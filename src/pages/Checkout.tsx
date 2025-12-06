@@ -64,8 +64,8 @@ export default function Checkout() {
       setLoading(true);
 
       // Call backend to create Stripe Checkout Session
-      const BACKEND_URL = "https://datorhuset-10h9dilxi-datorhusets-projects.vercel.app";
-      const response = await fetch(`${BACKEND_URL}/api/create-checkout-session`, {
+      // Call same-origin API to avoid CORS issues
+      const response = await fetch(`/api/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
