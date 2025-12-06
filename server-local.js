@@ -116,8 +116,8 @@ app.get("/api/health", (req, res) => {
 
 // Serve built frontend
 app.use(express.static(distPath));
-// Use an Express 5-safe wildcard (named param with splat)
-app.get("/:path*", (req, res, next) => {
+// Fallback for SPA routes (avoid wildcard path-to-regexp issues in Express 5)
+app.use((req, res, next) => {
   if (req.path.startsWith("/api/")) return next();
   return res.sendFile(path.join(distPath, "index.html"));
 });
