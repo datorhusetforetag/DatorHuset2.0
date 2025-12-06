@@ -94,10 +94,13 @@ app.post("/api/webhook", async (req, res) => {
     return res.status(400).json({ error: "Webhook signature failed" });
   }
 
+  console.log("[webhook] received", event.id, event.type);
+
   if (event.type === "checkout.session.completed") {
     const session = event.data.object; // JS only
     try {
       await handleSuccessfulPayment(session);
+      console.log("[webhook] handled checkout.session.completed", session.id);
     } catch (error) {
       console.error("Error handling successful payment:", error);
       return res.status(500).json({ error: "Failed to process payment" });
@@ -133,7 +136,7 @@ async function handleSuccessfulPayment(stripeSession) {
 
   if (!userEmail) throw new Error("No customer email in session");
 
-  console.log(`Processing payment for: ${userEmail}`);
+  console.log(`Processing payment for: ${userEmail}, session: ${sessionId}, amount: ${totalAmount}`);
 
   // TODO: implement real user lookup + cart/order creation
   console.log("User lookup skipped; store user_id in Stripe metadata to enable this.");
