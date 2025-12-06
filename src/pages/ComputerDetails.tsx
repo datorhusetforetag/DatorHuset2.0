@@ -124,6 +124,19 @@ const COMPUTERS: Computer[] = [
     tier: 'Gold',
     rating: 4.7,
     reviews: 687
+  },
+  {
+    id: '9',
+    name: 'Test item 1kr',
+    price: 1,
+    cpu: 'Placeholder CPU',
+    gpu: 'Placeholder GPU',
+    ram: 'Placeholder RAM',
+    storage: 'Placeholder storage',
+    storagetype: 'SSD',
+    tier: 'Bronze',
+    rating: 4.0,
+    reviews: 1
   }
 ];
 
