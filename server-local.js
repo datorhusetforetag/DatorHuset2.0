@@ -116,7 +116,8 @@ app.get("/api/health", (req, res) => {
 
 // Serve built frontend
 app.use(express.static(distPath));
-app.get("*", (req, res, next) => {
+// Use a safe wildcard for Express 5 / path-to-regexp
+app.get("/*", (req, res, next) => {
   if (req.path.startsWith("/api/")) return next();
   return res.sendFile(path.join(distPath, "index.html"));
 });
