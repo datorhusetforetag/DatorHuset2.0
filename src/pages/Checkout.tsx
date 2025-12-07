@@ -123,7 +123,7 @@ export default function Checkout() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
 
@@ -136,7 +136,7 @@ export default function Checkout() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Jan Svensson"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400"
+                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
                     />
                   </div>
 

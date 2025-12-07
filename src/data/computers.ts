@@ -128,8 +128,8 @@ export const COMPUTERS: Computer[] = [
 },
   {
     id: '9',
-    name: 'Test item 1kr',
-    price: 1,
+    name: 'Test item 4kr',
+    price: 4,
     cpu: 'Placeholder CPU',
     gpu: 'Placeholder GPU',
     ram: 'Placeholder RAM',

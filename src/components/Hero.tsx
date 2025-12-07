@@ -5,7 +5,7 @@ import { useRef } from "react";
 const FEATURED_COMPUTERS = [
   {
     id: '1',
-    name: 'Komplett-PC Epic Gaming a340 RGB - RTX 5080 Edition',
+    name: 'Bronze Starter',
     specs: 'Windows 11 Home, Geforce RTX 5080, Ryzen 7 9800X3D, 32GB DDR5, 2TB SSD',
     price: 31999,
     originalPrice: null,
