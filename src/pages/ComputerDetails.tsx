@@ -1,343 +1,310 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+﻿import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ArrowLeft, Star, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { useProducts, getProductIdByName } from "@/hooks/useProducts";
+import { getProductIdByName } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
+
+const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
+  "Fortnite": {
+    "1080p": { Medium: 160, High: 130, Ultra: 100 },
+    "1440p": { Medium: 140, High: 110, Ultra: 85 },
+    "4K": { Medium: 95, High: 70, Ultra: 55 },
+  },
+  "Cyberpunk 2077": {
+    "1080p": { Medium: 95, High: 75, Ultra: 60 },
+    "1440p": { Medium: 75, High: 60, Ultra: 45 },
+    "4K": { Medium: 50, High: 38, Ultra: 28 },
+  },
+  "GTA 5": {
+    "1080p": { Medium: 180, High: 150, Ultra: 120 },
+    "1440p": { Medium: 150, High: 125, Ultra: 95 },
+    "4K": { Medium: 110, High: 85, Ultra: 65 },
+  },
+  "Minecraft": {
+    "1080p": { Medium: 220, High: 180, Ultra: 150 },
+    "1440p": { Medium: 190, High: 160, Ultra: 130 },
+    "4K": { Medium: 160, High: 130, Ultra: 110 },
+  },
+  "CS2": {
+    "1080p": { Medium: 280, High: 240, Ultra: 200 },
+    "1440p": { Medium: 240, High: 200, Ultra: 170 },
+    "4K": { Medium: 200, High: 170, Ultra: 140 },
+  },
+  "Ghost of Tsushima": {
+    "1080p": { Medium: 120, High: 100, Ultra: 80 },
+    "1440p": { Medium: 100, High: 80, Ultra: 65 },
+    "4K": { Medium: 70, High: 55, Ultra: 42 },
+  },
+};
+
+const gameList = Object.keys(GAME_FPS);
 
 export default function ComputerDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
-  const [activeTab, setActiveTab] = useState('produktinfo');
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
-  const { products: supabaseProducts } = useProducts();
 
-  const computer = COMPUTERS.find((c) => c.id === id);
-  
-  // Get the Supabase product ID from the computer name
+  const [selectedGame, setSelectedGame] = useState(gameList[0]);
+  const [selectedResolution, setSelectedResolution] = useState("1080p");
+  const [selectedPreset, setSelectedPreset] = useState<"Medium" | "High" | "Ultra">("High");
+  const [dlssOn, setDlssOn] = useState(false);
+  const [frameGenOn, setFrameGenOn] = useState(false);
+
+  const computer: Computer | undefined = COMPUTERS.find((c) => c.id === id);
   const supabaseProductId = computer ? getProductIdByName(computer.name) : null;
 
   if (!computer) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-[#0f1216] text-white flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 container mx-auto px-4 py-20">
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Datorn hittades inte</h1>
-            <button
-              onClick={() => navigate("/products")}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded font-medium transition-colors inline-flex items-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Tillbaka till produkter
-            </button>
-          </div>
+        <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
+          <h1 className="text-2xl font-bold mb-4">Datorn hittades inte</h1>
+          <button
+            onClick={() => navigate("/products")}
+            className="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded font-semibold transition-colors inline-flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Tillbaka till produkter
+          </button>
         </div>
         <Footer />
       </div>
     );
   }
 
+  const handleAddToCart = async () => {
+    try {
+      setAddingToCart(true);
+      if (!supabaseProductId) {
+        alert("Laddar produktinformation, försök igen om en stund.");
+        return;
+      }
+      await addToCart(supabaseProductId, quantity);
+      navigate("/cart");
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      alert("Kunde inte lägga till i kundvagn");
+    } finally {
+      setAddingToCart(false);
+    }
+  };
+
+  const baseFps = GAME_FPS[selectedGame][selectedResolution][selectedPreset];
+  const multiplier = (dlssOn ? 1.2 : 1) * (frameGenOn ? 1.15 : 1);
+  const finalFps = Math.round(baseFps * multiplier);
+  const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
+  const fpsHigh = Math.round(finalFps * 1.1);
+
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-[#0f1216] text-white flex flex-col">
       <Navbar />
-      <div className="flex-1 pt-24">
-        <div className="container mx-auto px-4 py-8">
-          {/* Breadcrumb */}
-          <div className="mb-4 text-sm text-gray-600">
-            <span>Hem</span>
-            <span className="mx-2">/</span>
-            <span>Dator & Surfplatta</span>
-            <span className="mx-2">/</span>
-            <span>Gamingdatorer stationär</span>
-            <span className="mx-2">/</span>
-            <span className="font-semibold text-gray-900">{computer.name}</span>
-          </div>
+      <div className="flex-1 container mx-auto px-4 py-10 lg:py-16">
+        {/* Breadcrumb */}
+        <div className="flex items-center text-sm text-gray-400 gap-2 mb-8">
+          <span className="cursor-pointer hover:text-white" onClick={() => navigate("/")}>Hem</span>
+          <span>/</span>
+          <span>Datorer & Surfplatta</span>
+          <span>/</span>
+          <span>Gamingdatorer stationär</span>
+          <span>/</span>
+          <span className="text-white font-semibold">{computer.name}</span>
+        </div>
 
-          {/* Main content */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-            {/* Left: Image Gallery */}
-            <div className="lg:col-span-1">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg h-96 flex items-center justify-center sticky top-32">
-                <div className="text-center">
-                  <div className="text-8xl mb-4">🖥️</div>
-                  <p className="text-gray-600 font-medium text-sm">{computer.tier} Tier</p>
-                </div>
-              </div>
-              {/* Thumbnail gallery */}
-              <div className="flex gap-2 mt-4">
-                {[1, 2, 3].map((i) => (
-                  <div
-                    key={i}
-                    className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded cursor-pointer hover:ring-2 hover:ring-yellow-400 flex items-center justify-center text-2xl"
-                  >
-                    🖥️
-                  </div>
-                ))}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+          {/* Left: image area */}
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 flex flex-col items-center gap-6 shadow-lg">
+            <div className="w-full aspect-[4/3] bg-gray-950 rounded-xl border border-gray-800 flex items-center justify-center text-center">
+              <div>
+                <div className="text-6xl mb-2">💻</div>
+                <p className="text-gray-300 text-sm">{computer.tier} Tier</p>
               </div>
             </div>
-
-            {/* Middle: Product Info */}
-            <div className="lg:col-span-2">
-              {/* Title and Rating */}
-              <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-900 mb-3">{computer.name}</h1>
-                <div className="flex items-center gap-4 mb-4">
-                  <div className="flex gap-1">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <span
-                        key={i}
-                        className={i < Math.floor(computer.rating) ? 'text-yellow-400' : 'text-gray-300'}
-                      >
-                        ★
-                      </span>
-                    ))}
-                  </div>
-                  <span className="text-sm text-gray-600">({computer.reviews} omdömen)</span>
-                  <span className="text-xs bg-green-100 text-green-700 px-3 py-1 rounded">
-                    39 personer har köpt denna
-                  </span>
-                </div>
-
-                {/* Short description */}
-                <p className="text-gray-700 text-sm mb-4">
-                  Windows 11 Home, GeForce RTX 5080, Ryzen 7 9800X3D, 32GB DDR5, 2TB SSD
-                </p>
-              </div>
-
-              <hr className="my-6" />
-
-              {/* Price Section */}
-              <div className="mb-6">
-                <div className="flex items-baseline gap-3 mb-2">
-                  <span className="text-4xl font-bold text-gray-900">
-                    {computer.price.toLocaleString('sv-SE')} kr
-                  </span>
-                  <span className="text-sm text-gray-600">Exkl moms</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
-                  <span>📅 Premiärcart sänkningsålder 4 februari 2026 (10 kr), osäkert datum</span>
-                </div>
-                <div className="flex items-center gap-2 text-sm mb-4">
-                  <span className="text-green-600 font-semibold">✓ På ett modelltände var vägen finns i lager igen</span>
-                </div>
-              </div>
-
-              <hr className="my-6" />
-
-              {/* Add to Cart Section */}
-              <div className="mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="flex items-center border border-gray-300 rounded">
-                    <button
-                      onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                      className="px-4 py-2 hover:bg-gray-100 transition-colors border-r border-gray-300"
-                    >
-                      <Minus className="w-5 h-5 text-gray-600" />
-                    </button>
-                    <span className="px-6 py-2 font-semibold text-gray-900">
-                      {quantity}
-                    </span>
-                    <button
-                      onClick={() => setQuantity(quantity + 1)}
-                      className="px-4 py-2 hover:bg-gray-100 transition-colors border-l border-gray-300"
-                    >
-                      <Plus className="w-5 h-5 text-gray-600" />
-                    </button>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={async () => {
-                    try {
-                      setAddingToCart(true);
-                      if (!supabaseProductId) {
-                        alert('Laddar produktinformation från databasen. Vänta och försök igen.');
-                        return;
-                      }
-                      await addToCart(supabaseProductId, quantity);
-                      navigate("/cart");
-                    } catch (error) {
-                      console.error('Failed to add to cart:', error);
-                      alert('Kunde inte lägga till i kundvagn');
-                    } finally {
-                      setAddingToCart(false);
-                    }
-                  }}
-                  disabled={addingToCart || !supabaseProductId}
-                  className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-300 text-gray-900 py-3 rounded font-bold text-lg transition-colors mb-3 flex items-center justify-center gap-2"
+            <div className="flex gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="w-16 h-16 rounded-lg border border-gray-800 bg-gray-900 flex items-center justify-center text-gray-400"
                 >
-                  <ShoppingCart className="w-5 h-5" />
-                  {addingToCart ? 'Lägger till...' : 'Lägg i kundvagn'}
-                </button>
-
-                <button className="w-full bg-teal-600 hover:bg-teal-700 text-white py-3 rounded font-semibold transition-colors flex items-center justify-center gap-2 mb-4">
-                  💌 ANPASSA EN ÖR KÖP?
-                </button>
-
-                {/* Side actions */}
-                <div className="flex gap-4 text-sm mb-6">
-                  <button className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition">
-                    💝 Jämför
-                  </button>
-                  <button className="flex items-center gap-2 text-gray-700 hover:text-blue-600 transition">
-                    ❤️ Lägg till i Önskeslista
-                  </button>
+                  {computer.tier.charAt(0)}
                 </div>
-
-                {/* Trust elements */}
-                <div className="bg-gray-50 p-4 rounded border border-gray-200">
-                  <div className="space-y-2 text-sm">
-                    <p className="flex items-start gap-2">
-                      <span>🛡️</span>
-                      <span><strong>Trygghetssavtal</strong> från 117:- / månad</span>
-                    </p>
-                  </div>
-                  <button className="text-blue-600 hover:underline text-sm mt-2">Läs mer</button>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
 
-          {/* Tabs Section */}
-          <div className="border-t border-gray-200 pt-8">
-            <div className="flex gap-8 border-b border-gray-200 mb-8">
+          {/* Right: info/buy box */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <h1 className="text-3xl lg:text-4xl font-bold text-white">{computer.name}</h1>
+              <p className="text-gray-300 text-sm">
+                {computer.cpu}, {computer.gpu}, {computer.ram}, {computer.storage} {computer.storagetype}
+              </p>
+            </div>
+
+            <div className="text-4xl font-bold">{computer.price.toLocaleString("sv-SE")} kr</div>
+            <div className="text-sm text-gray-400">Exkl. moms</div>
+
+            <div className="flex items-center gap-6">
+              <div className="flex items-center border border-gray-700 rounded-lg overflow-hidden">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="px-4 py-3 hover:bg-gray-800 transition-colors"
+                >
+                  <Minus className="w-4 h-4" />
+                </button>
+                <span className="px-6 py-3 text-lg font-semibold">{quantity}</span>
+                <button
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="px-4 py-3 hover:bg-gray-800 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
               <button
-                onClick={() => setActiveTab('produktinfo')}
-                className={`pb-4 font-semibold transition-colors ${
-                  activeTab === 'produktinfo'
-                    ? 'text-gray-900 border-b-2 border-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
+                onClick={handleAddToCart}
+                disabled={addingToCart || !supabaseProductId}
+                className="flex-1 inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
               >
-                Produktinfo
-              </button>
-              <button
-                onClick={() => setActiveTab('specifikationer')}
-                className={`pb-4 font-semibold transition-colors ${
-                  activeTab === 'specifikationer'
-                    ? 'text-gray-900 border-b-2 border-gray-900'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                Specifikationer
+                <ShoppingCart className="w-5 h-5" />
+                {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
               </button>
             </div>
 
-            {/* Tab Content */}
-            {activeTab === 'produktinfo' && (
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Produktinfo</h2>
-
-                {/* Product description boxes */}
-                <div className="space-y-6 mb-8">
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <span>🎮</span> Game Changer
-                    </h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      GeForce RTX® 50-serien grafikkort utnyttjar NVIDIA Blackwell och ebjuder revolutionerande features för spelprov och strömning. RTX 50-serien är utrustad med förbättrad AI-hårdvara och möjligheter nya uplevelser och grafisk skärpning på nästa nivå. Förbättra prestandan med NVIDIA DLSS 4, generera bättre med överrasflad hastigher och ta utlopp för din kreativitet med NVIDIA Studio.
-                    </p>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                      <span>⚡</span> Ultimat strålspårning och AI
-                    </h3>
-                    <p className="text-gray-700 leading-relaxed">
-                      RTX är den mest avancerade plattformen för full strålspårning och neural rendering som revolutionerar vår sätt att gräta imaterialt. RTX erbjuder över 700 populärspel och appar för att leverera realistisk grafik med otrolig snabbhet och banbrytande nya AI-funktioner, som multithreading-centrering med DLSS.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Call to action button */}
-                <button className="px-6 py-2 border border-gray-300 text-gray-900 font-semibold rounded hover:bg-gray-50 transition">
-                  Visa mer
-                </button>
-              </div>
-            )}
-
-            {activeTab === 'specifikationer' && (
-              <div className="mb-12">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Specifikationer</h2>
-
-                <div className="space-y-4">
-                  <div className="flex justify-between py-3 border-b border-gray-200">
-                    <span className="text-gray-700 font-medium">Processor (CPU):</span>
-                    <span className="text-gray-900 font-semibold">{computer.cpu}</span>
-                  </div>
-                  <div className="flex justify-between py-3 border-b border-gray-200">
-                    <span className="text-gray-700 font-medium">Grafikkort (GPU):</span>
-                    <span className="text-gray-900 font-semibold">{computer.gpu}</span>
-                  </div>
-                  <div className="flex justify-between py-3 border-b border-gray-200">
-                    <span className="text-gray-700 font-medium">RAM-minne:</span>
-                    <span className="text-gray-900 font-semibold">{computer.ram}</span>
-                  </div>
-                  <div className="flex justify-between py-3 border-b border-gray-200">
-                    <span className="text-gray-700 font-medium">Lagring:</span>
-                    <span className="text-gray-900 font-semibold">{computer.storage} {computer.storagetype}</span>
-                  </div>
-                  <div className="flex justify-between py-3">
-                    <span className="text-gray-700 font-medium">Kategori:</span>
-                    <span className="text-gray-900 font-semibold">{computer.tier}</span>
-                  </div>
-                </div>
-              </div>
-            )}
+            <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 text-sm text-gray-300">
+              <p>Beräknad leverans: 3-5 arbetsdagar</p>
+              <p>Fri frakt vid köp över 5000 kr</p>
+            </div>
           </div>
+        </div>
 
-          {/* Related Products Section */}
-          <div className="border-t border-gray-200 pt-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Andra som tittat på samma produkt tittar även på:</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
-              {COMPUTERS.filter((c) => c.id !== computer.id)
-                .slice(0, 6)
-                .map((related) => (
-                  <button
-                    key={related.id}
-                    onClick={() => navigate(`/computer/${related.id}`)}
-                    className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all text-left"
+        {/* Tabs */}
+        <div className="mt-12 bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <div className="flex gap-6 border-b border-gray-800 pb-4 mb-6 text-sm font-semibold text-gray-300">
+            <span className="text-white">Produktinfo</span>
+            <span>Specifikationer</span>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-gray-200">
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold">Game Changer</h3>
+              <p className="text-sm text-gray-300">
+                Kraftfulla komponenter ger hög prestanda för spel och kreativa arbetsflöden. Perfekt balans mellan CPU, GPU och snabb lagring.
+              </p>
+              <h3 className="text-lg font-bold">Ultimat strålspårning och AI</h3>
+              <p className="text-sm text-gray-300">
+                Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.
+              </p>
+            </div>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between border-b border-gray-800 pb-2"><span>Processor (CPU)</span><span className="font-semibold text-white">{computer.cpu}</span></div>
+              <div className="flex justify-between border-b border-gray-800 pb-2"><span>Grafikkort (GPU)</span><span className="font-semibold text-white">{computer.gpu}</span></div>
+              <div className="flex justify-between border-b border-gray-800 pb-2"><span>RAM-minne</span><span className="font-semibold text-white">{computer.ram}</span></div>
+              <div className="flex justify-between border-b border-gray-800 pb-2"><span>Lagring</span><span className="font-semibold text-white">{computer.storage} {computer.storagetype}</span></div>
+              <div className="flex justify-between"><span>Kategori</span><span className="font-semibold text-white">{computer.tier}</span></div>
+            </div>
+          </div>
+        </div>
+
+        {/* FPS estimator */}
+        <div className="mt-12 bg-gray-900 border border-gray-800 rounded-2xl p-6 lg:p-8 shadow-[0_20px_50px_rgba(0,0,0,0.35)]">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+            <div className="space-y-4">
+              <h2 className="text-3xl font-bold">Uppskattad FPS</h2>
+              <div className="space-y-3">
+                <label className="text-sm text-gray-300" htmlFor="game">Välj spel</label>
+                <select
+                  id="game"
+                  value={selectedGame}
+                  onChange={(e) => setSelectedGame(e.target.value)}
+                  className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                >
+                  {gameList.map((game) => (
+                    <option key={game} value={game}>{game}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-300" htmlFor="res">Upplösning</label>
+                  <select
+                    id="res"
+                    value={selectedResolution}
+                    onChange={(e) => setSelectedResolution(e.target.value)}
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {/* Product image */}
-                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-32 flex items-center justify-center relative">
-                      <div className="text-4xl">🖥️</div>
-                      {related.price < computer.price && (
-                        <div className="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded">
-                          SPARA 3 600:-
-                        </div>
-                      )}
-                    </div>
+                    {Object.keys(GAME_FPS[selectedGame]).map((res) => (
+                      <option key={res} value={res}>{res}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm text-gray-300" htmlFor="preset">Grafik</label>
+                  <select
+                    id="preset"
+                    value={selectedPreset}
+                    onChange={(e) => setSelectedPreset(e.target.value as "Medium" | "High" | "Ultra")}
+                    className="w-full bg-gray-950 border border-gray-800 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-emerald-500"
+                  >
+                    {Object.keys(GAME_FPS[selectedGame][selectedResolution]).map((preset) => (
+                      <option key={preset} value={preset}>{preset}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
 
-                    {/* Product info */}
-                    <div className="p-3">
-                      <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-sm">
-                        {related.name}
-                      </h3>
-                      <div className="flex items-center mb-2">
-                        <div className="flex gap-0.5">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <span
-                              key={i}
-                              className={i < Math.floor(related.rating) ? 'text-yellow-400 text-xs' : 'text-gray-300 text-xs'}
-                            >
-                              ★
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="font-bold text-gray-900 text-sm">
-                        {related.price.toLocaleString('sv-SE')} kr
-                      </div>
-                      <p className="text-xs text-gray-600 mt-1">Exkl moms</p>
-                    </div>
-                  </button>
-                ))}
+              <div className="flex gap-3 flex-wrap">
+                <button
+                  onClick={() => setDlssOn((v) => !v)}
+                  className={`px-4 py-2 rounded-lg border ${dlssOn ? "border-emerald-500 bg-emerald-900/40" : "border-gray-700 bg-gray-950"} text-sm font-semibold`}
+                >
+                  DLSS / FSR {dlssOn ? "On" : "Off"}
+                </button>
+                <button
+                  onClick={() => setFrameGenOn((v) => !v)}
+                  className={`px-4 py-2 rounded-lg border ${frameGenOn ? "border-emerald-500 bg-emerald-900/40" : "border-gray-700 bg-gray-950"} text-sm font-semibold`}
+                >
+                  Frame generation {frameGenOn ? "On" : "Off"}
+                </button>
+              </div>
             </div>
+
+            <div className="bg-gray-950 border border-gray-800 rounded-xl p-6 flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-28 h-28 bg-gray-900 border border-gray-800 rounded-lg flex items-center justify-center text-center text-sm text-gray-300">
+                  {selectedGame}
+                </div>
+                <div className="space-y-2">
+                  <p className="text-gray-400 text-sm">{selectedResolution} • {selectedPreset}</p>
+                  <p className="text-3xl font-bold text-white">{fpsLow} – {fpsHigh} FPS</p>
+                  <p className="text-xs text-gray-500">Beräknat med vald konfiguration</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Related */}
+        <div className="mt-12 border-t border-gray-800 pt-10">
+          <h2 className="text-2xl font-bold mb-6">Andra som tittat på samma produkt tittar även på:</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {COMPUTERS.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
+              <button
+                key={related.id}
+                onClick={() => navigate(`/computer/${related.id}`)}
+                className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
+              >
+                <div className="h-28 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-3xl text-gray-400">
+                  {related.tier.charAt(0)}
+                </div>
+                <div className="p-4 space-y-2">
+                  <h3 className="font-semibold text-white text-sm line-clamp-2">{related.name}</h3>
+                  <p className="text-sm text-gray-400">{related.price.toLocaleString("sv-SE")} kr</p>
+                </div>
+              </button>
+            ))}
           </div>
         </div>
       </div>
