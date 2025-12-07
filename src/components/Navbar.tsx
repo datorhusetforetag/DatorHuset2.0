@@ -41,10 +41,7 @@ export const Navbar = () => {
             </Link>
 
             <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-              <div
-                className="relative w-full"
-                onMouseLeave={() => setShowSearchResults(false)}
-              >
+              <div className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-400" />
                 <input
                   type="text"
@@ -148,10 +145,7 @@ export const Navbar = () => {
           </div>
 
           <div className="lg:hidden pb-4">
-            <div
-              className="relative w-full"
-              onMouseLeave={() => setShowSearchResults(false)}
-            >
+            <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-400" />
               <input
                 type="text"

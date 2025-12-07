@@ -18,6 +18,7 @@ import CustomBuild from "./pages/CustomBuild.tsx";
 import ServiceRepair from "./pages/ServiceRepair.tsx";
 import About from "./pages/About.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -27,24 +28,26 @@ const App = () => (
       <Toaster />
       {/* <Sonner /> */}
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/products" element={<Products />} />
-          <Route path="/computer/:id" element={<ComputerDetails />} />
-          <Route path="/search" element={<SearchResults />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/checkout-success" element={<CheckoutSuccess />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/faq" element={<Faq />} />
-          <Route path="/kundservice" element={<CustomerService />} />
-          <Route path="/custom-bygg" element={<CustomBuild />} />
-          <Route path="/service-reparation" element={<ServiceRepair />} />
-          <Route path="/about" element={<About />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <ScrollToTop>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/computer/:id" element={<ComputerDetails />} />
+            <Route path="/search" element={<SearchResults />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/checkout" element={<Checkout />} />
+            <Route path="/checkout-success" element={<CheckoutSuccess />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/orders" element={<Orders />} />
+            <Route path="/faq" element={<Faq />} />
+            <Route path="/kundservice" element={<CustomerService />} />
+            <Route path="/custom-bygg" element={<CustomBuild />} />
+            <Route path="/service-reparation" element={<ServiceRepair />} />
+            <Route path="/about" element={<About />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </ScrollToTop>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

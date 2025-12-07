@@ -135,7 +135,7 @@ export default function Products() {
         {/* Main Content */}
         <div className="flex-1 p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">StationÃ¤ra Datorer</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Stationära Datorer</h1>
             <p className="text-gray-600">
               Visar {filteredProducts.length} av {COMPUTERS.length} produkter
             </p>
@@ -159,10 +159,7 @@ export default function Products() {
                   <div className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all">
                     {/* Product image area */}
                     <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-48 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 transition-colors">
-                      <div className="text-center">
-                        <div className="text-6xl font-bold text-gray-400 mb-2">{computer.tier.charAt(0).toUpperCase()}</div>
-                        <p className="text-sm text-gray-500">{computer.tier}</p>
-                      </div>
+                      <img src={computer.image} alt={computer.name} className="w-full h-full object-cover" />
                     </div>
 
                     {/* Product info */}
@@ -173,35 +170,21 @@ export default function Products() {
 
                       {/* Rating */}
                       <div className="flex items-center mb-3">
-                        <div className="flex">
-                          {Array.from({ length: 5 }).map((_, i) => (
-                            <span
-                              key={i}
-                              className={i < Math.floor(computer.rating) ? 'text-yellow-400' : 'text-gray-300'}
-                            >
-                              â˜…
-                            </span>
-                          ))}
-                        </div>
+                        <div className="flex text-yellow-400 text-lg">★★★★★</div>
                         <span className="ml-2 text-xs text-gray-600">({computer.reviews})</span>
                       </div>
 
                       {/* Specs */}
                       <div className="text-sm text-gray-600 space-y-1 mb-4 border-t border-gray-100 pt-3">
-                        <p className="truncate">ðŸ–¥ï¸ CPU: {computer.cpu}</p>
-                        <p className="truncate">ðŸŽ® GPU: {computer.gpu}</p>
-                        <p className="truncate">ðŸ’¾ RAM: {computer.ram}</p>
-                        <p className="truncate">ðŸ’¿ {computer.storage} {computer.storagetype}</p>
+                        <p className="truncate">CPU: {computer.cpu}</p>
+                        <p className="truncate">GPU: {computer.gpu}</p>
+                        <p className="truncate">RAM: {computer.ram}</p>
+                        <p className="truncate">Lagring: {computer.storage} {computer.storagetype}</p>
                       </div>
 
-                      {/* Price and button */}
-                      <div className="flex items-center justify-between">
-                        <span className="text-2xl font-bold text-gray-900">
-                          {computer.price.toLocaleString('sv-SE')} kr
-                        </span>
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-sm font-medium transition-colors">
-                          Visa
-                        </button>
+                      {/* Price */}
+                      <div className="text-2xl font-bold text-gray-900">
+                        {computer.price.toLocaleString('sv-SE')} kr
                       </div>
                     </div>
                   </div>

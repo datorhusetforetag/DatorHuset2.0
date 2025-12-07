@@ -10,6 +10,7 @@
   tier: string;
   rating: number;
   reviews: number;
+  image: string;
 }
 
 export const COMPUTERS: Computer[] = [
@@ -25,7 +26,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Bronze',
     rating: 4.2,
     reviews: 145,
-  },
+      image: 'https://images.unsplash.com/photo-1587202372616-b43abea06c47?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '2',
     name: 'Silver Ascent',
@@ -38,7 +40,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Silver',
     rating: 4.5,
     reviews: 287,
-  },
+      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '3',
     name: 'Gold Pinnacle',
@@ -51,7 +54,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Gold',
     rating: 4.8,
     reviews: 512,
-  },
+      image: 'https://images.unsplash.com/photo-1483478550801-ceba5fe50e8e?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '4',
     name: 'Platina Frostbyte',
@@ -64,7 +68,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Platinum',
     rating: 4.9,
     reviews: 834,
-  },
+      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '5',
     name: 'Diamond Quantum',
@@ -77,7 +82,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Diamond',
     rating: 5.0,
     reviews: 92,
-  },
+      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '6',
     name: 'Bronze Compact',
@@ -90,7 +96,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Bronze',
     rating: 4.1,
     reviews: 198,
-  },
+      image: 'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '7',
     name: 'Silver Speedster',
@@ -103,7 +110,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Silver',
     rating: 4.6,
     reviews: 423,
-  },
+      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '8',
     name: 'Gold Architect',
@@ -116,7 +124,8 @@ export const COMPUTERS: Computer[] = [
     tier: 'Gold',
     rating: 4.7,
     reviews: 687,
-  },
+      image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
+},
   {
     id: '9',
     name: 'Test item 1kr',
@@ -129,5 +138,6 @@ export const COMPUTERS: Computer[] = [
     tier: 'Bronze',
     rating: 4.0,
     reviews: 1,
-  },
+      image: 'https://images.unsplash.com/photo-1582719478152-2f2df4f5d98f?auto=format&fit=crop&w=800&q=80',
+},
 ];

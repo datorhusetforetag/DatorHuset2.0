@@ -61,6 +61,7 @@ export default function ComputerDetails() {
   const supabaseProductId =
     (computer && products.find((p) => p.name === computer.name)?.id) ||
     (computer && getProductIdByName(computer.name)) ||
+    computer?.id ||
     null;
 
   if (!computer) {
@@ -122,19 +123,23 @@ export default function ComputerDetails() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           {/* Left: image area */}
-          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 flex flex-col items-center gap-6 shadow-lg">
-            <div className="w-full aspect-[4/3] bg-gray-950 rounded-xl border border-gray-800 flex items-center justify-center text-center">
-              <div className="text-6xl">{["💻", "🖥️", "🖲️", "🧊"][selectedImage % 4]}</div>
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-4 lg:p-6 flex flex-col gap-4 shadow-lg">
+            <div className="w-full aspect-[4/3] bg-gray-950 rounded-xl border border-gray-800 overflow-hidden">
+              <img
+                src={computer.image}
+                alt={computer.name}
+                className="w-full h-full object-cover"
+              />
             </div>
-            <div className="flex gap-3">
-              {[0, 1, 2, 3].map((i) => (
+            <div className="flex gap-3 justify-center">
+              {[computer.image, computer.image, computer.image, computer.image].map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-16 h-16 rounded-lg border ${selectedImage === i ? "border-emerald-500" : "border-gray-800"} bg-gray-900 flex items-center justify-center text-gray-400`}
+                  className={`w-16 h-16 rounded-lg border ${selectedImage === i ? "border-emerald-500" : "border-gray-800"} bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
-                  {["💻", "🖥️", "🖲️", "🧊"][i]}
+                  <img src={img} alt={`${computer.name} vy ${i + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
