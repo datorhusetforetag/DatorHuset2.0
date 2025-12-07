@@ -109,6 +109,13 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500;
   }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes gradient-shift {

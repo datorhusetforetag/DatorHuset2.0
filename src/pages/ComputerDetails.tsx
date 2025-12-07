@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { getProductIdByName } from "@/hooks/useProducts";
+import { useProducts, getProductIdByName } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 
 const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
@@ -48,15 +48,20 @@ export default function ComputerDetails() {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
+  const { products } = useProducts();
 
   const [selectedGame, setSelectedGame] = useState(gameList[0]);
   const [selectedResolution, setSelectedResolution] = useState("1080p");
   const [selectedPreset, setSelectedPreset] = useState<"Medium" | "High" | "Ultra">("High");
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(0);
 
   const computer: Computer | undefined = COMPUTERS.find((c) => c.id === id);
-  const supabaseProductId = computer ? getProductIdByName(computer.name) : null;
+  const supabaseProductId =
+    (computer && products.find((p) => p.name === computer.name)?.id) ||
+    (computer && getProductIdByName(computer.name)) ||
+    null;
 
   if (!computer) {
     return (
@@ -119,19 +124,18 @@ export default function ComputerDetails() {
           {/* Left: image area */}
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-8 flex flex-col items-center gap-6 shadow-lg">
             <div className="w-full aspect-[4/3] bg-gray-950 rounded-xl border border-gray-800 flex items-center justify-center text-center">
-              <div>
-                <div className="text-6xl mb-2">💻</div>
-                <p className="text-gray-300 text-sm">{computer.tier} Tier</p>
-              </div>
+              <div className="text-6xl">{["💻", "🖥️", "🖲️", "🧊"][selectedImage % 4]}</div>
             </div>
             <div className="flex gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div
+              {[0, 1, 2, 3].map((i) => (
+                <button
                   key={i}
-                  className="w-16 h-16 rounded-lg border border-gray-800 bg-gray-900 flex items-center justify-center text-gray-400"
+                  onClick={() => setSelectedImage(i)}
+                  className={`w-16 h-16 rounded-lg border ${selectedImage === i ? "border-emerald-500" : "border-gray-800"} bg-gray-900 flex items-center justify-center text-gray-400`}
+                  aria-label={`Vy ${i + 1}`}
                 >
-                  {computer.tier.charAt(0)}
-                </div>
+                  {["💻", "🖥️", "🖲️", "🧊"][i]}
+                </button>
               ))}
             </div>
           </div>

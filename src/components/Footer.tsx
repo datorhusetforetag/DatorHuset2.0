@@ -28,7 +28,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-12 flex flex-col md:flex-row items-center justify-between border-t border-gray-800 pt-6">
-          <p className="text-sm text-gray-400">Copyright c 2025 DatorHuset UF</p>
+          <p className="text-sm text-gray-400">© 2025 DatorHuset UF. All rights reserved.</p>
           <img src={logo} alt="DatorHuset logo" className="w-16 h-16 object-contain mt-4 md:mt-0" />
         </div>
       </div>
