@@ -1,0 +1,133 @@
+﻿export interface Computer {
+  id: string;
+  name: string;
+  price: number;
+  cpu: string;
+  gpu: string;
+  ram: string;
+  storage: string;
+  storagetype: string;
+  tier: string;
+  rating: number;
+  reviews: number;
+}
+
+export const COMPUTERS: Computer[] = [
+  {
+    id: '1',
+    name: 'Bronze Starter',
+    price: 4999,
+    cpu: 'Intel i5-13600K',
+    gpu: 'RTX 3060',
+    ram: '16GB DDR5',
+    storage: '512GB',
+    storagetype: 'SSD',
+    tier: 'Bronze',
+    rating: 4.2,
+    reviews: 145,
+  },
+  {
+    id: '2',
+    name: 'Silver Ascent',
+    price: 8999,
+    cpu: 'Intel i7-13700K',
+    gpu: 'RTX 4070',
+    ram: '32GB DDR5',
+    storage: '1TB',
+    storagetype: 'SSD',
+    tier: 'Silver',
+    rating: 4.5,
+    reviews: 287,
+  },
+  {
+    id: '3',
+    name: 'Gold Pinnacle',
+    price: 12999,
+    cpu: 'Intel i9-13900K',
+    gpu: 'RTX 4080',
+    ram: '64GB DDR5',
+    storage: '2TB',
+    storagetype: 'SSD',
+    tier: 'Gold',
+    rating: 4.8,
+    reviews: 512,
+  },
+  {
+    id: '4',
+    name: 'Platina Frostbyte',
+    price: 18999,
+    cpu: 'Intel i9-14900KS',
+    gpu: 'RTX 4090',
+    ram: '128GB DDR5',
+    storage: '4TB',
+    storagetype: 'SSD',
+    tier: 'Platinum',
+    rating: 4.9,
+    reviews: 834,
+  },
+  {
+    id: '5',
+    name: 'Diamond Quantum',
+    price: 24999,
+    cpu: 'Intel Xeon W9-3595X',
+    gpu: 'RTX 6000 Ada',
+    ram: '256GB DDR5',
+    storage: '8TB',
+    storagetype: 'SSD',
+    tier: 'Diamond',
+    rating: 5.0,
+    reviews: 92,
+  },
+  {
+    id: '6',
+    name: 'Bronze Compact',
+    price: 3999,
+    cpu: 'AMD Ryzen 5 5600X',
+    gpu: 'RTX 3050',
+    ram: '8GB DDR4',
+    storage: '256GB',
+    storagetype: 'SSD',
+    tier: 'Bronze',
+    rating: 4.1,
+    reviews: 198,
+  },
+  {
+    id: '7',
+    name: 'Silver Speedster',
+    price: 9999,
+    cpu: 'AMD Ryzen 7 7700X',
+    gpu: 'RTX 4070 Super',
+    ram: '32GB DDR5',
+    storage: '1TB',
+    storagetype: 'NVMe',
+    tier: 'Silver',
+    rating: 4.6,
+    reviews: 423,
+  },
+  {
+    id: '8',
+    name: 'Gold Architect',
+    price: 14999,
+    cpu: 'AMD Ryzen 9 7950X',
+    gpu: 'RTX 4090',
+    ram: '64GB DDR5',
+    storage: '2TB',
+    storagetype: 'NVMe',
+    tier: 'Gold',
+    rating: 4.7,
+    reviews: 687,
+  },
+  {
+    id: '9',
+    name: 'Test item 1kr',
+    price: 1,
+    cpu: 'Placeholder CPU',
+    gpu: 'Placeholder GPU',
+    ram: 'Placeholder RAM',
+    storage: 'Placeholder storage',
+    storagetype: 'SSD',
+    tier: 'Bronze',
+    rating: 4.0,
+    reviews: 1,
+  },
+];

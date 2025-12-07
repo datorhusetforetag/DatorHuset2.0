@@ -1,10 +1,12 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { LogOut, User } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function LoginButton() {
   const { user, loading, signInWithGoogle, signOut } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
   if (loading) {
     return <div className="text-gray-600 text-sm">Laddar...</div>;
@@ -26,7 +28,7 @@ export function LoginButton() {
     <div className="relative">
       <button
         onClick={() => setShowDropdown(!showDropdown)}
-        className="flex items-center gap-2 px-4 py-2 text-gray-900 hover:bg-gray-100 rounded transition-colors"
+        className="flex items-center gap-2 px-4 py-2 text-gray-900 bg-white rounded hover:bg-gray-100 transition-colors"
       >
         <User className="w-5 h-5" />
         <span className="text-sm font-semibold">{user.email?.split('@')[0] || 'Profil'}</span>
@@ -38,6 +40,24 @@ export function LoginButton() {
             <p className="text-xs text-gray-600">Inloggad som</p>
             <p className="font-semibold text-gray-900 truncate">{user.email}</p>
           </div>
+          <button
+            onClick={() => {
+              setShowDropdown(false);
+              navigate('/account');
+            }}
+            className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors"
+          >
+            Mina uppgifter
+          </button>
+          <button
+            onClick={() => {
+              setShowDropdown(false);
+              navigate('/orders');
+            }}
+            className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors"
+          >
+            Mina bestallningar
+          </button>
           <button
             onClick={() => {
               setShowDropdown(false);
