@@ -298,21 +298,21 @@ export default function ComputerDetails() {
         {/* Related */}
         <div className="mt-12 border-t border-gray-800 pt-10">
           <h2 className="text-2xl font-bold mb-6">Andra som tittat på samma produkt tittar även på:</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {COMPUTERS.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
-              <button
-                key={related.id}
-                onClick={() => navigate(`/computer/${related.id}`)}
-                className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
-              >
-                <div className="h-28 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-3xl text-gray-400">
-                  {related.tier.charAt(0)}
-                </div>
-                <div className="p-4 space-y-2">
-                  <h3 className="font-semibold text-white text-sm line-clamp-2">{related.name}</h3>
-                  <p className="text-sm text-gray-400">{related.price.toLocaleString("sv-SE")} kr</p>
-                </div>
-              </button>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {COMPUTERS.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
+                <button
+                  key={related.id}
+                  onClick={() => navigate(`/computer/${related.id}`)}
+                  className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
+                >
+                  <div className="h-28 bg-gradient-to-br from-gray-800 to-gray-900 flex items-center justify-center text-3xl text-gray-400 overflow-hidden">
+                    <img src={related.image} alt={related.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="p-4 space-y-2">
+                    <h3 className="font-semibold text-white text-sm line-clamp-2">{related.name}</h3>
+                    <p className="text-sm text-gray-400">{related.price.toLocaleString("sv-SE")} kr</p>
+                  </div>
+                </button>
             ))}
           </div>
         </div>
