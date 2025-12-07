@@ -1,4 +1,5 @@
 import { Euro, Monitor, Package, RefreshCcw } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const steps = [
   {
@@ -54,9 +55,20 @@ export const StepsSection = () => {
           ))}
         </div>
 
-        <button className="mt-12 px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition-colors">
-          Köp din dator
-        </button>
+        <div className="mt-12 flex flex-col sm:flex-row gap-3">
+          <Link
+            to="/products"
+            className="px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold rounded-lg transition-colors text-center"
+          >
+            Köp din dator
+          </Link>
+          <Link
+            to="/custom-bygg"
+            className="px-8 py-3 bg-transparent border border-emerald-600 text-emerald-200 hover:bg-emerald-600 hover:text-white font-semibold rounded-lg transition-colors text-center"
+          >
+            Gör en custom bygg
+          </Link>
+        </div>
       </div>
     </section>
   );
