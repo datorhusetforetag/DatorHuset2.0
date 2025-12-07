@@ -1,49 +1,9 @@
 ﻿import { ChevronRight, ChevronLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
+import { COMPUTERS } from "@/data/computers";
 
-const FEATURED_COMPUTERS = [
-  {
-    id: '1',
-    name: 'Bronze Starter',
-    specs: 'Windows 11 Home, Geforce RTX 5080, Ryzen 7 9800X3D, 32GB DDR5, 2TB SSD',
-    price: 31999,
-    originalPrice: null,
-    availability: 'Preliminär sändningsklar 4 februari 202...'
-  },
-  {
-    id: '2',
-    name: 'Komplett-PC Advanced Gaming a165 RGB',
-    specs: 'Windows 11 Home, Geforce RTX 5060 Ti 16GB, Ryzen 7 9700X, 16GB DDR5, 2TB SSD',
-    price: 17999,
-    originalPrice: null,
-    availability: 'Preliminär sändningsklar 14 januari 202...'
-  },
-  {
-    id: '3',
-    name: 'Komplett-PC Epic Gaming i230 RGB',
-    specs: 'Windows 11 Home, Geforce RTX 5070, Core Ultra 7 265KF, 32GB DDR5, 2TB SSD',
-    price: 23199,
-    originalPrice: null,
-    availability: 'Inte i lager.'
-  },
-  {
-    id: '4',
-    name: 'Komplett-PC Epic Gaming a385 RGB',
-    specs: 'Windows 11 Home, Geforce RTX 5090, Ryzen 9 9950X3D, 64GB DDR5, 4TB SSD',
-    price: 51199,
-    originalPrice: null,
-    availability: '68 st i lager, produktionstid 23-24...'
-  },
-  {
-    id: '5',
-    name: 'Komplett-PC Epic Gaming RGB - RTX 5090 Edition',
-    specs: 'Windows 11 Home, Geforce RTX 5090, i9-14900KF, 32GB DDR5, 2TB SSD',
-    price: 46399,
-    originalPrice: null,
-    availability: 'Preliminär sändningsklar 13 jan...'
-  }
-];
+const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 
 const categories = [
   { name: "Hjälp mig välja", icon: "🧭" },
@@ -123,31 +83,22 @@ export const Hero = () => {
                   to={`/computer/${computer.id}`}
                   className="flex-shrink-0 w-96 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all"
                 >
-                  {/* Product image area */}
-                  <div className="bg-gradient-to-br from-gray-100 to-gray-200 h-56 flex items-center justify-center hover:from-gray-200 hover:to-gray-300 transition-colors">
-                    <div className="text-center">
-                      <div className="text-6xl font-bold text-gray-400">PC</div>
-                    </div>
+                  <div className="h-56 bg-gray-100 flex items-center justify-center">
+                    <img src={computer.image} alt={computer.name} className="w-full h-full object-cover" />
                   </div>
-
-                  {/* Product info */}
                   <div className="p-4">
                     <h4 className="text-sm font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors">
                       {computer.name}
                     </h4>
-
-                    {/* Specs */}
                     <div className="text-xs text-gray-600 space-y-1 mb-4 border-t border-gray-100 pt-3">
-                      <p className="line-clamp-2">{computer.specs}</p>
+                      <p className="line-clamp-2">{computer.cpu}</p>
+                      <p className="line-clamp-2">{computer.gpu}</p>
+                      <p className="line-clamp-2">{computer.ram}</p>
                     </div>
-
-                    {/* Price and availability */}
-                    <div className="border-t border-gray-100 pt-3">
-                      <div className="text-2xl font-bold text-gray-900 mb-2">
-                        {computer.price.toLocaleString('sv-SE')}:-
-                      </div>
-                      <p className="text-xs text-gray-600">{computer.availability}</p>
+                    <div className="text-2xl font-bold text-gray-900 mb-1">
+                      {computer.price.toLocaleString('sv-SE')}:-
                     </div>
+                    <p className="text-xs text-gray-600">I lager</p>
                   </div>
                 </Link>
               ))}

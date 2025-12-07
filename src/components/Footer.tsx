@@ -1,5 +1,5 @@
 ﻿import { Link } from "react-router-dom";
-import logo from "@/assets/datorhuset-logo.svg";
+import logo from "/Datorhuset.png";
 
 export const Footer = () => {
   return (

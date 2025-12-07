@@ -34,9 +34,7 @@ export const Navbar = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center gap-2 font-bold text-2xl flex-shrink-0">
-              <div className="w-10 h-10 bg-yellow-400 text-gray-900 flex items-center justify-center rounded font-bold">
-                D
-              </div>
+              <img src="/Datorhuset.png" alt="DatorHuset" className="w-12 h-12 object-contain" />
               <span>DatorHuset</span>
             </Link>
 
@@ -45,7 +43,7 @@ export const Navbar = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-400" />
                 <input
                   type="text"
-                  placeholder="Sok bland produkter"
+                  placeholder="Sök bland produkter"
                   value={searchInput}
                   onChange={(e) => {
                     setSearchInput(e.target.value);
@@ -60,7 +58,11 @@ export const Navbar = () => {
                   className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all"
                 />
                 {showSearchResults && searchResults.length > 0 && (
-                  <div className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden">
+                  <div
+                    className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden"
+                    onMouseEnter={() => setShowSearchResults(true)}
+                    onMouseLeave={() => setShowSearchResults(false)}
+                  >
                     {searchResults.map((result) => (
                       <button
                         key={result.id}
@@ -103,7 +105,7 @@ export const Navbar = () => {
                 {showCartPreview && (
                   <div className="absolute right-0 mt-2 w-72 bg-white text-gray-900 rounded shadow-lg border border-gray-200 p-4 z-50">
                     {items.length === 0 ? (
-                      <p className="text-sm text-gray-600">Kundvagnen ar tom.</p>
+                      <p className="text-sm text-gray-600">Kundvagnen är tom.</p>
                     ) : (
                       <>
                         <div className="space-y-2 max-h-60 overflow-auto">
@@ -127,7 +129,7 @@ export const Navbar = () => {
                             onClick={() => navigate("/cart")}
                             className="flex-1 px-3 py-2 text-sm font-semibold text-gray-900 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
                           >
-                            Ga till kundvagn
+                            Gå till kundvagn
                           </button>
                           <button
                             onClick={() => navigate("/checkout")}
@@ -164,7 +166,11 @@ export const Navbar = () => {
                 className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all"
               />
               {showSearchResults && searchResults.length > 0 && (
-                <div className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden z-50">
+                <div
+                  className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden z-50"
+                  onMouseEnter={() => setShowSearchResults(true)}
+                  onMouseLeave={() => setShowSearchResults(false)}
+                >
                   {searchResults.map((result) => (
                     <button
                       key={result.id}
