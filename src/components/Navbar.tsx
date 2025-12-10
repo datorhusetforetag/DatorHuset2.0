@@ -1,9 +1,10 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Search, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
 import { COMPUTERS } from "@/data/computers";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const Navbar = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -15,10 +16,11 @@ export const Navbar = () => {
   const searchResults = useMemo(() => {
     const query = searchInput.trim().toLowerCase();
     if (!query) return [];
-    return COMPUTERS.filter((computer) =>
-      computer.name.toLowerCase().includes(query) ||
-      computer.cpu.toLowerCase().includes(query) ||
-      computer.gpu.toLowerCase().includes(query)
+    return COMPUTERS.filter(
+      (computer) =>
+        computer.name.toLowerCase().includes(query) ||
+        computer.cpu.toLowerCase().includes(query) ||
+        computer.gpu.toLowerCase().includes(query)
     ).slice(0, 5);
   }, [searchInput]);
 
@@ -29,21 +31,21 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="sticky top-0 left-0 right-0 z-50">
-      <div className="bg-gray-900 text-white">
+    <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+      <div className="bg-white/90 text-gray-900 border-b border-gray-200 shadow-sm dark:bg-gray-950/90 dark:text-white dark:border-gray-800">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
-            <Link to="/" className="flex items-center gap-2 font-bold text-2xl flex-shrink-0">
+          <div className="flex items-center justify-between gap-4 h-20">
+            <Link to="/" className="flex items-center gap-2 font-bold text-2xl flex-shrink-0 text-gray-900 dark:text-white">
               <img src="/Datorhuset.png" alt="DatorHuset" className="w-12 h-12 object-contain" />
               <span>DatorHuset</span>
             </Link>
 
             <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-yellow-300" />
                 <input
                   type="text"
-                  placeholder="Sök bland produkter"
+                  placeholder="Sok bland produkter"
                   value={searchInput}
                   onChange={(e) => {
                     setSearchInput(e.target.value);
@@ -55,11 +57,11 @@ export const Navbar = () => {
                       handleSelectSearch(searchResults[0].id);
                     }
                   }}
-                  className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all"
+                  className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:border-gray-600 dark:focus:border-yellow-400"
                 />
                 {showSearchResults && searchResults.length > 0 && (
                   <div
-                    className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden"
+                    className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
                     onMouseEnter={() => setShowSearchResults(true)}
                     onMouseLeave={() => setShowSearchResults(false)}
                   >
@@ -67,13 +69,13 @@ export const Navbar = () => {
                       <button
                         key={result.id}
                         onMouseDown={() => handleSelectSearch(result.id)}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex flex-col gap-1"
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex flex-col gap-1 dark:hover:bg-gray-700"
                       >
-                        <span className="font-semibold text-sm text-gray-900">{result.name}</span>
-                        <span className="text-xs text-gray-600 truncate">
+                        <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{result.name}</span>
+                        <span className="text-xs text-gray-600 truncate dark:text-gray-300">
                           {result.cpu} | {result.gpu} | {result.ram}
                         </span>
-                        <span className="text-sm font-bold text-gray-900">
+                        <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
                           {result.price.toLocaleString("sv-SE")} kr
                         </span>
                       </button>
@@ -83,7 +85,8 @@ export const Navbar = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-6 flex-shrink-0">
+            <div className="flex items-center gap-4 flex-shrink-0">
+              <ThemeToggle />
               <LoginButton />
               <div
                 className="relative"
@@ -92,7 +95,7 @@ export const Navbar = () => {
               >
                 <button
                   onClick={() => navigate("/cart")}
-                  className="relative flex flex-col items-center text-white hover:text-yellow-400 transition-colors"
+                  className="relative flex flex-col items-center text-gray-900 hover:text-yellow-500 transition-colors dark:text-white"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span className="text-xs">Kundvagn</span>
@@ -103,33 +106,33 @@ export const Navbar = () => {
                   )}
                 </button>
                 {showCartPreview && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white text-gray-900 rounded shadow-lg border border-gray-200 p-4 z-50">
+                  <div className="absolute right-0 mt-2 w-72 bg-white text-gray-900 rounded shadow-lg border border-gray-200 p-4 z-50 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
                     {items.length === 0 ? (
-                      <p className="text-sm text-gray-600">Kundvagnen är tom.</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen ar tom.</p>
                     ) : (
                       <>
                         <div className="space-y-2 max-h-60 overflow-auto">
                           {items.map((item) => (
                             <div key={item.id} className="flex justify-between text-sm">
-                              <span className="text-gray-700 truncate pr-2">
+                              <span className="text-gray-700 truncate pr-2 dark:text-gray-200">
                                 {item.product?.name || "Produkt"} x{item.quantity}
                               </span>
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-semibold text-gray-900 dark:text-gray-100">
                                 {((item.product?.price_cents || 0) * item.quantity / 100).toLocaleString("sv-SE")} kr
                               </span>
                             </div>
                           ))}
                         </div>
-                        <div className="flex justify-between mt-3 text-sm font-semibold text-gray-900">
+                        <div className="flex justify-between mt-3 text-sm font-semibold text-gray-900 dark:text-gray-100">
                           <span>Totalt</span>
                           <span>{(totalPrice / 100).toLocaleString("sv-SE")} kr</span>
                         </div>
                         <div className="flex gap-2 mt-3">
                           <button
                             onClick={() => navigate("/cart")}
-                            className="flex-1 px-3 py-2 text-sm font-semibold text-gray-900 border border-gray-200 rounded hover:bg-gray-50 transition-colors"
+                            className="flex-1 px-3 py-2 text-sm font-semibold text-gray-900 border border-gray-200 rounded hover:bg-gray-50 transition-colors dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                           >
-                            Gå till kundvagn
+                            Ga till kundvagn
                           </button>
                           <button
                             onClick={() => navigate("/checkout")}
@@ -163,11 +166,11 @@ export const Navbar = () => {
                     handleSelectSearch(searchResults[0].id);
                   }
                 }}
-                className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all"
+                className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:border-gray-600"
               />
               {showSearchResults && searchResults.length > 0 && (
                 <div
-                  className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden z-50"
+                  className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden z-50 dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
                   onMouseEnter={() => setShowSearchResults(true)}
                   onMouseLeave={() => setShowSearchResults(false)}
                 >
@@ -175,13 +178,13 @@ export const Navbar = () => {
                     <button
                       key={result.id}
                       onMouseDown={() => handleSelectSearch(result.id)}
-                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex flex-col gap-1"
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 flex flex-col gap-1 dark:hover:bg-gray-700"
                     >
-                      <span className="font-semibold text-sm text-gray-900">{result.name}</span>
-                      <span className="text-xs text-gray-600 truncate">
+                      <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{result.name}</span>
+                      <span className="text-xs text-gray-600 truncate dark:text-gray-300">
                         {result.cpu} | {result.gpu} | {result.ram}
                       </span>
-                      <span className="text-sm font-bold text-gray-900">
+                      <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
                         {result.price.toLocaleString("sv-SE")} kr
                       </span>
                     </button>

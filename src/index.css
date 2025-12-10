@@ -6,6 +6,52 @@
 
 @layer base {
   :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 7%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 7%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 7%;
+
+    --primary: 45 100% 50%;
+    --primary-foreground: 222 47% 5%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 7%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 35%;
+
+    --accent: 48 100% 50%;
+    --accent-foreground: 222 47% 7%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214 31% 91%;
+    --input: 214 31% 91%;
+    --ring: 45 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Custom tokens */
+    --gold: 45 100% 50%;
+    --silver: 220 10% 70%;
+    --platinum: 270 60% 60%;
+    --sale: 0 84% 60%;
+
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 50%, hsl(0 0% 100%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(210 40% 98% / 0.8) 0%, hsl(210 40% 95% / 0.9) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(55 100% 60%) 100%);
+    --gradient-glow: radial-gradient(ellipse at center, hsl(45 100% 50% / 0.15) 0%, transparent 70%);
+
+    --shadow-glow: 0 0 30px hsl(45 100% 50% / 0.3);
+    --shadow-card: 0 8px 24px hsl(0 0% 0% / 0.08);
+  }
+
+  .dark {
     --background: 222 47% 5%;
     --foreground: 210 40% 98%;
 
@@ -34,9 +80,6 @@
     --input: 222 30% 18%;
     --ring: 180 100% 50%;
 
-    --radius: 0.75rem;
-
-    /* Custom tokens */
     --gold: 45 100% 50%;
     --silver: 220 10% 70%;
     --platinum: 270 60% 60%;
@@ -50,11 +93,6 @@
     --shadow-glow: 0 0 30px hsl(180 100% 50% / 0.3);
     --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.3);
   }
-
-  .dark {
-    --background: 222 47% 5%;
-    --foreground: 210 40% 98%;
-  }
 }
 
 @layer base {
@@ -63,7 +101,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased;
+    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
     font-family: 'Inter', sans-serif;
   }
 
