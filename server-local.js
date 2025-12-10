@@ -24,9 +24,11 @@ app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:8080" }));
 app.use("/api/webhook", express.raw({ type: "application/json" })); // raw for Stripe
 app.use(express.json());
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-  apiVersion: "2024-12-18.acacia",
-});
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+const stripe = stripeSecretKey
+  ? new Stripe(stripeSecretKey, { apiVersion: "2024-12-18.acacia" })
+  : null;
 
 const supabase = createClient(
   process.env.SUPABASE_URL || "",
@@ -39,6 +41,10 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
  * POST /api/create-checkout-session
  */
 app.post("/api/create-checkout-session", async (req, res) => {
+  if (!stripe) {
+    return res.status(503).json({ error: "Stripe not configured. Set STRIPE_SECRET_KEY to enable checkout." });
+  }
+
   try {
     const { cartItems, userEmail, fullName } = req.body || {};
 
@@ -79,6 +85,10 @@ app.post("/api/create-checkout-session", async (req, res) => {
  * POST /api/webhook
  */
 app.post("/api/webhook", async (req, res) => {
+  if (!stripe || !stripeWebhookSecret) {
+    return res.status(503).json({ error: "Stripe webhook not configured." });
+  }
+
   const sig = req.headers["stripe-signature"];
   if (!sig) return res.status(400).json({ error: "No stripe-signature header" });
 
@@ -87,7 +97,7 @@ app.post("/api/webhook", async (req, res) => {
     event = stripe.webhooks.constructEvent(
       req.body,
       sig,
-      process.env.STRIPE_WEBHOOK_SECRET || ""
+      stripeWebhookSecret
     );
   } catch (error) {
     console.error("Webhook signature verification failed:", error);

@@ -6,14 +6,14 @@ import { COMPUTERS } from "@/data/computers";
 const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 
 const categories = [
-  { name: "Hjalp mig valja", icon: "?" },
-  { name: "Alla produkter", icon: "???" },
-  { name: "Paket", icon: "??" },
-  { name: "RGB & Stil", icon: "?" },
-  { name: "Foraldrarnas val", icon: "??" },
-  { name: "Budgetvanlig", icon: "??" },
-  { name: "Mest for pengarna", icon: "??" },
-  { name: "Basta prestanda", icon: "??" },
+  { name: "Hjalp mig valja", icon: "🧭" },
+  { name: "Alla produkter", icon: "🖥️" },
+  { name: "Paket", icon: "🎁" },
+  { name: "RGB & Stil", icon: "✨" },
+  { name: "Foraldrarnas val", icon: "👍" },
+  { name: "Budgetvanlig", icon: "💰" },
+  { name: "Mest for pengarna", icon: "🔥" },
+  { name: "Basta prestanda", icon: "🚀" },
 ];
 
 export const Hero = () => {
