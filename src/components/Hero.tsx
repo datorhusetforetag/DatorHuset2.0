@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { COMPUTERS } from "@/data/computers";
 
 const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
+const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
   { name: "Hjalp mig valja", icon: "🧭" },
@@ -32,15 +33,24 @@ export const Hero = () => {
         {/* Hero Banners */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {/* Yellow banner - Veckans Deal */}
-          <div className="bg-yellow-400 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2">
+          <div className="bg-amber-200 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2 shadow-lg border border-amber-300">
             <div>
               <h2 className="text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
-              <p className="text-lg text-gray-900 font-semibold mb-6">
+              <p className="text-lg text-gray-900 font-semibold mb-6 flex items-center gap-2">
                 Elektronik for foretag <ChevronRight className="inline w-5 h-5" />
               </p>
             </div>
-            <div className="bg-gray-200 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-center">
-              <span className="text-gray-500 dark:text-gray-300">Bannerbilder har</span>
+            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-between overflow-hidden border border-amber-300/40 dark:border-gray-700 px-6">
+              <div>
+                <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">Pa utvalda gamingdatorer hela veckan</p>
+              </div>
+              <img
+                src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80"
+                alt="Veckans deal"
+                className="h-full w-48 object-cover rounded-lg shadow"
+                loading="lazy"
+              />
             </div>
           </div>
 
@@ -77,8 +87,8 @@ export const Hero = () => {
         {/* Featured Products Section */}
         <div className="mb-12 relative">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Senast visade produkter</h3>
-          <div className="overflow-hidden relative">
-            <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4">
+          <div className="relative">
+            <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4 pr-4">
               {FEATURED_COMPUTERS.map((computer) => (
                 <Link
                   key={computer.id}
@@ -86,7 +96,15 @@ export const Hero = () => {
                   className="flex-shrink-0 w-96 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:border-gray-500"
                 >
                   <div className="h-56 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                    <img src={computer.image} alt={computer.name} className="w-full h-full object-cover" />
+                    <img
+                      src={computer.image}
+                      alt={computer.name}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      onError={(e) => {
+                        e.currentTarget.src = FALLBACK_IMAGE;
+                      }}
+                    />
                   </div>
                   <div className="p-4">
                     <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-300">
@@ -107,14 +125,14 @@ export const Hero = () => {
             </div>
             <button
               onClick={() => scrollByCards("left")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+              className="hidden md:flex items-center justify-center absolute -left-10 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
               aria-label="Scroll left"
             >
               <ChevronLeft className="w-6 h-6 text-gray-900 dark:text-gray-100" />
             </button>
             <button
               onClick={() => scrollByCards("right")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+              className="hidden md:flex items-center justify-center absolute -right-10 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-6 h-6 text-gray-900 dark:text-gray-100" />

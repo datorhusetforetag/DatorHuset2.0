@@ -4,6 +4,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
 
+const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
+
 export default function Products() {
   const [priceRange, setPriceRange] = useState([0, 30000]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
@@ -154,7 +156,14 @@ export default function Products() {
                   <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all">
                     {/* Product image area */}
                     <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
-                      <img src={computer.image} alt={computer.name} className="w-full h-full object-cover" />
+                      <img
+                        src={computer.image}
+                        alt={computer.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = FALLBACK_IMAGE;
+                        }}
+                      />
                     </div>
 
                     {/* Product info */}

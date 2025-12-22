@@ -2,10 +2,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingCart, ChevronLeft, ChevronRight } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useProducts, getProductIdByName } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
+
+const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
@@ -64,6 +66,13 @@ export default function ComputerDetails() {
     computer?.id ||
     null;
 
+  const galleryImages = [
+    computer.image,
+    "https://images.unsplash.com/photo-1612198528243-2570936f11ff?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1587202372616-b43abea06c47?auto=format&fit=crop&w=1200&q=80",
+    "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80",
+  ];
+
   if (!computer) {
     return (
       <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
@@ -105,6 +114,15 @@ export default function ComputerDetails() {
   const finalFps = Math.round(baseFps * multiplier);
   const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
   const fpsHigh = Math.round(finalFps * 1.1);
+  const activeImage = galleryImages[selectedImage];
+
+  const showPrevImage = () => {
+    setSelectedImage((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+  };
+
+  const showNextImage = () => {
+    setSelectedImage((prev) => (prev + 1) % galleryImages.length);
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
@@ -124,18 +142,46 @@ export default function ComputerDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           {/* Left: image area */}
           <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
-            <div className="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-              <img src={computer.image} alt={computer.name} className="w-full h-full object-cover" />
+            <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              <img
+                src={activeImage}
+                alt={computer.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = FALLBACK_IMAGE;
+                }}
+              />
+              <button
+                onClick={showPrevImage}
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow"
+                aria-label="Föregående bild"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={showNextImage}
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 rounded-full p-2 shadow"
+                aria-label="Nästa bild"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
             <div className="flex gap-3 justify-center">
-              {[computer.image, computer.image, computer.image, computer.image].map((img, i) => (
+              {galleryImages.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
                   className={`w-16 h-16 rounded-lg border ${selectedImage === i ? "border-emerald-500" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
-                  <img src={img} alt={`${computer.name} vy ${i + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${computer.name} vy ${i + 1}`}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = FALLBACK_IMAGE;
+                    }}
+                  />
                 </button>
               ))}
             </div>
@@ -314,7 +360,14 @@ export default function ComputerDetails() {
                 className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
               >
                 <div className="h-28 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center text-3xl text-gray-400 overflow-hidden">
-                  <img src={related.image} alt={related.name} className="w-full h-full object-cover" />
+                  <img
+                    src={related.image}
+                    alt={related.name}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.currentTarget.src = FALLBACK_IMAGE;
+                    }}
+                  />
                 </div>
                 <div className="p-4 space-y-2">
                   <h3 className="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2">{related.name}</h3>

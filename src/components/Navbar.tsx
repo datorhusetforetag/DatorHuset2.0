@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Search, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginButton } from "@/components/LoginButton";
@@ -10,6 +10,7 @@ export const Navbar = () => {
   const [searchInput, setSearchInput] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showCartPreview, setShowCartPreview] = useState(false);
+  const cartHoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const { totalItems, items, totalPrice } = useCart();
 
@@ -28,6 +29,20 @@ export const Navbar = () => {
     navigate(`/computer/${id}`);
     setSearchInput("");
     setShowSearchResults(false);
+  };
+
+  const handleCartEnter = () => {
+    if (cartHoverTimer.current) {
+      clearTimeout(cartHoverTimer.current);
+    }
+    setShowCartPreview(true);
+  };
+
+  const handleCartLeave = () => {
+    if (cartHoverTimer.current) {
+      clearTimeout(cartHoverTimer.current);
+    }
+    cartHoverTimer.current = setTimeout(() => setShowCartPreview(false), 200);
   };
 
   return (
@@ -88,11 +103,7 @@ export const Navbar = () => {
             <div className="flex items-center gap-4 flex-shrink-0">
               <ThemeToggle />
               <LoginButton />
-              <div
-                className="relative"
-                onMouseEnter={() => setShowCartPreview(true)}
-                onMouseLeave={() => setShowCartPreview(false)}
-              >
+              <div className="relative" onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
                 <button
                   onClick={() => navigate("/cart")}
                   className="relative flex flex-col items-center text-gray-900 hover:text-yellow-500 transition-colors dark:text-white"
