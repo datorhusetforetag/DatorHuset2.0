@@ -17,6 +17,14 @@ if (!supabaseUrl || !supabaseAnonKey) {
       data: null,
       error: new Error("Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."),
     }),
+    signInWithPassword: async () => ({
+      data: null,
+      error: new Error("Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."),
+    }),
+    signUp: async () => ({
+      data: null,
+      error: new Error("Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."),
+    }),
     signOut: async () => ({
       error: new Error("Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY."),
     }),

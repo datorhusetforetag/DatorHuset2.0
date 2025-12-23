@@ -1,4 +1,4 @@
-import { ChevronRight, ChevronLeft } from "lucide-react";
+﻿import { ChevronLeft, ChevronRight, Flame, HelpCircle, Monitor, Package, Rocket, Sparkles, ThumbsUp, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import { COMPUTERS } from "@/data/computers";
@@ -7,14 +7,14 @@ const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
-  { name: "Hjalp mig valja", icon: "🧭" },
-  { name: "Alla produkter", icon: "🖥️" },
-  { name: "Paket", icon: "🎁" },
-  { name: "RGB & Stil", icon: "✨" },
-  { name: "Foraldrarnas val", icon: "👍" },
-  { name: "Budgetvanlig", icon: "💰" },
-  { name: "Mest for pengarna", icon: "🔥" },
-  { name: "Basta prestanda", icon: "🚀" },
+  { name: "Hjalp mig valja", icon: HelpCircle },
+  { name: "Alla produkter", icon: Monitor },
+  { name: "Paket", icon: Package },
+  { name: "RGB & Stil", icon: Sparkles },
+  { name: "Foraldrarnas val", icon: ThumbsUp },
+  { name: "Budgetvanlig", icon: Wallet },
+  { name: "Mest for pengarna", icon: Flame },
+  { name: "Basta prestanda", icon: Rocket },
 ];
 
 export const Hero = () => {
@@ -32,7 +32,6 @@ export const Hero = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Hero Banners */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          {/* Yellow banner - Veckans Deal */}
           <div className="bg-amber-200 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2 shadow-lg border border-amber-300">
             <div>
               <h2 className="text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
@@ -54,7 +53,6 @@ export const Hero = () => {
             </div>
           </div>
 
-          {/* Black banner - GE GLADJE */}
           <div className="bg-gray-900 rounded-lg p-8 flex flex-col justify-between min-h-64">
             <div>
               <h2 className="text-3xl font-bold text-white mb-2">GE GLADJE</h2>
@@ -62,7 +60,7 @@ export const Hero = () => {
               <p className="text-yellow-400 text-sm font-semibold">Allt stod gar till Min Stora Dag</p>
             </div>
             <div className="flex gap-2">
-              <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">??</span>
+              <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Julklapp</span>
             </div>
           </div>
         </div>
@@ -77,7 +75,7 @@ export const Hero = () => {
                 to="/products"
                 className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-yellow-400 dark:hover:bg-gray-800"
               >
-                <div className="text-4xl mb-3" aria-hidden>{category.icon}</div>
+                <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
               </Link>
             ))}
@@ -125,14 +123,14 @@ export const Hero = () => {
             </div>
             <button
               onClick={() => scrollByCards("left")}
-              className="hidden md:flex items-center justify-center absolute -left-10 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+              className="hidden md:flex items-center justify-center absolute -left-14 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
               aria-label="Scroll left"
             >
               <ChevronLeft className="w-6 h-6 text-gray-900 dark:text-gray-100" />
             </button>
             <button
               onClick={() => scrollByCards("right")}
-              className="hidden md:flex items-center justify-center absolute -right-10 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+              className="hidden md:flex items-center justify-center absolute -right-14 top-1/2 -translate-y-1/2 bg-white border border-gray-200 rounded-full p-2 shadow hover:bg-gray-100 transition-colors dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
               aria-label="Scroll right"
             >
               <ChevronRight className="w-6 h-6 text-gray-900 dark:text-gray-100" />
