@@ -14,6 +14,7 @@ export function LoginButton() {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const navigate = useNavigate();
 
@@ -26,12 +27,14 @@ export function LoginButton() {
     setPassword("");
     setUsername("");
     setError(null);
+    setSuccessMessage(null);
     setPending(false);
     setMode("login");
   };
 
   const handleEmailLogin = async () => {
     setError(null);
+    setSuccessMessage(null);
     setPending(true);
     try {
       await signInWithEmail(email, password);
@@ -45,6 +48,7 @@ export function LoginButton() {
 
   const handleSignup = async () => {
     setError(null);
+    setSuccessMessage(null);
     if (!username.trim()) {
       setError("Ange ett anvandarnamn.");
       return;
@@ -52,7 +56,10 @@ export function LoginButton() {
     setPending(true);
     try {
       await signUpWithEmail(email, password, username.trim());
-      setOpen(false);
+      setPassword("");
+      setUsername("");
+      setMode("login");
+      setSuccessMessage("Konto skapat! Kontrollera din e-post och bekrafta kontot innan du loggar in.");
     } catch (err: any) {
       setError(err?.message || "Kunde inte skapa konto.");
     } finally {
@@ -222,6 +229,11 @@ export function LoginButton() {
           </label>
 
           {error && <p className="text-sm text-red-600">{error}</p>}
+          {successMessage && (
+            <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+              {successMessage}
+            </div>
+          )}
 
           {mode === "login" ? (
             <button
