@@ -23,7 +23,7 @@ export default function Checkout() {
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Du måste logga in för att checka ut</h1>
             <button
               onClick={() => navigate("/")}
-              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-yellow-500 transition-colors"
+              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
               Tillbaka till startsidan
             </button>
@@ -43,7 +43,7 @@ export default function Checkout() {
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn är tom</h1>
             <button
               onClick={() => navigate("/products")}
-              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-yellow-500 transition-colors"
+              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
               Fortsätt handla
             </button>
@@ -194,7 +194,7 @@ export default function Checkout() {
                 <button
                   onClick={handleCheckout}
                   disabled={loading || !fullName.trim()}
-                  className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-yellow-500 disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   {loading ? "Bearbetar..." : "Gå till betalning"}

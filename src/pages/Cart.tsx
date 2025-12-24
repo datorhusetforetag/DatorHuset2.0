@@ -30,7 +30,7 @@ export default function Cart() {
             <p className="text-gray-600 mb-8">Lägg till produkter för att komma igång</p>
             <button
               onClick={() => navigate("/products")}
-              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-yellow-500 transition-colors"
+              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
               Fortsätt handla
             </button>
@@ -136,7 +136,7 @@ export default function Cart() {
 
                 <button
                   onClick={() => navigate("/checkout")}
-                  className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-yellow-500 transition-colors mb-3"
+                  className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white transition-colors mb-3"
                 >
                   Gå till kassa
                 </button>

@@ -18,18 +18,18 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div className="space-y-3">
             <h4 className="text-lg font-semibold">Kontakta oss</h4>
-            <Link to="/faq" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">FAQ</Link>
-            <Link to="/kundservice" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Kundservice / Kontaktuppgifter</Link>
-            <Link to="/about" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Om oss</Link>
-            <Link to="/privacy-policy" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Integritetspolicy</Link>
-            <Link to="/terms-of-service" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Allmanna villkor</Link>
+            <Link to="/faq" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">FAQ</Link>
+            <Link to="/kundservice" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Kundservice / Kontaktuppgifter</Link>
+            <Link to="/about" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Om oss</Link>
+            <Link to="/privacy-policy" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Integritetspolicy</Link>
+            <Link to="/terms-of-service" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Allmanna villkor</Link>
           </div>
 
           <div className="space-y-3">
             <h4 className="text-lg font-semibold">Vara tjanster</h4>
-            <Link to="/products" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Vara datorer</Link>
-            <Link to="/custom-bygg" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Custom bygg</Link>
-            <Link to="/service-reparation" className="block text-sm text-gray-200 hover:text-yellow-400 transition-colors">Service / reparation</Link>
+            <Link to="/products" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Vara datorer</Link>
+            <Link to="/custom-bygg" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Custom bygg</Link>
+            <Link to="/service-reparation" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Service / reparation</Link>
           </div>
 
           <div className="space-y-2 md:text-right">
@@ -43,8 +43,8 @@ export const Footer = () => {
           <div className="text-sm text-gray-400 flex flex-col gap-2">
             <span>c 2025 DatorHuset UF. All rights reserved.</span>
             <div className="flex flex-wrap gap-4">
-              <Link to="/privacy-policy" className="hover:text-yellow-400 transition-colors">Integritetspolicy</Link>
-              <Link to="/terms-of-service" className="hover:text-yellow-400 transition-colors">Allmanna villkor</Link>
+              <Link to="/privacy-policy" className="hover:text-[#11667b] transition-colors">Integritetspolicy</Link>
+              <Link to="/terms-of-service" className="hover:text-[#11667b] transition-colors">Allmanna villkor</Link>
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -53,7 +53,7 @@ export const Footer = () => {
               target="_blank"
               rel="noreferrer"
               aria-label="DatorHuset pa Instagram"
-              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-yellow-400 hover:border-yellow-400 transition-colors"
+              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
             >
               <Instagram className="w-5 h-5" />
             </a>
@@ -62,7 +62,7 @@ export const Footer = () => {
               target="_blank"
               rel="noreferrer"
               aria-label="DatorHuset pa X"
-              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-yellow-400 hover:border-yellow-400 transition-colors"
+              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
             >
               <Twitter className="w-5 h-5" />
             </a>
@@ -71,7 +71,7 @@ export const Footer = () => {
               target="_blank"
               rel="noreferrer"
               aria-label="DatorHuset pa TikTok"
-              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-yellow-400 hover:border-yellow-400 transition-colors"
+              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
             >
               <TikTokIcon className="w-5 h-5" />
             </a>
@@ -80,7 +80,7 @@ export const Footer = () => {
               target="_blank"
               rel="noreferrer"
               aria-label="DatorHuset pa YouTube"
-              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-yellow-400 hover:border-yellow-400 transition-colors"
+              className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
             >
               <Youtube className="w-5 h-5" />
             </a>

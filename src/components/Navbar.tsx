@@ -106,7 +106,7 @@ export const Navbar = () => {
               <div className="relative" onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
                 <button
                   onClick={() => navigate("/cart")}
-                  className="relative flex flex-col items-center text-gray-900 hover:text-yellow-500 transition-colors dark:text-white"
+                  className="relative flex flex-col items-center text-gray-900 hover:text-[#11667b] transition-colors dark:text-white"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span className="text-xs">Kundvagn</span>
@@ -147,7 +147,7 @@ export const Navbar = () => {
                           </button>
                           <button
                             onClick={() => navigate("/checkout")}
-                            className="flex-1 px-3 py-2 text-sm font-semibold text-white bg-yellow-500 hover:bg-yellow-600 rounded transition-colors"
+                            className="flex-1 px-3 py-2 text-sm font-semibold text-white bg-yellow-500 hover:bg-[#11667b] rounded transition-colors"
                           >
                             Kassa
                           </button>

@@ -104,7 +104,7 @@ export default function CheckoutSuccess() {
             <div className="flex gap-4">
               <button
                 onClick={() => navigate("/products")}
-                className="flex-1 px-6 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-yellow-500 transition-colors"
+                className="flex-1 px-6 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white transition-colors"
               >
                 Fortsätt handla
               </button>

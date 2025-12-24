@@ -68,7 +68,7 @@ export function LoginButton() {
       <div className="relative">
         <button
           onClick={() => setShowDropdown((prev) => !prev)}
-          className="flex items-center justify-center rounded-full border border-gray-200 bg-white p-1 shadow-sm transition-colors hover:border-yellow-400 focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-yellow-400"
+        className="flex items-center justify-center rounded-full border border-gray-200 bg-white p-1 shadow-sm transition-colors hover:border-[#11667b] focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-[#11667b]"
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={avatarUrl} alt="Profil" />
@@ -124,7 +124,7 @@ export function LoginButton() {
       if (!value) resetForm();
     }}>
       <SheetTrigger asChild>
-        <button className="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold shadow-sm hover:bg-yellow-500 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2">
+        <button className="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold shadow-sm hover:bg-[#11667b] hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2">
           Logga in
         </button>
       </SheetTrigger>

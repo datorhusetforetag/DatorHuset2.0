@@ -32,14 +32,14 @@ export const Hero = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Hero Banners */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-amber-200 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2 shadow-lg border border-amber-300">
+          <div className="bg-yellow-400 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
               <h2 className="text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
               <p className="text-lg text-gray-900 font-semibold mb-6 flex items-center gap-2">
                 Elektronik for foretag <ChevronRight className="inline w-5 h-5" />
               </p>
             </div>
-            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-between overflow-hidden border border-amber-300/40 dark:border-gray-700 px-6">
+            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-6">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
                 <p className="text-xs text-gray-600 dark:text-gray-300">Pa utvalda gamingdatorer hela veckan</p>
@@ -73,7 +73,7 @@ export const Hero = () => {
               <Link
                 key={category.name}
                 to="/products"
-                className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-yellow-400 dark:hover:bg-gray-800"
+                className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
               >
                 <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
