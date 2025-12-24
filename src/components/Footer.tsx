@@ -36,7 +36,7 @@ export const Footer = () => {
             <div className="space-y-2">
               <h4 className="text-lg font-semibold">Kundservice</h4>
               <p className="text-sm text-gray-200">datorhuset.foretag@gmail.com</p>
-              <p className="text-sm text-gray-400">Svarstider 11:00-3:00</p>
+              <p className="text-sm text-gray-400">Svarstider 11:00-15:00</p>
             </div>
 
             <div className="space-y-3">

@@ -7,17 +7,17 @@ import { BadgeCheck, Cpu, Hammer, Headset, Laptop, ShieldCheck, Wrench } from "l
 const serviceCards = [
   {
     title: "Gamingdatorer",
-    description: "Felsokning, uppgradering och kylning for maxad prestanda.",
+    description: "Felsökning, uppgradering och kylning för maxad prestanda.",
     icon: Cpu,
   },
   {
-    title: "Foretagsdatorer",
+    title: "Företagsdatorer",
     description: "Stabil drift, snabb service och trygg hantering av data.",
     icon: ShieldCheck,
   },
   {
     title: "Laptop & komponenter",
-    description: "Byte av delar, batteri, skarm och lagring.",
+    description: "Byte av delar, batteri, skärm och lagring.",
     icon: Laptop,
   },
   {
@@ -30,28 +30,28 @@ const serviceCards = [
 const steps = [
   {
     value: "step-1",
-    title: "1. Felsok din enhet",
-    body: "Beskriv felet sa noggrant du kan. Vi svarar med rekommendation, prisbild och tidsplan.",
+    title: "1. Felsök din enhet",
+    body: "Beskriv felet så noggrant du kan. Vi svarar med rekommendation, prisbild och tidsplan.",
   },
   {
     value: "step-2",
-    title: "2. Godkann offert",
-    body: "Du far en tydlig offert innan vi startar. Inga dolda kostnader.",
+    title: "2. Godkänn offert",
+    body: "Du får en tydlig offert innan vi startar. Inga dolda kostnader.",
   },
   {
     value: "step-3",
     title: "3. Service och test",
-    body: "Vi reparerar, uppgraderar och stress-testar for att sakerstalla stabilitet.",
+    body: "Vi reparerar, uppgraderar och stress-testar för att säkerställa stabilitet.",
   },
   {
     value: "step-4",
-    title: "4. Hamta upp eller fa leverans",
-    body: "Vi meddelar nar din dator ar klar. Valj hamtning eller leverans.",
+    title: "4. Hämta upp eller få leverans",
+    body: "Vi meddelar när din dator är klar. Välj hämtning eller leverans.",
   },
   {
     value: "step-5",
     title: "5. Efterservice",
-    body: "Behov av finjustering? Vi finns kvar for support och tips.",
+    body: "Behov av finjustering? Vi finns kvar för support och tips.",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function ServiceRepair() {
                 Vi reparerar, uppgraderar och optimerar din dator
               </h1>
               <p className="text-lg text-gray-600 dark:text-gray-300 mt-4">
-                DatorHuset hjalper dig med allt fran felsokning till komplett uppgradering. Snabb respons, tydlig offert och service som satter prestanda i fokus.
+                DatorHuset hjälper dig med allt från felsökning till komplett uppgradering. Snabb respons, tydlig offert och service som sätter prestanda i fokus.
               </p>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Link
@@ -82,7 +82,7 @@ export default function ServiceRepair() {
                   to="/products"
                   className="inline-flex items-center justify-center gap-2 border border-emerald-600 text-emerald-700 hover:bg-emerald-600 hover:text-white font-semibold px-6 py-3 rounded-lg transition-colors dark:text-emerald-200"
                 >
-                  Se vara datorer
+                  Se våra datorer
                 </Link>
               </div>
             </div>
@@ -107,9 +107,9 @@ export default function ServiceRepair() {
         <section className="container mx-auto px-4 py-16">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start">
             <div>
-              <h2 className="text-3xl font-bold mb-3">Lamna in pa reparation? Borja har.</h2>
+              <h2 className="text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Vart flode ar byggt for tydlighet och snabbhet. Du vet vad som sker och nar.
+                Vårt flöde är byggt för tydlighet och snabbhet. Du vet vad som sker och när.
               </p>
               <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/60">
                 <Accordion type="single" collapsible defaultValue="step-1" className="w-full">
@@ -130,17 +130,17 @@ export default function ServiceRepair() {
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-8 shadow-sm">
               <div className="flex items-center gap-3 mb-4">
                 <Wrench className="w-6 h-6 text-emerald-500" />
-                <h3 className="text-xl font-semibold">Vad vi kan hjalpa med</h3>
+                <h3 className="text-xl font-semibold">Vad vi kan hjälpa med</h3>
               </div>
               <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Felsokning av dator och komponenter</li>
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Rengoring, kylning och kabeldragning</li>
+                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Felsökning av dator och komponenter</li>
+                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Rengöring, kylning och kabeldragning</li>
                 <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Uppgradering av GPU, CPU, RAM och lagring</li>
                 <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Installation av OS, drivrutiner och optimering</li>
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Dataoverforing och backup-rad</li>
+                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-emerald-500 mt-0.5" /> Dataöverföring och backup-råd</li>
               </ul>
               <div className="mt-6 rounded-lg bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 p-4 text-sm text-emerald-900 dark:text-emerald-100">
-                Snabbt svar, tydlig offert och service med fokus pa prestanda.
+                Snabbt svar, tydlig offert och service med fokus på prestanda.
               </div>
             </div>
           </div>
@@ -149,8 +149,8 @@ export default function ServiceRepair() {
         <section className="container mx-auto px-4 pb-16">
           <div className="rounded-2xl bg-gray-900 text-white px-8 py-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
             <div>
-              <h3 className="text-2xl font-bold">Redo att fa din dator i toppskick?</h3>
-              <p className="text-gray-300 mt-2">Skicka en kort beskrivning av felet sa aterkommer vi snabbt.</p>
+              <h3 className="text-2xl font-bold">Redo att få din dator i toppskick?</h3>
+              <p className="text-gray-300 mt-2">Skicka en kort beskrivning av felet så återkommer vi snabbt.</p>
             </div>
             <Link
               to="/kundservice"

@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginButton } from "@/components/LoginButton";
@@ -10,6 +10,8 @@ export const Navbar = () => {
   const [searchInput, setSearchInput] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [showCartPreview, setShowCartPreview] = useState(false);
+  const desktopSearchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
   const cartHoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const { totalItems, items, totalPrice } = useCart();
@@ -45,6 +47,19 @@ export const Navbar = () => {
     cartHoverTimer.current = setTimeout(() => setShowCartPreview(false), 200);
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (desktopSearchRef.current?.contains(target) || mobileSearchRef.current?.contains(target)) {
+        return;
+      }
+      setShowSearchResults(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
       <div className="bg-white/90 text-gray-900 border-b border-gray-200 shadow-sm dark:bg-gray-950/90 dark:text-white dark:border-gray-800">
@@ -56,11 +71,11 @@ export const Navbar = () => {
             </Link>
 
             <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-              <div className="relative w-full">
+              <div ref={desktopSearchRef} className="relative w-full">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-yellow-300" />
                 <input
                   type="text"
-                  placeholder="Sok bland produkter"
+                  placeholder="Sök bland produkter"
                   value={searchInput}
                   onChange={(e) => {
                     setSearchInput(e.target.value);
@@ -77,8 +92,6 @@ export const Navbar = () => {
                 {showSearchResults && searchResults.length > 0 && (
                   <div
                     className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
-                    onMouseEnter={() => setShowSearchResults(true)}
-                    onMouseLeave={() => setShowSearchResults(false)}
                   >
                     {searchResults.map((result) => (
                       <button
@@ -119,7 +132,7 @@ export const Navbar = () => {
                 {showCartPreview && (
                   <div className="absolute right-0 mt-2 w-72 bg-white text-gray-900 rounded shadow-lg border border-gray-200 p-4 z-50 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700">
                     {items.length === 0 ? (
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen ar tom.</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen är tom.</p>
                     ) : (
                       <>
                         <div className="space-y-2 max-h-60 overflow-auto">
@@ -143,7 +156,7 @@ export const Navbar = () => {
                             onClick={() => navigate("/cart")}
                             className="flex-1 px-3 py-2 text-sm font-semibold text-gray-900 border border-gray-200 rounded hover:bg-gray-50 transition-colors dark:text-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
                           >
-                            Ga till kundvagn
+                            Gå till kundvagn
                           </button>
                           <button
                             onClick={() => navigate("/checkout")}
@@ -161,11 +174,11 @@ export const Navbar = () => {
           </div>
 
           <div className="lg:hidden pb-4">
-            <div className="relative w-full">
+            <div ref={mobileSearchRef} className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-400" />
               <input
                 type="text"
-                placeholder="Sok bland produkter"
+                placeholder="Sök bland produkter"
                 value={searchInput}
                 onChange={(e) => {
                   setSearchInput(e.target.value);
@@ -182,8 +195,6 @@ export const Navbar = () => {
               {showSearchResults && searchResults.length > 0 && (
                 <div
                   className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden z-50 dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
-                  onMouseEnter={() => setShowSearchResults(true)}
-                  onMouseLeave={() => setShowSearchResults(false)}
                 >
                   {searchResults.map((result) => (
                     <button

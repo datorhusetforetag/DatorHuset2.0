@@ -136,7 +136,7 @@ export default function Products() {
         {/* Main Content */}
         <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-gray-950">
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationara Datorer</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h1>
             <p className="text-gray-600 dark:text-gray-300">
               Visar {filteredProducts.length} av {COMPUTERS.length} produkter
             </p>

@@ -1,8 +1,8 @@
 ﻿import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useProducts, getProductIdByName } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
@@ -64,6 +64,12 @@ export default function ComputerDetails() {
     computer?.id ||
     null;
 
+  const images = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
+
+  useEffect(() => {
+    setSelectedImage(0);
+  }, [computer?.id]);
+
   if (!computer) {
     return (
       <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
@@ -114,9 +120,9 @@ export default function ComputerDetails() {
         <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-2 mb-8">
           <button className="hover:text-gray-800 dark:hover:text-gray-200" onClick={() => navigate("/")}>Hem</button>
           <span>/</span>
-          <span>Datorer & Surfplatta</span>
+          <span>Datorer & Surfplattor</span>
           <span>/</span>
-          <span>Gamingdatorer stationär</span>
+          <span>Gamingdatorer stationära</span>
           <span>/</span>
           <span className="text-gray-900 dark:text-white font-semibold">{computer.name}</span>
         </div>
@@ -124,11 +130,35 @@ export default function ComputerDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
           {/* Left: image area */}
           <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
-            <div className="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-              <img src={computer.image} alt={computer.name} className="w-full h-full object-cover" />
+            <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-gray-950 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              <img
+                src={images[selectedImage] || computer.image}
+                alt={computer.name}
+                className="w-full h-full object-cover"
+              />
+              {images.length > 1 && (
+                <>
+                  <button
+                    onClick={() =>
+                      setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
+                    }
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
+                    aria-label="Föregående bild"
+                  >
+                    <ChevronLeft className="w-5 h-5 mx-auto" />
+                  </button>
+                  <button
+                    onClick={() => setSelectedImage((prev) => (prev + 1) % images.length)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
+                    aria-label="Nästa bild"
+                  >
+                    <ChevronRight className="w-5 h-5 mx-auto" />
+                  </button>
+                </>
+              )}
             </div>
             <div className="flex gap-3 justify-center">
-              {[computer.image, computer.image, computer.image, computer.image].map((img, i) => (
+              {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
