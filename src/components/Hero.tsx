@@ -1,4 +1,4 @@
-﻿import { ChevronLeft, ChevronRight, Flame, HelpCircle, Monitor, Package, Rocket, Sparkles, ThumbsUp, Wallet } from "lucide-react";
+﻿import { ChevronLeft, ChevronRight, Flame, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useRef } from "react";
 import { COMPUTERS } from "@/data/computers";
@@ -7,14 +7,12 @@ const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
-  { name: "Hjalp mig valja", icon: HelpCircle },
+  { name: "Hjälp mig välja", icon: HelpCircle },
   { name: "Alla produkter", icon: Monitor },
   { name: "Paket", icon: Package },
-  { name: "RGB & Stil", icon: Sparkles },
-  { name: "Foraldrarnas val", icon: ThumbsUp },
-  { name: "Budgetvanlig", icon: Wallet },
-  { name: "Mest for pengarna", icon: Flame },
-  { name: "Basta prestanda", icon: Rocket },
+  { name: "Budgetvänlig", icon: Wallet },
+  { name: "Mest för pengarna", icon: Flame },
+  { name: "Bästa Prestanda", icon: Rocket },
 ];
 
 export const Hero = () => {
@@ -36,13 +34,13 @@ export const Hero = () => {
             <div>
               <h2 className="text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
               <p className="text-lg text-gray-900 font-semibold mb-6 flex items-center gap-2">
-                Elektronik for foretag <ChevronRight className="inline w-5 h-5" />
+                Elektronik för företag <ChevronRight className="inline w-5 h-5" />
               </p>
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-6">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">Pa utvalda gamingdatorer hela veckan</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">På utvalda gamingdatorer hela veckan</p>
               </div>
               <img
                 src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80"
@@ -55,9 +53,9 @@ export const Hero = () => {
 
           <div className="bg-gray-900 rounded-lg p-8 flex flex-col justify-between min-h-64">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">GE GLADJE</h2>
-              <p className="text-white text-sm mb-4">Fa chans till en tackgava!</p>
-              <p className="text-yellow-400 text-sm font-semibold">Allt stod gar till Min Stora Dag</p>
+              <h2 className="text-3xl font-bold text-white mb-2">GE GLÄDJE</h2>
+              <p className="text-white text-sm mb-4">Få chans till en tackgåva!</p>
+              <p className="text-yellow-400 text-sm font-semibold">Allt stöd går till Min Stora Dag</p>
             </div>
             <div className="flex gap-2">
               <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Julklapp</span>
@@ -67,8 +65,8 @@ export const Hero = () => {
 
         {/* Popular categories section */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Populara kategorier</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Populära kategorier</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {categories.map((category) => (
               <Link
                 key={category.name}
