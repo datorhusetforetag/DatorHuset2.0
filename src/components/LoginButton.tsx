@@ -69,7 +69,13 @@ export function LoginButton() {
 
   if (user) {
     const avatarUrl = user.user_metadata?.avatar_url as string | undefined;
-    const initials = (user.user_metadata?.full_name || user.email || "P")[0]?.toUpperCase() || "P";
+    const displayName =
+      user.user_metadata?.username ||
+      user.user_metadata?.full_name ||
+      user.user_metadata?.name ||
+      user.email ||
+      "Profil";
+    const initials = displayName.trim().charAt(0).toUpperCase() || "P";
 
     return (
       <div className="relative">
@@ -89,7 +95,7 @@ export function LoginButton() {
           <div className="absolute top-full right-0 mt-2 w-52 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <p className="text-xs text-gray-500 dark:text-gray-400">Inloggad som</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">{user.email}</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayName}</p>
             </div>
             <button
               onClick={() => {
