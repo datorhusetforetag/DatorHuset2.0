@@ -1,25 +1,25 @@
-﻿import { Euro, Monitor, Package, RefreshCcw } from "lucide-react";
+import { Euro, Monitor, Package, RefreshCcw } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const steps = [
   {
     title: "1. Gör en preorder",
-    description: "Hitta ett brett utbud av datorer eller skicka in en custom build du vill ha.",
-    icon: <Monitor className="w-14 h-14 text-gray-400 dark:text-gray-300" />,
+    description: "Hitta ett brett utbud av datorer eller skicka in ett custom-bygge du vill ha.",
+    icon: <Monitor className="w-14 h-14 text-yellow-400 dark:text-yellow-300" />,
   },
   {
     title: "2. Vi bygger och packar din dator",
     description:
       "Vi köper komponenterna och bygger datorn. Byggtiden varierar mellan 3-12 dagar beroende på om det är en färdigbyggd eller custom dator.",
-    icon: <Package className="w-14 h-14 text-gray-400 dark:text-gray-300" />,
+    icon: <Package className="w-14 h-14 text-yellow-400 dark:text-yellow-300" />,
   },
   {
     title: "3. Leverans/hämta upp",
     description: "Datorn är byggd och klar. Hämta upp den eller välj leverans (Postnord/annat).",
     icon: (
-      <div className="flex items-center gap-3 text-gray-400 dark:text-gray-300">
-        <RefreshCcw className="w-10 h-10" />
-        <Euro className="w-10 h-10" />
+      <div className="flex items-center gap-3">
+        <RefreshCcw className="w-10 h-10 text-yellow-400 dark:text-yellow-300" />
+        <Euro className="w-10 h-10 text-yellow-400 dark:text-yellow-300" />
       </div>
     ),
   },
@@ -66,4 +66,4 @@ export const StepsSection = () => {
       </div>
     </section>
   );
-};
+};

@@ -1,10 +1,114 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
+
+type BannerSticker = {
+  label: string;
+  className: string;
+};
+
+type BannerConfig = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  images: string[];
+  stickers?: BannerSticker[];
+  background: string;
+  variant?: "bundle";
+};
+
+const DEFAULT_BANNER: BannerConfig = {
+  eyebrow: "Topplistan",
+  title: "Bästa säljare inom stationära datorer i hela Norden!",
+  description: "Utvalda byggen som levererar prestanda, design och trygg service.",
+  images: [
+    "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
+    "/products/Horizon3_Elite_Hero_2000x.webp",
+    "/products/Voyager_Hero_NoGeforce_2000x.webp",
+  ],
+  background: "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950",
+};
+
+const CATEGORY_BANNERS: Record<string, BannerConfig> = {
+  budget: {
+    eyebrow: "Budgetvänligt",
+    title: "Budget betyder inte dåligt",
+    description: "Smarta val som håller priset nere utan att tumma på känslan.",
+    images: ["/products/NavBase_Hero_Colorswap_2000x.webp"],
+    stickers: [
+      {
+        label: "Bäst i budget-klass",
+        className: "bg-yellow-400 text-gray-900",
+      },
+    ],
+    background: "bg-gradient-to-r from-slate-950 via-purple-950 to-slate-950",
+  },
+  paket: {
+    eyebrow: "Paket",
+    title: "Allt du behöver, redo att köra",
+    description: "Kompletta paket med dator, skärm och tillbehör i ett och samma köp.",
+    images: ["/products/Horizon3_Elite_Hero_2000x.webp"],
+    background: "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950",
+    variant: "bundle",
+  },
+  "best-selling": {
+    eyebrow: "Mest för pengarna",
+    title: "Mest för pengarna",
+    description: "Våra mest prisvärda byggen – noggrant utvalda för maximal valuta.",
+    images: [
+      "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
+      "/products/Traveler_Hero_1_2000x.webp",
+      "/products/Voyager_Hero_NoGeforce_2000x.webp",
+    ],
+    stickers: [
+      {
+        label: "DatorHusets val",
+        className: "bg-red-500 text-white",
+      },
+      {
+        label: "Mest valuta",
+        className: "bg-sky-500 text-white",
+      },
+      {
+        label: "Otrolig Prestanda",
+        className: "bg-orange-500 text-white",
+      },
+    ],
+    background: "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950",
+  },
+  toptier: {
+    eyebrow: "Bästa prestanda",
+    title: "När bara det snabbaste duger",
+    description: "Toppbyggen för dig som vill ha maximal kraft och kompromisslös kvalitet.",
+    images: [
+      "/products/Voy_Red_Hero_2000x.webp",
+      "/products/Voyager_Hero_NoGeforce_2000x_2.webp",
+    ],
+    stickers: [
+      {
+        label: "Bäst i Klass",
+        className: "bg-yellow-400 text-gray-900",
+      },
+      {
+        label: "Topline",
+        className: "bg-[#11667b] text-white",
+      },
+    ],
+    background: "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950",
+  },
+};
+
+const bundleItems = [
+  { label: "Skärm", icon: Monitor },
+  { label: "Tangentbord", icon: Keyboard },
+  { label: "Mus", icon: Mouse },
+  { label: "Headset", icon: Headphones },
+];
 
 export default function Products() {
   const [searchParams] = useSearchParams();
@@ -63,172 +167,232 @@ export default function Products() {
     }
   };
 
+  const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
+  const imageAspect = banner.images.length === 1 ? "aspect-[16/9]" : "aspect-[4/3]";
+  const imageGridClass =
+    banner.images.length >= 3
+      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      : banner.images.length === 2
+        ? "grid-cols-1 sm:grid-cols-2"
+        : "grid-cols-1";
+
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
       <Navbar />
-      <div className="flex flex-1 pt-20">
-        {/* Sidebar */}
-        <div className="w-full max-w-xs bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-800 p-6 space-y-8">
-          <div>
-            <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Filter</h2>
-
-            {/* Price Range */}
-            <div className="mb-8">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Pris</h3>
-              <div className="space-y-2">
-                <input
-                  type="range"
-                  min="0"
-                  max="30000"
-                  value={priceRange[1]}
-                  onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                  className="w-full accent-yellow-400"
-                />
-                <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
-                  <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
-                  <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>
+      <main className="flex-1">
+        <section className="px-4 pt-24">
+          <div className="container mx-auto">
+            <div className={`relative overflow-hidden rounded-3xl ${banner.background}`}>
+              <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/30 to-black/60" />
+              <div className="relative z-10 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] p-8 md:p-10 items-center">
+                <div className="text-white">
+                  <p className="text-xs uppercase tracking-[0.4em] text-yellow-300">{banner.eyebrow}</p>
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight">
+                    {banner.title}
+                  </h1>
+                  <p className="text-sm md:text-base text-slate-200 mt-4 max-w-xl">
+                    {banner.description}
+                  </p>
+                </div>
+                <div>
+                  <div className={`grid gap-4 ${imageGridClass}`}>
+                    {banner.images.map((image, index) => (
+                      <div
+                        key={`${image}-${index}`}
+                        className={`relative ${imageAspect} rounded-2xl overflow-hidden border border-white/15 shadow-lg bg-slate-900/40`}
+                      >
+                        <img
+                          src={image}
+                          alt={`Bannerbild ${index + 1}`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                        {banner.stickers?.[index] ? (
+                          <span
+                            className={`absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
+                              banner.stickers[index].className
+                            }`}
+                          >
+                            {banner.stickers[index].label}
+                          </span>
+                        ) : null}
+                      </div>
+                    ))}
+                  </div>
+                  {banner.variant === "bundle" ? (
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      {bundleItems.map((item) => (
+                        <div
+                          key={item.label}
+                          className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs text-white border border-white/20"
+                        >
+                          <item.icon className="w-4 h-4 text-yellow-300" />
+                          <span>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </div>
+          </div>
+        </section>
 
-            <hr className="my-6 border-gray-200 dark:border-gray-800" />
+        <div className="flex flex-1 pt-8">
+          <div className="w-full max-w-xs bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-800 p-6 space-y-8">
+            <div>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Filter</h2>
 
-            {/* GPU Filter */}
-            <div className="mb-8 space-y-3">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Grafikkort</h3>
-              {gpus.map((gpu) => (
-                <label key={gpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+              <div className="mb-8">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Pris</h3>
+                <div className="space-y-2">
                   <input
-                    type="checkbox"
-                    checked={selectedGPUs.includes(gpu)}
-                    onChange={() => toggleFilter(gpu, selectedGPUs, setSelectedGPUs)}
-                    className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                    type="range"
+                    min="0"
+                    max="30000"
+                    value={priceRange[1]}
+                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    className="w-full accent-yellow-400"
                   />
-                  <span>{gpu}</span>
-                </label>
-              ))}
-            </div>
+                  <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                    <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
+                    <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>
+                  </div>
+                </div>
+              </div>
 
-            <hr className="my-6 border-gray-200 dark:border-gray-800" />
+              <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
-            {/* CPU Filter */}
-            <div className="mb-8 space-y-3">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Processor</h3>
-              <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-                {cpus.map((cpu) => (
-                  <label key={cpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+              <div className="mb-8 space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Grafikkort</h3>
+                {gpus.map((gpu) => (
+                  <label key={gpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
                     <input
                       type="checkbox"
-                      checked={selectedCPUs.includes(cpu)}
-                      onChange={() => toggleFilter(cpu, selectedCPUs, setSelectedCPUs)}
+                      checked={selectedGPUs.includes(gpu)}
+                      onChange={() => toggleFilter(gpu, selectedGPUs, setSelectedGPUs)}
                       className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
                     />
-                    <span>{cpu}</span>
+                    <span>{gpu}</span>
                   </label>
                 ))}
               </div>
-            </div>
 
-            <hr className="my-6 border-gray-200 dark:border-gray-800" />
+              <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
-            {/* Tier Filter */}
-            <div className="mb-8 space-y-3">
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
-              {tiers.map((tier) => (
-                <label key={tier} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                  <input
-                    type="checkbox"
-                    checked={selectedTiers.includes(tier)}
-                    onChange={() => toggleFilter(tier, selectedTiers, setSelectedTiers)}
-                    className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                  />
-                  <span className="capitalize">{tier}</span>
-                </label>
-              ))}
-            </div>
-
-            <button
-              onClick={() => {
-                setPriceRange([0, 30000]);
-                setSelectedGPUs([]);
-                setSelectedCPUs([]);
-                setSelectedTiers([]);
-              }}
-              className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded font-medium transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100"
-            >
-              Rensa filter
-            </button>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-gray-950">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h1>
-            <p className="text-gray-600 dark:text-gray-300">
-              Visar {filteredProducts.length} av {COMPUTERS.length} produkter
-            </p>
-          </div>
-
-          {filteredProducts.length === 0 ? (
-            <div className="flex items-center justify-center h-96 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-800">
-              <div className="text-center">
-                <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Inga datorer hittades</p>
-                <p className="text-gray-600 dark:text-gray-300">Prova att justera dina filter</p>
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {filteredProducts.map((computer) => (
-                <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
-                  <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all">
-                    {/* Product image area */}
-                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
-                      <img
-                        src={computer.image}
-                        alt={computer.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          e.currentTarget.src = FALLBACK_IMAGE;
-                        }}
+              <div className="mb-8 space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Processor</h3>
+                <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
+                  {cpus.map((cpu) => (
+                    <label key={cpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+                      <input
+                        type="checkbox"
+                        checked={selectedCPUs.includes(cpu)}
+                        onChange={() => toggleFilter(cpu, selectedCPUs, setSelectedCPUs)}
+                        className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
                       />
-                    </div>
+                      <span>{cpu}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
 
-                    {/* Product info */}
-                    <div className="p-4">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
-                        {computer.name}
-                      </h3>
+              <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
-                      {/* Rating */}
-                      <div className="flex items-center mb-3">
-                        <div className="flex text-yellow-400 text-lg" aria-hidden>★★★★★</div>
-                        <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
-                      </div>
+              <div className="mb-8 space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
+                {tiers.map((tier) => (
+                  <label key={tier} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+                    <input
+                      type="checkbox"
+                      checked={selectedTiers.includes(tier)}
+                      onChange={() => toggleFilter(tier, selectedTiers, setSelectedTiers)}
+                      className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                    />
+                    <span className="capitalize">{tier}</span>
+                  </label>
+                ))}
+              </div>
 
-                      {/* Specs */}
-                      <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
-                        <p className="truncate">CPU: {computer.cpu}</p>
-                        <p className="truncate">GPU: {computer.gpu}</p>
-                        <p className="truncate">RAM: {computer.ram}</p>
-                        <p className="truncate">
-                          Lagring: {computer.storage} {computer.storagetype}
-                        </p>
-                      </div>
-
-                      {/* Price */}
-                      <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                        {computer.price.toLocaleString("sv-SE")} kr
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
+              <button
+                onClick={() => {
+                  setPriceRange([0, 30000]);
+                  setSelectedGPUs([]);
+                  setSelectedCPUs([]);
+                  setSelectedTiers([]);
+                }}
+                className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded font-medium transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100"
+              >
+                Rensa filter
+              </button>
             </div>
-          )}
+          </div>
+
+          <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-gray-950">
+            <div className="mb-8">
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                Visar {filteredProducts.length} av {COMPUTERS.length} produkter
+              </p>
+            </div>
+
+            {filteredProducts.length === 0 ? (
+              <div className="flex items-center justify-center h-96 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-800">
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Inga datorer hittades</p>
+                  <p className="text-gray-600 dark:text-gray-300">Prova att justera dina filter</p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredProducts.map((computer) => (
+                  <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
+                    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all">
+                      <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-48 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
+                        <img
+                          src={computer.image}
+                          alt={computer.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = FALLBACK_IMAGE;
+                          }}
+                        />
+                      </div>
+
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
+                          {computer.name}
+                        </h3>
+
+                        <div className="flex items-center mb-3">
+                          <div className="flex text-yellow-400 text-lg" aria-hidden>
+                            ?.?.?.?.?.
+                          </div>
+                          <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
+                        </div>
+
+                        <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
+                          <p className="truncate">CPU: {computer.cpu}</p>
+                          <p className="truncate">GPU: {computer.gpu}</p>
+                          <p className="truncate">RAM: {computer.ram}</p>
+                          <p className="truncate">
+                            Lagring: {computer.storage} {computer.storagetype}
+                          </p>
+                        </div>
+
+                        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          {computer.price.toLocaleString("sv-SE")} kr
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
-}
+}

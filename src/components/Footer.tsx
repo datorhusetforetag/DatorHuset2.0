@@ -14,9 +14,9 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 export const Footer = () => {
   return (
     <footer className="bg-gray-900 text-gray-100 border-t border-gray-800">
-      <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <div className="space-y-3">
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-2">
             <h4 className="text-lg font-semibold">Kontakta oss</h4>
             <Link to="/faq" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">FAQ</Link>
             <Link to="/kundservice" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Kundservice / Kontaktuppgifter</Link>
@@ -25,21 +25,21 @@ export const Footer = () => {
             <Link to="/terms-of-service" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Allmänna villkor</Link>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2">
             <h4 className="text-lg font-semibold">Våra tjänster</h4>
             <Link to="/products" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Våra datorer</Link>
             <Link to="/custom-bygg" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Custom bygg</Link>
             <Link to="/service-reparation" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Service / reparation</Link>
           </div>
 
-          <div className="space-y-4 md:text-right">
-            <div className="space-y-2">
+          <div className="space-y-3 md:text-right">
+            <div className="space-y-1">
               <h4 className="text-lg font-semibold">Kundservice</h4>
               <p className="text-sm text-gray-200">datorhuset.foretag@gmail.com</p>
               <p className="text-sm text-gray-400">Svarstider 11:00-15:00</p>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-2">
               <p className="text-sm uppercase tracking-[0.2em] text-gray-500">Följ oss</p>
               <div className="flex items-center gap-3 md:justify-end">
                 <a
@@ -80,13 +80,13 @@ export const Footer = () => {
                 </a>
               </div>
               <div className="flex md:justify-end">
-                <img src={logo} alt="DatorHuset logo" className="w-16 h-16 object-contain" />
+                <img src={logo} alt="DatorHuset logo" className="w-14 h-14 object-contain" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-gray-800 pt-6">
+        <div className="mt-8 border-t border-gray-800 pt-4">
           <p className="text-sm text-gray-400">©2026 DatorHuset UF. All rights reserved.</p>
         </div>
       </div>

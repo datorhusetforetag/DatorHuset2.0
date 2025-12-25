@@ -1,4 +1,4 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -60,32 +60,30 @@ export default function ServiceRepair() {
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-          <div className="container mx-auto px-4 pt-24 pb-16">
-            <div className="max-w-3xl">
-              <p className="text-sm uppercase tracking-[0.2em] text-gray-400">Service & reparation</p>
-              <h1 className="text-4xl lg:text-5xl font-bold mt-4 text-white">
-                Vi reparerar, uppgraderar och optimerar din dator
-              </h1>
-              <p className="text-lg text-gray-300 mt-4">
-                DatorHuset hjälper dig med allt från felsökning till komplett uppgradering. Snabb respons,
-                tydlig offert och service som sätter prestanda i fokus.
-              </p>
-              <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <Link
-                  to="/kundservice"
-                  className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-                >
-                  <Headset className="w-5 h-5" />
-                  Kontakta service
-                </Link>
-                <Link
-                  to="/products"
-                  className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-400 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
-                >
-                  Se våra datorer
-                </Link>
-              </div>
+        <section className="bg-yellow-400">
+          <div className="container mx-auto px-4 pt-24 pb-12">
+            <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Service & reparation</p>
+            <h1 className="text-4xl lg:text-5xl font-bold mt-4 text-gray-900">
+              Vi reparerar, uppgraderar och optimerar din dator
+            </h1>
+            <p className="text-gray-800 mt-4 max-w-2xl">
+              DatorHuset hjälper dig med allt från felsökning till komplett uppgradering. Snabb respons,
+              tydlig offert och service som sätter prestanda i fokus.
+            </p>
+            <div className="mt-6 flex flex-col sm:flex-row gap-3">
+              <Link
+                to="/kundservice"
+                className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] transition-colors"
+              >
+                <Headset className="w-5 h-5" />
+                Kontakta service
+              </Link>
+              <Link
+                to="/products"
+                className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+              >
+                Se våra datorer
+              </Link>
             </div>
           </div>
         </section>
@@ -298,4 +296,4 @@ export default function ServiceRepair() {
       <Footer />
     </div>
   );
-}
+}
