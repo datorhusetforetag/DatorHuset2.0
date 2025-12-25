@@ -1,5 +1,5 @@
-import { useState, useMemo } from "react";
-import { Link } from "react-router-dom";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
@@ -7,10 +7,21 @@ import { COMPUTERS } from "@/data/computers";
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 export default function Products() {
+  const [searchParams] = useSearchParams();
+  const activeCategory = searchParams.get("category")?.toLowerCase() || "";
+  const hasAppliedCategory = useRef(false);
   const [priceRange, setPriceRange] = useState([0, 30000]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!activeCategory || hasAppliedCategory.current) return;
+    if (activeCategory === "budget") {
+      setPriceRange([0, 6000]);
+    }
+    hasAppliedCategory.current = true;
+  }, [activeCategory]);
 
   const gpus = Array.from(new Set(COMPUTERS.map((c) => c.gpu)));
   const cpus = Array.from(new Set(COMPUTERS.map((c) => c.cpu)));
@@ -18,14 +29,31 @@ export default function Products() {
 
   const filteredProducts = useMemo(() => {
     return COMPUTERS.filter((computer) => {
+      const categoryMatch = (() => {
+        if (!activeCategory) return true;
+        if (activeCategory === "budget") {
+          return computer.price <= 6000 || computer.classLabels?.includes("Budget PC's");
+        }
+        if (activeCategory === "best-selling") {
+          return computer.classLabels?.includes("Best-Selling PC's");
+        }
+        if (activeCategory === "toptier") {
+          return computer.classLabels?.includes("Toptier PC's");
+        }
+        if (activeCategory === "paket") {
+          return computer.classLabels?.includes("Paket PC's");
+        }
+        return true;
+      })();
+
       const withinPrice = computer.price >= priceRange[0] && computer.price <= priceRange[1];
       const gpuMatch = selectedGPUs.length === 0 || selectedGPUs.includes(computer.gpu);
       const cpuMatch = selectedCPUs.length === 0 || selectedCPUs.includes(computer.cpu);
       const tierMatch = selectedTiers.length === 0 || selectedTiers.includes(computer.tier);
 
-      return withinPrice && gpuMatch && cpuMatch && tierMatch;
+      return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
     });
-  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers]);
+  }, [activeCategory, priceRange, selectedGPUs, selectedCPUs, selectedTiers]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
     if (selected.includes(value)) {

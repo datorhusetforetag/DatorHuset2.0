@@ -251,6 +251,16 @@ export default function ComputerDetails() {
               <div className="flex justify-between">
                 <span>Kategori</span><span className="font-semibold text-gray-900 dark:text-white">{computer.tier}</span>
               </div>
+              {computer.bundleIncludes?.length ? (
+                <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-3">
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
+                  <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                    {computer.bundleIncludes.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>

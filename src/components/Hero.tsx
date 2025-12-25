@@ -7,12 +7,12 @@ const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
-  { name: "Hjälp mig välja", icon: HelpCircle },
-  { name: "Alla produkter", icon: Monitor },
-  { name: "Paket", icon: Package },
-  { name: "Budgetvänlig", icon: Wallet },
-  { name: "Mest för pengarna", icon: Flame },
-  { name: "Bästa Prestanda", icon: Rocket },
+  { name: "Hjälp mig välja", icon: HelpCircle, href: "/products" },
+  { name: "Alla produkter", icon: Monitor, href: "/products" },
+  { name: "Paket", icon: Package, href: "/products?category=paket" },
+  { name: "Budgetvänlig", icon: Wallet, href: "/products?category=budget" },
+  { name: "Mest för pengarna", icon: Flame, href: "/products?category=best-selling" },
+  { name: "Bästa Prestanda", icon: Rocket, href: "/products?category=toptier" },
 ];
 
 export const Hero = () => {
@@ -70,7 +70,7 @@ export const Hero = () => {
             {categories.map((category) => (
               <Link
                 key={category.name}
-                to="/products"
+                to={category.href}
                 className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
               >
                 <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />

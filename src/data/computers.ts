@@ -12,6 +12,8 @@
   reviews: number;
   image: string;
   images: string[];
+  classLabels?: string[];
+  bundleIncludes?: string[];
 }
 
 export const COMPUTERS: Computer[] = [
@@ -33,6 +35,7 @@ export const COMPUTERS: Computer[] = [
       "/products/NavBase_Front_Colorswap_2000x.webp",
       "/products/NavBase_Side_Colorswap_2000x.webp",
     ],
+    classLabels: ["Budget PC's"],
   },
   {
     id: "2",
@@ -52,6 +55,7 @@ export const COMPUTERS: Computer[] = [
       "/products/Horizon_Pro_Front_wEliteComponents_2000x.webp",
       "/products/Horizon_Pro_Side_wEliteComponents_2000x.webp",
     ],
+    classLabels: ["Best-Selling PC's"],
   },
   {
     id: "3",
@@ -90,6 +94,7 @@ export const COMPUTERS: Computer[] = [
       "/products/Voyager_Front_NoGeforce_2000x.webp",
       "/products/Voyager_Side_NoGeforce_2000x.webp",
     ],
+    classLabels: ["Best-Selling PC's", "Toptier PC's"],
   },
   {
     id: "5",
@@ -109,6 +114,7 @@ export const COMPUTERS: Computer[] = [
       "/products/Voy_Red_Front_2000x.webp",
       "/products/Voy_Red_Side_2000x.webp",
     ],
+    classLabels: ["Toptier PC's"],
   },
   {
     id: "6",
@@ -128,6 +134,7 @@ export const COMPUTERS: Computer[] = [
       "/products/NavPro_Front_Colorswap_2000x.webp",
       "/products/NavPro_Side_Colorswap_2000x.webp",
     ],
+    classLabels: ["Budget PC's"],
   },
   {
     id: "7",
@@ -147,6 +154,7 @@ export const COMPUTERS: Computer[] = [
       "/products/Traveler_Front_1_2000x.webp",
       "/products/Traveler_Side_1_2000x.webp",
     ],
+    classLabels: ["Best-Selling PC's"],
   },
   {
     id: "8",
@@ -166,6 +174,7 @@ export const COMPUTERS: Computer[] = [
       "/products/Voyager_Front_NoGeforce_2000x_2.webp",
       "/products/Voyager_Side_NoGeforce_2000x_2.webp",
     ],
+    classLabels: ["Toptier PC's"],
   },
   {
     id: "9",
@@ -185,5 +194,69 @@ export const COMPUTERS: Computer[] = [
       "/products/Traveler_Top_2000x.webp",
       "/products/Traveler_Front_1_2000x.webp",
     ],
+    classLabels: ["Budget PC's"],
+  },
+  {
+    id: "10",
+    name: "Paket Silver Ascent",
+    price: 11999,
+    cpu: "Intel i7-13700K",
+    gpu: "RTX 4070",
+    ram: "32GB DDR5",
+    storage: "1TB",
+    storagetype: "SSD",
+    tier: "Paket",
+    rating: 4.6,
+    reviews: 74,
+    image: "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
+    images: [
+      "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
+      "/products/Horizon_Pro_Front_wEliteComponents_2000x.webp",
+      "/products/Horizon_Pro_Side_wEliteComponents_2000x.webp",
+    ],
+    classLabels: ["Paket PC's"],
+    bundleIncludes: ["Skärm", "Tangentbord", "Mus", "Headset"],
+  },
+  {
+    id: "11",
+    name: "Paket Gold Pinnacle",
+    price: 15999,
+    cpu: "Intel i9-13900K",
+    gpu: "RTX 4080",
+    ram: "64GB DDR5",
+    storage: "2TB",
+    storagetype: "SSD",
+    tier: "Paket",
+    rating: 4.7,
+    reviews: 61,
+    image: "/products/Horizon3_Elite_Hero_2000x.webp",
+    images: [
+      "/products/Horizon3_Elite_Hero_2000x.webp",
+      "/products/Horizon3_Elite_Front_2000x.webp",
+      "/products/Horizon3_Elite_Side_2000x.webp",
+    ],
+    classLabels: ["Paket PC's"],
+    bundleIncludes: ["Skärm", "Tangentbord", "Mus", "Headset"],
+  },
+  {
+    id: "12",
+    name: "Paket Platina Frostbyte",
+    price: 21999,
+    cpu: "Intel i9-14900KS",
+    gpu: "RTX 4090",
+    ram: "128GB DDR5",
+    storage: "4TB",
+    storagetype: "SSD",
+    tier: "Paket",
+    rating: 4.9,
+    reviews: 38,
+    image: "/products/Voyager_Hero_NoGeforce_2000x.webp",
+    images: [
+      "/products/Voyager_Hero_NoGeforce_2000x.webp",
+      "/products/Voyager_Front_NoGeforce_2000x.webp",
+      "/products/Voyager_Side_NoGeforce_2000x.webp",
+    ],
+    classLabels: ["Paket PC's"],
+    bundleIncludes: ["Skärm", "Tangentbord", "Mus", "Headset"],
   },
 ];
