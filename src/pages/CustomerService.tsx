@@ -7,23 +7,23 @@ export default function CustomerService() {
     <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+        <section className="bg-yellow-400">
           <div className="container mx-auto px-4 pt-24 pb-12">
-            <p className="text-xs uppercase tracking-[0.35em] text-slate-400">Kundservice</p>
-            <h1 className="text-4xl lg:text-5xl font-bold text-white mt-4">Kontakta oss</h1>
-            <p className="text-slate-300 mt-4 max-w-2xl">
+            <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Kundservice</p>
+            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Kontakta oss</h1>
+            <p className="text-gray-800 mt-4 max-w-2xl">
               Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <a
                 href="mailto:datorhuset.foretag@gmail.com"
-                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] transition-colors"
               >
                 E-posta oss
               </a>
               <Link
                 to="/faq"
-                className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-400 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
               >
                 Se FAQ
               </Link>
@@ -31,7 +31,7 @@ export default function CustomerService() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12 max-w-4xl space-y-6">
+        <section className="container mx-auto px-4 py-12 max-w-5xl space-y-6">
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
               <h2 className="text-lg font-semibold">Kontaktuppgifter</h2>
@@ -49,6 +49,38 @@ export default function CustomerService() {
             <h2 className="text-lg font-semibold">Supportärenden</h2>
             <p>För frågor om beställningar, returer eller fakturor: ange ordernummer och beskriv ärendet kort.</p>
             <p>Teknisk support: beskriv problemet, vilka komponenter som används och bifoga bilder om möjligt.</p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
+              <h2 className="text-lg font-semibold">Vanliga ärenden</h2>
+              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                <li>Orderstatus, leveranstider och spårning</li>
+                <li>Ändringar i beställning eller uppgraderingar</li>
+                <li>Garantifrågor och reklamation</li>
+                <li>Felsökning, service och reparation</li>
+                <li>Företagslösningar och faktura</li>
+              </ul>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Vi återkommer normalt inom 24 timmar på vardagar.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
+              <h2 className="text-lg font-semibold">Så arbetar vi</h2>
+              <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside">
+                <li>Du beskriver ditt ärende via mail eller formulär.</li>
+                <li>Vi återkommer med frågor eller förslag.</li>
+                <li>Du får en tydlig offert och tidsplan.</li>
+                <li>Vi uppdaterar dig när arbetet är klart.</li>
+              </ol>
+              <Link
+                to="/service-reparation"
+                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+              >
+                Starta serviceärende
+              </Link>
+            </div>
           </div>
         </section>
       </main>
