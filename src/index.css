@@ -52,23 +52,23 @@
   }
 
   .dark {
-    --background: 222 47% 5%;
+    --background: 215 40% 12%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 8%;
+    --card: 215 36% 16%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 8%;
+    --popover: 215 36% 16%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 180 100% 50%;
     --primary-foreground: 222 47% 5%;
 
-    --secondary: 270 60% 50%;
+    --secondary: 215 28% 20%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 222 30% 15%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 215 20% 18%;
+    --muted-foreground: 215 16% 65%;
 
     --accent: 180 80% 40%;
     --accent-foreground: 210 40% 98%;
@@ -76,8 +76,8 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 222 30% 18%;
-    --input: 222 30% 18%;
+    --border: 215 20% 24%;
+    --input: 215 20% 24%;
     --ring: 180 100% 50%;
 
     --gold: 45 100% 50%;
@@ -85,8 +85,8 @@
     --platinum: 270 60% 60%;
     --sale: 0 84% 60%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(222 47% 5%) 0%, hsl(240 50% 10%) 50%, hsl(222 47% 5%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(222 47% 10% / 0.8) 0%, hsl(222 47% 6% / 0.9) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(215 40% 12%) 0%, hsl(215 36% 16%) 50%, hsl(215 40% 12%) 100%);
+    --gradient-card: linear-gradient(135deg, hsl(215 36% 18% / 0.8) 0%, hsl(215 36% 14% / 0.9) 100%);
     --gradient-primary: linear-gradient(135deg, hsl(180 100% 50%) 0%, hsl(200 100% 50%) 100%);
     --gradient-glow: radial-gradient(ellipse at center, hsl(180 100% 50% / 0.15) 0%, transparent 70%);
 
@@ -106,7 +106,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', sans-serif;
+    font-family: 'Orbitron', 'Inter', sans-serif;
   }
 }
 
@@ -141,6 +141,7 @@
     background-size: 400% 400%;
     animation: gradient-shift 15s ease infinite;
   }
+
 }
 
 @layer utilities {

@@ -26,7 +26,7 @@ export const Hero = () => {
   };
 
   return (
-    <section className="bg-white dark:bg-gray-950 transition-colors">
+    <section className="bg-white dark:bg-background transition-colors">
       <div className="container mx-auto px-4 py-8">
         {/* Hero Banners */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">

@@ -2,52 +2,112 @@ import { Link } from "react-router-dom";
 
 export const HomePromoSplit = () => {
   return (
-    <section className="bg-white dark:bg-gray-950 transition-colors">
+    <section className="bg-gray-50 text-gray-900 dark:bg-background dark:text-gray-50">
       <div className="container mx-auto px-4 py-16 lg:py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-gray-900/60">
-            <img
-              src="/products/Voyager_Hero_NoGeforce_2000x.webp"
-              alt="Service och reparation av datorer"
-              className="w-full h-56 object-cover"
-              loading="lazy"
-            />
-            <div className="p-6 space-y-3">
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Service & reparation</p>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Vi fixar din dator snabbt</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Felsökning, uppgraderingar och optimering med tydlig offert och snabb återkoppling.
-              </p>
-              <Link
-                to="/service-reparation"
-                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-5 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-              >
-                Service & reparation
-              </Link>
-            </div>
-          </div>
+        <div className="mb-10 text-center">
+          <p className="text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">Mer från DatorHuset</p>
+          <h2 className="text-3xl lg:text-4xl font-bold mt-3">Vi bygger, fixar och optimerar för dig</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-300 mt-3 max-w-2xl mx-auto">
+            Välj service om du vill få din dator tillbaka i toppform eller bygg ett helt nytt system från grunden.
+          </p>
+        </div>
 
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 overflow-hidden bg-gray-50 dark:bg-gray-900/60">
-            <img
-              src="/products/Horizon3_Elite_Hero_2000x.webp"
-              alt="Custom byggda datorer"
-              className="w-full h-56 object-cover"
-              loading="lazy"
-            />
-            <div className="p-6 space-y-3">
-              <p className="text-xs uppercase tracking-[0.3em] text-gray-500">Custom bygg</p>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Byggd för dig</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Välj komponenter, prestanda och utseende. Vi bygger, testar och levererar färdig dator.
-              </p>
-              <Link
-                to="/custom-bygg"
-                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-5 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-              >
-                Gå till custom bygg
-              </Link>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <article className="relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_20px_60px_rgba(0,0,0,0.08)] min-h-[560px] flex flex-col">
+            <div className="relative h-64">
+              <img
+                src="/products/Voyager_Hero_NoGeforce_2000x.webp"
+                alt="Service och reparation av datorer"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <p className="absolute bottom-4 left-6 text-xs uppercase tracking-[0.4em] text-yellow-400">Service & reparation</p>
             </div>
-          </div>
+            <div className="p-6 lg:p-8 flex flex-col gap-4 flex-1">
+              <h3 className="text-2xl lg:text-3xl font-bold">Vi får din dator tillbaka i toppform</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Snabb felsökning, tydlig offert och proffsig optimering. Vi tar hand om allt från prestandaproblem
+                till uppgraderingar.
+              </p>
+              <div className="grid gap-3 text-sm text-gray-600 dark:text-gray-300">
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                  Felsökning inom 24 timmar på vanliga fel
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                  Rengöring, kylning och stabilitetstester
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                  Garanti på utfört arbete och uppgraderingar
+                </div>
+              </div>
+              <div className="mt-auto flex flex-col sm:flex-row gap-3">
+                <Link
+                  to="/service-reparation"
+                  className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                >
+                  Service & reparation
+                </Link>
+                <Link
+                  to="/kundservice"
+                  className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-gray-900 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                >
+                  Fråga en tekniker
+                </Link>
+              </div>
+            </div>
+          </article>
+
+          <article className="relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_20px_60px_rgba(0,0,0,0.08)] min-h-[560px] flex flex-col">
+            <div className="relative h-64">
+              <img
+                src="/products/Horizon3_Elite_Hero_2000x.webp"
+                alt="Custom byggda datorer"
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+              <p className="absolute bottom-4 left-6 text-xs uppercase tracking-[0.4em] text-yellow-400">Custom bygg</p>
+            </div>
+            <div className="p-6 lg:p-8 flex flex-col gap-4 flex-1">
+              <h3 className="text-2xl lg:text-3xl font-bold">Byggd för din vardag och din gaming</h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Välj komponenter, stil och budget. Vi bygger, testar och levererar en dator som är helt anpassad
+                efter dig.
+              </p>
+              <div className="grid gap-3 text-sm text-gray-600 dark:text-gray-300">
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                  Välj prestandanivå, formfaktor och RGB
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                  Optimerade för gaming, kreativt arbete eller AI
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-yellow-400" />
+                  Trygg leverans med test och verifiering
+                </div>
+              </div>
+              <div className="mt-auto flex flex-col sm:flex-row gap-3">
+                <Link
+                  to="/custom-bygg"
+                  className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                >
+                  Gå till custom bygg
+                </Link>
+                <Link
+                  to="/products"
+                  className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-gray-900 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                >
+                  Se färdiga datorer
+                </Link>
+              </div>
+            </div>
+          </article>
         </div>
       </div>
     </section>

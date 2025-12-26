@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -31,7 +32,8 @@ const DEFAULT_BANNER: BannerConfig = {
     "/products/Horizon3_Elite_Hero_2000x.webp",
     "/products/Voyager_Hero_NoGeforce_2000x.webp",
   ],
-  background: "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950",
+  background:
+    "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
 };
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
@@ -46,14 +48,16 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-yellow-400 text-gray-900",
       },
     ],
-    background: "bg-gradient-to-r from-slate-950 via-purple-950 to-slate-950",
+    background:
+      "bg-gradient-to-r from-slate-950 via-purple-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
   paket: {
     eyebrow: "Paket",
     title: "Allt du behöver, redo att köra",
     description: "Kompletta paket med dator, skärm och tillbehör i ett och samma köp.",
     images: ["/products/Horizon3_Elite_Hero_2000x.webp"],
-    background: "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950",
+    background:
+      "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
     variant: "bundle",
   },
   "best-selling": {
@@ -79,7 +83,8 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-orange-500 text-white",
       },
     ],
-    background: "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950",
+    background:
+      "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
   toptier: {
     eyebrow: "Bästa prestanda",
@@ -99,7 +104,8 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-[#11667b] text-white",
       },
     ],
-    background: "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950",
+    background:
+      "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
 };
 
@@ -177,29 +183,43 @@ export default function Products() {
         : "grid-cols-1";
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="px-4 pt-24">
+        <section className="px-4 pt-24 pb-6">
           <div className="container mx-auto">
-            <div className={`relative overflow-hidden rounded-3xl ${banner.background}`}>
-              <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-black/30 to-black/60" />
-              <div className="relative z-10 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] p-8 md:p-10 items-center">
-                <div className="text-white">
-                  <p className="text-xs uppercase tracking-[0.4em] text-yellow-300">{banner.eyebrow}</p>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight">
+            <div className="rounded-3xl border border-gray-200 dark:border-[#1a2636] bg-[#facc15]">
+              <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] p-8 md:p-10 items-center">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.35em] text-gray-900/70">
+                    {banner.eyebrow}
+                  </p>
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-gray-900">
                     {banner.title}
                   </h1>
-                  <p className="text-sm md:text-base text-slate-200 mt-4 max-w-xl">
+                  <p className="text-sm md:text-base text-gray-800 mt-4 max-w-xl">
                     {banner.description}
                   </p>
+                  {banner.variant === "bundle" ? (
+                    <div className="mt-6 flex flex-wrap gap-3">
+                      {bundleItems.map((item) => (
+                        <div
+                          key={item.label}
+                          className="flex items-center gap-2 rounded-full bg-gray-100 text-gray-700 border border-gray-200 px-3 py-1 text-xs dark:bg-[#0b131f] dark:text-slate-200 dark:border-[#1a2636]"
+                        >
+                          <item.icon className="w-4 h-4 text-yellow-500 dark:text-yellow-300" />
+                          <span>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                 </div>
                 <div>
                   <div className={`grid gap-4 ${imageGridClass}`}>
                     {banner.images.map((image, index) => (
                       <div
                         key={`${image}-${index}`}
-                        className={`relative ${imageAspect} rounded-2xl overflow-hidden border border-white/15 shadow-lg bg-slate-900/40`}
+                        className={`relative ${imageAspect} rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 dark:border-[#1a2636] dark:bg-[#0b131f]`}
                       >
                         <img
                           src={image}
@@ -219,26 +239,13 @@ export default function Products() {
                       </div>
                     ))}
                   </div>
-                  {banner.variant === "bundle" ? (
-                    <div className="mt-4 flex flex-wrap gap-3">
-                      {bundleItems.map((item) => (
-                        <div
-                          key={item.label}
-                          className="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs text-white border border-white/20"
-                        >
-                          <item.icon className="w-4 h-4 text-yellow-300" />
-                          <span>{item.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        <div className="flex flex-1 pt-8">
+        <div className="flex flex-1 mt-6 pt-8 border-t border-gray-200 dark:border-[#1a2636]">
           <div className="w-full max-w-xs bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-800 p-6 space-y-8">
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Filter</h2>
@@ -328,7 +335,7 @@ export default function Products() {
             </div>
           </div>
 
-          <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-gray-950">
+          <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-[#0f1824]">
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h2>
               <p className="text-gray-600 dark:text-gray-300">
@@ -365,8 +372,10 @@ export default function Products() {
                         </h3>
 
                         <div className="flex items-center mb-3">
-                          <div className="flex text-yellow-400 text-lg" aria-hidden>
-                            ?.?.?.?.?.
+                          <div className="flex items-center text-yellow-400" aria-hidden>
+                            {Array.from({ length: 5 }).map((_, index) => (
+                              <Star key={index} className="w-4 h-4 fill-current" />
+                            ))}
                           </div>
                           <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
                         </div>
@@ -395,4 +404,5 @@ export default function Products() {
       <Footer />
     </div>
   );
-}
+}
+

@@ -57,7 +57,7 @@ const steps = [
 
 export default function ServiceRepair() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
         <section className="bg-yellow-400">
@@ -166,7 +166,7 @@ export default function ServiceRepair() {
                       id="service-name"
                       type="text"
                       placeholder="För- och efternamn"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
@@ -175,7 +175,7 @@ export default function ServiceRepair() {
                       id="service-email"
                       type="email"
                       placeholder="namn@exempel.se"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
@@ -184,14 +184,14 @@ export default function ServiceRepair() {
                       id="service-phone"
                       type="tel"
                       placeholder="07x xxx xx xx"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold" htmlFor="service-device">Enhetstyp</label>
                     <select
                       id="service-device"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     >
                       <option>Stationär dator</option>
                       <option>Laptop</option>
@@ -208,14 +208,14 @@ export default function ServiceRepair() {
                       id="service-brand"
                       type="text"
                       placeholder="Ex: DatorHuset Silver Ascent"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-semibold" htmlFor="service-type">Typ av problem</label>
                     <select
                       id="service-type"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     >
                       <option>Prestanda / lagg</option>
                       <option>Startar inte</option>
@@ -232,7 +232,7 @@ export default function ServiceRepair() {
                     <label className="text-sm font-semibold" htmlFor="service-urgency">Hur brådskande är det?</label>
                     <select
                       id="service-urgency"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     >
                       <option>Inom 1-2 dagar</option>
                       <option>Inom en vecka</option>
@@ -245,7 +245,7 @@ export default function ServiceRepair() {
                       id="service-serial"
                       type="text"
                       placeholder="Serienummer"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                     />
                   </div>
                 </div>
@@ -256,7 +256,7 @@ export default function ServiceRepair() {
                     id="service-notes"
                     rows={5}
                     placeholder="Berätta vad som händer, när felet uppstår och vad du redan testat."
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-950 px-4 py-2 text-sm"
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                   />
                 </div>
 
@@ -296,4 +296,5 @@ export default function ServiceRepair() {
       <Footer />
     </div>
   );
-}
+}
+

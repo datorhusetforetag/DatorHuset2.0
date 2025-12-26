@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
         <section className="bg-yellow-400">

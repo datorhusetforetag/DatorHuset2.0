@@ -11,12 +11,12 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 const getPreferredTheme = (): Theme => {
-  if (typeof window === "undefined") return "dark";
+  if (typeof window === "undefined") return "light";
 
   const stored = localStorage.getItem("theme");
   if (stored === "light" || stored === "dark") return stored;
 
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "light";
 };
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
@@ -24,11 +24,9 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === "dark") {
-      root.classList.add("dark");
-    } else {
-      root.classList.remove("dark");
-    }
+    const body = document.body;
+    root.classList.toggle("dark", theme === "dark");
+    body.classList.remove("dark");
     root.setAttribute("data-theme", theme);
     root.style.colorScheme = theme;
     localStorage.setItem("theme", theme);

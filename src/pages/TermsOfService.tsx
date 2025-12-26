@@ -3,7 +3,7 @@ import { Footer } from "@/components/Footer";
 
 export default function TermsOfService() {
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-50 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
         <section className="bg-yellow-400">
@@ -71,14 +71,14 @@ export default function TermsOfService() {
             <h2 className="text-xl font-semibold">7. &Auml;ndringar</h2>
             <p className="text-gray-700 dark:text-gray-300">
               Vi kan uppdatera villkoren vid behov. Den senaste versionen finns alltid
-              tillg&auml;nglig p&aring; webbplatsen.
+              tillgänglig på webbplatsen.
             </p>
           </section>
 
           <section className="space-y-3">
             <h2 className="text-xl font-semibold">8. Kontakt</h2>
             <p className="text-gray-700 dark:text-gray-300">
-              Har du fr&aring;gor om villkoren, kontakta oss p&aring; datorhuset.foretag@gmail.com.
+              Har du frågor om villkoren, kontakta oss på datorhuset.foretag@gmail.com.
             </p>
           </section>
         </section>

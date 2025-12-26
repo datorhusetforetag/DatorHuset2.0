@@ -62,7 +62,7 @@ export const Navbar = () => {
 
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-      <div className="bg-white/90 text-gray-900 border-b border-gray-200 shadow-sm dark:bg-gray-950/90 dark:text-white dark:border-gray-800">
+      <div className="bg-white text-gray-900 border-b border-gray-200 shadow-sm dark:bg-background dark:text-white dark:border-gray-800">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between gap-4 h-20">
             <Link to="/" className="flex items-center gap-2 font-bold text-2xl flex-shrink-0 text-gray-900 dark:text-white">

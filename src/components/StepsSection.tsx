@@ -27,7 +27,7 @@ const steps = [
 
 export const StepsSection = () => {
   return (
-    <section className="bg-gray-100 text-gray-900 dark:bg-[#0f1216] dark:text-gray-100 transition-colors">
+    <section className="bg-[#f5f6f8] text-gray-900 dark:bg-[#111827] dark:text-gray-100 transition-colors">
       <div className="container mx-auto px-4 py-16 lg:py-20 flex flex-col items-center text-center">
         <div className="mb-10">
           <h2 className="text-3xl lg:text-4xl font-bold mb-3 text-gray-900 dark:text-gray-100">
@@ -58,7 +58,7 @@ export const StepsSection = () => {
           </Link>
           <Link
             to="/custom-bygg"
-            className="px-8 py-3 bg-transparent border border-yellow-400 text-gray-900 hover:bg-[#11667b] hover:text-white hover:border-[#11667b] font-semibold rounded-lg transition-colors text-center dark:text-gray-100"
+            className="px-8 py-3 bg-transparent border border-yellow-400 text-gray-100 hover:bg-[#11667b] hover:text-white hover:border-[#11667b] font-semibold rounded-lg transition-colors text-center"
           >
             Gör en custom bygg
           </Link>

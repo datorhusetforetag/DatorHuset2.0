@@ -141,7 +141,7 @@ export function LoginButton() {
           Logga in
         </button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-md lg:w-[33vw] lg:max-w-[33vw] bg-white dark:bg-gray-950">
+      <SheetContent side="right" className="w-full sm:max-w-md lg:w-[33vw] lg:max-w-[33vw] bg-white dark:bg-[#0f1824]">
         <SheetHeader className="text-left">
           <div className="flex items-center gap-3">
             <img src="/Datorhuset.png" alt="DatorHuset" className="w-10 h-10 object-contain" />

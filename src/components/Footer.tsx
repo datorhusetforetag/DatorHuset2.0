@@ -13,7 +13,7 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 
 export const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-100 border-t border-gray-800">
+    <footer className="bg-[#0f1824] text-gray-100 border-t border-[#1a2636]">
       <div className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-2">
@@ -86,7 +86,7 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-gray-800 pt-4">
+        <div className="mt-8 border-t border-[#1a2636] pt-4">
           <p className="text-sm text-gray-400">©2026 DatorHuset UF. All rights reserved.</p>
         </div>
       </div>
