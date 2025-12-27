@@ -1,6 +1,7 @@
 ﻿import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { Instagram, Music2, Twitter, Youtube } from "lucide-react";
 
 export default function About() {
   return (
@@ -96,6 +97,51 @@ export default function About() {
               <li>Hjälp med uppgraderingar när du växer</li>
             </ul>
           </div>
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-8 space-y-4">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Folj oss</h2>
+            <p className="text-sm text-gray-700 dark:text-gray-300">
+              Hall koll pa nya byggen, erbjudanden och uppdateringar.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <a
+                href="https://www.instagram.com/datorhuset_uf/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
+              >
+                <Instagram className="w-4 h-4" />
+                Instagram
+              </a>
+              <a
+                href="https://x.com/DatorHuset_UF"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
+              >
+                <Twitter className="w-4 h-4" />
+                X (Twitter)
+              </a>
+              <a
+                href="https://www.tiktok.com/@datorhuset_uf?lang=en-GB"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
+              >
+                <Music2 className="w-4 h-4" />
+                TikTok
+              </a>
+              <a
+                href="https://www.youtube.com/@DatorHuset"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
+              >
+                <Youtube className="w-4 h-4" />
+                YouTube
+              </a>
+            </div>
+          </div>
+
         </section>
       </main>
       <Footer />

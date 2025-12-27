@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, ShoppingCart } from "lucide-react";
+import { Menu, Search, ShoppingCart } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
@@ -9,9 +9,11 @@ import { ThemeToggle } from "./ThemeToggle";
 export const Navbar = () => {
   const [searchInput, setSearchInput] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
+  const [showNavMenu, setShowNavMenu] = useState(false);
   const [showCartPreview, setShowCartPreview] = useState(false);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const navMenuRef = useRef<HTMLDivElement>(null);
   const cartHoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const navigate = useNavigate();
   const { totalItems, items, totalPrice } = useCart();
@@ -50,10 +52,16 @@ export const Navbar = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
-      if (desktopSearchRef.current?.contains(target) || mobileSearchRef.current?.contains(target)) {
-        return;
+      const insideSearch =
+        desktopSearchRef.current?.contains(target) || mobileSearchRef.current?.contains(target);
+      const insideMenu = navMenuRef.current?.contains(target);
+
+      if (!insideSearch) {
+        setShowSearchResults(false);
       }
-      setShowSearchResults(false);
+      if (!insideMenu) {
+        setShowNavMenu(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -69,6 +77,49 @@ export const Navbar = () => {
               <img src="/Datorhuset.png" alt="DatorHuset" className="w-12 h-12 object-contain" />
               <span className="font-[Orbitron]">DatorHuset</span>
             </Link>
+
+            <div ref={navMenuRef} className="relative">
+              <button
+                type="button"
+                aria-label="Öppna meny"
+                onClick={() => setShowNavMenu((prev) => !prev)}
+                className="p-2 rounded-md border border-gray-200 text-gray-900 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-white dark:border-gray-700"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+              {showNavMenu && (
+                <div className="absolute left-0 mt-3 w-64 rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg overflow-hidden z-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+                  <Link
+                    to="/products"
+                    onClick={() => setShowNavMenu(false)}
+                    className="block px-4 py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    Alla produkter
+                  </Link>
+                  <Link
+                    to="/custom-bygg"
+                    onClick={() => setShowNavMenu(false)}
+                    className="block px-4 py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    Custom Bygg
+                  </Link>
+                  <Link
+                    to="/service-reparation"
+                    onClick={() => setShowNavMenu(false)}
+                    className="block px-4 py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    Service & Reparation
+                  </Link>
+                  <Link
+                    to="/kundservice"
+                    onClick={() => setShowNavMenu(false)}
+                    className="block px-4 py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800"
+                  >
+                    Kundservice & Kontakta oss
+                  </Link>
+                </div>
+              )}
+            </div>
 
             <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
               <div ref={desktopSearchRef} className="relative w-full">
