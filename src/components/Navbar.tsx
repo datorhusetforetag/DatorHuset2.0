@@ -67,7 +67,7 @@ export const Navbar = () => {
           <div className="flex items-center justify-between gap-4 h-20">
             <Link to="/" className="flex items-center gap-2 font-bold text-2xl flex-shrink-0 text-gray-900 dark:text-white">
               <img src="/Datorhuset.png" alt="DatorHuset" className="w-12 h-12 object-contain" />
-              <span>DatorHuset</span>
+              <span className="font-[Orbitron]">DatorHuset</span>
             </Link>
 
             <div className="hidden lg:flex flex-1 max-w-2xl mx-8">

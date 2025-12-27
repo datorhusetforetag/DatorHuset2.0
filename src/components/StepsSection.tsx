@@ -58,7 +58,7 @@ export const StepsSection = () => {
           </Link>
           <Link
             to="/custom-bygg"
-            className="px-8 py-3 bg-transparent border border-yellow-400 text-gray-100 hover:bg-[#11667b] hover:text-white hover:border-[#11667b] font-semibold rounded-lg transition-colors text-center"
+            className="px-8 py-3 bg-yellow-400 hover:bg-[#11667b] hover:text-white text-gray-900 font-semibold rounded-lg transition-colors text-center"
           >
             Gör en custom bygg
           </Link>

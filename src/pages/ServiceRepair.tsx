@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { BadgeCheck, Cpu, Hammer, Headset, Laptop, ShieldCheck, Wrench } from "lucide-react";
+import { Cpu, Hammer, Headset, Laptop, ShieldCheck } from "lucide-react";
 
 const serviceCards = [
   {
@@ -110,7 +110,7 @@ export default function ServiceRepair() {
         </section>
 
         <section className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 items-start">
             <div>
               <h2 className="text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
@@ -132,27 +132,6 @@ export default function ServiceRepair() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-4">
-                <Wrench className="w-6 h-6 text-[#11667b]" />
-                <h3 className="text-xl font-semibold">Vad vi kan hjälpa med</h3>
-              </div>
-              <ul className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-[#11667b] mt-0.5" /> Felsökning av dator och komponenter</li>
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-[#11667b] mt-0.5" /> Rengöring, kylning och kabeldragning</li>
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-[#11667b] mt-0.5" /> Uppgradering av GPU, CPU, RAM och lagring</li>
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-[#11667b] mt-0.5" /> Installation av OS, drivrutiner och optimering</li>
-                <li className="flex items-start gap-2"><BadgeCheck className="w-4 h-4 text-[#11667b] mt-0.5" /> Dataöverföring och backup-råd</li>
-              </ul>
-              <div className="mt-6 rounded-lg bg-[#11667b]/10 border border-[#11667b]/30 p-4 text-sm text-gray-900 dark:text-gray-100">
-                Snabbt svar, tydlig offert och service med fokus på prestanda.
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="container mx-auto px-4 pb-16">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 items-start">
             <div>
               <h2 className="text-3xl font-bold mb-3">Beskriv ditt problem</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
@@ -279,17 +258,17 @@ export default function ServiceRepair() {
                 </button>
               </div>
             </div>
+          </div>
 
-            <div className="rounded-2xl bg-gray-900 text-white px-8 py-10 flex flex-col gap-4">
-              <h3 className="text-2xl font-bold">Redo att få din dator i toppskick?</h3>
-              <p className="text-gray-300">Skicka en kort beskrivning av felet så återkommer vi snabbt.</p>
-              <Link
-                to="/kundservice"
-                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-              >
-                Kontakta oss direkt
-              </Link>
-            </div>
+          <div className="mt-10 rounded-2xl bg-gray-900 text-white px-8 py-10 flex flex-col gap-4 w-full">
+            <h3 className="text-2xl font-bold">Redo att fA? din dator i toppskick?</h3>
+            <p className="text-gray-300">Skicka en kort beskrivning av felet sA? A?terkommer vi snabbt.</p>
+            <Link
+              to="/kundservice"
+              className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+            >
+              Kontakta oss direkt
+            </Link>
           </div>
         </section>
       </main>

@@ -17,6 +17,8 @@ export default function CustomerService() {
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <a
                 href="mailto:datorhuset.foretag@gmail.com"
+                target="_blank"
+                rel="noreferrer"
                 className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] transition-colors"
               >
                 E-posta oss
