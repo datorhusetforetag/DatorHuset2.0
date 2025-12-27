@@ -15,14 +15,6 @@ export default function CustomerService() {
               Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <a
-                href="mailto:datorhuset.foretag@gmail.com"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] transition-colors"
-              >
-                E-posta oss
-              </a>
               <Link
                 to="/faq"
                 className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"

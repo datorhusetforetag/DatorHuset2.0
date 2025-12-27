@@ -173,6 +173,31 @@ export default function Products() {
     }
   };
 
+  const clearFilters = () => {
+    setPriceRange([0, 30000]);
+    setSelectedGPUs([]);
+    setSelectedCPUs([]);
+    setSelectedTiers([]);
+  };
+
+  const categoryLabel = (() => {
+    if (activeCategory === "budget") return "Budgetvänlig";
+    if (activeCategory === "best-selling") return "Mest för pengarna";
+    if (activeCategory === "toptier") return "Bästa prestanda";
+    if (activeCategory === "paket") return "Paket";
+    return "";
+  })();
+
+  const activeFilters: string[] = [];
+  if (categoryLabel) activeFilters.push(categoryLabel);
+  if (priceRange[0] !== 0 || priceRange[1] !== 30000) {
+    activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
+  }
+  selectedGPUs.forEach((gpu) => activeFilters.push(`GPU: ${gpu}`));
+  selectedCPUs.forEach((cpu) => activeFilters.push(`CPU: ${cpu}`));
+  selectedTiers.forEach((tier) => activeFilters.push(`Kategori: ${tier}`));
+  const hasFilters = activeFilters.length > 0;
+
   const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
   const imageAspect = banner.images.length === 1 ? "aspect-[16/9]" : "aspect-[4/3]";
   const imageGridClass =
@@ -322,12 +347,7 @@ export default function Products() {
               </div>
 
               <button
-                onClick={() => {
-                  setPriceRange([0, 30000]);
-                  setSelectedGPUs([]);
-                  setSelectedCPUs([]);
-                  setSelectedTiers([]);
-                }}
+                onClick={clearFilters}
                 className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded font-medium transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100"
               >
                 Rensa filter
@@ -336,6 +356,28 @@ export default function Products() {
           </div>
 
           <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-[#0f1824]">
+            {hasFilters && (
+              <div className="sticky top-24 z-10 mb-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-[#0f1824]/95 backdrop-blur px-4 py-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Aktiva filter:</span>
+                  {activeFilters.map((filter) => (
+                    <span
+                      key={filter}
+                      className="rounded-full bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-200"
+                    >
+                      {filter}
+                    </span>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={clearFilters}
+                    className="text-xs font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+                  >
+                    Rensa filter
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="mb-8">
               <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h2>
               <p className="text-gray-600 dark:text-gray-300">

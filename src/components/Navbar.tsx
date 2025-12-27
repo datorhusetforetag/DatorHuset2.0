@@ -83,9 +83,10 @@ export const Navbar = () => {
                 type="button"
                 aria-label="Öppna meny"
                 onClick={() => setShowNavMenu((prev) => !prev)}
-                className="p-2 rounded-md border border-gray-200 text-gray-900 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-white dark:border-gray-700"
+                className="flex items-center gap-2 px-3 py-2 rounded-md border border-gray-200 text-gray-900 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-white dark:border-gray-700"
               >
                 <Menu className="w-5 h-5" />
+                <span className="text-sm font-semibold">Meny</span>
               </button>
               {showNavMenu && (
                 <div className="absolute left-0 mt-3 w-64 rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg overflow-hidden z-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">

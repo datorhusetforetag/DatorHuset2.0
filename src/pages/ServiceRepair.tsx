@@ -111,7 +111,7 @@ export default function ServiceRepair() {
 
         <section className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 items-start">
-            <div>
+            <div className="lg:mt-8">
               <h2 className="text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Vårt flöde är byggt för tydlighet och snabbhet. Du vet vad som sker och när.
@@ -260,16 +260,6 @@ export default function ServiceRepair() {
             </div>
           </div>
 
-          <div className="mt-10 rounded-2xl bg-gray-900 text-white px-8 py-10 flex flex-col gap-4 w-full">
-            <h3 className="text-2xl font-bold">Redo att fA? din dator i toppskick?</h3>
-            <p className="text-gray-300">Skicka en kort beskrivning av felet sA? A?terkommer vi snabbt.</p>
-            <Link
-              to="/kundservice"
-              className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-            >
-              Kontakta oss direkt
-            </Link>
-          </div>
         </section>
       </main>
       <Footer />

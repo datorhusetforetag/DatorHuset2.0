@@ -1,22 +1,26 @@
-﻿import { ChevronLeft, ChevronRight, Flame, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useRef } from "react";
+﻿import { ChevronLeft, ChevronRight, Hammer, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 import { COMPUTERS } from "@/data/computers";
 
 const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
-  { name: "Hjälp mig välja", icon: HelpCircle, href: "/products" },
+  { name: "Hj?lp mig v?lja", icon: HelpCircle, kind: "quiz" as const },
   { name: "Alla produkter", icon: Monitor, href: "/products" },
   { name: "Paket", icon: Package, href: "/products?category=paket" },
-  { name: "Budgetvänlig", icon: Wallet, href: "/products?category=budget" },
-  { name: "Mest för pengarna", icon: Flame, href: "/products?category=best-selling" },
-  { name: "Bästa Prestanda", icon: Rocket, href: "/products?category=toptier" },
+  { name: "Budgetv?nlig", icon: Wallet, href: "/products?category=budget" },
+  { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
+  { name: "B?sta Prestanda", icon: Rocket, href: "/products?category=toptier" },
 ];
 
 export const Hero = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [budgetChoice, setBudgetChoice] = useState("low");
+  const [performanceNeed, setPerformanceNeed] = useState("balanced");
 
   const scrollByCards = (direction: "left" | "right") => {
     const container = carouselRef.current;
@@ -67,17 +71,105 @@ export const Hero = () => {
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Populära kategorier</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {categories.map((category) => (
-              <Link
-                key={category.name}
-                to={category.href}
-                className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
-              >
-                <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
-              </Link>
-            ))}
+            {categories.map((category) =>
+              category.kind === "quiz" ? (
+                <button
+                  key={category.name}
+                  type="button"
+                  onClick={() => setShowQuiz((prev) => !prev)}
+                  className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+                >
+                  <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
+                </button>
+              ) : (
+                <Link
+                  key={category.name}
+                  to={category.href}
+                  className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+                >
+                  <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
+                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
+                </Link>
+              )
+            )}
           </div>
+          {showQuiz && (
+            <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">Hj?lp mig v?lja</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Besvara tv? fr?gor s? f?resl?r vi r?tt kategori direkt.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowQuiz(false)}
+                  className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                >
+                  St?ng
+                </button>
+              </div>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-900 dark:text-gray-100" htmlFor="quiz-budget">
+                    Budget
+                  </label>
+                  <select
+                    id="quiz-budget"
+                    value={budgetChoice}
+                    onChange={(e) => setBudgetChoice(e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
+                  >
+                    <option value="low">Under 6 000 kr</option>
+                    <option value="mid">6 000 - 12 000 kr</option>
+                    <option value="high">12 000+ kr</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-900 dark:text-gray-100" htmlFor="quiz-performance">
+                    Prestanda
+                  </label>
+                  <select
+                    id="quiz-performance"
+                    value={performanceNeed}
+                    onChange={(e) => setPerformanceNeed(e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
+                  >
+                    <option value="balanced">Balans f?r vardag & gaming</option>
+                    <option value="gaming">Gaming med h?ga krav</option>
+                    <option value="max">Maximal prestanda</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-5 flex flex-col sm:flex-row gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const recommendation =
+                      budgetChoice === "low"
+                        ? "budget"
+                        : performanceNeed === "max" || budgetChoice === "high"
+                          ? "toptier"
+                          : "best-selling";
+                    navigate(`/products?category=${recommendation}`);
+                    setShowQuiz(false);
+                  }}
+                  className="bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                >
+                  Visa rekommenderade datorer
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate("/products")}
+                  className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg hover:border-[#11667b] hover:text-[#11667b] transition-colors"
+                >
+                  Se alla produkter
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Featured Products Section */}

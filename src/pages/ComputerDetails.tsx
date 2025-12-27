@@ -1,4 +1,4 @@
-﻿import { useParams, useNavigate } from "react-router-dom";
+﻿import { Link, useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -111,6 +111,14 @@ export default function ComputerDetails() {
   const finalFps = Math.round(baseFps * multiplier);
   const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
   const fpsHigh = Math.round(finalFps * 1.1);
+
+  const comparisonCandidates = COMPUTERS.filter((c) => c.id !== computer.id);
+  const sameTier = comparisonCandidates.filter((c) => c.tier === computer.tier);
+  const comparisonPool = (sameTier.length >= 2
+    ? sameTier
+    : [...sameTier, ...comparisonCandidates.filter((c) => c.tier !== computer.tier)]
+  ).slice(0, 2);
+  const comparisonItems = [computer, ...comparisonPool];
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -340,6 +348,51 @@ export default function ComputerDetails() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+
+        {/* Comparison */}
+        <div className="mt-12">
+          <div className="flex items-center justify-between gap-4 mb-6">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">J?mf?r liknande datorer</h2>
+            <span className="text-sm text-gray-600 dark:text-gray-300">2?3 alternativ med liknande niv?</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {comparisonItems.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 space-y-4"
+              >
+                <div className="h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    {item.price.toLocaleString("sv-SE")} kr
+                  </p>
+                </div>
+                <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1 border-t border-gray-200 dark:border-gray-800 pt-3">
+                  <p>CPU: {item.cpu}</p>
+                  <p>GPU: {item.gpu}</p>
+                  <p>RAM: {item.ram}</p>
+                  <p>
+                    Lagring: {item.storage} {item.storagetype}
+                  </p>
+                </div>
+                <Link
+                  to={`/computer/${item.id}`}
+                  className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
+                    item.id === computer.id
+                      ? "bg-gray-200 text-gray-700 cursor-default dark:bg-gray-800 dark:text-gray-300"
+                      : "bg-yellow-400 text-gray-900 hover:bg-[#11667b] hover:text-white"
+                  }`}
+                >
+                  {item.id === computer.id ? "Aktuell" : "Visa produkt"}
+                </Link>
+              </div>
+            ))}
           </div>
         </div>
 
