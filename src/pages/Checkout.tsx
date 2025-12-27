@@ -12,7 +12,13 @@ export default function Checkout() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(user?.email || "");
-  const [fullName, setFullName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [city, setCity] = useState("");
+  const fullName = `${firstName} ${lastName}`.trim();
 
   if (!user) {
     return (
@@ -55,8 +61,8 @@ export default function Checkout() {
   }
 
   const handleCheckout = async () => {
-    if (!fullName.trim()) {
-      alert("Vänligen fyll i ditt fullständiga namn");
+    if (!email.trim() || !firstName.trim() || !lastName.trim() || !address.trim() || !postalCode.trim() || !city.trim()) {
+      alert("V\u00e4nligen fyll i alla obligatoriska f\u00e4lt.");
       return;
     }
 
@@ -77,6 +83,10 @@ export default function Checkout() {
           })),
           userEmail: email,
           fullName: fullName,
+          phone,
+          address,
+          postalCode,
+          city,
           totalCents: totalPrice,
         }),
       });
@@ -116,7 +126,7 @@ export default function Checkout() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      E-postadress
+                      {"E-postadress"}
                     </label>
                     <input
                       type="email"
@@ -127,30 +137,89 @@ export default function Checkout() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
-                      Fullständigt namn
-                    </label>
-                    <input
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Jan Svensson"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"F\u00f6rnamn"}
+                      </label>
+                      <input
+                        type="text"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="Jan"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"Efternamn"}
+                      </label>
+                      <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        placeholder="Svensson"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      />
+                    </div>
                   </div>
 
-                  <div className="bg-blue-50 border border-blue-200 p-4 rounded">
-                    <p className="text-sm text-gray-600">
-                      <strong>Obs:</strong> Du kommer att omdirigeras till Stripe Checkout för att slutföra betalningen. 
-                      För att testa använder du Stripe's testkortnummer:
-                    </p>
-                    <p className="text-sm font-mono text-gray-900 mt-2">
-                      4242 4242 4242 4242 | 12/25 | 123 | 12345
-                    </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"Mobil nr"}
+                      </label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="07x xxx xx xx"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"Adress"}
+                      </label>
+                      <input
+                        type="text"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="Gatan 1"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"Postnummer"}
+                      </label>
+                      <input
+                        type="text"
+                        value={postalCode}
+                        onChange={(e) => setPostalCode(e.target.value)}
+                        placeholder="123 45"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"Postort"}
+                      </label>
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Stockholm"
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
             </div>
 
             {/* Order Summary */}
@@ -193,7 +262,7 @@ export default function Checkout() {
 
                 <button
                   onClick={handleCheckout}
-                  disabled={loading || !fullName.trim()}
+                  disabled={loading || !email.trim() || !firstName.trim() || !lastName.trim() || !address.trim() || !postalCode.trim() || !city.trim()}
                   className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />

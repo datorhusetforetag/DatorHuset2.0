@@ -685,6 +685,7 @@ export default function CustomBuild() {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>("cpu");
   const [activeBrand, setActiveBrand] = useState("Alla");
   const [searchTerm, setSearchTerm] = useState("");
+  const [shareStatus, setShareStatus] = useState("");
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
     gpu: null,
@@ -695,6 +696,38 @@ export default function CustomBuild() {
     psu: null,
     cooling: null,
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const next: Record<CategoryKey, ComponentItem | null> = {
+      cpu: null,
+      gpu: null,
+      motherboard: null,
+      ram: null,
+      storage: null,
+      case: null,
+      psu: null,
+      cooling: null,
+    };
+    let firstKey: CategoryKey | null = null;
+
+    (Object.keys(COMPONENTS) as CategoryKey[]).forEach((key) => {
+      const id = params.get(key);
+      if (!id) return;
+      const match = COMPONENTS[key].find((item) => item.id === id);
+      if (match) {
+        next[key] = match;
+        if (!firstKey) {
+          firstKey = key;
+        }
+      }
+    });
+
+    setSelected(next);
+    if (firstKey) {
+      setActiveCategory(firstKey);
+    }
+  }, []);
 
   useEffect(() => {
     setActiveBrand("Alla");
@@ -719,6 +752,27 @@ export default function CustomBuild() {
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
+
+  const handleShareBuild = async () => {
+    const params = new URLSearchParams();
+    (Object.entries(selected) as [CategoryKey, ComponentItem | null][]).forEach(([key, item]) => {
+      if (item) {
+        params.set(key, item.id);
+      }
+    });
+    const query = params.toString();
+    const shareUrl = `${window.location.origin}/custom-bygg${query ? `?${query}` : ""}`;
+
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setShareStatus("L\u00e4nk kopierad till urklipp.");
+    } catch (error) {
+      window.prompt("Kopiera l\u00e4nken:", shareUrl);
+      setShareStatus("L\u00e4nk redo att kopieras.");
+    } finally {
+      setTimeout(() => setShareStatus(""), 3000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -975,6 +1029,17 @@ export default function CustomBuild() {
                   >
                     Skicka offertförfrågan
                   </button>
+                  <button
+                    type="button"
+                    onClick={handleShareBuild}
+                    className="mt-3 w-full border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
+                  >
+                    Spara build
+                  </button>
+                  {shareStatus ? (
+                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{shareStatus}</p>
+                  ) : null}
+
                 </div>
 
                 <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">

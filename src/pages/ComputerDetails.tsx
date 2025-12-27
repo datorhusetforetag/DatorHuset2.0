@@ -42,6 +42,110 @@ const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
 
 const gameList = Object.keys(GAME_FPS);
 
+const TOP_SELLER_REVIEWS: Record<
+  string,
+  {
+    average: number;
+    total: number;
+    breakdown: { stars: number; count: number }[];
+    reviews: { name: string; rating: number; text: string; date: string }[];
+  }
+> = {
+  "2": {
+    average: 4.6,
+    total: 287,
+    breakdown: [
+      { stars: 5, count: 188 },
+      { stars: 4, count: 72 },
+      { stars: 3, count: 18 },
+      { stars: 2, count: 6 },
+      { stars: 1, count: 3 },
+    ],
+    reviews: [
+      {
+        name: "Emma L.",
+        rating: 5,
+        text: "Otrolig prestanda i spel och streaming. Tyst och stabil.",
+        date: "2025-11-18",
+      },
+      {
+        name: "Johan M.",
+        rating: 4,
+        text: "Snabb leverans och snyggt bygge. Rekommenderas.",
+        date: "2025-10-29",
+      },
+      {
+        name: "Sara K.",
+        rating: 5,
+        text: "Perfekt balans mellan pris och prestanda.",
+        date: "2025-10-12",
+      },
+    ],
+  },
+  "4": {
+    average: 4.9,
+    total: 834,
+    breakdown: [
+      { stars: 5, count: 620 },
+      { stars: 4, count: 150 },
+      { stars: 3, count: 40 },
+      { stars: 2, count: 14 },
+      { stars: 1, count: 10 },
+    ],
+    reviews: [
+      {
+        name: "Oskar R.",
+        rating: 5,
+        text: "B\u00e4sta datorn jag haft. Maxar allt i 4K.",
+        date: "2025-11-22",
+      },
+      {
+        name: "Lina S.",
+        rating: 5,
+        text: "K\u00e4nns riktigt premium. Byggkvaliteten \u00e4r topp.",
+        date: "2025-11-03",
+      },
+      {
+        name: "Mahmoud A.",
+        rating: 4,
+        text: "Snabb och kraftfull, men ville ha fler USB-portar.",
+        date: "2025-10-08",
+      },
+    ],
+  },
+  "7": {
+    average: 4.7,
+    total: 423,
+    breakdown: [
+      { stars: 5, count: 280 },
+      { stars: 4, count: 105 },
+      { stars: 3, count: 26 },
+      { stars: 2, count: 8 },
+      { stars: 1, count: 4 },
+    ],
+    reviews: [
+      {
+        name: "Anton P.",
+        rating: 5,
+        text: "Stabil FPS i alla spel jag k\u00f6r. Supern\u00f6jd.",
+        date: "2025-11-09",
+      },
+      {
+        name: "Felicia T.",
+        rating: 4,
+        text: "Snyggt bygge och bra kylning. Lite h\u00f6g leveranstid.",
+        date: "2025-10-20",
+      },
+      {
+        name: "Daniel N.",
+        rating: 5,
+        text: "Perfekt f\u00f6r 1440p. Rekommenderas varmt.",
+        date: "2025-10-02",
+      },
+    ],
+  },
+};
+
 export default function ComputerDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -111,6 +215,20 @@ export default function ComputerDetails() {
   const finalFps = Math.round(baseFps * multiplier);
   const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
   const fpsHigh = Math.round(finalFps * 1.1);
+  const reviewData = computer ? TOP_SELLER_REVIEWS[computer.id] : undefined;
+
+  const renderStars = (rating: number) => (
+    <div className="flex items-center gap-1">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <span
+          key={index}
+          className={index < rating ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}
+        >
+          {"\u2605"}
+        </span>
+      ))}
+    </div>
+  );
 
   const comparisonCandidates = COMPUTERS.filter((c) => c.id !== computer.id);
   const sameTier = comparisonCandidates.filter((c) => c.tier === computer.tier);
@@ -426,6 +544,60 @@ export default function ComputerDetails() {
             ))}
           </div>
         </div>
+
+        {reviewData ? (
+          <div className="mt-12">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+              <div className="lg:w-1/3">
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{"Kundomd\u00f6men"}</h2>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                  {"Recensioner fr\u00e5n kunder som k\u00f6pt den h\u00e4r modellen."}
+                </p>
+                <div className="mt-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
+                  <div className="text-3xl font-bold text-gray-900 dark:text-white">{reviewData.average.toFixed(1)}</div>
+                  <div className="mt-2">{renderStars(Math.round(reviewData.average))}</div>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+                    {reviewData.total} {"omd\u00f6men"}
+                  </p>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {reviewData.breakdown.map((row) => {
+                    const percent = Math.round((row.count / reviewData.total) * 100);
+                    return (
+                      <div key={row.stars} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
+                        <span className="w-12">{row.stars} {"\u2605"}</span>
+                        <div className="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-800">
+                          <div
+                            className="h-full rounded-full bg-yellow-400"
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                        <span className="w-10 text-right">{row.count}</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+              <div className="lg:w-2/3 space-y-4">
+                {reviewData.reviews.map((review) => (
+                  <div
+                    key={`${review.name}-${review.date}`}
+                    className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-gray-900 dark:text-white">{review.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{review.date}</p>
+                      </div>
+                      {renderStars(review.rating)}
+                    </div>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 mt-3">{review.text}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : null}
 
         {/* Related */}
         <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
