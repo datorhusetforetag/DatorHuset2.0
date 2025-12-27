@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
+const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
 
 type BannerSticker = {
   label: string;
@@ -126,12 +127,49 @@ export default function Products() {
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
 
   useEffect(() => {
+    const stored = localStorage.getItem(FILTER_STORAGE_KEY);
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored) as {
+        priceRange?: number[];
+        selectedGPUs?: string[];
+        selectedCPUs?: string[];
+        selectedTiers?: string[];
+      };
+      if (Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) {
+        setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
+      }
+      if (Array.isArray(parsed.selectedGPUs)) {
+        setSelectedGPUs(parsed.selectedGPUs);
+      }
+      if (Array.isArray(parsed.selectedCPUs)) {
+        setSelectedCPUs(parsed.selectedCPUs);
+      }
+      if (Array.isArray(parsed.selectedTiers)) {
+        setSelectedTiers(parsed.selectedTiers);
+      }
+    } catch (error) {
+      console.warn("Failed to read saved filters", error);
+    }
+  }, []);
+
+  useEffect(() => {
     if (!activeCategory || hasAppliedCategory.current) return;
     if (activeCategory === "budget") {
       setPriceRange([0, 6000]);
     }
     hasAppliedCategory.current = true;
   }, [activeCategory]);
+
+  useEffect(() => {
+    const payload = {
+      priceRange,
+      selectedGPUs,
+      selectedCPUs,
+      selectedTiers,
+    };
+    localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(payload));
+  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers]);
 
   const gpus = Array.from(new Set(COMPUTERS.map((c) => c.gpu)));
   const cpus = Array.from(new Set(COMPUTERS.map((c) => c.cpu)));

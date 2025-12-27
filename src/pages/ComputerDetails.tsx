@@ -273,6 +273,37 @@ export default function ComputerDetails() {
           </div>
         </div>
 
+        {/* Warranty */}
+        <div className="mt-10 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900 dark:text-white">2 års garanti</p>
+              <p>Alla datorer levereras med garanti på komponenter och montering.</p>
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp</p>
+              <p>Testa i lugn och ro. Returnera om den inte passar dina behov.</p>
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900 dark:text-white">Trygg support</p>
+              <p>Vi hjälper dig med felsökning och uppgraderingar när du vill.</p>
+            </div>
+            <div className="space-y-2">
+              <p className="font-semibold text-gray-900 dark:text-white">Snabb återkoppling</p>
+              <p>Kontakta oss så återkommer vi med nästa steg och tidsplan.</p>
+            </div>
+          </div>
+          <div className="mt-4">
+            <Link
+              to="/kundservice"
+              className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-5 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+            >
+              Kontakta kundservice
+            </Link>
+          </div>
+        </div>
+
         {/* FPS estimator */}
         <div className="mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 lg:p-8 shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -342,9 +373,9 @@ export default function ComputerDetails() {
                   {selectedGame}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedResolution} • {selectedPreset}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedResolution} {"\u00d7"} {selectedPreset}</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{fpsLow} - {fpsHigh} FPS</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Beräknat med vald konfiguration</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">{"Ber\u00e4knat med vald konfiguration"}</p>
                 </div>
               </div>
             </div>
@@ -355,8 +386,8 @@ export default function ComputerDetails() {
         {/* Comparison */}
         <div className="mt-12">
           <div className="flex items-center justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">J?mf?r liknande datorer</h2>
-            <span className="text-sm text-gray-600 dark:text-gray-300">2?3 alternativ med liknande niv?</span>
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{"J\u00e4mf\u00f6r liknande datorer"}</h2>
+            <span className="text-sm text-gray-600 dark:text-gray-300">{"2\u20133 alternativ med liknande niv\u00e5"}</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {comparisonItems.map((item) => (
@@ -398,7 +429,7 @@ export default function ComputerDetails() {
 
         {/* Related */}
         <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Andra som tittat på samma produkt tittar även på:</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{"Andra som tittat p\u00e5 samma produkt tittar \u00e4ven p\u00e5:"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {COMPUTERS.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
               <button

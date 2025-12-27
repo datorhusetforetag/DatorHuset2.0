@@ -111,7 +111,7 @@ export default function ServiceRepair() {
 
         <section className="container mx-auto px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 items-start">
-            <div className="lg:mt-8">
+            <div className="lg:self-center">
               <h2 className="text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Vårt flöde är byggt för tydlighet och snabbhet. Du vet vad som sker och när.

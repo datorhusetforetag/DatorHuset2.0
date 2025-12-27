@@ -1,4 +1,4 @@
-﻿import { ChevronLeft, ChevronRight, Hammer, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
+import { ChevronLeft, ChevronRight, Hammer, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { COMPUTERS } from "@/data/computers";
@@ -7,12 +7,12 @@ const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
-  { name: "Hj?lp mig v?lja", icon: HelpCircle, kind: "quiz" as const },
+  { name: "Hj\u00e4lp mig v\u00e4lja", icon: HelpCircle, kind: "quiz" as const },
   { name: "Alla produkter", icon: Monitor, href: "/products" },
   { name: "Paket", icon: Package, href: "/products?category=paket" },
-  { name: "Budgetv?nlig", icon: Wallet, href: "/products?category=budget" },
+  { name: "Budgetv\u00e4nlig", icon: Wallet, href: "/products?category=budget" },
   { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
-  { name: "B?sta Prestanda", icon: Rocket, href: "/products?category=toptier" },
+  { name: "B\u00e4sta Prestanda", icon: Rocket, href: "/products?category=toptier" },
 ];
 
 export const Hero = () => {
@@ -37,14 +37,12 @@ export const Hero = () => {
           <div className="bg-yellow-400 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
               <h2 className="text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
-              <p className="text-lg text-gray-900 font-semibold mb-6 flex items-center gap-2">
-                Elektronik för företag <ChevronRight className="inline w-5 h-5" />
-              </p>
+              <p className="text-lg text-gray-900 font-semibold mb-6 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-6">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">På utvalda gamingdatorer hela veckan</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">{"P\u00e5 utvalda gamingdatorer hela veckan"}</p>
               </div>
               <img
                 src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80"
@@ -57,9 +55,9 @@ export const Hero = () => {
 
           <div className="bg-gray-900 rounded-lg p-8 flex flex-col justify-between min-h-64">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">GE GLÄDJE</h2>
-              <p className="text-white text-sm mb-4">Få chans till en tackgåva!</p>
-              <p className="text-yellow-400 text-sm font-semibold">Allt stöd går till Min Stora Dag</p>
+              <h2 className="text-3xl font-bold text-white mb-2">{"GE GL\u00c4DJE"}</h2>
+              <p className="text-white text-sm mb-4">{"F\u00e5 chans till en tackg\u00e5va!"}</p>
+              <p className="text-yellow-400 text-sm font-semibold">{"Allt st\u00f6d g\u00e5r till Min Stora Dag"}</p>
             </div>
             <div className="flex gap-2">
               <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Julklapp</span>
@@ -69,7 +67,7 @@ export const Hero = () => {
 
         {/* Popular categories section */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Populära kategorier</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Popul\u00e4ra kategorier"}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {categories.map((category) =>
               category.kind === "quiz" ? (
@@ -98,18 +96,12 @@ export const Hero = () => {
             <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">Hj?lp mig v?lja</h4>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{"Hj\u00e4lp mig v\u00e4lja"}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Besvara tv? fr?gor s? f?resl?r vi r?tt kategori direkt.
+                    {"Besvara tv\u00e5 fr\u00e5gor s\u00e5 f\u00f6resl\u00e5r vi r\u00e4tt kategori direkt."}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setShowQuiz(false)}
-                  className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                >
-                  St?ng
-                </button>
+                <button type="button" onClick={() => setShowQuiz(false)} className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">{"St\u00e4ng"}</button>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
@@ -137,8 +129,8 @@ export const Hero = () => {
                     onChange={(e) => setPerformanceNeed(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                   >
-                    <option value="balanced">Balans f?r vardag & gaming</option>
-                    <option value="gaming">Gaming med h?ga krav</option>
+                    <option value="balanced">{"Balans f\u00f6r vardag & gaming"}</option>
+                    <option value="gaming">{"Gaming med h\u00f6ga krav"}</option>
                     <option value="max">Maximal prestanda</option>
                   </select>
                 </div>
