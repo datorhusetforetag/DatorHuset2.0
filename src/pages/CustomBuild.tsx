@@ -23,6 +23,8 @@ type ComponentItem = {
   specs: string[];
   image?: string;
   highlight?: string;
+  socket?: "AM4" | "AM5" | "LGA1700" | "LGA1200";
+  ramType?: "DDR4" | "DDR5";
 };
 
 type CategoryConfig = {
@@ -84,6 +86,12 @@ const CATEGORY_LIST: CategoryConfig[] = [
 ];
 
 const FALLBACK_COMPONENT_IMAGE = "https://placehold.co/360x240?text=Komponent";
+const SOCKET_RAM_TYPE: Record<string, "DDR4" | "DDR5"> = {
+  AM4: "DDR4",
+  AM5: "DDR5",
+  LGA1700: "DDR5",
+  LGA1200: "DDR4",
+};
 const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
   cpu: { src: "https://placehold.co/360x240?text=CPU", alt: "Processor" },
   gpu: { src: "https://placehold.co/360x240?text=GPU", alt: "Grafikkort" },
@@ -102,6 +110,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Ryzen 5 7600",
       brand: "AMD",
       price: 2599,
+      socket: "AM5",
       specs: ["6 kärnor", "12 trådar", "5.1 GHz", "AM5"],
     },
     {
@@ -109,6 +118,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Ryzen 7 7800X3D",
       brand: "AMD",
       price: 4990,
+      socket: "AM5",
       specs: ["8 kärnor", "3D V-Cache", "5.0 GHz", "AM5"],
       highlight: "Gaming-favorit",
     },
@@ -117,6 +127,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Ryzen 9 7950X3D",
       brand: "AMD",
       price: 7990,
+      socket: "AM5",
       specs: ["16 kärnor", "3D V-Cache", "5.7 GHz", "AM5"],
     },
     {
@@ -124,6 +135,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Core i5-13400F",
       brand: "Intel",
       price: 2290,
+      socket: "LGA1700",
       specs: ["10 kärnor", "4.6 GHz", "LGA1700"],
     },
     {
@@ -131,6 +143,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Core i5-13600K",
       brand: "Intel",
       price: 3490,
+      socket: "LGA1700",
       specs: ["14 kärnor", "5.1 GHz", "LGA1700"],
     },
     {
@@ -138,6 +151,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Core i7-13700K",
       brand: "Intel",
       price: 4690,
+      socket: "LGA1700",
       specs: ["16 kärnor", "5.4 GHz", "LGA1700"],
     },
     {
@@ -145,6 +159,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Core i7-14700K",
       brand: "Intel",
       price: 5290,
+      socket: "LGA1700",
       specs: ["20 kärnor", "5.6 GHz", "LGA1700"],
       highlight: "Nyhet",
     },
@@ -153,6 +168,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Core i9-13900K",
       brand: "Intel",
       price: 6490,
+      socket: "LGA1700",
       specs: ["24 kärnor", "5.8 GHz", "LGA1700"],
     },
     {
@@ -160,6 +176,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Core i9-14900K",
       brand: "Intel",
       price: 7190,
+      socket: "LGA1700",
       specs: ["24 kärnor", "6.0 GHz", "LGA1700"],
     },
     {
@@ -167,6 +184,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Ryzen 7 7700",
       brand: "AMD",
       price: 3290,
+      socket: "AM5",
       specs: ["8 kärnor", "5.3 GHz", "AM5"],
     },
   ],
@@ -250,70 +268,80 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "ASUS ROG Strix B650-E",
       brand: "AMD",
       price: 3290,
-      specs: ["ATX", "PCIe 5.0", "Wi-Fi 6E"],
+      socket: "AM5",
+      specs: ["AM5", "ATX", "PCIe 5.0", "Wi-Fi 6E"],
     },
     {
       id: "mb-2",
       name: "MSI MAG B650 Tomahawk",
       brand: "AMD",
       price: 2590,
-      specs: ["ATX", "DDR5", "2.5G LAN"],
+      socket: "AM5",
+      specs: ["AM5", "ATX", "DDR5", "2.5G LAN"],
     },
     {
       id: "mb-3",
       name: "Gigabyte B650 Aorus Elite",
       brand: "AMD",
       price: 2490,
-      specs: ["ATX", "PCIe 4.0", "M.2"],
+      socket: "AM5",
+      specs: ["AM5", "ATX", "PCIe 4.0", "M.2"],
     },
     {
       id: "mb-4",
       name: "ASRock X670E Steel Legend",
       brand: "AMD",
       price: 3790,
-      specs: ["ATX", "PCIe 5.0", "USB-C"],
+      socket: "AM5",
+      specs: ["AM5", "ATX", "PCIe 5.0", "USB-C"],
     },
     {
       id: "mb-5",
       name: "ASUS TUF Gaming Z790-Plus",
       brand: "Intel",
       price: 3390,
-      specs: ["ATX", "DDR5", "Wi-Fi"],
+      socket: "LGA1700",
+      specs: ["LGA1700", "ATX", "DDR5", "Wi-Fi"],
     },
     {
       id: "mb-6",
       name: "MSI MPG Z790 Edge",
       brand: "Intel",
       price: 3990,
-      specs: ["ATX", "PCIe 5.0", "Wi-Fi 6E"],
+      socket: "LGA1700",
+      specs: ["LGA1700", "ATX", "PCIe 5.0", "Wi-Fi 6E"],
     },
     {
       id: "mb-7",
       name: "Gigabyte Z790 Aorus Elite",
       brand: "Intel",
       price: 3190,
-      specs: ["ATX", "DDR5", "2.5G LAN"],
+      socket: "LGA1700",
+      specs: ["LGA1700", "ATX", "DDR5", "2.5G LAN"],
     },
     {
       id: "mb-8",
       name: "ASRock Z790 Pro RS",
       brand: "Intel",
       price: 2590,
-      specs: ["ATX", "PCIe 4.0", "M.2"],
+      socket: "LGA1700",
+      specs: ["LGA1700", "ATX", "PCIe 4.0", "M.2"],
     },
     {
       id: "mb-9",
       name: "MSI B760M Mortar",
       brand: "Intel",
       price: 2090,
-      specs: ["mATX", "DDR5", "PCIe 4.0"],
+      socket: "LGA1700",
+      specs: ["LGA1700", "mATX", "DDR5", "PCIe 4.0"],
     },
     {
       id: "mb-10",
       name: "ASUS Prime B650M-A",
       brand: "AMD",
       price: 1890,
-      specs: ["mATX", "DDR5", "HDMI"],
+      socket: "AM5",
+      specs: ["AM5", "mATX", "DDR5", "HDMI"],
     },
   ],
   ram: [
@@ -322,6 +350,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair Vengeance 32GB",
       brand: "Corsair",
       price: 1290,
+      ramType: "DDR5",
       specs: ["DDR5", "6000 MHz", "CL36"],
     },
     {
@@ -329,6 +358,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "G.Skill Trident Z5 32GB",
       brand: "G.Skill",
       price: 1490,
+      ramType: "DDR5",
       specs: ["DDR5", "6400 MHz", "CL32"],
     },
     {
@@ -336,6 +366,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Kingston Fury Beast 32GB",
       brand: "Kingston",
       price: 1190,
+      ramType: "DDR5",
       specs: ["DDR5", "6000 MHz", "CL40"],
     },
     {
@@ -343,6 +374,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Crucial Pro 32GB",
       brand: "Crucial",
       price: 1090,
+      ramType: "DDR5",
       specs: ["DDR5", "5600 MHz", "CL46"],
     },
     {
@@ -350,6 +382,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair Dominator 64GB",
       brand: "Corsair",
       price: 2690,
+      ramType: "DDR5",
       specs: ["DDR5", "6000 MHz", "CL30"],
     },
     {
@@ -357,6 +390,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "G.Skill Ripjaws 32GB",
       brand: "G.Skill",
       price: 990,
+      ramType: "DDR4",
       specs: ["DDR4", "3600 MHz", "CL16"],
     },
     {
@@ -364,6 +398,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Kingston Fury Renegade 32GB",
       brand: "Kingston",
       price: 1390,
+      ramType: "DDR5",
       specs: ["DDR5", "6400 MHz", "CL32"],
     },
     {
@@ -371,6 +406,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Crucial Pro 64GB",
       brand: "Crucial",
       price: 2190,
+      ramType: "DDR5",
       specs: ["DDR5", "5600 MHz", "CL46"],
     },
     {
@@ -378,6 +414,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "TeamGroup T-Force Delta 32GB",
       brand: "TeamGroup",
       price: 1290,
+      ramType: "DDR5",
       specs: ["DDR5", "6000 MHz", "RGB"],
     },
     {
@@ -385,6 +422,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "ADATA XPG Lancer 32GB",
       brand: "ADATA",
       price: 1190,
+      ramType: "DDR5",
       specs: ["DDR5", "6000 MHz", "RGB"],
     },
   ],
@@ -734,6 +772,31 @@ export default function CustomBuild() {
     setSearchTerm("");
   }, [activeCategory]);
 
+  useEffect(() => {
+    const socket = selected.motherboard?.socket;
+    if (!socket) return;
+    const allowedRamType = SOCKET_RAM_TYPE[socket];
+
+    setSelected((prev) => {
+      const nextCpu =
+        prev.cpu && prev.cpu.socket && prev.cpu.socket !== socket ? null : prev.cpu;
+      const nextRam =
+        prev.ram && prev.ram.ramType && allowedRamType && prev.ram.ramType !== allowedRamType
+          ? null
+          : prev.ram;
+
+      if (nextCpu === prev.cpu && nextRam === prev.ram) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        cpu: nextCpu,
+        ram: nextRam,
+      };
+    });
+  }, [selected.motherboard]);
+
   const activeConfig = CATEGORY_LIST.find((category) => category.key === activeCategory);
   const items = COMPONENTS[activeCategory];
 
@@ -746,9 +809,15 @@ export default function CustomBuild() {
     return items.filter((item) => {
       const matchesBrand = activeBrand === "Alla" || item.brand === activeBrand;
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesBrand && matchesSearch;
+      const selectedSocket = selected.motherboard?.socket;
+      const allowedRamType = selectedSocket ? SOCKET_RAM_TYPE[selectedSocket] : null;
+      const matchesSocket =
+        activeCategory !== "cpu" || !selectedSocket ? true : item.socket === selectedSocket;
+      const matchesRamType =
+        activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
+      return matchesBrand && matchesSearch && matchesSocket && matchesRamType;
     });
-  }, [items, activeBrand, searchTerm]);
+  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard]);
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
