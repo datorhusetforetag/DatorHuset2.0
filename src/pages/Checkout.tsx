@@ -20,13 +20,13 @@ export default function Checkout() {
   const [city, setCity] = useState("");
   const fullName = `${firstName} ${lastName}`.trim();
 
-  if (!user) {
+    if (!user) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <div className="flex-1 pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Du måste logga in för att checka ut</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Du måste logga in för att checka ut"}</h1>
             <button
               onClick={() => navigate("/")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
@@ -40,18 +40,18 @@ export default function Checkout() {
     );
   }
 
-  if (items.length === 0) {
+    if (items.length === 0) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <div className="flex-1 pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn är tom</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Din kundvagn är tom"}</h1>
             <button
               onClick={() => navigate("/products")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
-              Fortsätt handla
+              {"Fortsätt handla"}
             </button>
           </div>
         </div>
@@ -220,7 +220,6 @@ export default function Checkout() {
                 </div>
               </div>
             </div>
-            </div>
 
             {/* Order Summary */}
             <div>
@@ -266,7 +265,7 @@ export default function Checkout() {
                   className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  {loading ? "Bearbetar..." : "Gå till betalning"}
+                  {loading ? "Bearbetar..." : "G\u00e5 till betalning"}
                 </button>
 
                 <button
