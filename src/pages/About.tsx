@@ -9,7 +9,7 @@ export default function About() {
       <Navbar />
       <main className="flex-1">
         <section className="bg-yellow-400">
-          <div className="container mx-auto px-4 pt-24 pb-12">
+          <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
             <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Om oss</p>
             <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">DatorHuset UF</h1>
             <p className="text-gray-800 mt-4 max-w-2xl">

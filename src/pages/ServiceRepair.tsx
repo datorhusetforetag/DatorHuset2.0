@@ -61,9 +61,9 @@ export default function ServiceRepair() {
       <Navbar />
       <main className="flex-1">
         <section className="bg-yellow-400">
-          <div className="container mx-auto px-4 pt-24 pb-12">
+          <div className="container mx-auto px-4 pt-16 sm:pt-20 lg:pt-24 pb-10 sm:pb-12">
             <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Service & reparation</p>
-            <h1 className="text-4xl lg:text-5xl font-bold mt-4 text-gray-900">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 text-gray-900">
               Vi reparerar, uppgraderar och optimerar din dator
             </h1>
             <p className="text-gray-800 mt-4 max-w-2xl">
@@ -88,7 +88,7 @@ export default function ServiceRepair() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12">
+        <section className="container mx-auto px-4 py-10 sm:py-12">
           <div className="flex flex-col gap-4 mb-8">
             <h2 className="text-2xl font-bold">Vad vi hjälper till med</h2>
             <p className="text-gray-600 dark:text-gray-300">
@@ -109,10 +109,10 @@ export default function ServiceRepair() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12">
+        <section className="container mx-auto px-4 py-10 sm:py-12">
           <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 items-start">
             <div className="lg:self-center">
-              <h2 className="text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Vårt flöde är byggt för tydlighet och snabbhet. Du vet vad som sker och när.
               </p>
@@ -133,11 +133,11 @@ export default function ServiceRepair() {
             </div>
 
             <div>
-              <h2 className="text-3xl font-bold mb-3">Beskriv ditt problem</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Beskriv ditt problem</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Fyll i formuläret så kan vi snabbare hjälpa dig rätt. Ju mer detaljer, desto bättre offert.
               </p>
-              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 space-y-4">
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-6 space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <label className="text-sm font-semibold" htmlFor="service-name">Namn</label>

@@ -24,7 +24,7 @@ export default function Checkout() {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 container mx-auto px-4 py-12">
+        <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Du måste logga in för att checka ut"}</h1>
             <button
@@ -44,7 +44,7 @@ export default function Checkout() {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 container mx-auto px-4 py-12">
+        <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Din kundvagn är tom"}</h1>
             <button
@@ -113,9 +113,9 @@ export default function Checkout() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
-      <div className="flex-1 pt-24">
+      <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Kassa</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Kassa</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
@@ -223,7 +223,7 @@ export default function Checkout() {
 
             {/* Order Summary */}
             <div>
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-24">
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 lg:sticky lg:top-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Ordersammanfattning</h2>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">

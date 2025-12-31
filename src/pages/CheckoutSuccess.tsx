@@ -24,7 +24,7 @@ export default function CheckoutSuccess() {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 flex items-center justify-center">
+        <div className="flex-1 pt-16 sm:pt-24 flex items-center justify-center">
           <div className="text-center">
             <Loader className="w-12 h-12 text-yellow-400 animate-spin mx-auto mb-4" />
             <p className="text-gray-600">Bearbetar din betalning...</p>
@@ -38,7 +38,7 @@ export default function CheckoutSuccess() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
-      <div className="flex-1 pt-24">
+      <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-lg border border-green-200">
             <div className="flex flex-col items-center text-center mb-8">

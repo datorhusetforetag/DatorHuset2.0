@@ -137,7 +137,7 @@ export function LoginButton() {
       if (!value) resetForm();
     }}>
       <SheetTrigger asChild>
-        <button className="px-3 py-1.5 text-sm sm:px-4 sm:py-2 sm:text-base rounded-lg bg-yellow-400 text-gray-900 font-semibold leading-none shadow-sm hover:bg-[#11667b] hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2">
+        <button className="px-2.5 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm md:px-4 md:py-2 md:text-base rounded-lg bg-yellow-400 text-gray-900 font-semibold leading-none shadow-sm hover:bg-[#11667b] hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2">
           Logga in
         </button>
       </SheetTrigger>

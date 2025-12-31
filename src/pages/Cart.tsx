@@ -12,7 +12,7 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 flex items-center justify-center">
+        <div className="flex-1 pt-16 sm:pt-24 flex items-center justify-center">
           <p className="text-gray-600">Laddar kundvagn...</p>
         </div>
         <Footer />
@@ -24,7 +24,7 @@ export default function Cart() {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
-        <div className="flex-1 pt-24 container mx-auto px-4 py-12">
+        <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn är tom</h1>
             <p className="text-gray-600 mb-8">Lägg till produkter för att komma igång</p>
@@ -44,9 +44,9 @@ export default function Cart() {
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
-      <div className="flex-1 pt-24">
+      <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Kundvagn ({items.length} artiklar)</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Kundvagn ({items.length} artiklar)</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Cart Items */}
@@ -55,10 +55,10 @@ export default function Cart() {
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+                    className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
                   >
                     {/* Product image placeholder */}
-                    <div className="w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded flex items-center justify-center flex-shrink-0">
+                    <div className="w-full sm:w-24 h-32 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded flex items-center justify-center flex-shrink-0">
                       <span className="text-3xl">🖥️</span>
                     </div>
 
@@ -92,8 +92,8 @@ export default function Cart() {
                     </div>
 
                     {/* Price & Remove */}
-                    <div className="text-right">
-                      <p className="font-bold text-gray-900 mb-4">
+                    <div className="flex items-center justify-between sm:flex-col sm:items-end sm:justify-start">
+                      <p className="font-bold text-gray-900 sm:mb-4">
                         {((item.product?.price_cents || 0) * item.quantity) / 100} kr
                       </p>
                       <button
@@ -111,7 +111,7 @@ export default function Cart() {
 
             {/* Order Summary */}
             <div>
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 sticky top-24">
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 lg:sticky lg:top-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Ordersammanfattning</h2>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">

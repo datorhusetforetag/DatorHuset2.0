@@ -239,13 +239,11 @@ export default function Products() {
 
   const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
   const hasMultipleImages = banner.images.length > 1;
-  const imageAspect = hasMultipleImages
-    ? "h-28 sm:h-auto sm:aspect-[4/3]"
-    : "h-36 sm:h-auto sm:aspect-[16/9]";
+  const imageAspect = hasMultipleImages ? "aspect-[16/10] sm:aspect-[16/9]" : "aspect-[16/9]";
   const imageGridClass = hasMultipleImages
-    ? "flex gap-3 overflow-x-auto no-scrollbar sm:grid sm:gap-4 sm:overflow-visible sm:grid-cols-2 lg:grid-cols-3"
-    : "grid grid-cols-1";
-  const imageItemClass = hasMultipleImages ? "min-w-[140px] sm:min-w-0" : "";
+    ? "grid grid-cols-3 gap-2 sm:gap-3 w-full max-w-[520px] ml-auto"
+    : "grid grid-cols-1 w-full max-w-[520px] ml-auto";
+  const imageItemClass = "w-full";
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
@@ -253,16 +251,16 @@ export default function Products() {
       <main className="flex-1">
         <section className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
           <div className="container mx-auto">
-            <div className="rounded-3xl border border-gray-200 dark:border-[#1a2636] bg-[#facc15]">
-              <div className="grid gap-6 sm:gap-8 lg:gap-10 lg:grid-cols-[1.05fr_0.95fr] p-5 sm:p-6 lg:p-10 items-center">
-                <div>
+            <div className="rounded-3xl border border-gray-200 dark:border-[#1a2636] bg-[#facc15] overflow-hidden">
+              <div className="grid gap-6 sm:gap-8 lg:gap-10 md:grid-cols-[1.25fr_0.75fr] lg:grid-cols-[1.35fr_0.65fr] p-5 sm:p-6 lg:p-10 items-start">
+                <div className="min-w-0">
                   <p className="text-xs uppercase tracking-[0.35em] text-gray-900/70">
                     {banner.eyebrow}
                   </p>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-gray-900">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-gray-900 break-words">
                     {banner.title}
                   </h1>
-                  <p className="text-sm md:text-base text-gray-800 mt-4 max-w-xl">
+                  <p className="text-sm md:text-base text-gray-800 mt-4 max-w-xl break-words">
                     {banner.description}
                   </p>
                   {banner.variant === "bundle" ? (
@@ -279,7 +277,7 @@ export default function Products() {
                     </div>
                   ) : null}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className={imageGridClass}>
                     {banner.images.map((image, index) => (
                       <div
