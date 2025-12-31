@@ -22,6 +22,7 @@ type BannerConfig = {
   stickers?: BannerSticker[];
   background: string;
   variant?: "bundle";
+  imageSize?: "normal" | "large";
 };
 
 const DEFAULT_BANNER: BannerConfig = {
@@ -35,6 +36,7 @@ const DEFAULT_BANNER: BannerConfig = {
   ],
   background:
     "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+  imageSize: "large",
 };
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
@@ -107,6 +109,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     ],
     background:
       "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+    imageSize: "large",
   },
 };
 
@@ -239,10 +242,14 @@ export default function Products() {
 
   const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
   const hasMultipleImages = banner.images.length > 1;
+  const bannerImageSize = banner.imageSize ?? "normal";
+  const imageMaxWidth =
+    bannerImageSize === "large" ? "sm:max-w-[600px] lg:max-w-[640px]" : "sm:max-w-[520px] lg:max-w-[560px]";
   const imageAspect = hasMultipleImages ? "aspect-[16/10] sm:aspect-[16/9]" : "aspect-[16/9]";
+  const imageGridColumns = banner.images.length >= 3 ? "grid-cols-3" : "grid-cols-2";
   const imageGridClass = hasMultipleImages
-    ? "grid grid-cols-3 gap-2 sm:gap-3 w-full max-w-[520px] ml-auto"
-    : "grid grid-cols-1 w-full max-w-[520px] ml-auto";
+    ? `grid ${imageGridColumns} gap-2 sm:gap-3 w-full max-w-full ${imageMaxWidth} ml-auto`
+    : `grid grid-cols-1 w-full max-w-full ${imageMaxWidth} ml-auto`;
   const imageItemClass = "w-full";
 
   return (
