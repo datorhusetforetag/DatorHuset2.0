@@ -34,12 +34,12 @@ export const Hero = () => {
       <div className="container mx-auto px-4 py-6 sm:py-8">
         {/* Hero Banners */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
-          <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[260px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
+          <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[230px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
-              <p className="text-sm sm:text-base text-gray-900 font-semibold mb-6 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Veckans Deal</h2>
+              <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
-            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-24 sm:h-28 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
+            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-20 sm:h-28 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
                 <p className="text-xs text-gray-600 dark:text-gray-300">{"P\u00e5 utvalda gamingdatorer hela veckan"}</p>
@@ -47,13 +47,13 @@ export const Hero = () => {
               <img
                 src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80"
                 alt="Veckans deal"
-                className="h-full w-24 sm:w-32 md:w-40 object-cover rounded-lg shadow"
+                className="h-full w-20 sm:w-32 md:w-40 object-cover rounded-lg shadow"
                 loading="lazy"
               />
             </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[260px] sm:min-h-[320px]">
+          <div className="bg-gray-900 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[220px] sm:min-h-[320px]">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{"GE GL\u00c4DJE"}</h2>
               <p className="text-white text-sm mb-4">{"F\u00e5 chans till en tackg\u00e5va!"}</p>

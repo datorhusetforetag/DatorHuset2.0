@@ -125,6 +125,7 @@ export default function Products() {
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
@@ -237,16 +238,14 @@ export default function Products() {
   const hasFilters = activeFilters.length > 0;
 
   const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
-  const imageAspect =
-    banner.images.length === 1
-      ? "h-40 sm:h-auto sm:aspect-[16/9]"
-      : "h-32 sm:h-auto sm:aspect-[4/3]";
-  const imageGridClass =
-    banner.images.length >= 3
-      ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3"
-      : banner.images.length === 2
-        ? "grid-cols-2"
-        : "grid-cols-1";
+  const hasMultipleImages = banner.images.length > 1;
+  const imageAspect = hasMultipleImages
+    ? "h-28 sm:h-auto sm:aspect-[4/3]"
+    : "h-36 sm:h-auto sm:aspect-[16/9]";
+  const imageGridClass = hasMultipleImages
+    ? "flex gap-3 overflow-x-auto no-scrollbar sm:grid sm:gap-4 sm:overflow-visible sm:grid-cols-2 lg:grid-cols-3"
+    : "grid grid-cols-1";
+  const imageItemClass = hasMultipleImages ? "min-w-[140px] sm:min-w-0" : "";
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
@@ -281,11 +280,11 @@ export default function Products() {
                   ) : null}
                 </div>
                 <div>
-                  <div className={`grid gap-3 sm:gap-4 ${imageGridClass}`}>
+                  <div className={imageGridClass}>
                     {banner.images.map((image, index) => (
                       <div
                         key={`${image}-${index}`}
-                        className={`relative w-full ${imageAspect} rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 dark:border-[#1a2636] dark:bg-[#0b131f]`}
+                        className={`relative w-full ${imageAspect} ${imageItemClass} rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 dark:border-[#1a2636] dark:bg-[#0b131f]`}
                       >
                         <img
                           src={image}
@@ -311,8 +310,36 @@ export default function Products() {
           </div>
         </section>
 
+        <div className="container mx-auto px-4 lg:hidden mt-4 sm:mt-6">
+          <div className="flex items-center justify-between gap-3">
+            <button
+              type="button"
+              onClick={() => setMobileFiltersOpen((prev) => !prev)}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+            >
+              Filter
+              <span className="text-xs text-gray-500 dark:text-gray-400">
+                {mobileFiltersOpen ? "Dölj" : "Visa"}
+              </span>
+            </button>
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={clearFilters}
+                className="text-xs font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+              >
+                Rensa filter
+              </button>
+            )}
+          </div>
+        </div>
+
         <div className="flex flex-col lg:flex-row flex-1 mt-4 sm:mt-6 pt-6 sm:pt-8 border-t border-gray-200 dark:border-[#1a2636] gap-6">
-          <div className="w-full lg:max-w-xs bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 lg:border-r lg:border-y-0 lg:border-l-0 rounded-2xl lg:rounded-none p-5 sm:p-6 space-y-8 h-fit lg:sticky lg:top-24">
+          <div
+            className={`w-full lg:max-w-xs bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 lg:border-r lg:border-y-0 lg:border-l-0 rounded-2xl lg:rounded-none p-5 sm:p-6 space-y-8 h-fit lg:sticky lg:top-24 ${
+              mobileFiltersOpen ? "block" : "hidden"
+            } lg:block`}
+          >
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Filter</h2>
 

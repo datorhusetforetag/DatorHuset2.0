@@ -101,8 +101,12 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300;
+    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300 overflow-x-hidden;
     font-family: 'Inter', sans-serif;
+  }
+
+  #root {
+    @apply overflow-x-hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {

@@ -724,6 +724,7 @@ export default function CustomBuild() {
   const [activeBrand, setActiveBrand] = useState("Alla");
   const [searchTerm, setSearchTerm] = useState("");
   const [shareStatus, setShareStatus] = useState("");
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
     gpu: null,
@@ -848,11 +849,11 @@ export default function CustomBuild() {
       <Navbar />
       <main className="flex-1">
         <section className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white">
-          <div className="container mx-auto px-4 pt-24 pb-16">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
+          <div className="container mx-auto px-4 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
+            <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
               <div>
                 <p className="text-xs uppercase tracking-[0.4em] text-yellow-300">Custom bygg</p>
-                <h1 className="text-4xl lg:text-5xl font-bold mt-4">Bygg din drömdator, din väg</h1>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4">Bygg din drömdator, din väg</h1>
                 <p className="text-gray-300 mt-4 max-w-xl">
                   Välj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar
                   ett färdigt bygge.
@@ -860,13 +861,13 @@ export default function CustomBuild() {
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link
                     to="/custom-bygg#bygg"
-                    className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
                   >
                     Börja bygga
                   </Link>
                   <Link
                     to="/products"
-                    className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
                   >
                     Se färdiga datorer
                   </Link>
@@ -876,7 +877,7 @@ export default function CustomBuild() {
                 <img
                   src="/products/Horizon3_Elite_Hero_2000x.webp"
                   alt="Custom bygg"
-                  className="w-full h-72 lg:h-80 object-cover rounded-3xl border border-white/10 shadow-xl"
+                  className="w-full h-56 sm:h-72 lg:h-80 object-cover rounded-3xl border border-white/10 shadow-xl"
                   loading="lazy"
                 />
                 <div className="absolute -bottom-5 left-6 bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
@@ -888,11 +889,11 @@ export default function CustomBuild() {
         </section>
 
         <section id="bygg" className="bg-gray-100 text-gray-900 dark:bg-background dark:text-gray-100">
-          <div className="container mx-auto px-4 py-12 lg:py-16">
+          <div className="container mx-auto px-4 py-10 sm:py-12 lg:py-16">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
               <div>
                 <p className="text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">Välj komponenter</p>
-                <h2 className="text-3xl font-bold mt-3">Bygg ditt system steg för steg</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mt-3">Bygg ditt system steg för steg</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
                   Klicka på en kategori till vänster för att se rekommenderade komponenter och filtrera efter märke.
                 </p>
@@ -902,8 +903,21 @@ export default function CustomBuild() {
               </div>
             </div>
 
-            <div className="grid gap-8 lg:grid-cols-[280px_1fr_320px] items-start">
-              <aside className="space-y-4">
+            <div className="flex items-center justify-between gap-3 lg:hidden mb-4">
+              <button
+                type="button"
+                onClick={() => setMobileSidebarOpen((prev) => !prev)}
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+              >
+                Komponenter
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  {mobileSidebarOpen ? "Dölj" : "Visa"}
+                </span>
+              </button>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-[280px_1fr_320px] items-start">
+              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block`}>
                 <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                   <div className="mt-4 space-y-2">
@@ -1050,7 +1064,7 @@ export default function CustomBuild() {
                               ))}
                             </div>
                           </div>
-                          <div className="w-full md:w-40 flex md:flex-col items-end md:items-end justify-between gap-3">
+                          <div className="w-full md:w-40 flex flex-row md:flex-col items-start md:items-end justify-between gap-3">
                             <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(item.price)} kr</p>
                             <button
                               type="button"
