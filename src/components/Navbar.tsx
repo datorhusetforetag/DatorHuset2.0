@@ -73,10 +73,10 @@ export const Navbar = () => {
   }, []);
 
   return (
-    <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+    <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:backdrop-blur overflow-visible">
       <div className="bg-white text-gray-900 border-b border-gray-200 shadow-sm dark:bg-background dark:text-white dark:border-gray-800">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:gap-4 lg:h-20 w-full overflow-x-hidden">
+          <div className="flex flex-col gap-3 py-3 lg:flex-row lg:items-center lg:gap-4 lg:h-20 w-full">
             <div className="flex items-center justify-between gap-3 lg:contents">
               <div className="flex items-center gap-2 min-w-0 lg:order-1">
                 {showBackButton && (
@@ -120,7 +120,7 @@ export const Navbar = () => {
                         <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen är tom.</p>
                       ) : (
                         <>
-                          <div className="space-y-2 max-h-60 overflow-auto">
+                          <div className="space-y-2">
                             {items.map((item) => (
                               <div key={item.id} className="flex justify-between text-sm">
                                 <span className="text-gray-700 truncate pr-2 dark:text-gray-200">
