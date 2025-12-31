@@ -237,27 +237,30 @@ export default function Products() {
   const hasFilters = activeFilters.length > 0;
 
   const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
-  const imageAspect = banner.images.length === 1 ? "aspect-[16/9]" : "aspect-[4/3]";
+  const imageAspect =
+    banner.images.length === 1
+      ? "h-40 sm:h-auto sm:aspect-[16/9]"
+      : "h-32 sm:h-auto sm:aspect-[4/3]";
   const imageGridClass =
     banner.images.length >= 3
-      ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3"
+      ? "grid-cols-2 sm:grid-cols-2 lg:grid-cols-3"
       : banner.images.length === 2
-        ? "grid-cols-1 sm:grid-cols-2"
+        ? "grid-cols-2"
         : "grid-cols-1";
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="px-4 pt-24 pb-6">
+        <section className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
           <div className="container mx-auto">
             <div className="rounded-3xl border border-gray-200 dark:border-[#1a2636] bg-[#facc15]">
-              <div className="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] p-8 md:p-10 items-center">
+              <div className="grid gap-6 sm:gap-8 lg:gap-10 lg:grid-cols-[1.05fr_0.95fr] p-5 sm:p-6 lg:p-10 items-center">
                 <div>
                   <p className="text-xs uppercase tracking-[0.35em] text-gray-900/70">
                     {banner.eyebrow}
                   </p>
-                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-gray-900">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-gray-900">
                     {banner.title}
                   </h1>
                   <p className="text-sm md:text-base text-gray-800 mt-4 max-w-xl">
@@ -278,11 +281,11 @@ export default function Products() {
                   ) : null}
                 </div>
                 <div>
-                  <div className={`grid gap-4 ${imageGridClass}`}>
+                  <div className={`grid gap-3 sm:gap-4 ${imageGridClass}`}>
                     {banner.images.map((image, index) => (
                       <div
                         key={`${image}-${index}`}
-                        className={`relative ${imageAspect} rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 dark:border-[#1a2636] dark:bg-[#0b131f]`}
+                        className={`relative w-full ${imageAspect} rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 dark:border-[#1a2636] dark:bg-[#0b131f]`}
                       >
                         <img
                           src={image}
@@ -308,8 +311,8 @@ export default function Products() {
           </div>
         </section>
 
-        <div className="flex flex-1 mt-6 pt-8 border-t border-gray-200 dark:border-[#1a2636]">
-          <div className="w-full max-w-xs bg-gray-50 dark:bg-gray-900/80 border-r border-gray-200 dark:border-gray-800 p-6 space-y-8">
+        <div className="flex flex-col lg:flex-row flex-1 mt-4 sm:mt-6 pt-6 sm:pt-8 border-t border-gray-200 dark:border-[#1a2636] gap-6">
+          <div className="w-full lg:max-w-xs bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 lg:border-r lg:border-y-0 lg:border-l-0 rounded-2xl lg:rounded-none p-5 sm:p-6 space-y-8 h-fit lg:sticky lg:top-24">
             <div>
               <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Filter</h2>
 
@@ -393,7 +396,7 @@ export default function Products() {
             </div>
           </div>
 
-          <div className="flex-1 p-6 lg:p-10 bg-white dark:bg-[#0f1824]">
+          <div className="flex-1 p-4 sm:p-6 lg:p-10 bg-white dark:bg-[#0f1824]">
             {hasFilters && (
               <div className="sticky top-24 z-10 mb-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-[#0f1824]/95 backdrop-blur px-4 py-3">
                 <div className="flex flex-wrap items-center gap-3">
@@ -416,8 +419,8 @@ export default function Products() {
                 </div>
               </div>
             )}
-            <div className="mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h2>
+            <div className="mb-6 sm:mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Stationära datorer</h2>
               <p className="text-gray-600 dark:text-gray-300">
                 Visar {filteredProducts.length} av {COMPUTERS.length} produkter
               </p>
@@ -431,7 +434,7 @@ export default function Products() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((computer) => (
                   <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
                     <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all">

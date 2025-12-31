@@ -31,15 +31,15 @@ export const Hero = () => {
 
   return (
     <section className="bg-white dark:bg-background transition-colors">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6 sm:py-8">
         {/* Hero Banners */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-yellow-400 rounded-lg p-8 flex flex-col justify-between min-h-64 col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
+          <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[260px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
-              <h2 className="text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
-              <p className="text-lg text-gray-900 font-semibold mb-6 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Veckans Deal</h2>
+              <p className="text-sm sm:text-base text-gray-900 font-semibold mb-6 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
-            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-40 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-6">
+            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-24 sm:h-28 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
                 <p className="text-xs text-gray-600 dark:text-gray-300">{"P\u00e5 utvalda gamingdatorer hela veckan"}</p>
@@ -47,15 +47,15 @@ export const Hero = () => {
               <img
                 src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80"
                 alt="Veckans deal"
-                className="h-full w-48 object-cover rounded-lg shadow"
+                className="h-full w-24 sm:w-32 md:w-40 object-cover rounded-lg shadow"
                 loading="lazy"
               />
             </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-8 flex flex-col justify-between min-h-64">
+          <div className="bg-gray-900 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[260px] sm:min-h-[320px]">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">{"GE GL\u00c4DJE"}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{"GE GL\u00c4DJE"}</h2>
               <p className="text-white text-sm mb-4">{"F\u00e5 chans till en tackg\u00e5va!"}</p>
               <p className="text-yellow-400 text-sm font-semibold">{"Allt st\u00f6d g\u00e5r till Min Stora Dag"}</p>
             </div>
@@ -68,32 +68,32 @@ export const Hero = () => {
         {/* Popular categories section */}
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Popul\u00e4ra kategorier"}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {categories.map((category) =>
               category.kind === "quiz" ? (
                 <button
                   key={category.name}
                   type="button"
                   onClick={() => setShowQuiz((prev) => !prev)}
-                  className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
                 >
-                  <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
+                  <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
                 </button>
               ) : (
                 <Link
                   key={category.name}
                   to={category.href}
-                  className="bg-white border border-gray-200 rounded-lg p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
                 >
-                  <category.icon className="w-10 h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
+                  <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
                 </Link>
               )
             )}
           </div>
           {showQuiz && (
-            <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-6 shadow-sm">
+            <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 sm:p-6 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div>
                   <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{"Hj\u00e4lp mig v\u00e4lja"}</h4>
@@ -168,14 +168,14 @@ export const Hero = () => {
         <div className="mb-12 relative">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Senast visade produkter</h3>
           <div className="relative">
-            <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4 pr-4">
+            <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4 pr-4 snap-x snap-mandatory">
               {FEATURED_COMPUTERS.map((computer) => (
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}
-                  className="flex-shrink-0 w-96 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:border-gray-500"
+                  className="flex-shrink-0 w-72 sm:w-80 md:w-96 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:border-gray-500 snap-start"
                 >
-                  <div className="h-56 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                  <div className="h-44 sm:h-52 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                     <img
                       src={computer.image}
                       alt={computer.name}

@@ -14,74 +14,76 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 export const Footer = () => {
   return (
     <footer className="bg-[#0f1824] text-gray-100 border-t border-[#1a2636]">
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="space-y-2">
-            <h4 className="text-lg font-semibold">Kontakta oss</h4>
-            <Link to="/faq" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">FAQ</Link>
-            <Link to="/kundservice" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Kundservice / Kontaktuppgifter</Link>
-            <Link to="/about" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Om oss</Link>
-            <Link to="/privacy-policy" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Integritetspolicy</Link>
-            <Link to="/terms-of-service" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Allmänna villkor</Link>
+      <div className="container mx-auto px-4 py-6 sm:py-8">
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr_1fr]">
+          <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
+            <div className="space-y-2">
+              <h4 className="text-base font-semibold">Kontakta oss</h4>
+              <Link to="/faq" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">FAQ</Link>
+              <Link to="/kundservice" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Kundservice / Kontaktuppgifter</Link>
+              <Link to="/about" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Om oss</Link>
+              <Link to="/privacy-policy" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Integritetspolicy</Link>
+              <Link to="/terms-of-service" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Allmänna villkor</Link>
+            </div>
+
+            <div className="space-y-2">
+              <h4 className="text-base font-semibold">Våra tjänster</h4>
+              <Link to="/products" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Våra datorer</Link>
+              <Link to="/custom-bygg" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Custom bygg</Link>
+              <Link to="/service-reparation" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Service / reparation</Link>
+            </div>
           </div>
 
-          <div className="space-y-2">
-            <h4 className="text-lg font-semibold">Våra tjänster</h4>
-            <Link to="/products" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Våra datorer</Link>
-            <Link to="/custom-bygg" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Custom bygg</Link>
-            <Link to="/service-reparation" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Service / reparation</Link>
-          </div>
-
-          <div className="space-y-3 md:text-right">
+          <div className="space-y-4 border-t border-[#1a2636] pt-4 lg:border-t-0 lg:pt-0">
             <div className="space-y-1">
-              <h4 className="text-lg font-semibold">Kundservice</h4>
+              <h4 className="text-base font-semibold">Kundservice</h4>
               <p className="text-sm text-gray-200">datorhuset.foretag@gmail.com</p>
               <p className="text-sm text-gray-400">Svarstider 11:00-15:00</p>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-sm uppercase tracking-[0.2em] text-gray-500">Följ oss</p>
-              <div className="flex items-center gap-3 md:justify-end">
-                <a
-                  href="https://www.instagram.com/datorhuset_uf/"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="DatorHuset på Instagram"
-                  className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://x.com/DatorHuset_UF"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="DatorHuset på X"
-                  className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://www.tiktok.com/@datorhuset_uf?lang=en-GB"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="DatorHuset på TikTok"
-                  className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                >
-                  <TikTokIcon className="w-5 h-5" />
-                </a>
-                <a
-                  href="https://www.youtube.com/@DatorHuset"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="DatorHuset på YouTube"
-                  className="w-10 h-10 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                >
-                  <Youtube className="w-5 h-5" />
-                </a>
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Följ oss</p>
+                <div className="flex items-center gap-3">
+                  <a
+                    href="https://www.instagram.com/datorhuset_uf/"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="DatorHuset på Instagram"
+                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
+                  >
+                    <Instagram className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="https://x.com/DatorHuset_UF"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="DatorHuset på X"
+                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
+                  >
+                    <Twitter className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="https://www.tiktok.com/@datorhuset_uf?lang=en-GB"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="DatorHuset på TikTok"
+                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
+                  >
+                    <TikTokIcon className="w-5 h-5" />
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@DatorHuset"
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="DatorHuset på YouTube"
+                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
+                  >
+                    <Youtube className="w-5 h-5" />
+                  </a>
+                </div>
               </div>
-              <div className="flex md:justify-end">
-                <img src={logo} alt="DatorHuset logo" className="w-14 h-14 object-contain" />
-              </div>
+              <img src={logo} alt="DatorHuset logo" className="w-12 h-12 object-contain" />
             </div>
           </div>
         </div>

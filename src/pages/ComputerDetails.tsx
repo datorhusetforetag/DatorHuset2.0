@@ -241,9 +241,9 @@ export default function ComputerDetails() {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
-      <div className="flex-1 container mx-auto px-4 py-10 lg:py-16">
+      <div className="flex-1 container mx-auto px-4 py-6 sm:py-10 lg:py-16">
         {/* Breadcrumb */}
-        <div className="flex items-center text-sm text-gray-500 dark:text-gray-400 gap-2 mb-8">
+        <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 gap-2 mb-6 sm:mb-8">
           <button className="hover:text-gray-800 dark:hover:text-gray-200" onClick={() => navigate("/")}>Hem</button>
           <span>/</span>
           <span>Datorer & Surfplattor</span>
@@ -253,9 +253,9 @@ export default function ComputerDetails() {
           <span className="text-gray-900 dark:text-white font-semibold">{computer.name}</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
           {/* Left: image area */}
-          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
+          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
             <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
               <img
                 src={images[selectedImage] || computer.image}
@@ -283,12 +283,12 @@ export default function ComputerDetails() {
                 </>
               )}
             </div>
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
               {images.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-16 h-16 rounded-lg border ${selectedImage === i ? "border-[#11667b]" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
+                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border ${selectedImage === i ? "border-[#11667b]" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
                   <img src={img} alt={`${computer.name} vy ${i + 1}`} className="w-full h-full object-cover" />
@@ -300,16 +300,16 @@ export default function ComputerDetails() {
           {/* Right: info/buy box */}
           <div className="space-y-6">
             <div className="space-y-2">
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">{computer.name}</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">{computer.name}</h1>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
                 {computer.cpu}, {computer.gpu}, {computer.ram}, {computer.storage} {computer.storagetype}
               </p>
             </div>
 
-            <div className="text-4xl font-bold text-gray-900 dark:text-white">{computer.price.toLocaleString("sv-SE")} kr</div>
+            <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{computer.price.toLocaleString("sv-SE")} kr</div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Exkl. moms</div>
 
-            <div className="flex items-center gap-6 flex-wrap">
+            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-row sm:items-center sm:gap-6">
               <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
@@ -330,7 +330,7 @@ export default function ComputerDetails() {
               <button
                 onClick={handleAddToCart}
                 disabled={addingToCart || !supabaseProductId}
-                className="flex-1 min-w-[220px] inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
@@ -345,7 +345,7 @@ export default function ComputerDetails() {
         </div>
 
         {/* Tabs */}
-        <div className="mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+        <div className="mt-10 sm:mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-6">
           <div className="flex gap-6 border-b border-gray-200 dark:border-gray-800 pb-4 mb-6 text-sm font-semibold text-gray-600 dark:text-gray-300">
             <span className="text-gray-900 dark:text-white">Produktinfo</span>
             <span>Specifikationer</span>
@@ -392,7 +392,7 @@ export default function ComputerDetails() {
         </div>
 
         {/* Warranty */}
-        <div className="mt-10 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+        <div className="mt-10 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-6">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
             <div className="space-y-2">
@@ -423,10 +423,10 @@ export default function ComputerDetails() {
         </div>
 
         {/* FPS estimator */}
-        <div className="mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-6 lg:p-8 shadow-lg">
+        <div className="mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
-              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Uppskattad FPS</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Uppskattad FPS</h2>
               <div className="space-y-3">
                 <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="game">Välj spel</label>
                 <select
@@ -503,9 +503,9 @@ export default function ComputerDetails() {
 
         {/* Comparison */}
         <div className="mt-12">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{"J\u00e4mf\u00f6r liknande datorer"}</h2>
-            <span className="text-sm text-gray-600 dark:text-gray-300">{"2\u20133 alternativ med liknande niv\u00e5"}</span>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-6">
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{"J\u00e4mf\u00f6r liknande datorer"}</h2>
+            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{"2\u20133 alternativ med liknande niv\u00e5"}</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {comparisonItems.map((item) => (
