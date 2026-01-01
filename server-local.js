@@ -85,10 +85,6 @@ app.post("/api/create-checkout-session", async (req, res) => {
       cancel_url: `${FRONTEND_URL}/cart`,
     });
 
-    console.log("[checkout] payment_method_types requested:", paymentMethodTypes);
-    console.log("[checkout] payment_method_types accepted:", session.payment_method_types);
-    console.log("[checkout] locale:", session.locale, "currency:", line_items[0]?.price_data?.currency);
-
     res.json({ url: session.url, sessionId: session.id });
   } catch (error) {
     console.error("Create checkout session error:", error);
