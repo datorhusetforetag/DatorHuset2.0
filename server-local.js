@@ -66,15 +66,28 @@ app.post("/api/create-checkout-session", async (req, res) => {
       quantity: item.quantity,
     }));
 
+    const paymentMethodTypes = ["card", "klarna"];
+    const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
+    if (customPaymentMethod) {
+      paymentMethodTypes.push(customPaymentMethod);
+    }
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: paymentMethodTypes,
       line_items,
       mode: "payment",
       customer_email: userEmail,
+      billing_address_collection: "required",
+      shipping_address_collection: { allowed_countries: ["SE"] },
+      locale: "sv",
       metadata: { fullName, userEmail },
       success_url: `${FRONTEND_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${FRONTEND_URL}/cart`,
     });
+
+    console.log("[checkout] payment_method_types requested:", paymentMethodTypes);
+    console.log("[checkout] payment_method_types accepted:", session.payment_method_types);
+    console.log("[checkout] locale:", session.locale, "currency:", line_items[0]?.price_data?.currency);
 
     res.json({ url: session.url, sessionId: session.id });
   } catch (error) {
