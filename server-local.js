@@ -66,7 +66,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
       quantity: item.quantity,
     }));
 
-    const paymentMethodTypes = ["card", "klarna"];
+    const paymentMethodTypes = ["card", "klarna", "paypal"];
     const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
     if (customPaymentMethod) {
       paymentMethodTypes.push(customPaymentMethod);
