@@ -12,6 +12,16 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import cpu7600Image from "../../images/product images/cpu/7600.png";
+import cpu7700Image from "../../images/product images/cpu/7700.png";
+import cpu7800x3dImage from "../../images/product images/cpu/7800x3d.png";
+import cpu7950x3dImage from "../../images/product images/cpu/7950x3d.png";
+import cpu13400fImage from "../../images/product images/cpu/13400f.png";
+import cpu13600kImage from "../../images/product images/cpu/13600k.png";
+import cpu13700kImage from "../../images/product images/cpu/13700k.png";
+import cpu14700kImage from "../../images/product images/cpu/14700k.png";
+import cpu13900kImage from "../../images/product images/cpu/13900k.png";
+import cpu14900kImage from "../../images/product images/cpu/14900k.png";
 
 type CategoryKey = "cpu" | "gpu" | "motherboard" | "ram" | "storage" | "case" | "psu" | "cooling";
 
@@ -111,6 +121,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 2599,
       socket: "AM5",
+      image: cpu7600Image,
       specs: ["6 kärnor", "12 trådar", "5.1 GHz", "AM5"],
     },
     {
@@ -119,6 +130,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 4990,
       socket: "AM5",
+      image: cpu7800x3dImage,
       specs: ["8 kärnor", "3D V-Cache", "5.0 GHz", "AM5"],
       highlight: "Gaming-favorit",
     },
@@ -128,6 +140,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 7990,
       socket: "AM5",
+      image: cpu7950x3dImage,
       specs: ["16 kärnor", "3D V-Cache", "5.7 GHz", "AM5"],
     },
     {
@@ -136,6 +149,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 2290,
       socket: "LGA1700",
+      image: cpu13400fImage,
       specs: ["10 kärnor", "4.6 GHz", "LGA1700"],
     },
     {
@@ -144,6 +158,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 3490,
       socket: "LGA1700",
+      image: cpu13600kImage,
       specs: ["14 kärnor", "5.1 GHz", "LGA1700"],
     },
     {
@@ -152,6 +167,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 4690,
       socket: "LGA1700",
+      image: cpu13700kImage,
       specs: ["16 kärnor", "5.4 GHz", "LGA1700"],
     },
     {
@@ -160,6 +176,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 5290,
       socket: "LGA1700",
+      image: cpu14700kImage,
       specs: ["20 kärnor", "5.6 GHz", "LGA1700"],
       highlight: "Nyhet",
     },
@@ -169,6 +186,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 6490,
       socket: "LGA1700",
+      image: cpu13900kImage,
       specs: ["24 kärnor", "5.8 GHz", "LGA1700"],
     },
     {
@@ -177,6 +195,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 7190,
       socket: "LGA1700",
+      image: cpu14900kImage,
       specs: ["24 kärnor", "6.0 GHz", "LGA1700"],
     },
     {
@@ -185,6 +204,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 3290,
       socket: "AM5",
+      image: cpu7700Image,
       specs: ["8 kärnor", "5.3 GHz", "AM5"],
     },
   ],
@@ -1027,7 +1047,7 @@ export default function CustomBuild() {
                         }`}
                       >
                         <div className="grid gap-4 md:grid-cols-[160px_1fr_auto] items-start">
-                          <div className="relative h-32 md:h-28 w-full md:w-40">
+                          <div className="relative w-full md:w-40 aspect-square">
                             <img
                               src={imageSrc}
                               alt={imageAlt}
