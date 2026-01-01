@@ -945,7 +945,7 @@ export default function CustomBuild() {
                                   : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
                               }`}
                             >
-                              <Icon className="w-4 h-4" />
+                              <Icon className="w-5 h-5" />
                             </span>
                             <div>
                               <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
@@ -1038,7 +1038,7 @@ export default function CustomBuild() {
                               }}
                             />
                             <span className="absolute top-2 left-2 rounded-full bg-white/90 text-gray-700 border border-gray-200 p-2 shadow-sm dark:bg-gray-900/90 dark:text-gray-200 dark:border-gray-700">
-                              <ActiveIcon className="w-4 h-4" />
+                              <ActiveIcon className="w-5 h-5" />
                             </span>
                           </div>
                           <div className="flex-1">
