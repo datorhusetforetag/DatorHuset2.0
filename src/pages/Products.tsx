@@ -186,12 +186,12 @@ export default function Products() {
         if (activeCategory === "budget") {
           return computer.price <= 6000 || computer.classLabels?.includes("Budget PC's");
         }
-        if (activeCategory === "best-selling") {
-          return computer.classLabels?.includes("Best-Selling PC's");
-        }
-    if (activeCategory === "toptier") return "B\u00e4sta prestanda";
-          return computer.classLabels?.includes("Toptier PC's");
-        }
+          if (activeCategory === "best-selling") {
+            return computer.classLabels?.includes("Best-Selling PC's");
+          }
+          if (activeCategory === "toptier") {
+            return computer.classLabels?.includes("Toptier PC's");
+          }
         if (activeCategory === "paket") {
           return computer.classLabels?.includes("Paket PC's");
         }
