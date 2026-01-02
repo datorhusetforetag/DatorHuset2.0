@@ -24,6 +24,37 @@ const supabase = createClient(
 );
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
+const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:8080")
+  .split(",")
+  .map((url) => url.trim())
+  .filter(Boolean);
+const MAX_LINE_ITEMS = 50;
+const MAX_QUANTITY = 10;
+const PAYMENT_METHODS = ["card", "klarna", "paypal"];
+const STATUS_OPTIONS = new Set(["received", "building", "finished"]);
+const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
+const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
+const swedishCityRegex = /^[A-Za-zÅÄÖåäö.\s-]+$/;
+
+const sanitizeText = (value: any, maxLength = 120) => {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+};
+
+const normalizePhone = (value: any) => sanitizeText(value, 32).replace(/\s+/g, "");
+
+async function getAuthUser(req: any) {
+  const authHeader = req?.headers?.authorization || "";
+  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  if (!token) {
+    return { user: null, error: "Missing auth token." };
+  }
+  const { data, error } = await supabase.auth.getUser(token);
+  if (error || !data?.user) {
+    return { user: null, error: error?.message || "Invalid auth token." };
+  }
+  return { user: data.user, error: null };
+}
 
 /**
  * Create Stripe Checkout Session
@@ -31,37 +62,84 @@ const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
  */
 export async function createCheckoutSession(req: any, res: any) {
   try {
-    const { cartItems, userEmail, fullName, totalCents } = req.body;
+    const { cartItems, userEmail, fullName, phone, address, postalCode, city } = req.body;
 
-    if (!cartItems || cartItems.length === 0) {
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+
+    const customerEmail = sanitizeText(user.email || userEmail, 120);
+    const safeFullName = sanitizeText(fullName || user.user_metadata?.full_name || user.user_metadata?.username, 120);
+    const safePhone = normalizePhone(phone);
+    const safeAddress = sanitizeText(address, 200);
+    const safePostalCode = sanitizeText(postalCode, 16);
+    const safeCity = sanitizeText(city, 80);
+
+    if (!customerEmail || !safeFullName || !safePhone || !safeAddress || !safePostalCode || !safeCity) {
+      return res.status(400).json({ error: "Missing user information" });
+    }
+    if (!swedishPhoneRegex.test(safePhone)) {
+      return res.status(400).json({ error: "Invalid phone number" });
+    }
+    if (!swedishPostalRegex.test(safePostalCode)) {
+      return res.status(400).json({ error: "Invalid postal code" });
+    }
+    if (!swedishCityRegex.test(safeCity)) {
+      return res.status(400).json({ error: "Invalid city" });
+    }
+
+    const { data: dbCartItems, error: cartError } = await supabase
+      .from("cart_items")
+      .select("quantity, product:product_id (id, name, price_cents)")
+      .eq("user_id", user.id);
+
+    if (cartError || !dbCartItems || dbCartItems.length === 0) {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    if (!userEmail || !fullName) {
-      return res.status(400).json({ error: "Missing user information" });
+    if (dbCartItems.length > MAX_LINE_ITEMS) {
+      return res.status(400).json({ error: "Too many items in cart" });
     }
 
-    // Build line items for Stripe
-    const line_items = cartItems.map((item: any) => ({
-      price_data: {
-        currency: "sek",
-        product_data: {
-          name: item.productName,
+    const line_items = dbCartItems.map((item: any) => {
+      const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(item.quantity) || 1));
+      const unitAmount = Number(item.product?.price_cents || 0);
+      if (!unitAmount || unitAmount < 1) {
+        throw new Error("Invalid product price");
+      }
+      return {
+        price_data: {
+          currency: "sek",
+          product_data: {
+            name: item.product?.name || "Produkt",
+          },
+          unit_amount: unitAmount,
         },
-        unit_amount: item.unitPriceCents, // Already in cents (öre)
-      },
-      quantity: item.quantity,
-    }));
+        quantity,
+      };
+    });
 
-    // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: [...PAYMENT_METHODS],
       line_items: line_items,
       mode: "payment",
-      customer_email: userEmail,
+      customer_email: customerEmail,
+      billing_address_collection: "required",
+      shipping_address_collection: { allowed_countries: ["SE"] },
+      locale: "sv",
       metadata: {
-        fullName: fullName,
-        userEmail: userEmail,
+        userId: user.id,
+        fullName: safeFullName,
+        userEmail: customerEmail,
+        phone: safePhone,
+        address: safeAddress,
+        postalCode: safePostalCode,
+        city: safeCity,
       },
       success_url: `${FRONTEND_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${FRONTEND_URL}/cart`,
@@ -268,6 +346,53 @@ export async function getOrder(req: any, res: any) {
     res.json(order);
   } catch (error) {
     console.error("Get order error:", error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
+
+/**
+ * Admin: Update order status
+ * POST /api/orders/:orderId/status
+ */
+export async function updateOrderStatusAdmin(req: any, res: any) {
+  try {
+    const { orderId } = req.params;
+    const nextStatus = sanitizeText(req.body?.status, 32);
+
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+
+    const isAdmin = user.user_metadata?.is_admin === true || user.user_metadata?.role === "admin";
+    if (!isAdmin) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    if (!STATUS_OPTIONS.has(nextStatus)) {
+      return res.status(400).json({ error: "Invalid status" });
+    }
+
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ status: nextStatus, updated_at: new Date() })
+      .eq("id", orderId)
+      .select()
+      .single();
+
+    if (error || !data) {
+      return res.status(500).json({ error: "Failed to update order" });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Update order status error:", error);
     res.status(500).json({
       error: error instanceof Error ? error.message : "Unknown error",
     });

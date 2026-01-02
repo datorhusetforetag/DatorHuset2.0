@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
-import { getUserOrders, updateOrderStatus } from "@/lib/supabaseServices";
+import { getUserOrders } from "@/lib/supabaseServices";
 import { KeyRound, MapPin, Package, User } from "lucide-react";
 
 type OrderItem = {
@@ -41,7 +41,7 @@ const statusOptions = [
 ];
 
 export default function Account() {
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
@@ -138,7 +138,16 @@ export default function Account() {
     try {
       setStatusSaving((prev) => ({ ...prev, [orderId]: true }));
       setStatusError((prev) => ({ ...prev, [orderId]: "" }));
-      const updated = await updateOrderStatus(orderId, newStatus);
+      const authHeader = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+      const response = await fetch(`/api/orders/${orderId}/status`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", ...authHeader },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update");
+      }
+      const updated = await response.json();
       setOrders((prev) =>
         prev.map((order) => (order.id === orderId ? { ...order, status: updated.status } : order))
       );

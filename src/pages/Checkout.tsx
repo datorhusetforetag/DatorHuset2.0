@@ -12,7 +12,7 @@ const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(user?.email || "");
@@ -100,9 +100,10 @@ export default function Checkout() {
 
       // Call backend to create Stripe Checkout Session
       // Call same-origin API to avoid CORS issues
+      const authHeader = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
       const response = await fetch(`/api/create-checkout-session`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...authHeader },
         body: JSON.stringify({
           cartItems: items.map((item) => ({
             productId: item.product_id,
