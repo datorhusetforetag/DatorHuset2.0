@@ -28,13 +28,17 @@ const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 
   .split(",")
   .map((url) => url.trim())
   .filter(Boolean);
+const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || "")
+  .split(",")
+  .map((ip) => ip.trim())
+  .filter(Boolean);
 const MAX_LINE_ITEMS = 50;
 const MAX_QUANTITY = 10;
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
 const STATUS_OPTIONS = new Set(["received", "building", "finished"]);
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
-const swedishCityRegex = /^[A-Za-zÅÄÖåäö.\s-]+$/;
+const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
 
 const sanitizeText = (value: any, maxLength = 120) => {
   if (typeof value !== "string") return "";
@@ -42,6 +46,19 @@ const sanitizeText = (value: any, maxLength = 120) => {
 };
 
 const normalizePhone = (value: any) => sanitizeText(value, 32).replace(/\s+/g, "");
+
+const getRequestIp = (req: any) => {
+  const forwarded = req?.headers?.["x-forwarded-for"];
+  if (Array.isArray(forwarded)) return forwarded[0]?.trim() || "";
+  if (typeof forwarded === "string") return forwarded.split(",")[0]?.trim() || "";
+  return (req?.ip || "").trim();
+};
+
+const isAllowedStripeIp = (req: any) => {
+  if (STRIPE_WEBHOOK_ALLOWED_IPS.length === 0) return true;
+  const ip = getRequestIp(req);
+  return STRIPE_WEBHOOK_ALLOWED_IPS.includes(ip);
+};
 
 async function getAuthUser(req: any) {
   const authHeader = req?.headers?.authorization || "";
@@ -124,8 +141,14 @@ export async function createCheckoutSession(req: any, res: any) {
       };
     });
 
+    const paymentMethodTypes = [...PAYMENT_METHODS];
+    const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
+    if (customPaymentMethod) {
+      paymentMethodTypes.push(customPaymentMethod);
+    }
+
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: [...PAYMENT_METHODS],
+      payment_method_types: paymentMethodTypes,
       line_items: line_items,
       mode: "payment",
       customer_email: customerEmail,
@@ -160,12 +183,16 @@ export async function createCheckoutSession(req: any, res: any) {
  * 
  * This endpoint receives webhooks from Stripe when payments complete.
  * You must:
- * 1. Set up the webhook in Stripe Dashboard → Developers → Webhooks
+ * 1. Set up the webhook in Stripe Dashboard -> Developers -> Webhooks
  * 2. Point it to: https://your-domain.com/api/webhook
  * 3. Select events: checkout.session.completed, payment_intent.succeeded
  */
 export async function handleStripeWebhook(req: any, res: any) {
   const sig = req.headers["stripe-signature"];
+
+  if (!isAllowedStripeIp(req)) {
+    return res.status(403).json({ error: "Forbidden" });
+  }
 
   if (!sig) {
     return res.status(400).json({ error: "No stripe-signature header" });
@@ -211,7 +238,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
   const userEmail = stripeSession.customer_email;
   const fullName = stripeSession.metadata?.fullName;
   const sessionId = stripeSession.id;
-  const totalAmount = stripeSession.amount_total; // in cents/öre
+  const totalAmount = stripeSession.amount_total; // in cents/ore
 
   if (!userEmail) {
     throw new Error("No customer email in session");
@@ -256,7 +283,13 @@ async function handleSuccessfulPayment(stripeSession: any) {
         total_cents: totalAmount,
         currency: "SEK",
         stripe_session_id: sessionId,
+        stripe_payment_intent_id: stripeSession.payment_intent || null,
         customer_email: userEmail,
+        customer_name: stripeSession.metadata?.fullName || fullName || null,
+        customer_phone: stripeSession.metadata?.phone || null,
+        customer_address: stripeSession.metadata?.address || null,
+        customer_postal_code: stripeSession.metadata?.postalCode || null,
+        customer_city: stripeSession.metadata?.city || null,
       },
     ])
     .select()
@@ -309,7 +342,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
     console.error("Warning: Failed to clear cart:", clearError);
   }
 
-  console.log(`✅ Order created for ${userEmail}: ${order.id}`);
+  console.log(`Order created for ${userEmail}: ${order.id}`);
 
   // Optionally: Send confirmation email
   // await sendConfirmationEmail(userEmail, fullName, order.id);
@@ -353,6 +386,56 @@ export async function getOrder(req: any, res: any) {
 }
 
 /**
+ * Admin: Get all orders
+ * GET /api/admin/orders
+ */
+export async function getAdminOrders(req: any, res: any) {
+  try {
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+
+    const isAdmin =
+      user.user_metadata?.is_admin === true ||
+      user.user_metadata?.role === "admin" ||
+      user.app_metadata?.is_admin === true ||
+      user.app_metadata?.role === "admin";
+    if (!isAdmin) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { data, error } = await supabase
+      .from("orders")
+      .select(
+        `
+        *,
+        order_items (
+          *,
+          product:product_id (name, price_cents, cpu, gpu, ram, storage)
+        )
+      `
+      )
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch orders" });
+    }
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Admin orders error:", error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
+
+/**
  * Admin: Update order status
  * POST /api/orders/:orderId/status
  */
@@ -370,7 +453,11 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
       return res.status(401).json({ error: authError || "Unauthorized" });
     }
 
-    const isAdmin = user.user_metadata?.is_admin === true || user.user_metadata?.role === "admin";
+    const isAdmin =
+      user.user_metadata?.is_admin === true ||
+      user.user_metadata?.role === "admin" ||
+      user.app_metadata?.is_admin === true ||
+      user.app_metadata?.role === "admin";
     if (!isAdmin) {
       return res.status(403).json({ error: "Forbidden" });
     }
@@ -378,6 +465,12 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
     if (!STATUS_OPTIONS.has(nextStatus)) {
       return res.status(400).json({ error: "Invalid status" });
     }
+
+    const { data: existing } = await supabase
+      .from("orders")
+      .select("status")
+      .eq("id", orderId)
+      .single();
 
     const { data, error } = await supabase
       .from("orders")
@@ -388,6 +481,22 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
 
     if (error || !data) {
       return res.status(500).json({ error: "Failed to update order" });
+    }
+
+    try {
+      await supabase.from("admin_audit_logs").insert([
+        {
+          admin_user_id: user.id,
+          order_id: orderId,
+          action: "order_status_update",
+          previous_status: existing?.status || null,
+          new_status: nextStatus,
+          ip_address: getRequestIp(req),
+          user_agent: req.headers["user-agent"] || null,
+        },
+      ]);
+    } catch (logError) {
+      console.warn("Admin audit log failed:", logError);
     }
 
     res.json(data);

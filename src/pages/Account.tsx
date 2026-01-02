@@ -21,6 +21,15 @@ type Order = {
   created_at?: string;
   total_cents?: number;
   status?: string;
+  user_id?: string;
+  customer_email?: string;
+  customer_name?: string;
+  customer_phone?: string;
+  customer_address?: string;
+  customer_postal_code?: string;
+  customer_city?: string;
+  stripe_session_id?: string;
+  stripe_payment_intent_id?: string;
   order_items?: OrderItem[];
   receipt_url?: string;
 };
@@ -45,6 +54,9 @@ export default function Account() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
+  const [adminOrders, setAdminOrders] = useState<Order[]>([]);
+  const [loadingAdminOrders, setLoadingAdminOrders] = useState(false);
+  const [adminOrderError, setAdminOrderError] = useState("");
   const [resetStatus, setResetStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [statusEdits, setStatusEdits] = useState<Record<string, string>>({});
   const [statusSaving, setStatusSaving] = useState<Record<string, boolean>>({});
@@ -82,8 +94,42 @@ export default function Account() {
   const isAdmin = useMemo(() => {
     if (!user) return false;
     const metadata = user.user_metadata || {};
-    return metadata.is_admin === true || metadata.role === "admin";
+    const appMetadata = user.app_metadata || {};
+    return (
+      metadata.is_admin === true ||
+      metadata.role === "admin" ||
+      appMetadata.is_admin === true ||
+      appMetadata.role === "admin"
+    );
   }, [user]);
+
+  useEffect(() => {
+    if (!user || !isAdmin) return;
+    let isMounted = true;
+    const loadAdminOrders = async () => {
+      try {
+        setLoadingAdminOrders(true);
+        setAdminOrderError("");
+        const authHeader = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
+        const response = await fetch("/api/admin/orders", { headers: authHeader });
+        if (!response.ok) {
+          throw new Error("Failed to load admin orders");
+        }
+        const data = await response.json();
+        if (!isMounted) return;
+        setAdminOrders(data as Order[]);
+      } catch (error) {
+        if (!isMounted) return;
+        setAdminOrderError("Kunde inte hämta admin-ordrar just nu.");
+      } finally {
+        if (isMounted) setLoadingAdminOrders(false);
+      }
+    };
+    loadAdminOrders();
+    return () => {
+      isMounted = false;
+    };
+  }, [isAdmin, session?.access_token, user]);
 
   const phoneNumber = useMemo(() => {
     if (!user) return "";
@@ -149,6 +195,9 @@ export default function Account() {
       }
       const updated = await response.json();
       setOrders((prev) =>
+        prev.map((order) => (order.id === orderId ? { ...order, status: updated.status } : order))
+      );
+      setAdminOrders((prev) =>
         prev.map((order) => (order.id === orderId ? { ...order, status: updated.status } : order))
       );
     } catch (error) {
@@ -258,6 +307,158 @@ export default function Account() {
           </div>
 
           <div className="space-y-6">
+            {isAdmin && (
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <Package className="w-5 h-5 text-[#11667b]" />
+                  <h2 className="text-xl font-semibold">Admin - orderöversikt</h2>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                  Här ser du alla ordrar med kunduppgifter, Stripe-ID och orderstatus.
+                </p>
+
+                {loadingAdminOrders && (
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar ordrar...</p>
+                )}
+                {adminOrderError && (
+                  <p className="text-sm text-red-500">{adminOrderError}</p>
+                )}
+                {!loadingAdminOrders && !adminOrderError && adminOrders.length === 0 && (
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                    Inga ordrar hittades ännu.
+                  </p>
+                )}
+
+                <div className="space-y-6">
+                  {adminOrders.map((order) => {
+                    const normalizedStatus = order.status || "pending";
+                    const statusInfo = statusConfig[normalizedStatus] || statusConfig.pending;
+                    const stage = statusInfo.step;
+                    const orderDate = order.created_at
+                      ? new Date(order.created_at).toLocaleDateString("sv-SE")
+                      : "Okänt datum";
+                    const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
+                    const items = order.order_items || [];
+
+                    return (
+                      <div key={order.id} className="rounded-xl border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
+                        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+                          <div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Order #{order.id.slice(0, 8)}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Totalt</p>
+                            <p className="text-lg font-semibold">{total.toLocaleString("sv-SE")} kr</p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-3 sm:grid-cols-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
+                          <div>
+                            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-1">Köpare</p>
+                            <p className="font-semibold text-gray-900 dark:text-gray-100">
+                              {order.customer_name || "Namn saknas"}
+                            </p>
+                            <p>{order.customer_email || "E-post saknas"}</p>
+                            <p>{order.customer_phone || "Telefon saknas"}</p>
+                          </div>
+                          <div>
+                            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-1">Adress</p>
+                            <p>{order.customer_address || "Adress saknas"}</p>
+                            <p>
+                              {order.customer_postal_code
+                                ? `${order.customer_postal_code} ${order.customer_city || ""}`
+                                : "Postnummer/postort saknas"}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="grid gap-2 text-xs text-gray-500 dark:text-gray-400 mb-4">
+                          <div>Stripe session: {order.stripe_session_id || "Saknas"}</div>
+                          <div>Payment intent: {order.stripe_payment_intent_id || "Saknas"}</div>
+                          <div>User ID: {order.user_id || "Saknas"}</div>
+                        </div>
+
+                        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
+                          {items.length === 0 && <p>Inga produkter kopplade till ordern.</p>}
+                          {items.map((item) => (
+                            <div key={item.id} className="flex justify-between">
+                              <span>{item.product?.name || "Produkt"} x{item.quantity}</span>
+                              <span>
+                                {typeof item.product?.price_cents === "number"
+                                  ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
+                                  : "--"}{" "}
+                                kr
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                          {statusSteps.map((label, index) => (
+                            <div
+                              key={label}
+                              className={`rounded-full px-3 py-1 text-center border ${
+                                stage >= index + 1
+                                  ? "border-yellow-400 bg-yellow-400/20 text-gray-900 dark:text-yellow-200"
+                                  : "border-gray-200 dark:border-gray-700"
+                              }`}
+                            >
+                              {label}
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+                          <span>Status: {statusInfo.label}</span>
+                          {order.receipt_url ? (
+                            <a
+                              href={order.receipt_url}
+                              className="text-[#11667b] hover:text-[#0d4d5d] font-semibold"
+                            >
+                              Kvitto
+                            </a>
+                          ) : (
+                            <span>Kvitto skickas via e-post</span>
+                          )}
+                        </div>
+
+                        <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
+                          <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">
+                            Adminläge
+                          </p>
+                          <div className="flex flex-col sm:flex-row gap-3">
+                            <select
+                              value={statusEdits[order.id] || normalizedStatus}
+                              onChange={(event) => handleStatusChange(order.id, event.target.value)}
+                              className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                            >
+                              {statusOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                  {option.label}
+                                </option>
+                              ))}
+                            </select>
+                            <button
+                              type="button"
+                              onClick={() => handleStatusSave(order.id)}
+                              disabled={statusSaving[order.id]}
+                              className="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
+                            >
+                              {statusSaving[order.id] ? "Uppdaterar..." : "Spara status"}
+                            </button>
+                          </div>
+                          {statusError[order.id] && (
+                            <p className="text-xs text-red-500 mt-2">{statusError[order.id]}</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Package className="w-5 h-5 text-[#11667b]" />

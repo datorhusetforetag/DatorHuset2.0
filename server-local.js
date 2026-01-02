@@ -28,6 +28,10 @@ const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || 
   .map((url) => url.trim())
   .filter(Boolean);
 const isAllowedOrigin = (origin) => !origin || FRONTEND_URLS.includes(origin);
+const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || "")
+  .split(",")
+  .map((ip) => ip.trim())
+  .filter(Boolean);
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -36,8 +40,35 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
 });
 
+const getRequestIp = (req) => {
+  const forwarded = req.headers["x-forwarded-for"];
+  if (Array.isArray(forwarded)) return forwarded[0]?.trim() || "";
+  if (typeof forwarded === "string") return forwarded.split(",")[0]?.trim() || "";
+  return (req.ip || "").trim();
+};
+
+const isAllowedStripeIp = (req) => {
+  if (STRIPE_WEBHOOK_ALLOWED_IPS.length === 0) return true;
+  const ip = getRequestIp(req);
+  return STRIPE_WEBHOOK_ALLOWED_IPS.includes(ip);
+};
+
+const cspDirectives = {
+  defaultSrc: ["'self'"],
+  baseUri: ["'self'"],
+  objectSrc: ["'none'"],
+  frameAncestors: ["'none'"],
+  imgSrc: ["'self'", "data:", "https:"],
+  fontSrc: ["'self'", "data:", "https:"],
+  styleSrc: ["'self'", "'unsafe-inline'", "https:"],
+  scriptSrc: ["'self'", "https://js.stripe.com"],
+  frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
+  connectSrc: ["'self'", "https://api.stripe.com", "https://*.supabase.co", ...FRONTEND_URLS],
+  formAction: ["'self'", "https://checkout.stripe.com"],
+};
+
 // Middleware
-app.use(helmet({ contentSecurityPolicy: false }));
+app.use(helmet({ contentSecurityPolicy: { directives: cspDirectives } }));
 app.use(cors({
   origin: (origin, callback) => {
     if (isAllowedOrigin(origin)) {
@@ -71,7 +102,7 @@ const PAYMENT_METHODS = ["card", "klarna", "paypal"];
 const STATUS_OPTIONS = new Set(["received", "building", "finished"]);
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
-const swedishCityRegex = /^[A-Za-zÅÄÖåäö.\s-]+$/;
+const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
 
 const sanitizeText = (value, maxLength = 120) => {
   if (typeof value !== "string") return "";
@@ -221,6 +252,48 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 });
 
+app.get("/api/admin/orders", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    const isAdmin =
+      user.user_metadata?.is_admin === true ||
+      user.user_metadata?.role === "admin" ||
+      user.app_metadata?.is_admin === true ||
+      user.app_metadata?.role === "admin";
+    if (!isAdmin) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { data, error } = await supabase
+      .from("orders")
+      .select(
+        `
+        *,
+        order_items (
+          *,
+          product:product_id (name, price_cents, cpu, gpu, ram, storage)
+        )
+      `
+      )
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch orders" });
+    }
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Admin orders error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/api/orders/:orderId/status", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -230,7 +303,11 @@ app.post("/api/orders/:orderId/status", async (req, res) => {
     if (authError || !user) {
       return res.status(401).json({ error: authError || "Unauthorized" });
     }
-    const isAdmin = user.user_metadata?.is_admin === true || user.user_metadata?.role === "admin";
+    const isAdmin =
+      user.user_metadata?.is_admin === true ||
+      user.user_metadata?.role === "admin" ||
+      user.app_metadata?.is_admin === true ||
+      user.app_metadata?.role === "admin";
     if (!isAdmin) {
       return res.status(403).json({ error: "Forbidden" });
     }
@@ -241,6 +318,12 @@ app.post("/api/orders/:orderId/status", async (req, res) => {
       return res.status(400).json({ error: "Invalid status" });
     }
 
+    const { data: existing } = await supabase
+      .from("orders")
+      .select("status")
+      .eq("id", orderId)
+      .single();
+
     const { data, error } = await supabase
       .from("orders")
       .update({ status: nextStatus, updated_at: new Date() })
@@ -250,6 +333,22 @@ app.post("/api/orders/:orderId/status", async (req, res) => {
 
     if (error || !data) {
       return res.status(500).json({ error: "Failed to update order" });
+    }
+
+    try {
+      await supabase.from("admin_audit_logs").insert([
+        {
+          admin_user_id: user.id,
+          order_id: orderId,
+          action: "order_status_update",
+          previous_status: existing?.status || null,
+          new_status: nextStatus,
+          ip_address: getRequestIp(req),
+          user_agent: req.headers["user-agent"] || null,
+        },
+      ]);
+    } catch (logError) {
+      console.warn("Admin audit log failed:", logError);
     }
 
     res.json(data);
@@ -265,6 +364,9 @@ app.post("/api/orders/:orderId/status", async (req, res) => {
 app.post("/api/webhook", async (req, res) => {
   if (!stripe || !stripeWebhookSecret) {
     return res.status(503).json({ error: "Stripe webhook not configured." });
+  }
+  if (!isAllowedStripeIp(req)) {
+    return res.status(403).json({ error: "Forbidden" });
   }
 
   const sig = req.headers["stripe-signature"];
@@ -317,18 +419,110 @@ app.use((req, res, next) => {
  * Process successful Stripe payment (stubbed)
  */
 async function handleSuccessfulPayment(stripeSession) {
+  if (!supabase) {
+    throw new Error("Supabase not configured.");
+  }
+
   const userEmail = stripeSession.customer_email;
   const fullName = stripeSession.metadata?.fullName;
   const sessionId = stripeSession.id;
   const totalAmount = stripeSession.amount_total;
 
-  if (!userEmail) throw new Error("No customer email in session");
+  if (!userEmail) {
+    throw new Error("No customer email in session");
+  }
 
-  console.log(`Processing payment for: ${userEmail}, session: ${sessionId}, amount: ${totalAmount}`);
+  const { data: users, error: userError } = await supabase.auth.admin.listUsers();
+  if (userError) {
+    throw new Error(`Failed to list users: ${userError.message}`);
+  }
 
-  // TODO: implement real user lookup + cart/order creation
-  console.log("User lookup skipped; store user_id in Stripe metadata to enable this.");
-  return;
+  const user = users.users.find((u) => u.email === userEmail);
+  if (!user) {
+    throw new Error(`User not found: ${userEmail}`);
+  }
+
+  const userId = user.id;
+
+  const { data: cartItems, error: cartError } = await supabase
+    .from("cart_items")
+    .select("*, product:product_id (*)")
+    .eq("user_id", userId);
+
+  if (cartError || !cartItems) {
+    throw new Error(`Failed to fetch cart: ${cartError?.message}`);
+  }
+
+  if (cartItems.length === 0) {
+    throw new Error("Cart is empty");
+  }
+
+  const { data: order, error: orderError } = await supabase
+    .from("orders")
+    .insert([
+      {
+        user_id: userId,
+        status: "paid",
+        total_cents: totalAmount,
+        currency: "SEK",
+        stripe_session_id: sessionId,
+        stripe_payment_intent_id: stripeSession.payment_intent || null,
+        customer_email: userEmail,
+        customer_name: stripeSession.metadata?.fullName || fullName || null,
+        customer_phone: stripeSession.metadata?.phone || null,
+        customer_address: stripeSession.metadata?.address || null,
+        customer_postal_code: stripeSession.metadata?.postalCode || null,
+        customer_city: stripeSession.metadata?.city || null,
+      },
+    ])
+    .select()
+    .single();
+
+  if (orderError || !order) {
+    throw new Error(`Failed to create order: ${orderError?.message}`);
+  }
+
+  const orderItems = cartItems.map((cartItem) => ({
+    order_id: order.id,
+    product_id: cartItem.product_id,
+    unit_price_cents: cartItem.product?.price_cents || 0,
+    quantity: cartItem.quantity,
+  }));
+
+  const { error: orderItemsError } = await supabase
+    .from("order_items")
+    .insert(orderItems);
+
+  if (orderItemsError) {
+    throw new Error(`Failed to create order items: ${orderItemsError.message}`);
+  }
+
+  for (const cartItem of cartItems) {
+    const { data: inventory } = await supabase
+      .from("inventory")
+      .select("quantity_in_stock")
+      .eq("product_id", cartItem.product_id)
+      .single();
+
+    if (inventory && inventory.quantity_in_stock > 0) {
+      const newQuantity = inventory.quantity_in_stock - cartItem.quantity;
+      await supabase
+        .from("inventory")
+        .update({ quantity_in_stock: newQuantity })
+        .eq("product_id", cartItem.product_id);
+    }
+  }
+
+  const { error: clearError } = await supabase
+    .from("cart_items")
+    .delete()
+    .eq("user_id", userId);
+
+  if (clearError) {
+    console.error("Warning: Failed to clear cart:", clearError);
+  }
+
+  console.log(`Order created for ${userEmail}: ${order.id}`);
 }
 
 // Error handler
