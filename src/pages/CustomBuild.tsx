@@ -42,6 +42,15 @@ import moboGigabyteZ790AorusEliteImage from "../../images/product images/mobo/Gi
 import moboAsrockZ790ProRsImage from "../../images/product images/mobo/ASRock Z790 Pro RS.png";
 import moboMsiB760MMortarImage from "../../images/product images/mobo/MSI B760M Mortar.png";
 import moboAsusPrimeB650MAImage from "../../images/product images/mobo/ASUS Prime B650M-A.png";
+import ramAdataXpgLancerImage from "../../images/product images/ram/ADATA XPG Lancer.png";
+import ramCorsairDominatorImage from "../../images/product images/ram/Corsair Dominator.png";
+import ramCorsairVengeanceImage from "../../images/product images/ram/Corsair Vengeance.png";
+import ramCrucialProImage from "../../images/product images/ram/Crucial Pro.png";
+import ramGSkillRipjawsImage from "../../images/product images/ram/G.Skill Ripjaws.png";
+import ramGSkillTridentZ5Image from "../../images/product images/ram/G.Skill Trident Z5.png";
+import ramKingstonFuryBeastImage from "../../images/product images/ram/Kingston Fury Beast.png";
+import ramKingstonFuryRenegadeImage from "../../images/product images/ram/Kingston Fury Renegade.png";
+import ramTeamGroupTForceDeltaImage from "../../images/product images/ram/TeamGroup T-Force Delta.png";
 
 type CategoryKey = "cpu" | "gpu" | "motherboard" | "ram" | "storage" | "case" | "psu" | "cooling";
 
@@ -411,6 +420,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Corsair",
       price: 1290,
       ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
       specs: ["DDR5", "6000 MHz", "CL36"],
     },
     {
@@ -419,6 +429,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "G.Skill",
       price: 1490,
       ramType: "DDR5",
+      image: ramGSkillTridentZ5Image,
       specs: ["DDR5", "6400 MHz", "CL32"],
     },
     {
@@ -427,6 +438,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Kingston",
       price: 1190,
       ramType: "DDR5",
+      image: ramKingstonFuryBeastImage,
       specs: ["DDR5", "6000 MHz", "CL40"],
     },
     {
@@ -435,6 +447,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Crucial",
       price: 1090,
       ramType: "DDR5",
+      image: ramCrucialProImage,
       specs: ["DDR5", "5600 MHz", "CL46"],
     },
     {
@@ -443,6 +456,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Corsair",
       price: 2690,
       ramType: "DDR5",
+      image: ramCorsairDominatorImage,
       specs: ["DDR5", "6000 MHz", "CL30"],
     },
     {
@@ -451,6 +465,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "G.Skill",
       price: 990,
       ramType: "DDR4",
+      image: ramGSkillRipjawsImage,
       specs: ["DDR4", "3600 MHz", "CL16"],
     },
     {
@@ -459,6 +474,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Kingston",
       price: 1390,
       ramType: "DDR5",
+      image: ramKingstonFuryRenegadeImage,
       specs: ["DDR5", "6400 MHz", "CL32"],
     },
     {
@@ -467,6 +483,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Crucial",
       price: 2190,
       ramType: "DDR5",
+      image: ramCrucialProImage,
       specs: ["DDR5", "5600 MHz", "CL46"],
     },
     {
@@ -475,6 +492,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "TeamGroup",
       price: 1290,
       ramType: "DDR5",
+      image: ramTeamGroupTForceDeltaImage,
       specs: ["DDR5", "6000 MHz", "RGB"],
     },
     {
@@ -483,6 +501,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "ADATA",
       price: 1190,
       ramType: "DDR5",
+      image: ramAdataXpgLancerImage,
       specs: ["DDR5", "6000 MHz", "RGB"],
     },
   ],
