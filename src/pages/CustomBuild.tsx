@@ -22,6 +22,16 @@ import cpu13700kImage from "../../images/product images/cpu/13700k.png";
 import cpu14700kImage from "../../images/product images/cpu/14700k.png";
 import cpu13900kImage from "../../images/product images/cpu/13900k.png";
 import cpu14900kImage from "../../images/product images/cpu/14900k.png";
+import gpu4060Image from "../../images/product images/gpu/4060.png";
+import gpu4060TiImage from "../../images/product images/gpu/4060 ti.png";
+import gpu4070Image from "../../images/product images/gpu/4070.png";
+import gpu4070SuperImage from "../../images/product images/gpu/4070 super.png";
+import gpu4080SuperImage from "../../images/product images/gpu/4080 super.png";
+import gpu4090Image from "../../images/product images/gpu/4090.png";
+import gpu7600Image from "../../images/product images/gpu/7600.png";
+import gpu7700xtImage from "../../images/product images/gpu/7700xt.png";
+import gpu7800xtImage from "../../images/product images/gpu/7800xt.png";
+import gpuA770Image from "../../images/product images/gpu/a770.png";
 
 type CategoryKey = "cpu" | "gpu" | "motherboard" | "ram" | "storage" | "case" | "psu" | "cooling";
 
@@ -214,6 +224,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NVIDIA GeForce RTX 4060",
       brand: "NVIDIA",
       price: 3790,
+      image: gpu4060Image,
       specs: ["8 GB", "DLSS 3", "1080p"],
     },
     {
@@ -221,6 +232,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NVIDIA GeForce RTX 4060 Ti",
       brand: "NVIDIA",
       price: 4690,
+      image: gpu4060TiImage,
       specs: ["8 GB", "DLSS 3", "1440p"],
     },
     {
@@ -228,6 +240,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NVIDIA GeForce RTX 4070",
       brand: "NVIDIA",
       price: 6990,
+      image: gpu4070Image,
       specs: ["12 GB", "DLSS 3", "1440p"],
     },
     {
@@ -235,6 +248,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NVIDIA GeForce RTX 4070 Super",
       brand: "NVIDIA",
       price: 7990,
+      image: gpu4070SuperImage,
       specs: ["12 GB", "DLSS 3", "1440p"],
       highlight: "Bästa värde",
     },
@@ -243,6 +257,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NVIDIA GeForce RTX 4080 Super",
       brand: "NVIDIA",
       price: 12990,
+      image: gpu4080SuperImage,
       specs: ["16 GB", "DLSS 3", "4K"],
     },
     {
@@ -250,6 +265,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NVIDIA GeForce RTX 4090",
       brand: "NVIDIA",
       price: 21990,
+      image: gpu4090Image,
       specs: ["24 GB", "DLSS 3", "4K+"],
       highlight: "Toppklass",
     },
@@ -258,6 +274,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Radeon RX 7600",
       brand: "AMD",
       price: 3190,
+      image: gpu7600Image,
       specs: ["8 GB", "FSR", "1080p"],
     },
     {
@@ -265,6 +282,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Radeon RX 7700 XT",
       brand: "AMD",
       price: 4990,
+      image: gpu7700xtImage,
       specs: ["12 GB", "FSR", "1440p"],
     },
     {
@@ -272,6 +290,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "AMD Radeon RX 7800 XT",
       brand: "AMD",
       price: 5990,
+      image: gpu7800xtImage,
       specs: ["16 GB", "FSR", "1440p"],
     },
     {
@@ -279,6 +298,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Intel Arc A770",
       brand: "Intel",
       price: 3290,
+      image: gpuA770Image,
       specs: ["16 GB", "XeSS", "1080p"],
     },
   ],
