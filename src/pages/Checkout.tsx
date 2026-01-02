@@ -6,6 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ShoppingCart } from "lucide-react";
 
+const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
+const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
+const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
+
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
   const { user } = useAuth();
@@ -18,15 +22,24 @@ export default function Checkout() {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [city, setCity] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    address: "",
+    postalCode: "",
+    city: "",
+  });
   const fullName = `${firstName} ${lastName}`.trim();
 
-    if (!user) {
+  if (!user) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Du måste logga in för att checka ut"}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Du m\u00e5ste logga in f\u00f6r att checka ut"}</h1>
             <button
               onClick={() => navigate("/")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
@@ -40,18 +53,18 @@ export default function Checkout() {
     );
   }
 
-    if (items.length === 0) {
+  if (items.length === 0) {
     return (
       <div className="min-h-screen bg-white flex flex-col">
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Din kundvagn är tom"}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Din kundvagn \u00e4r tom"}</h1>
             <button
               onClick={() => navigate("/products")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
-              {"Fortsätt handla"}
+              {"Forts\u00e4tt handla"}
             </button>
           </div>
         </div>
@@ -60,9 +73,25 @@ export default function Checkout() {
     );
   }
 
+  const validateFields = () => {
+    const normalizedPhone = phone.replace(/\s+/g, "");
+    const nextErrors = {
+      email: email.trim() ? "" : "Ange en giltig e-postadress.",
+      firstName: firstName.trim().length >= 2 ? "" : "Ange f\u00f6rnamn.",
+      lastName: lastName.trim().length >= 2 ? "" : "Ange efternamn.",
+      phone: swedishPhoneRegex.test(normalizedPhone) ? "" : "Ange ett giltigt svenskt mobilnummer.",
+      address: address.trim().length >= 5 ? "" : "Ange en giltig adress.",
+      postalCode: swedishPostalRegex.test(postalCode.trim()) ? "" : "Ange ett giltigt postnummer.",
+      city: swedishCityRegex.test(city.trim()) ? "" : "Ange en giltig postort.",
+    };
+
+    setErrors(nextErrors);
+    return Object.values(nextErrors).every((value) => value === "");
+  };
+
   const handleCheckout = async () => {
-    if (!email.trim() || !firstName.trim() || !lastName.trim() || !address.trim() || !postalCode.trim() || !city.trim()) {
-      alert("V\u00e4nligen fyll i alla obligatoriska f\u00e4lt.");
+    if (!validateFields()) {
+      alert("Kontrollera att alla f\u00e4lt \u00e4r korrekt ifyllda.");
       return;
     }
 
@@ -110,6 +139,15 @@ export default function Checkout() {
     }
   };
 
+  const isFormValid =
+    email.trim().length > 0 &&
+    firstName.trim().length >= 2 &&
+    lastName.trim().length >= 2 &&
+    swedishPhoneRegex.test(phone.replace(/\s+/g, "")) &&
+    address.trim().length >= 5 &&
+    swedishPostalRegex.test(postalCode.trim()) &&
+    swedishCityRegex.test(city.trim());
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <Navbar />
@@ -133,8 +171,12 @@ export default function Checkout() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
-                      className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                      aria-invalid={Boolean(errors.email)}
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                        errors.email ? "border-red-400" : "border-gray-300"
+                      }`}
                     />
+                    {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -147,8 +189,12 @@ export default function Checkout() {
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Jan"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                        aria-invalid={Boolean(errors.firstName)}
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                          errors.firstName ? "border-red-400" : "border-gray-300"
+                        }`}
                       />
+                      {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -159,8 +205,12 @@ export default function Checkout() {
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Svensson"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                        aria-invalid={Boolean(errors.lastName)}
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                          errors.lastName ? "border-red-400" : "border-gray-300"
+                        }`}
                       />
+                      {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
                     </div>
                   </div>
 
@@ -174,8 +224,12 @@ export default function Checkout() {
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="07x xxx xx xx"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                        aria-invalid={Boolean(errors.phone)}
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                          errors.phone ? "border-red-400" : "border-gray-300"
+                        }`}
                       />
+                      {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -186,8 +240,12 @@ export default function Checkout() {
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="Gatan 1"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                        aria-invalid={Boolean(errors.address)}
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                          errors.address ? "border-red-400" : "border-gray-300"
+                        }`}
                       />
+                      {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
                     </div>
                   </div>
 
@@ -201,8 +259,12 @@ export default function Checkout() {
                         value={postalCode}
                         onChange={(e) => setPostalCode(e.target.value)}
                         placeholder="123 45"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                        aria-invalid={Boolean(errors.postalCode)}
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                          errors.postalCode ? "border-red-400" : "border-gray-300"
+                        }`}
                       />
+                      {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
                     </div>
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
@@ -213,8 +275,12 @@ export default function Checkout() {
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         placeholder="Stockholm"
-                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500"
+                        aria-invalid={Boolean(errors.city)}
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                          errors.city ? "border-red-400" : "border-gray-300"
+                        }`}
                       />
+                      {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
                     </div>
                   </div>
                 </div>
@@ -261,7 +327,7 @@ export default function Checkout() {
 
                 <button
                   onClick={handleCheckout}
-                  disabled={loading || !email.trim() || !firstName.trim() || !lastName.trim() || !address.trim() || !postalCode.trim() || !city.trim()}
+                  disabled={loading || !isFormValid}
                   className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />

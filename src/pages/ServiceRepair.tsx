@@ -110,29 +110,28 @@ export default function ServiceRepair() {
         </section>
 
         <section className="container mx-auto px-4 py-10 sm:py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1fr] gap-10 items-start">
-            <div className="lg:self-center">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-3">Lämna in på reparation? Börja här.</h2>
-              <p className="text-gray-600 dark:text-gray-300 mb-6">
+          <div className="max-w-5xl mx-auto flex flex-col gap-8">
+            <div className="space-y-3 text-center sm:text-left">
+              <h2 className="text-2xl sm:text-3xl font-bold">Lämna in på reparation? Börja här.</h2>
+              <p className="text-gray-600 dark:text-gray-300">
                 Vårt flöde är byggt för tydlighet och snabbhet. Du vet vad som sker och när.
               </p>
-              <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/60">
-                <Accordion type="single" collapsible defaultValue="step-1" className="w-full">
-                  {steps.map((step) => (
-                    <AccordionItem key={step.value} value={step.value} className="px-6 border-gray-200 dark:border-gray-800">
-                      <AccordionTrigger className="text-left text-gray-900 dark:text-gray-100">
-                        {step.title}
-                      </AccordionTrigger>
-                      <AccordionContent className="text-gray-600 dark:text-gray-300">
-                        {step.body}
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </div>
             </div>
 
-            <div>
+            <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-gray-900/60">
+              <Accordion type="single" collapsible defaultValue="step-1" className="w-full">
+                {steps.map((step) => (
+                  <AccordionItem key={step.value} value={step.value} className="px-6 border-gray-200 dark:border-gray-800">
+                    <AccordionTrigger className="text-left text-gray-900 dark:text-gray-100">
+                      {step.title}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-gray-600 dark:text-gray-300">{step.body}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
+
+            <div className="max-w-3xl w-full mx-auto">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">Beskriv ditt problem</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Fyll i formuläret så kan vi snabbare hjälpa dig rätt. Ju mer detaljer, desto bättre offert.
@@ -259,11 +258,9 @@ export default function ServiceRepair() {
               </div>
             </div>
           </div>
-
         </section>
       </main>
       <Footer />
     </div>
   );
 }
-

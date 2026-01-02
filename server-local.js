@@ -48,12 +48,12 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 
   try {
-    const { cartItems, userEmail, fullName } = req.body || {};
+    const { cartItems, userEmail, fullName, phone, address, postalCode, city } = req.body || {};
 
     if (!cartItems || cartItems.length === 0) {
       return res.status(400).json({ error: "Cart is empty" });
     }
-    if (!userEmail || !fullName) {
+    if (!userEmail || !fullName || !phone || !address || !postalCode || !city) {
       return res.status(400).json({ error: "Missing user information" });
     }
 
@@ -80,7 +80,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: ["SE"] },
       locale: "sv",
-      metadata: { fullName, userEmail },
+      metadata: { fullName, userEmail, phone, address, postalCode, city },
       success_url: `${FRONTEND_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${FRONTEND_URL}/cart`,
     });
