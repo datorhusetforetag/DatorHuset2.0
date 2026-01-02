@@ -32,6 +32,16 @@ import gpu7600Image from "../../images/product images/gpu/7600.png";
 import gpu7700xtImage from "../../images/product images/gpu/7700xt.png";
 import gpu7800xtImage from "../../images/product images/gpu/7800xt.png";
 import gpuA770Image from "../../images/product images/gpu/a770.png";
+import moboAsusRogB650EImage from "../../images/product images/mobo/ASUS ROG Strix B650-E.png";
+import moboMsiMagB650TomahawkImage from "../../images/product images/mobo/MSI MAG B650 Tomahawk.png";
+import moboGigabyteB650AorusEliteImage from "../../images/product images/mobo/Gigabyte B650 Aorus Elite.png";
+import moboAsrockX670ESteelLegendImage from "../../images/product images/mobo/ASRock X670E Steel Legend.png";
+import moboAsusTufZ790PlusImage from "../../images/product images/mobo/ASUS TUF Gaming Z790-Plus.png";
+import moboMsiMpgZ790EdgeImage from "../../images/product images/mobo/MSI MPG Z790 Edge.png";
+import moboGigabyteZ790AorusEliteImage from "../../images/product images/mobo/Gigabyte Z790 Aorus Elite.png";
+import moboAsrockZ790ProRsImage from "../../images/product images/mobo/ASRock Z790 Pro RS.png";
+import moboMsiB760MMortarImage from "../../images/product images/mobo/MSI B760M Mortar.png";
+import moboAsusPrimeB650MAImage from "../../images/product images/mobo/ASUS Prime B650M-A.png";
 
 type CategoryKey = "cpu" | "gpu" | "motherboard" | "ram" | "storage" | "case" | "psu" | "cooling";
 
@@ -309,6 +319,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 3290,
       socket: "AM5",
+      image: moboAsusRogB650EImage,
       specs: ["AM5", "ATX", "PCIe 5.0", "Wi-Fi 6E"],
     },
     {
@@ -317,6 +328,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 2590,
       socket: "AM5",
+      image: moboMsiMagB650TomahawkImage,
       specs: ["AM5", "ATX", "DDR5", "2.5G LAN"],
     },
     {
@@ -325,6 +337,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 2490,
       socket: "AM5",
+      image: moboGigabyteB650AorusEliteImage,
       specs: ["AM5", "ATX", "PCIe 4.0", "M.2"],
     },
     {
@@ -333,6 +346,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 3790,
       socket: "AM5",
+      image: moboAsrockX670ESteelLegendImage,
       specs: ["AM5", "ATX", "PCIe 5.0", "USB-C"],
     },
     {
@@ -341,6 +355,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 3390,
       socket: "LGA1700",
+      image: moboAsusTufZ790PlusImage,
       specs: ["LGA1700", "ATX", "DDR5", "Wi-Fi"],
     },
     {
@@ -349,6 +364,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 3990,
       socket: "LGA1700",
+      image: moboMsiMpgZ790EdgeImage,
       specs: ["LGA1700", "ATX", "PCIe 5.0", "Wi-Fi 6E"],
     },
     {
@@ -357,6 +373,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 3190,
       socket: "LGA1700",
+      image: moboGigabyteZ790AorusEliteImage,
       specs: ["LGA1700", "ATX", "DDR5", "2.5G LAN"],
     },
     {
@@ -365,6 +382,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 2590,
       socket: "LGA1700",
+      image: moboAsrockZ790ProRsImage,
       specs: ["LGA1700", "ATX", "PCIe 4.0", "M.2"],
     },
     {
@@ -373,6 +391,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Intel",
       price: 2090,
       socket: "LGA1700",
+      image: moboMsiB760MMortarImage,
       specs: ["LGA1700", "mATX", "DDR5", "PCIe 4.0"],
     },
     {
@@ -381,6 +400,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "AMD",
       price: 1890,
       socket: "AM5",
+      image: moboAsusPrimeB650MAImage,
       specs: ["AM5", "mATX", "DDR5", "HDMI"],
     },
   ],
