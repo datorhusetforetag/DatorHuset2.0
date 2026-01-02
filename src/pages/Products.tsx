@@ -452,7 +452,7 @@ export default function Products() {
               </div>
             )}
             <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">Station\u00e4ra datorer</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
                 Visar {filteredProducts.length} av {COMPUTERS.length} produkter
               </p>
@@ -469,8 +469,8 @@ export default function Products() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((computer) => (
                   <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
-                    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all">
-                    <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-60 sm:h-64 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
+                    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all min-h-[520px]">
+                      <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
                         <img
                           src={computer.image}
                           alt={computer.name}
@@ -481,7 +481,7 @@ export default function Products() {
                         />
                       </div>
 
-                      <div className="p-4">
+                      <div className="p-4 pb-6">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
                           {computer.name}
                         </h3>

@@ -110,7 +110,7 @@ export default function ServiceRepair() {
         </section>
 
         <section className="container mx-auto px-4 py-10 sm:py-12">
-          <div className="max-w-5xl mx-auto flex flex-col gap-8">
+          <div className="max-w-5xl mx-auto flex flex-col gap-12">
             <div className="space-y-3 text-center sm:text-left">
               <h2 className="text-2xl sm:text-3xl font-bold">Lämna in på reparation? Börja här.</h2>
               <p className="text-gray-600 dark:text-gray-300">
@@ -131,7 +131,7 @@ export default function ServiceRepair() {
               </Accordion>
             </div>
 
-            <div className="max-w-3xl w-full mx-auto">
+            <div className="max-w-3xl w-full mx-auto mt-2">
               <h2 className="text-2xl sm:text-3xl font-bold mb-3">Beskriv ditt problem</h2>
               <p className="text-gray-600 dark:text-gray-300 mb-6">
                 Fyll i formuläret så kan vi snabbare hjälpa dig rätt. Ju mer detaljer, desto bättre offert.

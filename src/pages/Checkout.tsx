@@ -168,6 +168,9 @@ export default function Checkout() {
                     </label>
                     <input
                       type="email"
+                      required
+                      inputMode="email"
+                      autoComplete="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
@@ -186,6 +189,8 @@ export default function Checkout() {
                       </label>
                       <input
                         type="text"
+                        required
+                        autoComplete="given-name"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Jan"
@@ -202,6 +207,8 @@ export default function Checkout() {
                       </label>
                       <input
                         type="text"
+                        required
+                        autoComplete="family-name"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Svensson"
@@ -221,6 +228,10 @@ export default function Checkout() {
                       </label>
                       <input
                         type="tel"
+                        required
+                        inputMode="tel"
+                        pattern="^(?:\\+46|0)7\\d{8}$"
+                        autoComplete="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="07x xxx xx xx"
@@ -237,6 +248,8 @@ export default function Checkout() {
                       </label>
                       <input
                         type="text"
+                        required
+                        autoComplete="street-address"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder="Gatan 1"
@@ -256,6 +269,10 @@ export default function Checkout() {
                       </label>
                       <input
                         type="text"
+                        required
+                        inputMode="numeric"
+                        pattern="^\\d{3}\\s?\\d{2}$"
+                        autoComplete="postal-code"
                         value={postalCode}
                         onChange={(e) => setPostalCode(e.target.value)}
                         placeholder="123 45"
@@ -272,6 +289,9 @@ export default function Checkout() {
                       </label>
                       <input
                         type="text"
+                        required
+                        autoComplete="address-level2"
+                        pattern="^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\\s-]+$"
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         placeholder="Stockholm"
