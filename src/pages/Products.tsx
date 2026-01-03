@@ -1,12 +1,10 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+﻿import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
-import { getAllInventory } from "@/lib/supabaseServices";
-import { useProducts } from "@/hooks/useProducts";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
@@ -29,7 +27,7 @@ type BannerConfig = {
 
 const DEFAULT_BANNER: BannerConfig = {
   eyebrow: "Topplistan",
-  title: "Bästa säljare inom stationära datorer i hela Norden!",
+  title: "B\u00e4sta s\u00e4ljare inom station\u00e4ra datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
   images: [
     "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
@@ -43,13 +41,13 @@ const DEFAULT_BANNER: BannerConfig = {
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   budget: {
-    eyebrow: "Budgetvänligt",
-    title: "Budget betyder inte dåligt",
-    description: "Smarta val som håller priset nere utan att tumma på känslan.",
+    eyebrow: "Budgetv\u00e4nligt",
+    title: "Budget betyder inte d\u00e5ligt",
+    description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
     images: ["/products/NavBase_Hero_Colorswap_2000x.webp"],
     stickers: [
       {
-        label: "Bäst i budget-klass",
+        label: "B\u00e4st i budget-klass",
         className: "bg-yellow-400 text-gray-900",
       },
     ],
@@ -58,17 +56,17 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   },
   paket: {
     eyebrow: "Paket",
-    title: "Allt du behöver, redo att köra",
-    description: "Kompletta paket med dator, skärm och tillbehör i ett och samma köp.",
+    title: "Allt du beh\u00f6ver, redo att k\u00f6ra",
+    description: "Kompletta paket med dator, sk\u00e4rm och tillbeh\u00f6r i ett och samma k\u00f6p.",
     images: ["/products/Horizon3_Elite_Hero_2000x.webp"],
     background:
       "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
     variant: "bundle",
   },
   "best-selling": {
-    eyebrow: "Mest för pengarna",
-    title: "Mest för pengarna",
-    description: "Våra mest prisvärda byggen \u2013 noggrant utvalda för maximal valuta.",
+    eyebrow: "Mest f\u00f6r pengarna",
+    title: "Mest f\u00f6r pengarna",
+    description: "V\u00e5ra mest prisv\u00e4rda byggen \u2013 noggrant utvalda f\u00f6r maximal valuta.",
     images: [
       "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
       "/products/Traveler_Hero_1_2000x.webp",
@@ -92,16 +90,16 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
       "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
   toptier: {
-    eyebrow: "Bästa prestanda",
-    title: "När bara det snabbaste duger",
-    description: "Toppbyggen för dig som vill ha maximal kraft och kompromisslös kvalitet.",
+    eyebrow: "B\u00e4sta prestanda",
+    title: "N\u00e4r bara det snabbaste duger",
+    description: "Toppbyggen f\u00f6r dig som vill ha maximal kraft och kompromissl\u00f6s kvalitet.",
     images: [
       "/products/Voy_Red_Hero_2000x.webp",
       "/products/Voyager_Hero_NoGeforce_2000x_2.webp",
     ],
     stickers: [
       {
-        label: "Bäst i Klass",
+        label: "B\u00e4st i Klass",
         className: "bg-yellow-400 text-gray-900",
       },
       {
@@ -116,7 +114,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
 };
 
 const bundleItems = [
-  { label: "Skärm", icon: Monitor },
+  { label: "Sk\u00e4rm", icon: Monitor },
   { label: "Tangentbord", icon: Keyboard },
   { label: "Mus", icon: Mouse },
   { label: "Headset", icon: Headphones },
@@ -124,7 +122,6 @@ const bundleItems = [
 
 export default function Products() {
   const [searchParams] = useSearchParams();
-  const { products } = useProducts();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const hasAppliedCategory = useRef(false);
   const [priceRange, setPriceRange] = useState([0, 30000]);
@@ -132,28 +129,6 @@ export default function Products() {
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [inventoryMap, setInventoryMap] = useState<Record<string, { quantity_in_stock?: number | null; is_preorder?: boolean | null; eta_days?: number | null; eta_note?: string | null }>>({});
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadInventory = async () => {
-      try {
-        const data = await getAllInventory();
-        if (!isMounted) return;
-        const mapped = (data || []).reduce((acc, item) => {
-          acc[item.product_id] = item;
-          return acc;
-        }, {} as Record<string, any>);
-        setInventoryMap(mapped);
-      } catch (error) {
-        console.warn("Failed to load inventory", error);
-      }
-    };
-    loadInventory();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
@@ -248,9 +223,9 @@ export default function Products() {
   };
 
   const categoryLabel = (() => {
-    if (activeCategory === "budget") return "Budgetvänlig";
-    if (activeCategory === "best-selling") return "Mest för pengarna";
-    if (activeCategory === "toptier") return "Bästa prestanda";
+    if (activeCategory === "budget") return "Budgetv\u00e4nlig";
+    if (activeCategory === "best-selling") return "Mest f\u00f6r pengarna";
+    if (activeCategory === "toptier") return "B\u00e4sta prestanda";
     if (activeCategory === "paket") return "Paket";
     return "";
   })();
@@ -321,7 +296,6 @@ export default function Products() {
                           alt={`Bannerbild ${index + 1}`}
                           className="w-full h-full object-cover"
                           loading="lazy"
-                          decoding="async"
                         />
                         {banner.stickers?.[index] ? (
                           <span
@@ -350,7 +324,7 @@ export default function Products() {
             >
               Filter
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {mobileFiltersOpen ? "Dölj" : "Visa"}
+                {mobileFiltersOpen ? "D\u00f6lj" : "Visa"}
               </span>
             </button>
             {hasFilters && (
@@ -478,7 +452,7 @@ export default function Products() {
               </div>
             )}
             <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Stationära datorer"}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
                 Visar {filteredProducts.length} av {COMPUTERS.length} produkter
               </p>
@@ -495,72 +469,46 @@ export default function Products() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((computer) => (
                   <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
-                    {(() => {
-                      const productId = products.find((p) => p.name === computer.name)?.id;
-                      const inventory = productId ? inventoryMap[productId] : null;
-                      const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
-                      const isPreorder = Boolean(inventory?.is_preorder);
-                      const etaNote = inventory?.eta_note || (inventory?.eta_days ? `ETA ${inventory.eta_days} dagar` : "");
-                      const badgeText = inStock ? "I lager" : isPreorder ? "Förbeställning" : "Slut i lager";
-                      const badgeTone = inStock
-                        ? "bg-emerald-100 text-emerald-700"
-                        : isPreorder
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-700";
+                    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all min-h-[520px]">
+                      <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
+                        <img
+                          src={computer.image}
+                          alt={computer.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = FALLBACK_IMAGE;
+                          }}
+                        />
+                      </div>
 
-                      return (
-                        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all min-h-[520px]">
-                          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
-                            <img
-                              src={computer.image}
-                              alt={computer.name}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => {
-                                e.currentTarget.src = FALLBACK_IMAGE;
-                              }}
-                            />
-                            <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}>
-                              {badgeText}
-                            </span>
-                            {!inStock && isPreorder && etaNote ? (
-                              <span className="absolute bottom-3 left-3 text-xs font-semibold px-3 py-1 rounded-full bg-gray-900/80 text-white">
-                                {etaNote}
-                              </span>
-                            ) : null}
+                      <div className="p-4 pb-6">
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
+                          {computer.name}
+                        </h3>
+
+                        <div className="flex items-center mb-3">
+                          <div className="flex items-center text-yellow-400" aria-hidden>
+                            {Array.from({ length: 5 }).map((_, index) => (
+                              <Star key={index} className="w-4 h-4 fill-current" />
+                            ))}
                           </div>
-
-                          <div className="p-4 pb-6">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
-                              {computer.name}
-                            </h3>
-
-                            <div className="flex items-center mb-3">
-                              <div className="flex items-center text-yellow-400" aria-hidden>
-                                {Array.from({ length: 5 }).map((_, index) => (
-                                  <Star key={index} className="w-4 h-4 fill-current" />
-                                ))}
-                              </div>
-                              <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
-                            </div>
-
-                            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
-                              <p className="truncate">CPU: {computer.cpu}</p>
-                              <p className="truncate">GPU: {computer.gpu}</p>
-                              <p className="truncate">RAM: {computer.ram}</p>
-                              <p className="truncate">
-                                Lagring: {computer.storage} {computer.storagetype}
-                              </p>
-                            </div>
-
-                            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                              {computer.price.toLocaleString("sv-SE")} kr
-                            </div>
-                          </div>
+                          <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
                         </div>
-                      );
-                    })()}
+
+                        <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
+                          <p className="truncate">CPU: {computer.cpu}</p>
+                          <p className="truncate">GPU: {computer.gpu}</p>
+                          <p className="truncate">RAM: {computer.ram}</p>
+                          <p className="truncate">
+                            Lagring: {computer.storage} {computer.storagetype}
+                          </p>
+                        </div>
+
+                        <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          {computer.price.toLocaleString("sv-SE")} kr
+                        </div>
+                      </div>
+                    </div>
                   </Link>
                 ))}
               </div>
