@@ -175,7 +175,7 @@ export const Navbar = () => {
                 <span className="text-sm font-semibold">Meny</span>
               </button>
               {showNavMenu && (
-                <div className="absolute left-0 mt-3 w-64 rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg overflow-hidden z-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+                <div className="absolute left-0 top-full mt-2 w-64 rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg overflow-hidden z-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
                   <Link
                     to="/products"
                     onClick={() => setShowNavMenu(false)}
@@ -266,7 +266,7 @@ export const Navbar = () => {
                   <span className="text-sm font-semibold">Meny</span>
                 </button>
                 {showNavMenu && (
-                  <div className="absolute left-0 mt-3 w-64 rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg overflow-hidden z-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+                  <div className="absolute left-0 top-full mt-2 w-64 rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg overflow-hidden z-50 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
                     <Link
                       to="/products"
                       onClick={() => setShowNavMenu(false)}

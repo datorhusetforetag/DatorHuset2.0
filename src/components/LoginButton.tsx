@@ -78,7 +78,7 @@ export function LoginButton() {
     const initials = displayName.trim().charAt(0).toUpperCase() || "P";
 
     return (
-      <div className="relative">
+      <div className="relative z-50">
         <button
           onClick={() => setShowDropdown((prev) => !prev)}
         className="flex items-center justify-center rounded-full border border-gray-200 bg-white p-1 shadow-sm transition-colors hover:border-[#11667b] focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-[#11667b]"
@@ -92,7 +92,7 @@ export function LoginButton() {
         </button>
 
         {showDropdown && (
-          <div className="absolute top-full right-0 mt-2 w-52 rounded-lg border border-gray-200 bg-white shadow-lg dark:border-gray-700 dark:bg-gray-900">
+          <div className="absolute top-full right-0 mt-2 w-52 rounded-lg border border-gray-200 bg-white shadow-lg z-50 dark:border-gray-700 dark:bg-gray-900">
             <div className="p-4 border-b border-gray-200 dark:border-gray-700">
               <p className="text-xs text-gray-500 dark:text-gray-400">Inloggad som</p>
               <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayName}</p>

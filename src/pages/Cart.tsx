@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Plus, Minus } from "lucide-react";
+import { COMPUTERS } from "@/data/computers";
 
 export default function Cart() {
   const { items, loading, removeFromCart, updateQuantity, totalPrice } = useCart();
@@ -57,10 +58,36 @@ export default function Cart() {
                     key={item.id}
                     className="flex flex-col sm:flex-row gap-4 p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
                   >
-                    {/* Product image placeholder */}
-                    <div className="w-full sm:w-24 h-32 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded flex items-center justify-center flex-shrink-0">
-                      <span className="text-3xl">🖥️</span>
-                    </div>
+                    {(() => {
+                      const product = item.product;
+                      const fallbackComputer = COMPUTERS.find(
+                        (computer) =>
+                          computer.name === product?.name ||
+                          computer.id === product?.id ||
+                          computer.id === String(product?.id)
+                      );
+                      const imageSrc =
+                        product?.image_url ||
+                        product?.image ||
+                        product?.imageUrl ||
+                        fallbackComputer?.image;
+
+                      return (
+                        <div className="w-full sm:w-24 h-32 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">
+                          {imageSrc ? (
+                            <img
+                              src={imageSrc}
+                              alt={product?.name || "Produktbild"}
+                              className="w-full h-full object-cover"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : (
+                            <span className="text-sm text-gray-500">Ingen bild</span>
+                          )}
+                        </div>
+                      );
+                    })()}
 
                     {/* Product info */}
                     <div className="flex-1">

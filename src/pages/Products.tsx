@@ -509,7 +509,7 @@ export default function Products() {
                           : "bg-red-100 text-red-700";
 
                       return (
-                        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all min-h-[520px]">
+                        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
                           <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
                             <img
                               src={computer.image}
@@ -532,7 +532,7 @@ export default function Products() {
                           </div>
 
                           <div className="p-4 pb-6">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#11667b] dark:group-hover:text-[#11667b] transition-colors">
                               {computer.name}
                             </h3>
 

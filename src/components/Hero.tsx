@@ -77,7 +77,7 @@ export const Hero = () => {
                   key={category.name}
                   type="button"
                   onClick={() => setShowQuiz((prev) => !prev)}
-                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
                 >
                   <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
@@ -91,7 +91,7 @@ export const Hero = () => {
                     utm_campaign: "populara_kategorier",
                     utm_content: buildUtmContent(category.name),
                   })}
-                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
                 >
                   <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
@@ -196,7 +196,7 @@ export const Hero = () => {
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}
-                  className="flex-shrink-0 w-72 sm:w-80 md:w-96 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:border-gray-500 snap-start"
+                  className="flex-shrink-0 w-72 sm:w-80 md:w-96 bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:hover:border-[#11667b] snap-start"
                 >
                   <div className="h-44 sm:h-52 bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                     <img
@@ -211,7 +211,7 @@ export const Hero = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 hover:text-blue-600 dark:hover:text-blue-300">
+                    <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2 line-clamp-2 hover:text-[#11667b] dark:hover:text-[#11667b]">
                       {computer.name}
                     </h4>
                     <div className="text-xs text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
