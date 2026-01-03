@@ -3,24 +3,27 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index.tsx";
-import Products from "./pages/Products.tsx";
-import ComputerDetails from "./pages/ComputerDetails.tsx";
-import SearchResults from "./pages/SearchResults.tsx";
-import Cart from "./pages/Cart.tsx";
-import Checkout from "./pages/Checkout.tsx";
-import CheckoutSuccess from "./pages/CheckoutSuccess.tsx";
-import Account from "./pages/Account.tsx";
-import Orders from "./pages/Orders.tsx";
-import Faq from "./pages/Faq.tsx";
-import CustomerService from "./pages/CustomerService.tsx";
-import CustomBuild from "./pages/CustomBuild.tsx";
-import ServiceRepair from "./pages/ServiceRepair.tsx";
-import About from "./pages/About.tsx";
-import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
-import TermsOfService from "./pages/TermsOfService.tsx";
+import { Suspense, lazy } from "react";
 import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop";
+
+const Index = lazy(() => import("./pages/Index.tsx"));
+const Products = lazy(() => import("./pages/Products.tsx"));
+const ComputerDetails = lazy(() => import("./pages/ComputerDetails.tsx"));
+const SearchResults = lazy(() => import("./pages/SearchResults.tsx"));
+const Cart = lazy(() => import("./pages/Cart.tsx"));
+const Checkout = lazy(() => import("./pages/Checkout.tsx"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess.tsx"));
+const Account = lazy(() => import("./pages/Account.tsx"));
+const Orders = lazy(() => import("./pages/Orders.tsx"));
+const Faq = lazy(() => import("./pages/Faq.tsx"));
+const CustomerService = lazy(() => import("./pages/CustomerService.tsx"));
+const CustomBuild = lazy(() => import("./pages/CustomBuild.tsx"));
+const ServiceRepair = lazy(() => import("./pages/ServiceRepair.tsx"));
+const About = lazy(() => import("./pages/About.tsx"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard.tsx"));
 
 const queryClient = new QueryClient();
 
@@ -31,26 +34,35 @@ const App = () => (
       {/* <Sonner /> */}
       <BrowserRouter>
         <ScrollToTop>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/computer/:id" element={<ComputerDetails />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            <Route path="/checkout-success" element={<CheckoutSuccess />} />
-            <Route path="/account" element={<Account />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/faq" element={<Faq />} />
-            <Route path="/kundservice" element={<CustomerService />} />
-            <Route path="/custom-bygg" element={<CustomBuild />} />
-            <Route path="/service-reparation" element={<ServiceRepair />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms-of-service" element={<TermsOfService />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <Suspense
+            fallback={
+              <div className="min-h-screen flex items-center justify-center bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50">
+                <p className="text-sm font-semibold">Laddar sida...</p>
+              </div>
+            }
+          >
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/computer/:id" element={<ComputerDetails />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/checkout-success" element={<CheckoutSuccess />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/kundservice" element={<CustomerService />} />
+              <Route path="/custom-bygg" element={<CustomBuild />} />
+              <Route path="/service-reparation" element={<ServiceRepair />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
         </ScrollToTop>
       </BrowserRouter>
     </TooltipProvider>

@@ -83,7 +83,13 @@ export const Footer = () => {
                   </a>
                 </div>
               </div>
-              <img src={logo} alt="DatorHuset logo" className="w-12 h-12 object-contain" />
+              <img
+                src={logo}
+                alt="DatorHuset logo"
+                className="w-12 h-12 object-contain"
+                loading="lazy"
+                decoding="async"
+              />
             </div>
           </div>
         </div>

@@ -144,7 +144,13 @@ export function LoginButton() {
       <SheetContent side="right" className="w-full sm:max-w-md lg:w-[33vw] lg:max-w-[33vw] bg-white dark:bg-[#0f1824]">
         <SheetHeader className="text-left">
           <div className="flex items-center gap-3">
-            <img src="/Datorhuset.png" alt="DatorHuset" className="w-10 h-10 object-contain" />
+            <img
+              src="/Datorhuset.png"
+              alt="DatorHuset"
+              className="w-10 h-10 object-contain"
+              loading="lazy"
+              decoding="async"
+            />
             <div>
               <SheetTitle className="text-xl">Logga in pa DatorHuset</SheetTitle>
               <SheetDescription>Hantera ordrar, favoriter och servicearenden.</SheetDescription>

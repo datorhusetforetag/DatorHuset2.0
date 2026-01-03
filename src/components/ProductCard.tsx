@@ -36,6 +36,8 @@ export const ProductCard = ({ name, tier, price, salePrice, image, delay = 0 }: 
           src={image}
           alt={name}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          loading="lazy"
+          decoding="async"
         />
         
         {/* Badges */}

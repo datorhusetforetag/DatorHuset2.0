@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { buildUtmContent, withUtm } from "@/lib/utm";
 
 export const HomePromoSplit = () => {
   return (
@@ -20,6 +21,7 @@ export const HomePromoSplit = () => {
                 alt="Service och reparation av datorer"
                 className="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               <p className="absolute bottom-4 left-6 text-xs uppercase tracking-[0.4em] text-yellow-400">Service & reparation</p>
@@ -46,13 +48,23 @@ export const HomePromoSplit = () => {
               </div>
               <div className="mt-auto flex flex-col sm:flex-row gap-3">
                 <Link
-                  to="/service-reparation"
+                  to={withUtm("/service-reparation", {
+                    utm_source: "homepage",
+                    utm_medium: "promo_card",
+                    utm_campaign: "service_reparation",
+                    utm_content: buildUtmContent("service-reparation"),
+                  })}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
                 >
                   Service & reparation
                 </Link>
                 <Link
-                  to="/kundservice"
+                  to={withUtm("/kundservice", {
+                    utm_source: "homepage",
+                    utm_medium: "promo_card",
+                    utm_campaign: "service_reparation",
+                    utm_content: buildUtmContent("kundservice"),
+                  })}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-yellow-400 text-gray-900 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
                 >
                   Fråga en tekniker
@@ -68,6 +80,7 @@ export const HomePromoSplit = () => {
                 alt="Custom byggda datorer"
                 className="w-full h-full object-cover"
                 loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
               <p className="absolute bottom-4 left-6 text-xs uppercase tracking-[0.4em] text-yellow-400">Custom bygg</p>
@@ -94,13 +107,23 @@ export const HomePromoSplit = () => {
               </div>
               <div className="mt-auto flex flex-col sm:flex-row gap-3">
                 <Link
-                  to="/custom-bygg"
+                  to={withUtm("/custom-bygg", {
+                    utm_source: "homepage",
+                    utm_medium: "promo_card",
+                    utm_campaign: "custom_bygg",
+                    utm_content: buildUtmContent("custom-bygg"),
+                  })}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
                 >
                   Gå till custom bygg
                 </Link>
                 <Link
-                  to="/products"
+                  to={withUtm("/products", {
+                    utm_source: "homepage",
+                    utm_medium: "promo_card",
+                    utm_campaign: "custom_bygg",
+                    utm_content: buildUtmContent("produkter"),
+                  })}
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-yellow-400 text-gray-900 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
                 >
                   Se färdiga datorer

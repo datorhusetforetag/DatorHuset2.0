@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight, Hammer, HelpCircle, Monitor, Package, Rocket
 import { Link, useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 import { COMPUTERS } from "@/data/computers";
+import { buildUtmContent, withUtm } from "@/lib/utm";
 
 const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
@@ -45,10 +46,11 @@ export const Hero = () => {
                 <p className="text-xs text-gray-600 dark:text-gray-300">{"P\u00e5 utvalda gamingdatorer hela veckan"}</p>
               </div>
               <img
-                src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1200&q=80"
+                src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=80"
                 alt="Veckans deal"
                 className="h-full w-20 sm:w-32 md:w-40 object-cover rounded-lg shadow"
                 loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -83,7 +85,12 @@ export const Hero = () => {
               ) : (
                 <Link
                   key={category.name}
-                  to={category.href}
+                  to={withUtm(category.href, {
+                    utm_source: "homepage",
+                    utm_medium: "category_card",
+                    utm_campaign: "populara_kategorier",
+                    utm_content: buildUtmContent(category.name),
+                  })}
                   className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-gray-300 transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
                 >
                   <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
@@ -145,7 +152,14 @@ export const Hero = () => {
                         : performanceNeed === "max" || budgetChoice === "high"
                           ? "toptier"
                           : "best-selling";
-                    navigate(`/products?category=${recommendation}`);
+                    navigate(
+                      withUtm(`/products?category=${recommendation}`, {
+                        utm_source: "homepage",
+                        utm_medium: "quiz",
+                        utm_campaign: "help_me_choose",
+                        utm_content: recommendation,
+                      })
+                    );
                     setShowQuiz(false);
                   }}
                   className="bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
@@ -154,7 +168,16 @@ export const Hero = () => {
                 </button>
                 <button
                   type="button"
-                  onClick={() => navigate("/products")}
+                  onClick={() =>
+                    navigate(
+                      withUtm("/products", {
+                        utm_source: "homepage",
+                        utm_medium: "quiz",
+                        utm_campaign: "help_me_choose",
+                        utm_content: "alla-produkter",
+                      })
+                    )
+                  }
                   className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg hover:border-[#11667b] hover:text-[#11667b] transition-colors"
                 >
                   Se alla produkter
@@ -181,6 +204,7 @@ export const Hero = () => {
                       alt={computer.name}
                       className="w-full h-full object-cover"
                       loading="lazy"
+                      decoding="async"
                       onError={(e) => {
                         e.currentTarget.src = FALLBACK_IMAGE;
                       }}

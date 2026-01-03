@@ -1,11 +1,12 @@
 ﻿import { Link, useParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useProducts, getProductIdByName } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
+import { checkStock } from "@/lib/supabaseServices";
 
 const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
@@ -197,6 +198,12 @@ export default function ComputerDetails() {
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [inventoryStatus, setInventoryStatus] = useState<{
+    inStock: boolean;
+    canPreorder: boolean;
+    etaDays: number | null;
+    etaNote: string | null;
+  } | null>(null);
 
   const computer: Computer | undefined = COMPUTERS.find((c) => c.id === id);
   const supabaseProductId =
@@ -210,6 +217,29 @@ export default function ComputerDetails() {
   useEffect(() => {
     setSelectedImage(0);
   }, [computer?.id]);
+
+  useEffect(() => {
+    if (!supabaseProductId) return;
+    let isMounted = true;
+    const loadInventory = async () => {
+      try {
+        const status = await checkStock(supabaseProductId);
+        if (!isMounted) return;
+        setInventoryStatus({
+          inStock: status.inStock,
+          canPreorder: status.canPreorder,
+          etaDays: status.etaDays ?? null,
+          etaNote: status.etaNote ?? null,
+        });
+      } catch (error) {
+        console.warn("Failed to fetch inventory status", error);
+      }
+    };
+    loadInventory();
+    return () => {
+      isMounted = false;
+    };
+  }, [supabaseProductId]);
 
   if (!computer) {
     return (
@@ -253,6 +283,80 @@ export default function ComputerDetails() {
   const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
   const fpsHigh = Math.round(finalFps * 1.1);
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
+  const availability = useMemo(() => {
+    if (!inventoryStatus) {
+      return {
+        label: "Kontrollerar lager",
+        className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200",
+        schema: "https://schema.org/InStock",
+      };
+    }
+    if (inventoryStatus.inStock) {
+      return {
+        label: "I lager",
+        className: "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200",
+        schema: "https://schema.org/InStock",
+      };
+    }
+    if (inventoryStatus.canPreorder) {
+      return {
+        label: "Förbeställning",
+        className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
+        schema: "https://schema.org/PreOrder",
+      };
+    }
+    return {
+      label: "Slut i lager",
+      className: "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200",
+      schema: "https://schema.org/OutOfStock",
+    };
+  }, [inventoryStatus]);
+  const etaLabel = useMemo(() => {
+    if (!inventoryStatus || !inventoryStatus.canPreorder) return null;
+    return inventoryStatus.etaNote || (inventoryStatus.etaDays ? `ETA ${inventoryStatus.etaDays} dagar` : null);
+  }, [inventoryStatus]);
+  const structuredData = useMemo(() => {
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.site";
+    const imageUrls = (images.length ? images : [computer.image]).map((img) =>
+      img.startsWith("http") ? img : new URL(img, baseUrl).toString()
+    );
+    return {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: computer.name,
+      image: imageUrls,
+      description: `${computer.cpu}, ${computer.gpu}, ${computer.ram}, ${computer.storage} ${computer.storagetype}`,
+      sku: computer.id,
+      brand: {
+        "@type": "Brand",
+        name: "DatorHuset",
+      },
+      offers: {
+        "@type": "Offer",
+        priceCurrency: "SEK",
+        price: computer.price,
+        availability: availability.schema,
+        url: `${baseUrl}/computer/${computer.id}`,
+      },
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: reviewData.average,
+        reviewCount: reviewData.total,
+      },
+      review: reviewData.reviews.slice(0, 2).map((review) => ({
+        "@type": "Review",
+        author: { "@type": "Person", name: review.name },
+        datePublished: review.date,
+        reviewBody: review.text,
+        reviewRating: {
+          "@type": "Rating",
+          ratingValue: review.rating,
+          bestRating: "5",
+          worstRating: "1",
+        },
+      })),
+    };
+  }, [availability.schema, computer, images, reviewData]);
 
   const renderStars = (rating: number) => (
     <div className="flex items-center gap-1">
@@ -278,6 +382,10 @@ export default function ComputerDetails() {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <div className="flex-1 container mx-auto px-4 py-6 sm:py-10 lg:py-16 pb-24 lg:pb-16">
         {/* Breadcrumb */}
         <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 gap-2 mb-6 sm:mb-8">
@@ -298,6 +406,8 @@ export default function ComputerDetails() {
                 src={images[selectedImage] || computer.image}
                 alt={computer.name}
                 className="w-full h-full object-cover"
+                loading="eager"
+                decoding="async"
               />
               {images.length > 1 && (
                 <>
@@ -328,7 +438,13 @@ export default function ComputerDetails() {
                   className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border ${selectedImage === i ? "border-[#11667b]" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
-                  <img src={img} alt={`${computer.name} vy ${i + 1}`} className="w-full h-full object-cover" />
+                  <img
+                    src={img}
+                    alt={`${computer.name} vy ${i + 1}`}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </button>
               ))}
             </div>
@@ -345,6 +461,14 @@ export default function ComputerDetails() {
 
             <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{computer.price.toLocaleString("sv-SE")} kr</div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Exkl. moms</div>
+            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
+              <span className={`rounded-full px-3 py-1 ${availability.className}`}>{availability.label}</span>
+              {etaLabel && (
+                <span className="rounded-full px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                  {etaLabel}
+                </span>
+              )}
+            </div>
 
             <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-row sm:items-center sm:gap-6">
               <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
@@ -551,7 +675,13 @@ export default function ComputerDetails() {
                 className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 space-y-4"
               >
                 <div className="h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
@@ -645,7 +775,13 @@ export default function ComputerDetails() {
                 className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
               >
                 <div className="h-28 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center text-3xl text-gray-400 overflow-hidden">
-                  <img src={related.image} alt={related.name} className="w-full h-full object-cover" />
+                  <img
+                    src={related.image}
+                    alt={related.name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                  />
                 </div>
                 <div className="p-4 space-y-2">
                   <h3 className="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2">{related.name}</h3>

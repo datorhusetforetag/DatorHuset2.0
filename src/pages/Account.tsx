@@ -4,8 +4,18 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
-import { getUserOrders } from "@/lib/supabaseServices";
+import {
+  createUserAddress,
+  deleteUserAddress,
+  getUserAddresses,
+  getUserOrders,
+  setDefaultAddress,
+} from "@/lib/supabaseServices";
 import { KeyRound, MapPin, Package, User } from "lucide-react";
+
+const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
+const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
+const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
 
 type OrderItem = {
   id: string;
@@ -21,17 +31,21 @@ type Order = {
   created_at?: string;
   total_cents?: number;
   status?: string;
-  user_id?: string;
-  customer_email?: string;
-  customer_name?: string;
-  customer_phone?: string;
-  customer_address?: string;
-  customer_postal_code?: string;
-  customer_city?: string;
-  stripe_session_id?: string;
-  stripe_payment_intent_id?: string;
   order_items?: OrderItem[];
   receipt_url?: string;
+};
+
+type Address = {
+  id: string;
+  label?: string | null;
+  full_name?: string | null;
+  phone?: string | null;
+  address_line1: string;
+  address_line2?: string | null;
+  postal_code: string;
+  city: string;
+  country?: string | null;
+  is_default?: boolean;
 };
 
 const statusConfig: Record<string, { label: string; step: number }> = {
@@ -43,24 +57,43 @@ const statusConfig: Record<string, { label: string; step: number }> = {
   finished: { label: "Klar", step: 3 },
 };
 
-const statusOptions = [
-  { value: "received", label: "Order mottagen" },
-  { value: "building", label: "Byggs" },
-  { value: "finished", label: "Klar" },
-];
+const statusSteps = ["Order mottagen", "Byggs", "Klar"];
 
 export default function Account() {
   const { user, session } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
-  const [adminOrders, setAdminOrders] = useState<Order[]>([]);
-  const [loadingAdminOrders, setLoadingAdminOrders] = useState(false);
-  const [adminOrderError, setAdminOrderError] = useState("");
   const [resetStatus, setResetStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const [statusEdits, setStatusEdits] = useState<Record<string, string>>({});
-  const [statusSaving, setStatusSaving] = useState<Record<string, boolean>>({});
-  const [statusError, setStatusError] = useState<Record<string, string>>({});
+
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [addressError, setAddressError] = useState("");
+  const [addressForm, setAddressForm] = useState({
+    label: "",
+    full_name: "",
+    phone: "",
+    address_line1: "",
+    address_line2: "",
+    postal_code: "",
+    city: "",
+    is_default: false,
+  });
+  const [addressFormErrors, setAddressFormErrors] = useState<Record<string, string>>({});
+
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const metadataIsAdmin = useMemo(() => {
+    if (!user) return false;
+    const userMetadata = user.user_metadata || {};
+    const appMetadata = user.app_metadata || {};
+    return Boolean(
+      userMetadata.is_admin === true ||
+        userMetadata.role === "admin" ||
+        appMetadata.is_admin === true ||
+        appMetadata.role === "admin"
+    );
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -85,51 +118,64 @@ export default function Account() {
     };
   }, [user]);
 
+  useEffect(() => {
+    if (!user) return;
+    let isMounted = true;
+    const loadAddresses = async () => {
+      try {
+        setLoadingAddresses(true);
+        setAddressError("");
+        const data = await getUserAddresses(user.id);
+        if (!isMounted) return;
+        setAddresses(data as Address[]);
+      } catch (error) {
+        if (!isMounted) return;
+        setAddressError("Kunde inte hämta sparade adresser.");
+      } finally {
+        if (isMounted) setLoadingAddresses(false);
+      }
+    };
+    loadAddresses();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!session?.access_token) {
+      setIsAdmin(metadataIsAdmin);
+      return;
+    }
+    let isMounted = true;
+    const loadAdminStatus = async () => {
+      try {
+        const response = await fetch("/api/admin/me", {
+          headers: { Authorization: `Bearer ${session.access_token}` },
+        });
+        if (!response.ok) {
+          if (!isMounted) return;
+          setIsAdmin(metadataIsAdmin);
+          return;
+        }
+        const data = await response.json();
+        if (!isMounted) return;
+        setIsAdmin(Boolean(data?.isAdmin) || metadataIsAdmin);
+      } catch (error) {
+        if (!isMounted) return;
+        setIsAdmin(metadataIsAdmin);
+      }
+    };
+    loadAdminStatus();
+    return () => {
+      isMounted = false;
+    };
+  }, [session?.access_token, metadataIsAdmin]);
+
   const profileName = useMemo(() => {
     if (!user) return "";
     const metadata = user.user_metadata || {};
     return metadata.full_name || metadata.username || user.email?.split("@")[0] || "Kund";
   }, [user]);
-
-  const isAdmin = useMemo(() => {
-    if (!user) return false;
-    const metadata = user.user_metadata || {};
-    const appMetadata = user.app_metadata || {};
-    return (
-      metadata.is_admin === true ||
-      metadata.role === "admin" ||
-      appMetadata.is_admin === true ||
-      appMetadata.role === "admin"
-    );
-  }, [user]);
-
-  useEffect(() => {
-    if (!user || !isAdmin) return;
-    let isMounted = true;
-    const loadAdminOrders = async () => {
-      try {
-        setLoadingAdminOrders(true);
-        setAdminOrderError("");
-        const authHeader = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
-        const response = await fetch("/api/admin/orders", { headers: authHeader });
-        if (!response.ok) {
-          throw new Error("Failed to load admin orders");
-        }
-        const data = await response.json();
-        if (!isMounted) return;
-        setAdminOrders(data as Order[]);
-      } catch (error) {
-        if (!isMounted) return;
-        setAdminOrderError("Kunde inte hämta admin-ordrar just nu.");
-      } finally {
-        if (isMounted) setLoadingAdminOrders(false);
-      }
-    };
-    loadAdminOrders();
-    return () => {
-      isMounted = false;
-    };
-  }, [isAdmin, session?.access_token, user]);
 
   const phoneNumber = useMemo(() => {
     if (!user) return "";
@@ -137,25 +183,9 @@ export default function Account() {
     return metadata.phone || user.phone || "";
   }, [user]);
 
-  const addressLine = useMemo(() => {
-    if (!user) return "";
-    const metadata = user.user_metadata || {};
-    return metadata.address || "";
-  }, [user]);
-
-  const postalCode = useMemo(() => {
-    if (!user) return "";
-    const metadata = user.user_metadata || {};
-    return metadata.postalCode || metadata.postal_code || "";
-  }, [user]);
-
-  const city = useMemo(() => {
-    if (!user) return "";
-    const metadata = user.user_metadata || {};
-    return metadata.city || "";
-  }, [user]);
-
-  const statusSteps = ["Order mottagen", "Byggs", "Klar"];
+  const defaultAddress = useMemo(() => {
+    return addresses.find((addr) => addr.is_default) || addresses[0] || null;
+  }, [addresses]);
 
   const handlePasswordReset = async () => {
     if (!user?.email) return;
@@ -174,36 +204,83 @@ export default function Account() {
     }
   };
 
-  const handleStatusChange = (orderId: string, value: string) => {
-    setStatusEdits((prev) => ({ ...prev, [orderId]: value }));
+  const validateAddressForm = () => {
+    const nextErrors: Record<string, string> = {};
+    if (!addressForm.full_name.trim()) {
+      nextErrors.full_name = "Ange namn.";
+    }
+    if (!swedishPhoneRegex.test(addressForm.phone.replace(/\s+/g, ""))) {
+      nextErrors.phone = "Ange ett giltigt svenskt mobilnummer.";
+    }
+    if (!addressForm.address_line1.trim()) {
+      nextErrors.address_line1 = "Ange adress.";
+    }
+    if (!swedishPostalRegex.test(addressForm.postal_code.trim())) {
+      nextErrors.postal_code = "Ange ett giltigt postnummer.";
+    }
+    if (!swedishCityRegex.test(addressForm.city.trim())) {
+      nextErrors.city = "Ange en giltig postort.";
+    }
+    setAddressFormErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
   };
 
-  const handleStatusSave = async (orderId: string) => {
-    const newStatus = statusEdits[orderId];
-    if (!newStatus) return;
+  const handleAddressSave = async () => {
+    if (!user) return;
+    if (!validateAddressForm()) return;
     try {
-      setStatusSaving((prev) => ({ ...prev, [orderId]: true }));
-      setStatusError((prev) => ({ ...prev, [orderId]: "" }));
-      const authHeader = session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {};
-      const response = await fetch(`/api/orders/${orderId}/status`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", ...authHeader },
-        body: JSON.stringify({ status: newStatus }),
+      setAddressError("");
+      const saved = await createUserAddress({
+        user_id: user.id,
+        label: addressForm.label || null,
+        full_name: addressForm.full_name,
+        phone: addressForm.phone,
+        address_line1: addressForm.address_line1,
+        address_line2: addressForm.address_line2 || null,
+        postal_code: addressForm.postal_code,
+        city: addressForm.city,
+        country: "SE",
+        is_default: addressForm.is_default,
       });
-      if (!response.ok) {
-        throw new Error("Failed to update");
+      if (addressForm.is_default) {
+        await setDefaultAddress(user.id, saved.id);
       }
-      const updated = await response.json();
-      setOrders((prev) =>
-        prev.map((order) => (order.id === orderId ? { ...order, status: updated.status } : order))
-      );
-      setAdminOrders((prev) =>
-        prev.map((order) => (order.id === orderId ? { ...order, status: updated.status } : order))
-      );
+      const refreshed = await getUserAddresses(user.id);
+      setAddresses(refreshed as Address[]);
+      setAddressForm({
+        label: "",
+        full_name: "",
+        phone: "",
+        address_line1: "",
+        address_line2: "",
+        postal_code: "",
+        city: "",
+        is_default: false,
+      });
     } catch (error) {
-      setStatusError((prev) => ({ ...prev, [orderId]: "Kunde inte uppdatera status." }));
-    } finally {
-      setStatusSaving((prev) => ({ ...prev, [orderId]: false }));
+      setAddressError("Kunde inte spara adressen.");
+    }
+  };
+
+  const handleSetDefault = async (addressId: string) => {
+    if (!user) return;
+    try {
+      await setDefaultAddress(user.id, addressId);
+      const refreshed = await getUserAddresses(user.id);
+      setAddresses(refreshed as Address[]);
+    } catch (error) {
+      setAddressError("Kunde inte uppdatera standardadress.");
+    }
+  };
+
+  const handleDeleteAddress = async (addressId: string) => {
+    if (!user) return;
+    try {
+      await deleteUserAddress(addressId);
+      const refreshed = await getUserAddresses(user.id);
+      setAddresses(refreshed as Address[]);
+    } catch (error) {
+      setAddressError("Kunde inte ta bort adressen.");
     }
   };
 
@@ -239,6 +316,20 @@ export default function Account() {
           <h1 className="text-3xl font-bold">Hej {profileName}</h1>
         </div>
 
+        {isAdmin && (
+          <div className="mb-6 rounded-2xl border border-yellow-200 bg-yellow-50 text-gray-900 p-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <p className="font-semibold">Du har administratörsbehörighet.</p>
+              <Link
+                to="/admin"
+                className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white transition-colors"
+              >
+                öppna adminpanelen
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div className="grid gap-8 lg:grid-cols-[1.05fr_1.3fr]">
           <div className="space-y-6">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
@@ -262,19 +353,21 @@ export default function Account() {
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <MapPin className="w-5 h-5 text-[#11667b]" />
-                <h2 className="text-xl font-semibold">Adress</h2>
+                <h2 className="text-xl font-semibold">Standardadress</h2>
               </div>
-              <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                <p>{addressLine || "Adress saknas"}</p>
-                <p>{postalCode ? `${postalCode} ${city}` : "Postnummer och postort saknas"}</p>
-                <p>Sverige</p>
-              </div>
-              <Link
-                to="/kundservice"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-[#11667b] hover:text-[#0d4d5d] mt-4"
-              >
-                Uppdatera adress
-              </Link>
+              {defaultAddress ? (
+                <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                  <p className="font-semibold text-gray-900 dark:text-gray-100">
+                    {defaultAddress.full_name || profileName}
+                  </p>
+                  <p>{defaultAddress.address_line1}</p>
+                  {defaultAddress.address_line2 && <p>{defaultAddress.address_line2}</p>}
+                  <p>{defaultAddress.postal_code} {defaultAddress.city}</p>
+                  <p>{defaultAddress.country || "SE"}</p>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-600 dark:text-gray-300">Ingen adress sparad ännu.</p>
+              )}
             </div>
 
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
@@ -283,7 +376,7 @@ export default function Account() {
                 <h2 className="text-xl font-semibold">Lösenord</h2>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                För att byta lösenord skickar vi en säker länk till din e-post.
+                För att byta lösenord skickar vi en söker länk till din e-post.
               </p>
               <button
                 type="button"
@@ -304,161 +397,129 @@ export default function Account() {
                 </p>
               )}
             </div>
+
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+              <h2 className="text-xl font-semibold mb-4">Sparade adresser</h2>
+              {loadingAddresses && <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar adresser...</p>}
+              {addressError && <p className="text-sm text-red-500">{addressError}</p>}
+              {!loadingAddresses && addresses.length === 0 && (
+                <p className="text-sm text-gray-600 dark:text-gray-300">Du har inte lagt till någon adress ännu.</p>
+              )}
+              <div className="space-y-3">
+                {addresses.map((address) => (
+                  <div
+                    key={address.id}
+                    className="rounded-lg border border-gray-200 dark:border-gray-800 p-3 flex flex-col gap-2"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="font-semibold text-gray-900 dark:text-gray-100">
+                        {address.label || address.address_line1}
+                      </p>
+                      {address.is_default && (
+                        <span className="text-xs rounded-full bg-yellow-100 text-yellow-800 px-2 py-1">Standard</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{address.full_name}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">
+                      {address.address_line1}{address.address_line2 ? `, ${address.address_line2}` : ""}
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300">{address.postal_code} {address.city}</p>
+                    <div className="flex flex-wrap gap-3 text-sm font-semibold text-[#11667b]">
+                      {!address.is_default && (
+                        <button type="button" onClick={() => handleSetDefault(address.id)}>
+                          Sätt som standard
+                        </button>
+                      )}
+                      <button type="button" onClick={() => handleDeleteAddress(address.id)}>
+                        Ta bort
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4">
+                <h3 className="text-lg font-semibold mb-4">Lägg till ny adress</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <input
+                    type="text"
+                    placeholder="Adressnamn (t.ex. Hemma)"
+                    value={addressForm.label}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, label: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="För- och efternamn"
+                    value={addressForm.full_name}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, full_name: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  {addressFormErrors.full_name && <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.full_name}</p>}
+
+                  <input
+                    type="tel"
+                    placeholder="Mobilnummer"
+                    value={addressForm.phone}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, phone: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Adress"
+                    value={addressForm.address_line1}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, address_line1: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  {addressFormErrors.phone && <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.phone}</p>}
+                  {addressFormErrors.address_line1 && <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.address_line1}</p>}
+
+                  <input
+                    type="text"
+                    placeholder="Adressrad 2 (valfritt)"
+                    value={addressForm.address_line2}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, address_line2: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Postnummer"
+                    value={addressForm.postal_code}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, postal_code: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  {addressFormErrors.postal_code && <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.postal_code}</p>}
+
+                  <input
+                    type="text"
+                    placeholder="Postort"
+                    value={addressForm.city}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, city: event.target.value }))}
+                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  />
+                  {addressFormErrors.city && <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.city}</p>}
+                </div>
+                <label className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={addressForm.is_default}
+                    onChange={(event) => setAddressForm((prev) => ({ ...prev, is_default: event.target.checked }))}
+                    className="w-4 h-4 text-yellow-400"
+                  />
+                  Sätt som standardadress
+                </label>
+                <button
+                  type="button"
+                  onClick={handleAddressSave}
+                  className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white transition-colors"
+                >
+                  Spara adress
+                </button>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-6">
-            {isAdmin && (
-              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <Package className="w-5 h-5 text-[#11667b]" />
-                  <h2 className="text-xl font-semibold">Admin - orderöversikt</h2>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
-                  Här ser du alla ordrar med kunduppgifter, Stripe-ID och orderstatus.
-                </p>
-
-                {loadingAdminOrders && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar ordrar...</p>
-                )}
-                {adminOrderError && (
-                  <p className="text-sm text-red-500">{adminOrderError}</p>
-                )}
-                {!loadingAdminOrders && !adminOrderError && adminOrders.length === 0 && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    Inga ordrar hittades ännu.
-                  </p>
-                )}
-
-                <div className="space-y-6">
-                  {adminOrders.map((order) => {
-                    const normalizedStatus = order.status || "pending";
-                    const statusInfo = statusConfig[normalizedStatus] || statusConfig.pending;
-                    const stage = statusInfo.step;
-                    const orderDate = order.created_at
-                      ? new Date(order.created_at).toLocaleDateString("sv-SE")
-                      : "Okänt datum";
-                    const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
-                    const items = order.order_items || [];
-
-                    return (
-                      <div key={order.id} className="rounded-xl border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
-                        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
-                          <div>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Order #{order.id.slice(0, 8)}</p>
-                            <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">Totalt</p>
-                            <p className="text-lg font-semibold">{total.toLocaleString("sv-SE")} kr</p>
-                          </div>
-                        </div>
-
-                        <div className="grid gap-3 sm:grid-cols-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
-                          <div>
-                            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-1">Köpare</p>
-                            <p className="font-semibold text-gray-900 dark:text-gray-100">
-                              {order.customer_name || "Namn saknas"}
-                            </p>
-                            <p>{order.customer_email || "E-post saknas"}</p>
-                            <p>{order.customer_phone || "Telefon saknas"}</p>
-                          </div>
-                          <div>
-                            <p className="text-xs uppercase tracking-[0.2em] text-gray-400 mb-1">Adress</p>
-                            <p>{order.customer_address || "Adress saknas"}</p>
-                            <p>
-                              {order.customer_postal_code
-                                ? `${order.customer_postal_code} ${order.customer_city || ""}`
-                                : "Postnummer/postort saknas"}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="grid gap-2 text-xs text-gray-500 dark:text-gray-400 mb-4">
-                          <div>Stripe session: {order.stripe_session_id || "Saknas"}</div>
-                          <div>Payment intent: {order.stripe_payment_intent_id || "Saknas"}</div>
-                          <div>User ID: {order.user_id || "Saknas"}</div>
-                        </div>
-
-                        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
-                          {items.length === 0 && <p>Inga produkter kopplade till ordern.</p>}
-                          {items.map((item) => (
-                            <div key={item.id} className="flex justify-between">
-                              <span>{item.product?.name || "Produkt"} x{item.quantity}</span>
-                              <span>
-                                {typeof item.product?.price_cents === "number"
-                                  ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
-                                  : "--"}{" "}
-                                kr
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
-                          {statusSteps.map((label, index) => (
-                            <div
-                              key={label}
-                              className={`rounded-full px-3 py-1 text-center border ${
-                                stage >= index + 1
-                                  ? "border-yellow-400 bg-yellow-400/20 text-gray-900 dark:text-yellow-200"
-                                  : "border-gray-200 dark:border-gray-700"
-                              }`}
-                            >
-                              {label}
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
-                          <span>Status: {statusInfo.label}</span>
-                          {order.receipt_url ? (
-                            <a
-                              href={order.receipt_url}
-                              className="text-[#11667b] hover:text-[#0d4d5d] font-semibold"
-                            >
-                              Kvitto
-                            </a>
-                          ) : (
-                            <span>Kvitto skickas via e-post</span>
-                          )}
-                        </div>
-
-                        <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
-                          <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">
-                            Adminläge
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-3">
-                            <select
-                              value={statusEdits[order.id] || normalizedStatus}
-                              onChange={(event) => handleStatusChange(order.id, event.target.value)}
-                              className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
-                            >
-                              {statusOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))}
-                            </select>
-                            <button
-                              type="button"
-                              onClick={() => handleStatusSave(order.id)}
-                              disabled={statusSaving[order.id]}
-                              className="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
-                            >
-                              {statusSaving[order.id] ? "Uppdaterar..." : "Spara status"}
-                            </button>
-                          </div>
-                          {statusError[order.id] && (
-                            <p className="text-xs text-red-500 mt-2">{statusError[order.id]}</p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Package className="w-5 h-5 text-[#11667b]" />
@@ -512,8 +573,7 @@ export default function Account() {
                             <span>
                               {typeof item.product?.price_cents === "number"
                                 ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
-                                : "--"}{" "}
-                              kr
+                                : "--"} kr
                             </span>
                           </div>
                         ))}
@@ -550,40 +610,7 @@ export default function Account() {
 
                       {stage === 3 && (
                         <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
-                          DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa
-                          dig och skicka ett mejl.
-                        </div>
-                      )}
-
-                      {isAdmin && (
-                        <div className="mt-4 border-t border-gray-200 dark:border-gray-800 pt-4">
-                          <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">
-                            Adminläge
-                          </p>
-                          <div className="flex flex-col sm:flex-row gap-3">
-                            <select
-                              value={statusEdits[order.id] || normalizedStatus}
-                              onChange={(event) => handleStatusChange(order.id, event.target.value)}
-                              className="flex-1 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
-                            >
-                              {statusOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                  {option.label}
-                                </option>
-                              ))}
-                            </select>
-                            <button
-                              type="button"
-                              onClick={() => handleStatusSave(order.id)}
-                              disabled={statusSaving[order.id]}
-                              className="px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
-                            >
-                              {statusSaving[order.id] ? "Uppdaterar..." : "Spara status"}
-                            </button>
-                          </div>
-                          {statusError[order.id] && (
-                            <p className="text-xs text-red-500 mt-2">{statusError[order.id]}</p>
-                          )}
+                          DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.
                         </div>
                       )}
                     </div>
