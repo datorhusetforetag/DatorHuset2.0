@@ -1,15 +1,44 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+﻿import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
-import { getAllInventory } from "@/lib/supabaseServices";
 import { useProducts } from "@/hooks/useProducts";
+import { getAllInventory } from "@/lib/supabaseServices";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
+const FILTER_LABELS = {
+  gpu: {
+    "ASUS Dual GeForce RTX 3050 6GB OC": "RTX 3050",
+    "ASUS Dual Radeon RX 7600 EVO OC": "RX 7600",
+    "ASUS Prime Radeon RX 9060 XT OC Edition 8GB": "RX 9060 XT",
+    "PNY GeForce RTX 5060 Ti Dual Fan OC": "RTX 5060 Ti",
+    "Gigabyte GeForce RTX 5070 WINDFORCE OC 12GB": "RTX 5070",
+    "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB": "RTX 5070",
+    "ASUS PRIME Radeon RX 9070 XT 16GB OC": "RX 9070 XT",
+    "Asus Dual GeForce RTX 5070 OC": "RTX 5070",
+    "ASUS Prime GeForce RTX 5080 16GB OC": "RTX 5080",
+    "INNO3D GeForce RTX 5080 16GB X3 OC White": "RTX 5080",
+  },
+} as const;
+const GPU_ORDER = [
+  "RTX 5080",
+  "RTX 4090",
+  "RTX 4080 SUPER",
+  "RTX 4080",
+  "RTX 5070",
+  "RTX 4070 SUPER",
+  "RTX 5060 TI",
+  "RTX 4070",
+  "RTX 3060",
+  "RTX 3050",
+  "RX 9070 XT",
+  "RX 9060 XT",
+  "RX 7600",
+];
 
 type BannerSticker = {
   label: string;
@@ -27,9 +56,18 @@ type BannerConfig = {
   imageSize?: "normal" | "large";
 };
 
+type InventoryEntry = {
+  product_id: string;
+  quantity_in_stock: number;
+  is_preorder?: boolean | null;
+  allow_preorder?: boolean | null;
+  eta_days?: number | null;
+  eta_note?: string | null;
+};
+
 const DEFAULT_BANNER: BannerConfig = {
   eyebrow: "Topplistan",
-  title: "Bästa säljare inom stationära datorer i hela Norden!",
+  title: "B\u00e4sta s\u00e4ljare inom station\u00e4ra datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
   images: [
     "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
@@ -43,13 +81,13 @@ const DEFAULT_BANNER: BannerConfig = {
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   budget: {
-    eyebrow: "Budgetvänligt",
-    title: "Budget betyder inte dåligt",
-    description: "Smarta val som håller priset nere utan att tumma på känslan.",
+    eyebrow: "Budgetv\u00e4nligt",
+    title: "Budget betyder inte d\u00e5ligt",
+    description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
     images: ["/products/NavBase_Hero_Colorswap_2000x.webp"],
     stickers: [
       {
-        label: "Bäst i budget-klass",
+        label: "B\u00e4st i budget-klass",
         className: "bg-yellow-400 text-gray-900",
       },
     ],
@@ -58,17 +96,17 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   },
   paket: {
     eyebrow: "Paket",
-    title: "Allt du behöver, redo att köra",
-    description: "Kompletta paket med dator, skärm och tillbehör i ett och samma köp.",
+    title: "Allt du beh\u00f6ver, redo att k\u00f6ra",
+    description: "Kompletta paket med dator, sk\u00e4rm och tillbeh\u00f6r i ett och samma k\u00f6p.",
     images: ["/products/Horizon3_Elite_Hero_2000x.webp"],
     background:
       "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
     variant: "bundle",
   },
   "best-selling": {
-    eyebrow: "Mest för pengarna",
-    title: "Mest för pengarna",
-    description: "Våra mest prisvärda byggen \u2013 noggrant utvalda för maximal valuta.",
+    eyebrow: "Mest f\u00f6r pengarna",
+    title: "Mest f\u00f6r pengarna",
+    description: "V\u00e5ra mest prisv\u00e4rda byggen \u2013 noggrant utvalda f\u00f6r maximal valuta.",
     images: [
       "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
       "/products/Traveler_Hero_1_2000x.webp",
@@ -92,16 +130,16 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
       "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
   toptier: {
-    eyebrow: "Bästa prestanda",
-    title: "När bara det snabbaste duger",
-    description: "Toppbyggen för dig som vill ha maximal kraft och kompromisslös kvalitet.",
+    eyebrow: "B\u00e4sta prestanda",
+    title: "N\u00e4r bara det snabbaste duger",
+    description: "Toppbyggen f\u00f6r dig som vill ha maximal kraft och kompromissl\u00f6s kvalitet.",
     images: [
       "/products/Voy_Red_Hero_2000x.webp",
       "/products/Voyager_Hero_NoGeforce_2000x_2.webp",
     ],
     stickers: [
       {
-        label: "Bäst i Klass",
+        label: "B\u00e4st i Klass",
         className: "bg-yellow-400 text-gray-900",
       },
       {
@@ -116,7 +154,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
 };
 
 const bundleItems = [
-  { label: "Skärm", icon: Monitor },
+  { label: "Sk\u00e4rm", icon: Monitor },
   { label: "Tangentbord", icon: Keyboard },
   { label: "Mus", icon: Mouse },
   { label: "Headset", icon: Headphones },
@@ -124,34 +162,130 @@ const bundleItems = [
 
 export default function Products() {
   const [searchParams] = useSearchParams();
-  const { products } = useProducts();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const hasAppliedCategory = useRef(false);
-  const [priceRange, setPriceRange] = useState([0, 30000]);
+  const [priceRange, setPriceRange] = useState([0, 35000]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
-  const [inventoryMap, setInventoryMap] = useState<Record<string, { quantity_in_stock?: number | null; is_preorder?: boolean | null; eta_days?: number | null; eta_note?: string | null }>>({});
+  const [showAllGpus, setShowAllGpus] = useState(false);
+  const [showAllCpus, setShowAllCpus] = useState(false);
+  const [showAllTiers, setShowAllTiers] = useState(false);
+  const { products } = useProducts();
+  const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
+  const [inventoryLoading, setInventoryLoading] = useState(true);
+
+  const getFilterLabel = (type: "gpu" | "cpu" | "tier", value: string) => {
+    if (type === "gpu") {
+      return FILTER_LABELS.gpu[value as keyof typeof FILTER_LABELS.gpu] ?? value;
+    }
+    if (type === "cpu") {
+      let label = value.replace(/\(\s*tray\s*\)/i, "").replace(/\btray\b/i, "");
+      label = label.replace(/^AMD\s+/i, "").replace(/^Intel\s+/i, "").trim();
+      label = label.replace(/^Core\s+/i, "").replace(/^Ryzen\s+/i, "Ryzen ");
+      label = label.replace(/\s{2,}/g, " ");
+      return label;
+    }
+    return value;
+  };
+  const getGpuOrderIndex = (label: string) => {
+    const upper = label.toUpperCase();
+    return GPU_ORDER.findIndex((entry) => upper.includes(entry));
+  };
+  const getGpuRank = (label: string) => {
+    const upper = label.toUpperCase();
+    const match = upper.match(/\d{3,4}/);
+    const base = match ? Number.parseInt(match[0], 10) : 0;
+    let score = base;
+    if (upper.includes("SUPER")) score += 0.2;
+    if (upper.includes("TI")) score += 0.1;
+    if (upper.includes("XT")) score += 0.2;
+    return score;
+  };
+  const getCpuRank = (label: string) => {
+    const upper = label.toUpperCase();
+    const match = upper.match(/\d{3,5}/);
+    const base = match ? Number.parseInt(match[0], 10) : 0;
+    let score = base;
+    if (upper.includes("XEON")) score += 20000;
+    return score;
+  };
+  type FilterOption = { label: string; values: string[] };
+  const sortGpuOptions = (a: FilterOption, b: FilterOption) => {
+    const aIndex = getGpuOrderIndex(a.label);
+    const bIndex = getGpuOrderIndex(b.label);
+    if (aIndex !== -1 || bIndex !== -1) {
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    }
+    const aUpper = a.label.toUpperCase();
+    const bUpper = b.label.toUpperCase();
+    const aVendor = aUpper.startsWith("RTX") ? 0 : aUpper.startsWith("RX") ? 1 : 2;
+    const bVendor = bUpper.startsWith("RTX") ? 0 : bUpper.startsWith("RX") ? 1 : 2;
+    if (aVendor !== bVendor) return aVendor - bVendor;
+    const rankDiff = getGpuRank(b.label) - getGpuRank(a.label);
+    if (rankDiff !== 0) return rankDiff;
+    return a.label.localeCompare(b.label, "sv-SE");
+  };
+  const sortCpuOptions = (a: FilterOption, b: FilterOption) => {
+    const aUpper = a.label.toUpperCase();
+    const bUpper = b.label.toUpperCase();
+    const aVendor =
+      aUpper.startsWith("RYZEN") ? 0 : aUpper.startsWith("I") || aUpper.includes("XEON") ? 1 : 2;
+    const bVendor =
+      bUpper.startsWith("RYZEN") ? 0 : bUpper.startsWith("I") || bUpper.includes("XEON") ? 1 : 2;
+    if (aVendor !== bVendor) return aVendor - bVendor;
+    const rankDiff = getCpuRank(b.label) - getCpuRank(a.label);
+    if (rankDiff !== 0) return rankDiff;
+    return a.label.localeCompare(b.label, "sv-SE");
+  };
+  const buildFilterOptions = (items: string[], type: "gpu" | "cpu" | "tier") => {
+    const options = new Map<string, string[]>();
+    items.forEach((item) => {
+      if (item.toLowerCase().includes("placeholder")) return;
+      const label = getFilterLabel(type, item);
+      const existing = options.get(label);
+      if (existing) {
+        existing.push(item);
+      } else {
+        options.set(label, [item]);
+      }
+    });
+    return Array.from(options.entries()).map(([label, values]) => ({ label, values }));
+  };
+
+  const productIdByName = useMemo(() => {
+    const map = new Map<string, string>();
+    products.forEach((product) => {
+      map.set(product.name.toLowerCase(), product.id);
+    });
+    return map;
+  }, [products]);
 
   useEffect(() => {
-    let isMounted = true;
-    const loadInventory = async () => {
-      try {
-        const data = await getAllInventory();
-        if (!isMounted) return;
-        const mapped = (data || []).reduce((acc, item) => {
-          acc[item.product_id] = item;
-          return acc;
-        }, {} as Record<string, any>);
-        setInventoryMap(mapped);
-      } catch (error) {
-        console.warn("Failed to load inventory", error);
-      }
-    };
-    loadInventory();
+    let active = true;
+    setInventoryLoading(true);
+    getAllInventory()
+      .then((items) => {
+        if (!active) return;
+        const nextMap: Record<string, InventoryEntry> = {};
+        items.forEach((item) => {
+          if (item?.product_id) {
+            nextMap[item.product_id] = item as InventoryEntry;
+          }
+        });
+        setInventoryMap(nextMap);
+      })
+      .catch((error) => {
+        console.error("Failed to load inventory", error);
+      })
+      .finally(() => {
+        if (active) setInventoryLoading(false);
+      });
     return () => {
-      isMounted = false;
+      active = false;
     };
   }, []);
 
@@ -169,13 +303,16 @@ export default function Products() {
         setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
       }
       if (Array.isArray(parsed.selectedGPUs)) {
-        setSelectedGPUs(parsed.selectedGPUs);
+        const normalized = parsed.selectedGPUs.map((gpu) => getFilterLabel("gpu", gpu));
+        setSelectedGPUs(Array.from(new Set(normalized)));
       }
       if (Array.isArray(parsed.selectedCPUs)) {
-        setSelectedCPUs(parsed.selectedCPUs);
+        const normalized = parsed.selectedCPUs.map((cpu) => getFilterLabel("cpu", cpu));
+        setSelectedCPUs(Array.from(new Set(normalized)));
       }
       if (Array.isArray(parsed.selectedTiers)) {
-        setSelectedTiers(parsed.selectedTiers);
+        const normalized = parsed.selectedTiers.map((tier) => getFilterLabel("tier", tier));
+        setSelectedTiers(Array.from(new Set(normalized)));
       }
     } catch (error) {
       console.warn("Failed to read saved filters", error);
@@ -203,6 +340,31 @@ export default function Products() {
   const gpus = Array.from(new Set(COMPUTERS.map((c) => c.gpu)));
   const cpus = Array.from(new Set(COMPUTERS.map((c) => c.cpu)));
   const tiers = Array.from(new Set(COMPUTERS.map((c) => c.tier)));
+  const filterPreviewCount = 3;
+  const gpuOptions = useMemo(() => buildFilterOptions(gpus, "gpu").sort(sortGpuOptions), [gpus]);
+  const cpuOptions = useMemo(() => buildFilterOptions(cpus, "cpu").sort(sortCpuOptions), [cpus]);
+  const tierOptions = useMemo(() => buildFilterOptions(tiers, "tier"), [tiers]);
+  const gpuLabelMap = useMemo(
+    () => new Map(gpuOptions.map((option) => [option.label, option.values])),
+    [gpuOptions],
+  );
+  const cpuLabelMap = useMemo(
+    () => new Map(cpuOptions.map((option) => [option.label, option.values])),
+    [cpuOptions],
+  );
+  const tierLabelMap = useMemo(
+    () => new Map(tierOptions.map((option) => [option.label, option.values])),
+    [tierOptions],
+  );
+  const visibleGpus = gpuOptions.slice(0, filterPreviewCount);
+  const visibleCpus = cpuOptions.slice(0, filterPreviewCount);
+  const visibleTiers = tierOptions.slice(0, filterPreviewCount);
+  const extraGpus = gpuOptions.slice(filterPreviewCount);
+  const extraCpus = cpuOptions.slice(filterPreviewCount);
+  const extraTiers = tierOptions.slice(filterPreviewCount);
+  const hasMoreGpus = gpuOptions.length > filterPreviewCount;
+  const hasMoreCpus = cpuOptions.length > filterPreviewCount;
+  const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
     return COMPUTERS.filter((computer) => {
@@ -224,13 +386,19 @@ export default function Products() {
       })();
 
       const withinPrice = computer.price >= priceRange[0] && computer.price <= priceRange[1];
-      const gpuMatch = selectedGPUs.length === 0 || selectedGPUs.includes(computer.gpu);
-      const cpuMatch = selectedCPUs.length === 0 || selectedCPUs.includes(computer.cpu);
-      const tierMatch = selectedTiers.length === 0 || selectedTiers.includes(computer.tier);
+      const gpuMatch =
+        selectedGPUs.length === 0 ||
+        selectedGPUs.some((label) => gpuLabelMap.get(label)?.includes(computer.gpu));
+      const cpuMatch =
+        selectedCPUs.length === 0 ||
+        selectedCPUs.some((label) => cpuLabelMap.get(label)?.includes(computer.cpu));
+      const tierMatch =
+        selectedTiers.length === 0 ||
+        selectedTiers.some((label) => tierLabelMap.get(label)?.includes(computer.tier));
 
       return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
     });
-  }, [activeCategory, priceRange, selectedGPUs, selectedCPUs, selectedTiers]);
+  }, [activeCategory, priceRange, selectedGPUs, selectedCPUs, selectedTiers, gpuLabelMap, cpuLabelMap, tierLabelMap]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
     if (selected.includes(value)) {
@@ -241,23 +409,23 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 30000]);
+    setPriceRange([0, 35000]);
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
   };
 
   const categoryLabel = (() => {
-    if (activeCategory === "budget") return "Budgetvänlig";
-    if (activeCategory === "best-selling") return "Mest för pengarna";
-    if (activeCategory === "toptier") return "Bästa prestanda";
+    if (activeCategory === "budget") return "Budgetv\u00e4nlig";
+    if (activeCategory === "best-selling") return "Mest f\u00f6r pengarna";
+    if (activeCategory === "toptier") return "B\u00e4sta prestanda";
     if (activeCategory === "paket") return "Paket";
     return "";
   })();
 
   const activeFilters: string[] = [];
   if (categoryLabel) activeFilters.push(categoryLabel);
-  if (priceRange[0] !== 0 || priceRange[1] !== 30000) {
+  if (priceRange[0] !== 0 || priceRange[1] !== 35000) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
   }
   selectedGPUs.forEach((gpu) => activeFilters.push(`GPU: ${gpu}`));
@@ -321,7 +489,6 @@ export default function Products() {
                           alt={`Bannerbild ${index + 1}`}
                           className="w-full h-full object-cover"
                           loading="lazy"
-                          decoding="async"
                         />
                         {banner.stickers?.[index] ? (
                           <span
@@ -350,7 +517,7 @@ export default function Products() {
             >
               Filter
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {mobileFiltersOpen ? "Dölj" : "Visa"}
+                {mobileFiltersOpen ? "D\u00f6lj" : "Visa"}
               </span>
             </button>
             {hasFilters && (
@@ -380,7 +547,7 @@ export default function Products() {
                   <input
                     type="range"
                     min="0"
-                    max="30000"
+                    max="35000"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="w-full accent-yellow-400"
@@ -396,53 +563,186 @@ export default function Products() {
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Grafikkort</h3>
-                {gpus.map((gpu) => (
-                  <label key={gpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                    <input
-                      type="checkbox"
-                      checked={selectedGPUs.includes(gpu)}
-                      onChange={() => toggleFilter(gpu, selectedGPUs, setSelectedGPUs)}
-                      className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                    />
-                    <span>{gpu}</span>
-                  </label>
-                ))}
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllGpus
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {visibleGpus.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedGPUs.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span>{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllGpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="space-y-3 pt-1">
+                      {extraGpus.map((option) => (
+                        <label
+                          key={option.label}
+                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedGPUs.includes(option.label)}
+                            onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
+                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          />
+                          <span>{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {hasMoreGpus && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllGpus((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
+                  >
+                    {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Processor</h3>
-                <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-                  {cpus.map((cpu) => (
-                    <label key={cpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={selectedCPUs.includes(cpu)}
-                        onChange={() => toggleFilter(cpu, selectedCPUs, setSelectedCPUs)}
-                        className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                      />
-                      <span>{cpu}</span>
-                    </label>
-                  ))}
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllCpus
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {visibleCpus.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCPUs.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span>{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllCpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="space-y-3 pt-1">
+                      {extraCpus.map((option) => (
+                        <label
+                          key={option.label}
+                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCPUs.includes(option.label)}
+                            onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
+                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          />
+                          <span>{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+                {hasMoreCpus && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllCpus((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
+                  >
+                    {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
-                {tiers.map((tier) => (
-                  <label key={tier} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                    <input
-                      type="checkbox"
-                      checked={selectedTiers.includes(tier)}
-                      onChange={() => toggleFilter(tier, selectedTiers, setSelectedTiers)}
-                      className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                    />
-                    <span className="capitalize">{tier}</span>
-                  </label>
-                ))}
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllTiers
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {visibleTiers.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTiers.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span className="capitalize">{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllTiers ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="space-y-3 pt-1">
+                      {extraTiers.map((option) => (
+                        <label
+                          key={option.label}
+                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedTiers.includes(option.label)}
+                            onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          />
+                          <span className="capitalize">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {hasMoreTiers && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllTiers((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
+                  >
+                    {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <button
@@ -478,7 +778,7 @@ export default function Products() {
               </div>
             )}
             <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Stationära datorer"}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
                 Visar {filteredProducts.length} av {COMPUTERS.length} produkter
               </p>
@@ -493,76 +793,86 @@ export default function Products() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProducts.map((computer) => (
-                  <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
-                    {(() => {
-                      const productId = products.find((p) => p.name === computer.name)?.id;
-                      const inventory = productId ? inventoryMap[productId] : null;
-                      const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
-                      const isPreorder = Boolean(inventory?.is_preorder);
-                      const etaNote = inventory?.eta_note || (inventory?.eta_days ? `ETA ${inventory.eta_days} dagar` : "");
-                      const badgeText = inStock ? "I lager" : isPreorder ? "Förbeställning" : "Slut i lager";
-                      const badgeTone = inStock
-                        ? "bg-emerald-100 text-emerald-700"
-                        : isPreorder
-                          ? "bg-yellow-100 text-yellow-800"
-                          : "bg-red-100 text-red-700";
+                {filteredProducts.map((computer) => {
+                  const supabaseId = productIdByName.get(computer.name.toLowerCase());
+                  const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
+                  const hasInventory = Boolean(inventory);
+                  const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
+                  const canPreorder = Boolean(inventory?.is_preorder ?? inventory?.allow_preorder);
+                  const badgeText = !hasInventory || inventoryLoading
+                    ? "Kontrollerar lager"
+                    : inStock
+                    ? "I lager"
+                    : canPreorder
+                    ? "Förbeställning"
+                    : "Slut i lager";
+                  const badgeTone = !hasInventory || inventoryLoading
+                    ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    : inStock
+                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
+                    : canPreorder
+                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200"
+                    : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200";
+                  const etaNote =
+                    !inStock && canPreorder
+                      ? inventory?.eta_note ?? (inventory?.eta_days ? `ETA ${inventory.eta_days} dagar` : null)
+                      : null;
 
-                      return (
-                        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
-                          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
-                            <img
-                              src={computer.image}
-                              alt={computer.name}
-                              className="w-full h-full object-cover"
-                              loading="lazy"
-                              decoding="async"
-                              onError={(e) => {
-                                e.currentTarget.src = FALLBACK_IMAGE;
-                              }}
-                            />
-                            <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}>
-                              {badgeText}
+                  return (
+                    <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
+                      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
+                        <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
+                          <img
+                            src={computer.image}
+                            alt={computer.name}
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                            onError={(e) => {
+                              e.currentTarget.src = FALLBACK_IMAGE;
+                            }}
+                          />
+                          <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}>
+                            {badgeText}
+                          </span>
+                          {etaNote ? (
+                            <span className="absolute bottom-3 left-3 text-xs font-semibold px-3 py-1 rounded-full bg-gray-900/80 text-white">
+                              {etaNote}
                             </span>
-                            {!inStock && isPreorder && etaNote ? (
-                              <span className="absolute bottom-3 left-3 text-xs font-semibold px-3 py-1 rounded-full bg-gray-900/80 text-white">
-                                {etaNote}
-                              </span>
-                            ) : null}
+                          ) : null}
+                        </div>
+
+                        <div className="p-4 pb-6">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#11667b] dark:group-hover:text-[#11667b] transition-colors">
+                            {computer.name}
+                          </h3>
+
+                          <div className="flex items-center mb-3">
+                            <div className="flex items-center text-yellow-400" aria-hidden>
+                              {Array.from({ length: 5 }).map((_, index) => (
+                                <Star key={index} className="w-4 h-4 fill-current" />
+                              ))}
+                            </div>
+                            <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
                           </div>
 
-                          <div className="p-4 pb-6">
-                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#11667b] dark:group-hover:text-[#11667b] transition-colors">
-                              {computer.name}
-                            </h3>
+                          <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
+                            <p className="truncate">CPU: {computer.cpu}</p>
+                            <p className="truncate">GPU: {computer.gpu}</p>
+                            <p className="truncate">RAM: {computer.ram}</p>
+                            <p className="truncate">
+                              Lagring: {computer.storage} {computer.storagetype}
+                            </p>
+                          </div>
 
-                            <div className="flex items-center mb-3">
-                              <div className="flex items-center text-yellow-400" aria-hidden>
-                                {Array.from({ length: 5 }).map((_, index) => (
-                                  <Star key={index} className="w-4 h-4 fill-current" />
-                                ))}
-                              </div>
-                              <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
-                            </div>
-
-                            <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
-                              <p className="truncate">CPU: {computer.cpu}</p>
-                              <p className="truncate">GPU: {computer.gpu}</p>
-                              <p className="truncate">RAM: {computer.ram}</p>
-                              <p className="truncate">
-                                Lagring: {computer.storage} {computer.storagetype}
-                              </p>
-                            </div>
-
-                            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                              {computer.price.toLocaleString("sv-SE")} kr
-                            </div>
+                          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                            {computer.price.toLocaleString("sv-SE")} kr
                           </div>
                         </div>
-                      );
-                    })()}
-                  </Link>
-                ))}
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
