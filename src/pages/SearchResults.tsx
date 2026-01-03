@@ -5,130 +5,45 @@ import { Navbar } from "@/components/Navbar";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { COMPUTERS } from "@/data/computers";
+
+type TierKey = "platinum" | "gold" | "silver" | "bronze" | "diamond" | "paket";
 
 interface Computer {
-  id: number;
+  id: string;
   name: string;
   price: number;
-  specs: {
-    cpu: string;
-    gpu: string;
-    ram: number;
-    storage: number;
-    storageType: "SSD" | "HDD" | "NVMe";
-  };
-  tier: "platinum" | "gold" | "silver";
+  cpu: string;
+  gpu: string;
+  ram: string;
+  tier: TierKey;
   discount?: number;
 }
 
-const computers: Computer[] = [
-  {
-    id: 1,
-    name: "Platina Frostbyte",
-    price: 28990,
-    tier: "platinum",
-    specs: {
-      cpu: "Intel Core i9-13900K",
-      gpu: "NVIDIA RTX 4080",
-      ram: 32,
-      storage: 1000,
-      storageType: "NVMe",
-    },
-  },
-  {
-    id: 2,
-    name: "Platina Titan X",
-    price: 45990,
-    tier: "platinum",
-    specs: {
-      cpu: "Intel Core i9-14900KS",
-      gpu: "NVIDIA RTX 4090",
-      ram: 64,
-      storage: 2000,
-      storageType: "NVMe",
-    },
-  },
-  {
-    id: 3,
-    name: "Guld Spectra Pro",
-    price: 22990,
-    tier: "gold",
-    discount: 10,
-    specs: {
-      cpu: "Intel Core i7-13700K",
-      gpu: "NVIDIA RTX 4070 Ti",
-      ram: 32,
-      storage: 1000,
-      storageType: "NVMe",
-    },
-  },
-  {
-    id: 4,
-    name: "Guld Inferno",
-    price: 19990,
-    tier: "gold",
-    specs: {
-      cpu: "Intel Core i7-13700",
-      gpu: "NVIDIA RTX 4070",
-      ram: 16,
-      storage: 512,
-      storageType: "NVMe",
-    },
-  },
-  {
-    id: 5,
-    name: "Silver Nova GT",
-    price: 15490,
-    tier: "silver",
-    discount: 5,
-    specs: {
-      cpu: "Intel Core i5-13600K",
-      gpu: "NVIDIA RTX 4060 Ti",
-      ram: 16,
-      storage: 512,
-      storageType: "SSD",
-    },
-  },
-  {
-    id: 6,
-    name: "Silver Shadow",
-    price: 8499,
-    tier: "silver",
-    specs: {
-      cpu: "Intel Core i5-13600",
-      gpu: "NVIDIA RTX 4060",
-      ram: 8,
-      storage: 256,
-      storageType: "SSD",
-    },
-  },
-  {
-    id: 7,
-    name: "Elite Quantum Pro",
-    price: 35990,
-    tier: "platinum",
-    specs: {
-      cpu: "AMD Ryzen 9 7950X",
-      gpu: "NVIDIA RTX 4080 Super",
-      ram: 48,
-      storage: 1500,
-      storageType: "NVMe",
-    },
-  },
-  {
-    id: 8,
-    name: "Advanced Velocity",
-    price: 24990,
-    tier: "gold",
-    specs: {
-      cpu: "AMD Ryzen 7 7700X",
-      gpu: "NVIDIA RTX 4070 Super",
-      ram: 32,
-      storage: 1000,
-      storageType: "NVMe",
-    },
-  },
-];
+const normalizeTier = (tier: string): TierKey => {
+  const normalized = tier.toLowerCase();
+  if (
+    normalized === "platinum" ||
+    normalized === "gold" ||
+    normalized === "silver" ||
+    normalized === "bronze" ||
+    normalized === "diamond" ||
+    normalized === "paket"
+  ) {
+    return normalized;
+  }
+  return "silver";
+};
+
+const computers: Computer[] = COMPUTERS.map((computer) => ({
+  id: computer.id,
+  name: computer.name,
+  price: computer.price,
+  cpu: computer.cpu,
+  gpu: computer.gpu,
+  ram: computer.ram,
+  tier: normalizeTier(computer.tier),
+}));
 
 interface SearchResult extends Computer {
   matchType: "name" | "cpu" | "gpu";
@@ -155,19 +70,19 @@ export default function SearchResults() {
         });
       }
       // Search by CPU
-      else if (computer.specs.cpu.toLowerCase().includes(query)) {
+      else if (computer.cpu.toLowerCase().includes(query)) {
         foundResults.push({
           ...computer,
           matchType: "cpu",
-          matchText: computer.specs.cpu,
+          matchText: computer.cpu,
         });
       }
       // Search by GPU
-      else if (computer.specs.gpu.toLowerCase().includes(query)) {
+      else if (computer.gpu.toLowerCase().includes(query)) {
         foundResults.push({
           ...computer,
           matchType: "gpu",
-          matchText: computer.specs.gpu,
+          matchText: computer.gpu,
         });
       }
     });
@@ -175,10 +90,31 @@ export default function SearchResults() {
     return foundResults;
   }, [searchQuery]);
 
-  const tierColors = {
+  const tierColors: Record<TierKey, string> = {
     platinum: "from-yellow-500/20 to-yellow-600/20",
     gold: "from-amber-500/20 to-amber-600/20",
     silver: "from-gray-500/20 to-gray-600/20",
+    bronze: "from-orange-500/20 to-orange-600/20",
+    diamond: "from-cyan-500/20 to-cyan-600/20",
+    paket: "from-emerald-500/20 to-emerald-600/20",
+  };
+
+  const tierBadgeStyles: Record<TierKey, string> = {
+    platinum: "bg-yellow-500/20 text-yellow-700 dark:text-yellow-200",
+    gold: "bg-amber-500/20 text-amber-700 dark:text-amber-200",
+    silver: "bg-gray-500/20 text-gray-700 dark:text-gray-200",
+    bronze: "bg-orange-500/20 text-orange-700 dark:text-orange-200",
+    diamond: "bg-cyan-500/20 text-cyan-700 dark:text-cyan-200",
+    paket: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-200",
+  };
+
+  const tierLabels: Record<TierKey, string> = {
+    platinum: "Platina",
+    gold: "Guld",
+    silver: "Silver",
+    bronze: "Bronze",
+    diamond: "Diamond",
+    paket: "Paket",
   };
 
   return (
@@ -255,19 +191,9 @@ export default function SearchResults() {
                               {computer.name}
                             </h3>
                             <span
-                              className={`text-xs font-semibold px-2 py-1 rounded-full ${
-                                computer.tier === "platinum"
-                                  ? "bg-yellow-500/20 text-yellow-700 dark:text-yellow-200"
-                                  : computer.tier === "gold"
-                                  ? "bg-amber-500/20 text-amber-700 dark:text-amber-200"
-                                  : "bg-gray-500/20 text-gray-700 dark:text-gray-200"
-                              }`}
+                              className={`text-xs font-semibold px-2 py-1 rounded-full ${tierBadgeStyles[computer.tier]}`}
                             >
-                              {computer.tier === "platinum"
-                                ? "Platina"
-                                : computer.tier === "gold"
-                                ? "Guld"
-                                : "Silver"}
+                              {tierLabels[computer.tier]}
                             </span>
                           </div>
 
@@ -289,15 +215,15 @@ export default function SearchResults() {
                           <div className="space-y-2 mb-4 text-sm text-muted-foreground">
                             <p>
                               <span className="font-semibold text-foreground">CPU:</span>{" "}
-                              {computer.specs.cpu}
+                              {computer.cpu}
                             </p>
                             <p>
                               <span className="font-semibold text-foreground">GPU:</span>{" "}
-                              {computer.specs.gpu}
+                              {computer.gpu}
                             </p>
                             <p>
                               <span className="font-semibold text-foreground">RAM:</span>{" "}
-                              {computer.specs.ram} GB
+                              {computer.ram}
                             </p>
                           </div>
 

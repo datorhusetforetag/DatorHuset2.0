@@ -591,7 +591,7 @@ export default function Products() {
                       showAllGpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
                     }`}
                   >
-                    <div className="space-y-3 pt-1">
+                    <div className="mt-3 space-y-3">
                       {extraGpus.map((option) => (
                         <label
                           key={option.label}
@@ -653,7 +653,7 @@ export default function Products() {
                       showAllCpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
                     }`}
                   >
-                    <div className="space-y-3 pt-1">
+                    <div className="mt-3 space-y-3">
                       {extraCpus.map((option) => (
                         <label
                           key={option.label}
@@ -715,7 +715,7 @@ export default function Products() {
                       showAllTiers ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
                     }`}
                   >
-                    <div className="space-y-3 pt-1">
+                    <div className="mt-3 space-y-3">
                       {extraTiers.map((option) => (
                         <label
                           key={option.label}
