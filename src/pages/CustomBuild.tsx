@@ -131,6 +131,14 @@ const SOCKET_RAM_TYPE: Record<string, "DDR4" | "DDR5"> = {
   LGA1700: "DDR5",
   LGA1200: "DDR4",
 };
+const getAllowedRamType = (motherboard: ComponentItem | null) => {
+  if (!motherboard) return null;
+  if (motherboard.ramType) return motherboard.ramType;
+  if (motherboard.specs.includes("DDR4")) return "DDR4";
+  if (motherboard.specs.includes("DDR5")) return "DDR5";
+  if (motherboard.socket) return SOCKET_RAM_TYPE[motherboard.socket] ?? null;
+  return null;
+};
 const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
   cpu: { src: "https://placehold.co/360x240?text=CPU", alt: "Processor" },
   gpu: { src: "https://placehold.co/360x240?text=GPU", alt: "Grafikkort" },
@@ -855,7 +863,7 @@ export default function CustomBuild() {
   useEffect(() => {
     const socket = selected.motherboard?.socket;
     if (!socket) return;
-    const allowedRamType = SOCKET_RAM_TYPE[socket];
+    const allowedRamType = getAllowedRamType(selected.motherboard);
 
     setSelected((prev) => {
       const nextCpu =
@@ -889,15 +897,28 @@ export default function CustomBuild() {
     return items.filter((item) => {
       const matchesBrand = activeBrand === "Alla" || item.brand === activeBrand;
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const selectedSocket = selected.motherboard?.socket;
-      const allowedRamType = selectedSocket ? SOCKET_RAM_TYPE[selectedSocket] : null;
-      const matchesSocket =
-        activeCategory !== "cpu" || !selectedSocket ? true : item.socket === selectedSocket;
+      const selectedMotherboardSocket = selected.motherboard?.socket;
+      const selectedCpuSocket = selected.cpu?.socket;
+      const allowedRamType = getAllowedRamType(selected.motherboard);
+      const matchesCpuSocket =
+        activeCategory !== "cpu" || !selectedMotherboardSocket
+          ? true
+          : item.socket === selectedMotherboardSocket;
+      const matchesMotherboardSocket =
+        activeCategory !== "motherboard" || !selectedCpuSocket
+          ? true
+          : item.socket === selectedCpuSocket;
       const matchesRamType =
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
-      return matchesBrand && matchesSearch && matchesSocket && matchesRamType;
+      return (
+        matchesBrand &&
+        matchesSearch &&
+        matchesCpuSocket &&
+        matchesMotherboardSocket &&
+        matchesRamType
+      );
     });
-  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard]);
+  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu]);
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
@@ -932,8 +953,10 @@ export default function CustomBuild() {
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
               <div>
                 <p className="text-xs uppercase tracking-[0.4em] text-yellow-300">Custom bygg</p>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4">Bygg din drömdator, din väg</h1>
-                <p className="text-gray-300 mt-4 max-w-xl">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4 leading-tight">
+                  Bygg din drömdator, din väg
+                </h1>
+                <p className="text-gray-300 mt-6 max-w-xl">
                   Välj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar
                   ett färdigt bygge.
                 </p>
