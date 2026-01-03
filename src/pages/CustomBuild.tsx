@@ -889,15 +889,22 @@ export default function CustomBuild() {
     return items.filter((item) => {
       const matchesBrand = activeBrand === "Alla" || item.brand === activeBrand;
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const selectedSocket = selected.motherboard?.socket;
-      const allowedRamType = selectedSocket ? SOCKET_RAM_TYPE[selectedSocket] : null;
+      const selectedMotherboardSocket = selected.motherboard?.socket;
+      const selectedCpuSocket = selected.cpu?.socket;
+      const allowedRamType = selectedMotherboardSocket
+        ? SOCKET_RAM_TYPE[selectedMotherboardSocket]
+        : null;
       const matchesSocket =
-        activeCategory !== "cpu" || !selectedSocket ? true : item.socket === selectedSocket;
+        activeCategory === "cpu" && selectedMotherboardSocket
+          ? item.socket === selectedMotherboardSocket
+          : activeCategory === "motherboard" && selectedCpuSocket
+          ? item.socket === selectedCpuSocket
+          : true;
       const matchesRamType =
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
       return matchesBrand && matchesSearch && matchesSocket && matchesRamType;
     });
-  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard]);
+  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu]);
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
