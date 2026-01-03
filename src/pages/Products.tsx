@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { Star } from "lucide-react";
+import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -8,6 +8,20 @@ import { COMPUTERS } from "@/data/computers";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
+const FILTER_LABELS = {
+  gpu: {
+    "ASUS Dual GeForce RTX 3050 6GB OC": "RTX 3050",
+    "ASUS Dual Radeon RX 7600 EVO OC": "RX 7600",
+    "ASUS Prime Radeon RX 9060 XT OC Edition 8GB": "RX 9060 XT",
+    "PNY GeForce RTX 5060 Ti Dual Fan OC": "RTX 5060 Ti",
+    "Gigabyte GeForce RTX 5070 WINDFORCE OC 12GB": "RTX 5070",
+    "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB": "RTX 5070",
+    "ASUS PRIME Radeon RX 9070 XT 16GB OC": "RX 9070 XT",
+    "Asus Dual GeForce RTX 5070 OC": "RTX 5070",
+    "ASUS Prime GeForce RTX 5080 16GB OC": "RTX 5080",
+    "INNO3D GeForce RTX 5080 16GB X3 OC White": "RTX 5080",
+  },
+} as const;
 
 type BannerSticker = {
   label: string;
@@ -124,11 +138,14 @@ export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const hasAppliedCategory = useRef(false);
-  const [priceRange, setPriceRange] = useState([0, 30000]);
+  const [priceRange, setPriceRange] = useState([0, 35000]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  const [showAllGpus, setShowAllGpus] = useState(false);
+  const [showAllCpus, setShowAllCpus] = useState(false);
+  const [showAllTiers, setShowAllTiers] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
@@ -144,13 +161,16 @@ export default function Products() {
         setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
       }
       if (Array.isArray(parsed.selectedGPUs)) {
-        setSelectedGPUs(parsed.selectedGPUs);
+        const normalized = parsed.selectedGPUs.map((gpu) => getFilterLabel("gpu", gpu));
+        setSelectedGPUs(Array.from(new Set(normalized)));
       }
       if (Array.isArray(parsed.selectedCPUs)) {
-        setSelectedCPUs(parsed.selectedCPUs);
+        const normalized = parsed.selectedCPUs.map((cpu) => getFilterLabel("cpu", cpu));
+        setSelectedCPUs(Array.from(new Set(normalized)));
       }
       if (Array.isArray(parsed.selectedTiers)) {
-        setSelectedTiers(parsed.selectedTiers);
+        const normalized = parsed.selectedTiers.map((tier) => getFilterLabel("tier", tier));
+        setSelectedTiers(Array.from(new Set(normalized)));
       }
     } catch (error) {
       console.warn("Failed to read saved filters", error);
@@ -178,6 +198,116 @@ export default function Products() {
   const gpus = Array.from(new Set(COMPUTERS.map((c) => c.gpu)));
   const cpus = Array.from(new Set(COMPUTERS.map((c) => c.cpu)));
   const tiers = Array.from(new Set(COMPUTERS.map((c) => c.tier)));
+  const filterPreviewCount = 3;
+  type FilterOption = { label: string; values: string[] };
+  const getFilterLabel = (type: "gpu" | "cpu" | "tier", value: string) => {
+    if (type === "gpu") {
+      return FILTER_LABELS.gpu[value as keyof typeof FILTER_LABELS.gpu] ?? value;
+    }
+    return value;
+  };
+  const GPU_ORDER = [
+    "RTX 5080",
+    "RTX 4090",
+    "RTX 4080 SUPER",
+    "RTX 4080",
+    "RTX 5070",
+    "RTX 4070 SUPER",
+    "RTX 5060 TI",
+    "RTX 4070",
+    "RTX 3060",
+    "RTX 3050",
+    "RX 9070 XT",
+    "RX 9060 XT",
+    "RX 7600",
+  ];
+  const getGpuOrderIndex = (label: string) => {
+    const upper = label.toUpperCase();
+    return GPU_ORDER.findIndex((entry) => upper.includes(entry));
+  };
+  const getGpuRank = (label: string) => {
+    const upper = label.toUpperCase();
+    const match = upper.match(/\d{3,4}/);
+    const base = match ? Number.parseInt(match[0], 10) : 0;
+    let score = base;
+    if (upper.includes("SUPER")) score += 0.2;
+    if (upper.includes("TI")) score += 0.1;
+    if (upper.includes("XT")) score += 0.2;
+    return score;
+  };
+  const getCpuRank = (label: string) => {
+    const upper = label.toUpperCase();
+    const match = upper.match(/\d{3,5}/);
+    const base = match ? Number.parseInt(match[0], 10) : 0;
+    let score = base;
+    if (upper.includes("XEON")) score += 20000;
+    return score;
+  };
+  const sortGpuOptions = (a: FilterOption, b: FilterOption) => {
+    const aIndex = getGpuOrderIndex(a.label);
+    const bIndex = getGpuOrderIndex(b.label);
+    if (aIndex !== -1 || bIndex !== -1) {
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    }
+    const aUpper = a.label.toUpperCase();
+    const bUpper = b.label.toUpperCase();
+    const aVendor = aUpper.startsWith("RTX") ? 0 : aUpper.startsWith("RX") ? 1 : 2;
+    const bVendor = bUpper.startsWith("RTX") ? 0 : bUpper.startsWith("RX") ? 1 : 2;
+    if (aVendor !== bVendor) return aVendor - bVendor;
+    const rankDiff = getGpuRank(b.label) - getGpuRank(a.label);
+    if (rankDiff !== 0) return rankDiff;
+    return a.label.localeCompare(b.label, "sv-SE");
+  };
+  const sortCpuOptions = (a: FilterOption, b: FilterOption) => {
+    const aUpper = a.label.toUpperCase();
+    const bUpper = b.label.toUpperCase();
+    const aVendor = aUpper.startsWith("AMD") ? 0 : aUpper.startsWith("INTEL") ? 1 : 2;
+    const bVendor = bUpper.startsWith("AMD") ? 0 : bUpper.startsWith("INTEL") ? 1 : 2;
+    if (aVendor !== bVendor) return aVendor - bVendor;
+    const rankDiff = getCpuRank(b.label) - getCpuRank(a.label);
+    if (rankDiff !== 0) return rankDiff;
+    return a.label.localeCompare(b.label, "sv-SE");
+  };
+  const buildFilterOptions = (items: string[], type: "gpu" | "cpu" | "tier") => {
+    const options = new Map<string, string[]>();
+    items.forEach((item) => {
+      if (item.toLowerCase().includes("placeholder")) return;
+      const label = getFilterLabel(type, item);
+      const existing = options.get(label);
+      if (existing) {
+        existing.push(item);
+      } else {
+        options.set(label, [item]);
+      }
+    });
+    return Array.from(options.entries()).map(([label, values]) => ({ label, values })) as FilterOption[];
+  };
+  const gpuOptions = useMemo(() => buildFilterOptions(gpus, "gpu").sort(sortGpuOptions), [gpus]);
+  const cpuOptions = useMemo(() => buildFilterOptions(cpus, "cpu").sort(sortCpuOptions), [cpus]);
+  const tierOptions = useMemo(() => buildFilterOptions(tiers, "tier"), [tiers]);
+  const gpuLabelMap = useMemo(
+    () => new Map(gpuOptions.map((option) => [option.label, option.values])),
+    [gpuOptions],
+  );
+  const cpuLabelMap = useMemo(
+    () => new Map(cpuOptions.map((option) => [option.label, option.values])),
+    [cpuOptions],
+  );
+  const tierLabelMap = useMemo(
+    () => new Map(tierOptions.map((option) => [option.label, option.values])),
+    [tierOptions],
+  );
+  const visibleGpus = gpuOptions.slice(0, filterPreviewCount);
+  const visibleCpus = cpuOptions.slice(0, filterPreviewCount);
+  const visibleTiers = tierOptions.slice(0, filterPreviewCount);
+  const extraGpus = gpuOptions.slice(filterPreviewCount);
+  const extraCpus = cpuOptions.slice(filterPreviewCount);
+  const extraTiers = tierOptions.slice(filterPreviewCount);
+  const hasMoreGpus = gpuOptions.length > filterPreviewCount;
+  const hasMoreCpus = cpuOptions.length > filterPreviewCount;
+  const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
     return COMPUTERS.filter((computer) => {
@@ -199,9 +329,15 @@ export default function Products() {
       })();
 
       const withinPrice = computer.price >= priceRange[0] && computer.price <= priceRange[1];
-      const gpuMatch = selectedGPUs.length === 0 || selectedGPUs.includes(computer.gpu);
-      const cpuMatch = selectedCPUs.length === 0 || selectedCPUs.includes(computer.cpu);
-      const tierMatch = selectedTiers.length === 0 || selectedTiers.includes(computer.tier);
+      const gpuMatch =
+        selectedGPUs.length === 0 ||
+        selectedGPUs.some((label) => gpuLabelMap.get(label)?.includes(computer.gpu));
+      const cpuMatch =
+        selectedCPUs.length === 0 ||
+        selectedCPUs.some((label) => cpuLabelMap.get(label)?.includes(computer.cpu));
+      const tierMatch =
+        selectedTiers.length === 0 ||
+        selectedTiers.some((label) => tierLabelMap.get(label)?.includes(computer.tier));
 
       return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
     });
@@ -216,7 +352,7 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 30000]);
+    setPriceRange([0, 35000]);
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
@@ -354,7 +490,7 @@ export default function Products() {
                   <input
                     type="range"
                     min="0"
-                    max="30000"
+                    max="35000"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="w-full accent-yellow-400"
@@ -370,53 +506,186 @@ export default function Products() {
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Grafikkort</h3>
-                {gpus.map((gpu) => (
-                  <label key={gpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                    <input
-                      type="checkbox"
-                      checked={selectedGPUs.includes(gpu)}
-                      onChange={() => toggleFilter(gpu, selectedGPUs, setSelectedGPUs)}
-                      className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                    />
-                    <span>{gpu}</span>
-                  </label>
-                ))}
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllGpus
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {visibleGpus.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedGPUs.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span>{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllGpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="space-y-3 pt-1">
+                      {extraGpus.map((option) => (
+                        <label
+                          key={option.label}
+                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedGPUs.includes(option.label)}
+                            onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
+                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          />
+                          <span>{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                {hasMoreGpus && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllGpus((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
+                  >
+                    {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Processor</h3>
-                <div className="space-y-3 max-h-48 overflow-y-auto pr-2">
-                  {cpus.map((cpu) => (
-                    <label key={cpu} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                      <input
-                        type="checkbox"
-                        checked={selectedCPUs.includes(cpu)}
-                        onChange={() => toggleFilter(cpu, selectedCPUs, setSelectedCPUs)}
-                        className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                      />
-                      <span>{cpu}</span>
-                    </label>
-                  ))}
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllCpus
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {visibleCpus.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedCPUs.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span>{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllCpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="space-y-3 pt-1">
+                      {extraCpus.map((option) => (
+                        <label
+                          key={option.label}
+                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedCPUs.includes(option.label)}
+                            onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
+                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          />
+                          <span>{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+                {hasMoreCpus && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllCpus((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
+                  >
+                    {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <hr className="my-6 border-gray-200 dark:border-gray-800" />
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
-                {tiers.map((tier) => (
-                  <label key={tier} className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllTiers
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                {visibleTiers.map((option) => (
+                  <label
+                    key={option.label}
+                    className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                  >
                     <input
                       type="checkbox"
-                      checked={selectedTiers.includes(tier)}
-                      onChange={() => toggleFilter(tier, selectedTiers, setSelectedTiers)}
+                      checked={selectedTiers.includes(option.label)}
+                      onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
                       className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
                     />
-                    <span className="capitalize">{tier}</span>
+                    <span className="capitalize">{option.label}</span>
                   </label>
                 ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllTiers ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="space-y-3 pt-1">
+                    {extraTiers.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTiers.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span className="capitalize">{option.label}</span>
+                      </label>
+                    ))}
+                    </div>
+                  </div>
+                </div>
+                {hasMoreTiers && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllTiers((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
+                  >
+                    {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <button
@@ -469,16 +738,22 @@ export default function Products() {
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((computer) => (
                   <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
-                    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-gray-300 dark:hover:border-gray-600 transition-all min-h-[520px]">
-                      <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
+                    <div className="relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden transition-all duration-300 min-h-[520px] group-hover:border-yellow-400/70 group-hover:shadow-[0_20px_50px_rgba(250,204,21,0.2)] dark:group-hover:border-yellow-300/60">
+                      <div className="relative bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors">
                         <img
                           src={computer.image}
                           alt={computer.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.03]"
                           onError={(e) => {
                             e.currentTarget.src = FALLBACK_IMAGE;
                           }}
                         />
+                        <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-t from-yellow-400/25 via-transparent to-transparent" />
+                        {computer.isUsed ? (
+                          <span className="absolute right-3 top-3 inline-flex items-center rounded-full border border-white/20 bg-[#525252] px-3 py-1 text-xs font-semibold text-white shadow-sm">
+                            Begagnad
+                          </span>
+                        ) : null}
                       </div>
 
                       <div className="p-4 pb-6">
