@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { AdminLayout } from "./admin/AdminLayout";
+import { AdminNotFound } from "./admin/AdminNotFound";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
@@ -26,6 +28,7 @@ const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard.tsx"));
 
 const queryClient = new QueryClient();
+const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -42,25 +45,40 @@ const App = () => (
             }
           >
             <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/products" element={<Products />} />
-              <Route path="/computer/:id" element={<ComputerDetails />} />
-              <Route path="/search" element={<SearchResults />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
-              <Route path="/checkout-success" element={<CheckoutSuccess />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/orders" element={<Orders />} />
-              <Route path="/faq" element={<Faq />} />
-              <Route path="/kundservice" element={<CustomerService />} />
-              <Route path="/custom-bygg" element={<CustomBuild />} />
-              <Route path="/service-reparation" element={<ServiceRepair />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-              <Route path="/terms-of-service" element={<TermsOfService />} />
-              <Route path="/admin" element={<AdminDashboard />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
+              {isAdminApp ? (
+                <>
+                  <Route
+                    path="/"
+                    element={
+                      <AdminLayout>
+                        <AdminDashboard />
+                      </AdminLayout>
+                    }
+                  />
+                  <Route path="*" element={<AdminNotFound />} />
+                </>
+              ) : (
+                <>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/computer/:id" element={<ComputerDetails />} />
+                  <Route path="/search" element={<SearchResults />} />
+                  <Route path="/cart" element={<Cart />} />
+                  <Route path="/checkout" element={<Checkout />} />
+                  <Route path="/checkout-success" element={<CheckoutSuccess />} />
+                  <Route path="/account" element={<Account />} />
+                  <Route path="/orders" element={<Orders />} />
+                  <Route path="/faq" element={<Faq />} />
+                  <Route path="/kundservice" element={<CustomerService />} />
+                  <Route path="/custom-bygg" element={<CustomBuild />} />
+                  <Route path="/service-reparation" element={<ServiceRepair />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </>
+              )}
             </Routes>
           </Suspense>
         </ScrollToTop>

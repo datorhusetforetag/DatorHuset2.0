@@ -60,7 +60,7 @@ const statusConfig: Record<string, { label: string; step: number }> = {
 const statusSteps = ["Order mottagen", "Byggs", "Klar"];
 
 export default function Account() {
-  const { user, session } = useAuth();
+  const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
@@ -81,19 +81,6 @@ export default function Account() {
   });
   const [addressFormErrors, setAddressFormErrors] = useState<Record<string, string>>({});
 
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  const metadataIsAdmin = useMemo(() => {
-    if (!user) return false;
-    const userMetadata = user.user_metadata || {};
-    const appMetadata = user.app_metadata || {};
-    return Boolean(
-      userMetadata.is_admin === true ||
-        userMetadata.role === "admin" ||
-        appMetadata.is_admin === true ||
-        appMetadata.role === "admin"
-    );
-  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -140,36 +127,6 @@ export default function Account() {
       isMounted = false;
     };
   }, [user]);
-
-  useEffect(() => {
-    if (!session?.access_token) {
-      setIsAdmin(metadataIsAdmin);
-      return;
-    }
-    let isMounted = true;
-    const loadAdminStatus = async () => {
-      try {
-        const response = await fetch("/api/admin/me", {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        });
-        if (!response.ok) {
-          if (!isMounted) return;
-          setIsAdmin(metadataIsAdmin);
-          return;
-        }
-        const data = await response.json();
-        if (!isMounted) return;
-        setIsAdmin(Boolean(data?.isAdmin) || metadataIsAdmin);
-      } catch (error) {
-        if (!isMounted) return;
-        setIsAdmin(metadataIsAdmin);
-      }
-    };
-    loadAdminStatus();
-    return () => {
-      isMounted = false;
-    };
-  }, [session?.access_token, metadataIsAdmin]);
 
   const profileName = useMemo(() => {
     if (!user) return "";
@@ -316,20 +273,7 @@ export default function Account() {
           <h1 className="text-3xl font-bold">Hej {profileName}</h1>
         </div>
 
-        {isAdmin && (
-          <div className="mb-6 rounded-2xl border border-yellow-200 bg-yellow-50 text-gray-900 p-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <p className="font-semibold">Du har administratörsbehörighet.</p>
-              <Link
-                to="/admin"
-                className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white transition-colors"
-              >
-                öppna adminpanelen
-              </Link>
-            </div>
-          </div>
-        )}
-
+        
         <div className="grid gap-8 lg:grid-cols-[1.05fr_1.3fr]">
           <div className="space-y-6">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">

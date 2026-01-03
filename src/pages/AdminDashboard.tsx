@@ -79,13 +79,14 @@ export default function AdminDashboard() {
   const [savingInventory, setSavingInventory] = useState<string | null>(null);
 
   const token = session?.access_token || "";
+  const apiBase = import.meta.env.VITE_API_BASE_URL || "";
 
   const loadAdminData = async () => {
     if (!token) return;
     setLoading(true);
     setError("");
     try {
-      const adminResponse = await fetch("/api/admin/me", {
+      const adminResponse = await fetch(`${apiBase}/api/admin/me`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const adminData = await adminResponse.json();
@@ -97,8 +98,8 @@ export default function AdminDashboard() {
       setIsAdmin(true);
 
       const [ordersResponse, inventoryResponse] = await Promise.all([
-        fetch("/api/admin/orders", { headers: { Authorization: `Bearer ${token}` } }),
-        fetch("/api/admin/inventory", { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${apiBase}/api/admin/orders`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${apiBase}/api/admin/inventory`, { headers: { Authorization: `Bearer ${token}` } }),
       ]);
 
       if (!ordersResponse.ok) {
@@ -128,7 +129,7 @@ export default function AdminDashboard() {
     if (!token) return;
     try {
       setSavingOrder(orderId);
-      const response = await fetch(`/api/orders/${orderId}/status`, {
+      const response = await fetch(`${apiBase}/api/orders/${orderId}/status`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -157,7 +158,7 @@ export default function AdminDashboard() {
     );
     try {
       setSavingOrder(order.id);
-      const response = await fetch(`/api/admin/orders/${order.id}/checklist`, {
+      const response = await fetch(`${apiBase}/api/admin/orders/${order.id}/checklist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -186,7 +187,7 @@ export default function AdminDashboard() {
   const handleExportCsv = async () => {
     if (!token) return;
     try {
-      const response = await fetch("/api/admin/orders.csv", {
+      const response = await fetch(`${apiBase}/api/admin/orders.csv`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
@@ -226,7 +227,7 @@ export default function AdminDashboard() {
     if (!token) return;
     try {
       setSavingInventory(item.product_id);
-      const response = await fetch("/api/admin/inventory", {
+      const response = await fetch(`${apiBase}/api/admin/inventory`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
