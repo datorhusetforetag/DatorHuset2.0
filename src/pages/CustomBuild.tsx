@@ -958,6 +958,7 @@ export default function CustomBuild() {
                   alt="Custom bygg"
                   className="w-full h-56 sm:h-72 lg:h-80 object-cover rounded-3xl border border-white/10 shadow-xl"
                   loading="lazy"
+                  decoding="async"
                 />
                 <div className="absolute -bottom-5 left-6 bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                   Komplett montering & test ingår
@@ -1112,6 +1113,7 @@ export default function CustomBuild() {
                               alt={imageAlt}
                               className="w-full h-full object-cover rounded-xl border border-gray-200 dark:border-gray-800"
                               loading="lazy"
+                              decoding="async"
                               onError={(event) => {
                                 event.currentTarget.src = FALLBACK_COMPONENT_IMAGE;
                               }}

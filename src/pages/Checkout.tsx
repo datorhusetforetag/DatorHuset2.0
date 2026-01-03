@@ -3,18 +3,35 @@ import { Footer } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
+import { getUserAddresses } from "@/lib/supabaseServices";
 
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
 const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
+
+type SavedAddress = {
+  id: string;
+  label?: string | null;
+  full_name?: string | null;
+  phone?: string | null;
+  address_line1: string;
+  address_line2?: string | null;
+  postal_code: string;
+  city: string;
+  country?: string | null;
+  is_default?: boolean;
+};
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
   const { user, session } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
+  const [loadingAddresses, setLoadingAddresses] = useState(false);
+  const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
   const [email, setEmail] = useState(user?.email || "");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -32,6 +49,45 @@ export default function Checkout() {
     city: "",
   });
   const fullName = `${firstName} ${lastName}`.trim();
+
+  useEffect(() => {
+    if (!user) return;
+    let isMounted = true;
+    const loadAddresses = async () => {
+      try {
+        setLoadingAddresses(true);
+        const data = await getUserAddresses(user.id);
+        if (!isMounted) return;
+        setAddresses(data as SavedAddress[]);
+        const defaultAddress = (data as SavedAddress[]).find((item) => item.is_default) || data?.[0];
+        if (defaultAddress) {
+          applyAddress(defaultAddress);
+          setSelectedAddressId(defaultAddress.id);
+        }
+      } catch (error) {
+        console.error("Failed to load addresses", error);
+      } finally {
+        if (isMounted) setLoadingAddresses(false);
+      }
+    };
+    loadAddresses();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  const applyAddress = (saved: SavedAddress) => {
+    if (!saved) return;
+    const parts = (saved.full_name || "").trim().split(" ").filter(Boolean);
+    const first = parts.shift() || "";
+    const last = parts.join(" ");
+    setFirstName(first);
+    setLastName(last);
+    setPhone(saved.phone || "");
+    setAddress([saved.address_line1, saved.address_line2].filter(Boolean).join(", "));
+    setPostalCode(saved.postal_code || "");
+    setCity(saved.city || "");
+  };
 
   if (!user) {
     return (
@@ -85,7 +141,7 @@ export default function Checkout() {
       city: swedishCityRegex.test(city.trim()) ? "" : "Ange en giltig postort.",
     };
 
-    setErrors(nextErrors);
+      setErrors(nextErrors);
     return Object.values(nextErrors).every((value) => value === "");
   };
 
@@ -117,6 +173,7 @@ export default function Checkout() {
           address,
           postalCode,
           city,
+          addressId: selectedAddressId,
           totalCents: totalPrice,
         }),
       });
@@ -163,6 +220,36 @@ export default function Checkout() {
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Leveransuppgifter</h2>
 
                 <div className="space-y-4">
+                  {addresses.length > 0 && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        {"Sparade adresser"}
+                      </label>
+                      <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+                        <select
+                          value={selectedAddressId || ""}
+                          onChange={(event) => {
+                            const nextId = event.target.value || null;
+                            setSelectedAddressId(nextId);
+                            const selected = addresses.find((item) => item.id === nextId);
+                            if (selected) applyAddress(selected);
+                          }}
+                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900"
+                        >
+                          <option value="">Välj adress...</option>
+                          {addresses.map((saved) => (
+                            <option key={saved.id} value={saved.id}>
+                              {saved.label || saved.address_line1}
+                              {saved.is_default ? " (Standard)" : ""}
+                            </option>
+                          ))}
+                        </select>
+                        {loadingAddresses && (
+                          <span className="text-xs text-gray-500">Hämtar adresser...</span>
+                        )}
+                      </div>
+                    </div>
+                  )}
                   <div>
                     <label className="block text-sm font-semibold text-gray-900 mb-2">
                       {"E-postadress"}

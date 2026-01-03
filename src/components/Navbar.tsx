@@ -93,7 +93,13 @@ export const Navbar = () => {
                   to="/"
                   className="flex items-center gap-2 font-bold text-base sm:text-xl flex-shrink-0 text-gray-900 dark:text-white min-w-0"
                 >
-                  <img src="/Datorhuset.png" alt="DatorHuset" className="w-9 h-9 sm:w-12 sm:h-12 object-contain" />
+                  <img
+                    src="/Datorhuset.png"
+                    alt="DatorHuset"
+                    className="w-9 h-9 sm:w-12 sm:h-12 object-contain"
+                    loading="eager"
+                    decoding="async"
+                  />
                   <span className="font-[Orbitron] truncate max-w-[140px] sm:max-w-none">DatorHuset</span>
                 </Link>
               </div>

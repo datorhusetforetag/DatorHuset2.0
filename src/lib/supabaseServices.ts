@@ -54,9 +54,20 @@ export async function checkStock(productId: string) {
   return {
     inStock: inventory.quantity_in_stock > 0,
     quantity: inventory.quantity_in_stock,
-    canPreorder: inventory.allow_preorder,
-    preorderDate: inventory.preorder_available_date,
+    canPreorder: Boolean(inventory.is_preorder ?? inventory.allow_preorder),
+    etaDays: inventory.eta_days ?? null,
+    etaNote: inventory.eta_note ?? null,
+    preorderDate: inventory.preorder_available_date ?? null,
   };
+}
+
+export async function getAllInventory() {
+  const { data, error } = await supabase
+    .from('inventory')
+    .select('*');
+
+  if (error) throw error;
+  return data || [];
 }
 
 // ============================================================
@@ -201,4 +212,81 @@ export async function addOrderItem(orderItem: {
   
   if (error) throw error;
   return data;
+}
+
+// ============================================================
+// ADDRESS SERVICE
+// ============================================================
+
+export async function getUserAddresses(userId: string) {
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .select('*')
+    .eq('user_id', userId)
+    .order('is_default', { ascending: false })
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createUserAddress(address: {
+  user_id: string;
+  label?: string | null;
+  full_name?: string | null;
+  phone?: string | null;
+  address_line1: string;
+  address_line2?: string | null;
+  postal_code: string;
+  city: string;
+  country?: string | null;
+  is_default?: boolean;
+}) {
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .insert([address])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function updateUserAddress(addressId: string, updates: Record<string, any>) {
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .update({ ...updates, updated_at: new Date() })
+    .eq('id', addressId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function setDefaultAddress(userId: string, addressId: string) {
+  const { error: resetError } = await supabase
+    .from('user_addresses')
+    .update({ is_default: false })
+    .eq('user_id', userId);
+  if (resetError) throw resetError;
+
+  const { data, error } = await supabase
+    .from('user_addresses')
+    .update({ is_default: true, updated_at: new Date() })
+    .eq('id', addressId)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteUserAddress(addressId: string) {
+  const { error } = await supabase
+    .from('user_addresses')
+    .delete()
+    .eq('id', addressId);
+
+  if (error) throw error;
 }
