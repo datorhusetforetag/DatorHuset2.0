@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import cpu7600Image from "../../images/product images/cpu/7600.png";
 import cpu7700Image from "../../images/product images/cpu/7700.png";
 import cpu7800x3dImage from "../../images/product images/cpu/7800x3d.png";
@@ -236,6 +237,70 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       image: cpu7700Image,
       specs: ["8 kärnor", "5.3 GHz", "AM5"],
     },
+    {
+      id: "cpu-11",
+      name: "AMD Ryzen 5 3600",
+      brand: "AMD",
+      price: 0,
+      socket: "AM4",
+      specs: ["AM4"],
+    },
+    {
+      id: "cpu-12",
+      name: "Intel Core i5-12400F",
+      brand: "Intel",
+      price: 0,
+      socket: "LGA1700",
+      specs: ["LGA1700"],
+    },
+    {
+      id: "cpu-13",
+      name: "AMD Ryzen 5 5500",
+      brand: "AMD",
+      price: 0,
+      socket: "AM4",
+      specs: ["AM4"],
+    },
+    {
+      id: "cpu-14",
+      name: "AMD Ryzen 5 5600X",
+      brand: "AMD",
+      price: 0,
+      socket: "AM4",
+      specs: ["AM4"],
+    },
+    {
+      id: "cpu-15",
+      name: "AMD Ryzen 5 8400F",
+      brand: "AMD",
+      price: 0,
+      socket: "AM5",
+      specs: ["AM5"],
+    },
+    {
+      id: "cpu-16",
+      name: "AMD Ryzen 5 9600X (Tray)",
+      brand: "AMD",
+      price: 0,
+      socket: "AM5",
+      specs: ["AM5"],
+    },
+    {
+      id: "cpu-17",
+      name: "AMD Ryzen 5 7600X3D",
+      brand: "AMD",
+      price: 0,
+      socket: "AM5",
+      specs: ["AM5"],
+    },
+    {
+      id: "cpu-18",
+      name: "AMD Ryzen 7 9800X3D",
+      brand: "AMD",
+      price: 0,
+      socket: "AM5",
+      specs: ["AM5"],
+    },
   ],
   gpu: [
     {
@@ -319,6 +384,76 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 3290,
       image: gpuA770Image,
       specs: ["16 GB", "XeSS", "1080p"],
+    },
+    {
+      id: "gpu-11",
+      name: "ASUS Dual GeForce RTX 3050 6GB OC",
+      brand: "ASUS",
+      price: 0,
+      specs: ["6 GB", "RTX 3050"],
+    },
+    {
+      id: "gpu-12",
+      name: "ASUS Dual Radeon RX 7600 EVO OC",
+      brand: "ASUS",
+      price: 0,
+      specs: ["RX 7600"],
+    },
+    {
+      id: "gpu-13",
+      name: "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
+      brand: "ASUS",
+      price: 0,
+      specs: ["8 GB", "RX 9060 XT"],
+    },
+    {
+      id: "gpu-14",
+      name: "PNY GeForce RTX 5060 Ti Dual Fan OC",
+      brand: "PNY",
+      price: 0,
+      specs: ["RTX 5060 Ti"],
+    },
+    {
+      id: "gpu-15",
+      name: "RTX 5070",
+      brand: "NVIDIA",
+      price: 0,
+      specs: ["RTX 5070"],
+    },
+    {
+      id: "gpu-16",
+      name: "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
+      brand: "Gigabyte",
+      price: 0,
+      specs: ["12 GB", "RTX 5070"],
+    },
+    {
+      id: "gpu-17",
+      name: "ASUS PRIME Radeon RX 9070 XT 16GB OC",
+      brand: "ASUS",
+      price: 0,
+      specs: ["16 GB", "RX 9070 XT"],
+    },
+    {
+      id: "gpu-18",
+      name: "Asus Dual GeForce RTX 5070 OC",
+      brand: "ASUS",
+      price: 0,
+      specs: ["RTX 5070"],
+    },
+    {
+      id: "gpu-19",
+      name: "ASUS Prime GeForce RTX 5080 16GB OC",
+      brand: "ASUS",
+      price: 0,
+      specs: ["16 GB", "RTX 5080"],
+    },
+    {
+      id: "gpu-20",
+      name: "INNO3D GeForce RTX 5080 16GB X3 OC White",
+      brand: "INNO3D",
+      price: 0,
+      specs: ["16 GB", "RTX 5080"],
     },
   ],
   motherboard: [
@@ -504,6 +639,54 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       image: ramAdataXpgLancerImage,
       specs: ["DDR5", "6000 MHz", "RGB"],
     },
+    {
+      id: "ram-11",
+      name: "A-Data XPG SPECTRIX D35G 16GB (2x8GB) DDR4 3600MHz CL18",
+      brand: "ADATA",
+      price: 0,
+      ramType: "DDR4",
+      specs: ["DDR4", "16GB", "3600 MHz", "CL18"],
+    },
+    {
+      id: "ram-12",
+      name: "Corsair Dominator RGB DDR4 3600MHz 32GB",
+      brand: "Corsair",
+      price: 0,
+      ramType: "DDR4",
+      specs: ["DDR4", "32GB", "3600 MHz", "RGB"],
+    },
+    {
+      id: "ram-13",
+      name: "32GB DDR4",
+      brand: "Generic",
+      price: 0,
+      ramType: "DDR4",
+      specs: ["DDR4", "32GB"],
+    },
+    {
+      id: "ram-14",
+      name: "Dell 32GB DDR5 5600MHz (begagnad)",
+      brand: "Dell",
+      price: 0,
+      ramType: "DDR5",
+      specs: ["DDR5", "32GB", "5600 MHz", "Begagnad"],
+    },
+    {
+      id: "ram-15",
+      name: "Dell 32GB DDR5 5600MHz",
+      brand: "Dell",
+      price: 0,
+      ramType: "DDR5",
+      specs: ["DDR5", "32GB", "5600 MHz"],
+    },
+    {
+      id: "ram-16",
+      name: "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
+      brand: "Kingston",
+      price: 0,
+      ramType: "DDR5",
+      specs: ["DDR5", "32GB", "6400 MHz", "CL32"],
+    },
   ],
   storage: [
     {
@@ -575,6 +758,34 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Seagate",
       price: 1190,
       specs: ["HDD", "5400 RPM", "3.5-inch"],
+    },
+    {
+      id: "sto-11",
+      name: "Team Group T-Force G50",
+      brand: "TeamGroup",
+      price: 0,
+      specs: ["SSD"],
+    },
+    {
+      id: "sto-12",
+      name: "2TB",
+      brand: "Generic",
+      price: 0,
+      specs: ["NVMe", "2TB"],
+    },
+    {
+      id: "sto-13",
+      name: "Lexar Professional NM1090",
+      brand: "Lexar",
+      price: 0,
+      specs: ["NVMe"],
+    },
+    {
+      id: "sto-14",
+      name: "Kingston Fury Renegade G5",
+      brand: "Kingston",
+      price: 0,
+      specs: ["NVMe"],
     },
   ],
   case: [
@@ -797,6 +1008,70 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
 };
 
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
+const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
+  cpu: 2990,
+  gpu: 6990,
+  motherboard: 2490,
+  ram: 1190,
+  storage: 990,
+  case: 1290,
+  psu: 1290,
+  cooling: 990,
+};
+const STORE_NAMES = [
+  "Komplett",
+  "Inet",
+  "Webhallen",
+  "NetOnNet",
+  "Dustin",
+  "Proshop",
+  "Elgiganten",
+  "Amazon",
+];
+const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const hashString = (value: string) => {
+  let hash = 0;
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash * 31 + value.charCodeAt(i)) % 100000;
+  }
+  return hash;
+};
+
+const getBasePrice = (item: ComponentItem, category: CategoryKey) =>
+  item.price && item.price > 0 ? item.price : CATEGORY_BASE_PRICE[category];
+
+const buildPriceHistory = (basePrice: number) =>
+  MONTH_LABELS.map((_, index) => {
+    const trend = 1.08 - index * 0.03;
+    const wobble = (index % 3) * 0.01;
+    const multiplier = Math.max(0.72, trend + wobble);
+    return Math.max(100, Math.round(basePrice * multiplier));
+  });
+
+const buildStorePrices = (item: ComponentItem, category: CategoryKey) => {
+  const basePrice = getBasePrice(item, category);
+  const hash = hashString(`${item.id}-${item.name}-${category}`);
+  const stores = STORE_NAMES.map((name, index) => {
+    const variance = ((hash + index * 17) % 9 - 4) * 0.01;
+    const price = Math.max(100, Math.round(basePrice * (1 + variance)));
+    const inStock = (hash + index) % 4 !== 0;
+    return { name, price, inStock };
+  }).sort((a, b) => a.price - b.price);
+  const cheapest = stores[0]?.price ?? basePrice;
+  return stores.map((store) => ({ ...store, isCheapest: store.price === cheapest }));
+};
+
+const buildSpecList = (item: ComponentItem) => {
+  const specs = [...item.specs];
+  if (item.socket && !specs.some((spec) => spec.includes(item.socket))) {
+    specs.push(`Socket ${item.socket}`);
+  }
+  if (item.ramType && !specs.some((spec) => spec.includes(item.ramType))) {
+    specs.push(item.ramType);
+  }
+  return specs;
+};
 
 export default function CustomBuild() {
   const [activeCategory, setActiveCategory] = useState<CategoryKey>("cpu");
@@ -814,6 +1089,7 @@ export default function CustomBuild() {
     psu: null,
     cooling: null,
   });
+  const [detailItem, setDetailItem] = useState<{ item: ComponentItem; category: CategoryKey } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -906,8 +1182,40 @@ export default function CustomBuild() {
     });
   }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu]);
 
+  const detailData = useMemo(() => {
+    if (!detailItem) {
+      return null;
+    }
+    const basePrice = getBasePrice(detailItem.item, detailItem.category);
+    const specs = buildSpecList(detailItem.item);
+    const history = buildPriceHistory(basePrice);
+    const stores = buildStorePrices(detailItem.item, detailItem.category);
+    const cheapestStore = stores[0] ?? null;
+    const inStockStore = stores.find((store) => store.inStock) ?? stores[0] ?? null;
+    const image =
+      detailItem.item.image ?? CATEGORY_IMAGES[detailItem.category]?.src ?? FALLBACK_COMPONENT_IMAGE;
+    return {
+      basePrice,
+      specs,
+      history,
+      stores,
+      cheapestStore,
+      inStockStore,
+      image,
+    };
+  }, [detailItem]);
+
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
+
+  const handleOpenDetails = (item: ComponentItem) => {
+    setDetailItem({ item, category: activeCategory });
+  };
+  const detailIsSelected = detailItem
+    ? selected[detailItem.category]?.id === detailItem.item.id
+    : false;
+  const detailHistoryMax = detailData ? Math.max(...detailData.history) : 0;
+  const detailHistoryMin = detailData ? Math.min(...detailData.history) : 0;
 
   const handleShareBuild = async () => {
     const params = new URLSearchParams();
@@ -933,6 +1241,164 @@ export default function CustomBuild() {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
+      <Dialog
+        open={Boolean(detailItem)}
+        onOpenChange={(open) => {
+          if (!open) {
+            setDetailItem(null);
+          }
+        }}
+      >
+        {detailItem && detailData ? (
+          <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f1824]">
+            <DialogHeader>
+              <DialogTitle>{detailItem.item.name}</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-400">
+                Utokad vy for specifikationer, pris och lagerstatus.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="space-y-6">
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <div className="relative w-full md:w-52 aspect-square">
+                      <img
+                        src={detailData.image}
+                        alt={detailItem.item.name}
+                        className="w-full h-full object-cover rounded-xl border border-gray-200 dark:border-gray-800"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <span className="absolute top-2 left-2 rounded-full bg-white/90 text-gray-700 border border-gray-200 px-2 py-1 text-xs shadow-sm dark:bg-gray-900/90 dark:text-gray-200 dark:border-gray-700">
+                        {detailItem.item.brand}
+                      </span>
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponent</p>
+                      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
+                        {detailItem.item.name}
+                      </h3>
+                      <div className="mt-3 flex flex-wrap items-center gap-3">
+                        <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          {formatPrice(detailData.basePrice)} kr
+                        </span>
+                        {detailData.cheapestStore ? (
+                          <span className="text-xs font-semibold bg-yellow-400 text-gray-900 px-3 py-1 rounded-full">
+                            Lagsta pris hos {detailData.cheapestStore.name}
+                          </span>
+                        ) : null}
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        {detailData.specs.map((spec) => (
+                          <span
+                            key={spec}
+                            className="text-xs border border-gray-200 text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full dark:border-gray-700 dark:text-gray-200 dark:bg-gray-800"
+                          >
+                            {spec}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="mt-4 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelected((prev) => ({
+                              ...prev,
+                              [detailItem.category]: detailIsSelected ? null : detailItem.item,
+                            }))
+                          }
+                          className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
+                            detailIsSelected
+                              ? "bg-yellow-400 text-gray-900"
+                              : "border border-yellow-400 text-yellow-700 dark:text-yellow-300 hover:bg-[#11667b] hover:text-white hover:border-[#11667b]"
+                          }`}
+                        >
+                          {detailIsSelected ? "Vald" : "Valj"}
+                        </button>
+                        {detailData.inStockStore ? (
+                          <span className="inline-flex items-center text-xs font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full dark:text-green-200 dark:bg-green-900/40">
+                            I lager hos {detailData.inStockStore.name}
+                          </span>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Prishistorik</p>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Senaste 12 manader</span>
+                  </div>
+                  <div className="mt-4 flex items-end gap-1 h-28">
+                    {detailData.history.map((value, index) => {
+                      const range = detailHistoryMax - detailHistoryMin || 1;
+                      const height = ((value - detailHistoryMin) / range) * 100;
+                      return (
+                        <div key={`${value}-${index}`} className="flex-1">
+                          <div
+                            className="w-full rounded-md bg-yellow-400/80"
+                            style={{ height: `${Math.max(8, height)}%` }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-3 grid grid-cols-6 gap-2 text-[10px] text-gray-500 dark:text-gray-400">
+                    {MONTH_LABELS.slice(0, 6).map((label) => (
+                      <span key={label} className="text-center">
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                    Prisdata ar demo tills riktig koppling ar klar.
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Butiker</p>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    {detailData.stores.length} jamforelser
+                  </span>
+                </div>
+                <div className="mt-4 space-y-3">
+                  {detailData.stores.map((store) => (
+                    <div
+                      key={store.name}
+                      className={`rounded-xl border px-3 py-3 flex items-center justify-between gap-3 ${
+                        store.isCheapest
+                          ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
+                          : "border-gray-200 dark:border-gray-800"
+                      }`}
+                    >
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{store.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                          {store.inStock ? "I lager" : "Ej i lager"}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          {formatPrice(store.price)} kr
+                        </span>
+                        <button
+                          type="button"
+                          className="rounded-lg border border-yellow-400 px-3 py-1 text-xs font-semibold text-yellow-700 hover:bg-[#11667b] hover:text-white hover:border-[#11667b] dark:text-yellow-300"
+                        >
+                          Till butik
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
       <main className="flex-1">
         <section className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white">
           <div className="container mx-auto px-4 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
@@ -1109,6 +1575,15 @@ export default function CustomBuild() {
                     return (
                       <div
                         key={item.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => handleOpenDetails(item)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter" || event.key === " ") {
+                            event.preventDefault();
+                            handleOpenDetails(item);
+                          }
+                        }}
                         className={`rounded-2xl border bg-white p-4 shadow-sm transition-colors dark:bg-gray-900/80 ${
                           isSelected ? "border-yellow-400 ring-1 ring-yellow-300/30" : "border-gray-200 dark:border-gray-800"
                         }`}
@@ -1156,12 +1631,13 @@ export default function CustomBuild() {
                             <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(item.price)} kr</p>
                             <button
                               type="button"
-                              onClick={() =>
+                              onClick={(event) => {
+                                event.stopPropagation();
                                 setSelected((prev) => ({
                                   ...prev,
                                   [activeCategory]: isSelected ? null : item,
-                                }))
-                              }
+                                }));
+                              }}
                               className={`w-full md:w-auto rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
                                 isSelected
                                   ? "bg-yellow-400 text-gray-900"
