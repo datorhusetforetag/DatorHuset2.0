@@ -42,10 +42,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
+    const redirectTo =
+      import.meta.env.VITE_APP_MODE === 'admin'
+        ? 'https://admin.datorhuset.site'
+        : window.location.origin;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        redirectTo,
       },
     });
     if (error) {
