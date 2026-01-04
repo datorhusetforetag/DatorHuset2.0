@@ -8,6 +8,9 @@ import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { AdminLayout } from "./admin/AdminLayout";
 import { AdminNotFound } from "./admin/AdminNotFound";
+import AdminInventory from "./admin/pages/AdminInventory";
+import AdminOrders from "./admin/pages/AdminOrders";
+import AdminBuild from "./admin/pages/AdminBuild";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
@@ -25,8 +28,6 @@ const ServiceRepair = lazy(() => import("./pages/ServiceRepair.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
-const AdminDashboard = lazy(() => import("./pages/AdminDashboard.tsx"));
-
 const queryClient = new QueryClient();
 const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
 
@@ -47,14 +48,12 @@ const App = () => (
             <Routes>
               {isAdminApp ? (
                 <>
-                  <Route
-                    path="/"
-                    element={
-                      <AdminLayout>
-                        <AdminDashboard />
-                      </AdminLayout>
-                    }
-                  />
+                  <Route path="/" element={<AdminLayout />}>
+                    <Route index element={<AdminInventory />} />
+                    <Route path="lager" element={<AdminInventory />} />
+                    <Route path="bestallningar" element={<AdminOrders />} />
+                    <Route path="bygg" element={<AdminBuild />} />
+                  </Route>
                   <Route path="*" element={<AdminNotFound />} />
                 </>
               ) : (

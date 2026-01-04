@@ -36,7 +36,17 @@ const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || ""
 const MAX_LINE_ITEMS = 50;
 const MAX_QUANTITY = 10;
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
-const STATUS_OPTIONS = new Set(["received", "building", "finished"]);
+const STATUS_OPTIONS = new Set([
+  "received",
+  "ordering",
+  "building",
+  "postbuild",
+  "ready",
+  "pending",
+  "in_progress",
+  "finished",
+  "completed",
+]);
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
 const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
@@ -48,6 +58,19 @@ const DEFAULT_BUILD_CHECKLIST = [
   { id: "qc", label: "QC & packning", done: false },
   { id: "ready", label: "Klar f\u00f6r utl\u00e4mning", done: false },
 ];
+const STATUS_LABELS: Record<string, string> = {
+  received: "Best\u00e4llning mottagen",
+  ordering: "Best\u00e4ller komponenterna",
+  building: "Bygger",
+  postbuild: "Post-bygg justeringar",
+  ready: "Redo att h\u00e4mta/frakta!",
+  pending: "Best\u00e4llning mottagen",
+  in_progress: "Bygger",
+  finished: "Redo att h\u00e4mta/frakta!",
+  completed: "Redo att h\u00e4mta/frakta!",
+};
+const READY_MESSAGE =
+  "DatorHuset kommer ringa dig ang\u00e5ende n\u00e4r och vart du kan h\u00e4mta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
 
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
@@ -607,29 +630,24 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
     res.json(data);
 
     if (data?.customer_email) {
-      const statusLabel =
-        nextStatus === "building"
-          ? "Din dator byggs just nu"
-          : nextStatus === "finished"
-            ? "Din order är klar"
-            : "Order mottagen";
+      const statusLabel = STATUS_LABELS[nextStatus] || STATUS_LABELS.received;
       const statusNote =
-        nextStatus === "finished"
-          ? "DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl."
-          : null;
+        nextStatus === "ready" || nextStatus === "finished" || nextStatus === "completed"
+          ? READY_MESSAGE
+          : statusLabel;
       await sendEmail({
         to: data.customer_email,
         subject: "Uppdatering om din order hos DatorHuset",
         html: buildOrderEmailHtml({
           headline: "Uppdatering om din order",
-          intro: `Hej ${data.customer_name || ""}! Vi har uppdaterat statusen på din order.`,
+          intro: `Hej ${data.customer_name || ""}! Vi har uppdaterat statusen p? din order.`,
           order: data,
           items: (data.order_items || []).map((item: any) => ({
             name: item.product?.name || "Produkt",
             quantity: item.quantity,
             total: ((item.unit_price_cents || 0) * item.quantity) / 100,
           })),
-          statusNote: statusNote || statusLabel,
+          statusNote,
         }),
       });
     }
@@ -674,7 +692,7 @@ export async function getAdminInventory(req: any, res: any) {
 
     const { data, error } = await supabase
       .from("inventory")
-      .select("*, product:product_id (name)")
+      .select("*, product:product_id (name, price_cents)")
       .order("updated_at", { ascending: false });
 
     if (error) {
@@ -707,6 +725,7 @@ export async function updateAdminInventory(req: any, res: any) {
     const isPreorder = Boolean(req.body?.is_preorder);
     const etaDays = req.body?.eta_days === null || req.body?.eta_days === undefined ? null : Number(req.body?.eta_days);
     const etaNote = sanitizeText(req.body?.eta_note, 200);
+    const priceCents = Number(req.body?.price_cents);
 
     if (!productId) {
       return res.status(400).json({ error: "Missing productId" });
@@ -729,6 +748,17 @@ export async function updateAdminInventory(req: any, res: any) {
 
     if (error || !data) {
       return res.status(500).json({ error: "Failed to update inventory" });
+    }
+
+    if (Number.isFinite(priceCents)) {
+      const pricePayload = { price_cents: Math.max(0, Math.round(priceCents)) };
+      const { error: priceError } = await supabase
+        .from("products")
+        .update(pricePayload)
+        .eq("id", productId);
+      if (priceError) {
+        return res.status(500).json({ error: "Failed to update price" });
+      }
     }
 
     res.json(data);

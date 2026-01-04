@@ -11,6 +11,7 @@ import {
   getUserOrders,
   setDefaultAddress,
 } from "@/lib/supabaseServices";
+import { getOrderStatusInfo, ORDER_STATUS_STEPS } from "@/lib/orderStatus";
 import { KeyRound, MapPin, Package, User } from "lucide-react";
 
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
@@ -47,17 +48,6 @@ type Address = {
   country?: string | null;
   is_default?: boolean;
 };
-
-const statusConfig: Record<string, { label: string; step: number }> = {
-  pending: { label: "Order mottagen", step: 1 },
-  received: { label: "Order mottagen", step: 1 },
-  building: { label: "Byggs", step: 2 },
-  in_progress: { label: "Byggs", step: 2 },
-  completed: { label: "Klar", step: 3 },
-  finished: { label: "Klar", step: 3 },
-};
-
-const statusSteps = ["Order mottagen", "Byggs", "Klar"];
 
 export default function Account() {
   const { user } = useAuth();
@@ -487,8 +477,7 @@ export default function Account() {
 
               <div className="space-y-6">
                 {orders.map((order) => {
-                  const normalizedStatus = order.status || "pending";
-                  const statusInfo = statusConfig[normalizedStatus] || statusConfig.pending;
+                  const statusInfo = getOrderStatusInfo(order.status);
                   const stage = statusInfo.step;
                   const orderDate = order.created_at
                     ? new Date(order.created_at).toLocaleDateString("sv-SE")
@@ -523,8 +512,8 @@ export default function Account() {
                         ))}
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
-                        {statusSteps.map((label, index) => (
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                        {ORDER_STATUS_STEPS.map((label, index) => (
                           <div
                             key={label}
                             className={`rounded-full px-3 py-1 text-center border ${
@@ -538,8 +527,9 @@ export default function Account() {
                         ))}
                       </div>
 
-                      <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-gray-600 dark:text-gray-300">
                         <span>Status: {statusInfo.label}</span>
+                        <span>ETA: {statusInfo.eta}</span>
                         {order.receipt_url ? (
                           <a
                             href={order.receipt_url}
@@ -552,7 +542,7 @@ export default function Account() {
                         )}
                       </div>
 
-                      {stage === 3 && (
+                      {stage === 5 && (
                         <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
                           DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.
                         </div>
