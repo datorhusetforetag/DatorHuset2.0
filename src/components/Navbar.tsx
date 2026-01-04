@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Menu, Search, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Menu, Search, ShieldCheck, ShoppingCart } from "lucide-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
 import { COMPUTERS } from "@/data/computers";
 import { ThemeToggle } from "./ThemeToggle";
+import { useAuth } from "@/context/AuthContext";
 
 export const Navbar = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -19,7 +20,9 @@ export const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { totalItems, items, totalPrice } = useCart();
+  const { user } = useAuth();
   const showBackButton = location.pathname !== "/";
+  const isAdmin = Boolean(user?.user_metadata?.role === "admin" || user?.user_metadata?.is_admin);
 
   const searchResults = useMemo(() => {
     const query = searchInput.trim().toLowerCase();
@@ -105,6 +108,15 @@ export const Navbar = () => {
               </div>
 
               <div className="flex items-center gap-2 lg:order-4">
+                {isAdmin && (
+                  <a
+                    href="https://admin.datorhuset.site"
+                    className="hidden sm:inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
+                  >
+                    <ShieldCheck className="h-4 w-4" />
+                    Admin
+                  </a>
+                )}
                 <ThemeToggle />
                 <LoginButton />
                 <div className="relative" onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
@@ -339,6 +351,16 @@ export const Navbar = () => {
                   </div>
                 )}
               </div>
+
+              {isAdmin && (
+                <a
+                  href="https://admin.datorhuset.site"
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  Admin
+                </a>
+              )}
             </div>
           </div>
         </div>
