@@ -164,7 +164,9 @@ const getAuthUser = async (req) => {
     return { user: null, error: "Supabase not configured." };
   }
   const authHeader = req.headers.authorization || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const fallbackToken = req.headers["x-access-token"] || "";
+  const rawToken = authHeader || fallbackToken;
+  const token = rawToken.startsWith("Bearer ") ? rawToken.slice(7) : String(rawToken || "");
   if (!token) {
     return { user: null, error: "Missing auth token." };
   }

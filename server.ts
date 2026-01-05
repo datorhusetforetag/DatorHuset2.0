@@ -19,10 +19,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia",
 });
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-);
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const HAS_SERVICE_ROLE_KEY = SUPABASE_SERVICE_ROLE_KEY.trim().length > 0;
+
+const supabase = createClient(process.env.SUPABASE_URL || "", SUPABASE_SERVICE_ROLE_KEY);
+
+if (!HAS_SERVICE_ROLE_KEY) {
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY is missing. Admin inventory updates require the service role key to bypass RLS."
+  );
+}
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
 const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:8080")
@@ -123,6 +129,17 @@ const sendEmail = async ({ to, subject, html }: { to: string; subject: string; h
   await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
 };
 
+const requireServiceRoleKey = (res: any) => {
+  if (HAS_SERVICE_ROLE_KEY) return true;
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations require the service role key to bypass RLS."
+  );
+  res.status(503).json({
+    error: "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations are unavailable.",
+  });
+  return false;
+};
+
 const buildOrderEmailHtml = ({
   headline,
   intro,
@@ -154,7 +171,9 @@ const buildOrderEmailHtml = ({
 
 async function getAuthUser(req: any) {
   const authHeader = req?.headers?.authorization || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const fallbackToken = req?.headers?.["x-access-token"] || "";
+  const rawToken = authHeader || fallbackToken;
+  const token = rawToken.startsWith("Bearer ") ? rawToken.slice(7) : String(rawToken || "");
   if (!token) {
     return { user: null, error: "Missing auth token." };
   }
@@ -547,7 +566,8 @@ export async function getAdminOrders(req: any, res: any) {
       .order("created_at", { ascending: false });
 
     if (error) {
-      return res.status(500).json({ error: "Failed to fetch orders" });
+      console.error("Admin orders fetch failed:", error);
+      return res.status(500).json({ error: `Failed to fetch orders: ${error.message}` });
     }
 
     res.json(data || []);
@@ -579,6 +599,15 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
 
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
     }
 
     if (!STATUS_OPTIONS.has(nextStatus)) {
@@ -696,7 +725,8 @@ export async function getAdminInventory(req: any, res: any) {
       .order("updated_at", { ascending: false });
 
     if (error) {
-      return res.status(500).json({ error: "Failed to fetch inventory" });
+      console.error("Admin inventory fetch failed:", error);
+      return res.status(500).json({ error: `Failed to fetch inventory: ${error.message}` });
     }
 
     res.json(data || []);
@@ -718,6 +748,9 @@ export async function updateAdminInventory(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
     }
 
     const productId = sanitizeText(req.body?.productId, 64);
@@ -780,6 +813,9 @@ export async function updateOrderChecklist(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
     }
 
     const { orderId } = req.params;

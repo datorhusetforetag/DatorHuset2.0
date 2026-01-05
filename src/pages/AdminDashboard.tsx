@@ -87,7 +87,7 @@ export default function AdminDashboard() {
     setError("");
     try {
       const adminResponse = await fetch(`${apiBase}/api/admin/me`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       const adminData = await adminResponse.json();
       if (!adminResponse.ok || !adminData?.isAdmin) {
@@ -98,8 +98,8 @@ export default function AdminDashboard() {
       setIsAdmin(true);
 
       const [ordersResponse, inventoryResponse] = await Promise.all([
-        fetch(`${apiBase}/api/admin/orders`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${apiBase}/api/admin/inventory`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${apiBase}/api/admin/orders`, { headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token } }),
+        fetch(`${apiBase}/api/admin/inventory`, { headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token } }),
       ]);
 
       if (!ordersResponse.ok) {
@@ -134,6 +134,7 @@ export default function AdminDashboard() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-Access-Token": token,
         },
         body: JSON.stringify({ status }),
       });
@@ -163,6 +164,7 @@ export default function AdminDashboard() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-Access-Token": token,
         },
         body: JSON.stringify({ build_checklist: currentChecklist }),
       });
@@ -188,7 +190,7 @@ export default function AdminDashboard() {
     if (!token) return;
     try {
       const response = await fetch(`${apiBase}/api/admin/orders.csv`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
         throw new Error("Kunde inte exportera CSV.");
@@ -232,6 +234,7 @@ export default function AdminDashboard() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-Access-Token": token,
         },
         body: JSON.stringify({
           productId: item.product_id,
