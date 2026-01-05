@@ -14,25 +14,40 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import cpu7600Image from "../../images/product images/cpu/7600.png";
+import cpu7600x3dImage from "../../images/product images/cpu/7600x3d.png";
 import cpu7700Image from "../../images/product images/cpu/7700.png";
 import cpu7800x3dImage from "../../images/product images/cpu/7800x3d.png";
 import cpu7950x3dImage from "../../images/product images/cpu/7950x3d.png";
+import cpu12400fImage from "../../images/product images/cpu/12400f.png";
 import cpu13400fImage from "../../images/product images/cpu/13400f.png";
 import cpu13600kImage from "../../images/product images/cpu/13600k.png";
 import cpu13700kImage from "../../images/product images/cpu/13700k.png";
 import cpu14700kImage from "../../images/product images/cpu/14700k.png";
 import cpu13900kImage from "../../images/product images/cpu/13900k.png";
 import cpu14900kImage from "../../images/product images/cpu/14900k.png";
+import cpu3600Image from "../../images/product images/cpu/3600.png";
+import cpu5500Image from "../../images/product images/cpu/5500.png";
+import cpu5600xImage from "../../images/product images/cpu/5600x.png";
+import cpu8400fImage from "../../images/product images/cpu/8400f.png";
+import cpu9600xImage from "../../images/product images/cpu/9600x.png";
+import cpu9800x3dImage from "../../images/product images/cpu/9800x3d.png";
+import gpu3050Image from "../../images/product images/gpu/3050.png";
 import gpu4060Image from "../../images/product images/gpu/4060.png";
 import gpu4060TiImage from "../../images/product images/gpu/4060 ti.png";
 import gpu4070Image from "../../images/product images/gpu/4070.png";
 import gpu4070SuperImage from "../../images/product images/gpu/4070 super.png";
 import gpu4080SuperImage from "../../images/product images/gpu/4080 super.png";
 import gpu4090Image from "../../images/product images/gpu/4090.png";
+import gpu5060TiImage from "../../images/product images/gpu/5060 ti.png";
+import gpu5070Image from "../../images/product images/gpu/5070.png";
+import gpu5080Image from "../../images/product images/gpu/5080.png";
 import gpu7600Image from "../../images/product images/gpu/7600.png";
 import gpu7700xtImage from "../../images/product images/gpu/7700xt.png";
 import gpu7800xtImage from "../../images/product images/gpu/7800xt.png";
+import gpu9060xtImage from "../../images/product images/gpu/9060 xt.png";
+import gpu9070xtImage from "../../images/product images/gpu/9070 xt.png";
 import gpuA770Image from "../../images/product images/gpu/a770.png";
+import gpuRx7600Image from "../../images/product images/gpu/RX 7600.png";
 import moboAsusRogB650EImage from "../../images/product images/mobo/ASUS ROG Strix B650-E.png";
 import moboMsiMagB650TomahawkImage from "../../images/product images/mobo/MSI MAG B650 Tomahawk.png";
 import moboGigabyteB650AorusEliteImage from "../../images/product images/mobo/Gigabyte B650 Aorus Elite.png";
@@ -43,15 +58,62 @@ import moboGigabyteZ790AorusEliteImage from "../../images/product images/mobo/Gi
 import moboAsrockZ790ProRsImage from "../../images/product images/mobo/ASRock Z790 Pro RS.png";
 import moboMsiB760MMortarImage from "../../images/product images/mobo/MSI B760M Mortar.png";
 import moboAsusPrimeB650MAImage from "../../images/product images/mobo/ASUS Prime B650M-A.png";
+import ramAdataSpectrixD35GImage from "../../images/product images/ram/A-Data XPG SPECTRIX D35G.png";
 import ramAdataXpgLancerImage from "../../images/product images/ram/ADATA XPG Lancer.png";
+import ramCorsairDominatorDdr4Image from "../../images/product images/ram/Corsair Dominator ddr4.png";
 import ramCorsairDominatorImage from "../../images/product images/ram/Corsair Dominator.png";
 import ramCorsairVengeanceImage from "../../images/product images/ram/Corsair Vengeance.png";
 import ramCrucialProImage from "../../images/product images/ram/Crucial Pro.png";
+import ramDellGenericImage from "../../images/product images/ram/dell generic ram.png";
 import ramGSkillRipjawsImage from "../../images/product images/ram/G.Skill Ripjaws.png";
 import ramGSkillTridentZ5Image from "../../images/product images/ram/G.Skill Trident Z5.png";
+import ramKingston32GbDdr5Image from "../../images/product images/ram/Kingston 32GB DDR5.png";
 import ramKingstonFuryBeastImage from "../../images/product images/ram/Kingston Fury Beast.png";
 import ramKingstonFuryRenegadeImage from "../../images/product images/ram/Kingston Fury Renegade.png";
 import ramTeamGroupTForceDeltaImage from "../../images/product images/ram/TeamGroup T-Force Delta.png";
+import storageCrucialMx500Image from "../../images/product images/ssd/Crucial MX500 1TB.png";
+import storageCrucialT500Image from "../../images/product images/ssd/Crucial T500 1TB.png";
+import storageKingstonFuryRenegadeG5Image from "../../images/product images/ssd/Kingston Fury Renegade G5.png";
+import storageKingstonKc3000Image from "../../images/product images/ssd/Kingston KC3000 1TB.png";
+import storageLexarNm1090Image from "../../images/product images/ssd/Lexar Professional NM1090.png";
+import storageSamsung870EvoImage from "../../images/product images/ssd/Samsung 870 Evo 2TB.png";
+import storageSamsung990Pro1tbImage from "../../images/product images/ssd/Samsung 990 Pro 1TB.png";
+import storageSamsung990Pro2tbImage from "../../images/product images/ssd/Samsung 990 Pro 2TB.png";
+import storageSeagateBarraCudaImage from "../../images/product images/ssd/Seagate BarraCuda 4TB.png";
+import storageSeagateFireCuda530Image from "../../images/product images/ssd/Seagate FireCuda 530 2TB.png";
+import storageTeamGroupG50Image from "../../images/product images/ssd/Team Group T-Force G50.png";
+import storageWdBlackSn850xImage from "../../images/product images/ssd/WD Black SN850X 1TB.png";
+import storageWdBlueSn580Image from "../../images/product images/ssd/WD Blue SN580 1TBWD Blue SN580 1TB.png";
+import caseNzxtH7FlowImage from "../../images/product images/chassi/NZXT H7 Flow.png";
+import caseLianLiLancool216Image from "../../images/product images/chassi/Lian Li Lancool 216.png";
+import caseFractalDesignNorthImage from "../../images/product images/chassi/Fractal Design North.png";
+import caseCorsair4000dAirflowImage from "../../images/product images/chassi/Corsair 4000D Airflow.png";
+import casePhanteksEclipseG500aImage from "../../images/product images/chassi/Phanteks Eclipse G500A.png";
+import caseBeQuietPureBase500DxImage from "../../images/product images/chassi/be quiet! Pure Base 500DX.png";
+import caseCoolerMasterTd500MeshImage from "../../images/product images/chassi/Cooler Master TD500 Mesh.png";
+import caseNzxtH5FlowImage from "../../images/product images/chassi/NZXT H5 Flow.png";
+import caseLianLiO11DynamicImage from "../../images/product images/chassi/Lian Li O11 Dynamic.png";
+import caseFractalDesignMeshify2Image from "../../images/product images/chassi/Fractal Design Meshify 2.png";
+import psuCorsairRm750eImage from "../../images/product images/psu/Corsair RM750e.png";
+import psuCorsairRm850xImage from "../../images/product images/psu/Corsair RM850x.png";
+import psuSeasonicFocusGx750Image from "../../images/product images/psu/Seasonic Focus GX-750.png";
+import psuSeasonicVertexGx1000Image from "../../images/product images/psu/Seasonic Vertex GX-1000.png";
+import psuBeQuietStraightPower12Image from "../../images/product images/psu/be quiet! Straight Power 12.png";
+import psuCoolerMasterMwe750Image from "../../images/product images/psu/Cooler Master MWE 750.png";
+import psuAsusTufGaming850gImage from "../../images/product images/psu/ASUS TUF Gaming 850G.png";
+import psuMsiMpgA850gImage from "../../images/product images/psu/MSI MPG A850G.png";
+import psuNzxtC750Image from "../../images/product images/psu/NZXT C750.png";
+import psuThermaltakeToughpowerGf3Image from "../../images/product images/psu/Thermaltake Toughpower GF3.png";
+import coolingNoctuaNhd15Image from "../../images/product images/cooler/Noctua NH-D15.png";
+import coolingBeQuietDarkRockPro5Image from "../../images/product images/cooler/be quiet! Dark Rock Pro 5.png";
+import coolingCorsairIcUEH150iImage from "../../images/product images/cooler/Corsair iCUE H150i.png";
+import coolingNzxtKraken360Image from "../../images/product images/cooler/NZXT Kraken 360.png";
+import coolingArcticLiquidFreezerII360Image from "../../images/product images/cooler/Arctic Liquid Freezer II 360.png";
+import coolingDeepCoolAk620Image from "../../images/product images/cooler/DeepCool AK620.png";
+import coolingLianLiGalahadIiTrinityImage from "../../images/product images/cooler/Lian Li Galahad II Trinity.png";
+import coolingCoolerMasterMasterLiquid360Image from "../../images/product images/cooler/Cooler Master MasterLiquid 360.png";
+import coolingThermalrightPeerlessAssassinImage from "../../images/product images/cooler/Thermalright Peerless Assassin.png";
+import coolingCorsairIcUEH100iImage from "../../images/product images/cooler/Corsair iCUE H100i.png";
 
 type CategoryKey = "cpu" | "gpu" | "motherboard" | "ram" | "storage" | "case" | "psu" | "cooling";
 
@@ -141,6 +203,26 @@ const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
   case: { src: "https://placehold.co/360x240?text=Chassi", alt: "Chassi" },
   psu: { src: "https://placehold.co/360x240?text=PSU", alt: "Nätaggregat" },
   cooling: { src: "https://placehold.co/360x240?text=Kylning", alt: "Kylning" },
+};
+const CATEGORY_ORDER: CategoryKey[] = [
+  "cpu",
+  "gpu",
+  "motherboard",
+  "ram",
+  "storage",
+  "case",
+  "psu",
+  "cooling",
+];
+const CATEGORY_ID_PREFIX: Record<CategoryKey, string> = {
+  cpu: "cpu",
+  gpu: "gpu",
+  motherboard: "mb",
+  ram: "ram",
+  storage: "sto",
+  case: "case",
+  psu: "psu",
+  cooling: "cool",
 };
 
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
@@ -241,64 +323,72 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       id: "cpu-11",
       name: "AMD Ryzen 5 3600",
       brand: "AMD",
-      price: 0,
+      price: 1200,
       socket: "AM4",
+      image: cpu3600Image,
       specs: ["AM4"],
     },
     {
       id: "cpu-12",
       name: "Intel Core i5-12400F",
       brand: "Intel",
-      price: 0,
+      price: 1600,
       socket: "LGA1700",
+      image: cpu12400fImage,
       specs: ["LGA1700"],
     },
     {
       id: "cpu-13",
       name: "AMD Ryzen 5 5500",
       brand: "AMD",
-      price: 0,
+      price: 1300,
       socket: "AM4",
+      image: cpu5500Image,
       specs: ["AM4"],
     },
     {
       id: "cpu-14",
       name: "AMD Ryzen 5 5600X",
       brand: "AMD",
-      price: 0,
+      price: 1800,
       socket: "AM4",
+      image: cpu5600xImage,
       specs: ["AM4"],
     },
     {
       id: "cpu-15",
       name: "AMD Ryzen 5 8400F",
       brand: "AMD",
-      price: 0,
+      price: 1900,
       socket: "AM5",
+      image: cpu8400fImage,
       specs: ["AM5"],
     },
     {
       id: "cpu-16",
       name: "AMD Ryzen 5 9600X (Tray)",
       brand: "AMD",
-      price: 0,
+      price: 3200,
       socket: "AM5",
+      image: cpu9600xImage,
       specs: ["AM5"],
     },
     {
       id: "cpu-17",
       name: "AMD Ryzen 5 7600X3D",
       brand: "AMD",
-      price: 0,
+      price: 3900,
       socket: "AM5",
+      image: cpu7600x3dImage,
       specs: ["AM5"],
     },
     {
       id: "cpu-18",
       name: "AMD Ryzen 7 9800X3D",
       brand: "AMD",
-      price: 0,
+      price: 5500,
       socket: "AM5",
+      image: cpu9800x3dImage,
       specs: ["AM5"],
     },
   ],
@@ -389,70 +479,80 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       id: "gpu-11",
       name: "ASUS Dual GeForce RTX 3050 6GB OC",
       brand: "ASUS",
-      price: 0,
+      price: 2200,
+      image: gpu3050Image,
       specs: ["6 GB", "RTX 3050"],
     },
     {
       id: "gpu-12",
       name: "ASUS Dual Radeon RX 7600 EVO OC",
       brand: "ASUS",
-      price: 0,
+      price: 3300,
+      image: gpuRx7600Image,
       specs: ["RX 7600"],
     },
     {
       id: "gpu-13",
       name: "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
       brand: "ASUS",
-      price: 0,
+      price: 4500,
+      image: gpu9060xtImage,
       specs: ["8 GB", "RX 9060 XT"],
     },
     {
       id: "gpu-14",
       name: "PNY GeForce RTX 5060 Ti Dual Fan OC",
       brand: "PNY",
-      price: 0,
+      price: 5000,
+      image: gpu5060TiImage,
       specs: ["RTX 5060 Ti"],
     },
     {
       id: "gpu-15",
       name: "RTX 5070",
       brand: "NVIDIA",
-      price: 0,
+      price: 6500,
+      image: gpu5070Image,
       specs: ["RTX 5070"],
     },
     {
       id: "gpu-16",
       name: "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
       brand: "Gigabyte",
-      price: 0,
+      price: 6700,
+      image: gpu5070Image,
       specs: ["12 GB", "RTX 5070"],
     },
     {
       id: "gpu-17",
       name: "ASUS PRIME Radeon RX 9070 XT 16GB OC",
       brand: "ASUS",
-      price: 0,
+      price: 7500,
+      image: gpu9070xtImage,
       specs: ["16 GB", "RX 9070 XT"],
     },
     {
       id: "gpu-18",
       name: "Asus Dual GeForce RTX 5070 OC",
       brand: "ASUS",
-      price: 0,
+      price: 6900,
+      image: gpu5070Image,
       specs: ["RTX 5070"],
     },
     {
       id: "gpu-19",
       name: "ASUS Prime GeForce RTX 5080 16GB OC",
       brand: "ASUS",
-      price: 0,
+      price: 11500,
+      image: gpu5080Image,
       specs: ["16 GB", "RTX 5080"],
     },
     {
       id: "gpu-20",
       name: "INNO3D GeForce RTX 5080 16GB X3 OC White",
       brand: "INNO3D",
-      price: 0,
+      price: 11800,
+      image: gpu5080Image,
       specs: ["16 GB", "RTX 5080"],
     },
   ],
@@ -643,48 +743,54 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       id: "ram-11",
       name: "A-Data XPG SPECTRIX D35G 16GB (2x8GB) DDR4 3600MHz CL18",
       brand: "ADATA",
-      price: 0,
+      price: 600,
       ramType: "DDR4",
+      image: ramAdataSpectrixD35GImage,
       specs: ["DDR4", "16GB", "3600 MHz", "CL18"],
     },
     {
       id: "ram-12",
       name: "Corsair Dominator RGB DDR4 3600MHz 32GB",
       brand: "Corsair",
-      price: 0,
+      price: 1200,
       ramType: "DDR4",
+      image: ramCorsairDominatorDdr4Image,
       specs: ["DDR4", "32GB", "3600 MHz", "RGB"],
     },
     {
       id: "ram-13",
       name: "32GB DDR4",
       brand: "Generic",
-      price: 0,
+      price: 900,
       ramType: "DDR4",
+      image: ramKingston32GbDdr5Image,
       specs: ["DDR4", "32GB"],
     },
     {
       id: "ram-14",
       name: "Dell 32GB DDR5 5600MHz (begagnad)",
       brand: "Dell",
-      price: 0,
+      price: 900,
       ramType: "DDR5",
+      image: ramDellGenericImage,
       specs: ["DDR5", "32GB", "5600 MHz", "Begagnad"],
     },
     {
       id: "ram-15",
       name: "Dell 32GB DDR5 5600MHz",
       brand: "Dell",
-      price: 0,
+      price: 1100,
       ramType: "DDR5",
+      image: ramDellGenericImage,
       specs: ["DDR5", "32GB", "5600 MHz"],
     },
     {
       id: "ram-16",
       name: "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
       brand: "Kingston",
-      price: 0,
+      price: 1400,
       ramType: "DDR5",
+      image: ramKingston32GbDdr5Image,
       specs: ["DDR5", "32GB", "6400 MHz", "CL32"],
     },
   ],
@@ -694,6 +800,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Samsung 990 Pro 1TB",
       brand: "Samsung",
       price: 1190,
+      image: storageSamsung990Pro1tbImage,
       specs: ["NVMe", "PCIe 4.0", "7450 MB/s"],
     },
     {
@@ -701,6 +808,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "WD Black SN850X 1TB",
       brand: "WD",
       price: 1090,
+      image: storageWdBlackSn850xImage,
       specs: ["NVMe", "PCIe 4.0", "7300 MB/s"],
     },
     {
@@ -708,6 +816,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Crucial T500 1TB",
       brand: "Crucial",
       price: 990,
+      image: storageCrucialT500Image,
       specs: ["NVMe", "PCIe 4.0", "7400 MB/s"],
     },
     {
@@ -715,6 +824,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Samsung 990 Pro 2TB",
       brand: "Samsung",
       price: 1890,
+      image: storageSamsung990Pro2tbImage,
       specs: ["NVMe", "PCIe 4.0", "7450 MB/s"],
     },
     {
@@ -722,6 +832,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Seagate FireCuda 530 2TB",
       brand: "Seagate",
       price: 1990,
+      image: storageSeagateFireCuda530Image,
       specs: ["NVMe", "PCIe 4.0", "7300 MB/s"],
     },
     {
@@ -729,6 +840,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "WD Blue SN580 1TB",
       brand: "WD",
       price: 790,
+      image: storageWdBlueSn580Image,
       specs: ["NVMe", "PCIe 4.0", "4150 MB/s"],
     },
     {
@@ -736,6 +848,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Kingston KC3000 1TB",
       brand: "Kingston",
       price: 990,
+      image: storageKingstonKc3000Image,
       specs: ["NVMe", "PCIe 4.0", "7000 MB/s"],
     },
     {
@@ -743,6 +856,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Samsung 870 Evo 2TB",
       brand: "Samsung",
       price: 1590,
+      image: storageSamsung870EvoImage,
       specs: ["SATA", "560 MB/s", "2.5-inch"],
     },
     {
@@ -750,6 +864,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Crucial MX500 1TB",
       brand: "Crucial",
       price: 890,
+      image: storageCrucialMx500Image,
       specs: ["SATA", "560 MB/s", "2.5-inch"],
     },
     {
@@ -757,34 +872,31 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Seagate BarraCuda 4TB",
       brand: "Seagate",
       price: 1190,
+      image: storageSeagateBarraCudaImage,
       specs: ["HDD", "5400 RPM", "3.5-inch"],
     },
     {
       id: "sto-11",
       name: "Team Group T-Force G50",
       brand: "TeamGroup",
-      price: 0,
+      price: 900,
+      image: storageTeamGroupG50Image,
       specs: ["SSD"],
-    },
-    {
-      id: "sto-12",
-      name: "2TB",
-      brand: "Generic",
-      price: 0,
-      specs: ["NVMe", "2TB"],
     },
     {
       id: "sto-13",
       name: "Lexar Professional NM1090",
       brand: "Lexar",
-      price: 0,
+      price: 1200,
+      image: storageLexarNm1090Image,
       specs: ["NVMe"],
     },
     {
       id: "sto-14",
       name: "Kingston Fury Renegade G5",
       brand: "Kingston",
-      price: 0,
+      price: 1400,
+      image: storageKingstonFuryRenegadeG5Image,
       specs: ["NVMe"],
     },
   ],
@@ -794,6 +906,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT H7 Flow",
       brand: "NZXT",
       price: 1390,
+      image: caseNzxtH7FlowImage,
       specs: ["ATX", "Mesh", "Svart"],
     },
     {
@@ -801,6 +914,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li Lancool 216",
       brand: "Lian Li",
       price: 1290,
+      image: caseLianLiLancool216Image,
       specs: ["ATX", "Airflow", "RGB"],
     },
     {
@@ -808,6 +922,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Fractal Design North",
       brand: "Fractal",
       price: 1490,
+      image: caseFractalDesignNorthImage,
       specs: ["ATX", "Träpanel", "Airflow"],
       highlight: "Designfavorit",
     },
@@ -816,6 +931,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair 4000D Airflow",
       brand: "Corsair",
       price: 1090,
+      image: caseCorsair4000dAirflowImage,
       specs: ["ATX", "Mesh", "Tyst"],
     },
     {
@@ -823,6 +939,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Phanteks Eclipse G500A",
       brand: "Phanteks",
       price: 1390,
+      image: casePhanteksEclipseG500aImage,
       specs: ["ATX", "RGB", "Airflow"],
     },
     {
@@ -830,6 +947,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "be quiet! Pure Base 500DX",
       brand: "be quiet!",
       price: 1290,
+      image: caseBeQuietPureBase500DxImage,
       specs: ["ATX", "Tyst", "RGB"],
     },
     {
@@ -837,6 +955,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Cooler Master TD500 Mesh",
       brand: "Cooler Master",
       price: 1190,
+      image: caseCoolerMasterTd500MeshImage,
       specs: ["ATX", "Mesh", "ARGB"],
     },
     {
@@ -844,6 +963,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT H5 Flow",
       brand: "NZXT",
       price: 1090,
+      image: caseNzxtH5FlowImage,
       specs: ["ATX", "Kompakt", "Svart"],
     },
     {
@@ -851,6 +971,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li O11 Dynamic",
       brand: "Lian Li",
       price: 1690,
+      image: caseLianLiO11DynamicImage,
       specs: ["ATX", "Glas", "Showcase"],
     },
     {
@@ -858,6 +979,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Fractal Design Meshify 2",
       brand: "Fractal",
       price: 1690,
+      image: caseFractalDesignMeshify2Image,
       specs: ["ATX", "Mesh", "Modulär"],
     },
   ],
@@ -867,6 +989,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair RM750e",
       brand: "Corsair",
       price: 1290,
+      image: psuCorsairRm750eImage,
       specs: ["750W", "80+ Gold", "Modulärt"],
     },
     {
@@ -874,6 +997,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair RM850x",
       brand: "Corsair",
       price: 1590,
+      image: psuCorsairRm850xImage,
       specs: ["850W", "80+ Gold", "Modulärt"],
     },
     {
@@ -881,6 +1005,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Seasonic Focus GX-750",
       brand: "Seasonic",
       price: 1390,
+      image: psuSeasonicFocusGx750Image,
       specs: ["750W", "80+ Gold", "Tyst"],
     },
     {
@@ -888,6 +1013,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Seasonic Vertex GX-1000",
       brand: "Seasonic",
       price: 2490,
+      image: psuSeasonicVertexGx1000Image,
       specs: ["1000W", "80+ Gold", "ATX 3.0"],
     },
     {
@@ -895,6 +1021,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "be quiet! Straight Power 12",
       brand: "be quiet!",
       price: 2290,
+      image: psuBeQuietStraightPower12Image,
       specs: ["1000W", "80+ Platinum", "ATX 3.0"],
     },
     {
@@ -902,6 +1029,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Cooler Master MWE 750",
       brand: "Cooler Master",
       price: 990,
+      image: psuCoolerMasterMwe750Image,
       specs: ["750W", "80+ Gold", "Modulärt"],
     },
     {
@@ -909,6 +1037,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "ASUS TUF Gaming 850G",
       brand: "ASUS",
       price: 1690,
+      image: psuAsusTufGaming850gImage,
       specs: ["850W", "80+ Gold", "Tuff byggd"],
     },
     {
@@ -916,6 +1045,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "MSI MPG A850G",
       brand: "MSI",
       price: 1590,
+      image: psuMsiMpgA850gImage,
       specs: ["850W", "80+ Gold", "ATX 3.0"],
     },
     {
@@ -923,6 +1053,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT C750",
       brand: "NZXT",
       price: 1190,
+      image: psuNzxtC750Image,
       specs: ["750W", "80+ Gold", "Modulärt"],
     },
     {
@@ -930,6 +1061,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Thermaltake Toughpower GF3",
       brand: "Thermaltake",
       price: 1790,
+      image: psuThermaltakeToughpowerGf3Image,
       specs: ["850W", "80+ Gold", "ATX 3.0"],
     },
   ],
@@ -939,6 +1071,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Noctua NH-D15",
       brand: "Noctua",
       price: 1190,
+      image: coolingNoctuaNhd15Image,
       specs: ["Luftkylare", "Tyst", "Topplista"],
     },
     {
@@ -946,6 +1079,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "be quiet! Dark Rock Pro 5",
       brand: "be quiet!",
       price: 1090,
+      image: coolingBeQuietDarkRockPro5Image,
       specs: ["Luftkylare", "Tyst", "Hög TDP"],
     },
     {
@@ -953,6 +1087,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair iCUE H150i",
       brand: "Corsair",
       price: 1990,
+      image: coolingCorsairIcUEH150iImage,
       specs: ["360mm AIO", "RGB", "LCD"],
     },
     {
@@ -960,6 +1095,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT Kraken 360",
       brand: "NZXT",
       price: 1990,
+      image: coolingNzxtKraken360Image,
       specs: ["360mm AIO", "RGB", "LCD"],
     },
     {
@@ -967,6 +1103,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Arctic Liquid Freezer II 360",
       brand: "Arctic",
       price: 1590,
+      image: coolingArcticLiquidFreezerII360Image,
       specs: ["360mm AIO", "Tyst", "Prisvärd"],
     },
     {
@@ -974,6 +1111,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool AK620",
       brand: "DeepCool",
       price: 790,
+      image: coolingDeepCoolAk620Image,
       specs: ["Luftkylare", "Hög TDP", "Prisvärd"],
     },
     {
@@ -981,6 +1119,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li Galahad II",
       brand: "Lian Li",
       price: 1790,
+      image: coolingLianLiGalahadIiTrinityImage,
       specs: ["360mm AIO", "RGB", "Prestanda"],
     },
     {
@@ -988,6 +1127,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Cooler Master MasterLiquid 360",
       brand: "Cooler Master",
       price: 1490,
+      image: coolingCoolerMasterMasterLiquid360Image,
       specs: ["360mm AIO", "ARGB", "Tyst"],
     },
     {
@@ -995,6 +1135,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Thermalright Peerless Assassin",
       brand: "Thermalright",
       price: 590,
+      image: coolingThermalrightPeerlessAssassinImage,
       specs: ["Luftkylare", "Prisvärd", "Tyst"],
     },
     {
@@ -1002,6 +1143,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair iCUE H100i",
       brand: "Corsair",
       price: 1490,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "RGB", "Kompakt"],
     },
   ],
@@ -1041,6 +1183,30 @@ const hashString = (value: string) => {
 const getBasePrice = (item: ComponentItem, category: CategoryKey) =>
   item.price && item.price > 0 ? item.price : CATEGORY_BASE_PRICE[category];
 
+const encodeBuildSelection = (selection: Record<CategoryKey, ComponentItem | null>) =>
+  CATEGORY_ORDER.map((key) => {
+    const item = selection[key];
+    if (!item) return "-";
+    const lastSegment = item.id.split("-").pop();
+    const numberValue = lastSegment ? Number(lastSegment) : Number.NaN;
+    if (!Number.isFinite(numberValue)) return "-";
+    return numberValue.toString(36);
+  }).join(".");
+
+const decodeBuildSelection = (encoded: string) => {
+  const parts = encoded.split(".");
+  if (parts.length !== CATEGORY_ORDER.length) return null;
+  const result: Partial<Record<CategoryKey, string>> = {};
+  parts.forEach((part, index) => {
+    if (!part || part === "-") return;
+    const numberValue = parseInt(part, 36);
+    if (!Number.isFinite(numberValue)) return;
+    const key = CATEGORY_ORDER[index];
+    result[key] = `${CATEGORY_ID_PREFIX[key]}-${numberValue}`;
+  });
+  return result;
+};
+
 const buildPriceHistory = (basePrice: number) =>
   MONTH_LABELS.map((_, index) => {
     const trend = 1.08 - index * 0.03;
@@ -1079,6 +1245,7 @@ export default function CustomBuild() {
   const [searchTerm, setSearchTerm] = useState("");
   const [shareStatus, setShareStatus] = useState("");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
     gpu: null,
@@ -1093,6 +1260,8 @@ export default function CustomBuild() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const shortCode = params.get("b");
+    const decodedIds = shortCode ? decodeBuildSelection(shortCode) : null;
     const next: Record<CategoryKey, ComponentItem | null> = {
       cpu: null,
       gpu: null,
@@ -1105,17 +1274,31 @@ export default function CustomBuild() {
     };
     let firstKey: CategoryKey | null = null;
 
-    (Object.keys(COMPONENTS) as CategoryKey[]).forEach((key) => {
-      const id = params.get(key);
-      if (!id) return;
-      const match = COMPONENTS[key].find((item) => item.id === id);
-      if (match) {
-        next[key] = match;
-        if (!firstKey) {
-          firstKey = key;
+    if (decodedIds) {
+      CATEGORY_ORDER.forEach((key) => {
+        const id = decodedIds[key];
+        if (!id) return;
+        const match = COMPONENTS[key].find((item) => item.id === id);
+        if (match) {
+          next[key] = match;
+          if (!firstKey) {
+            firstKey = key;
+          }
         }
-      }
-    });
+      });
+    } else {
+      (Object.keys(COMPONENTS) as CategoryKey[]).forEach((key) => {
+        const id = params.get(key);
+        if (!id) return;
+        const match = COMPONENTS[key].find((item) => item.id === id);
+        if (match) {
+          next[key] = match;
+          if (!firstKey) {
+            firstKey = key;
+          }
+        }
+      });
+    }
 
     setSelected(next);
     if (firstKey) {
@@ -1161,6 +1344,20 @@ export default function CustomBuild() {
     return ["Alla", ...brands];
   }, [items]);
 
+  const priceBounds = useMemo(() => {
+    const prices = items.map((item) => getBasePrice(item, activeCategory));
+    const min = Math.min(...prices);
+    const max = Math.max(...prices);
+    return {
+      min: Number.isFinite(min) ? min : 0,
+      max: Number.isFinite(max) ? max : 0,
+    };
+  }, [items, activeCategory]);
+
+  useEffect(() => {
+    setPriceRange([priceBounds.min, priceBounds.max]);
+  }, [priceBounds.min, priceBounds.max]);
+
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
       const matchesBrand = activeBrand === "Alla" || item.brand === activeBrand;
@@ -1178,9 +1375,10 @@ export default function CustomBuild() {
           : true;
       const matchesRamType =
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
-      return matchesBrand && matchesSearch && matchesSocket && matchesRamType;
+      const matchesPrice = getBasePrice(item, activeCategory) <= priceRange[1];
+      return matchesBrand && matchesSearch && matchesSocket && matchesRamType && matchesPrice;
     });
-  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu]);
+  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu, priceRange]);
 
   const detailData = useMemo(() => {
     if (!detailItem) {
@@ -1218,14 +1416,10 @@ export default function CustomBuild() {
   const detailHistoryMin = detailData ? Math.min(...detailData.history) : 0;
 
   const handleShareBuild = async () => {
-    const params = new URLSearchParams();
-    (Object.entries(selected) as [CategoryKey, ComponentItem | null][]).forEach(([key, item]) => {
-      if (item) {
-        params.set(key, item.id);
-      }
-    });
-    const query = params.toString();
-    const shareUrl = `${window.location.origin}/custom-bygg${query ? `?${query}` : ""}`;
+    const hasSelection = Object.values(selected).some(Boolean);
+    const shareUrl = hasSelection
+      ? `${window.location.origin}/custom-bygg?b=${encodeBuildSelection(selected)}`
+      : `${window.location.origin}/custom-bygg`;
 
     try {
       await navigator.clipboard.writeText(shareUrl);
@@ -1546,7 +1740,45 @@ export default function CustomBuild() {
                       />
                     </div>
                   </div>
-                  <div className="mt-5 flex flex-wrap gap-2">
+                  <div className="mt-5 space-y-2">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Pris</p>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <input
+                        type="range"
+                        min={priceBounds.min}
+                        max={priceBounds.max}
+                        step="10"
+                        value={priceRange[1]}
+                        onChange={(event) =>
+                          setPriceRange([priceRange[0], parseInt(event.target.value)])
+                        }
+                        className="h-1 w-full max-w-[260px] accent-yellow-400"
+                      />
+                      <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
+                        <label htmlFor="custom-price-max" className="sr-only">
+                          Maxpris
+                        </label>
+                        <input
+                          id="custom-price-max"
+                          type="number"
+                          inputMode="numeric"
+                          min={priceBounds.min}
+                          max={priceBounds.max}
+                          value={priceRange[1]}
+                          onChange={(event) => {
+                            const nextValue = Number(event.target.value);
+                            const clamped = Number.isFinite(nextValue)
+                              ? Math.min(priceBounds.max, Math.max(priceBounds.min, nextValue))
+                              : priceBounds.max;
+                            setPriceRange([priceRange[0], clamped]);
+                          }}
+                          className="w-20 rounded-md border border-gray-300 bg-white px-2 py-1 text-right text-xs text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
+                        />
+                        <span>kr</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex flex-wrap gap-2">
                     {brandOptions.map((brand) => (
                       <button
                         key={brand}
