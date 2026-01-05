@@ -19,10 +19,16 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2024-12-18.acacia",
 });
 
-const supabase = createClient(
-  process.env.SUPABASE_URL || "",
-  process.env.SUPABASE_SERVICE_ROLE_KEY || ""
-);
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
+const HAS_SERVICE_ROLE_KEY = SUPABASE_SERVICE_ROLE_KEY.trim().length > 0;
+
+const supabase = createClient(process.env.SUPABASE_URL || "", SUPABASE_SERVICE_ROLE_KEY);
+
+if (!HAS_SERVICE_ROLE_KEY) {
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY is missing. Admin inventory updates require the service role key to bypass RLS."
+  );
+}
 
 const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
 const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:8080")
@@ -121,6 +127,17 @@ const formatCurrency = (value: number) =>
 const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   if (!mailer) return;
   await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
+};
+
+const requireServiceRoleKey = (res: any) => {
+  if (HAS_SERVICE_ROLE_KEY) return true;
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations require the service role key to bypass RLS."
+  );
+  res.status(503).json({
+    error: "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations are unavailable.",
+  });
+  return false;
 };
 
 const buildOrderEmailHtml = ({
@@ -580,6 +597,9 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
     }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
 
     if (!STATUS_OPTIONS.has(nextStatus)) {
       return res.status(400).json({ error: "Invalid status" });
@@ -719,6 +739,9 @@ export async function updateAdminInventory(req: any, res: any) {
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
     }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
 
     const productId = sanitizeText(req.body?.productId, 64);
     const quantity = Number(req.body?.quantity_in_stock ?? 0);
@@ -780,6 +803,9 @@ export async function updateOrderChecklist(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
     }
 
     const { orderId } = req.params;
