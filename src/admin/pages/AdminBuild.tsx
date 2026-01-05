@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, RefreshCcw, Wrench } from "lucide-react";
-import { useAdminAccess } from "../useAdminAccess";
+import { useOutletContext } from "react-router-dom";
+import { AdminAccessContext } from "../useAdminAccess";
 import { getOrderStatusInfo, ORDER_STATUS_FLOW } from "@/lib/orderStatus";
 
 type BuildChecklistItem = {
@@ -42,7 +43,8 @@ const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
 export default function AdminBuild() {
-  const { isAdmin, loading, error, token, apiBase, refresh, signInWithGoogle } = useAdminAccess();
+  const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
+    useOutletContext<AdminAccessContext>();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [savingOrder, setSavingOrder] = useState<string | null>(null);
@@ -67,12 +69,6 @@ export default function AdminBuild() {
       setLoadingOrders(false);
     }
   };
-
-  useEffect(() => {
-    if (!loading) {
-      refresh();
-    }
-  }, [loading, refresh]);
 
   useEffect(() => {
     if (isAdmin) {

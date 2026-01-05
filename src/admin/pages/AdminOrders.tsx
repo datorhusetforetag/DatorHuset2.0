@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Download, RefreshCcw, ShieldAlert } from "lucide-react";
-import { useAdminAccess } from "../useAdminAccess";
+import { useOutletContext } from "react-router-dom";
+import { AdminAccessContext } from "../useAdminAccess";
 import { getOrderStatusInfo } from "@/lib/orderStatus";
 
 type OrderItem = {
@@ -34,7 +35,8 @@ const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
 export default function AdminOrders() {
-  const { isAdmin, loading, error, token, apiBase, refresh, signInWithGoogle } = useAdminAccess();
+  const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
+    useOutletContext<AdminAccessContext>();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [localError, setLocalError] = useState("");
@@ -58,12 +60,6 @@ export default function AdminOrders() {
       setLoadingOrders(false);
     }
   };
-
-  useEffect(() => {
-    if (!loading) {
-      refresh();
-    }
-  }, [loading, refresh]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -190,7 +186,8 @@ export default function AdminOrders() {
                     <span className="text-slate-400">Stripe session:</span> {order.stripe_session_id || "-"}
                   </p>
                   <p>
-                    <span className="text-slate-400">Payment intent:</span> {order.stripe_payment_intent_id || "-"}
+                    <span className="text-slate-400">Payment intent:</span>{" "}
+                    {order.stripe_payment_intent_id || "-"}
                   </p>
                   {order.receipt_url ? (
                     <a
@@ -210,7 +207,9 @@ export default function AdminOrders() {
                 <div className="space-y-1 text-sm text-slate-300">
                   {(order.order_items || []).map((item) => (
                     <div key={item.id} className="flex justify-between">
-                      <span>{item.product?.name || "Produkt"} x{item.quantity}</span>
+                      <span>
+                        {item.product?.name || "Produkt"} x{item.quantity}
+                      </span>
                       <span>
                         {item.unit_price_cents
                           ? formatCurrency((item.unit_price_cents * item.quantity) / 100)

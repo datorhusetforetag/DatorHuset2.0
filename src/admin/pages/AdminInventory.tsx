@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { RefreshCcw, Save, Search } from "lucide-react";
-import { useAdminAccess } from "../useAdminAccess";
+import { useOutletContext } from "react-router-dom";
+import { AdminAccessContext } from "../useAdminAccess";
 
 type InventoryItem = {
   id?: string;
@@ -20,7 +21,7 @@ const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
 export default function AdminInventory() {
-  const { isAdmin, loading, error, token, apiBase, refresh, signInWithGoogle } = useAdminAccess();
+  const { isAdmin, loading, error, token, apiBase, signInWithGoogle } = useOutletContext<AdminAccessContext>();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [loadingItems, setLoadingItems] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
@@ -50,12 +51,6 @@ export default function AdminInventory() {
       setLoadingItems(false);
     }
   };
-
-  useEffect(() => {
-    if (!loading) {
-      refresh();
-    }
-  }, [loading, refresh]);
 
   useEffect(() => {
     if (isAdmin) {
@@ -172,10 +167,7 @@ export default function AdminInventory() {
           const priceCents = Number(item.price_cents ?? 0);
           const inStock = Number(item.quantity_in_stock ?? 0);
           return (
-            <div
-              key={item.product_id}
-              className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5"
-            >
+            <div key={item.product_id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-lg font-semibold text-white">{name}</p>

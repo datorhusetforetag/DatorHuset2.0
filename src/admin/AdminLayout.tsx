@@ -10,7 +10,8 @@ const navItems = [
 ];
 
 export const AdminLayout = () => {
-  const { user, signInWithGoogle, signOut } = useAdminAccess();
+  const access = useAdminAccess();
+  const { user, signInWithGoogle, signOut } = access;
   const [navOpen, setNavOpen] = useState(false);
 
   const displayName = useMemo(() => {
@@ -70,7 +71,7 @@ export const AdminLayout = () => {
       <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 py-6 lg:px-6">
         <aside className="hidden w-64 flex-shrink-0 lg:block">
           <nav className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-lg">
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500 mb-3">Administration</p>
+            <p className="mb-3 text-xs uppercase tracking-[0.3em] text-slate-500">Administration</p>
             <div className="space-y-1">
               {navItems.map(({ to, label, icon: Icon }) => (
                 <NavLink
@@ -93,7 +94,7 @@ export const AdminLayout = () => {
         </aside>
 
         <main className="flex-1">
-          <Outlet />
+          <Outlet context={access} />
         </main>
       </div>
 
@@ -106,7 +107,7 @@ export const AdminLayout = () => {
             aria-label="Stäng meny"
           />
           <aside className="relative z-10 h-full w-72 border-r border-slate-800 bg-[#0f1824] px-4 py-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <img src="/datorhuset.jpg" alt="DatorHuset" className="h-9 w-9 rounded-full border border-slate-700/60" />
                 <span className="text-sm font-semibold">Adminportal</span>
