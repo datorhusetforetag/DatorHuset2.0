@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 
 export type AdminAccessState = {
@@ -8,6 +8,7 @@ export type AdminAccessState = {
 };
 
 export type AdminAccessContext = AdminAccessState & {
+  user: any;
   token: string;
   apiBase: string;
   refresh: () => Promise<void>;
@@ -15,25 +16,28 @@ export type AdminAccessContext = AdminAccessState & {
   signOut: () => Promise<void>;
 };
 
-const ADMIN_CACHE_TTL_MS = 60_000;
-const ADMIN_COOLDOWN_MS = 60_000;
-const ADMIN_MIN_REQUEST_GAP_MS = 2_000;
+const ADMIN_CACHE_TTL_MS = 5 * 60_000;
+const ADMIN_COOLDOWN_MS = 2 * 60_000;
+const ADMIN_MIN_REQUEST_GAP_MS = 15_000;
 
 let cachedToken = "";
 let cachedState: AdminAccessState | null = null;
 let cachedAt = 0;
 let refreshPromise: Promise<AdminAccessState> | null = null;
 let cooldownUntil = 0;
+let lastRequestAt = 0;
+let lastVerifiedToken = "";
+let lastVerifiedAt = 0;
 
 export const useAdminAccess = (): AdminAccessContext => {
-  const { session, loading: authLoading, signInWithGoogle, signOut } = useAuth();
+  const { session, user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
   const [state, setState] = useState<AdminAccessState>({
     isAdmin: false,
     loading: true,
     error: "",
   });
   const refreshInFlight = useRef(false);
-  const lastRequestAt = useRef(0);
+  const requestedToken = useRef("");
 
   const token = session?.access_token || "";
   const apiBase = useMemo(() => import.meta.env.VITE_API_BASE_URL || "", []);
@@ -45,6 +49,8 @@ export const useAdminAccess = (): AdminAccessContext => {
       cachedState = { isAdmin: false, loading: false, error: "" };
       cachedAt = 0;
       cooldownUntil = 0;
+      lastVerifiedToken = "";
+      lastVerifiedAt = 0;
       setState({ isAdmin: false, loading: false, error: "" });
       return;
     }
@@ -55,6 +61,10 @@ export const useAdminAccess = (): AdminAccessContext => {
     }
 
     const now = Date.now();
+    if (lastVerifiedToken === token && now - lastVerifiedAt < ADMIN_CACHE_TTL_MS && cachedState) {
+      setState(cachedState);
+      return;
+    }
     if (cooldownUntil && now < cooldownUntil && cachedState) {
       setState(cachedState);
       return;
@@ -69,10 +79,10 @@ export const useAdminAccess = (): AdminAccessContext => {
       return;
     }
     if (refreshInFlight.current) return;
-    if (now - lastRequestAt.current < ADMIN_MIN_REQUEST_GAP_MS) return;
+    if (now - lastRequestAt < ADMIN_MIN_REQUEST_GAP_MS) return;
 
     refreshInFlight.current = true;
-    lastRequestAt.current = now;
+    lastRequestAt = now;
     setState((prev) => ({ ...prev, loading: true, error: "" }));
     try {
       refreshPromise = (async () => {
@@ -82,7 +92,8 @@ export const useAdminAccess = (): AdminAccessContext => {
         const data = await response.json();
 
         if (response.status === 429) {
-          cooldownUntil = Date.now() + ADMIN_COOLDOWN_MS;
+          const retryAfter = Number(response.headers.get("Retry-After") || 0);
+          cooldownUntil = Date.now() + (retryAfter > 0 ? retryAfter * 1000 : ADMIN_COOLDOWN_MS);
           return (
             cachedState || {
               isAdmin: false,
@@ -107,6 +118,8 @@ export const useAdminAccess = (): AdminAccessContext => {
       cachedToken = token;
       cachedState = nextState;
       cachedAt = Date.now();
+      lastVerifiedToken = token;
+      lastVerifiedAt = cachedAt;
       setState(nextState);
     } catch (error) {
       const nextState: AdminAccessState = {
@@ -117,6 +130,8 @@ export const useAdminAccess = (): AdminAccessContext => {
       cachedToken = token;
       cachedState = nextState;
       cachedAt = Date.now();
+      lastVerifiedToken = token;
+      lastVerifiedAt = cachedAt;
       setState(nextState);
     } finally {
       refreshInFlight.current = false;
@@ -125,11 +140,18 @@ export const useAdminAccess = (): AdminAccessContext => {
   }, [apiBase, authLoading, token]);
 
   useEffect(() => {
+    if (!token || authLoading) return;
+    if (requestedToken.current === token && cachedState) {
+      setState(cachedState);
+      return;
+    }
+    requestedToken.current = token;
     refresh();
   }, [refresh, token, authLoading]);
 
   return {
     ...state,
+    user,
     token,
     apiBase,
     refresh,
