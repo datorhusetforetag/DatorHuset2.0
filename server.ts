@@ -171,7 +171,14 @@ const buildOrderEmailHtml = ({
 
 async function getAuthUser(req: any) {
   const authHeader = req?.headers?.authorization || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const headerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const fallbackHeader = req?.headers?.["x-access-token"];
+  const fallbackToken = Array.isArray(fallbackHeader)
+    ? fallbackHeader[0] || ""
+    : typeof fallbackHeader === "string"
+      ? fallbackHeader
+      : "";
+  const token = headerToken || fallbackToken;
   if (!token) {
     return { user: null, error: "Missing auth token." };
   }
