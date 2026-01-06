@@ -10,6 +10,13 @@ import { getAllInventory } from "@/lib/supabaseServices";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
+const RAM_PRICE_TOOLTIP =
+  "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
+const toUsedName = (name: string) => {
+  const trimmed = name.trim();
+  const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
+  return replaced === trimmed ? `${trimmed} - Begagnade` : replaced;
+};
 const FILTER_LABELS = {
   gpu: {
     "ASUS Dual GeForce RTX 3050 6GB OC": "RTX 3050",
@@ -358,6 +365,8 @@ export default function Products() {
   );
   const getDisplayVariant = (computer: Computer) =>
     showUsedOnly && computer.usedVariant ? computer.usedVariant : computer;
+  const getDisplayName = (computer: Computer) =>
+    showUsedOnly && computer.usedVariant ? toUsedName(computer.name) : computer.name;
   const gpus = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).gpu)));
   const cpus = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).cpu)));
   const tiers = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).tier)));
@@ -847,6 +856,7 @@ export default function Products() {
                 {filteredProducts.map((computer) => {
                   const variant = getDisplayVariant(computer);
                   const displayPrice = variant.price ?? computer.price;
+                  const displayName = getDisplayName(computer);
                   const supabaseKey =
                     showUsedOnly && computer.usedVariant?.productKey
                       ? computer.usedVariant.productKey
@@ -884,7 +894,7 @@ export default function Products() {
                         <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
                           <img
                             src={computer.image}
-                            alt={computer.name}
+                            alt={displayName}
                             className="w-full h-full object-cover"
                             loading="lazy"
                             decoding="async"
@@ -909,11 +919,11 @@ export default function Products() {
                               {etaNote}
                             </span>
                           ) : null}
-                        </div>
+                          </div>
 
                         <div className="p-4 pb-6">
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#11667b] dark:group-hover:text-[#11667b] transition-colors">
-                            {computer.name}
+                            {displayName}
                           </h3>
 
                           <div className="flex items-center mb-3">
@@ -928,7 +938,20 @@ export default function Products() {
                           <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
                             <p className="truncate">CPU: {variant.cpu}</p>
                             <p className="truncate">GPU: {variant.gpu}</p>
-                            <p className="truncate">RAM: {variant.ram}</p>
+                            <p className="flex flex-wrap items-center gap-2">
+                              <span>
+                                RAM:{" "}
+                                <span className="cursor-help" title={RAM_PRICE_TOOLTIP}>
+                                  {variant.ram}
+                                </span>
+                              </span>
+                              <span
+                                className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
+                                title={RAM_PRICE_TOOLTIP}
+                              >
+                                Begagnade
+                              </span>
+                            </p>
                             <p className="truncate">
                               Lagring: {variant.storage} {variant.storagetype}
                             </p>

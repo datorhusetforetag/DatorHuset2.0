@@ -42,6 +42,13 @@ const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
 };
 
 const gameList = Object.keys(GAME_FPS);
+const RAM_PRICE_TOOLTIP =
+  "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
+const toUsedName = (name: string) => {
+  const trimmed = name.trim();
+  const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
+  return replaced === trimmed ? `${trimmed} - Begagnade` : replaced;
+};
 
 const TOP_SELLER_REVIEWS: Record<
   string,
@@ -290,6 +297,7 @@ export default function ComputerDetails() {
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
   const activeVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : null;
   const displayPrice = activeVariant?.price ?? computer.price;
+  const displayName = useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
   const displaySpecs = {
     cpu: activeVariant?.cpu ?? computer.cpu,
     gpu: activeVariant?.gpu ?? computer.gpu,
@@ -303,7 +311,7 @@ export default function ComputerDetails() {
     () => [
       { label: "Processor (CPU)", value: displaySpecs.cpu, used: usedParts.cpu },
       { label: "Grafikkort (GPU)", value: displaySpecs.gpu, used: usedParts.gpu },
-      { label: "RAM-minne", value: displaySpecs.ram, used: usedParts.ram },
+      { label: "RAM-minne", value: displaySpecs.ram, used: true, tooltip: RAM_PRICE_TOOLTIP },
       {
         label: "Lagring",
         value: `${displaySpecs.storage} ${displaySpecs.storagetype}`.trim(),
@@ -320,7 +328,6 @@ export default function ComputerDetails() {
       displaySpecs.tier,
       usedParts.cpu,
       usedParts.gpu,
-      usedParts.ram,
       usedParts.storage,
     ],
   );
@@ -366,9 +373,9 @@ export default function ComputerDetails() {
     return {
       "@context": "https://schema.org",
       "@type": "Product",
-      name: computer.name,
+      name: displayName,
       image: imageUrls,
-      description: `${computer.cpu}, ${computer.gpu}, ${computer.ram}, ${computer.storage} ${computer.storagetype}`,
+      description: `${displaySpecs.cpu}, ${displaySpecs.gpu}, ${displaySpecs.ram}, ${displaySpecs.storage} ${displaySpecs.storagetype}`,
       sku: computer.id,
       brand: {
         "@type": "Brand",
@@ -377,7 +384,7 @@ export default function ComputerDetails() {
       offers: {
         "@type": "Offer",
         priceCurrency: "SEK",
-        price: computer.price,
+        price: displayPrice,
         availability: availability.schema,
         url: `${baseUrl}/computer/${computer.id}`,
       },
@@ -399,7 +406,7 @@ export default function ComputerDetails() {
         },
       })),
     };
-  }, [availability.schema, computer, images, reviewData]);
+  }, [availability.schema, computer, displayName, displayPrice, displaySpecs, images, reviewData]);
 
   const renderStars = (rating: number) => (
     <div className="flex items-center gap-1">
@@ -438,7 +445,7 @@ export default function ComputerDetails() {
           <span>/</span>
           <span>Gamingdatorer stationära</span>
           <span>/</span>
-          <span className="text-gray-900 dark:text-white font-semibold">{computer.name}</span>
+          <span className="text-gray-900 dark:text-white font-semibold">{displayName}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
@@ -447,7 +454,7 @@ export default function ComputerDetails() {
             <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
               <img
                 src={images[selectedImage] || computer.image}
-                alt={computer.name}
+                alt={displayName}
                 className="w-full h-full object-cover"
                 loading="eager"
                 decoding="async"
@@ -483,7 +490,7 @@ export default function ComputerDetails() {
                 >
                   <img
                     src={img}
-                    alt={`${computer.name} vy ${i + 1}`}
+                    alt={`${displayName} vy ${i + 1}`}
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
@@ -496,7 +503,7 @@ export default function ComputerDetails() {
           {/* Right: info/buy box */}
           <div className="space-y-6">
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">{computer.name}</h1>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">{displayName}</h1>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
                 {displaySpecs.cpu}, {displaySpecs.gpu}, {displaySpecs.ram}, {displaySpecs.storage}{" "}
                 {displaySpecs.storagetype}
@@ -606,22 +613,34 @@ export default function ComputerDetails() {
               </p>
             </div>
             <div className="space-y-3 text-sm">
-              {specRows.map((row, index) => (
+              {specRows.map((row, index) => {
+                const showUsedBadge = row.label === "RAM-minne" ? true : row.used;
+                return (
                 <div
                   key={row.label}
                   className={`flex justify-between ${index < specRows.length - 1 ? "border-b border-gray-200 dark:border-gray-800 pb-2" : ""}`}
                 >
                   <span>{row.label}</span>
                   <span className="font-semibold text-gray-900 dark:text-white text-right">
-                    {row.value}
-                    {row.used && (
+                    {row.tooltip ? (
+                      <span className="relative inline-flex items-center justify-end gap-1 group">
+                        <span>{row.value}</span>
+                        <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-60 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                          {row.tooltip}
+                        </span>
+                      </span>
+                    ) : (
+                      row.value
+                    )}
+                    {showUsedBadge && (
                       <span className="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
                         Begagnade
                       </span>
                     )}
                   </span>
                 </div>
-              ))}
+              );
+              })}
               {computer.bundleIncludes?.length ? (
                 <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] p-3">
                   <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
@@ -776,7 +795,20 @@ export default function ComputerDetails() {
                 <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1 border-t border-gray-200 dark:border-gray-800 pt-3">
                   <p>CPU: {item.cpu}</p>
                   <p>GPU: {item.gpu}</p>
-                  <p>RAM: {item.ram}</p>
+                  <p className="flex flex-wrap items-center gap-2">
+                    <span>
+                      RAM:{" "}
+                      <span className="cursor-help" title={RAM_PRICE_TOOLTIP}>
+                        {item.ram}
+                      </span>
+                    </span>
+                    <span
+                      className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
+                      title={RAM_PRICE_TOOLTIP}
+                    >
+                      Begagnade
+                    </span>
+                  </p>
                   <p>
                     Lagring: {item.storage} {item.storagetype}
                   </p>
