@@ -4,6 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
 import { COMPUTERS } from "@/data/computers";
+import { useProducts } from "@/hooks/useProducts";
+import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 
@@ -21,19 +23,52 @@ export const Navbar = () => {
   const location = useLocation();
   const { totalItems, items, totalPrice } = useCart();
   const { user } = useAuth();
+  const { products } = useProducts();
+  const productLookup = useMemo(() => buildProductLookup(products), [products]);
   const showBackButton = location.pathname !== "/";
   const isAdmin = Boolean(user?.user_metadata?.role === "admin" || user?.user_metadata?.is_admin);
 
   const searchResults = useMemo(() => {
     const query = searchInput.trim().toLowerCase();
     if (!query) return [];
-    return COMPUTERS.filter(
-      (computer) =>
-        computer.name.toLowerCase().includes(query) ||
-        computer.cpu.toLowerCase().includes(query) ||
-        computer.gpu.toLowerCase().includes(query)
-    ).slice(0, 5);
-  }, [searchInput]);
+    const merged = COMPUTERS.map((computer) => {
+      const product =
+        getProductFromLookup(productLookup, computer.name) ||
+        getProductFromLookup(productLookup, computer.id);
+      const mergedFields = mergeProductFields(
+        {
+          name: computer.name,
+          price: computer.price,
+          cpu: computer.cpu,
+          gpu: computer.gpu,
+          ram: computer.ram,
+          storage: computer.storage,
+          storagetype: computer.storagetype,
+          tier: computer.tier,
+        },
+        product,
+      );
+      return {
+        ...computer,
+        name: mergedFields.name,
+        price: mergedFields.price,
+        cpu: mergedFields.cpu,
+        gpu: mergedFields.gpu,
+        ram: mergedFields.ram,
+        storage: mergedFields.storage,
+        storagetype: mergedFields.storagetype,
+        tier: mergedFields.tier,
+      };
+    });
+    return merged
+      .filter(
+        (computer) =>
+          computer.name.toLowerCase().includes(query) ||
+          computer.cpu.toLowerCase().includes(query) ||
+          computer.gpu.toLowerCase().includes(query)
+      )
+      .slice(0, 5);
+  }, [productLookup, searchInput]);
 
   const handleSelectSearch = (id: string) => {
     navigate(`/computer/${id}`);

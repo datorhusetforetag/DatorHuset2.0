@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { Boxes, ClipboardList, LogIn, LogOut, Menu, ShieldCheck, Wrench } from "lucide-react";
+import { Boxes, ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ShieldCheck, Wrench } from "lucide-react";
 import { useAdminAccess } from "./useAdminAccess";
 
 const navItems = [
   { to: "/lager", label: "Lager", icon: Boxes },
+  { to: "/produkter", label: "Produkt-UI", icon: LayoutGrid },
   { to: "/bestallningar", label: "Beställningar", icon: ClipboardList },
   { to: "/bygg", label: "Byggstatus", icon: Wrench },
 ];

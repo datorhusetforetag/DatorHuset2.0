@@ -157,6 +157,12 @@ const sanitizeText = (value, maxLength = 120) => {
   return value.trim().slice(0, maxLength);
 };
 
+const parseMultiplier = (value, fallback) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(0, parsed);
+};
+
 const normalizePhone = (value) => sanitizeText(value, 32).replace(/\s+/g, "");
 
 const getAuthUser = async (req) => {
@@ -584,6 +590,172 @@ app.post("/api/admin/inventory", async (req, res) => {
     res.json(data);
   } catch (error) {
     console.error("Inventory update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+app.get("/api/admin/products", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, name, slug, legacy_id, description, price_cents, cpu, gpu, ram, storage, storage_type, tier")
+      .order("name", { ascending: true });
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch products" });
+    }
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Admin products error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/admin/products/:productId", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { productId } = req.params;
+    const name = sanitizeText(req.body?.name, 120);
+    const description = sanitizeText(req.body?.description, 1000);
+    const cpu = sanitizeText(req.body?.cpu, 120);
+    const gpu = sanitizeText(req.body?.gpu, 120);
+    const ram = sanitizeText(req.body?.ram, 120);
+    const storage = sanitizeText(req.body?.storage, 120);
+    const storageType = sanitizeText(req.body?.storage_type, 40);
+    const tier = sanitizeText(req.body?.tier, 40);
+    const priceCents = Number(req.body?.price_cents);
+
+    if (!productId) {
+      return res.status(400).json({ error: "Missing productId" });
+    }
+    if (!name) {
+      return res.status(400).json({ error: "Missing product name" });
+    }
+
+    const payload = {
+      name,
+      description: description || null,
+      cpu,
+      gpu,
+      ram,
+      storage,
+      storage_type: storageType || null,
+      tier,
+      updated_at: new Date(),
+    };
+    if (Number.isFinite(priceCents)) {
+      payload.price_cents = Math.max(0, Math.round(priceCents));
+    }
+
+    const { data, error } = await supabase
+      .from("products")
+      .update(payload)
+      .eq("id", productId)
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Product update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update product" });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Admin product update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/admin/ui-settings", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", "fps")
+      .single();
+
+    if (error) {
+      return res.json({ fps: DEFAULT_FPS_SETTINGS });
+    }
+
+    res.json({ fps: data?.value || DEFAULT_FPS_SETTINGS });
+  } catch (error) {
+    console.error("Admin UI settings error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/admin/ui-settings", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const fps = req.body?.fps || {};
+    const dlssMultiplier = parseMultiplier(fps.dlssMultiplier, DEFAULT_FPS_SETTINGS.dlssMultiplier);
+    const frameGenMultiplier = parseMultiplier(fps.frameGenMultiplier, DEFAULT_FPS_SETTINGS.frameGenMultiplier);
+
+    const payload = {
+      key: "fps",
+      value: { dlssMultiplier, frameGenMultiplier },
+      updated_at: new Date(),
+    };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("UI settings update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update settings" });
+    }
+
+    res.json({ fps: data.value });
+  } catch (error) {
+    console.error("Admin UI settings update error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

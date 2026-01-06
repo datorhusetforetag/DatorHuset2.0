@@ -6,6 +6,8 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { COMPUTERS } from "@/data/computers";
+import { useProducts } from "@/hooks/useProducts";
+import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 
 type TierKey = "platinum" | "gold" | "silver" | "bronze" | "diamond" | "paket";
 
@@ -35,16 +37,6 @@ const normalizeTier = (tier: string): TierKey => {
   return "silver";
 };
 
-const computers: Computer[] = COMPUTERS.map((computer) => ({
-  id: computer.id,
-  name: computer.name,
-  price: computer.price,
-  cpu: computer.cpu,
-  gpu: computer.gpu,
-  ram: computer.ram,
-  tier: normalizeTier(computer.tier),
-}));
-
 interface SearchResult extends Computer {
   matchType: "name" | "cpu" | "gpu";
   matchText: string;
@@ -53,6 +45,39 @@ interface SearchResult extends Computer {
 export default function SearchResults() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
+  const { products } = useProducts();
+  const productLookup = useMemo(() => buildProductLookup(products), [products]);
+  const computers = useMemo<Computer[]>(
+    () =>
+      COMPUTERS.map((computer) => {
+        const product =
+          getProductFromLookup(productLookup, computer.name) ||
+          getProductFromLookup(productLookup, computer.id);
+        const merged = mergeProductFields(
+          {
+            name: computer.name,
+            price: computer.price,
+            cpu: computer.cpu,
+            gpu: computer.gpu,
+            ram: computer.ram,
+            storage: computer.storage,
+            storagetype: computer.storagetype,
+            tier: computer.tier,
+          },
+          product,
+        );
+        return {
+          id: computer.id,
+          name: merged.name,
+          price: merged.price,
+          cpu: merged.cpu,
+          gpu: merged.gpu,
+          ram: merged.ram,
+          tier: normalizeTier(merged.tier),
+        };
+      }),
+    [productLookup],
+  );
 
   const results = useMemo(() => {
     if (!searchQuery.trim()) return [];

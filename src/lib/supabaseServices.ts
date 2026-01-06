@@ -71,6 +71,29 @@ export async function getAllInventory() {
 }
 
 // ============================================================
+// UI SETTINGS SERVICE
+// ============================================================
+
+export type FpsSettings = {
+  dlssMultiplier: number;
+  frameGenMultiplier: number;
+};
+
+export async function getFpsSettings() {
+  const { data, error } = await supabase
+    .from('ui_settings')
+    .select('value')
+    .eq('key', 'fps')
+    .single();
+
+  if (error) {
+    return null;
+  }
+
+  return data?.value as FpsSettings | null;
+}
+
+// ============================================================
 // CART SERVICE
 // ============================================================
 

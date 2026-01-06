@@ -1,4 +1,4 @@
-﻿import { Link, useParams, useNavigate } from "react-router-dom";
+﻿import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -6,7 +6,8 @@ import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from 
 import { useCart } from "@/context/CartContext";
 import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
-import { checkStock } from "@/lib/supabaseServices";
+import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
+import { checkStock, getFpsSettings } from "@/lib/supabaseServices";
 
 const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
@@ -194,11 +195,14 @@ const buildDefaultReviewData = (computer: Computer) => {
 export default function ComputerDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
   const [useUsedVariant, setUseUsedVariant] = useState(false);
-  useProducts();
+  const [fpsSettings, setFpsSettings] = useState({ dlssMultiplier: 1.2, frameGenMultiplier: 1.15 });
+  const { products } = useProducts();
+  const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
   const [selectedGame, setSelectedGame] = useState(gameList[0]);
   const [selectedResolution, setSelectedResolution] = useState("1080p");
@@ -227,8 +231,31 @@ export default function ComputerDetails() {
   }, [computer?.id]);
 
   useEffect(() => {
-    setUseUsedVariant(false);
-  }, [computer?.id]);
+    let isMounted = true;
+    const loadFpsSettings = async () => {
+      try {
+        const data = await getFpsSettings();
+        if (!isMounted || !data) return;
+        const dlssMultiplier = Number(data.dlssMultiplier);
+        const frameGenMultiplier = Number(data.frameGenMultiplier);
+        setFpsSettings({
+          dlssMultiplier: Number.isFinite(dlssMultiplier) ? dlssMultiplier : 1.2,
+          frameGenMultiplier: Number.isFinite(frameGenMultiplier) ? frameGenMultiplier : 1.15,
+        });
+      } catch (error) {
+        console.warn("Failed to load FPS settings", error);
+      }
+    };
+    loadFpsSettings();
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const variant = searchParams.get("variant");
+    setUseUsedVariant(Boolean(variant === "used" && computer?.usedVariant));
+  }, [computer?.id, computer?.usedVariant, searchParams]);
 
   useEffect(() => {
     if (!activeProductId) return;
@@ -290,21 +317,43 @@ export default function ComputerDetails() {
   };
 
   const baseFps = GAME_FPS[selectedGame][selectedResolution][selectedPreset];
-  const multiplier = (dlssOn ? 1.2 : 1) * (frameGenOn ? 1.15 : 1);
+  const multiplier =
+    (dlssOn ? fpsSettings.dlssMultiplier : 1) * (frameGenOn ? fpsSettings.frameGenMultiplier : 1);
   const finalFps = Math.round(baseFps * multiplier);
   const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
   const fpsHigh = Math.round(finalFps * 1.1);
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
   const activeVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : null;
-  const displayPrice = activeVariant?.price ?? computer.price;
-  const displayName = useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
+  const fallbackName = useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
+  const activeProduct =
+    getProductFromLookup(productLookup, activeProductId) ||
+    getProductFromLookup(
+      productLookup,
+      useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name
+    ) ||
+    getProductFromLookup(productLookup, computer.id);
+  const merged = mergeProductFields(
+    {
+      name: fallbackName,
+      price: activeVariant?.price ?? computer.price,
+      cpu: activeVariant?.cpu ?? computer.cpu,
+      gpu: activeVariant?.gpu ?? computer.gpu,
+      ram: activeVariant?.ram ?? computer.ram,
+      storage: activeVariant?.storage ?? computer.storage,
+      storagetype: activeVariant?.storagetype ?? computer.storagetype,
+      tier: activeVariant?.tier ?? computer.tier,
+    },
+    activeProduct,
+  );
+  const displayPrice = merged.price;
+  const displayName = merged.name;
   const displaySpecs = {
-    cpu: activeVariant?.cpu ?? computer.cpu,
-    gpu: activeVariant?.gpu ?? computer.gpu,
-    ram: activeVariant?.ram ?? computer.ram,
-    storage: activeVariant?.storage ?? computer.storage,
-    storagetype: activeVariant?.storagetype ?? computer.storagetype,
-    tier: activeVariant?.tier ?? computer.tier,
+    cpu: merged.cpu,
+    gpu: merged.gpu,
+    ram: merged.ram,
+    storage: merged.storage,
+    storagetype: merged.storagetype,
+    tier: merged.tier,
   };
   const usedParts = activeVariant?.usedParts ?? {};
   const specRows = useMemo(
@@ -421,7 +470,38 @@ export default function ComputerDetails() {
     </div>
   );
 
-  const comparisonCandidates = COMPUTERS.filter((c) => c.id !== computer.id);
+  const enrichedComputers = useMemo(
+    () =>
+      COMPUTERS.map((item) => {
+        const product = getProductFromLookup(productLookup, item.name);
+        const mergedItem = mergeProductFields(
+          {
+            name: item.name,
+            price: item.price,
+            cpu: item.cpu,
+            gpu: item.gpu,
+            ram: item.ram,
+            storage: item.storage,
+            storagetype: item.storagetype,
+            tier: item.tier,
+          },
+          product,
+        );
+        return {
+          ...item,
+          name: mergedItem.name,
+          price: mergedItem.price,
+          cpu: mergedItem.cpu,
+          gpu: mergedItem.gpu,
+          ram: mergedItem.ram,
+          storage: mergedItem.storage,
+          storagetype: mergedItem.storagetype,
+          tier: mergedItem.tier,
+        };
+      }),
+    [productLookup],
+  );
+  const comparisonCandidates = enrichedComputers.filter((c) => c.id !== computer.id);
   const sameTier = comparisonCandidates.filter((c) => c.tier === computer.tier);
   const comparisonPool = (sameTier.length >= 2
     ? sameTier
@@ -884,7 +964,7 @@ export default function ComputerDetails() {
         <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{"Andra som tittat p\u00e5 samma produkt tittar \u00e4ven p\u00e5:"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {COMPUTERS.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
+            {enrichedComputers.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
               <button
                 key={related.id}
                 onClick={() => navigate(`/computer/${related.id}`)}

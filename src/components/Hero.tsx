@@ -1,27 +1,63 @@
 import { ChevronLeft, ChevronRight, Hammer, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { COMPUTERS } from "@/data/computers";
+import { useProducts } from "@/hooks/useProducts";
+import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { buildUtmContent, withUtm } from "@/lib/utm";
 
-const FEATURED_COMPUTERS = COMPUTERS.slice(0, 6);
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
   { name: "Hj\u00e4lp mig v\u00e4lja", icon: HelpCircle, kind: "quiz" as const },
   { name: "Alla produkter", icon: Monitor, href: "/products" },
   { name: "Paket", icon: Package, href: "/products?category=paket" },
-  { name: "Budgetv\u00e4nlig", icon: Wallet, href: "/products?category=budget" },
+  { name: "Budgetv\u00e4nlig", icon: Wallet, href: "/products?preset=budget" },
   { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
-  { name: "B\u00e4sta Prestanda", icon: Rocket, href: "/products?category=toptier" },
+  { name: "B\u00e4sta Prestanda", icon: Rocket, href: "/products?preset=toptier" },
 ];
 
 export const Hero = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
-  const [budgetChoice, setBudgetChoice] = useState("low");
+  const [budgetChoice, setBudgetChoice] = useState("starter");
   const [performanceNeed, setPerformanceNeed] = useState("balanced");
+  const { products } = useProducts();
+  const productLookup = useMemo(() => buildProductLookup(products), [products]);
+  const featuredComputers = useMemo(
+    () =>
+      COMPUTERS.slice(0, 6).map((computer) => {
+        const product =
+          getProductFromLookup(productLookup, computer.name) ||
+          getProductFromLookup(productLookup, computer.id);
+        const merged = mergeProductFields(
+          {
+            name: computer.name,
+            price: computer.price,
+            cpu: computer.cpu,
+            gpu: computer.gpu,
+            ram: computer.ram,
+            storage: computer.storage,
+            storagetype: computer.storagetype,
+            tier: computer.tier,
+          },
+          product,
+        );
+        return {
+          ...computer,
+          name: merged.name,
+          price: merged.price,
+          cpu: merged.cpu,
+          gpu: merged.gpu,
+          ram: merged.ram,
+          storage: merged.storage,
+          storagetype: merged.storagetype,
+          tier: merged.tier,
+        };
+      }),
+    [productLookup],
+  );
 
   const scrollByCards = (direction: "left" | "right") => {
     const container = carouselRef.current;
@@ -121,9 +157,9 @@ export const Hero = () => {
                     onChange={(e) => setBudgetChoice(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                   >
-                    <option value="low">Under 6 000 kr</option>
-                    <option value="mid">6 000 - 12 000 kr</option>
-                    <option value="high">12 000+ kr</option>
+                    <option value="starter">7 500 - 12 500 kr</option>
+                    <option value="mid">13 500 - 21 000 kr</option>
+                    <option value="high">24 000 - 40 000 kr</option>
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -136,9 +172,9 @@ export const Hero = () => {
                     onChange={(e) => setPerformanceNeed(e.target.value)}
                     className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                   >
-                    <option value="balanced">{"Balans f\u00f6r vardag & gaming"}</option>
-                    <option value="gaming">{"Gaming med h\u00f6ga krav"}</option>
-                    <option value="max">Maximal prestanda</option>
+                    <option value="office">{"Office datorer"}</option>
+                    <option value="gaming">{"Gaming datorer"}</option>
+                    <option value="balanced">{"Balans f\u00f6r jobb och gaming"}</option>
                   </select>
                 </div>
               </div>
@@ -146,18 +182,30 @@ export const Hero = () => {
                 <button
                   type="button"
                   onClick={() => {
-                    const recommendation =
-                      budgetChoice === "low"
-                        ? "budget"
-                        : performanceNeed === "max" || budgetChoice === "high"
-                          ? "toptier"
-                          : "best-selling";
+                    const budgetRanges: Record<string, [number, number]> = {
+                      starter: [7500, 12500],
+                      mid: [13500, 21000],
+                      high: [24000, 40000],
+                    };
+                    const tierFilters: Record<string, string[]> = {
+                      office: ["Bronze", "Silver"],
+                      gaming: ["Gold", "Platinum"],
+                      balanced: ["Silver", "Gold"],
+                    };
+                    const [minPrice, maxPrice] = budgetRanges[budgetChoice] || budgetRanges.starter;
+                    const tiers = tierFilters[performanceNeed] || tierFilters.balanced;
+                    const params = new URLSearchParams({
+                      price_min: String(minPrice),
+                      price_max: String(maxPrice),
+                      tiers: tiers.map((tier) => tier.toLowerCase()).join(","),
+                    });
+                    const recommendation = params.toString();
                     navigate(
-                      withUtm(`/products?category=${recommendation}`, {
+                      withUtm(`/products?${recommendation}`, {
                         utm_source: "homepage",
                         utm_medium: "quiz",
                         utm_campaign: "help_me_choose",
-                        utm_content: recommendation,
+                        utm_content: `${budgetChoice}-${performanceNeed}`,
                       })
                     );
                     setShowQuiz(false);
@@ -192,7 +240,7 @@ export const Hero = () => {
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Senast visade produkter</h3>
           <div className="relative">
             <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4 pr-4 snap-x snap-mandatory">
-              {FEATURED_COMPUTERS.map((computer) => (
+              {featuredComputers.map((computer) => (
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}

@@ -77,6 +77,7 @@ const STATUS_LABELS: Record<string, string> = {
 };
 const READY_MESSAGE =
   "DatorHuset kommer ringa dig ang\u00e5ende n\u00e4r och vart du kan h\u00e4mta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
+const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
 
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
@@ -96,6 +97,12 @@ const mailer = EMAIL_ENABLED
 const sanitizeText = (value: any, maxLength = 120) => {
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
+};
+
+const parseMultiplier = (value: any, fallback: number) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.max(0, parsed);
 };
 
 const normalizePhone = (value: any) => sanitizeText(value, 32).replace(/\s+/g, "");
@@ -796,6 +803,179 @@ export async function updateAdminInventory(req: any, res: any) {
     res.json(data);
   } catch (error) {
     console.error("Inventory update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: get products for UI editing
+ * GET /api/admin/products
+ */
+export async function getAdminProducts(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("id, name, slug, legacy_id, description, price_cents, cpu, gpu, ram, storage, storage_type, tier")
+      .order("name", { ascending: true });
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch products" });
+    }
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Admin products error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: update product UI details
+ * POST /api/admin/products/:productId
+ */
+export async function updateAdminProduct(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const { productId } = req.params;
+    const name = sanitizeText(req.body?.name, 120);
+    const description = sanitizeText(req.body?.description, 1000);
+    const cpu = sanitizeText(req.body?.cpu, 120);
+    const gpu = sanitizeText(req.body?.gpu, 120);
+    const ram = sanitizeText(req.body?.ram, 120);
+    const storage = sanitizeText(req.body?.storage, 120);
+    const storageType = sanitizeText(req.body?.storage_type, 40);
+    const tier = sanitizeText(req.body?.tier, 40);
+    const priceCents = Number(req.body?.price_cents);
+
+    if (!productId) {
+      return res.status(400).json({ error: "Missing productId" });
+    }
+    if (!name) {
+      return res.status(400).json({ error: "Missing product name" });
+    }
+
+    const payload: Record<string, any> = {
+      name,
+      description: description || null,
+      cpu,
+      gpu,
+      ram,
+      storage,
+      storage_type: storageType || null,
+      tier,
+      updated_at: new Date(),
+    };
+    if (Number.isFinite(priceCents)) {
+      payload.price_cents = Math.max(0, Math.round(priceCents));
+    }
+
+    const { data, error } = await supabase.from("products").update(payload).eq("id", productId).select().single();
+
+    if (error || !data) {
+      console.error("Product update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update product" });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Admin product update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: get UI settings (FPS)
+ * GET /api/admin/ui-settings
+ */
+export async function getAdminUiSettings(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", "fps")
+      .single();
+
+    if (error) {
+      return res.json({ fps: DEFAULT_FPS_SETTINGS });
+    }
+
+    res.json({ fps: data?.value || DEFAULT_FPS_SETTINGS });
+  } catch (error) {
+    console.error("Admin UI settings error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: update UI settings (FPS)
+ * POST /api/admin/ui-settings
+ */
+export async function updateAdminUiSettings(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const fps = req.body?.fps || {};
+    const dlssMultiplier = parseMultiplier(fps.dlssMultiplier, DEFAULT_FPS_SETTINGS.dlssMultiplier);
+    const frameGenMultiplier = parseMultiplier(
+      fps.frameGenMultiplier,
+      DEFAULT_FPS_SETTINGS.frameGenMultiplier
+    );
+
+    const payload = {
+      key: "fps",
+      value: { dlssMultiplier, frameGenMultiplier },
+      updated_at: new Date(),
+    };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("UI settings update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update settings" });
+    }
+
+    res.json({ fps: data.value });
+  } catch (error) {
+    console.error("Admin UI settings update error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }

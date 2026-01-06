@@ -11,6 +11,7 @@ import { AdminNotFound } from "./admin/AdminNotFound";
 import AdminInventory from "./admin/pages/AdminInventory";
 import AdminOrders from "./admin/pages/AdminOrders";
 import AdminBuild from "./admin/pages/AdminBuild";
+import AdminProducts from "./admin/pages/AdminProducts";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
@@ -51,6 +52,7 @@ const App = () => (
                   <Route path="/" element={<AdminLayout />}>
                     <Route index element={<AdminInventory />} />
                     <Route path="lager" element={<AdminInventory />} />
+                    <Route path="produkter" element={<AdminProducts />} />
                     <Route path="bestallningar" element={<AdminOrders />} />
                     <Route path="bygg" element={<AdminBuild />} />
                   </Route>

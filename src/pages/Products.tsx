@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
+import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
@@ -171,7 +172,8 @@ export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const hasAppliedCategory = useRef(false);
-  const [priceRange, setPriceRange] = useState([0, 35000]);
+  const hasAppliedQueryFilters = useRef(false);
+  const [priceRange, setPriceRange] = useState([0, 40000]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
@@ -183,6 +185,7 @@ export default function Products() {
   const { products } = useProducts();
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const [inventoryLoading, setInventoryLoading] = useState(true);
+  const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
   const getFilterLabel = (type: "gpu" | "cpu" | "tier", value: string) => {
     if (type === "gpu") {
@@ -349,6 +352,25 @@ export default function Products() {
   }, [activeCategory]);
 
   useEffect(() => {
+    if (hasAppliedQueryFilters.current) return;
+    const minParam = Number(searchParams.get("price_min"));
+    const maxParam = Number(searchParams.get("price_max"));
+    if (Number.isFinite(minParam) && Number.isFinite(maxParam)) {
+      setPriceRange([minParam, maxParam]);
+    }
+    const tiersParam = searchParams.get("tiers");
+    if (tiersParam) {
+      const normalized = tiersParam
+        .split(",")
+        .map((tier) => tier.trim())
+        .filter(Boolean)
+        .map((tier) => tier.charAt(0).toUpperCase() + tier.slice(1).toLowerCase());
+      setSelectedTiers(normalized);
+    }
+    hasAppliedQueryFilters.current = true;
+  }, [searchParams]);
+
+  useEffect(() => {
     const payload = {
       priceRange,
       selectedGPUs,
@@ -359,17 +381,84 @@ export default function Products() {
     localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(payload));
   }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers, showUsedOnly]);
 
-  const filterComputers = useMemo(
-    () => (showUsedOnly ? COMPUTERS.filter((computer) => computer.usedVariant) : COMPUTERS),
-    [showUsedOnly],
-  );
-  const getDisplayVariant = (computer: Computer) =>
-    showUsedOnly && computer.usedVariant ? computer.usedVariant : computer;
-  const getDisplayName = (computer: Computer) =>
-    showUsedOnly && computer.usedVariant ? toUsedName(computer.name) : computer.name;
-  const gpus = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).gpu)));
-  const cpus = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).cpu)));
-  const tiers = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).tier)));
+  const preset = searchParams.get("preset")?.toLowerCase() || "";
+  useEffect(() => {
+    if (!preset) return;
+    setSelectedGPUs([]);
+    setSelectedCPUs([]);
+    setSelectedTiers([]);
+    setShowUsedOnly(false);
+    setPriceRange([0, 40000]);
+  }, [preset]);
+  const filterComputers = useMemo(() => {
+    if (preset === "budget") {
+      return COMPUTERS.filter((computer) => computer.name === "Cheapo - Ny");
+    }
+    if (preset === "toptier") {
+      return COMPUTERS.filter((computer) =>
+        ["All in, all out - BLACK nybyggd", "All white, all out - NYPRIS"].includes(computer.name)
+      );
+    }
+    return showUsedOnly ? COMPUTERS.filter((computer) => computer.usedVariant) : COMPUTERS;
+  }, [preset, showUsedOnly]);
+  const getProductForVariant = (computer: Computer, useUsedVariant: boolean) => {
+    const key =
+      useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name;
+    const directMatch = getProductFromLookup(productLookup, key);
+    if (directMatch) return directMatch;
+    const lookupId =
+      productIdByName.get(normalizeProductKey(key)) || productIdByName.get(normalizeProductKey(computer.id));
+    return getProductFromLookup(productLookup, lookupId);
+  };
+  const getDisplayVariant = (computer: Computer, useUsedVariant: boolean) => {
+    const baseVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : computer;
+    return mergeProductFields(
+      {
+        name: computer.name,
+        price: baseVariant.price,
+        cpu: baseVariant.cpu,
+        gpu: baseVariant.gpu,
+        ram: baseVariant.ram,
+        storage: baseVariant.storage,
+        storagetype: baseVariant.storagetype,
+        tier: baseVariant.tier,
+      },
+      getProductForVariant(computer, useUsedVariant),
+    );
+  };
+  const getDisplayName = (computer: Computer, useUsedVariant: boolean) => {
+    const product = getProductForVariant(computer, useUsedVariant);
+    if (product?.name) return product.name;
+    return useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
+  };
+  type DisplayCard = { computer: Computer; useUsedVariant: boolean };
+  const displayCards = useMemo<DisplayCard[]>(() => {
+    if (preset === "budget") {
+      const cheapo = filterComputers[0];
+      if (!cheapo) return [];
+      const baseCard = {
+        computer: cheapo,
+        useUsedVariant: false,
+      };
+      const usedCard = cheapo.usedVariant
+        ? {
+            computer: cheapo,
+            useUsedVariant: true,
+          }
+        : null;
+      if (showUsedOnly) {
+        return usedCard ? [usedCard] : [];
+      }
+      return usedCard ? [baseCard, usedCard] : [baseCard];
+    }
+    return filterComputers.map((computer) => ({
+      computer,
+      useUsedVariant: showUsedOnly && Boolean(computer.usedVariant),
+    }));
+  }, [filterComputers, preset, showUsedOnly]);
+  const gpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).gpu)));
+  const cpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).cpu)));
+  const tiers = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).tier)));
   const filterPreviewCount = 3;
   const gpuOptions = useMemo(() => buildFilterOptions(gpus, "gpu").sort(sortGpuOptions), [gpus]);
   const cpuOptions = useMemo(() => buildFilterOptions(cpus, "cpu").sort(sortCpuOptions), [cpus]);
@@ -397,22 +486,22 @@ export default function Products() {
   const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
-    return filterComputers.filter((computer) => {
-      const variant = getDisplayVariant(computer);
-      const displayPrice = variant.price ?? computer.price;
+    return displayCards.filter((card) => {
+      const variant = getDisplayVariant(card.computer, card.useUsedVariant);
+      const displayPrice = variant.price;
       const categoryMatch = (() => {
         if (!activeCategory) return true;
         if (activeCategory === "budget") {
-          return displayPrice <= 6000 || computer.classLabels?.includes("Budget PC's");
+          return displayPrice <= 6000 || card.computer.classLabels?.includes("Budget PC's");
         }
           if (activeCategory === "best-selling") {
-            return computer.classLabels?.includes("Best-Selling PC's");
+            return card.computer.classLabels?.includes("Best-Selling PC's");
           }
           if (activeCategory === "toptier") {
-            return computer.classLabels?.includes("Toptier PC's");
+            return card.computer.classLabels?.includes("Toptier PC's");
           }
         if (activeCategory === "paket") {
-          return computer.classLabels?.includes("Paket PC's");
+          return card.computer.classLabels?.includes("Paket PC's");
         }
         return true;
       })();
@@ -439,8 +528,7 @@ export default function Products() {
     gpuLabelMap,
     cpuLabelMap,
     tierLabelMap,
-    filterComputers,
-    showUsedOnly,
+    displayCards,
   ]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
@@ -452,7 +540,7 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 35000]);
+    setPriceRange([0, 40000]);
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
@@ -472,7 +560,7 @@ export default function Products() {
   if (showUsedOnly) {
     activeFilters.push("Begagnade datorer");
   }
-  if (priceRange[0] !== 0 || priceRange[1] !== 35000) {
+  if (priceRange[0] !== 0 || priceRange[1] !== 40000) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
   }
   selectedGPUs.forEach((gpu) => activeFilters.push(`GPU: ${gpu}`));
@@ -594,7 +682,7 @@ export default function Products() {
                   <input
                     type="range"
                     min="0"
-                    max="35000"
+                    max="40000"
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="w-full accent-yellow-400"
@@ -840,7 +928,7 @@ export default function Products() {
             <div className="mb-6 sm:mb-8">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Visar {filteredProducts.length} av {filterComputers.length} produkter
+                Visar {filteredProducts.length} av {displayCards.length} produkter
               </p>
             </div>
 
@@ -853,12 +941,13 @@ export default function Products() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredProducts.map((computer) => {
-                  const variant = getDisplayVariant(computer);
-                  const displayPrice = variant.price ?? computer.price;
-                  const displayName = getDisplayName(computer);
+                {filteredProducts.map((card) => {
+                  const { computer, useUsedVariant } = card;
+                  const variant = getDisplayVariant(computer, useUsedVariant);
+                  const displayPrice = variant.price;
+                  const displayName = getDisplayName(computer, useUsedVariant);
                   const supabaseKey =
-                    showUsedOnly && computer.usedVariant?.productKey
+                    useUsedVariant && computer.usedVariant?.productKey
                       ? computer.usedVariant.productKey
                       : computer.name;
                   const supabaseId =
@@ -888,8 +977,14 @@ export default function Products() {
                       ? inventory?.eta_note ?? (inventory?.eta_days ? `ETA ${inventory.eta_days} dagar` : null)
                       : null;
 
+                  const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
+
+                  const detailPath = useUsedVariant
+                    ? `/computer/${computer.id}?variant=used`
+                    : `/computer/${computer.id}`;
+
                   return (
-                    <Link key={computer.id} to={`/computer/${computer.id}`} className="group">
+                    <Link key={cardKey} to={detailPath} className="group">
                       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
                         <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
                           <img
