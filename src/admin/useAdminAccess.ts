@@ -87,7 +87,7 @@ export const useAdminAccess = (): AdminAccessContext => {
     try {
       refreshPromise = (async () => {
         const response = await fetch(`${apiBase}/api/admin/me`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
         });
         const data = await response.json();
 

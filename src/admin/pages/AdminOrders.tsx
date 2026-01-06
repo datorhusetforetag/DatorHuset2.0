@@ -47,7 +47,7 @@ export default function AdminOrders() {
     setLocalError("");
     try {
       const response = await fetch(`${apiBase}/api/admin/orders`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
         throw new Error("Kunde inte hämta beställningar.");
@@ -72,7 +72,7 @@ export default function AdminOrders() {
     if (!token || !isAdmin) return;
     try {
       const response = await fetch(`${apiBase}/api/admin/orders.csv`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
         throw new Error("Kunde inte exportera CSV.");

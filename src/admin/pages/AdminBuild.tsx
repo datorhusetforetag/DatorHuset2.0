@@ -56,7 +56,7 @@ export default function AdminBuild() {
     setLocalError("");
     try {
       const response = await fetch(`${apiBase}/api/admin/orders`, {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
         throw new Error("Kunde inte hämta beställningar.");
@@ -86,6 +86,7 @@ export default function AdminBuild() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-Access-Token": token,
         },
         body: JSON.stringify({ status }),
       });
@@ -114,6 +115,7 @@ export default function AdminBuild() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "X-Access-Token": token,
         },
         body: JSON.stringify({ build_checklist: currentChecklist }),
       });
