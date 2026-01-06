@@ -309,6 +309,7 @@ export default function ComputerDetails() {
       schema: "https://schema.org/OutOfStock",
     };
   }, [inventoryStatus]);
+  const showPreorderLabel = Boolean(inventoryStatus && !inventoryStatus.inStock && inventoryStatus.canPreorder);
   const etaLabel = useMemo(() => {
     if (!inventoryStatus || !inventoryStatus.canPreorder) return null;
     return inventoryStatus.etaNote || (inventoryStatus.etaDays ? `ETA ${inventoryStatus.etaDays} dagar` : null);
@@ -464,6 +465,16 @@ export default function ComputerDetails() {
               {etaLabel && (
                 <span className="rounded-full px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200">
                   {etaLabel}
+                </span>
+              )}
+              {showPreorderLabel && (
+                <span className="relative group">
+                  <span className="rounded-full px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                    F&ouml;rbest&auml;ll
+                  </span>
+                  <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                    F&ouml;rbest&auml;ll varan och f&aring; den inom 2 veckor d&aring; varan &auml;r slut p&aring; lager.
+                  </span>
                 </span>
               )}
             </div>

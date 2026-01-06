@@ -810,6 +810,7 @@ export default function Products() {
                   const hasInventory = Boolean(inventory);
                   const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
                   const canPreorder = Boolean(inventory?.is_preorder ?? inventory?.allow_preorder);
+                  const showPreorderLabel = !inStock && canPreorder;
                   const badgeText = !hasInventory || inventoryLoading
                     ? "Kontrollerar lager"
                     : inStock
@@ -846,6 +847,11 @@ export default function Products() {
                           <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}>
                             {badgeText}
                           </span>
+                          {showPreorderLabel ? (
+                            <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                              F&ouml;rbest&auml;ll
+                            </span>
+                          ) : null}
                           {etaNote ? (
                             <span className="absolute bottom-3 left-3 text-xs font-semibold px-3 py-1 rounded-full bg-gray-900/80 text-white">
                               {etaNote}

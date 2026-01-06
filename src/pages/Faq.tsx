@@ -24,6 +24,12 @@ export default function Faq() {
             </p>
           </div>
           <div>
+            <h2 className="text-xl font-semibold">Vad inneb&auml;r f&ouml;rbest&auml;llning?</h2>
+            <p className="text-gray-600 dark:text-gray-300">
+              F&ouml;rbest&auml;llning betyder att vi inte har varan i lager just nu, men vi kan bygga en s&aring; snart du best&auml;ller.
+            </p>
+          </div>
+          <div>
             <h2 className="text-xl font-semibold">Vilka betalmetoder accepterar ni?</h2>
             <p className="text-gray-600 dark:text-gray-300">
               Kort, Swish och faktura via Stripe/partner. Alla k&ouml;p sker &ouml;ver s&auml;ker anslutning.
