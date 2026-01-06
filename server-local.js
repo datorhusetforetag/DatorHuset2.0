@@ -164,7 +164,14 @@ const getAuthUser = async (req) => {
     return { user: null, error: "Supabase not configured." };
   }
   const authHeader = req.headers.authorization || "";
-  const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const headerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+  const fallbackHeader = req.headers["x-access-token"];
+  const fallbackToken = Array.isArray(fallbackHeader)
+    ? fallbackHeader[0] || ""
+    : typeof fallbackHeader === "string"
+      ? fallbackHeader
+      : "";
+  const token = headerToken || fallbackToken;
   if (!token) {
     return { user: null, error: "Missing auth token." };
   }
@@ -558,7 +565,8 @@ app.post("/api/admin/inventory", async (req, res) => {
       .single();
 
     if (error || !data) {
-      return res.status(500).json({ error: "Failed to update inventory" });
+      console.error("Inventory upsert failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update inventory" });
     }
 
     if (Number.isFinite(priceCents)) {
@@ -568,7 +576,8 @@ app.post("/api/admin/inventory", async (req, res) => {
         .update(pricePayload)
         .eq("id", productId);
       if (priceError) {
-        return res.status(500).json({ error: "Failed to update price" });
+        console.error("Inventory price update failed:", priceError);
+        return res.status(500).json({ error: priceError?.message || "Failed to update price" });
       }
     }
 
