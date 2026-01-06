@@ -30,11 +30,12 @@ if (!HAS_SERVICE_ROLE_KEY) {
   );
 }
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
-const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:8080")
+const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
+const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
   .split(",")
   .map((url) => url.trim())
   .filter(Boolean);
+const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8080";
 const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || "")
   .split(",")
   .map((ip) => ip.trim())
@@ -277,6 +278,10 @@ export async function createCheckoutSession(req: any, res: any) {
       paymentMethodTypes.push(customPaymentMethod);
     }
 
+    const requestOrigin = req?.headers?.origin;
+    const checkoutBaseUrl =
+      requestOrigin && FRONTEND_URLS.includes(requestOrigin) ? requestOrigin : FRONTEND_URL;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: paymentMethodTypes,
       line_items: line_items,
@@ -296,8 +301,8 @@ export async function createCheckoutSession(req: any, res: any) {
         city: safeCity,
         addressId: safeAddressId,
       },
-      success_url: `${FRONTEND_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${FRONTEND_URL}/cart`,
+      success_url: `${checkoutBaseUrl}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${checkoutBaseUrl}/cart`,
     });
 
     res.json({ url: session.url, sessionId: session.id });

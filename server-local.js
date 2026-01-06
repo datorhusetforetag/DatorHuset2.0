@@ -24,7 +24,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.join(__dirname, "dist");
 
-const FRONTEND_URLS = (process.env.FRONTEND_URLS || process.env.FRONTEND_URL || "http://localhost:8080")
+const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
+const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
   .split(",")
   .map((url) => url.trim())
   .filter(Boolean);
@@ -96,7 +97,7 @@ const supabase =
     ? createClient(supabaseUrl, supabaseServiceKey)
     : null;
 
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:8080";
+const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8080";
 const MAX_LINE_ITEMS = 50;
 const MAX_QUANTITY = 10;
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
@@ -308,6 +309,10 @@ app.post("/api/create-checkout-session", async (req, res) => {
       paymentMethodTypes.push(customPaymentMethod);
     }
 
+    const requestOrigin = req?.headers?.origin;
+    const checkoutBaseUrl =
+      requestOrigin && FRONTEND_URLS.includes(requestOrigin) ? requestOrigin : FRONTEND_URL;
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: paymentMethodTypes,
       line_items,
@@ -327,8 +332,8 @@ app.post("/api/create-checkout-session", async (req, res) => {
         city: safeCity,
         addressId: safeAddressId,
       },
-      success_url: `${FRONTEND_URL}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${FRONTEND_URL}/cart`,
+      success_url: `${checkoutBaseUrl}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${checkoutBaseUrl}/cart`,
     });
 
     res.json({ url: session.url, sessionId: session.id });
