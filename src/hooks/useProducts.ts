@@ -3,6 +3,7 @@ import { getProducts } from '@/lib/supabaseServices';
 
 export interface SupabaseProduct {
   id: string; // UUID
+  legacy_id?: string | null;
   name: string;
   slug: string;
   description: string;
@@ -37,6 +38,12 @@ export async function loadProducts() {
       productCache = await getProducts();
       // Create mapping by tier and name for easy lookup
       productCache.forEach((product) => {
+        if (product.legacy_id) {
+          const legacyKey = normalizeProductKey(product.legacy_id);
+          if (legacyKey) {
+            productMapCache[legacyKey] = product.id;
+          }
+        }
         const nameKey = normalizeProductKey(product.name);
         if (nameKey) {
           productMapCache[nameKey] = product.id;
