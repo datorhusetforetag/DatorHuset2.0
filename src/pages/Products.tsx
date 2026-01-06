@@ -4,7 +4,7 @@ import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { COMPUTERS } from "@/data/computers";
+import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
 import { getAllInventory } from "@/lib/supabaseServices";
 
@@ -168,6 +168,7 @@ export default function Products() {
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
+  const [showUsedOnly, setShowUsedOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [showAllGpus, setShowAllGpus] = useState(false);
   const [showAllCpus, setShowAllCpus] = useState(false);
@@ -307,6 +308,7 @@ export default function Products() {
         selectedGPUs?: string[];
         selectedCPUs?: string[];
         selectedTiers?: string[];
+        showUsedOnly?: boolean;
       };
       if (Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) {
         setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
@@ -322,6 +324,9 @@ export default function Products() {
       if (Array.isArray(parsed.selectedTiers)) {
         const normalized = parsed.selectedTiers.map((tier) => getFilterLabel("tier", tier));
         setSelectedTiers(Array.from(new Set(normalized)));
+      }
+      if (typeof parsed.showUsedOnly === "boolean") {
+        setShowUsedOnly(parsed.showUsedOnly);
       }
     } catch (error) {
       console.warn("Failed to read saved filters", error);
@@ -342,13 +347,20 @@ export default function Products() {
       selectedGPUs,
       selectedCPUs,
       selectedTiers,
+      showUsedOnly,
     };
     localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(payload));
-  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers]);
+  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers, showUsedOnly]);
 
-  const gpus = Array.from(new Set(COMPUTERS.map((c) => c.gpu)));
-  const cpus = Array.from(new Set(COMPUTERS.map((c) => c.cpu)));
-  const tiers = Array.from(new Set(COMPUTERS.map((c) => c.tier)));
+  const filterComputers = useMemo(
+    () => (showUsedOnly ? COMPUTERS.filter((computer) => computer.usedVariant) : COMPUTERS),
+    [showUsedOnly],
+  );
+  const getDisplayVariant = (computer: Computer) =>
+    showUsedOnly && computer.usedVariant ? computer.usedVariant : computer;
+  const gpus = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).gpu)));
+  const cpus = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).cpu)));
+  const tiers = Array.from(new Set(filterComputers.map((c) => getDisplayVariant(c).tier)));
   const filterPreviewCount = 3;
   const gpuOptions = useMemo(() => buildFilterOptions(gpus, "gpu").sort(sortGpuOptions), [gpus]);
   const cpuOptions = useMemo(() => buildFilterOptions(cpus, "cpu").sort(sortCpuOptions), [cpus]);
@@ -376,11 +388,13 @@ export default function Products() {
   const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
-    return COMPUTERS.filter((computer) => {
+    return filterComputers.filter((computer) => {
+      const variant = getDisplayVariant(computer);
+      const displayPrice = variant.price ?? computer.price;
       const categoryMatch = (() => {
         if (!activeCategory) return true;
         if (activeCategory === "budget") {
-          return computer.price <= 6000 || computer.classLabels?.includes("Budget PC's");
+          return displayPrice <= 6000 || computer.classLabels?.includes("Budget PC's");
         }
           if (activeCategory === "best-selling") {
             return computer.classLabels?.includes("Best-Selling PC's");
@@ -394,20 +408,31 @@ export default function Products() {
         return true;
       })();
 
-      const withinPrice = computer.price >= priceRange[0] && computer.price <= priceRange[1];
+      const withinPrice = displayPrice >= priceRange[0] && displayPrice <= priceRange[1];
       const gpuMatch =
         selectedGPUs.length === 0 ||
-        selectedGPUs.some((label) => gpuLabelMap.get(label)?.includes(computer.gpu));
+        selectedGPUs.some((label) => gpuLabelMap.get(label)?.includes(variant.gpu));
       const cpuMatch =
         selectedCPUs.length === 0 ||
-        selectedCPUs.some((label) => cpuLabelMap.get(label)?.includes(computer.cpu));
+        selectedCPUs.some((label) => cpuLabelMap.get(label)?.includes(variant.cpu));
       const tierMatch =
         selectedTiers.length === 0 ||
-        selectedTiers.some((label) => tierLabelMap.get(label)?.includes(computer.tier));
+        selectedTiers.some((label) => tierLabelMap.get(label)?.includes(variant.tier));
 
       return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
     });
-  }, [activeCategory, priceRange, selectedGPUs, selectedCPUs, selectedTiers, gpuLabelMap, cpuLabelMap, tierLabelMap]);
+  }, [
+    activeCategory,
+    priceRange,
+    selectedGPUs,
+    selectedCPUs,
+    selectedTiers,
+    gpuLabelMap,
+    cpuLabelMap,
+    tierLabelMap,
+    filterComputers,
+    showUsedOnly,
+  ]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
     if (selected.includes(value)) {
@@ -422,6 +447,7 @@ export default function Products() {
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
+    setShowUsedOnly(false);
   };
 
   const categoryLabel = (() => {
@@ -434,6 +460,9 @@ export default function Products() {
 
   const activeFilters: string[] = [];
   if (categoryLabel) activeFilters.push(categoryLabel);
+  if (showUsedOnly) {
+    activeFilters.push("Begagnade datorer");
+  }
   if (priceRange[0] !== 0 || priceRange[1] !== 35000) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
   }
@@ -566,6 +595,19 @@ export default function Products() {
                     <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>
                   </div>
                 </div>
+              </div>
+
+              <div className="mb-8 space-y-3">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Skick</h3>
+                <label className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+                  <input
+                    type="checkbox"
+                    checked={showUsedOnly}
+                    onChange={() => setShowUsedOnly((prev) => !prev)}
+                    className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                  />
+                  <span>Begagnade datorer</span>
+                </label>
               </div>
 
               <hr className="my-6 border-gray-200 dark:border-gray-800" />
@@ -789,7 +831,7 @@ export default function Products() {
             <div className="mb-6 sm:mb-8">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
-                Visar {filteredProducts.length} av {COMPUTERS.length} produkter
+                Visar {filteredProducts.length} av {filterComputers.length} produkter
               </p>
             </div>
 
@@ -803,8 +845,14 @@ export default function Products() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((computer) => {
+                  const variant = getDisplayVariant(computer);
+                  const displayPrice = variant.price ?? computer.price;
+                  const supabaseKey =
+                    showUsedOnly && computer.usedVariant?.productKey
+                      ? computer.usedVariant.productKey
+                      : computer.name;
                   const supabaseId =
-                    productIdByName.get(normalizeProductKey(computer.name)) ||
+                    productIdByName.get(normalizeProductKey(supabaseKey)) ||
                     productIdByName.get(normalizeProductKey(computer.id));
                   const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
                   const hasInventory = Boolean(inventory);
@@ -878,16 +926,16 @@ export default function Products() {
                           </div>
 
                           <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
-                            <p className="truncate">CPU: {computer.cpu}</p>
-                            <p className="truncate">GPU: {computer.gpu}</p>
-                            <p className="truncate">RAM: {computer.ram}</p>
+                            <p className="truncate">CPU: {variant.cpu}</p>
+                            <p className="truncate">GPU: {variant.gpu}</p>
+                            <p className="truncate">RAM: {variant.ram}</p>
                             <p className="truncate">
-                              Lagring: {computer.storage} {computer.storagetype}
+                              Lagring: {variant.storage} {variant.storagetype}
                             </p>
                           </div>
 
                           <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                            {computer.price.toLocaleString("sv-SE")} kr
+                            {displayPrice.toLocaleString("sv-SE")} kr
                           </div>
                         </div>
                       </div>

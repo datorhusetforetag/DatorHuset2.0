@@ -190,6 +190,7 @@ export default function ComputerDetails() {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
+  const [useUsedVariant, setUseUsedVariant] = useState(false);
   useProducts();
 
   const [selectedGame, setSelectedGame] = useState(gameList[0]);
@@ -206,9 +207,11 @@ export default function ComputerDetails() {
   } | null>(null);
 
   const computer: Computer | undefined = COMPUTERS.find((c) => c.id === id);
-  const supabaseProductId = computer
-    ? getProductIdByName(computer.name) || getProductIdByName(computer.id)
+  const baseProductId = computer ? getProductIdByName(computer.name) || getProductIdByName(computer.id) : null;
+  const usedProductId = computer?.usedVariant?.productKey
+    ? getProductIdByName(computer.usedVariant.productKey)
     : null;
+  const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 
   const images = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
 
@@ -217,11 +220,15 @@ export default function ComputerDetails() {
   }, [computer?.id]);
 
   useEffect(() => {
-    if (!supabaseProductId) return;
+    setUseUsedVariant(false);
+  }, [computer?.id]);
+
+  useEffect(() => {
+    if (!activeProductId) return;
     let isMounted = true;
     const loadInventory = async () => {
       try {
-        const status = await checkStock(supabaseProductId);
+        const status = await checkStock(activeProductId);
         if (!isMounted) return;
         setInventoryStatus({
           inStock: status.inStock,
@@ -237,7 +244,7 @@ export default function ComputerDetails() {
     return () => {
       isMounted = false;
     };
-  }, [supabaseProductId]);
+  }, [activeProductId]);
 
   if (!computer) {
     return (
@@ -261,11 +268,11 @@ export default function ComputerDetails() {
   const handleAddToCart = async () => {
     try {
       setAddingToCart(true);
-      if (!supabaseProductId) {
+      if (!activeProductId) {
         alert("Laddar produktinformation, försök igen om en stund.");
         return;
       }
-      await addToCart(supabaseProductId, quantity);
+      await addToCart(activeProductId, quantity);
       navigate("/cart");
     } catch (error) {
       console.error("Failed to add to cart", error);
@@ -281,6 +288,42 @@ export default function ComputerDetails() {
   const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
   const fpsHigh = Math.round(finalFps * 1.1);
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
+  const activeVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : null;
+  const displayPrice = activeVariant?.price ?? computer.price;
+  const displaySpecs = {
+    cpu: activeVariant?.cpu ?? computer.cpu,
+    gpu: activeVariant?.gpu ?? computer.gpu,
+    ram: activeVariant?.ram ?? computer.ram,
+    storage: activeVariant?.storage ?? computer.storage,
+    storagetype: activeVariant?.storagetype ?? computer.storagetype,
+    tier: activeVariant?.tier ?? computer.tier,
+  };
+  const usedParts = activeVariant?.usedParts ?? {};
+  const specRows = useMemo(
+    () => [
+      { label: "Processor (CPU)", value: displaySpecs.cpu, used: usedParts.cpu },
+      { label: "Grafikkort (GPU)", value: displaySpecs.gpu, used: usedParts.gpu },
+      { label: "RAM-minne", value: displaySpecs.ram, used: usedParts.ram },
+      {
+        label: "Lagring",
+        value: `${displaySpecs.storage} ${displaySpecs.storagetype}`.trim(),
+        used: usedParts.storage,
+      },
+      { label: "Kategori", value: displaySpecs.tier },
+    ],
+    [
+      displaySpecs.cpu,
+      displaySpecs.gpu,
+      displaySpecs.ram,
+      displaySpecs.storage,
+      displaySpecs.storagetype,
+      displaySpecs.tier,
+      usedParts.cpu,
+      usedParts.gpu,
+      usedParts.ram,
+      usedParts.storage,
+    ],
+  );
   const availability = useMemo(() => {
     if (!inventoryStatus) {
       return {
@@ -309,6 +352,7 @@ export default function ComputerDetails() {
       schema: "https://schema.org/OutOfStock",
     };
   }, [inventoryStatus]);
+  const hasUsedVariant = Boolean(computer.usedVariant);
   const showPreorderLabel = Boolean(inventoryStatus && !inventoryStatus.inStock && inventoryStatus.canPreorder);
   const etaLabel = useMemo(() => {
     if (!inventoryStatus || !inventoryStatus.canPreorder) return null;
@@ -454,11 +498,14 @@ export default function ComputerDetails() {
             <div className="space-y-2">
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">{computer.name}</h1>
               <p className="text-gray-600 dark:text-gray-300 text-sm">
-                {computer.cpu}, {computer.gpu}, {computer.ram}, {computer.storage} {computer.storagetype}
+                {displaySpecs.cpu}, {displaySpecs.gpu}, {displaySpecs.ram}, {displaySpecs.storage}{" "}
+                {displaySpecs.storagetype}
               </p>
             </div>
 
-            <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{computer.price.toLocaleString("sv-SE")} kr</div>
+            <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+              {displayPrice.toLocaleString("sv-SE")} kr
+            </div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Exkl. moms</div>
             <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
               {!showPreorderLabel && (
@@ -481,6 +528,31 @@ export default function ComputerDetails() {
               )}
             </div>
 
+            {hasUsedVariant && (
+              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-gray-600 dark:text-gray-300">
+                <span className={useUsedVariant ? "text-gray-500" : "text-gray-900 dark:text-white"}>Nya delar</span>
+                <button
+                  type="button"
+                  role="switch"
+                  aria-checked={useUsedVariant}
+                  onClick={() => setUseUsedVariant((prev) => !prev)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    useUsedVariant ? "bg-yellow-400" : "bg-gray-300 dark:bg-gray-700"
+                  }`}
+                >
+                  <span className="sr-only">V\u00e4xla begagnade delar</span>
+                  <span
+                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                      useUsedVariant ? "translate-x-5" : "translate-x-1"
+                    }`}
+                  />
+                </button>
+                <span className={useUsedVariant ? "text-gray-900 dark:text-white" : "text-gray-500"}>
+                  Begagnade delar
+                </span>
+              </div>
+            )}
+
             <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-row sm:items-center sm:gap-6">
               <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
                 <button
@@ -501,7 +573,7 @@ export default function ComputerDetails() {
               </div>
               <button
                 onClick={handleAddToCart}
-                disabled={addingToCart || !supabaseProductId}
+                disabled={addingToCart || !activeProductId}
                 className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
@@ -534,21 +606,22 @@ export default function ComputerDetails() {
               </p>
             </div>
             <div className="space-y-3 text-sm">
-              <div className="flex justify-between border-b border-gray-200 dark:border-gray-800 pb-2">
-                <span>Processor (CPU)</span><span className="font-semibold text-gray-900 dark:text-white">{computer.cpu}</span>
-              </div>
-              <div className="flex justify-between border-b border-gray-200 dark:border-gray-800 pb-2">
-                <span>Grafikkort (GPU)</span><span className="font-semibold text-gray-900 dark:text-white">{computer.gpu}</span>
-              </div>
-              <div className="flex justify-between border-b border-gray-200 dark:border-gray-800 pb-2">
-                <span>RAM-minne</span><span className="font-semibold text-gray-900 dark:text-white">{computer.ram}</span>
-              </div>
-              <div className="flex justify-between border-b border-gray-200 dark:border-gray-800 pb-2">
-                <span>Lagring</span><span className="font-semibold text-gray-900 dark:text-white">{computer.storage} {computer.storagetype}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Kategori</span><span className="font-semibold text-gray-900 dark:text-white">{computer.tier}</span>
-              </div>
+              {specRows.map((row, index) => (
+                <div
+                  key={row.label}
+                  className={`flex justify-between ${index < specRows.length - 1 ? "border-b border-gray-200 dark:border-gray-800 pb-2" : ""}`}
+                >
+                  <span>{row.label}</span>
+                  <span className="font-semibold text-gray-900 dark:text-white text-right">
+                    {row.value}
+                    {row.used && (
+                      <span className="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                        Begagnade
+                      </span>
+                    )}
+                  </span>
+                </div>
+              ))}
               {computer.bundleIncludes?.length ? (
                 <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] p-3">
                   <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
@@ -807,11 +880,11 @@ export default function ComputerDetails() {
         <div className="container mx-auto px-4 py-3 flex items-center gap-3">
           <div className="flex-1">
             <p className="text-xs text-gray-500 dark:text-gray-400">Pris</p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">{computer.price.toLocaleString("sv-SE")} kr</p>
+            <p className="text-lg font-bold text-gray-900 dark:text-white">{displayPrice.toLocaleString("sv-SE")} kr</p>
           </div>
           <button
             onClick={handleAddToCart}
-            disabled={addingToCart || !supabaseProductId}
+            disabled={addingToCart || !activeProductId}
             className="flex-1 inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />
