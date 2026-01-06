@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { useProducts, getProductIdByName } from "@/hooks/useProducts";
+import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { checkStock } from "@/lib/supabaseServices";
 
@@ -190,7 +190,7 @@ export default function ComputerDetails() {
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
-  const { products } = useProducts();
+  useProducts();
 
   const [selectedGame, setSelectedGame] = useState(gameList[0]);
   const [selectedResolution, setSelectedResolution] = useState("1080p");
@@ -206,11 +206,9 @@ export default function ComputerDetails() {
   } | null>(null);
 
   const computer: Computer | undefined = COMPUTERS.find((c) => c.id === id);
-  const supabaseProductId =
-    (computer && products.find((p) => p.name === computer.name)?.id) ||
-    (computer && getProductIdByName(computer.name)) ||
-    computer?.id ||
-    null;
+  const supabaseProductId = computer
+    ? getProductIdByName(computer.name) || getProductIdByName(computer.id)
+    : null;
 
   const images = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
 

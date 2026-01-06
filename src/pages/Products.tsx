@@ -5,7 +5,7 @@ import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
-import { useProducts } from "@/hooks/useProducts";
+import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
 import { getAllInventory } from "@/lib/supabaseServices";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
@@ -259,7 +259,16 @@ export default function Products() {
   const productIdByName = useMemo(() => {
     const map = new Map<string, string>();
     products.forEach((product) => {
-      map.set(product.name.toLowerCase(), product.id);
+      const nameKey = normalizeProductKey(product.name);
+      if (nameKey) {
+        map.set(nameKey, product.id);
+      }
+      if (product.slug) {
+        const slugKey = normalizeProductKey(product.slug);
+        if (slugKey) {
+          map.set(slugKey, product.id);
+        }
+      }
     });
     return map;
   }, [products]);
@@ -794,7 +803,9 @@ export default function Products() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredProducts.map((computer) => {
-                  const supabaseId = productIdByName.get(computer.name.toLowerCase());
+                  const supabaseId =
+                    productIdByName.get(normalizeProductKey(computer.name)) ||
+                    productIdByName.get(normalizeProductKey(computer.id));
                   const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
                   const hasInventory = Boolean(inventory);
                   const inStock = (inventory?.quantity_in_stock ?? 0) > 0;

@@ -20,13 +20,31 @@ export interface SupabaseProduct {
 let productCache: SupabaseProduct[] = [];
 let productMapCache: { [key: string]: string } = {}; // name -> UUID mapping
 
+export const normalizeProductKey = (value: string) => {
+  if (!value) return "";
+  return value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u2012-\u2015\u2212]/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
 export async function loadProducts() {
   if (productCache.length === 0) {
     try {
       productCache = await getProducts();
       // Create mapping by tier and name for easy lookup
       productCache.forEach((product) => {
-        productMapCache[product.name.toLowerCase()] = product.id;
+        const nameKey = normalizeProductKey(product.name);
+        if (nameKey) {
+          productMapCache[nameKey] = product.id;
+        }
+        const slugKey = normalizeProductKey(product.slug);
+        if (slugKey) {
+          productMapCache[slugKey] = product.id;
+        }
       });
     } catch (error) {
       console.error('Failed to load products from Supabase:', error);
@@ -36,7 +54,9 @@ export async function loadProducts() {
 }
 
 export function getProductIdByName(name: string): string | null {
-  return productMapCache[name.toLowerCase()] || null;
+  const key = normalizeProductKey(name);
+  if (!key) return null;
+  return productMapCache[key] || null;
 }
 
 export function useProducts() {
