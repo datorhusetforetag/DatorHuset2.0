@@ -11,6 +11,7 @@ import { getAllInventory } from "@/lib/supabaseServices";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
+const DEFAULT_PRICE_RANGE: [number, number] = [0, 40000];
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
 const toUsedName = (name: string) => {
@@ -168,12 +169,24 @@ const bundleItems = [
   { label: "Headset", icon: Headphones },
 ];
 
+const normalizePriceRange = (range?: number[]) => {
+  if (!Array.isArray(range) || range.length !== 2) return DEFAULT_PRICE_RANGE;
+  const min = Number(range[0]);
+  const max = Number(range[1]);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= 0) {
+    return DEFAULT_PRICE_RANGE;
+  }
+  const clampedMin = Math.max(DEFAULT_PRICE_RANGE[0], Math.min(min, DEFAULT_PRICE_RANGE[1]));
+  const clampedMax = Math.max(clampedMin, Math.min(max, DEFAULT_PRICE_RANGE[1]));
+  return [clampedMin, clampedMax] as [number, number];
+};
+
 export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const hasAppliedCategory = useRef(false);
   const hasAppliedQueryFilters = useRef(false);
-  const [priceRange, setPriceRange] = useState([0, 40000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
@@ -321,7 +334,7 @@ export default function Products() {
         showUsedOnly?: boolean;
       };
       if (Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) {
-        setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
+        setPriceRange(normalizePriceRange(parsed.priceRange));
       }
       if (Array.isArray(parsed.selectedGPUs)) {
         const normalized = parsed.selectedGPUs.map((gpu) => getFilterLabel("gpu", gpu));
@@ -356,7 +369,7 @@ export default function Products() {
     const minParam = Number(searchParams.get("price_min"));
     const maxParam = Number(searchParams.get("price_max"));
     if (Number.isFinite(minParam) && Number.isFinite(maxParam)) {
-      setPriceRange([minParam, maxParam]);
+      setPriceRange(normalizePriceRange([minParam, maxParam]));
     }
     const tiersParam = searchParams.get("tiers");
     if (tiersParam) {
@@ -388,7 +401,7 @@ export default function Products() {
     setSelectedCPUs([]);
     setSelectedTiers([]);
     setShowUsedOnly(false);
-    setPriceRange([0, 40000]);
+    setPriceRange(DEFAULT_PRICE_RANGE);
   }, [preset]);
   const filterComputers = useMemo(() => {
     if (preset === "budget") {
@@ -540,7 +553,7 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 40000]);
+    setPriceRange(DEFAULT_PRICE_RANGE);
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
@@ -560,7 +573,7 @@ export default function Products() {
   if (showUsedOnly) {
     activeFilters.push("Begagnade datorer");
   }
-  if (priceRange[0] !== 0 || priceRange[1] !== 40000) {
+  if (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1]) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
   }
   selectedGPUs.forEach((gpu) => activeFilters.push(`GPU: ${gpu}`));
@@ -679,14 +692,14 @@ export default function Products() {
               <div className="mb-8">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Pris</h3>
                 <div className="space-y-2">
-                  <input
-                    type="range"
-                    min="0"
-                    max="40000"
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="w-full accent-yellow-400"
-                  />
+                    <input
+                      type="range"
+                      min="0"
+                      max={DEFAULT_PRICE_RANGE[1]}
+                      value={priceRange[1]}
+                      onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                      className="w-full accent-yellow-400"
+                    />
                   <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
                     <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
                     <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>

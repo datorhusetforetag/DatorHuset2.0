@@ -188,6 +188,24 @@ const CATEGORY_LIST: CategoryConfig[] = [
 ];
 
 const FALLBACK_COMPONENT_IMAGE = "https://placehold.co/360x240?text=Komponent";
+const TrashIcon = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    aria-hidden="true"
+  >
+    <path d="M3 6h18" />
+    <path d="M8 6V4h8v2" />
+    <path d="M6 6l1 14h10l1-14" />
+    <path d="M10 11v6" />
+    <path d="M14 11v6" />
+  </svg>
+);
 const SOCKET_RAM_TYPE: Record<string, "DDR4" | "DDR5"> = {
   AM4: "DDR4",
   AM5: "DDR5",
@@ -1674,35 +1692,53 @@ export default function CustomBuild() {
                       const selectedItem = selected[category.key];
 
                       return (
-                        <button
-                          key={category.key}
-                          type="button"
-                          onClick={() => setActiveCategory(category.key)}
-                          className={`w-full text-left rounded-xl border px-3 py-3 transition-colors ${
-                            isActive
-                              ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
-                              : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <span
-                              className={`mt-1 rounded-lg p-2 ${
-                                isActive
-                                  ? "bg-yellow-400 text-gray-900"
-                                  : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                              }`}
-                            >
-                              <Icon className="w-5 h-5" />
-                            </span>
-                            <div>
-                              <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">{category.description}</p>
-                              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                {selectedItem ? selectedItem.name : "Ej valt"}
-                              </p>
+                        <div key={category.key} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => setActiveCategory(category.key)}
+                            className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
+                              isActive
+                                ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
+                                : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <span
+                                className={`mt-1 rounded-lg p-2 ${
+                                  isActive
+                                    ? "bg-yellow-400 text-gray-900"
+                                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                }`}
+                              >
+                                <Icon className="w-5 h-5" />
+                              </span>
+                              <div>
+                                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">{category.description}</p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                  {selectedItem ? selectedItem.name : "Ej valt"}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </button>
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              if (!selectedItem) return;
+                              setSelected((prev) => ({ ...prev, [category.key]: null }));
+                            }}
+                            className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
+                              selectedItem
+                                ? "hover:bg-slate-800 dark:hover:bg-slate-600"
+                                : "opacity-40 cursor-default"
+                            }`}
+                            aria-label={`Ta bort ${category.label}`}
+                            aria-disabled={!selectedItem}
+                          >
+                            <TrashIcon className="h-4 w-4" />
+                          </button>
+                        </div>
                       );
                     })}
                   </div>
