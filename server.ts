@@ -777,7 +777,8 @@ export async function updateAdminInventory(req: any, res: any) {
       .single();
 
     if (error || !data) {
-      return res.status(500).json({ error: "Failed to update inventory" });
+      console.error("Inventory upsert failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update inventory" });
     }
 
     if (Number.isFinite(priceCents)) {
@@ -787,7 +788,8 @@ export async function updateAdminInventory(req: any, res: any) {
         .update(pricePayload)
         .eq("id", productId);
       if (priceError) {
-        return res.status(500).json({ error: "Failed to update price" });
+        console.error("Inventory price update failed:", priceError);
+        return res.status(500).json({ error: priceError?.message || "Failed to update price" });
       }
     }
 
