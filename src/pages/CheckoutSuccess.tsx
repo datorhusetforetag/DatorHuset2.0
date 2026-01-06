@@ -4,16 +4,19 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CheckCircle, Loader } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 
 export default function CheckoutSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { clearCart } = useCart();
+  const { session } = useAuth();
   const [loading, setLoading] = useState(true);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<string | null>(null);
   const sessionId = searchParams.get("session_id");
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+  const token = session?.access_token || "";
 
   useEffect(() => {
     let isMounted = true;
@@ -24,9 +27,11 @@ export default function CheckoutSuccess() {
         console.warn("Failed to clear cart", error);
       }
 
-      if (sessionId) {
+      if (sessionId && token) {
         try {
-          const response = await fetch(`${apiBase}/api/orders/by-session/${sessionId}`);
+          const response = await fetch(`${apiBase}/api/orders/by-session/${sessionId}`, {
+            headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
+          });
           if (response.ok) {
             const data = await response.json();
             if (!isMounted) return;
@@ -48,7 +53,7 @@ export default function CheckoutSuccess() {
     return () => {
       isMounted = false;
     };
-  }, [apiBase, clearCart, sessionId]);
+  }, [apiBase, clearCart, sessionId, token]);
 
   if (loading) {
     return (

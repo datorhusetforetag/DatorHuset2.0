@@ -26,7 +26,7 @@ export const Navbar = () => {
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
   const showBackButton = location.pathname !== "/";
-  const isAdmin = Boolean(user?.user_metadata?.role === "admin" || user?.user_metadata?.is_admin);
+  const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
 
   const searchResults = useMemo(() => {
     const query = searchInput.trim().toLowerCase();

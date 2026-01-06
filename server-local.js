@@ -190,12 +190,7 @@ const getAuthUser = async (req) => {
 };
 
 const isAdminUser = (user) =>
-  Boolean(
-    user?.user_metadata?.is_admin === true ||
-      user?.user_metadata?.role === "admin" ||
-      user?.app_metadata?.is_admin === true ||
-      user?.app_metadata?.role === "admin"
-  );
+  Boolean(user?.app_metadata?.is_admin === true || user?.app_metadata?.role === "admin");
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
@@ -242,7 +237,11 @@ app.post("/api/create-checkout-session", async (req, res) => {
   }
 
   try {
-    const { cartItems, userEmail, fullName, phone, address, postalCode, city, addressId } = req.body || {};
+    const { userEmail, fullName, phone, address, postalCode, city, addressId } = req.body || {};
+    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
     const { user, error: authError } = await getAuthUser(req);
     if (authError || !user) {
       return res.status(401).json({ error: authError || "Unauthorized" });
@@ -269,58 +268,39 @@ app.post("/api/create-checkout-session", async (req, res) => {
       return res.status(400).json({ error: "Invalid city" });
     }
 
-    let line_items = [];
-    if (supabase) {
-      const { data: dbCartItems, error: cartError } = await supabase
-        .from("cart_items")
-        .select("quantity, product:product_id (id, name, price_cents)")
-        .eq("user_id", user.id);
+    const { data: dbCartItems, error: cartError } = await supabase
+      .from("cart_items")
+      .select("quantity, product:product_id (id, name, price_cents)")
+      .eq("user_id", user.id);
 
-      if (cartError || !dbCartItems || dbCartItems.length === 0) {
-        return res.status(400).json({ error: "Cart is empty" });
-      }
-
-      if (dbCartItems.length > MAX_LINE_ITEMS) {
-        return res.status(400).json({ error: "Too many items in cart" });
-      }
-
-      line_items = dbCartItems.map((item) => {
-        const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(item.quantity) || 1));
-        const unitAmount = Number(item.product?.price_cents || 0);
-        if (!unitAmount || unitAmount < 1) {
-          throw new Error("Invalid product price");
-        }
-        return {
-          price_data: {
-            currency: "sek",
-            product_data: { name: item.product?.name || "Produkt" },
-            unit_amount: unitAmount,
-          },
-          quantity,
-        };
-      });
-    } else if (Array.isArray(cartItems) && cartItems.length > 0) {
-      if (cartItems.length > MAX_LINE_ITEMS) {
-        return res.status(400).json({ error: "Too many items in cart" });
-      }
-      line_items = cartItems.map((item) => {
-        const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(item.quantity) || 1));
-        const unitAmount = Number(item.unitPriceCents || 0);
-        if (!unitAmount || unitAmount < 1) {
-          throw new Error("Invalid product price");
-        }
-        return {
-          price_data: {
-            currency: "sek",
-            product_data: { name: sanitizeText(item.productName, 120) || "Produkt" },
-            unit_amount: unitAmount,
-          },
-          quantity,
-        };
-      });
-    } else {
+    if (cartError || !dbCartItems || dbCartItems.length === 0) {
       return res.status(400).json({ error: "Cart is empty" });
     }
+
+    if (dbCartItems.length > MAX_LINE_ITEMS) {
+      return res.status(400).json({ error: "Too many items in cart" });
+    }
+
+    const line_items = dbCartItems.map((item) => {
+      const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(item.quantity) || 1));
+      const unitAmount = Number(item.product?.price_cents || 0);
+      if (!unitAmount || unitAmount < 1) {
+        throw new Error("Invalid product price");
+      }
+      return {
+        price_data: {
+          currency: "sek",
+          product_data: {
+            name: item.product?.name || "Produkt",
+            metadata: {
+              product_id: item.product?.id || "",
+            },
+          },
+          unit_amount: unitAmount,
+        },
+        quantity,
+      };
+    });
 
     const paymentMethodTypes = [...PAYMENT_METHODS];
     const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
@@ -332,6 +312,7 @@ app.post("/api/create-checkout-session", async (req, res) => {
       payment_method_types: paymentMethodTypes,
       line_items,
       mode: "payment",
+      client_reference_id: user.id,
       customer_email: customerEmail,
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: ["SE"] },
@@ -788,11 +769,16 @@ app.get("/api/orders/by-session/:sessionId", async (req, res) => {
     if (!sessionId) {
       return res.status(400).json({ error: "Missing session id" });
     }
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
 
     const { data, error } = await supabase
       .from("orders")
       .select("id, order_number, status")
       .eq("stripe_session_id", sessionId)
+      .eq("user_id", user.id)
       .single();
 
     if (error || !data) {
@@ -1006,35 +992,113 @@ async function handleSuccessfulPayment(stripeSession) {
   const userEmail = stripeSession.customer_email;
   const fullName = stripeSession.metadata?.fullName;
   const sessionId = stripeSession.id;
-  const totalAmount = stripeSession.amount_total;
+  const totalAmount = Number(stripeSession.amount_total ?? 0);
+  const paymentStatus = stripeSession.payment_status;
+  const sessionStatus = stripeSession.status;
 
-  if (!userEmail) {
-    throw new Error("No customer email in session");
+  if (!sessionId) {
+    throw new Error("Missing Stripe session id");
   }
 
-  const { data: users, error: userError } = await supabase.auth.admin.listUsers();
-  if (userError) {
-    throw new Error(`Failed to list users: ${userError.message}`);
+  if (paymentStatus !== "paid" || sessionStatus !== "complete") {
+    console.warn(`Skipping session ${sessionId} with status ${sessionStatus}/${paymentStatus}`);
+    return;
   }
 
-  const user = users.users.find((u) => u.email === userEmail);
-  if (!user) {
-    throw new Error(`User not found: ${userEmail}`);
+  if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
+    throw new Error("Invalid total amount");
   }
 
-  const userId = user.id;
+  const { data: existingOrders, error: existingError } = await supabase
+    .from("orders")
+    .select("id")
+    .eq("stripe_session_id", sessionId)
+    .limit(1);
 
-  const { data: cartItems, error: cartError } = await supabase
-    .from("cart_items")
-    .select("*, product:product_id (*)")
-    .eq("user_id", userId);
-
-  if (cartError || !cartItems) {
-    throw new Error(`Failed to fetch cart: ${cartError?.message}`);
+  if (existingError) {
+    throw new Error(`Failed to check existing order: ${existingError.message}`);
   }
 
-  if (cartItems.length === 0) {
-    throw new Error("Cart is empty");
+  if (existingOrders && existingOrders.length > 0) {
+    console.log(`Order already exists for session ${sessionId}`);
+    return;
+  }
+
+  const metadataUserId = sanitizeText(stripeSession.metadata?.userId, 64);
+  const referenceUserId = sanitizeText(stripeSession.client_reference_id, 64);
+  if (metadataUserId && referenceUserId && metadataUserId !== referenceUserId) {
+    throw new Error("User reference mismatch on Stripe session");
+  }
+  let userId = metadataUserId || referenceUserId;
+  if (userId) {
+    const { data: userData, error: userLookupError } = await supabase.auth.admin.getUserById(userId);
+    if (userLookupError || !userData?.user) {
+      throw new Error("User not found for session");
+    }
+  } else {
+    if (!userEmail) {
+      throw new Error("No customer email in session");
+    }
+    const { data: users, error: userError } = await supabase.auth.admin.listUsers();
+    if (userError) {
+      throw new Error(`Failed to list users: ${userError.message}`);
+    }
+
+    const user = users.users.find((u) => u.email === userEmail);
+    if (!user) {
+      throw new Error(`User not found: ${userEmail}`);
+    }
+
+    userId = user.id;
+  }
+
+  const lineItemResponse = await stripe.checkout.sessions.listLineItems(sessionId, {
+    limit: MAX_LINE_ITEMS,
+    expand: ["data.price.product"],
+  });
+  const lineItems = lineItemResponse.data || [];
+
+  if (lineItems.length === 0) {
+    throw new Error("No line items on session");
+  }
+
+  const orderItems = lineItems.map((lineItem) => {
+    const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
+    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    const productMeta =
+      lineItem.price?.product && typeof lineItem.price.product === "object"
+        ? lineItem.price.product.metadata
+        : null;
+    const productId = sanitizeText(productMeta?.product_id, 64);
+    if (!productId) {
+      throw new Error("Missing product metadata on line item");
+    }
+    if (!unitAmount || unitAmount < 1) {
+      throw new Error("Invalid line item price");
+    }
+    return {
+      product_id: productId,
+      unit_price_cents: unitAmount,
+      quantity,
+    };
+  });
+
+  const emailItems = lineItems.map((lineItem) => {
+    const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
+    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    return {
+      name: lineItem.description || "Produkt",
+      quantity,
+      total: (unitAmount * quantity) / 100,
+    };
+  });
+
+  const lineItemTotal = orderItems.reduce(
+    (sum, item) => sum + item.unit_price_cents * item.quantity,
+    0
+  );
+  if (lineItemTotal !== totalAmount) {
+    console.warn(`Line item total mismatch for session ${sessionId}`);
   }
 
   const { data: order, error: orderError } = await supabase
@@ -1054,7 +1118,6 @@ async function handleSuccessfulPayment(stripeSession) {
         customer_postal_code: stripeSession.metadata?.postalCode || null,
         customer_city: stripeSession.metadata?.city || null,
         shipping_address_id: stripeSession.metadata?.addressId || null,
-        build_checklist: DEFAULT_BUILD_CHECKLIST,
       },
     ])
     .select()
@@ -1064,7 +1127,7 @@ async function handleSuccessfulPayment(stripeSession) {
     throw new Error(`Failed to create order: ${orderError?.message}`);
   }
 
-  if (stripe && stripeSession.payment_intent) {
+  if (stripeSession.payment_intent) {
     try {
       const paymentIntent = await stripe.paymentIntents.retrieve(stripeSession.payment_intent, {
         expand: ["latest_charge"],
@@ -1081,22 +1144,15 @@ async function handleSuccessfulPayment(stripeSession) {
     }
   }
 
-  const orderItems = cartItems.map((cartItem) => ({
-    order_id: order.id,
-    product_id: cartItem.product_id,
-    unit_price_cents: cartItem.product?.price_cents || 0,
-    quantity: cartItem.quantity,
-  }));
-
   const { error: orderItemsError } = await supabase
     .from("order_items")
-    .insert(orderItems);
+    .insert(orderItems.map((item) => ({ ...item, order_id: order.id })));
 
   if (orderItemsError) {
     throw new Error(`Failed to create order items: ${orderItemsError.message}`);
   }
 
-  for (const cartItem of cartItems) {
+  for (const cartItem of orderItems) {
     const { data: inventory } = await supabase
       .from("inventory")
       .select("quantity_in_stock")
@@ -1123,18 +1179,12 @@ async function handleSuccessfulPayment(stripeSession) {
 
   console.log(`Order created for ${userEmail}: ${order.id}`);
 
-  const emailItems = cartItems.map((cartItem) => ({
-    name: cartItem.product?.name || "Produkt",
-    quantity: cartItem.quantity,
-    total: ((cartItem.product?.price_cents || 0) * cartItem.quantity) / 100,
-  }));
-
   await sendEmail({
     to: userEmail,
-    subject: "Din order hos DatorHuset Ã¤r mottagen",
+    subject: "Din order hos DatorHuset Ar mottagen",
     html: buildOrderEmailHtml({
-      headline: "Tack fÃ¶r din bestÃ¤llning!",
-      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och bÃ¶rjar behandla den.`,
+      headline: "Tack fAr din bestAllning!",
+      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och bArjar behandla den.`,
       order,
       items: emailItems,
       statusNote: "Order mottagen",
