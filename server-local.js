@@ -34,6 +34,17 @@ const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || ""
   .split(",")
   .map((ip) => ip.trim())
   .filter(Boolean);
+const ADMIN_EMAIL_ALLOWLIST = (process.env.ADMIN_EMAIL_ALLOWLIST || "")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+const ADMIN_REQUIRE_MFA = process.env.ADMIN_REQUIRE_MFA === "true";
+const STRIPE_EXPECT_LIVEMODE =
+  process.env.STRIPE_EXPECT_LIVEMODE === "true"
+    ? true
+    : process.env.STRIPE_EXPECT_LIVEMODE === "false"
+      ? false
+      : null;
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -41,12 +52,50 @@ const apiLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+const checkoutLimiter = rateLimit({
+  windowMs: 10 * 60 * 1000,
+  max: 8,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => getRateLimitKey(req, "checkout"),
+});
+const adminLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => getRateLimitKey(req, "admin"),
+});
 
 const getRequestIp = (req) => {
   const forwarded = req.headers["x-forwarded-for"];
   if (Array.isArray(forwarded)) return forwarded[0]?.trim() || "";
   if (typeof forwarded === "string") return forwarded.split(",")[0]?.trim() || "";
   return (req.ip || "").trim();
+};
+
+const getAuthToken = (req) => {
+  const authHeader = req.headers.authorization || "";
+  return authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+};
+
+const getJwtSubject = (token) => {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return "";
+    const decoded = Buffer.from(payload, "base64").toString("utf8");
+    const parsed = JSON.parse(decoded);
+    return typeof parsed.sub === "string" ? parsed.sub : "";
+  } catch (error) {
+    return "";
+  }
+};
+
+const getRateLimitKey = (req, prefix) => {
+  const ip = getRequestIp(req) || "unknown";
+  const token = getAuthToken(req);
+  const subject = token ? getJwtSubject(token) : "";
+  return `${prefix}:${subject || "anon"}:${ip}`;
 };
 
 const isAllowedStripeIp = (req) => {
@@ -67,10 +116,15 @@ const cspDirectives = {
   frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
   connectSrc: ["'self'", "https://api.stripe.com", "https://*.supabase.co", ...FRONTEND_URLS],
   formAction: ["'self'", "https://checkout.stripe.com"],
+  upgradeInsecureRequests: [],
 };
 
 // Middleware
-app.use(helmet({ contentSecurityPolicy: { directives: cspDirectives } }));
+app.use(helmet({
+  contentSecurityPolicy: { directives: cspDirectives },
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+}));
 app.use(cors({
   origin: (origin, callback) => {
     if (isAllowedOrigin(origin)) {
@@ -83,6 +137,7 @@ app.use(cors({
 app.use("/api/webhook", express.raw({ type: "application/json" })); // raw for Stripe
 app.use(express.json({ limit: "100kb" }));
 app.use("/api/", apiLimiter);
+app.use("/api/admin", adminLimiter);
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -101,6 +156,11 @@ const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8
 const MAX_LINE_ITEMS = 50;
 const MAX_QUANTITY = 10;
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
+const CUSTOM_PAYMENT_METHOD = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
+const ALLOWED_PAYMENT_METHODS = new Set([
+  ...PAYMENT_METHODS,
+  ...(CUSTOM_PAYMENT_METHOD ? [CUSTOM_PAYMENT_METHOD] : []),
+]);
 const STATUS_OPTIONS = new Set([
   "received",
   "ordering",
@@ -173,13 +233,7 @@ const getAuthUser = async (req) => {
   }
   const authHeader = req.headers.authorization || "";
   const headerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  const fallbackHeader = req.headers["x-access-token"];
-  const fallbackToken = Array.isArray(fallbackHeader)
-    ? fallbackHeader[0] || ""
-    : typeof fallbackHeader === "string"
-      ? fallbackHeader
-      : "";
-  const token = headerToken || fallbackToken;
+  const token = headerToken;
   if (!token) {
     return { user: null, error: "Missing auth token." };
   }
@@ -190,8 +244,21 @@ const getAuthUser = async (req) => {
   return { user: data.user, error: null };
 };
 
-const isAdminUser = (user) =>
-  Boolean(user?.app_metadata?.is_admin === true || user?.app_metadata?.role === "admin");
+const isAdminUser = (user) => {
+  const isAdmin = user?.app_metadata?.is_admin === true || user?.app_metadata?.role === "admin";
+  if (!isAdmin) return false;
+  if (ADMIN_EMAIL_ALLOWLIST.length > 0) {
+    const email = String(user?.email || "").toLowerCase();
+    if (!ADMIN_EMAIL_ALLOWLIST.includes(email)) return false;
+  }
+  if (ADMIN_REQUIRE_MFA) {
+    const mfaEnabled =
+      user?.app_metadata?.mfa_enabled === true ||
+      (Array.isArray(user?.factors) && user.factors.length > 0);
+    if (!mfaEnabled) return false;
+  }
+  return true;
+};
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
@@ -207,6 +274,53 @@ const formatOrderNumber = (order) => {
 const sendEmail = async ({ to, subject, html }) => {
   if (!mailer) return;
   await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
+};
+
+const logAdminAction = async (req, user, action, resourceType, resourceId, metadata) => {
+  if (!supabase) return;
+  try {
+    await supabase.from("admin_audit_logs").insert([
+      {
+        admin_user_id: user.id,
+        action,
+        resource_type: resourceType,
+        resource_id: resourceId,
+        metadata,
+        ip_address: getRequestIp(req),
+        user_agent: req.headers["user-agent"] || null,
+      },
+    ]);
+  } catch (error) {
+    console.warn("Admin audit log failed:", error);
+  }
+};
+
+const recordWebhookEvent = async (event) => {
+  if (!event?.id || !supabase) return { duplicate: false };
+  const { data: existing, error: existingError } = await supabase
+    .from("stripe_webhook_events")
+    .select("event_id")
+    .eq("event_id", event.id)
+    .limit(1);
+  if (existingError) {
+    console.warn("Webhook event lookup failed:", existingError);
+    return { duplicate: false };
+  }
+  if (existing && existing.length > 0) {
+    return { duplicate: true };
+  }
+  const { error: insertError } = await supabase.from("stripe_webhook_events").insert([
+    {
+      event_id: event.id,
+      event_type: event.type,
+      livemode: Boolean(event.livemode),
+      received_at: new Date(),
+    },
+  ]);
+  if (insertError) {
+    console.warn("Webhook event insert failed:", insertError);
+  }
+  return { duplicate: false };
 };
 
 const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
@@ -229,7 +343,7 @@ const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
 /**
  * POST /api/create-checkout-session
  */
-app.post("/api/create-checkout-session", async (req, res) => {
+app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
   if (!stripe) {
     return res.status(503).json({ error: "Stripe not configured. Set STRIPE_SECRET_KEY to enable checkout." });
   }
@@ -492,6 +606,38 @@ app.get("/api/admin/orders.csv", async (req, res) => {
   }
 });
 
+app.get("/api/admin/logs", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const limit = Math.min(200, Math.max(1, Number(req.query?.limit || 50)));
+    const offset = Math.max(0, Number(req.query?.offset || 0));
+    const { data, error, count } = await supabase
+      .from("admin_audit_logs")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch logs" });
+    }
+
+    res.json({ data: data || [], total: count || 0, limit, offset });
+  } catch (error) {
+    console.error("Admin logs error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.get("/api/admin/inventory", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -583,6 +729,14 @@ app.post("/api/admin/inventory", async (req, res) => {
         return res.status(500).json({ error: priceError?.message || "Failed to update price" });
       }
     }
+
+    await logAdminAction(req, user, "inventory_update", "inventory", productId, {
+      quantity_in_stock: payload.quantity_in_stock,
+      is_preorder: payload.is_preorder,
+      eta_days: etaRange || payload.eta_days,
+      eta_note: payload.eta_note,
+      price_cents: Number.isFinite(priceCents) ? Math.max(0, Math.round(priceCents)) : null,
+    });
 
     res.json(data);
   } catch (error) {
@@ -687,6 +841,21 @@ app.post("/api/admin/products/:productId", async (req, res) => {
       return res.status(500).json({ error: error?.message || "Failed to update product" });
     }
 
+    await logAdminAction(req, user, "product_update", "product", productId, {
+      name,
+      cpu,
+      gpu,
+      ram,
+      storage,
+      storage_type: storageType || null,
+      tier,
+      motherboard: motherboard || null,
+      psu: psu || null,
+      case_name: caseName || null,
+      cpu_cooler: cpuCooler || null,
+      os: os || null,
+    });
+
     res.json(data);
   } catch (error) {
     console.error("Admin product update error:", error);
@@ -758,6 +927,11 @@ app.post("/api/admin/ui-settings", async (req, res) => {
       return res.status(500).json({ error: error?.message || "Failed to update settings" });
     }
 
+    await logAdminAction(req, user, "ui_settings_update", "ui_settings", "fps", {
+      dlssMultiplier,
+      frameGenMultiplier,
+    });
+
     res.json({ fps: data.value });
   } catch (error) {
     console.error("Admin UI settings update error:", error);
@@ -801,7 +975,7 @@ app.get("/api/orders/by-session/:sessionId", async (req, res) => {
   }
 });
 
-app.post("/api/orders/:orderId/status", async (req, res) => {
+app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
   }
@@ -922,6 +1096,10 @@ app.post("/api/admin/orders/:orderId/checklist", async (req, res) => {
       return res.status(500).json({ error: "Failed to update checklist" });
     }
 
+    await logAdminAction(req, user, "order_checklist_update", "order", orderId, {
+      build_checklist: checklist,
+    });
+
     res.json(data);
   } catch (error) {
     console.error("Checklist update error:", error);
@@ -957,10 +1135,26 @@ app.post("/api/webhook", async (req, res) => {
 
   console.log("[webhook] received", event.id, event.type);
 
+  if (STRIPE_EXPECT_LIVEMODE !== null && event.livemode !== STRIPE_EXPECT_LIVEMODE) {
+    console.warn("Webhook livemode mismatch", { eventId: event.id, livemode: event.livemode });
+    return res.status(400).json({ error: "Invalid livemode" });
+  }
+
+  const { duplicate } = await recordWebhookEvent(event);
+  if (duplicate) {
+    return res.json({ received: true, duplicate: true });
+  }
+
   if (event.type === "checkout.session.completed") {
     const session = event.data.object; // JS only
     try {
       await handleSuccessfulPayment(session);
+      if (event.id && supabase) {
+        await supabase
+          .from("stripe_webhook_events")
+          .update({ processed_at: new Date() })
+          .eq("event_id", event.id);
+      }
       console.log("[webhook] handled checkout.session.completed", session.id);
     } catch (error) {
       console.error("Error handling successful payment:", error);
@@ -1008,6 +1202,17 @@ async function handleSuccessfulPayment(stripeSession) {
   if (paymentStatus !== "paid" || sessionStatus !== "complete") {
     console.warn(`Skipping session ${sessionId} with status ${sessionStatus}/${paymentStatus}`);
     return;
+  }
+
+  if (STRIPE_EXPECT_LIVEMODE !== null && stripeSession.livemode !== STRIPE_EXPECT_LIVEMODE) {
+    throw new Error("Stripe session livemode mismatch");
+  }
+
+  const sessionMethods = Array.isArray(stripeSession.payment_method_types)
+    ? stripeSession.payment_method_types
+    : [];
+  if (sessionMethods.length === 0 || sessionMethods.some((method) => !ALLOWED_PAYMENT_METHODS.has(method))) {
+    throw new Error("Unexpected payment method on session");
   }
 
   if (!Number.isFinite(totalAmount) || totalAmount <= 0) {

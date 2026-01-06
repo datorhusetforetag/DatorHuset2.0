@@ -49,7 +49,7 @@ export default function AdminProducts() {
     setLocalError("");
     try {
       const response = await fetch(`${apiBase}/api/admin/products`, {
-        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
         throw new Error("Kunde inte hämta produkter.");
@@ -67,7 +67,7 @@ export default function AdminProducts() {
     if (!token || !isAdmin) return;
     try {
       const response = await fetch(`${apiBase}/api/admin/ui-settings`, {
-        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
         throw new Error("Kunde inte hämta FPS-inställningar.");
@@ -115,7 +115,6 @@ export default function AdminProducts() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "X-Access-Token": token,
         },
         body: JSON.stringify({
           name: product.name,
@@ -154,7 +153,6 @@ export default function AdminProducts() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "X-Access-Token": token,
         },
         body: JSON.stringify({ fps: fpsSettings }),
       });

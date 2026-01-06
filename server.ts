@@ -40,9 +40,30 @@ const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || ""
   .split(",")
   .map((ip) => ip.trim())
   .filter(Boolean);
+const ADMIN_EMAIL_ALLOWLIST = (process.env.ADMIN_EMAIL_ALLOWLIST || "")
+  .split(",")
+  .map((email) => email.trim().toLowerCase())
+  .filter(Boolean);
+const ADMIN_REQUIRE_MFA = process.env.ADMIN_REQUIRE_MFA === "true";
+const STRIPE_EXPECT_LIVEMODE =
+  process.env.STRIPE_EXPECT_LIVEMODE === "true"
+    ? true
+    : process.env.STRIPE_EXPECT_LIVEMODE === "false"
+      ? false
+      : null;
 const MAX_LINE_ITEMS = 50;
 const MAX_QUANTITY = 10;
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
+const CUSTOM_PAYMENT_METHOD = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
+const ALLOWED_PAYMENT_METHODS = new Set([
+  ...PAYMENT_METHODS,
+  ...(CUSTOM_PAYMENT_METHOD ? [CUSTOM_PAYMENT_METHOD] : []),
+]);
+const CHECKOUT_RATE_LIMIT_MAX = Number(process.env.CHECKOUT_RATE_LIMIT_MAX || 8);
+const CHECKOUT_RATE_LIMIT_WINDOW_MS = Number(process.env.CHECKOUT_RATE_LIMIT_WINDOW_MS || 10 * 60 * 1000);
+const ADMIN_RATE_LIMIT_MAX = Number(process.env.ADMIN_RATE_LIMIT_MAX || 120);
+const ADMIN_RATE_LIMIT_WINDOW_MS = Number(process.env.ADMIN_RATE_LIMIT_WINDOW_MS || 5 * 60 * 1000);
+const RATE_LIMIT_STORE = new Map<string, { count: number; resetAt: number }>();
 const STATUS_OPTIONS = new Set([
   "received",
   "ordering",
@@ -121,8 +142,35 @@ const isAllowedStripeIp = (req: any) => {
   return STRIPE_WEBHOOK_ALLOWED_IPS.includes(ip);
 };
 
-const isAdminUser = (user: any) =>
-  Boolean(user?.app_metadata?.is_admin === true || user?.app_metadata?.role === "admin");
+const isRateLimited = (key: string, max: number, windowMs: number) => {
+  const now = Date.now();
+  const entry = RATE_LIMIT_STORE.get(key);
+  if (!entry || entry.resetAt <= now) {
+    RATE_LIMIT_STORE.set(key, { count: 1, resetAt: now + windowMs });
+    return false;
+  }
+  if (entry.count >= max) {
+    return true;
+  }
+  entry.count += 1;
+  return false;
+};
+
+const isAdminUser = (user: any) => {
+  const isAdmin = user?.app_metadata?.is_admin === true || user?.app_metadata?.role === "admin";
+  if (!isAdmin) return false;
+  if (ADMIN_EMAIL_ALLOWLIST.length > 0) {
+    const email = String(user?.email || "").toLowerCase();
+    if (!ADMIN_EMAIL_ALLOWLIST.includes(email)) return false;
+  }
+  if (ADMIN_REQUIRE_MFA) {
+    const mfaEnabled =
+      user?.app_metadata?.mfa_enabled === true ||
+      (Array.isArray(user?.factors) && user.factors.length > 0);
+    if (!mfaEnabled) return false;
+  }
+  return true;
+};
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
@@ -138,6 +186,59 @@ const formatOrderNumber = (order: any) => {
 const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   if (!mailer) return;
   await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
+};
+
+const logAdminAction = async (
+  req: any,
+  user: any,
+  action: string,
+  resourceType: string,
+  resourceId: string | null,
+  metadata: Record<string, any> | null
+) => {
+  try {
+    await supabase.from("admin_audit_logs").insert([
+      {
+        admin_user_id: user.id,
+        action,
+        resource_type: resourceType,
+        resource_id: resourceId,
+        metadata,
+        ip_address: getRequestIp(req),
+        user_agent: req.headers["user-agent"] || null,
+      },
+    ]);
+  } catch (error) {
+    console.warn("Admin audit log failed:", error);
+  }
+};
+
+const recordWebhookEvent = async (event: any) => {
+  if (!event?.id) return { duplicate: false };
+  const { data: existing, error: existingError } = await supabase
+    .from("stripe_webhook_events")
+    .select("event_id")
+    .eq("event_id", event.id)
+    .limit(1);
+  if (existingError) {
+    console.warn("Webhook event lookup failed:", existingError);
+    return { duplicate: false };
+  }
+  if (existing && existing.length > 0) {
+    return { duplicate: true };
+  }
+  const { error: insertError } = await supabase.from("stripe_webhook_events").insert([
+    {
+      event_id: event.id,
+      event_type: event.type,
+      livemode: Boolean(event.livemode),
+      received_at: new Date(),
+    },
+  ]);
+  if (insertError) {
+    console.warn("Webhook event insert failed:", insertError);
+  }
+  return { duplicate: false };
 };
 
 const requireServiceRoleKey = (res: any) => {
@@ -183,13 +284,7 @@ const buildOrderEmailHtml = ({
 async function getAuthUser(req: any) {
   const authHeader = req?.headers?.authorization || "";
   const headerToken = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
-  const fallbackHeader = req?.headers?.["x-access-token"];
-  const fallbackToken = Array.isArray(fallbackHeader)
-    ? fallbackHeader[0] || ""
-    : typeof fallbackHeader === "string"
-      ? fallbackHeader
-      : "";
-  const token = headerToken || fallbackToken;
+  const token = headerToken;
   if (!token) {
     return { user: null, error: "Missing auth token." };
   }
@@ -348,12 +443,28 @@ export async function handleStripeWebhook(req: any, res: any) {
     return res.status(400).json({ error: "Webhook signature failed" });
   }
 
+  if (STRIPE_EXPECT_LIVEMODE !== null && event.livemode !== STRIPE_EXPECT_LIVEMODE) {
+    console.warn("Webhook livemode mismatch", { eventId: event.id, livemode: event.livemode });
+    return res.status(400).json({ error: "Invalid livemode" });
+  }
+
+  const { duplicate } = await recordWebhookEvent(event);
+  if (duplicate) {
+    return res.json({ received: true, duplicate: true });
+  }
+
   // Handle checkout.session.completed
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as any;
 
     try {
       await handleSuccessfulPayment(session);
+      if (event.id) {
+        await supabase
+          .from("stripe_webhook_events")
+          .update({ processed_at: new Date() })
+          .eq("event_id", event.id);
+      }
     } catch (error) {
       console.error("Error handling successful payment:", error);
       return res.status(500).json({ error: "Failed to process payment" });
@@ -386,6 +497,17 @@ async function handleSuccessfulPayment(stripeSession: any) {
   if (paymentStatus !== "paid" || sessionStatus !== "complete") {
     console.warn(`Skipping session ${sessionId} with status ${sessionStatus}/${paymentStatus}`);
     return;
+  }
+
+  if (STRIPE_EXPECT_LIVEMODE !== null && stripeSession.livemode !== STRIPE_EXPECT_LIVEMODE) {
+    throw new Error("Stripe session livemode mismatch");
+  }
+
+  const sessionMethods = Array.isArray(stripeSession.payment_method_types)
+    ? stripeSession.payment_method_types
+    : [];
+  if (sessionMethods.length === 0 || sessionMethods.some((method) => !ALLOWED_PAYMENT_METHODS.has(method))) {
+    throw new Error("Unexpected payment method on session");
   }
 
   if (!Number.isFinite(totalAmount) || totalAmount <= 0) {
@@ -596,6 +718,10 @@ export async function getOrder(req: any, res: any) {
     if (authError || !user) {
       return res.status(401).json({ error: authError || "Unauthorized" });
     }
+    const checkoutKey = `checkout:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(checkoutKey, CHECKOUT_RATE_LIMIT_MAX, CHECKOUT_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many checkout attempts" });
+    }
     if (!/^[0-9a-fA-F-]{36}$/.test(orderId)) {
       return res.status(400).json({ error: "Invalid order id" });
     }
@@ -685,6 +811,10 @@ export async function getAdminOrders(req: any, res: any) {
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
     }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
 
     const { data, error } = await supabase
       .from("orders")
@@ -732,6 +862,10 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
 
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
     if (!requireServiceRoleKey(res)) {
       return;
@@ -825,6 +959,10 @@ export async function getAdminMe(req: any, res: any) {
     if (authError || !user) {
       return res.status(401).json({ error: authError || "Unauthorized" });
     }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
     return res.json({ id: user.id, email: user.email, isAdmin: isAdminUser(user) });
   } catch (error) {
     console.error("Admin me error:", error);
@@ -844,6 +982,10 @@ export async function getAdminInventory(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
 
     const { data, error } = await supabase
@@ -877,6 +1019,10 @@ export async function updateAdminInventory(req: any, res: any) {
     }
     if (!requireServiceRoleKey(res)) {
       return;
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
 
     const productId = sanitizeText(req.body?.productId, 64);
@@ -929,6 +1075,14 @@ export async function updateAdminInventory(req: any, res: any) {
       }
     }
 
+    await logAdminAction(req, user, "inventory_update", "inventory", productId, {
+      quantity_in_stock: payload.quantity_in_stock,
+      is_preorder: payload.is_preorder,
+      eta_days: etaRange || payload.eta_days,
+      eta_note: payload.eta_note,
+      price_cents: Number.isFinite(priceCents) ? Math.max(0, Math.round(priceCents)) : null,
+    });
+
     res.json(data);
   } catch (error) {
     console.error("Inventory update error:", error);
@@ -948,6 +1102,10 @@ export async function getAdminProducts(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
 
     const { data, error } = await supabase
@@ -983,6 +1141,10 @@ export async function updateAdminProduct(req: any, res: any) {
     }
     if (!requireServiceRoleKey(res)) {
       return;
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
 
     const { productId } = req.params;
@@ -1031,6 +1193,21 @@ export async function updateAdminProduct(req: any, res: any) {
       return res.status(500).json({ error: error?.message || "Failed to update product" });
     }
 
+    await logAdminAction(req, user, "product_update", "product", productId, {
+      name,
+      cpu,
+      gpu,
+      ram,
+      storage,
+      storage_type: storageType || null,
+      tier,
+      motherboard: motherboard || null,
+      psu: psu || null,
+      case_name: caseName || null,
+      cpu_cooler: cpuCooler || null,
+      os: os || null,
+    });
+
     res.json(data);
   } catch (error) {
     console.error("Admin product update error:", error);
@@ -1050,6 +1227,10 @@ export async function getAdminUiSettings(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
 
     const { data, error } = await supabase
@@ -1085,6 +1266,10 @@ export async function updateAdminUiSettings(req: any, res: any) {
     if (!requireServiceRoleKey(res)) {
       return;
     }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
 
     const fps = req.body?.fps || {};
     const dlssMultiplier = parseMultiplier(fps.dlssMultiplier, DEFAULT_FPS_SETTINGS.dlssMultiplier);
@@ -1110,6 +1295,11 @@ export async function updateAdminUiSettings(req: any, res: any) {
       return res.status(500).json({ error: error?.message || "Failed to update settings" });
     }
 
+    await logAdminAction(req, user, "ui_settings_update", "ui_settings", "fps", {
+      dlssMultiplier,
+      frameGenMultiplier,
+    });
+
     res.json({ fps: data.value });
   } catch (error) {
     console.error("Admin UI settings update error:", error);
@@ -1133,6 +1323,10 @@ export async function updateOrderChecklist(req: any, res: any) {
     if (!requireServiceRoleKey(res)) {
       return;
     }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
 
     const { orderId } = req.params;
     const checklist = Array.isArray(req.body?.build_checklist) ? req.body.build_checklist : null;
@@ -1150,6 +1344,10 @@ export async function updateOrderChecklist(req: any, res: any) {
     if (error || !data) {
       return res.status(500).json({ error: "Failed to update checklist" });
     }
+
+    await logAdminAction(req, user, "order_checklist_update", "order", orderId, {
+      build_checklist: checklist,
+    });
 
     res.json(data);
   } catch (error) {
@@ -1170,6 +1368,10 @@ export async function exportOrdersCsv(req: any, res: any) {
     }
     if (!isAdminUser(user)) {
       return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
     }
 
     const { data, error } = await supabase
@@ -1247,6 +1449,43 @@ export async function exportOrdersCsv(req: any, res: any) {
     res.send(csv);
   } catch (error) {
     console.error("Export CSV error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: audit logs
+ * GET /api/admin/logs
+ */
+export async function getAdminLogs(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const limit = Math.min(200, Math.max(1, Number(req.query?.limit || 50)));
+    const offset = Math.max(0, Number(req.query?.offset || 0));
+    const { data, error, count } = await supabase
+      .from("admin_audit_logs")
+      .select("*", { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (error) {
+      return res.status(500).json({ error: "Failed to fetch logs" });
+    }
+
+    res.json({ data: data || [], total: count || 0, limit, offset });
+  } catch (error) {
+    console.error("Admin logs error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }

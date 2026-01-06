@@ -35,7 +35,7 @@ export default function AdminInventory() {
     setLocalError("");
     try {
       const response = await fetch(`${apiBase}/api/admin/inventory`, {
-        headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
         throw new Error("Kunde inte hämta lagerstatus.");
@@ -98,7 +98,6 @@ export default function AdminInventory() {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-          "X-Access-Token": token,
         },
         body: JSON.stringify({
           productId: item.product_id,

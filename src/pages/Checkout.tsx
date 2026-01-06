@@ -157,7 +157,7 @@ export default function Checkout() {
       // Call backend to create Stripe Checkout Session
       // Call same-origin API to avoid CORS issues
       const authHeader = session?.access_token
-        ? { Authorization: `Bearer ${session.access_token}`, "X-Access-Token": session.access_token }
+        ? { Authorization: `Bearer ${session.access_token}` }
         : {};
       const response = await fetch(`/api/create-checkout-session`, {
         method: "POST",

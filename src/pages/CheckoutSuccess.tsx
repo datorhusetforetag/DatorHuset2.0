@@ -30,7 +30,7 @@ export default function CheckoutSuccess() {
       if (sessionId && token) {
         try {
           const response = await fetch(`${apiBase}/api/orders/by-session/${sessionId}`, {
-            headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
+            headers: { Authorization: `Bearer ${token}` },
           });
           if (response.ok) {
             const data = await response.json();
