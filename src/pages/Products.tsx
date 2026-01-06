@@ -816,7 +816,7 @@ export default function Products() {
                     : inStock
                     ? "I lager"
                     : canPreorder
-                    ? "Förbeställning"
+                    ? "Slut i lager"
                     : "Slut i lager";
                   const badgeTone = !hasInventory || inventoryLoading
                     ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
@@ -844,9 +844,13 @@ export default function Products() {
                               e.currentTarget.src = FALLBACK_IMAGE;
                             }}
                           />
-                          <span className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}>
-                            {badgeText}
-                          </span>
+                          {!showPreorderLabel && (
+                            <span
+                              className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}
+                            >
+                              {badgeText}
+                            </span>
+                          )}
                           {showPreorderLabel ? (
                             <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
                               F&ouml;rbest&auml;ll

@@ -298,7 +298,7 @@ export default function ComputerDetails() {
     }
     if (inventoryStatus.canPreorder) {
       return {
-        label: "Förbeställning",
+        label: "Slut i lager",
         className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
         schema: "https://schema.org/PreOrder",
       };
@@ -461,7 +461,9 @@ export default function ComputerDetails() {
             <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{computer.price.toLocaleString("sv-SE")} kr</div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Exkl. moms</div>
             <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
-              <span className={`rounded-full px-3 py-1 ${availability.className}`}>{availability.label}</span>
+              {!showPreorderLabel && (
+                <span className={`rounded-full px-3 py-1 ${availability.className}`}>{availability.label}</span>
+              )}
               {etaLabel && (
                 <span className="rounded-full px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200">
                   {etaLabel}
