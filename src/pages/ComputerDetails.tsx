@@ -45,6 +45,18 @@ const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
 const gameList = Object.keys(GAME_FPS);
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
+const DEFAULT_PRODUCT_INFO = [
+  {
+    title: "Game Changer",
+    body:
+      "Kraftfulla komponenter ger hög prestanda för spel och kreativa arbetsflöden. Perfekt balans mellan CPU, GPU och snabb lagring.",
+  },
+  {
+    title: "Ultimat strålspårning och AI",
+    body:
+      "Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.",
+  },
+];
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
@@ -347,6 +359,7 @@ export default function ComputerDetails() {
   );
   const displayPrice = merged.price;
   const displayName = merged.name;
+  const osValue = merged.os || "Windows 10 Pro";
   const displaySpecs = {
     cpu: merged.cpu,
     gpu: merged.gpu,
@@ -354,20 +367,37 @@ export default function ComputerDetails() {
     storage: merged.storage,
     storagetype: merged.storagetype,
     tier: merged.tier,
+    motherboard: merged.motherboard,
+    psu: merged.psu,
+    caseName: merged.caseName,
+    cpuCooler: merged.cpuCooler,
+    os: osValue,
   };
   const usedParts = activeVariant?.usedParts ?? {};
   const specRows = useMemo(
-    () => [
-      { label: "Processor (CPU)", value: displaySpecs.cpu, used: usedParts.cpu },
-      { label: "Grafikkort (GPU)", value: displaySpecs.gpu, used: usedParts.gpu },
-      { label: "RAM-minne", value: displaySpecs.ram, used: true, tooltip: RAM_PRICE_TOOLTIP },
-      {
-        label: "Lagring",
-        value: `${displaySpecs.storage} ${displaySpecs.storagetype}`.trim(),
-        used: usedParts.storage,
-      },
-      { label: "Kategori", value: displaySpecs.tier },
-    ],
+    () => {
+      const rows = [
+        { label: "Processor (CPU)", value: displaySpecs.cpu, used: usedParts.cpu },
+        { label: "Grafikkort (GPU)", value: displaySpecs.gpu, used: usedParts.gpu },
+        { label: "RAM-minne", value: displaySpecs.ram, used: true, tooltip: RAM_PRICE_TOOLTIP },
+        {
+          label: "Lagring",
+          value: `${displaySpecs.storage} ${displaySpecs.storagetype}`.trim(),
+          used: usedParts.storage,
+        },
+        { label: "Moderkort", value: displaySpecs.motherboard, used: false },
+        { label: "Nätaggregat", value: displaySpecs.psu, used: false },
+        { label: "Chassi", value: displaySpecs.caseName, used: false },
+        { label: "CPU-kylare", value: displaySpecs.cpuCooler, used: false },
+        { label: "Operativsystem", value: displaySpecs.os, used: false },
+        { label: "Kategori", value: displaySpecs.tier, used: false },
+      ];
+
+      return rows.filter((row) => {
+        const value = typeof row.value === "string" ? row.value.trim() : row.value;
+        return Boolean(value);
+      });
+    },
     [
       displaySpecs.cpu,
       displaySpecs.gpu,
@@ -375,11 +405,33 @@ export default function ComputerDetails() {
       displaySpecs.storage,
       displaySpecs.storagetype,
       displaySpecs.tier,
+      displaySpecs.motherboard,
+      displaySpecs.psu,
+      displaySpecs.caseName,
+      displaySpecs.cpuCooler,
+      displaySpecs.os,
       usedParts.cpu,
       usedParts.gpu,
       usedParts.storage,
     ],
   );
+  const productInfoSections = useMemo(() => {
+    const rawDescription = merged.description?.trim() || "";
+    if (!rawDescription) return DEFAULT_PRODUCT_INFO;
+    const parts = rawDescription
+      .split(/\n\s*\n/)
+      .map((block) => block.trim())
+      .filter(Boolean);
+    if (parts.length === 1) {
+      return [{ title: "Produktinfo", body: parts[0] }];
+    }
+    const [first, second, ...rest] = parts;
+    const secondBody = rest.length ? `${second}\n\n${rest.join("\n\n")}` : second;
+    return [
+      { title: DEFAULT_PRODUCT_INFO[0].title, body: first },
+      { title: DEFAULT_PRODUCT_INFO[1].title, body: secondBody },
+    ];
+  }, [merged.description]);
   const availability = useMemo(() => {
     if (!inventoryStatus) {
       return {
@@ -683,14 +735,12 @@ export default function ComputerDetails() {
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-gray-700 dark:text-gray-200">
             <div className="space-y-4">
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Game Changer</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Kraftfulla komponenter ger hög prestanda för spel och kreativa arbetsflöden. Perfekt balans mellan CPU, GPU och snabb lagring.
-              </p>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white">Ultimat strålspårning och AI</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.
-              </p>
+              {productInfoSections.map((section) => (
+                <div key={section.title} className="space-y-2">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">{section.title}</h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">{section.body}</p>
+                </div>
+              ))}
             </div>
             <div className="space-y-3 text-sm">
               {specRows.map((row, index) => {
@@ -1008,3 +1058,4 @@ export default function ComputerDetails() {
     </div>
   );
 }
+

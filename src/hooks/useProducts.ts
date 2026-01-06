@@ -6,7 +6,7 @@ export interface SupabaseProduct {
   legacy_id?: string | null;
   name: string;
   slug: string;
-  description: string;
+  description?: string | null;
   price_cents: number;
   cpu: string;
   gpu: string;
@@ -16,6 +16,11 @@ export interface SupabaseProduct {
   tier: string;
   rating: number;
   reviews_count: number;
+  motherboard?: string | null;
+  psu?: string | null;
+  case_name?: string | null;
+  cpu_cooler?: string | null;
+  os?: string | null;
 }
 
 let productCache: SupabaseProduct[] = [];

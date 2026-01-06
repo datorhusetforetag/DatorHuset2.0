@@ -7,13 +7,17 @@ type AdminProduct = {
   id: string;
   name: string;
   description?: string | null;
-  price_cents?: number | null;
   cpu?: string | null;
   gpu?: string | null;
   ram?: string | null;
   storage?: string | null;
   storage_type?: string | null;
   tier?: string | null;
+  motherboard?: string | null;
+  psu?: string | null;
+  case_name?: string | null;
+  cpu_cooler?: string | null;
+  os?: string | null;
   slug?: string | null;
   legacy_id?: string | null;
 };
@@ -27,9 +31,6 @@ const DEFAULT_FPS_SETTINGS: FpsSettings = {
   dlssMultiplier: 1.2,
   frameGenMultiplier: 1.15,
 };
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
 export default function AdminProducts() {
   const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
@@ -51,12 +52,12 @@ export default function AdminProducts() {
         headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
-        throw new Error("Kunde inte h\u00e4mta produkter.");
+        throw new Error("Kunde inte hämta produkter.");
       }
       const data = await response.json();
       setProducts(data || []);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte h\u00e4mta produkter.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta produkter.");
     } finally {
       setLoadingProducts(false);
     }
@@ -69,7 +70,7 @@ export default function AdminProducts() {
         headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
-        throw new Error("Kunde inte h\u00e4mta FPS-inst\u00e4llningar.");
+        throw new Error("Kunde inte hämta FPS-inställningar.");
       }
       const data = await response.json();
       if (data?.fps) {
@@ -79,7 +80,7 @@ export default function AdminProducts() {
         });
       }
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte h\u00e4mta FPS-inst\u00e4llningar.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
     }
   };
 
@@ -97,8 +98,7 @@ export default function AdminProducts() {
         product.id === productId
           ? {
               ...product,
-              [field]:
-                field === "price_cents" ? Number(value) : typeof value === "string" ? value : value,
+              [field]: typeof value === "string" ? value : value,
             }
           : product
       )
@@ -120,13 +120,17 @@ export default function AdminProducts() {
         body: JSON.stringify({
           name: product.name,
           description: product.description,
-          price_cents: product.price_cents ?? 0,
           cpu: product.cpu,
           gpu: product.gpu,
           ram: product.ram,
           storage: product.storage,
           storage_type: product.storage_type,
           tier: product.tier,
+          motherboard: product.motherboard,
+          psu: product.psu,
+          case_name: product.case_name,
+          cpu_cooler: product.cpu_cooler,
+          os: product.os,
         }),
       });
       if (!response.ok) {
@@ -156,10 +160,10 @@ export default function AdminProducts() {
       });
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data?.error || "Kunde inte spara FPS-inst\u00e4llningar.");
+        throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
       }
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inst\u00e4llningar.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
     } finally {
       setSavingFps(false);
     }
@@ -176,8 +180,8 @@ export default function AdminProducts() {
   if (!token) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center">
-        <h2 className="text-xl font-semibold">Logga in f\u00f6r att forts\u00e4tta</h2>
-        <p className="mt-2 text-sm text-slate-400">Du m\u00e5ste vara inloggad med ditt admin-konto.</p>
+        <h2 className="text-xl font-semibold">Logga in för att fortsätta</h2>
+        <p className="mt-2 text-sm text-slate-400">Du måste vara inloggad med ditt admin-konto.</p>
         <button
           type="button"
           onClick={signInWithGoogle}
@@ -195,7 +199,7 @@ export default function AdminProducts() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Adminpanel</p>
           <h2 className="text-2xl font-semibold">Produkt-UI</h2>
-          <p className="text-sm text-slate-400">Uppdatera titel, specs, pris och FPS-inst\u00e4llningar.</p>
+          <p className="text-sm text-slate-400">Uppdatera titel, specs och FPS-inställningar.</p>
         </div>
         <button
           type="button"
@@ -207,7 +211,7 @@ export default function AdminProducts() {
         </button>
       </div>
 
-      {loading && <p className="text-sm text-slate-400">Verifierar \u00e5tkomst...</p>}
+      {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingProducts && <p className="text-sm text-slate-400">Laddar produkter...</p>}
@@ -216,9 +220,9 @@ export default function AdminProducts() {
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Uppskattad FPS</p>
-            <h3 className="text-lg font-semibold text-white">Multiplier-inst\u00e4llningar</h3>
+            <h3 className="text-lg font-semibold text-white">Multiplikator-inställningar</h3>
             <p className="text-sm text-slate-400">
-              Justera hur mycket DLSS/FSR och Frame Generation p\u00e5verkar FPS-ber\u00e4kningen.
+              Justera hur mycket DLSS/FSR och Frame Generation påverkar FPS-beräkningen.
             </p>
           </div>
           <SlidersHorizontal className="h-5 w-5 text-[#11667b]" />
@@ -261,7 +265,7 @@ export default function AdminProducts() {
             disabled={savingFps}
           >
             <Save className="h-4 w-4" />
-            {savingFps ? "Sparar..." : "Spara FPS-inst\u00e4llningar"}
+            {savingFps ? "Sparar..." : "Spara FPS-inställningar"}
           </button>
         </div>
       </div>
@@ -271,21 +275,19 @@ export default function AdminProducts() {
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="S\u00f6k produkt"
+          placeholder="Sök produkt"
           className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
         />
       </div>
 
       <div className="space-y-4">
         {filteredProducts.map((product) => {
-          const priceCents = Number(product.price_cents ?? 0);
           return (
             <div key={product.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-lg font-semibold text-white">{product.name}</p>
                   <p className="text-xs text-slate-500">{product.id}</p>
-                  <p className="mt-2 text-sm text-slate-300">{formatCurrency(priceCents / 100)}</p>
                 </div>
                 <div className="text-right text-sm text-slate-300">
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Slug</p>
@@ -302,16 +304,6 @@ export default function AdminProducts() {
                     type="text"
                     value={product.name}
                     onChange={(event) => handleChange(product.id, "name", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Pris (SEK)
-                  <input
-                    type="number"
-                    min="0"
-                    value={priceCents / 100}
-                    onChange={(event) => handleChange(product.id, "price_cents", Number(event.target.value) * 100)}
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
@@ -369,12 +361,58 @@ export default function AdminProducts() {
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
+                <label className="text-xs text-slate-400">
+                  Moderkort
+                  <input
+                    type="text"
+                    value={product.motherboard ?? ""}
+                    onChange={(event) => handleChange(product.id, "motherboard", event.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="text-xs text-slate-400">
+                  Nätaggregat
+                  <input
+                    type="text"
+                    value={product.psu ?? ""}
+                    onChange={(event) => handleChange(product.id, "psu", event.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="text-xs text-slate-400">
+                  Chassi
+                  <input
+                    type="text"
+                    value={product.case_name ?? ""}
+                    onChange={(event) => handleChange(product.id, "case_name", event.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="text-xs text-slate-400">
+                  CPU-kylare
+                  <input
+                    type="text"
+                    value={product.cpu_cooler ?? ""}
+                    onChange={(event) => handleChange(product.id, "cpu_cooler", event.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="text-xs text-slate-400">
+                  Operativsystem
+                  <input
+                    type="text"
+                    value={product.os ?? ""}
+                    onChange={(event) => handleChange(product.id, "os", event.target.value)}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
                 <label className="text-xs text-slate-400 md:col-span-2 xl:col-span-4">
                   Beskrivning
                   <textarea
                     value={product.description ?? ""}
                     onChange={(event) => handleChange(product.id, "description", event.target.value)}
                     className="mt-1 min-h-[96px] w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                    placeholder="Skriv Produktinfo-texter här. Separera stycken med en tom rad."
                   />
                 </label>
               </div>
@@ -387,7 +425,7 @@ export default function AdminProducts() {
                   disabled={savingId === product.id}
                 >
                   <Save className="h-4 w-4" />
-                  {savingId === product.id ? "Sparar..." : "Spara \u00e4ndringar"}
+                  {savingId === product.id ? "Sparar..." : "Spara ändringar"}
                 </button>
               </div>
             </div>
@@ -395,7 +433,7 @@ export default function AdminProducts() {
         })}
 
         {!loadingProducts && filteredProducts.length === 0 && (
-          <p className="text-sm text-slate-400">Inga produkter matchar din s\u00f6kning.</p>
+          <p className="text-sm text-slate-400">Inga produkter matchar din sökning.</p>
         )}
       </div>
     </div>

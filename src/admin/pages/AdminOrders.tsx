@@ -15,12 +15,11 @@ type OrderItem = {
 
 type Order = {
   id: string;
+  order_number?: string | number | null;
   created_at?: string | null;
   status?: string | null;
   total_cents?: number | null;
   currency?: string | null;
-  stripe_session_id?: string | null;
-  stripe_payment_intent_id?: string | null;
   customer_name?: string | null;
   customer_email?: string | null;
   customer_phone?: string | null;
@@ -159,7 +158,9 @@ export default function AdminOrders() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Order</p>
-                  <h3 className="text-lg font-semibold text-white">#{order.id.slice(0, 8)}</h3>
+                  <h3 className="text-lg font-semibold text-white">
+                    #{order.order_number ?? order.id.slice(0, 8)}
+                  </h3>
                   <p className="text-sm text-slate-400">Beställd: {orderDate}</p>
                 </div>
                 <div className="text-right">
@@ -182,13 +183,6 @@ export default function AdminOrders() {
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-slate-300">
-                  <p>
-                    <span className="text-slate-400">Stripe session:</span> {order.stripe_session_id || "-"}
-                  </p>
-                  <p>
-                    <span className="text-slate-400">Payment intent:</span>{" "}
-                    {order.stripe_payment_intent_id || "-"}
-                  </p>
                   {order.receipt_url ? (
                     <a
                       href={order.receipt_url}

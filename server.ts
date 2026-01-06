@@ -131,6 +131,14 @@ const isAdminUser = (user: any) =>
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
+const formatOrderNumber = (order: any) => {
+  const raw = order?.order_number;
+  if (raw === null || raw === undefined || raw === "") {
+    return order?.id ? order.id.slice(0, 8) : "-";
+  }
+  return String(raw);
+};
+
 const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {
   if (!mailer) return;
   await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
@@ -167,7 +175,7 @@ const buildOrderEmailHtml = ({
     <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
       <h2>${headline}</h2>
       <p>${intro}</p>
-      <p><strong>Ordernummer:</strong> ${order.id.slice(0, 8)}</p>
+      <p><strong>Ordernummer:</strong> ${formatOrderNumber(order)}</p>
       <p><strong>Total:</strong> ${formatCurrency((order.total_cents || 0) / 100)}</p>
       <ul>${itemLines}</ul>
       ${statusNote ? `<p><strong>Status:</strong> ${statusNote}</p>` : ""}
@@ -546,6 +554,40 @@ export async function getOrder(req: any, res: any) {
 }
 
 /**
+ * Customer: get order number by Stripe session id
+ * GET /api/orders/by-session/:sessionId
+ */
+export async function getOrderBySession(req: any, res: any) {
+  try {
+    const sessionId = sanitizeText(req.params?.sessionId, 120);
+    if (!sessionId) {
+      return res.status(400).json({ error: "Missing session id" });
+    }
+
+    const { data, error } = await supabase
+      .from("orders")
+      .select("id, order_number, status")
+      .eq("stripe_session_id", sessionId)
+      .single();
+
+    if (error || !data) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.json({
+      order_number: data.order_number ?? null,
+      status: data.status ?? null,
+      fallback: data.id ? data.id.slice(0, 8) : null,
+    });
+  } catch (error) {
+    console.error("Order lookup error:", error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+}
+
+/**
  * Admin: Get all orders
  * GET /api/admin/orders
  */
@@ -760,8 +802,15 @@ export async function updateAdminInventory(req: any, res: any) {
     const productId = sanitizeText(req.body?.productId, 64);
     const quantity = Number(req.body?.quantity_in_stock ?? 0);
     const isPreorder = Boolean(req.body?.is_preorder);
-    const etaDays = req.body?.eta_days === null || req.body?.eta_days === undefined ? null : Number(req.body?.eta_days);
-    const etaNote = sanitizeText(req.body?.eta_note, 200);
+    const rawEtaDays = req.body?.eta_days;
+    const etaRange =
+      typeof rawEtaDays === "string" && /^\d+\s*-\s*\d+$/.test(rawEtaDays.trim())
+        ? rawEtaDays.trim().replace(/\s+/g, "")
+        : null;
+    const etaDaysNumber =
+      rawEtaDays === null || rawEtaDays === undefined ? null : Number(rawEtaDays);
+    const etaNoteInput = sanitizeText(req.body?.eta_note, 200);
+    const etaNote = etaNoteInput || (etaRange ? `ETA ${etaRange} dagar` : "");
     const priceCents = Number(req.body?.price_cents);
 
     if (!productId) {
@@ -772,7 +821,7 @@ export async function updateAdminInventory(req: any, res: any) {
       product_id: productId,
       quantity_in_stock: Number.isFinite(quantity) ? Math.max(0, quantity) : 0,
       is_preorder: isPreorder,
-      eta_days: Number.isFinite(etaDays) ? Math.max(0, etaDays) : null,
+      eta_days: etaRange ? null : Number.isFinite(etaDaysNumber) ? Math.max(0, etaDaysNumber) : null,
       eta_note: etaNote || null,
       updated_at: new Date(),
     };
@@ -823,7 +872,9 @@ export async function getAdminProducts(req: any, res: any) {
 
     const { data, error } = await supabase
       .from("products")
-      .select("id, name, slug, legacy_id, description, price_cents, cpu, gpu, ram, storage, storage_type, tier")
+      .select(
+        "id, name, slug, legacy_id, description, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os"
+      )
       .order("name", { ascending: true });
 
     if (error) {
@@ -863,7 +914,11 @@ export async function updateAdminProduct(req: any, res: any) {
     const storage = sanitizeText(req.body?.storage, 120);
     const storageType = sanitizeText(req.body?.storage_type, 40);
     const tier = sanitizeText(req.body?.tier, 40);
-    const priceCents = Number(req.body?.price_cents);
+    const motherboard = sanitizeText(req.body?.motherboard, 120);
+    const psu = sanitizeText(req.body?.psu, 120);
+    const caseName = sanitizeText(req.body?.case_name, 120);
+    const cpuCooler = sanitizeText(req.body?.cpu_cooler, 120);
+    const os = sanitizeText(req.body?.os, 80);
 
     if (!productId) {
       return res.status(400).json({ error: "Missing productId" });
@@ -881,11 +936,13 @@ export async function updateAdminProduct(req: any, res: any) {
       storage,
       storage_type: storageType || null,
       tier,
+      motherboard: motherboard || null,
+      psu: psu || null,
+      case_name: caseName || null,
+      cpu_cooler: cpuCooler || null,
+      os: os || null,
       updated_at: new Date(),
     };
-    if (Number.isFinite(priceCents)) {
-      payload.price_cents = Math.max(0, Math.round(priceCents));
-    }
 
     const { data, error } = await supabase.from("products").update(payload).eq("id", productId).select().single();
 
@@ -1040,12 +1097,11 @@ export async function exportOrdersCsv(req: any, res: any) {
       .select(
         `
         id,
+        order_number,
         created_at,
         status,
         total_cents,
         currency,
-        stripe_session_id,
-        stripe_payment_intent_id,
         customer_name,
         customer_email,
         customer_phone,
@@ -1073,12 +1129,10 @@ export async function exportOrdersCsv(req: any, res: any) {
 
     const rows = [
       [
-        "Order ID",
+        "Ordernummer",
         "Datum",
         "Status",
         "Total (SEK)",
-        "Stripe session",
-        "Payment intent",
         "Namn",
         "E-post",
         "Telefon",
@@ -1092,12 +1146,10 @@ export async function exportOrdersCsv(req: any, res: any) {
           .map((item: any) => `${item.product?.name || "Produkt"} x${item.quantity}`)
           .join("; ");
         return [
-          order.id,
+          order.order_number ?? order.id,
           order.created_at,
           order.status,
           ((order.total_cents || 0) / 100).toFixed(2),
-          order.stripe_session_id,
-          order.stripe_payment_intent_id,
           order.customer_name,
           order.customer_email,
           order.customer_phone,

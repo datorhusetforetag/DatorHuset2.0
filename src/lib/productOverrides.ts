@@ -9,6 +9,12 @@ export type ProductOverrideFields = {
   storage: string;
   storagetype: string;
   tier: string;
+  description?: string;
+  motherboard?: string;
+  psu?: string;
+  caseName?: string;
+  cpuCooler?: string;
+  os?: string;
 };
 
 export const buildProductLookup = (products: SupabaseProduct[]) => {
@@ -50,4 +56,10 @@ export const mergeProductFields = (
   storage: product?.storage || fallback.storage,
   storagetype: product?.storage_type || fallback.storagetype,
   tier: product?.tier || fallback.tier,
+  description: product?.description || fallback.description,
+  motherboard: product?.motherboard || fallback.motherboard,
+  psu: product?.psu || fallback.psu,
+  caseName: product?.case_name || fallback.caseName,
+  cpuCooler: product?.cpu_cooler || fallback.cpuCooler,
+  os: product?.os || fallback.os,
 });

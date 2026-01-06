@@ -10,6 +10,7 @@ type InventoryItem = {
   is_preorder?: boolean | null;
   eta_days?: number | null;
   eta_note?: string | null;
+  eta_input?: string;
   price_cents?: number | null;
   product?: {
     name?: string | null;
@@ -40,10 +41,20 @@ export default function AdminInventory() {
         throw new Error("Kunde inte hämta lagerstatus.");
       }
       const data = await response.json();
-      const normalized = (data || []).map((item: InventoryItem) => ({
-        ...item,
-        price_cents: item.product?.price_cents ?? item.price_cents ?? 0,
-      }));
+      const normalized = (data || []).map((item: InventoryItem) => {
+        const etaNote = item.eta_note ?? "";
+        const etaRangeMatch = etaNote.match(/ETA\s+(\d+\s*-\s*\d+)\s*dagar/i);
+        const etaInput = etaRangeMatch
+          ? etaRangeMatch[1]?.replace(/\s+/g, "") || ""
+          : item.eta_days !== null && item.eta_days !== undefined
+            ? String(item.eta_days)
+            : "";
+        return {
+          ...item,
+          price_cents: item.product?.price_cents ?? item.price_cents ?? 0,
+          eta_input: etaInput,
+        };
+      });
       setItems(normalized);
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta lagret.");
@@ -65,10 +76,7 @@ export default function AdminInventory() {
         item.product_id === productId
           ? {
               ...item,
-              [field]:
-                field === "quantity_in_stock" || field === "eta_days" || field === "price_cents"
-                  ? Number(value)
-                  : value,
+              [field]: field === "quantity_in_stock" || field === "price_cents" ? Number(value) : value,
             }
           : item
       )
@@ -79,6 +87,11 @@ export default function AdminInventory() {
     if (!token || !isAdmin) return;
     setSavingId(item.product_id);
     setLocalError("");
+    const etaInput = (item.eta_input ?? "").trim();
+    const isRange = /^\d+\s*-\s*\d+$/.test(etaInput);
+    const normalizedRange = isRange ? etaInput.replace(/\s+/g, "") : "";
+    const etaDays = etaInput && !isRange && /^\d+$/.test(etaInput) ? Number(etaInput) : null;
+    const etaNote = (item.eta_note ?? "").trim() || (isRange ? `ETA ${normalizedRange} dagar` : "");
     try {
       const response = await fetch(`${apiBase}/api/admin/inventory`, {
         method: "POST",
@@ -91,8 +104,8 @@ export default function AdminInventory() {
           productId: item.product_id,
           quantity_in_stock: item.quantity_in_stock ?? 0,
           is_preorder: Boolean(item.is_preorder),
-          eta_days: item.eta_days ?? null,
-          eta_note: item.eta_note ?? "",
+          eta_days: etaDays,
+          eta_note: etaNote,
           price_cents: item.price_cents ?? 0,
         }),
       });
@@ -220,11 +233,11 @@ export default function AdminInventory() {
                 <label className="text-xs text-slate-400">
                   ETA (dagar)
                   <input
-                    type="number"
-                    min="0"
-                    value={item.eta_days ?? ""}
-                    onChange={(event) => handleChange(item.product_id, "eta_days", event.target.value)}
+                    type="text"
+                    value={item.eta_input ?? ""}
+                    onChange={(event) => handleChange(item.product_id, "eta_input", event.target.value)}
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                    placeholder="Ex: 5-10"
                   />
                 </label>
                 <label className="text-xs text-slate-400">

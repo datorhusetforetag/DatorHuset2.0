@@ -1,14 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { CheckCircle2, RefreshCcw, Wrench } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
 import { getOrderStatusInfo, ORDER_STATUS_FLOW } from "@/lib/orderStatus";
-
-type BuildChecklistItem = {
-  id: string;
-  label: string;
-  done: boolean;
-};
 
 type OrderItem = {
   id: string;
@@ -21,23 +15,14 @@ type OrderItem = {
 
 type Order = {
   id: string;
+  order_number?: string | number | null;
   created_at?: string | null;
   status?: string | null;
   customer_name?: string | null;
   customer_email?: string | null;
   total_cents?: number | null;
-  build_checklist?: BuildChecklistItem[] | null;
   order_items?: OrderItem[];
 };
-
-const DEFAULT_CHECKLIST: BuildChecklistItem[] = [
-  { id: "parts", label: "Delar plockade", done: false },
-  { id: "assembly", label: "Montering klar", done: false },
-  { id: "bios", label: "BIOS & uppdateringar", done: false },
-  { id: "stress", label: "Stresstest", done: false },
-  { id: "qc", label: "QC & packning", done: false },
-  { id: "ready", label: "Klar för utlämning", done: false },
-];
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
@@ -59,12 +44,12 @@ export default function AdminBuild() {
         headers: { Authorization: `Bearer ${token}`, "X-Access-Token": token },
       });
       if (!response.ok) {
-        throw new Error("Kunde inte hämta beställningar.");
+        throw new Error("Kunde inte hÃ¤mta bestÃ¤llningar.");
       }
       const data = await response.json();
       setOrders(data || []);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta beställningar.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hÃ¤mta bestÃ¤llningar.");
     } finally {
       setLoadingOrders(false);
     }
@@ -103,53 +88,12 @@ export default function AdminBuild() {
     }
   };
 
-  const handleChecklistToggle = async (order: Order, itemId: string) => {
-    if (!token || !isAdmin) return;
-    const currentChecklist = (order.build_checklist?.length ? order.build_checklist : DEFAULT_CHECKLIST).map((item) =>
-      item.id === itemId ? { ...item, done: !item.done } : item
-    );
-    try {
-      setSavingOrder(order.id);
-      const response = await fetch(`${apiBase}/api/admin/orders/${order.id}/checklist`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-          "X-Access-Token": token,
-        },
-        body: JSON.stringify({ build_checklist: currentChecklist }),
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data?.error || "Kunde inte uppdatera checklistan.");
-      }
-      const updated = await response.json();
-      setOrders((prev) =>
-        prev.map((existing) =>
-          existing.id === order.id ? { ...existing, build_checklist: updated.build_checklist } : existing
-        )
-      );
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Checklist-uppdatering misslyckades.");
-    } finally {
-      setSavingOrder(null);
-    }
-  };
-
-  const ordersWithChecklist = useMemo(
-    () =>
-      orders.map((order) => ({
-        ...order,
-        build_checklist: order.build_checklist?.length ? order.build_checklist : DEFAULT_CHECKLIST,
-      })),
-    [orders]
-  );
-
-  if (!token) {
+  
+    if (!token) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center">
-        <h2 className="text-xl font-semibold">Logga in för att fortsätta</h2>
-        <p className="mt-2 text-sm text-slate-400">Du måste vara inloggad med ditt admin-konto.</p>
+        <h2 className="text-xl font-semibold">Logga in fÃ¶r att fortsÃ¤tta</h2>
+        <p className="mt-2 text-sm text-slate-400">Du mÃ¥ste vara inloggad med ditt admin-konto.</p>
         <button
           type="button"
           onClick={signInWithGoogle}
@@ -167,7 +111,7 @@ export default function AdminBuild() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Adminpanel</p>
           <h2 className="text-2xl font-semibold">Byggstatus</h2>
-          <p className="text-sm text-slate-400">Uppdatera status och checklista för varje order.</p>
+          <p className="text-sm text-slate-400">Uppdatera status och checklista fÃ¶r varje order.</p>
         </div>
         <button
           type="button"
@@ -179,13 +123,13 @@ export default function AdminBuild() {
         </button>
       </div>
 
-      {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
+      {loading && <p className="text-sm text-slate-400">Verifierar Ã¥tkomst...</p>}
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingOrders && <p className="text-sm text-slate-400">Laddar byggstatus...</p>}
 
       <div className="space-y-5">
-        {ordersWithChecklist.map((order) => {
+        {orders.map((order) => {
           const statusInfo = getOrderStatusInfo(order.status || undefined);
           const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
           return (
@@ -193,8 +137,10 @@ export default function AdminBuild() {
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Order</p>
-                  <h3 className="text-lg font-semibold text-white">#{order.id.slice(0, 8)}</h3>
-                  <p className="text-sm text-slate-400">{order.customer_name || "Okänt namn"}</p>
+                  <h3 className="text-lg font-semibold text-white">
+                    #{order.order_number ?? order.id.slice(0, 8)}
+                  </h3>
+                  <p className="text-sm text-slate-400">{order.customer_name || "OkÃ¤nt namn"}</p>
                   <p className="text-sm text-slate-400">{order.customer_email}</p>
                 </div>
                 <div className="text-right">
@@ -222,25 +168,6 @@ export default function AdminBuild() {
                 </select>
                 {savingOrder === order.id && <span className="text-xs text-slate-500">Sparar...</span>}
               </div>
-
-              <div className="mt-5">
-                <p className="text-sm font-semibold text-white mb-2">Byggchecklista</p>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {order.build_checklist?.map((item) => (
-                    <label
-                      key={item.id}
-                      className="flex items-center gap-2 rounded-lg border border-slate-800 px-3 py-2 text-sm text-slate-300"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={item.done}
-                        onChange={() => handleChecklistToggle(order, item.id)}
-                        className="h-4 w-4 text-yellow-400"
-                      />
-                      <span className={item.done ? "line-through text-slate-500" : ""}>{item.label}</span>
-                    </label>
-                  ))}
-                </div>
               </div>
 
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
@@ -253,10 +180,15 @@ export default function AdminBuild() {
           );
         })}
 
-        {!loadingOrders && ordersWithChecklist.length === 0 && (
+        {!loadingOrders && orders.length === 0 && (
           <p className="text-sm text-slate-400">Inga ordrar att visa.</p>
         )}
       </div>
     </div>
   );
 }
+
+
+
+
+

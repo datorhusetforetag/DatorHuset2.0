@@ -21,12 +21,11 @@ type BuildChecklistItem = {
 
 type Order = {
   id: string;
+  order_number?: string | number | null;
   created_at?: string | null;
   status?: string | null;
   total_cents?: number | null;
   currency?: string | null;
-  stripe_session_id?: string | null;
-  stripe_payment_intent_id?: string | null;
   customer_name?: string | null;
   customer_email?: string | null;
   customer_phone?: string | null;
@@ -332,7 +331,9 @@ export default function AdminDashboard() {
                     <div key={order.id} className="rounded-xl border border-gray-200 dark:border-gray-800 p-5">
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Order #{order.id.slice(0, 8)}</p>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                            Order #{order.order_number ?? order.id.slice(0, 8)}
+                          </p>
                           <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
                         </div>
                         <div className="text-right">
@@ -352,14 +353,6 @@ export default function AdminDashboard() {
                           </p>
                         </div>
                         <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                          <p>
-                            <span className="font-semibold text-gray-900 dark:text-gray-100">Stripe session:</span>{" "}
-                            {order.stripe_session_id || "—"}
-                          </p>
-                          <p>
-                            <span className="font-semibold text-gray-900 dark:text-gray-100">Payment intent:</span>{" "}
-                            {order.stripe_payment_intent_id || "—"}
-                          </p>
                           {order.receipt_url && (
                             <a
                               href={order.receipt_url}
