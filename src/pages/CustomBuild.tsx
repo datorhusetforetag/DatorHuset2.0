@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import type { PointerEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -9,6 +10,7 @@ import {
   MemoryStick,
   Monitor,
   Power,
+  ChevronRight,
 } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -1264,6 +1266,10 @@ export default function CustomBuild() {
   const [shareStatus, setShareStatus] = useState("");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
+  const [isSummaryVisible, setIsSummaryVisible] = useState(false);
+  const [componentPickerOpen, setComponentPickerOpen] = useState(false);
+  const [componentPickerHolding, setComponentPickerHolding] = useState(false);
+  const [componentPickerHover, setComponentPickerHover] = useState<CategoryKey | null>(null);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
     gpu: null,
@@ -1328,6 +1334,25 @@ export default function CustomBuild() {
     setActiveBrand("Alla");
     setSearchTerm("");
   }, [activeCategory]);
+
+  useEffect(() => {
+    const summary = document.getElementById("build-summary");
+    if (!summary || typeof IntersectionObserver === "undefined") {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsSummaryVisible(entry.isIntersecting && entry.intersectionRatio >= 0.5);
+      },
+      {
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+      }
+    );
+
+    observer.observe(summary);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const socket = selected.motherboard?.socket;
@@ -1423,6 +1448,77 @@ export default function CustomBuild() {
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
+  const activeCategoryIndex = CATEGORY_LIST.findIndex((category) => category.key === activeCategory);
+  const nextCategory = activeCategoryIndex >= 0 ? CATEGORY_LIST[activeCategoryIndex + 1] : null;
+  const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
+  const nextBubbleLabel = nextCategory?.label ?? "Sammanfattning";
+  const showNextBubble = Boolean(
+    selected[activeCategory] &&
+      (nextCategory || isLastCategory) &&
+      !isSummaryVisible &&
+      !componentPickerOpen
+  );
+
+  const handleNextBubbleClick = () => {
+    if (nextCategory) {
+      setActiveCategory(nextCategory.key);
+      return;
+    }
+
+    const summary = document.getElementById("build-summary");
+    summary?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const scrollToCategoryPicker = () => {
+    const target = document.getElementById("component-picker");
+    target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleCategorySelect = (key: CategoryKey) => {
+    setActiveCategory(key);
+    setMobileSidebarOpen(false);
+    scrollToCategoryPicker();
+  };
+
+  const handlePickerPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    setComponentPickerOpen(true);
+    setComponentPickerHolding(true);
+    setComponentPickerHover(activeCategory);
+  };
+
+  const handlePickerPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!componentPickerHolding) return;
+    const element = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
+    const key = element?.closest("[data-component-key]")?.getAttribute("data-component-key") as
+      | CategoryKey
+      | null;
+    if (key) {
+      setComponentPickerHover(key);
+    }
+  };
+
+  const handlePickerPointerUp = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!componentPickerHolding) return;
+    event.preventDefault();
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    setComponentPickerHolding(false);
+    const key = componentPickerHover;
+    setComponentPickerOpen(false);
+    setComponentPickerHover(null);
+    if (key) {
+      handleCategorySelect(key);
+    }
+  };
+
+  const handlePickerPointerCancel = (event: PointerEvent<HTMLButtonElement>) => {
+    if (!componentPickerHolding) return;
+    event.currentTarget.releasePointerCapture(event.pointerId);
+    setComponentPickerHolding(false);
+    setComponentPickerOpen(false);
+    setComponentPickerHover(null);
+  };
 
   const handleOpenDetails = (item: ComponentItem) => {
     setDetailItem({ item, category: activeCategory });
@@ -1759,7 +1855,10 @@ export default function CustomBuild() {
               </aside>
 
               <div className="space-y-6">
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                <div
+                  id="component-picker"
+                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80"
+                >
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Vald kategori</p>
@@ -1852,51 +1951,50 @@ export default function CustomBuild() {
                             handleOpenDetails(item);
                           }
                         }}
-                        className={`rounded-2xl border bg-white p-4 shadow-sm transition-colors dark:bg-gray-900/80 ${
+                        className={`rounded-2xl border bg-white p-3 shadow-sm transition-colors dark:bg-gray-900/80 sm:p-4 ${
                           isSelected ? "border-yellow-400 ring-1 ring-yellow-300/30" : "border-gray-200 dark:border-gray-800"
                         }`}
                       >
-                        <div className="grid gap-4 md:grid-cols-[160px_1fr_auto] items-start">
-                          <div className="relative w-full md:w-40 aspect-square">
+                        <div className="grid items-center gap-3 grid-cols-[72px_minmax(0,1fr)_auto] sm:grid-cols-[96px_minmax(0,1fr)_auto] md:grid-cols-[160px_minmax(0,1fr)_auto] sm:gap-4">
+                          <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-40 md:w-40">
                             <img
                               src={imageSrc}
                               alt={imageAlt}
-                              className="w-full h-full object-cover rounded-xl border border-gray-200 dark:border-gray-800"
+                              className="w-full h-full object-contain rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-800/70"
                               loading="lazy"
                               decoding="async"
                               onError={(event) => {
                                 event.currentTarget.src = FALLBACK_COMPONENT_IMAGE;
                               }}
                             />
-                            <span className="absolute top-2 left-2 rounded-full bg-white/90 text-gray-700 border border-gray-200 p-2 shadow-sm dark:bg-gray-900/90 dark:text-gray-200 dark:border-gray-700">
-                              <ActiveIcon className="w-5 h-5" />
-                            </span>
                           </div>
-                          <div className="flex-1">
+                          <div className="min-w-0">
                             <div className="flex items-start justify-between gap-4">
                               <div>
-                                <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">{item.brand}</p>
-                                <h4 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-2">{item.name}</h4>
+                                <p className="text-[10px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 sm:text-xs">{item.brand}</p>
+                                <h4 className="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:mt-2 sm:text-lg">{item.name}</h4>
                               </div>
                               {item.highlight ? (
-                                <span className="text-xs font-semibold bg-yellow-400 text-gray-900 px-3 py-1 rounded-full">
+                                <span className="text-[10px] font-semibold bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full sm:text-xs sm:px-3 sm:py-1">
                                   {item.highlight}
                                 </span>
                               ) : null}
                             </div>
-                            <div className="flex flex-wrap gap-2 mt-3">
-                              {item.specs.map((spec) => (
+                            <div className="mt-2 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
+                              {item.specs.map((spec, index) => (
                                 <span
                                   key={spec}
-                                  className="text-xs border border-gray-200 text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full dark:border-gray-700 dark:text-gray-200 dark:bg-gray-800"
+                                  className={`text-[10px] border border-gray-200 text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full dark:border-gray-700 dark:text-gray-200 dark:bg-gray-800 sm:px-2.5 sm:py-1 sm:text-xs ${
+                                    index > 1 ? "hidden sm:inline-flex" : ""
+                                  }`}
                                 >
                                   {spec}
                                 </span>
                               ))}
                             </div>
                           </div>
-                          <div className="w-full md:w-40 flex flex-row md:flex-col items-start md:items-end justify-between gap-3">
-                            <p className="text-xl font-bold text-gray-900 dark:text-gray-100">{formatPrice(item.price)} kr</p>
+                          <div className="flex flex-col items-end gap-2">
+                            <p className="text-base font-bold text-gray-900 dark:text-gray-100 sm:text-xl">{formatPrice(item.price)} kr</p>
                             <button
                               type="button"
                               onClick={(event) => {
@@ -1906,7 +2004,7 @@ export default function CustomBuild() {
                                   [activeCategory]: isSelected ? null : item,
                                 }));
                               }}
-                              className={`w-full md:w-auto rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
+                              className={`min-w-[84px] rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:min-w-[96px] sm:px-5 sm:py-2 sm:text-sm ${
                                 isSelected
                                   ? "bg-yellow-400 text-gray-900"
                                   : "border border-yellow-400 text-yellow-700 dark:text-yellow-300 hover:bg-[#11667b] hover:text-white hover:border-[#11667b]"
@@ -1923,15 +2021,25 @@ export default function CustomBuild() {
               </div>
 
               <aside className="space-y-4">
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                <div
+                  id="build-summary"
+                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
+                >
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Din build</p>
                   <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
                   <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
                     {CATEGORY_LIST.map((category) => (
-                      <div key={category.key} className="flex items-start justify-between gap-3">
+                      <button
+                        key={category.key}
+                        type="button"
+                        onClick={() => {
+                          handleCategorySelect(category.key);
+                        }}
+                        className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-gray-900 dark:hover:text-white"
+                      >
                         <span className="text-gray-500 dark:text-gray-400">{category.label}</span>
                         <span className="text-right">{selected[category.key]?.name ?? "Ej vald"}</span>
-                      </div>
+                      </button>
                     ))}
                   </div>
                   <div className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4 flex items-center justify-between">
@@ -1970,6 +2078,101 @@ export default function CustomBuild() {
           </div>
         </section>
       </main>
+      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30">
+        <div className="mx-auto max-w-md px-4 pb-4">
+          <div className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg shadow-black/20 backdrop-blur dark:border-gray-800 dark:bg-[#0f1824]/95">
+            <div className="flex items-center justify-between px-4 pt-3 text-[10px] text-gray-500 dark:text-gray-400">
+              <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                {formatPrice(totalPrice)} kr
+              </span>
+              <span>
+                {selectedCount}/{CATEGORY_LIST.length} valda
+              </span>
+            </div>
+            <div className="relative flex items-center justify-center px-4 pb-4 pt-3">
+              <button
+                type="button"
+                onPointerDown={handlePickerPointerDown}
+                onPointerMove={handlePickerPointerMove}
+                onPointerUp={handlePickerPointerUp}
+                onPointerCancel={handlePickerPointerCancel}
+                className={`flex items-center gap-3 rounded-full border px-4 py-2 text-xs font-semibold transition-transform touch-none select-none ${
+                  componentPickerOpen || componentPickerHolding
+                    ? "border-yellow-400 bg-yellow-400 text-gray-900 scale-105"
+                    : "border-gray-200 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
+                }`}
+                aria-label="Komponenter"
+              >
+                <span>Komponenter</span>
+                <div className="flex items-center gap-1">
+                  {CATEGORY_LIST.map((category) => (
+                    <span
+                      key={category.key}
+                      className={`h-1.5 w-1.5 rounded-full ${
+                        category.key === activeCategory ? "bg-gray-900" : "bg-gray-400/60"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </button>
+              {componentPickerOpen ? (
+                <div
+                  className="absolute bottom-14 left-1/2 w-[min(360px,92vw)] -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl touch-none dark:border-gray-800 dark:bg-gray-900"
+                  onPointerMove={handlePickerPointerMove}
+                  onPointerUp={handlePickerPointerUp}
+                  onPointerCancel={handlePickerPointerCancel}
+                >
+                  <div className="grid grid-cols-4 gap-2">
+                    {CATEGORY_LIST.map((category) => {
+                      const Icon = category.icon;
+                      const isHighlighted =
+                        category.key === (componentPickerHover ?? activeCategory);
+
+                      return (
+                        <button
+                          key={category.key}
+                          type="button"
+                          data-component-key={category.key}
+                          onClick={() => {
+                            setComponentPickerOpen(false);
+                            setComponentPickerHolding(false);
+                            setComponentPickerHover(null);
+                            handleCategorySelect(category.key);
+                          }}
+                          className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[10px] font-semibold transition-colors ${
+                            isHighlighted
+                              ? "bg-yellow-400 text-gray-900"
+                              : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                          }`}
+                        >
+                          <Icon className="h-4 w-4" />
+                          <span className="whitespace-nowrap">{category.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-center text-[10px] text-gray-500 dark:text-gray-400">
+                    Hold & swipe to choose
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </div>
+      {showNextBubble ? (
+        <button
+          type="button"
+          onClick={handleNextBubbleClick}
+          className="sm:hidden fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-yellow-400 text-gray-900 px-4 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
+          aria-label={`N\u00e4sta: ${nextBubbleLabel}`}
+        >
+          <span>{nextBubbleLabel}</span>
+          <span className="text-gray-700/70">{"\u2022"}</span>
+          <span>{"N\u00e4sta"}</span>
+          <ChevronRight className="w-4 h-4" />
+        </button>
+      ) : null}
       <Footer />
     </div>
   );
