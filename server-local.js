@@ -185,18 +185,18 @@ const DEFAULT_BUILD_CHECKLIST = [
 ];
 
 const STATUS_LABELS = {
-  received: "BestÃ¤llning mottagen",
-  ordering: "BestÃ¤ller komponenterna",
+  received: "Beställning mottagen",
+  ordering: "Beställer komponenterna",
   building: "Bygger",
   postbuild: "Post-bygg justeringar",
-  ready: "Redo att hÃ¤mta/frakta!",
-  pending: "BestÃ¤llning mottagen",
+  ready: "Redo att hämta/frakta!",
+  pending: "Beställning mottagen",
   in_progress: "Bygger",
-  finished: "Redo att hÃ¤mta/frakta!",
-  completed: "Redo att hÃ¤mta/frakta!",
+  finished: "Redo att hämta/frakta!",
+  completed: "Redo att hämta/frakta!",
 };
 const READY_MESSAGE =
-  "DatorHuset kommer ringa dig angÃ¥ende nÃ¤r och vart du kan hÃ¤mta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
+  "DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
 const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
 
 const SMTP_HOST = process.env.SMTP_HOST;

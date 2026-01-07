@@ -1,4 +1,4 @@
-import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
+﻿import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperType } from "swiper";
@@ -54,12 +54,12 @@ const DEFAULT_PRODUCT_INFO = [
   {
     title: "Game Changer",
     body:
-      "Kraftfulla komponenter ger h�g prestanda f�r spel och kreativa arbetsfl�den. Perfekt balans mellan CPU, GPU och snabb lagring.",
+      "Kraftfulla komponenter ger hög prestanda för spel och kreativa arbetsflöden. Perfekt balans mellan CPU, GPU och snabb lagring.",
   },
   {
-    title: "Ultimat str�lsp�rning och AI",
+    title: "Ultimat strålspårning och AI",
     body:
-      "Modern grafik med ray tracing och AI-f�rb�ttringar levererar skarpa bilder och mjuk upplevelse �ven i kr�vande titlar.",
+      "Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.",
   },
 ];
 const toUsedName = (name: string) => {
@@ -299,14 +299,14 @@ export default function ComputerDetails() {
     try {
       setAddingToCart(true);
       if (!activeProductId) {
-        alert("Laddar produktinformation, f�rs�k igen om en stund.");
+        alert("Laddar produktinformation, försök igen om en stund.");
         return;
       }
       await addToCart(activeProductId, quantity);
       navigate("/cart");
     } catch (error) {
       console.error("Failed to add to cart", error);
-      alert("Kunde inte l�gga till i kundvagn");
+      alert("Kunde inte lägga till i kundvagn");
     } finally {
       setAddingToCart(false);
     }
@@ -380,7 +380,7 @@ export default function ComputerDetails() {
           used: usedParts.storage,
         },
         { label: "Moderkort", value: displaySpecs.motherboard, used: false },
-        { label: "N�taggregat", value: displaySpecs.psu, used: false },
+        { label: "Nätaggregat", value: displaySpecs.psu, used: false },
         { label: "Chassi", value: displaySpecs.caseName, used: false },
         { label: "CPU-kylare", value: displaySpecs.cpuCooler, used: false },
         { label: "Operativsystem", value: displaySpecs.os, used: false },
@@ -571,7 +571,7 @@ export default function ComputerDetails() {
           <span>/</span>
           <span>Datorer & Surfplattor</span>
           <span>/</span>
-          <span>Gamingdatorer station�ra</span>
+          <span>Gamingdatorer stationära</span>
           <span>/</span>
           <span className="text-gray-900 dark:text-white font-semibold">{displayName}</span>
         </div>
@@ -623,14 +623,14 @@ export default function ComputerDetails() {
                   <button
                     onClick={() => swiperRef.current?.slidePrev()}
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
-                    aria-label="F�reg�ende bild"
+                    aria-label="Föregående bild"
                   >
                     <ChevronLeft className="w-5 h-5 mx-auto" />
                   </button>
                   <button
                     onClick={() => swiperRef.current?.slideNext()}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
-                    aria-label="N�sta bild"
+                    aria-label="Nästa bild"
                   >
                     <ChevronRight className="w-5 h-5 mx-auto" />
                   </button>
@@ -733,7 +733,7 @@ export default function ComputerDetails() {
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label="�ka antal"
+                  aria-label="?ka antal"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -744,13 +744,13 @@ export default function ComputerDetails() {
                 className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {addingToCart ? "L�gger till..." : "L�gg i kundvagn"}
+                {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
               </button>
             </div>
 
             <div className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
-              <p>Ber�knad leverans: 3-5 arbetsdagar</p>
-              <p>Fri frakt vid k�p �ver 5000 kr</p>
+              <p>Beräknad leverans: 3-5 arbetsdagar</p>
+              <p>Fri frakt vid köp över 5000 kr</p>
             </div>
           </div>
         </div>
@@ -801,7 +801,7 @@ export default function ComputerDetails() {
               })}
               {computer.bundleIncludes?.length ? (
                 <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] p-3">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ing�r i paketet</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
                   <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
                     {computer.bundleIncludes.map((item) => (
                       <li key={item}>{item}</li>
@@ -818,20 +818,20 @@ export default function ComputerDetails() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">2 �rs garanti</p>
-              <p>Alla datorer levereras med garanti p� komponenter och montering.</p>
+              <p className="font-semibold text-gray-900 dark:text-white">2 ?rs garanti</p>
+              <p>Alla datorer levereras med garanti p? komponenter och montering.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">14 dagars �ppet k�p</p>
+              <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp</p>
               <p>Testa i lugn och ro. Returnera om den inte passar dina behov.</p>
             </div>
             <div className="space-y-2">
               <p className="font-semibold text-gray-900 dark:text-white">Trygg support</p>
-              <p>Vi hj�lper dig med fels�kning och uppgraderingar n�r du vill.</p>
+              <p>Vi hjälper dig med felsökning och uppgraderingar när du vill.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">Snabb �terkoppling</p>
-              <p>Kontakta oss s� �terkommer vi med n�sta steg och tidsplan.</p>
+              <p className="font-semibold text-gray-900 dark:text-white">Snabb ?terkoppling</p>
+              <p>Kontakta oss så återkommer vi med nästa steg och tidsplan.</p>
             </div>
           </div>
           <div className="mt-4">
@@ -850,7 +850,7 @@ export default function ComputerDetails() {
             <div className="space-y-4">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Uppskattad FPS</h2>
               <div className="space-y-3">
-                <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="game">V�lj spel</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="game">Välj spel</label>
                 <select
                   id="game"
                   value={selectedGame}
@@ -864,7 +864,7 @@ export default function ComputerDetails() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="res">Uppl�sning</label>
+                  <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="res">Upplösning</label>
                   <select
                     id="res"
                     value={selectedResolution}
@@ -1070,5 +1070,7 @@ export default function ComputerDetails() {
     </div>
   );
 }
+
+
 
 

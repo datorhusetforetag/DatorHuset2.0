@@ -100,7 +100,7 @@ export default function Account() {
         setAddresses(data as Address[]);
       } catch (error) {
         if (!isMounted) return;
-        setAddressError("Kunde inte hÃ¤mta sparade adresser.");
+        setAddressError("Kunde inte hämta sparade adresser.");
       } finally {
         if (isMounted) setLoadingAddresses(false);
       }
@@ -270,7 +270,7 @@ export default function Account() {
         <Navbar />
         <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="max-w-xl mx-auto text-center space-y-4">
-            <h1 className="text-3xl font-bold">Logga in fÃ¶r att se ditt konto</h1>
+            <h1 className="text-3xl font-bold">Logga in för att se ditt konto</h1>
             <p className="text-gray-600 dark:text-gray-300">
               For att hantera dina uppgifter och bestallningar behover du vara inloggad.
             </p>

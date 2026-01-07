@@ -44,12 +44,12 @@ export default function AdminBuild() {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!response.ok) {
-        throw new Error("Kunde inte hÃ¤mta bestÃ¤llningar.");
+        throw new Error("Kunde inte hämta beställningar.");
       }
       const data = await response.json();
       setOrders(data || []);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hÃ¤mta bestÃ¤llningar.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta beställningar.");
     } finally {
       setLoadingOrders(false);
     }
@@ -91,8 +91,8 @@ export default function AdminBuild() {
     if (!token) {
     return (
       <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-8 text-center">
-        <h2 className="text-xl font-semibold">Logga in fÃ¶r att fortsÃ¤tta</h2>
-        <p className="mt-2 text-sm text-slate-400">Du mÃ¥ste vara inloggad med ditt admin-konto.</p>
+        <h2 className="text-xl font-semibold">Logga in för att fortsätta</h2>
+        <p className="mt-2 text-sm text-slate-400">Du måste vara inloggad med ditt admin-konto.</p>
         <button
           type="button"
           onClick={signInWithGoogle}
@@ -110,7 +110,7 @@ export default function AdminBuild() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Adminpanel</p>
           <h2 className="text-2xl font-semibold">Byggstatus</h2>
-          <p className="text-sm text-slate-400">Uppdatera status och checklista fÃ¶r varje order.</p>
+          <p className="text-sm text-slate-400">Uppdatera status och checklista för varje order.</p>
         </div>
         <button
           type="button"
@@ -122,7 +122,7 @@ export default function AdminBuild() {
         </button>
       </div>
 
-      {loading && <p className="text-sm text-slate-400">Verifierar Ã¥tkomst...</p>}
+      {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingOrders && <p className="text-sm text-slate-400">Laddar byggstatus...</p>}
@@ -139,7 +139,7 @@ export default function AdminBuild() {
                   <h3 className="text-lg font-semibold text-white">
                     #{order.order_number ?? order.id.slice(0, 8)}
                   </h3>
-                  <p className="text-sm text-slate-400">{order.customer_name || "OkÃ¤nt namn"}</p>
+                  <p className="text-sm text-slate-400">{order.customer_name || "Okänt namn"}</p>
                   <p className="text-sm text-slate-400">{order.customer_email}</p>
                 </div>
                 <div className="text-right">
