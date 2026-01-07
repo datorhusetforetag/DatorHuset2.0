@@ -1058,22 +1058,6 @@ export default function ComputerDetails() {
           </div>
         </div>
       </div>
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-[#0f1824]/95 backdrop-blur">
-        <div className="container mx-auto px-4 py-3 flex items-center gap-3">
-          <div className="flex-1">
-            <p className="text-xs text-gray-500 dark:text-gray-400">Pris</p>
-            <p className="text-lg font-bold text-gray-900 dark:text-white">{displayPrice.toLocaleString("sv-SE")} kr</p>
-          </div>
-          <button
-            onClick={handleAddToCart}
-            disabled={addingToCart || !activeProductId}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            {addingToCart ? "L\u00e4gger till..." : "L\u00e4gg i kundvagn"}
-          </button>
-        </div>
-      </div>
       <Footer />
     </div>
   );
