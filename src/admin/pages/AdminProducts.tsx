@@ -111,7 +111,7 @@ export default function AdminProducts() {
     } finally {
       setSavingId(null);
     }
-  };\r\n
+  };
   const filteredProducts = useMemo(() => {
     const term = query.trim().toLowerCase();
     if (!term) return products;
