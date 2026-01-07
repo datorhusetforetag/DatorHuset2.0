@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import type { PointerEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -8,6 +7,7 @@ import {
   Fan,
   HardDrive,
   MemoryStick,
+  Menu,
   Monitor,
   Power,
   ChevronRight,
@@ -1267,9 +1267,6 @@ export default function CustomBuild() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
-  const [componentPickerOpen, setComponentPickerOpen] = useState(false);
-  const [componentPickerHolding, setComponentPickerHolding] = useState(false);
-  const [componentPickerHover, setComponentPickerHover] = useState<CategoryKey | null>(null);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
     gpu: null,
@@ -1453,10 +1450,7 @@ export default function CustomBuild() {
   const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
   const nextBubbleLabel = nextCategory?.label ?? "Sammanfattning";
   const showNextBubble = Boolean(
-    selected[activeCategory] &&
-      (nextCategory || isLastCategory) &&
-      !isSummaryVisible &&
-      !componentPickerOpen
+    selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
   );
 
   const handleNextBubbleClick = () => {
@@ -1478,46 +1472,6 @@ export default function CustomBuild() {
     setActiveCategory(key);
     setMobileSidebarOpen(false);
     scrollToCategoryPicker();
-  };
-
-  const handlePickerPointerDown = (event: PointerEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    setComponentPickerOpen(true);
-    setComponentPickerHolding(true);
-    setComponentPickerHover(activeCategory);
-  };
-
-  const handlePickerPointerMove = (event: PointerEvent<HTMLButtonElement>) => {
-    if (!componentPickerHolding) return;
-    const element = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null;
-    const key = element?.closest("[data-component-key]")?.getAttribute("data-component-key") as
-      | CategoryKey
-      | null;
-    if (key) {
-      setComponentPickerHover(key);
-    }
-  };
-
-  const handlePickerPointerUp = (event: PointerEvent<HTMLButtonElement>) => {
-    if (!componentPickerHolding) return;
-    event.preventDefault();
-    event.currentTarget.releasePointerCapture(event.pointerId);
-    setComponentPickerHolding(false);
-    const key = componentPickerHover;
-    setComponentPickerOpen(false);
-    setComponentPickerHover(null);
-    if (key) {
-      handleCategorySelect(key);
-    }
-  };
-
-  const handlePickerPointerCancel = (event: PointerEvent<HTMLButtonElement>) => {
-    if (!componentPickerHolding) return;
-    event.currentTarget.releasePointerCapture(event.pointerId);
-    setComponentPickerHolding(false);
-    setComponentPickerOpen(false);
-    setComponentPickerHover(null);
   };
 
   const handleOpenDetails = (item: ComponentItem) => {
@@ -1967,6 +1921,9 @@ export default function CustomBuild() {
                                 event.currentTarget.src = FALLBACK_COMPONENT_IMAGE;
                               }}
                             />
+                            <span className="absolute top-1 left-1 rounded-full bg-white/90 text-gray-700 border border-gray-200 p-1.5 shadow-sm dark:bg-gray-900/90 dark:text-gray-200 dark:border-gray-700 sm:top-2 sm:left-2 sm:p-2">
+                              <ActiveIcon className="h-4 w-4 sm:h-5 sm:w-5" />
+                            </span>
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-start justify-between gap-4">
@@ -2078,88 +2035,22 @@ export default function CustomBuild() {
           </div>
         </section>
       </main>
-      <div className="sm:hidden fixed bottom-0 left-0 right-0 z-30">
-        <div className="mx-auto max-w-md px-4 pb-4">
-          <div className="rounded-2xl border border-gray-200 bg-white/95 shadow-lg shadow-black/20 backdrop-blur dark:border-gray-800 dark:bg-[#0f1824]/95">
-            <div className="flex items-center justify-between px-4 pt-3 text-[10px] text-gray-500 dark:text-gray-400">
-              <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                {formatPrice(totalPrice)} kr
-              </span>
-              <span>
-                {selectedCount}/{CATEGORY_LIST.length} valda
-              </span>
-            </div>
-            <div className="relative flex items-center justify-center px-4 pb-4 pt-3">
-              <button
-                type="button"
-                onPointerDown={handlePickerPointerDown}
-                onPointerMove={handlePickerPointerMove}
-                onPointerUp={handlePickerPointerUp}
-                onPointerCancel={handlePickerPointerCancel}
-                className={`flex items-center gap-3 rounded-full border px-4 py-2 text-xs font-semibold transition-transform touch-none select-none ${
-                  componentPickerOpen || componentPickerHolding
-                    ? "border-yellow-400 bg-yellow-400 text-gray-900 scale-105"
-                    : "border-gray-200 bg-white text-gray-700 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200"
-                }`}
-                aria-label="Komponenter"
-              >
-                <span>Komponenter</span>
-                <div className="flex items-center gap-1">
-                  {CATEGORY_LIST.map((category) => (
-                    <span
-                      key={category.key}
-                      className={`h-1.5 w-1.5 rounded-full ${
-                        category.key === activeCategory ? "bg-gray-900" : "bg-gray-400/60"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </button>
-              {componentPickerOpen ? (
-                <div
-                  className="absolute bottom-14 left-1/2 w-[min(360px,92vw)] -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-2 shadow-xl touch-none dark:border-gray-800 dark:bg-gray-900"
-                  onPointerMove={handlePickerPointerMove}
-                  onPointerUp={handlePickerPointerUp}
-                  onPointerCancel={handlePickerPointerCancel}
-                >
-                  <div className="grid grid-cols-4 gap-2">
-                    {CATEGORY_LIST.map((category) => {
-                      const Icon = category.icon;
-                      const isHighlighted =
-                        category.key === (componentPickerHover ?? activeCategory);
-
-                      return (
-                        <button
-                          key={category.key}
-                          type="button"
-                          data-component-key={category.key}
-                          onClick={() => {
-                            setComponentPickerOpen(false);
-                            setComponentPickerHolding(false);
-                            setComponentPickerHover(null);
-                            handleCategorySelect(category.key);
-                          }}
-                          className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[10px] font-semibold transition-colors ${
-                            isHighlighted
-                              ? "bg-yellow-400 text-gray-900"
-                              : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                          }`}
-                        >
-                          <Icon className="h-4 w-4" />
-                          <span className="whitespace-nowrap">{category.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="mt-2 text-center text-[10px] text-gray-500 dark:text-gray-400">
-                    Hold & swipe to choose
-                  </p>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
-      </div>
+      <button
+        type="button"
+        onClick={() => {
+          setMobileSidebarOpen((prev) => {
+            const next = !prev;
+            if (next) {
+              scrollToCategoryPicker();
+            }
+            return next;
+          });
+        }}
+        className="sm:hidden fixed top-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-gray-900 shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
+        aria-label="Komponenter"
+      >
+        <Menu className="h-5 w-5" />
+      </button>
       {showNextBubble ? (
         <button
           type="button"

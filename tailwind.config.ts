@@ -12,10 +12,21 @@ export default {
         "2xl": "1400px",
       },
     },
+    borderRadius: {
+      none: "0px",
+      sm: "var(--radius-sm)",
+      DEFAULT: "var(--radius-sm)",
+      md: "var(--radius-sm)",
+      lg: "var(--radius-lg)",
+      xl: "var(--radius-lg)",
+      "2xl": "var(--radius-lg)",
+      "3xl": "var(--radius-lg)",
+      full: "var(--radius-lg)",
+    },
     extend: {
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        display: ['Orbitron', 'sans-serif'],
+        sans: ["Inter", "sans-serif"],
+        display: ["Orbitron", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -55,11 +66,6 @@ export default {
         silver: "hsl(var(--silver))",
         platinum: "hsl(var(--platinum))",
         sale: "hsl(var(--sale))",
-      },
-      borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
       },
       keyframes: {
         "accordion-down": {

@@ -32,7 +32,8 @@
     --input: 214 31% 91%;
     --ring: 45 100% 50%;
 
-    --radius: 0.75rem;
+    --radius-sm: 0.5rem;
+    --radius-lg: 1rem;
 
     /* Custom tokens */
     --gold: 45 100% 50%;

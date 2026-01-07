@@ -1,5 +1,5 @@
 ﻿import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
@@ -222,6 +222,7 @@ export default function ComputerDetails() {
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
   const [inventoryStatus, setInventoryStatus] = useState<{
     inStock: boolean;
     canPreorder: boolean;
@@ -548,6 +549,33 @@ export default function ComputerDetails() {
     : [...sameTier, ...comparisonCandidates.filter((c) => c.tier !== computer.tier)]
   ).slice(0, 2);
   const comparisonItems = [computer, ...comparisonPool];
+  const hasMultipleImages = images.length > 1;
+  const handleImageSwipeStart = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (!hasMultipleImages || event.touches.length !== 1) return;
+    swipeStartRef.current = {
+      x: event.touches[0].clientX,
+      y: event.touches[0].clientY,
+    };
+  };
+
+  const handleImageSwipeEnd = (event: React.TouchEvent<HTMLDivElement>) => {
+    if (!hasMultipleImages || !swipeStartRef.current) return;
+    const { x, y } = swipeStartRef.current;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - x;
+    const deltaY = touch.clientY - y;
+    swipeStartRef.current = null;
+
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
+      return;
+    }
+
+    if (deltaX < 0) {
+      setSelectedImage((prev) => (prev + 1) % images.length);
+    } else {
+      setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -571,7 +599,11 @@ export default function ComputerDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
           {/* Left: image area */}
           <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
-            <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+            <div
+              className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden touch-pan-y"
+              onTouchStart={handleImageSwipeStart}
+              onTouchEnd={handleImageSwipeEnd}
+            >
               <img
                 src={images[selectedImage] || computer.image}
                 alt={displayName}
@@ -579,7 +611,7 @@ export default function ComputerDetails() {
                 loading="eager"
                 decoding="async"
               />
-              {images.length > 1 && (
+              {hasMultipleImages && (
                 <>
                   <button
                     onClick={() =>
