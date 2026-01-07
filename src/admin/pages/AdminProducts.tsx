@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { RefreshCcw, Save, Search, SlidersHorizontal } from "lucide-react";
+﻿import { useEffect, useMemo, useState } from "react";
+import { RefreshCcw, Save, Search } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
 
@@ -20,16 +20,8 @@ type AdminProduct = {
   os?: string | null;
   slug?: string | null;
   legacy_id?: string | null;
-};
-
-type FpsSettings = {
-  dlssMultiplier: number;
-  frameGenMultiplier: number;
-};
-
-const DEFAULT_FPS_SETTINGS: FpsSettings = {
-  dlssMultiplier: 1.2,
-  frameGenMultiplier: 1.15,
+  dlss_multiplier?: number | null;
+  frame_gen_multiplier?: number | null;
 };
 
 export default function AdminProducts() {
@@ -40,8 +32,6 @@ export default function AdminProducts() {
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [localError, setLocalError] = useState("");
-  const [fpsSettings, setFpsSettings] = useState<FpsSettings>(DEFAULT_FPS_SETTINGS);
-  const [savingFps, setSavingFps] = useState(false);
 
   const loadProducts = async () => {
     if (!token || !isAdmin) return;
@@ -63,36 +53,14 @@ export default function AdminProducts() {
     }
   };
 
-  const loadFpsSettings = async () => {
-    if (!token || !isAdmin) return;
-    try {
-      const response = await fetch(`${apiBase}/api/admin/ui-settings`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error("Kunde inte hämta FPS-inställningar.");
-      }
-      const data = await response.json();
-      if (data?.fps) {
-        setFpsSettings({
-          dlssMultiplier: Number(data.fps.dlssMultiplier ?? DEFAULT_FPS_SETTINGS.dlssMultiplier),
-          frameGenMultiplier: Number(data.fps.frameGenMultiplier ?? DEFAULT_FPS_SETTINGS.frameGenMultiplier),
-        });
-      }
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
-    }
-  };
-
   useEffect(() => {
     if (isAdmin) {
       loadProducts();
-      loadFpsSettings();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
-  const handleChange = (productId: string, field: keyof AdminProduct, value: string | number) => {
+  const handleChange = (productId: string, field: keyof AdminProduct, value: string | number | null) => {
     setProducts((prev) =>
       prev.map((product) =>
         product.id === productId
@@ -130,6 +98,8 @@ export default function AdminProducts() {
           case_name: product.case_name,
           cpu_cooler: product.cpu_cooler,
           os: product.os,
+          dlss_multiplier: product.dlss_multiplier ?? null,
+          frame_gen_multiplier: product.frame_gen_multiplier ?? null,
         }),
       });
       if (!response.ok) {
@@ -141,32 +111,7 @@ export default function AdminProducts() {
     } finally {
       setSavingId(null);
     }
-  };
-
-  const handleSaveFps = async () => {
-    if (!token || !isAdmin) return;
-    setSavingFps(true);
-    setLocalError("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/ui-settings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ fps: fpsSettings }),
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
-      }
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
-    } finally {
-      setSavingFps(false);
-    }
-  };
-
+  };\r\n
   const filteredProducts = useMemo(() => {
     const term = query.trim().toLowerCase();
     if (!term) return products;
@@ -197,7 +142,7 @@ export default function AdminProducts() {
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Adminpanel</p>
           <h2 className="text-2xl font-semibold">Produkt-UI</h2>
-          <p className="text-sm text-slate-400">Uppdatera titel, specs och FPS-inställningar.</p>
+          <p className="text-sm text-slate-400">Uppdatera titel, specs och multiplikatorer.</p>
         </div>
         <button
           type="button"
@@ -213,60 +158,6 @@ export default function AdminProducts() {
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingProducts && <p className="text-sm text-slate-400">Laddar produkter...</p>}
-
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Uppskattad FPS</p>
-            <h3 className="text-lg font-semibold text-white">Multiplikator-inställningar</h3>
-            <p className="text-sm text-slate-400">
-              Justera hur mycket DLSS/FSR och Frame Generation påverkar FPS-beräkningen.
-            </p>
-          </div>
-          <SlidersHorizontal className="h-5 w-5 text-[#11667b]" />
-        </div>
-
-        <div className="mt-4 grid gap-4 md:grid-cols-2">
-          <label className="text-xs text-slate-400">
-            DLSS/FSR multiplier
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={fpsSettings.dlssMultiplier}
-              onChange={(event) =>
-                setFpsSettings((prev) => ({ ...prev, dlssMultiplier: Number(event.target.value) }))
-              }
-              className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-            />
-          </label>
-          <label className="text-xs text-slate-400">
-            Frame Gen multiplier
-            <input
-              type="number"
-              step="0.01"
-              min="0"
-              value={fpsSettings.frameGenMultiplier}
-              onChange={(event) =>
-                setFpsSettings((prev) => ({ ...prev, frameGenMultiplier: Number(event.target.value) }))
-              }
-              className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-            />
-          </label>
-        </div>
-
-        <div className="mt-4 flex justify-end">
-          <button
-            type="button"
-            onClick={handleSaveFps}
-            className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
-            disabled={savingFps}
-          >
-            <Save className="h-4 w-4" />
-            {savingFps ? "Sparar..." : "Spara FPS-inställningar"}
-          </button>
-        </div>
-      </div>
 
       <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
         <Search className="h-4 w-4 text-slate-400" />
@@ -404,13 +295,47 @@ export default function AdminProducts() {
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
+                <label className="text-xs text-slate-400">
+                  DLSS/FSR multiplier
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={product.dlss_multiplier ?? ""}
+                    onChange={(event) =>
+                      handleChange(
+                        product.id,
+                        "dlss_multiplier",
+                        event.target.value === "" ? null : Number(event.target.value)
+                      )
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+                <label className="text-xs text-slate-400">
+                  Frame Gen multiplier
+                  <input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    value={product.frame_gen_multiplier ?? ""}
+                    onChange={(event) =>
+                      handleChange(
+                        product.id,
+                        "frame_gen_multiplier",
+                        event.target.value === "" ? null : Number(event.target.value)
+                      )
+                    }
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
                 <label className="text-xs text-slate-400 md:col-span-2 xl:col-span-4">
                   Beskrivning
                   <textarea
                     value={product.description ?? ""}
                     onChange={(event) => handleChange(product.id, "description", event.target.value)}
                     className="mt-1 min-h-[96px] w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                    placeholder="Skriv Produktinfo-texter här. Separera stycken med en tom rad."
+                    placeholder="Skriv Produktinfo-texter har. Separera stycken med en tom rad."
                   />
                 </label>
               </div>
@@ -437,3 +362,9 @@ export default function AdminProducts() {
     </div>
   );
 }
+
+
+
+
+
+

@@ -184,6 +184,7 @@ const normalizePriceRange = (range?: number[]) => {
 export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
+  const clearFiltersParam = searchParams.get("clear_filters") === "1";
   const hasAppliedCategory = useRef(false);
   const hasAppliedQueryFilters = useRef(false);
   const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
@@ -323,6 +324,15 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
+    if (clearFiltersParam) {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+      setPriceRange(DEFAULT_PRICE_RANGE);
+      setSelectedGPUs([]);
+      setSelectedCPUs([]);
+      setSelectedTiers([]);
+      setShowUsedOnly(false);
+      return;
+    }
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
     if (!stored) return;
     try {
@@ -354,12 +364,19 @@ export default function Products() {
     } catch (error) {
       console.warn("Failed to read saved filters", error);
     }
-  }, []);
+  }, [clearFiltersParam]);
 
   useEffect(() => {
     if (!activeCategory || hasAppliedCategory.current) return;
     if (activeCategory === "budget") {
       setPriceRange([0, 6000]);
+    }
+    if (activeCategory === "paket") {
+      setPriceRange(DEFAULT_PRICE_RANGE);
+      setSelectedGPUs([]);
+      setSelectedCPUs([]);
+      setSelectedTiers([]);
+      setShowUsedOnly(false);
     }
     hasAppliedCategory.current = true;
   }, [activeCategory]);

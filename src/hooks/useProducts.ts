@@ -21,6 +21,8 @@ export interface SupabaseProduct {
   case_name?: string | null;
   cpu_cooler?: string | null;
   os?: string | null;
+  dlss_multiplier?: number | null;
+  frame_gen_multiplier?: number | null;
 }
 
 let productCache: SupabaseProduct[] = [];

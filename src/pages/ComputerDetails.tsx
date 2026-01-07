@@ -7,7 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { checkStock, getFpsSettings } from "@/lib/supabaseServices";
+import { checkStock } from "@/lib/supabaseServices";
 
 const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
@@ -42,6 +42,7 @@ const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   },
 };
 
+const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
 const gameList = Object.keys(GAME_FPS);
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
@@ -212,7 +213,6 @@ export default function ComputerDetails() {
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
   const [useUsedVariant, setUseUsedVariant] = useState(false);
-  const [fpsSettings, setFpsSettings] = useState({ dlssMultiplier: 1.2, frameGenMultiplier: 1.15 });
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
@@ -241,28 +241,6 @@ export default function ComputerDetails() {
   useEffect(() => {
     setSelectedImage(0);
   }, [computer?.id]);
-
-  useEffect(() => {
-    let isMounted = true;
-    const loadFpsSettings = async () => {
-      try {
-        const data = await getFpsSettings();
-        if (!isMounted || !data) return;
-        const dlssMultiplier = Number(data.dlssMultiplier);
-        const frameGenMultiplier = Number(data.frameGenMultiplier);
-        setFpsSettings({
-          dlssMultiplier: Number.isFinite(dlssMultiplier) ? dlssMultiplier : 1.2,
-          frameGenMultiplier: Number.isFinite(frameGenMultiplier) ? frameGenMultiplier : 1.15,
-        });
-      } catch (error) {
-        console.warn("Failed to load FPS settings", error);
-      }
-    };
-    loadFpsSettings();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     const variant = searchParams.get("variant");
@@ -328,12 +306,6 @@ export default function ComputerDetails() {
     }
   };
 
-  const baseFps = GAME_FPS[selectedGame][selectedResolution][selectedPreset];
-  const multiplier =
-    (dlssOn ? fpsSettings.dlssMultiplier : 1) * (frameGenOn ? fpsSettings.frameGenMultiplier : 1);
-  const finalFps = Math.round(baseFps * multiplier);
-  const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
-  const fpsHigh = Math.round(finalFps * 1.1);
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
   const activeVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : null;
   const fallbackName = useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
@@ -344,6 +316,22 @@ export default function ComputerDetails() {
       useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name
     ) ||
     getProductFromLookup(productLookup, computer.id);
+  const rawDlssMultiplier = Number(activeProduct?.dlss_multiplier);
+  const rawFrameGenMultiplier = Number(activeProduct?.frame_gen_multiplier);
+  const effectiveDlssMultiplier = Number.isFinite(rawDlssMultiplier)
+    ? rawDlssMultiplier
+    : DEFAULT_FPS_SETTINGS.dlssMultiplier;
+  const effectiveFrameGenMultiplier = Number.isFinite(rawFrameGenMultiplier)
+    ? rawFrameGenMultiplier
+    : DEFAULT_FPS_SETTINGS.frameGenMultiplier;
+
+  const baseFps = GAME_FPS[selectedGame][selectedResolution][selectedPreset];
+  const multiplier =
+    (dlssOn ? effectiveDlssMultiplier : 1) * (frameGenOn ? effectiveFrameGenMultiplier : 1);
+  const finalFps = Math.round(baseFps * multiplier);
+  const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
+  const fpsHigh = Math.round(finalFps * 1.1);
+
   const merged = mergeProductFields(
     {
       name: fallbackName,
@@ -1058,4 +1046,5 @@ export default function ComputerDetails() {
     </div>
   );
 }
+
 

@@ -23,6 +23,7 @@ const Checkout = lazy(() => import("./pages/Checkout.tsx"));
 const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess.tsx"));
 const Account = lazy(() => import("./pages/Account.tsx"));
 const Orders = lazy(() => import("./pages/Orders.tsx"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword.tsx"));
 const Faq = lazy(() => import("./pages/Faq.tsx"));
 const CustomerService = lazy(() => import("./pages/CustomerService.tsx"));
 const CustomBuild = lazy(() => import("./pages/CustomBuild.tsx"));
@@ -71,6 +72,7 @@ const App = () => (
                   <Route path="/checkout-success" element={<CheckoutSuccess />} />
                   <Route path="/account" element={<Account />} />
                   <Route path="/orders" element={<Orders />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
                   <Route path="/faq" element={<Faq />} />
                   <Route path="/kundservice" element={<CustomerService />} />
                   <Route path="/custom-bygg" element={<CustomBuild />} />

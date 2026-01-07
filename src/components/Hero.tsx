@@ -10,8 +10,8 @@ const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
   { name: "Hj\u00e4lp mig v\u00e4lja", icon: HelpCircle, kind: "quiz" as const },
-  { name: "Alla produkter", icon: Monitor, href: "/products" },
-  { name: "Paket", icon: Package, href: "/products?category=paket" },
+  { name: "Alla produkter", icon: Monitor, href: "/products?clear_filters=1" },
+  { name: "Paket", icon: Package, href: "/products?category=paket&clear_filters=1" },
   { name: "Budgetv\u00e4nlig", icon: Wallet, href: "/products?preset=budget" },
   { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
   { name: "B\u00e4sta Prestanda", icon: Rocket, href: "/products?preset=toptier" },
@@ -218,7 +218,7 @@ export const Hero = () => {
                   type="button"
                   onClick={() =>
                     navigate(
-                      withUtm("/products", {
+                      withUtm("/products?clear_filters=1", {
                         utm_source: "homepage",
                         utm_medium: "quiz",
                         utm_campaign: "help_me_choose",

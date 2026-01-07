@@ -45,6 +45,10 @@ alter table public.orders add column if not exists shipping_address_id uuid;
 alter table public.orders add column if not exists build_checklist jsonb default '[]'::jsonb;
 alter table public.orders add column if not exists updated_at timestamptz default now();
 
+-- Products: FPS multipliers per product
+alter table public.products add column if not exists dlss_multiplier numeric;
+alter table public.products add column if not exists frame_gen_multiplier numeric;
+
 -- Inventory: optional ETA + preorder flags
 alter table public.inventory add column if not exists is_preorder boolean default false;
 alter table public.inventory add column if not exists eta_days integer;

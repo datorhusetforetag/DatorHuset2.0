@@ -127,6 +127,13 @@ const parseMultiplier = (value: any, fallback: number) => {
   return Math.max(0, parsed);
 };
 
+const parseOptionalMultiplier = (value: any) => {
+  if (value === null || value === undefined || value === "") return null;
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return null;
+  return Math.max(0, parsed);
+};
+
 const normalizePhone = (value: any) => sanitizeText(value, 32).replace(/\s+/g, "");
 
 const getRequestIp = (req: any) => {
@@ -1111,7 +1118,7 @@ export async function getAdminProducts(req: any, res: any) {
     const { data, error } = await supabase
       .from("products")
       .select(
-        "id, name, slug, legacy_id, description, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os"
+        "id, name, slug, legacy_id, description, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, dlss_multiplier, frame_gen_multiplier"
       )
       .order("name", { ascending: true });
 
@@ -1161,6 +1168,8 @@ export async function updateAdminProduct(req: any, res: any) {
     const caseName = sanitizeText(req.body?.case_name, 120);
     const cpuCooler = sanitizeText(req.body?.cpu_cooler, 120);
     const os = sanitizeText(req.body?.os, 80);
+    const dlssMultiplier = parseOptionalMultiplier(req.body?.dlss_multiplier);
+    const frameGenMultiplier = parseOptionalMultiplier(req.body?.frame_gen_multiplier);
 
     if (!productId) {
       return res.status(400).json({ error: "Missing productId" });
@@ -1183,6 +1192,8 @@ export async function updateAdminProduct(req: any, res: any) {
       case_name: caseName || null,
       cpu_cooler: cpuCooler || null,
       os: os || null,
+      dlss_multiplier: dlssMultiplier,
+      frame_gen_multiplier: frameGenMultiplier,
       updated_at: new Date(),
     };
 
