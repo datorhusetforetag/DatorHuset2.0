@@ -106,6 +106,9 @@ const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM = process.env.SMTP_FROM || "DatorHuset <no-reply@datorhuset.site>";
+const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "datorhuset.foretag@gmail.com";
+const SERVICE_REQUEST_RATE_LIMIT_MAX = Number(process.env.SERVICE_REQUEST_RATE_LIMIT_MAX || 5);
+const SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS = Number(process.env.SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
 const EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
 const mailer = EMAIL_ENABLED
   ? nodemailer.createTransport({
@@ -120,6 +123,18 @@ const sanitizeText = (value: any, maxLength = 120) => {
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
 };
+
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => {
+    const map: Record<string, string> = {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+    };
+    return map[char] || char;
+  });
 
 const parseMultiplier = (value: any, fallback: number) => {
   const parsed = Number(value);
@@ -190,9 +205,19 @@ const formatOrderNumber = (order: any) => {
   return String(raw);
 };
 
-const sendEmail = async ({ to, subject, html }: { to: string; subject: string; html: string }) => {
+const sendEmail = async ({
+  to,
+  subject,
+  html,
+  replyTo,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+  replyTo?: string;
+}) => {
   if (!mailer) return;
-  await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
+  await mailer.sendMail({ from: SMTP_FROM, to, subject, html, replyTo });
 };
 
 const logAdminAction = async (
@@ -413,6 +438,79 @@ export async function createCheckoutSession(req: any, res: any) {
     res.status(500).json({
       error: error instanceof Error ? error.message : "Unknown error",
     });
+  }
+}
+
+/**
+ * Submit service request
+ * POST /api/service-request
+ */
+export async function submitServiceRequest(req: any, res: any) {
+  try {
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const serviceKey = `service:${getRequestIp(req)}`;
+    if (isRateLimited(serviceKey, SERVICE_REQUEST_RATE_LIMIT_MAX, SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many requests" });
+    }
+
+    if (!mailer) {
+      return res.status(503).json({ error: "Email service not configured" });
+    }
+
+    const name = sanitizeText(req.body?.name, 120);
+    const email = sanitizeText(req.body?.email, 120).toLowerCase();
+    const phone = sanitizeText(req.body?.phone, 32);
+    const deviceType = sanitizeText(req.body?.deviceType, 60);
+    const brandModel = sanitizeText(req.body?.brandModel, 120);
+    const issueType = sanitizeText(req.body?.issueType, 80);
+    const urgency = sanitizeText(req.body?.urgency, 80);
+    const serialNumber = sanitizeText(req.body?.serialNumber, 80);
+    const notes = sanitizeText(req.body?.notes, 2000);
+    const needsBackup = Boolean(req.body?.needsBackup);
+    const wantsQuote = Boolean(req.body?.wantsQuote);
+
+    if (!name || !email || !notes) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Invalid email address" });
+    }
+    if (phone && !swedishPhoneRegex.test(phone)) {
+      return res.status(400).json({ error: "Invalid phone number" });
+    }
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
+        <h2>Servicef\u00f6rfr\u00e5gan</h2>
+        <p><strong>Namn:</strong> ${escapeHtml(name)}</p>
+        <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Telefon:</strong> ${escapeHtml(phone || "-")}</p>
+        <p><strong>Enhetstyp:</strong> ${escapeHtml(deviceType || "-")}</p>
+        <p><strong>M\u00e4rke/modell:</strong> ${escapeHtml(brandModel || "-")}</p>
+        <p><strong>Typ av problem:</strong> ${escapeHtml(issueType || "-")}</p>
+        <p><strong>Br\u00e5dskande:</strong> ${escapeHtml(urgency || "-")}</p>
+        <p><strong>Serienummer:</strong> ${escapeHtml(serialNumber || "-")}</p>
+        <p><strong>Backup-hj\u00e4lp:</strong> ${needsBackup ? "Ja" : "Nej"}</p>
+        <p><strong>Offert innan start:</strong> ${wantsQuote ? "Ja" : "Nej"}</p>
+        <p><strong>Beskrivning:</strong></p>
+        <p>${escapeHtml(notes).replace(/\n/g, "<br />")}</p>
+      </div>
+    `;
+
+    await sendEmail({
+      to: SERVICE_REQUEST_TO,
+      subject: `Servicef\u00f6rfr\u00e5gan fr\u00e5n ${name}`,
+      html,
+      replyTo: email,
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Service request error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 }
 

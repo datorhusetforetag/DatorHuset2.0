@@ -16,6 +16,26 @@ const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
 const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
 
+type OrderItem = {
+  id: string;
+  quantity: number;
+  product?: {
+    name?: string;
+    price_cents?: number;
+    image_url?: string | null;
+  };
+};
+
+type Order = {
+  id: string;
+  order_number?: string | number | null;
+  created_at?: string;
+  total_cents?: number;
+  status?: string;
+  order_items?: OrderItem[];
+  receipt_url?: string;
+};
+
 type Address = {
   id: string;
   label?: string | null;
@@ -576,7 +596,132 @@ export default function Account() {
               </form>
             </div>
           </div>
-        </div>      </main>
+
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Package className="w-5 h-5 text-[#11667b]" />
+                <h2 className="text-xl font-semibold">Orderhistorik</h2>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                Status uppdateras manuellt när vi bygger din dator.
+              </p>
+
+              {loadingOrders && (
+                <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar order...</p>
+              )}
+              {orderError && (
+                <p className="text-sm text-red-500">{orderError}</p>
+              )}
+              {!loadingOrders && !orderError && orders.length === 0 && (
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Du har inga registrerade ordrar ännu.
+                </p>
+              )}
+
+              <div className="space-y-6">
+                {orders.map((order) => {
+                  const statusInfo = getOrderStatusInfo(order.status);
+                  const stage = statusInfo.step;
+                  const orderDate = order.created_at
+                    ? new Date(order.created_at).toLocaleDateString("sv-SE")
+                    : "Okänt datum";
+                  const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
+                  const items = order.order_items || [];
+                  const firstItem = items[0];
+                  const itemName = firstItem?.product?.name || "Produkt";
+                  const itemCount = items.length;
+                  const itemLabel = itemCount > 1 ? `${itemName} + ${itemCount - 1} fler` : itemName;
+                  const itemImage = firstItem?.product?.image_url || "";
+                  const orderNumber = order.order_number ? String(order.order_number) : order.id.slice(0, 8);
+
+                  return (
+                    <div
+                      key={order.id}
+                      className="relative overflow-hidden rounded-2xl border border-[#1a2636] bg-gradient-to-br from-[#0b1320] to-[#0f1a2a] p-5 sm:p-6 shadow-lg"
+                    >
+                      <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#11667b] via-yellow-400 to-[#11667b]" />
+                      <div className="flex flex-col gap-4">
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                          <div className="flex items-start gap-4">
+                            <div className="h-16 w-20 sm:h-20 sm:w-28 rounded-xl border border-[#22324a] bg-[#0f1824] overflow-hidden flex items-center justify-center text-xs text-slate-400">
+                              {itemImage ? (
+                                <img
+                                  src={itemImage}
+                                  alt={itemName}
+                                  className="h-full w-full object-cover"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <span>Ingen bild</span>
+                              )}
+                            </div>
+                            <div>
+                              <p className="text-sm text-slate-300">
+                                Order {orderNumber} · <span className="font-semibold text-white">{itemLabel}</span>
+                              </p>
+                              <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Beställd: {orderDate}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="inline-flex items-center rounded-full border border-yellow-400/60 bg-yellow-400/10 px-3 py-1 text-xs font-semibold text-yellow-200">
+                              {statusInfo.label}
+                            </span>
+                            <p className="mt-2 text-sm text-slate-400">Totalt</p>
+                            <p className="text-lg font-semibold text-white">{total.toLocaleString("sv-SE")} kr</p>
+                          </div>
+                        </div>
+
+                        <div className="w-full rounded-xl border border-[#1f2b3f] bg-[#0b1320]/60 p-3 sm:p-4">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs font-semibold text-slate-300">
+                            {ORDER_STATUS_STEPS.map((label, index) => (
+                              <div
+                                key={label}
+                                className={`rounded-full px-3 py-1 text-center border ${
+                                  stage >= index + 1
+                                    ? "border-yellow-400 bg-yellow-400/20 text-yellow-100"
+                                    : "border-[#283448] text-slate-400"
+                                }`}
+                              >
+                                {label}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-300">
+                          <span>
+                            Status: <span className="font-semibold text-white">{statusInfo.label}</span>
+                          </span>
+                          <span>
+                            ETA: <span className="font-semibold text-white">{statusInfo.eta}</span>
+                          </span>
+                          {order.receipt_url ? (
+                            <a
+                              href={order.receipt_url}
+                              className="font-semibold text-[#9dd4e0] hover:text-white"
+                            >
+                              Kvitto
+                            </a>
+                          ) : (
+                            <span>Kvitto skickas via e-post</span>
+                          )}
+                        </div>
+
+                        {stage === 5 && (
+                          <div className="rounded-lg border border-yellow-500/40 bg-yellow-500/10 text-yellow-100 px-4 py-3 text-sm">
+                            DatorHuset ringer dig om när och var du kan hämta upp datorn. Vi ringer och skickar mejl.
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
       <Footer />
     </div>
   );

@@ -156,7 +156,7 @@ export async function getUserOrders(userId: string) {
       *,
       order_items (
         *,
-        product:product_id (name, price_cents)
+        product:product_id (name, price_cents, image_url)
       )
     `)
     .eq('user_id', userId)
