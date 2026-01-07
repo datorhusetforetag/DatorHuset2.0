@@ -1,5 +1,9 @@
-﻿import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
+import { A11y } from "swiper/modules";
+import "swiper/css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
@@ -50,12 +54,12 @@ const DEFAULT_PRODUCT_INFO = [
   {
     title: "Game Changer",
     body:
-      "Kraftfulla komponenter ger hög prestanda för spel och kreativa arbetsflöden. Perfekt balans mellan CPU, GPU och snabb lagring.",
+      "Kraftfulla komponenter ger h�g prestanda f�r spel och kreativa arbetsfl�den. Perfekt balans mellan CPU, GPU och snabb lagring.",
   },
   {
-    title: "Ultimat strålspårning och AI",
+    title: "Ultimat str�lsp�rning och AI",
     body:
-      "Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.",
+      "Modern grafik med ray tracing och AI-f�rb�ttringar levererar skarpa bilder och mjuk upplevelse �ven i kr�vande titlar.",
   },
 ];
 const toUsedName = (name: string) => {
@@ -222,7 +226,7 @@ export default function ComputerDetails() {
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  const swipeStartRef = useRef<{ x: number; y: number } | null>(null);
+  const swiperRef = useRef<SwiperType | null>(null);
   const [inventoryStatus, setInventoryStatus] = useState<{
     inStock: boolean;
     canPreorder: boolean;
@@ -241,6 +245,7 @@ export default function ComputerDetails() {
 
   useEffect(() => {
     setSelectedImage(0);
+    swiperRef.current?.slideTo(0, 0);
   }, [computer?.id]);
 
   useEffect(() => {
@@ -294,14 +299,14 @@ export default function ComputerDetails() {
     try {
       setAddingToCart(true);
       if (!activeProductId) {
-        alert("Laddar produktinformation, försök igen om en stund.");
+        alert("Laddar produktinformation, f�rs�k igen om en stund.");
         return;
       }
       await addToCart(activeProductId, quantity);
       navigate("/cart");
     } catch (error) {
       console.error("Failed to add to cart", error);
-      alert("Kunde inte lägga till i kundvagn");
+      alert("Kunde inte l�gga till i kundvagn");
     } finally {
       setAddingToCart(false);
     }
@@ -375,7 +380,7 @@ export default function ComputerDetails() {
           used: usedParts.storage,
         },
         { label: "Moderkort", value: displaySpecs.motherboard, used: false },
-        { label: "Nätaggregat", value: displaySpecs.psu, used: false },
+        { label: "N�taggregat", value: displaySpecs.psu, used: false },
         { label: "Chassi", value: displaySpecs.caseName, used: false },
         { label: "CPU-kylare", value: displaySpecs.cpuCooler, used: false },
         { label: "Operativsystem", value: displaySpecs.os, used: false },
@@ -550,32 +555,7 @@ export default function ComputerDetails() {
   ).slice(0, 2);
   const comparisonItems = [computer, ...comparisonPool];
   const hasMultipleImages = images.length > 1;
-  const handleImageSwipeStart = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (!hasMultipleImages || event.touches.length !== 1) return;
-    swipeStartRef.current = {
-      x: event.touches[0].clientX,
-      y: event.touches[0].clientY,
-    };
-  };
-
-  const handleImageSwipeEnd = (event: React.TouchEvent<HTMLDivElement>) => {
-    if (!hasMultipleImages || !swipeStartRef.current) return;
-    const { x, y } = swipeStartRef.current;
-    const touch = event.changedTouches[0];
-    const deltaX = touch.clientX - x;
-    const deltaY = touch.clientY - y;
-    swipeStartRef.current = null;
-
-    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) < Math.abs(deltaY)) {
-      return;
-    }
-
-    if (deltaX < 0) {
-      setSelectedImage((prev) => (prev + 1) % images.length);
-    } else {
-      setSelectedImage((prev) => (prev - 1 + images.length) % images.length);
-    }
-  };
+  const resolvedImage = images[selectedImage] || computer.image;
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -591,7 +571,7 @@ export default function ComputerDetails() {
           <span>/</span>
           <span>Datorer & Surfplattor</span>
           <span>/</span>
-          <span>Gamingdatorer stationära</span>
+          <span>Gamingdatorer station�ra</span>
           <span>/</span>
           <span className="text-gray-900 dark:text-white font-semibold">{displayName}</span>
         </div>
@@ -599,33 +579,58 @@ export default function ComputerDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
           {/* Left: image area */}
           <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
-            <div
-              className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden touch-pan-y"
-              onTouchStart={handleImageSwipeStart}
-              onTouchEnd={handleImageSwipeEnd}
-            >
-              <img
-                src={images[selectedImage] || computer.image}
-                alt={displayName}
-                className="w-full h-full object-cover"
-                loading="eager"
-                decoding="async"
-              />
+                        <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+              {hasMultipleImages ? (
+                <>
+                  <Swiper
+                    modules={[A11y]}
+                    onSwiper={(swiper) => {
+                      swiperRef.current = swiper;
+                    }}
+                    onSlideChange={(swiper) => setSelectedImage(swiper.realIndex)}
+                    spaceBetween={8}
+                    slidesPerView={1}
+                    className="h-full"
+                  >
+                    {images.map((src, index) => (
+                      <SwiperSlide key={`${src}-${index}`} className="h-full">
+                        <img
+                          src={src}
+                          alt={displayName}
+                          className="h-full w-full object-cover"
+                          loading="eager"
+                          decoding="async"
+                          draggable={false}
+                        />
+                      </SwiperSlide>
+                    ))}
+                  </Swiper>
+                  <div
+                  />
+                </>
+              ) : (
+                <img
+                  src={resolvedImage}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                />
+              )}
               {hasMultipleImages && (
                 <>
                   <button
-                    onClick={() =>
-                      setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
-                    }
+                    onClick={() => swiperRef.current?.slidePrev()}
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
-                    aria-label="Föregående bild"
+                    aria-label="F�reg�ende bild"
                   >
                     <ChevronLeft className="w-5 h-5 mx-auto" />
                   </button>
                   <button
-                    onClick={() => setSelectedImage((prev) => (prev + 1) % images.length)}
+                    onClick={() => swiperRef.current?.slideNext()}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
-                    aria-label="Nästa bild"
+                    aria-label="N�sta bild"
                   >
                     <ChevronRight className="w-5 h-5 mx-auto" />
                   </button>
@@ -636,7 +641,10 @@ export default function ComputerDetails() {
               {images.map((img, i) => (
                 <button
                   key={i}
-                  onClick={() => setSelectedImage(i)}
+                  onClick={() => {
+                    swiperRef.current?.slideTo(i);
+                    setSelectedImage(i);
+                  }}
                   className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border ${selectedImage === i ? "border-[#11667b]" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
@@ -725,7 +733,7 @@ export default function ComputerDetails() {
                 <button
                   onClick={() => setQuantity(quantity + 1)}
                   className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label="Öka antal"
+                  aria-label="�ka antal"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -736,13 +744,13 @@ export default function ComputerDetails() {
                 className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
-                {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
+                {addingToCart ? "L�gger till..." : "L�gg i kundvagn"}
               </button>
             </div>
 
             <div className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
-              <p>Beräknad leverans: 3-5 arbetsdagar</p>
-              <p>Fri frakt vid köp över 5000 kr</p>
+              <p>Ber�knad leverans: 3-5 arbetsdagar</p>
+              <p>Fri frakt vid k�p �ver 5000 kr</p>
             </div>
           </div>
         </div>
@@ -793,7 +801,7 @@ export default function ComputerDetails() {
               })}
               {computer.bundleIncludes?.length ? (
                 <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] p-3">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ing�r i paketet</p>
                   <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
                     {computer.bundleIncludes.map((item) => (
                       <li key={item}>{item}</li>
@@ -810,20 +818,20 @@ export default function ComputerDetails() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">2 års garanti</p>
-              <p>Alla datorer levereras med garanti på komponenter och montering.</p>
+              <p className="font-semibold text-gray-900 dark:text-white">2 �rs garanti</p>
+              <p>Alla datorer levereras med garanti p� komponenter och montering.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp</p>
+              <p className="font-semibold text-gray-900 dark:text-white">14 dagars �ppet k�p</p>
               <p>Testa i lugn och ro. Returnera om den inte passar dina behov.</p>
             </div>
             <div className="space-y-2">
               <p className="font-semibold text-gray-900 dark:text-white">Trygg support</p>
-              <p>Vi hjälper dig med felsökning och uppgraderingar när du vill.</p>
+              <p>Vi hj�lper dig med fels�kning och uppgraderingar n�r du vill.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">Snabb återkoppling</p>
-              <p>Kontakta oss så återkommer vi med nästa steg och tidsplan.</p>
+              <p className="font-semibold text-gray-900 dark:text-white">Snabb �terkoppling</p>
+              <p>Kontakta oss s� �terkommer vi med n�sta steg och tidsplan.</p>
             </div>
           </div>
           <div className="mt-4">
@@ -842,7 +850,7 @@ export default function ComputerDetails() {
             <div className="space-y-4">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Uppskattad FPS</h2>
               <div className="space-y-3">
-                <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="game">Välj spel</label>
+                <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="game">V�lj spel</label>
                 <select
                   id="game"
                   value={selectedGame}
@@ -856,7 +864,7 @@ export default function ComputerDetails() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="res">Upplösning</label>
+                  <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="res">Uppl�sning</label>
                   <select
                     id="res"
                     value={selectedResolution}
