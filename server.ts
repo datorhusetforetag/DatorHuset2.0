@@ -515,6 +515,184 @@ export async function submitServiceRequest(req: any, res: any) {
 }
 
 /**
+ * User: get saved addresses
+ * GET /api/addresses
+ */
+export async function getUserAddresses(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const { data, error } = await supabase
+      .from("user_addresses")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("is_default", { ascending: false })
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Get addresses error:", error);
+      return res.status(500).json({ error: "Failed to fetch addresses" });
+    }
+
+    res.json(data || []);
+  } catch (error) {
+    console.error("Get addresses error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * User: create address
+ * POST /api/addresses
+ */
+export async function createUserAddress(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const label = sanitizeText(req.body?.label, 80);
+    const fullName = sanitizeText(req.body?.full_name, 120);
+    const phone = normalizePhone(req.body?.phone);
+    const addressLine1 = sanitizeText(req.body?.address_line1, 160);
+    const addressLine2 = sanitizeText(req.body?.address_line2, 160);
+    const postalCode = sanitizeText(req.body?.postal_code, 16);
+    const city = sanitizeText(req.body?.city, 80);
+    const isDefault = Boolean(req.body?.is_default);
+
+    if (!fullName || !addressLine1 || !postalCode || !city) {
+      return res.status(400).json({ error: "Missing address fields" });
+    }
+    if (phone && !swedishPhoneRegex.test(phone)) {
+      return res.status(400).json({ error: "Invalid phone number" });
+    }
+    if (!swedishPostalRegex.test(postalCode)) {
+      return res.status(400).json({ error: "Invalid postal code" });
+    }
+    if (!swedishCityRegex.test(city)) {
+      return res.status(400).json({ error: "Invalid city" });
+    }
+
+    if (isDefault) {
+      await supabase.from("user_addresses").update({ is_default: false }).eq("user_id", user.id);
+    }
+
+    const payload = {
+      user_id: user.id,
+      label: label || null,
+      full_name: fullName,
+      phone: phone || null,
+      address_line1: addressLine1,
+      address_line2: addressLine2 || null,
+      postal_code: postalCode,
+      city,
+      country: "SE",
+      is_default: isDefault,
+      updated_at: new Date(),
+    };
+
+    const { data, error } = await supabase.from("user_addresses").insert([payload]).select().single();
+
+    if (error || !data) {
+      console.error("Create address error:", error);
+      return res.status(500).json({ error: error?.message || "Failed to create address" });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Create address error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * User: set default address
+ * POST /api/addresses/:addressId/default
+ */
+export async function setDefaultUserAddress(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const addressId = sanitizeText(req.params?.addressId, 64);
+    if (!addressId) {
+      return res.status(400).json({ error: "Missing address id" });
+    }
+
+    await supabase.from("user_addresses").update({ is_default: false }).eq("user_id", user.id);
+    const { data, error } = await supabase
+      .from("user_addresses")
+      .update({ is_default: true, updated_at: new Date() })
+      .eq("id", addressId)
+      .eq("user_id", user.id)
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Set default address error:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update address" });
+    }
+
+    res.json(data);
+  } catch (error) {
+    console.error("Set default address error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * User: delete address
+ * DELETE /api/addresses/:addressId
+ */
+export async function deleteUserAddress(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const addressId = sanitizeText(req.params?.addressId, 64);
+    if (!addressId) {
+      return res.status(400).json({ error: "Missing address id" });
+    }
+
+    const { error } = await supabase
+      .from("user_addresses")
+      .delete()
+      .eq("id", addressId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      console.error("Delete address error:", error);
+      return res.status(500).json({ error: error?.message || "Failed to delete address" });
+    }
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Delete address error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
  * Webhook handler for Stripe
  * POST /api/webhook
  * 

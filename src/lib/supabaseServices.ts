@@ -1,5 +1,29 @@
 import { supabase } from '@/lib/supabaseClient';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
+const apiRequest = async (path: string, options: RequestInit = {}) => {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) {
+    throw new Error('Missing auth token');
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload?.error || 'Request failed');
+  }
+  return payload;
+};
+
 // ============================================================
 // PRODUCTS SERVICE
 // ============================================================
@@ -242,15 +266,7 @@ export async function addOrderItem(orderItem: {
 // ============================================================
 
 export async function getUserAddresses(userId: string) {
-  const { data, error } = await supabase
-    .from('user_addresses')
-    .select('*')
-    .eq('user_id', userId)
-    .order('is_default', { ascending: false })
-    .order('created_at', { ascending: false });
-
-  if (error) throw error;
-  return data || [];
+  return apiRequest('/api/addresses');
 }
 
 export async function createUserAddress(address: {
@@ -265,14 +281,10 @@ export async function createUserAddress(address: {
   country?: string | null;
   is_default?: boolean;
 }) {
-  const { data, error } = await supabase
-    .from('user_addresses')
-    .insert([address])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  return apiRequest('/api/addresses', {
+    method: 'POST',
+    body: JSON.stringify(address),
+  });
 }
 
 export async function updateUserAddress(addressId: string, updates: Record<string, any>) {
@@ -288,28 +300,13 @@ export async function updateUserAddress(addressId: string, updates: Record<strin
 }
 
 export async function setDefaultAddress(userId: string, addressId: string) {
-  const { error: resetError } = await supabase
-    .from('user_addresses')
-    .update({ is_default: false })
-    .eq('user_id', userId);
-  if (resetError) throw resetError;
-
-  const { data, error } = await supabase
-    .from('user_addresses')
-    .update({ is_default: true, updated_at: new Date() })
-    .eq('id', addressId)
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data;
+  return apiRequest(`/api/addresses/${addressId}/default`, {
+    method: 'POST',
+  });
 }
 
 export async function deleteUserAddress(addressId: string) {
-  const { error } = await supabase
-    .from('user_addresses')
-    .delete()
-    .eq('id', addressId);
-
-  if (error) throw error;
+  await apiRequest(`/api/addresses/${addressId}`, {
+    method: 'DELETE',
+  });
 }
