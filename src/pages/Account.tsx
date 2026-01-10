@@ -8,8 +8,10 @@ import {
   createUserAddress,
   deleteUserAddress,
   getUserAddresses,
+  getUserOrders,
   setDefaultAddress,
 } from "@/lib/supabaseServices";
+import { getOrderStatusInfo, ORDER_STATUS_STEPS } from "@/lib/orderStatus";
 import { KeyRound, MapPin, Package, User } from "lucide-react";
 
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
@@ -65,6 +67,9 @@ export default function Account() {
   const [addressError, setAddressError] = useState("");
   const [addressSuccess, setAddressSuccess] = useState("");
   const [savingAddress, setSavingAddress] = useState(false);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [orderError, setOrderError] = useState("");
   const [addressForm, setAddressForm] = useState({
     label: "",
     full_name: "",
@@ -106,6 +111,29 @@ export default function Account() {
       }
     };
     loadAddresses();
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let isMounted = true;
+    const loadOrders = async () => {
+      try {
+        setLoadingOrders(true);
+        setOrderError("");
+        const data = await getUserOrders(user.id);
+        if (!isMounted) return;
+        setOrders(data as Order[]);
+      } catch (error) {
+        if (!isMounted) return;
+        setOrderError("Kunde inte hämta ordrar.");
+      } finally {
+        if (isMounted) setLoadingOrders(false);
+      }
+    };
+    loadOrders();
     return () => {
       isMounted = false;
     };
