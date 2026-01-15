@@ -4,10 +4,12 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
+import { getOrderStatusInfo, ORDER_STATUS_STEPS } from "@/lib/orderStatus";
 import {
   createUserAddress,
   deleteUserAddress,
   getUserAddresses,
+  getUserOrders,
   setDefaultAddress,
 } from "@/lib/supabaseServices";
 import { KeyRound, MapPin, Package, User } from "lucide-react";
@@ -58,6 +60,10 @@ export default function Account() {
   const [profileFormErrors, setProfileFormErrors] = useState<Record<string, string>>({});
   const [profileStatus, setProfileStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loadingOrders, setLoadingOrders] = useState(false);
+  const [orderError, setOrderError] = useState("");
+
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
   const [addressError, setAddressError] = useState("");
@@ -84,6 +90,29 @@ export default function Account() {
       username: metadata.username || "",
       phone: metadata.phone || user.phone || "",
     });
+  }, [user]);
+
+  useEffect(() => {
+    if (!user) return;
+    let isMounted = true;
+    const loadOrders = async () => {
+      try {
+        setLoadingOrders(true);
+        setOrderError("");
+        const data = await getUserOrders(user.id);
+        if (!isMounted) return;
+        setOrders(data as Order[]);
+      } catch (error) {
+        if (!isMounted) return;
+        setOrderError("Kunde inte h?mta orderhistorik just nu.");
+      } finally {
+        if (isMounted) setLoadingOrders(false);
+      }
+    };
+    loadOrders();
+    return () => {
+      isMounted = false;
+    };
   }, [user]);
 
   useEffect(() => {
