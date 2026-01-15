@@ -78,7 +78,7 @@ export default function PrivacyPolicy() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold">7. Kontakt</h2>
             <p className="text-gray-700 dark:text-gray-300">
-              För frågor om integritet, kontakta oss på datorhuset.foretag@gmail.com.
+              För frågor om integritet, kontakta oss på support@datorhuset.site.
             </p>
           </section>
         </section>

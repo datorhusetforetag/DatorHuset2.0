@@ -78,7 +78,7 @@ export default function TermsOfService() {
           <section className="space-y-3">
             <h2 className="text-xl font-semibold">8. Kontakt</h2>
             <p className="text-gray-700 dark:text-gray-300">
-              Har du frågor om villkoren, kontakta oss på datorhuset.foretag@gmail.com.
+              Har du frågor om villkoren, kontakta oss på support@datorhuset.site.
             </p>
           </section>
         </section>

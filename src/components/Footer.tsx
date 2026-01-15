@@ -37,7 +37,7 @@ export const Footer = () => {
           <div className="space-y-4 border-t border-[#1a2636] pt-4 lg:border-t-0 lg:pt-0">
             <div className="space-y-1">
               <h4 className="text-base font-semibold">Kundservice</h4>
-              <p className="text-sm text-gray-200">datorhuset.foretag@gmail.com</p>
+              <p className="text-sm text-gray-200">support@datorhuset.site</p>
               <p className="text-sm text-gray-400">Svarstider 11:00-15:00</p>
             </div>
 

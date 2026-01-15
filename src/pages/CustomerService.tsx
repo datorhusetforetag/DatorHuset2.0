@@ -29,8 +29,7 @@ export default function CustomerService() {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
               <h2 className="text-lg font-semibold">Kontaktuppgifter</h2>
-              <p>E-post: <a className="text-blue-600 dark:text-blue-400" href="mailto:datorhuset.foretag@gmail.com">datorhuset.foretag@gmail.com</a></p>
-              <p>Telefon: +46 (0)10 138 82 08</p>
+              <p>E-post: <a className="text-blue-600 dark:text-blue-400" href="mailto:support@datorhuset.site">support@datorhuset.site</a></p>
             </div>
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
               <h2 className="text-lg font-semibold">Öppettider</h2>

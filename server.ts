@@ -107,6 +107,7 @@ const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM = process.env.SMTP_FROM || "DatorHuset <no-reply@datorhuset.site>";
 const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "datorhuset.foretag@gmail.com";
+const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "datorhuset.foretag@gmail.com";
 const SERVICE_REQUEST_RATE_LIMIT_MAX = Number(process.env.SERVICE_REQUEST_RATE_LIMIT_MAX || 5);
 const SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS = Number(process.env.SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
 const EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
@@ -510,6 +511,82 @@ export async function submitServiceRequest(req: any, res: any) {
     res.json({ ok: true });
   } catch (error) {
     console.error("Service request error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Submit offer request
+ * POST /api/offer-request
+ */
+export async function submitOfferRequest(req: any, res: any) {
+  try {
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    if (!mailer) {
+      return res.status(503).json({ error: "Email service not configured" });
+    }
+
+    const name = sanitizeText(req.body?.name, 120);
+    const email = sanitizeText(req.body?.email, 120).toLowerCase();
+    const phone = sanitizeText(req.body?.phone, 32);
+    const notes = sanitizeText(req.body?.notes, 2000);
+    const totalPrice = Number(req.body?.totalPrice || 0);
+    const shareUrl = sanitizeText(req.body?.shareUrl, 500);
+    const components = Array.isArray(req.body?.components) ? req.body.components : [];
+    const componentLines = components
+      .map((item: any) => ({
+        category: sanitizeText(item?.category, 80),
+        name: sanitizeText(item?.name, 160),
+        price: Number(item?.price || 0),
+      }))
+      .filter((item: any) => item.category && item.name);
+
+    if (!name || !email) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Invalid email address" });
+    }
+    if (phone && !swedishPhoneRegex.test(phone)) {
+      return res.status(400).json({ error: "Invalid phone number" });
+    }
+
+    const componentListHtml = componentLines.length
+      ? `<ul>${componentLines
+          .map(
+            (item: any) =>
+              `<li>${escapeHtml(item.category)}: ${escapeHtml(item.name)} (${formatCurrency(item.price)})</li>`
+          )
+          .join("")}</ul>`
+      : "<p>Inga komponenter valda.</p>";
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
+        <h2>Offertförfrågan (Custom build)</h2>
+        <p><strong>Namn:</strong> ${escapeHtml(name)}</p>
+        <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Telefon:</strong> ${escapeHtml(phone || "-")}</p>
+        ${notes ? `<p><strong>Kommentar:</strong><br />${escapeHtml(notes).replace(/\n/g, "<br />")}</p>` : ""}
+        <p><strong>Total:</strong> ${formatCurrency(totalPrice)}</p>
+        <p><strong>Valda komponenter:</strong></p>
+        ${componentListHtml}
+        ${shareUrl ? `<p><strong>Länk:</strong> <a href="${escapeHtml(shareUrl)}">${escapeHtml(shareUrl)}</a></p>` : ""}
+      </div>
+    `;
+
+    await sendEmail({
+      to: OFFER_REQUEST_TO,
+      subject: `Offertförfrågan från ${name}`,
+      html,
+      replyTo: email,
+    });
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Offer request error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }

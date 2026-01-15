@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -1191,6 +1191,15 @@ const STORE_NAMES = [
   "Amazon",
 ];
 const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const initialOfferForm = {
+  name: "",
+  email: "",
+  phone: "",
+  notes: "",
+};
+
 
 const hashString = (value: string) => {
   let hash = 0;
@@ -1260,6 +1269,11 @@ const buildSpecList = (item: ComponentItem) => {
 };
 
 export default function CustomBuild() {
+  const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+  const [offerOpen, setOfferOpen] = useState(false);
+  const [offerForm, setOfferForm] = useState(initialOfferForm);
+  const [offerStatus, setOfferStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [offerError, setOfferError] = useState("");
   const [activeCategory, setActiveCategory] = useState<CategoryKey>("cpu");
   const [activeBrand, setActiveBrand] = useState("Alla");
   const [searchTerm, setSearchTerm] = useState("");
@@ -1483,6 +1497,76 @@ export default function CustomBuild() {
   const detailHistoryMax = detailData ? Math.max(...detailData.history) : 0;
   const detailHistoryMin = detailData ? Math.min(...detailData.history) : 0;
 
+  const updateOfferField = (field: keyof typeof initialOfferForm) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const value = event.target.value;
+    setOfferForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleOfferSubmit = async (event: FormEvent) => {
+    event.preventDefault();
+    setOfferError("");
+
+    const trimmedName = offerForm.name.trim();
+    const trimmedEmail = offerForm.email.trim();
+    const trimmedNotes = offerForm.notes.trim();
+
+    if (!trimmedName) {
+      setOfferStatus("error");
+      setOfferError("Ange ditt namn sa att vi kan aterkomma.");
+      return;
+    }
+
+    if (!emailRegex.test(trimmedEmail)) {
+      setOfferStatus("error");
+      setOfferError("Ange en giltig e-postadress.");
+      return;
+    }
+
+    const components = CATEGORY_LIST.map((category) => {
+      const item = selected[category.key];
+      if (!item) return null;
+      return {
+        category: category.label,
+        name: item.name,
+        price: item.price || 0,
+      };
+    }).filter(Boolean);
+
+    const hasSelection = Object.values(selected).some(Boolean);
+    const shareUrl = hasSelection
+      ? `${window.location.origin}/custom-bygg?b=${encodeBuildSelection(selected)}`
+      : `${window.location.origin}/custom-bygg`;
+
+    setOfferStatus("sending");
+
+    try {
+      const response = await fetch(`${apiBase}/api/offer-request`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: trimmedName,
+          email: trimmedEmail,
+          phone: offerForm.phone.trim(),
+          notes: trimmedNotes,
+          totalPrice,
+          components,
+          shareUrl,
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || "Kunde inte skicka offertforfragan.");
+      }
+
+      setOfferStatus("sent");
+      setOfferForm(initialOfferForm);
+    } catch (error) {
+      setOfferStatus("error");
+      setOfferError(error instanceof Error ? error.message : "Kunde inte skicka offertforfragan.");
+    }
+  };
+
   const handleShareBuild = async () => {
     const hasSelection = Object.values(selected).some(Boolean);
     const shareUrl = hasSelection
@@ -1503,6 +1587,83 @@ export default function CustomBuild() {
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
+      <Dialog
+        open={offerOpen}
+        onOpenChange={(open) => {
+          setOfferOpen(open);
+          if (!open) {
+            setOfferStatus("idle");
+            setOfferError("");
+          }
+        }}
+      >
+        {offerOpen ? (
+          <DialogContent className="max-w-lg bg-white dark:bg-[#0f1824]">
+            <DialogHeader>
+              <DialogTitle>Offertforfragan</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-400">
+                Fyll i dina uppgifter sa aterkommer vi med offert och leveranstid.
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleOfferSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <label className="text-sm font-semibold" htmlFor="offer-name">Namn</label>
+                <input
+                  id="offer-name"
+                  type="text"
+                  value={offerForm.name}
+                  onChange={updateOfferField("name")}
+                  placeholder="For- och efternamn"
+                  className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold" htmlFor="offer-email">E-post</label>
+                <input
+                  id="offer-email"
+                  type="email"
+                  value={offerForm.email}
+                  onChange={updateOfferField("email")}
+                  placeholder="namn@exempel.se"
+                  className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold" htmlFor="offer-phone">Telefon (valfritt)</label>
+                <input
+                  id="offer-phone"
+                  type="text"
+                  value={offerForm.phone}
+                  onChange={updateOfferField("phone")}
+                  placeholder="07x xxx xx xx"
+                  className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-semibold" htmlFor="offer-notes">Kommentar (valfritt)</label>
+                <textarea
+                  id="offer-notes"
+                  value={offerForm.notes}
+                  onChange={updateOfferField("notes")}
+                  placeholder="Beskriv onskemal eller annat"
+                  className="min-h-[120px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
+                />
+              </div>
+              {offerError ? <p className="text-sm text-red-600">{offerError}</p> : null}
+              {offerStatus === "sent" ? (
+                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertforfragan.</p>
+              ) : null}
+              <button
+                type="submit"
+                disabled={offerStatus === "sending"}
+                className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white transition-colors"
+              >
+                {offerStatus === "sending" ? "Skickar..." : "Skicka offertforfragan"}
+              </button>
+            </form>
+          </DialogContent>
+        ) : null}
+      </Dialog>
       <Dialog
         open={Boolean(detailItem)}
         onOpenChange={(open) => {
