@@ -204,15 +204,31 @@ const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM = process.env.SMTP_FROM || "DatorHuset <no-reply@datorhuset.site>";
+const SUPPORT_SMTP_HOST = process.env.SUPPORT_SMTP_HOST || SMTP_HOST;
+const SUPPORT_SMTP_PORT = Number(process.env.SUPPORT_SMTP_PORT || SMTP_PORT || 0);
+const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER;
+const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
+const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.site>";
 const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "datorhuset.foretag@gmail.com";
 const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "datorhuset.foretag@gmail.com";
-const EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
-const mailer = EMAIL_ENABLED
+const DEFAULT_EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
+const SUPPORT_EMAIL_ENABLED = Boolean(
+  SUPPORT_SMTP_HOST && SUPPORT_SMTP_PORT && SUPPORT_SMTP_USER && SUPPORT_SMTP_PASS
+);
+const defaultMailer = DEFAULT_EMAIL_ENABLED
   ? nodemailer.createTransport({
       host: SMTP_HOST,
       port: SMTP_PORT,
       secure: SMTP_PORT === 465,
       auth: { user: SMTP_USER, pass: SMTP_PASS },
+    })
+  : null;
+const supportMailer = SUPPORT_EMAIL_ENABLED
+  ? nodemailer.createTransport({
+      host: SUPPORT_SMTP_HOST,
+      port: SUPPORT_SMTP_PORT,
+      secure: SUPPORT_SMTP_PORT === 465,
+      auth: { user: SUPPORT_SMTP_USER, pass: SUPPORT_SMTP_PASS },
     })
   : null;
 
@@ -286,8 +302,13 @@ const formatOrderNumber = (order) => {
 };
 
 const sendEmail = async ({ to, subject, html }) => {
-  if (!mailer) return;
-  await mailer.sendMail({ from: SMTP_FROM, to, subject, html });
+  if (!defaultMailer) return;
+  await defaultMailer.sendMail({ from: SMTP_FROM, to, subject, html });
+};
+
+const sendSupportEmail = async ({ to, subject, html, replyTo }) => {
+  if (!supportMailer) return;
+  await supportMailer.sendMail({ from: SUPPORT_SMTP_FROM, to, subject, html, replyTo });
 };
 
 const logAdminAction = async (req, user, action, resourceType, resourceId, metadata) => {
@@ -475,8 +496,8 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
  * POST /api/service-request
  */
 app.post("/api/service-request", async (req, res) => {
-  if (!mailer) {
-    return res.status(503).json({ error: "Email service not configured" });
+  if (!supportMailer) {
+    return res.status(503).json({ error: "Support email service not configured" });
   }
 
   try {
@@ -524,8 +545,7 @@ app.post("/api/service-request", async (req, res) => {
       </div>
     `;
 
-    await mailer.sendMail({
-      from: SMTP_FROM,
+    await sendSupportEmail({
       to: SERVICE_REQUEST_TO,
       subject: `Servicef\u00f6rfr\u00e5gan fr\u00e5n ${name}`,
       html,
@@ -543,8 +563,8 @@ app.post("/api/service-request", async (req, res) => {
  * POST /api/offer-request
  */
 app.post("/api/offer-request", async (req, res) => {
-  if (!mailer) {
-    return res.status(503).json({ error: "Email service not configured" });
+  if (!supportMailer) {
+    return res.status(503).json({ error: "Support email service not configured" });
   }
 
   try {
@@ -600,10 +620,9 @@ app.post("/api/offer-request", async (req, res) => {
       </div>
     `;
 
-    await mailer.sendMail({
-      from: SMTP_FROM,
+    await sendSupportEmail({
       to: OFFER_REQUEST_TO,
-      subject: `Offertförfrågan från ${name}`,
+      subject: `Offertf?rfr?gan fr?n ${name}`,
       html,
       replyTo: email,
     });
