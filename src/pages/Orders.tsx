@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -78,7 +78,7 @@ export default function Orders() {
         <Navbar />
         <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="max-w-xl mx-auto text-center space-y-4">
-            <h1 className="text-3xl font-bold">Logga in for att se dina bestallningar</h1>
+            <h1 className="text-3xl font-bold">Logga in for att se dina beställningar</h1>
             <p className="text-gray-600 dark:text-gray-300">
               Dina ordrar, kvitton och byggstatus finns i kontot.
             </p>
@@ -100,8 +100,8 @@ export default function Orders() {
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
         <div className="flex flex-col gap-3 mb-8">
-          <p className="text-sm uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Mina bestallningar</p>
-          <h1 className="text-3xl font-bold">Din orderoversikt</h1>
+          <p className="text-sm uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Mina beställningar</p>
+          <h1 className="text-3xl font-bold">Din orderöversikt</h1>
           <p className="text-sm text-gray-600 dark:text-gray-300">
             Se status, ETA och kvitton for alla dina byggen.
           </p>
@@ -161,7 +161,7 @@ export default function Orders() {
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Order</p>
                       <p className="text-lg font-semibold mt-2">#{order.id.slice(0, 8)}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Bestalld: {orderDate}</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
                     </div>
                     <div className="text-right">
                       <span className="inline-flex items-center justify-center rounded-full border border-yellow-400 bg-yellow-400/15 px-3 py-1 text-xs font-semibold text-gray-900 dark:text-yellow-200">
@@ -174,7 +174,7 @@ export default function Orders() {
 
                   <div className="mt-4 grid gap-4 md:grid-cols-[1.2fr_1fr]">
                     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Innehall</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Innehåll</p>
                       <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
                         {items.length === 0 && <p>Inga produkter kopplade till ordern.</p>}
                         {items.map((item) => (
@@ -233,7 +233,7 @@ export default function Orders() {
 
                   {stage === 5 && (
                     <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
-                      DatorHuset kontaktar dig om upphamtning och leverans. Vi ringer och skickar mejl.
+                      DatorHuset kontaktar dig om upphämtning och leverans. Vi ringer och skickar mejl.
                     </div>
                   )}
                 </div>
@@ -243,9 +243,9 @@ export default function Orders() {
 
           <div className="space-y-6">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
-              <p className="font-semibold text-gray-900 dark:text-gray-100">Behov av hjalp?</p>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">Behov av hjälp?</p>
               <p className="mt-3">
-                Har du fragor om leverans, uppgraderingar eller garanti? Kontakta oss sa svarar vi snabbt.
+                Har du frågor om leverans, uppgraderingar eller garanti? Kontakta oss så svarar vi snabbt.
               </p>
               <Link
                 to="/kundservice"
@@ -260,7 +260,7 @@ export default function Orders() {
               <ul className="mt-3 space-y-2">
                 <li>Vi skickar mejl vid varje statusandring.</li>
                 <li>Byggtiden varierar beroende pa komponenter.</li>
-                <li>Du kan fa kvitto via e-post eller under ordern.</li>
+                <li>Du kan få kvitto via e-post eller under ordern.</li>
               </ul>
             </div>
           </div>

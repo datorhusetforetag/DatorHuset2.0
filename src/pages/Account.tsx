@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -15,6 +15,24 @@ import { KeyRound, MapPin, Package, User } from "lucide-react";
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
 const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
+
+type OrderItem = {
+  id: string;
+  quantity: number;
+  product?: {
+    name?: string;
+    price_cents?: number;
+  };
+};
+
+type Order = {
+  id: string;
+  created_at?: string;
+  total_cents?: number;
+  status?: string;
+  order_items?: OrderItem[];
+  receipt_url?: string;
+};
 
 type Address = {
   id: string;
@@ -80,7 +98,7 @@ export default function Account() {
         setAddresses(data as Address[]);
       } catch (error) {
         if (!isMounted) return;
-        setAddressError("Kunde inte hämta sparade adresser.");
+        setAddressError("Kunde inte hÃ¤mta sparade adresser.");
       } finally {
         if (isMounted) setLoadingAddresses(false);
       }
@@ -277,14 +295,14 @@ export default function Account() {
             <div>
               <h1 className="text-3xl font-bold">Hej {profileName}</h1>
               <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-              Hantera uppgifter, adresser och dina beställningar.
+                Hantera uppgifter, adresser och dina beställningar.
               </p>
             </div>
             <Link
               to="/orders"
               className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
             >
-              Mina beställningar
+              Mina bestallningar
             </Link>
           </div>
         </div>
@@ -401,7 +419,7 @@ export default function Account() {
                 <h2 className="text-xl font-semibold">Mina beställningar</h2>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-              Följ status, kvitton och leveransinfo för dina beställningar.
+                Folj status, kvitton och leveransinfo for dina beställningar.
               </p>
               <Link
                 to="/orders"
@@ -577,6 +595,106 @@ export default function Account() {
             </div>
           </div>
 
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Package className="w-5 h-5 text-[#11667b]" />
+                <h2 className="text-xl font-semibold">Orderhistorik</h2>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                Status uppdateras manuellt när vi bygger din dator.
+              </p>
+
+              {loadingOrders && (
+                <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar order...</p>
+              )}
+              {orderError && (
+                <p className="text-sm text-red-500">{orderError}</p>
+              )}
+              {!loadingOrders && !orderError && orders.length === 0 && (
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Du har inga registrerade ordrar ännu.
+                </p>
+              )}
+
+              <div className="space-y-6">
+                {orders.map((order) => {
+                  const statusInfo = getOrderStatusInfo(order.status);
+                  const stage = statusInfo.step;
+                  const orderDate = order.created_at
+                    ? new Date(order.created_at).toLocaleDateString("sv-SE")
+                    : "Okänt datum";
+                  const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
+                  const items = order.order_items || [];
+
+                  return (
+                    <div key={order.id} className="rounded-xl border border-gray-200 dark:border-gray-800 p-4 sm:p-5">
+                      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+                        <div>
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Order #{order.id.slice(0, 8)}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">Totalt</p>
+                          <p className="text-lg font-semibold">{total.toLocaleString("sv-SE")} kr</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300 mb-4">
+                        {items.length === 0 && <p>Inga produkter kopplade till ordern.</p>}
+                        {items.map((item) => (
+                          <div key={item.id} className="flex justify-between">
+                            <span>{item.product?.name || "Produkt"} x{item.quantity}</span>
+                            <span>
+                              {typeof item.product?.price_cents === "number"
+                                ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
+                                : "--"} kr
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
+                        {ORDER_STATUS_STEPS.map((label, index) => (
+                          <div
+                            key={label}
+                            className={`rounded-full px-3 py-1 text-center border ${
+                              stage >= index + 1
+                                ? "border-yellow-400 bg-yellow-400/20 text-gray-900 dark:text-yellow-200"
+                                : "border-gray-200 dark:border-gray-700"
+                            }`}
+                          >
+                            {label}
+                          </div>
+                        ))}
+                      </div>
+
+                      <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-gray-600 dark:text-gray-300">
+                        <span>Status: {statusInfo.label}</span>
+                        <span>ETA: {statusInfo.eta}</span>
+                        {order.receipt_url ? (
+                          <a
+                            href={order.receipt_url}
+                            className="text-[#11667b] hover:text-[#0d4d5d] font-semibold"
+                          >
+                            Kvitto
+                          </a>
+                        ) : (
+                          <span>Kvitto skickas via e-post</span>
+                        )}
+                      </div>
+
+                      {stage === 5 && (
+                        <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
+                          DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
       </main>
       <Footer />
