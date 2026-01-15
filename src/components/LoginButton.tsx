@@ -152,8 +152,8 @@ export function LoginButton() {
               decoding="async"
             />
             <div>
-              <SheetTitle className="text-xl">Logga in pa DatorHuset</SheetTitle>
-              <SheetDescription>Hantera ordrar, favoriter och servicearenden.</SheetDescription>
+              <SheetTitle className="text-xl">Logga in på DatorHuset</SheetTitle>
+              <SheetDescription>Hantera ordrar, favoriter och serviceärenden.</SheetDescription>
             </div>
           </div>
         </SheetHeader>
@@ -171,9 +171,27 @@ export function LoginButton() {
                 setPending(false);
               }
             }}
-            className="w-full py-3 rounded-lg bg-gray-900 text-white font-semibold hover:bg-gray-800 transition-colors"
+            className="w-full py-3 rounded-lg border border-[#23324a] bg-[#101a28] text-white font-semibold shadow-sm hover:bg-[#162235] hover:border-[#2b3d59] transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
             disabled={pending}
           >
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="h-5 w-5">
+              <path
+                fill="#EA4335"
+                d="M12 10.2v3.9h5.5c-.2 1.4-1.7 4.1-5.5 4.1-3.3 0-6-2.7-6-6.1s2.7-6.1 6-6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.7 2.5 12 2.5 6.9 2.5 2.7 6.7 2.7 12s4.2 9.5 9.3 9.5c5.4 0 9-3.8 9-9.1 0-.6-.1-1.1-.2-1.6H12z"
+              />
+              <path
+                fill="#34A853"
+                d="M3.8 7.3l3.1 2.3C7.7 7.7 9.6 6.1 12 6.1c1.9 0 3.1.8 3.8 1.5l2.6-2.5C16.8 3.5 14.7 2.5 12 2.5c-3.6 0-6.6 2.1-8.2 4.8z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M12 21.5c2.6 0 4.8-.9 6.4-2.4l-3.1-2.4c-.9.6-2 1-3.3 1-2.4 0-4.5-1.6-5.2-3.7l-3.1 2.4c1.6 2.8 4.6 5.1 8.3 5.1z"
+              />
+              <path
+                fill="#4285F4"
+                d="M21 12.4c0-.6-.1-1.1-.2-1.6H12v3.9h5.5c-.3 1.6-1.9 3-3.4 3.7l3.1 2.4c1.8-1.7 2.8-4.2 2.8-7.4z"
+              />
+            </svg>
             Logga in via Google
           </button>
 
@@ -200,7 +218,7 @@ export function LoginButton() {
 
           {mode === "signup" && (
             <label className="block text-sm text-gray-700 dark:text-gray-300">
-              Anvandarnamn
+              Användarnamn
               <div className="mt-2 flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2">
                 <User className="w-4 h-4 text-gray-400" />
                 <input
@@ -228,7 +246,7 @@ export function LoginButton() {
           </label>
 
           <label className="block text-sm text-gray-700 dark:text-gray-300">
-            Losenord
+            Lösenord
             <div className="mt-2 flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2">
               <input
                 type="password"
@@ -266,7 +284,7 @@ export function LoginButton() {
           )}
 
           <div className="text-xs text-gray-500 dark:text-gray-400">
-            {mode === "login" ? "Saknar konto? Skapa ett konto for att spara ordrar." : "Har du redan konto? Logga in ovan."}
+            {mode === "login" ? "Saknar konto? Skapa ett konto för att spara ordrar." : "Har du redan konto? Logga in ovan."}
           </div>
         </div>
       </SheetContent>
