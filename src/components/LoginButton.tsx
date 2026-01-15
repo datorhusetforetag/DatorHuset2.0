@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { LogOut, Mail, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -6,16 +6,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 export function LoginButton() {
-  const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, signOut } = useAuth();
+  const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut } = useAuth();
   const [showDropdown, setShowDropdown] = useState(false);
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [lastSignupEmail, setLastSignupEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [resendPending, setResendPending] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
   const navigate = useNavigate();
 
   if (loading) {
@@ -26,11 +29,22 @@ export function LoginButton() {
     setEmail("");
     setPassword("");
     setUsername("");
+    setLastSignupEmail(null);
     setError(null);
     setSuccessMessage(null);
     setPending(false);
+    setResendPending(false);
+    setResendCooldown(0);
     setMode("login");
   };
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = window.setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [resendCooldown]);
 
   const handleEmailLogin = async () => {
     setError(null);
@@ -50,7 +64,7 @@ export function LoginButton() {
     setError(null);
     setSuccessMessage(null);
     if (!username.trim()) {
-      setError("Ange ett anvandarnamn.");
+      setError("Ange ett användarnamn.");
       return;
     }
     setPending(true);
@@ -58,12 +72,29 @@ export function LoginButton() {
       await signUpWithEmail(email, password, username.trim());
       setPassword("");
       setUsername("");
+      setLastSignupEmail(email);
+      setResendCooldown(60);
       setMode("login");
-      setSuccessMessage("Konto skapat! Kontrollera din e-post och bekrafta kontot innan du loggar in.");
+      setSuccessMessage("Konto skapat! Kontrollera din e-post och bekräfta kontot innan du loggar in.");
     } catch (err: any) {
       setError(err?.message || "Kunde inte skapa konto.");
     } finally {
       setPending(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!lastSignupEmail || resendCooldown > 0) return;
+    setResendPending(true);
+    setError(null);
+    try {
+      await resendSignupEmail(lastSignupEmail);
+      setResendCooldown(60);
+      setSuccessMessage("Verifieringsmejlet skickades igen. Kolla inkorgen.");
+    } catch (err: any) {
+      setError(err?.message || "Kunde inte skicka verifieringsmejl.");
+    } finally {
+      setResendPending(false);
     }
   };
 
@@ -113,7 +144,7 @@ export function LoginButton() {
               }}
               className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-gray-100 dark:hover:bg-gray-800"
             >
-              Mina bestallningar
+              Mina best?llningar
             </button>
             <button
               onClick={() => {
@@ -261,7 +292,21 @@ export function LoginButton() {
           {error && <p className="text-sm text-red-600">{error}</p>}
           {successMessage && (
             <div className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-              {successMessage}
+              <div>{successMessage}</div>
+              {lastSignupEmail && mode === "login" && (
+                <button
+                  type="button"
+                  onClick={handleResendVerification}
+                  className="mt-3 inline-flex items-center gap-2 text-xs font-semibold text-emerald-700 hover:text-emerald-600 disabled:text-emerald-400"
+                  disabled={resendPending || resendCooldown > 0}
+                >
+                  {resendCooldown > 0
+                    ? `Skicka igen om ${resendCooldown}s`
+                    : resendPending
+                      ? "Skickar..."
+                      : "Skicka verifieringsmejl igen"}
+                </button>
+              )}
             </div>
           )}
 
