@@ -1253,7 +1253,7 @@ const buildStorePrices = (item: ComponentItem, category: CategoryKey) => {
     const inStock = (hash + index) % 4 !== 0;
     return { name, price, inStock };
   }).sort((a, b) => a.price - b.price);
-  const cheapest = stores[0]?.price ?? basePrice;
+  const cheapest = stores[0]?.price ö basePrice;
   return stores.map((store) => ({ ...store, isCheapest: store.price === cheapest }));
 };
 
@@ -1442,10 +1442,10 @@ export default function CustomBuild() {
     const specs = buildSpecList(detailItem.item);
     const history = buildPriceHistory(basePrice);
     const stores = buildStorePrices(detailItem.item, detailItem.category);
-    const cheapestStore = stores[0] ?? null;
-    const inStockStore = stores.find((store) => store.inStock) ?? stores[0] ?? null;
+    const cheapestStore = stores[0] ö null;
+    const inStockStore = stores.find((store) => store.inStock) ö stores[0] ö null;
     const image =
-      detailItem.item.image ?? CATEGORY_IMAGES[detailItem.category]?.src ?? FALLBACK_COMPONENT_IMAGE;
+      detailItem.item.image ö CATEGORY_IMAGES[detailItem.category]?.src ö FALLBACK_COMPONENT_IMAGE;
     return {
       basePrice,
       specs,
@@ -1457,12 +1457,13 @@ export default function CustomBuild() {
     };
   }, [detailItem]);
 
-  const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
+  const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ö 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
+  const allComponentsSelected = selectedCount === CATEGORY_LIST.length;
   const activeCategoryIndex = CATEGORY_LIST.findIndex((category) => category.key === activeCategory);
   const nextCategory = activeCategoryIndex >= 0 ? CATEGORY_LIST[activeCategoryIndex + 1] : null;
   const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
-  const nextBubbleLabel = nextCategory?.label ?? "Sammanfattning";
+  const nextBubbleLabel = nextCategory?.label ö "Sammanfattning";
   const showNextBubble = Boolean(
     selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
   );
@@ -1506,13 +1507,19 @@ export default function CustomBuild() {
     event.preventDefault();
     setOfferError("");
 
+    if (!allComponentsSelected) {
+      setOfferStatus("error");
+      setOfferError("Välj en komponent i varje kategori innan du skickar offertförfrågan.");
+      return;
+    }
+
     const trimmedName = offerForm.name.trim();
     const trimmedEmail = offerForm.email.trim();
     const trimmedNotes = offerForm.notes.trim();
 
     if (!trimmedName) {
       setOfferStatus("error");
-      setOfferError("Ange ditt namn s? att vi kan ?terkomma.");
+      setOfferError("Ange ditt namn så att vi kan ?terkomma.");
       return;
     }
 
@@ -1556,14 +1563,14 @@ export default function CustomBuild() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || "Kunde inte skicka offertf?rfr?gan.");
+        throw new Error(data?.error || "Kunde inte skicka offertförfrågan.");
       }
 
       setOfferStatus("sent");
       setOfferForm(initialOfferForm);
     } catch (error) {
       setOfferStatus("error");
-      setOfferError(error instanceof Error ? error.message : "Kunde inte skicka offertf?rfr?gan.");
+      setOfferError(error instanceof Error ? error.message : "Kunde inte skicka offertförfrågan.");
     }
   };
 
@@ -1600,9 +1607,9 @@ export default function CustomBuild() {
         {offerOpen ? (
           <DialogContent className="max-w-lg bg-white dark:bg-[#0f1824]">
             <DialogHeader>
-              <DialogTitle>Offertf?rfr?gan</DialogTitle>
+              <DialogTitle>Offertförfrågan</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
-                Fyll i dina uppgifter s? ?terkommer vi med offert och leveranstid.
+                Fyll i dina uppgifter så återkommer vi med offert och leveranstid.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleOfferSubmit} className="space-y-4">
@@ -1645,20 +1652,25 @@ export default function CustomBuild() {
                   id="offer-notes"
                   value={offerForm.notes}
                   onChange={updateOfferField("notes")}
-                  placeholder="Beskriv ?nskem?l eller annat"
+                  placeholder="Beskriv önskemål eller annat"
                   className="min-h-[120px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                 />
               </div>
+              {!allComponentsSelected ? (
+                <p className="text-sm text-amber-600">
+                  Välj en komponent i varje kategori innan du kan skicka offertförfrågan.
+                </p>
+              ) : null}
               {offerError ? <p className="text-sm text-red-600">{offerError}</p> : null}
               {offerStatus === "sent" ? (
-                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertf?rfr?gan.</p>
+                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertförfrågan.</p>
               ) : null}
               <button
                 type="submit"
-                disabled={offerStatus === "sending"}
-                className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white transition-colors"
+                disabled={offerStatus === "sending" || !allComponentsSelected}
+                className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
-                {offerStatus === "sending" ? "Skickar..." : "Skicka offertf?rfr?gan"}
+                {offerStatus === "sending" ? "Skickar..." : "Skicka offertförfrågan"}
               </button>
             </form>
           </DialogContent>
@@ -2049,10 +2061,10 @@ export default function CustomBuild() {
                 <div className="space-y-4">
                   {filteredItems.map((item) => {
                     const isSelected = selected[activeCategory]?.id === item.id;
-                    const ActiveIcon = activeConfig?.icon ?? Cpu;
+                    const ActiveIcon = activeConfig?.icon ö Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
-                    const imageSrc = item.image ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
-                    const imageAlt = item.image ? item.name : categoryImage?.alt ?? "Komponent";
+                    const imageSrc = item.image ö categoryImage?.src ö FALLBACK_COMPONENT_IMAGE;
+                    const imageAlt = item.image ? item.name : categoryImage?.alt ö "Komponent";
 
                     return (
                       <div
@@ -2166,10 +2178,15 @@ export default function CustomBuild() {
                   </div>
                   <button
                     type="button"
-                    className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-                   onClick={() => setOfferOpen(true)}>
+                    onClick={() => setOfferOpen(true)}
+                    disabled={!allComponentsSelected}
+                    className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                  >
                     Skicka offertförfrågan
                   </button>
+                  {!allComponentsSelected ? (
+                    <p className="mt-2 text-xs text-amber-600">Välj alla komponenter innan du skickar offertförfrågan.</p>
+                  ) : null}
                   <button
                     type="button"
                     onClick={handleShareBuild}

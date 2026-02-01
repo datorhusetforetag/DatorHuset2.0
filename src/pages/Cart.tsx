@@ -106,7 +106,7 @@ export default function Cart() {
                         >
                           <Minus className="w-4 h-4 text-gray-600" />
                         </button>
-                        <span className="px-3 py-1 bg-gray-100 rounded font-semibold">
+                        <span className="px-3 py-1 bg-gray-100 rounded font-semibold text-gray-900">
                           {item.quantity}
                         </span>
                         <button

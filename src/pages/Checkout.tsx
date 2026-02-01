@@ -39,6 +39,9 @@ export default function Checkout() {
   const [address, setAddress] = useState("");
   const [postalCode, setPostalCode] = useState("");
   const [city, setCity] = useState("");
+  const [deliveryInstructions, setDeliveryInstructions] = useState("");
+  const [doorCode, setDoorCode] = useState("");
+  const [deliveryTime, setDeliveryTime] = useState("");
   const [errors, setErrors] = useState({
     email: "",
     firstName: "",
@@ -175,6 +178,9 @@ export default function Checkout() {
           address,
           postalCode,
           city,
+          deliveryInstructions,
+          doorCode,
+          deliveryTime,
           addressId: selectedAddressId,
           totalCents: totalPrice,
         }),
@@ -391,6 +397,50 @@ export default function Checkout() {
                         }`}
                       />
                       {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
+                    </div>
+                  </div>
+
+                  <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+                    <h3 className="text-base font-semibold text-gray-900">Lägg till fraktinformation</h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
+                    </p>
+                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          Portkod (valfritt)
+                        </label>
+                        <input
+                          type="text"
+                          value={doorCode}
+                          onChange={(e) => setDoorCode(e.target.value)}
+                          placeholder="1234"
+                          className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          Önskad leveranstid (valfritt)
+                        </label>
+                        <input
+                          type="text"
+                          value={deliveryTime}
+                          onChange={(e) => setDeliveryTime(e.target.value)}
+                          placeholder="Vardagar 17–20"
+                          className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                        />
+                      </div>
+                    </div>
+                    <div className="mt-4">
+                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        Leveransinstruktioner (valfritt)
+                      </label>
+                      <textarea
+                        value={deliveryInstructions}
+                        onChange={(e) => setDeliveryInstructions(e.target.value)}
+                        placeholder="Lämna vid dörren / ring vid leverans / våning osv."
+                        className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                      />
                     </div>
                   </div>
                 </div>
