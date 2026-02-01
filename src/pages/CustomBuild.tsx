@@ -1253,7 +1253,7 @@ const buildStorePrices = (item: ComponentItem, category: CategoryKey) => {
     const inStock = (hash + index) % 4 !== 0;
     return { name, price, inStock };
   }).sort((a, b) => a.price - b.price);
-  const cheapest = stores[0]?.price ö basePrice;
+  const cheapest = stores[0]?.price ?? basePrice;
   return stores.map((store) => ({ ...store, isCheapest: store.price === cheapest }));
 };
 
