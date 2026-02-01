@@ -1442,10 +1442,10 @@ export default function CustomBuild() {
     const specs = buildSpecList(detailItem.item);
     const history = buildPriceHistory(basePrice);
     const stores = buildStorePrices(detailItem.item, detailItem.category);
-    const cheapestStore = stores[0] ö null;
-    const inStockStore = stores.find((store) => store.inStock) ö stores[0] ö null;
+    const cheapestStore = stores[0] ?? null;
+    const inStockStore = stores.find((store) => store.inStock) ?? stores[0] ?? null;
     const image =
-      detailItem.item.image ö CATEGORY_IMAGES[detailItem.category]?.src ö FALLBACK_COMPONENT_IMAGE;
+      detailItem.item.image ?? CATEGORY_IMAGES[detailItem.category]?.src ?? FALLBACK_COMPONENT_IMAGE;
     return {
       basePrice,
       specs,
@@ -1457,13 +1457,13 @@ export default function CustomBuild() {
     };
   }, [detailItem]);
 
-  const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ö 0), 0);
+  const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
   const allComponentsSelected = selectedCount === CATEGORY_LIST.length;
   const activeCategoryIndex = CATEGORY_LIST.findIndex((category) => category.key === activeCategory);
   const nextCategory = activeCategoryIndex >= 0 ? CATEGORY_LIST[activeCategoryIndex + 1] : null;
   const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
-  const nextBubbleLabel = nextCategory?.label ö "Sammanfattning";
+  const nextBubbleLabel = nextCategory?.label ?? "Sammanfattning";
   const showNextBubble = Boolean(
     selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
   );
@@ -1719,7 +1719,7 @@ export default function CustomBuild() {
                         </span>
                         {detailData.cheapestStore ? (
                           <span className="text-xs font-semibold bg-yellow-400 text-gray-900 px-3 py-1 rounded-full">
-                            Lagsta pris hos {detailData.cheapestStore.name}
+                            L?gsta pris hos {detailData.cheapestStore.name}
                           </span>
                         ) : null}
                       </div>
@@ -1748,7 +1748,7 @@ export default function CustomBuild() {
                               : "border border-yellow-400 text-yellow-700 dark:text-yellow-300 hover:bg-[#11667b] hover:text-white hover:border-[#11667b]"
                           }`}
                         >
-                          {detailIsSelected ? "Vald" : "Valj"}
+                          {detailIsSelected ? "Vald" : "Välj"}
                         </button>
                         {detailData.inStockStore ? (
                           <span className="inline-flex items-center text-xs font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full dark:text-green-200 dark:bg-green-900/40">
@@ -1763,7 +1763,7 @@ export default function CustomBuild() {
                 <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                   <div className="flex items-center justify-between">
                     <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Prishistorik</p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Senaste 12 manader</span>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Senaste 12 m?nader</span>
                   </div>
                   <div className="mt-4 flex items-end gap-1 h-28">
                     {detailData.history.map((value, index) => {
@@ -2061,10 +2061,10 @@ export default function CustomBuild() {
                 <div className="space-y-4">
                   {filteredItems.map((item) => {
                     const isSelected = selected[activeCategory]?.id === item.id;
-                    const ActiveIcon = activeConfig?.icon ö Cpu;
+                    const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
-                    const imageSrc = item.image ö categoryImage?.src ö FALLBACK_COMPONENT_IMAGE;
-                    const imageAlt = item.image ? item.name : categoryImage?.alt ö "Komponent";
+                    const imageSrc = item.image ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
+                    const imageAlt = item.image ? item.name : (categoryImage?.alt ?? "Komponent");
 
                     return (
                       <div
@@ -2234,9 +2234,7 @@ export default function CustomBuild() {
           type="button"
           onClick={handleNextBubbleClick}
           className="sm:hidden fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-yellow-400 text-gray-900 px-4 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
-          aria-label={`N\u00e4sta: ${nextBubbleLabel}`}
         >
-          <span>{nextBubbleLabel}</span>
           <span className="text-gray-700/70">{"\u2022"}</span>
           <span>{"N\u00e4sta"}</span>
           <ChevronRight className="w-4 h-4" />
