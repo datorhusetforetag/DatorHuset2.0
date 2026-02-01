@@ -111,8 +111,9 @@ const SUPPORT_SMTP_PORT = Number(process.env.SUPPORT_SMTP_PORT || SMTP_PORT || 0
 const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER;
 const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
 const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.site>";
-const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "datorhuset.foretag@gmail.com";
-const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "datorhuset.foretag@gmail.com";
+const DEFAULT_SUPPORT_TO = "support@datorhuset.site";
+const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || DEFAULT_SUPPORT_TO;
+const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || DEFAULT_SUPPORT_TO;
 const SERVICE_REQUEST_RATE_LIMIT_MAX = Number(process.env.SERVICE_REQUEST_RATE_LIMIT_MAX || 5);
 const SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS = Number(process.env.SERVICE_REQUEST_RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
 const DEFAULT_EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
@@ -608,7 +609,7 @@ export async function submitOfferRequest(req: any, res: any) {
       </div>
     `;
 
-    await sendEmail({
+    await sendSupportEmail({
       to: OFFER_REQUEST_TO,
       subject: `Offertförfrågan från ${name}`,
       html,

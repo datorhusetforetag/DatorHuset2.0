@@ -1512,7 +1512,7 @@ export default function CustomBuild() {
 
     if (!trimmedName) {
       setOfferStatus("error");
-      setOfferError("Ange ditt namn sa att vi kan aterkomma.");
+      setOfferError("Ange ditt namn s? att vi kan ?terkomma.");
       return;
     }
 
@@ -1556,14 +1556,14 @@ export default function CustomBuild() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || "Kunde inte skicka offertforfragan.");
+        throw new Error(data?.error || "Kunde inte skicka offertf?rfr?gan.");
       }
 
       setOfferStatus("sent");
       setOfferForm(initialOfferForm);
     } catch (error) {
       setOfferStatus("error");
-      setOfferError(error instanceof Error ? error.message : "Kunde inte skicka offertforfragan.");
+      setOfferError(error instanceof Error ? error.message : "Kunde inte skicka offertf?rfr?gan.");
     }
   };
 
@@ -1600,9 +1600,9 @@ export default function CustomBuild() {
         {offerOpen ? (
           <DialogContent className="max-w-lg bg-white dark:bg-[#0f1824]">
             <DialogHeader>
-              <DialogTitle>Offertforfragan</DialogTitle>
+              <DialogTitle>Offertf?rfr?gan</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
-                Fyll i dina uppgifter sa aterkommer vi med offert och leveranstid.
+                Fyll i dina uppgifter s? ?terkommer vi med offert och leveranstid.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleOfferSubmit} className="space-y-4">
@@ -1645,20 +1645,20 @@ export default function CustomBuild() {
                   id="offer-notes"
                   value={offerForm.notes}
                   onChange={updateOfferField("notes")}
-                  placeholder="Beskriv onskemal eller annat"
+                  placeholder="Beskriv ?nskem?l eller annat"
                   className="min-h-[120px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                 />
               </div>
               {offerError ? <p className="text-sm text-red-600">{offerError}</p> : null}
               {offerStatus === "sent" ? (
-                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertforfragan.</p>
+                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertf?rfr?gan.</p>
               ) : null}
               <button
                 type="submit"
                 disabled={offerStatus === "sending"}
                 className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white transition-colors"
               >
-                {offerStatus === "sending" ? "Skickar..." : "Skicka offertforfragan"}
+                {offerStatus === "sending" ? "Skickar..." : "Skicka offertf?rfr?gan"}
               </button>
             </form>
           </DialogContent>
@@ -2167,7 +2167,7 @@ export default function CustomBuild() {
                   <button
                     type="button"
                     className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-                  >
+                   onClick={() => setOfferOpen(true)}>
                     Skicka offertförfrågan
                   </button>
                   <button
