@@ -80,7 +80,7 @@ export default function Account() {
         setAddresses(data as Address[]);
       } catch (error) {
         if (!isMounted) return;
-        setAddressError("Kunde inte hÃ¤mta sparade adresser.");
+        setAddressError("Kunde inte hämta sparade adresser.");
       } finally {
         if (isMounted) setLoadingAddresses(false);
       }
@@ -284,7 +284,7 @@ export default function Account() {
               to="/orders"
               className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
             >
-              Mina bestallningar
+              Mina best\u00e4llningar
             </Link>
           </div>
         </div>

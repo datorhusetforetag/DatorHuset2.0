@@ -144,7 +144,7 @@ export function LoginButton() {
               }}
               className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-gray-100 dark:hover:bg-gray-800"
             >
-              Mina best?llningar
+              Mina best\u00e4llningar
             </button>
             <button
               onClick={() => {

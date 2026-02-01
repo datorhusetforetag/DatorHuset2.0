@@ -58,6 +58,7 @@ export const Navbar = () => {
         storage: mergedFields.storage,
         storagetype: mergedFields.storagetype,
         tier: mergedFields.tier,
+        image: product?.image_url || computer.image,
       };
     });
     return merged
@@ -282,15 +283,26 @@ export const Navbar = () => {
                       <button
                         key={result.id}
                         onMouseDown={() => handleSelectSearch(result.id)}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex flex-col gap-1 dark:hover:bg-gray-700"
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 dark:hover:bg-gray-700"
                       >
-                        <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{result.name}</span>
-                        <span className="text-xs text-gray-600 truncate dark:text-gray-300">
-                          {result.cpu} | {result.gpu} | {result.ram}
-                        </span>
-                        <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                          {result.price.toLocaleString("sv-SE")} kr
-                        </span>
+                        <img
+                          src={result.image}
+                          alt={result.name}
+                          className="h-12 w-12 rounded-md object-cover bg-gray-100 dark:bg-gray-900"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <span className="font-semibold text-sm text-gray-900 dark:text-gray-100 block truncate">
+                            {result.name}
+                          </span>
+                          <span className="text-xs text-gray-600 truncate dark:text-gray-300 block">
+                            {result.cpu} | {result.gpu} | {result.ram}
+                          </span>
+                          <span className="text-sm font-bold text-gray-900 dark:text-gray-100 block">
+                            {result.price.toLocaleString("sv-SE")} kr
+                          </span>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -372,15 +384,26 @@ export const Navbar = () => {
                       <button
                         key={result.id}
                         onMouseDown={() => handleSelectSearch(result.id)}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex flex-col gap-1 dark:hover:bg-gray-700"
+                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 dark:hover:bg-gray-700"
                       >
-                        <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{result.name}</span>
-                        <span className="text-xs text-gray-600 truncate dark:text-gray-300">
-                          {result.cpu} | {result.gpu} | {result.ram}
-                        </span>
-                        <span className="text-sm font-bold text-gray-900 dark:text-gray-100">
-                          {result.price.toLocaleString("sv-SE")} kr
-                        </span>
+                        <img
+                          src={result.image}
+                          alt={result.name}
+                          className="h-12 w-12 rounded-md object-cover bg-gray-100 dark:bg-gray-900"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <span className="font-semibold text-sm text-gray-900 dark:text-gray-100 block truncate">
+                            {result.name}
+                          </span>
+                          <span className="text-xs text-gray-600 truncate dark:text-gray-300 block">
+                            {result.cpu} | {result.gpu} | {result.ram}
+                          </span>
+                          <span className="text-sm font-bold text-gray-900 dark:text-gray-100 block">
+                            {result.price.toLocaleString("sv-SE")} kr
+                          </span>
+                        </div>
                       </button>
                     ))}
                   </div>
