@@ -111,6 +111,7 @@ const SUPPORT_SMTP_PORT = Number(process.env.SUPPORT_SMTP_PORT || SMTP_PORT || 0
 const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER;
 const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
 const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.site>";
+const SMTP_TIMEOUT_MS = Number(process.env.SMTP_TIMEOUT_MS || 10000);
 const DEFAULT_SUPPORT_TO = "support@datorhuset.site";
 const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || DEFAULT_SUPPORT_TO;
 const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || DEFAULT_SUPPORT_TO;
@@ -126,6 +127,9 @@ const defaultMailer = DEFAULT_EMAIL_ENABLED
       port: SMTP_PORT,
       secure: SMTP_PORT === 465,
       auth: { user: SMTP_USER, pass: SMTP_PASS },
+      connectionTimeout: SMTP_TIMEOUT_MS,
+      greetingTimeout: SMTP_TIMEOUT_MS,
+      socketTimeout: SMTP_TIMEOUT_MS,
     })
   : null;
 const supportMailer = SUPPORT_EMAIL_ENABLED
@@ -134,6 +138,9 @@ const supportMailer = SUPPORT_EMAIL_ENABLED
       port: SUPPORT_SMTP_PORT,
       secure: SUPPORT_SMTP_PORT === 465,
       auth: { user: SUPPORT_SMTP_USER, pass: SUPPORT_SMTP_PASS },
+      connectionTimeout: SMTP_TIMEOUT_MS,
+      greetingTimeout: SMTP_TIMEOUT_MS,
+      socketTimeout: SMTP_TIMEOUT_MS,
     })
   : null;
 
@@ -611,7 +618,7 @@ export async function submitOfferRequest(req: any, res: any) {
 
     await sendSupportEmail({
       to: OFFER_REQUEST_TO,
-      subject: `Offertförfrågan från ${name}`,
+      subject: `Custom-bygg from ${name}`,
       html,
       replyTo: email,
     });
