@@ -4,13 +4,16 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
+import { decodeUnicodeEscapes } from "@/lib/textUtils";
 import {
   createUserAddress,
   deleteUserAddress,
+  confirmAccountDelete,
   getUserAddresses,
+  requestAccountDeleteCode,
   setDefaultAddress,
 } from "@/lib/supabaseServices";
-import { KeyRound, MapPin, Package, User } from "lucide-react";
+import { KeyRound, MapPin, Package, Trash2, User } from "lucide-react";
 
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
@@ -39,6 +42,12 @@ export default function Account() {
   });
   const [profileFormErrors, setProfileFormErrors] = useState<Record<string, string>>({});
   const [profileStatus, setProfileStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteCode, setDeleteCode] = useState("");
+  const [deleteStatus, setDeleteStatus] = useState<"idle" | "sending" | "sent" | "deleting" | "deleted" | "error">("idle");
+  const [deleteMessage, setDeleteMessage] = useState("");
+  const [deleteError, setDeleteError] = useState("");
+  const [deleteCodeRequested, setDeleteCodeRequested] = useState(false);
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [loadingAddresses, setLoadingAddresses] = useState(false);
@@ -101,6 +110,7 @@ export default function Account() {
   const defaultAddress = useMemo(() => {
     return addresses.find((addr) => addr.is_default) || addresses[0] || null;
   }, [addresses]);
+  const ordersLabel = useMemo(() => decodeUnicodeEscapes("Mina beställningar"), []);
 
   const validateProfileForm = () => {
     const nextErrors: Record<string, string> = {};
@@ -153,6 +163,63 @@ export default function Account() {
       setResetStatus("sent");
     } catch (error) {
       setResetStatus("error");
+    }
+  };
+
+  const handleSendDeleteCode = async () => {
+    if (!user?.email) return;
+    setDeleteError("");
+    setDeleteMessage("");
+    if (!deletePassword.trim()) {
+      setDeleteError("Ange ditt lösenord för att fortsätta.");
+      return;
+    }
+    try {
+      setDeleteStatus("sending");
+      const { error } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: deletePassword,
+      });
+      if (error) {
+        setDeleteStatus("error");
+        setDeleteError("Fel lösenord. Kontrollera och försök igen.");
+        return;
+      }
+      await requestAccountDeleteCode();
+      setDeleteStatus("sent");
+      setDeleteCodeRequested(true);
+      setDeleteMessage("Verifieringskoden är skickad till din e-post.");
+    } catch (error) {
+      setDeleteStatus("error");
+      setDeleteError(
+        error instanceof Error
+          ? error.message
+          : "Kunde inte skicka verifieringskod."
+      );
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteCode.trim()) {
+      setDeleteError("Ange verifieringskoden från mejlet.");
+      return;
+    }
+    try {
+      setDeleteStatus("deleting");
+      setDeleteError("");
+      setDeleteMessage("");
+      await confirmAccountDelete(deleteCode.trim());
+      setDeleteStatus("deleted");
+      setDeleteMessage("Ditt konto har raderats.");
+      await supabase.auth.signOut();
+      window.location.href = "/";
+    } catch (error) {
+      setDeleteStatus("error");
+      setDeleteError(
+        error instanceof Error
+          ? error.message
+          : "Kunde inte radera kontot."
+      );
     }
   };
 
@@ -280,12 +347,12 @@ export default function Account() {
                 Hantera uppgifter, adresser och dina beställningar.
               </p>
             </div>
-            <Link
-              to="/orders"
-              className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
-            >
-              Mina best\u00e4llningar
-            </Link>
+              <Link
+                to="/orders"
+                className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
+              >
+              {ordersLabel}
+              </Link>
           </div>
         </div>
 
@@ -398,10 +465,10 @@ export default function Account() {
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-3">
                 <Package className="w-5 h-5 text-[#11667b]" />
-                <h2 className="text-xl font-semibold">Mina beställningar</h2>
+                <h2 className="text-xl font-semibold">{ordersLabel}</h2>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Folj status, kvitton och leveransinfo for dina beställningar.
+                Följ status, kvitton och leveransinfo för dina beställningar.
               </p>
               <Link
                 to="/orders"
@@ -409,6 +476,58 @@ export default function Account() {
               >
                 Öppna orderöversikt
               </Link>
+            </div>
+
+            <div className="rounded-2xl border border-red-200 dark:border-red-900 bg-white dark:bg-gray-900 p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Trash2 className="w-5 h-5 text-red-500" />
+                <h2 className="text-xl font-semibold">Radera konto</h2>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Detta tar bort ditt konto och din tillgång till tjänsten. Du får en verifieringskod via e-post innan radering.
+              </p>
+              <div className="mt-4 grid gap-3">
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(event) => setDeletePassword(event.target.value)}
+                  placeholder="Ange ditt lösenord"
+                  className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={handleSendDeleteCode}
+                  disabled={deleteStatus === "sending"}
+                  className="inline-flex items-center justify-center rounded-lg border border-red-400 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950 disabled:opacity-60"
+                >
+                  {deleteStatus === "sending" ? "Skickar kod..." : "Skicka verifieringskod"}
+                </button>
+                {deleteCodeRequested && (
+                  <>
+                    <input
+                      type="text"
+                      value={deleteCode}
+                      onChange={(event) => setDeleteCode(event.target.value)}
+                      placeholder="Verifieringskod från e-post"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleConfirmDelete}
+                      disabled={deleteStatus === "deleting" || deleteStatus === "sending"}
+                      className="inline-flex items-center justify-center rounded-lg bg-red-500 text-white px-4 py-2 text-xs font-semibold hover:bg-red-600 disabled:opacity-60"
+                    >
+                      {deleteStatus === "deleting" ? "Raderar..." : "Radera konto"}
+                    </button>
+                  </>
+                )}
+                {deleteMessage && (
+                  <p className="text-xs text-emerald-600">{deleteMessage}</p>
+                )}
+                {deleteError && (
+                  <p className="text-xs text-red-500">{deleteError}</p>
+                )}
+              </div>
             </div>
           </div>
 

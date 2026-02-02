@@ -7,17 +7,18 @@ export type OrderStatusInfo = {
 
 export const ORDER_STATUS_FLOW: OrderStatusInfo[] = [
   { value: "received", label: "Beställning mottagen", eta: "1-2 dagar", step: 1 },
-  { value: "ordering", label: "Beställer komponenterna", eta: "2-5 dagar", step: 2 },
-  { value: "building", label: "Bygger", eta: "1-3 dagar", step: 3 },
-  { value: "postbuild", label: "Post-bygg justeringar", eta: "1-2 dagar", step: 4 },
-  { value: "ready", label: "Redo att hämta/frakta!", eta: "Kontakta kund", step: 5 },
+  { value: "building", label: "Bygger/Produktion", eta: "1-3 dagar", step: 2 },
+  { value: "postbuild", label: "Post-bygg justeringar", eta: "1-2 dagar", step: 3 },
+  { value: "ready", label: "Redo att hämta/frakta!", eta: "Kontakta kund", step: 4 },
 ];
 
 const STATUS_ALIASES: Record<string, string> = {
   pending: "received",
+  ordering: "received",
   in_progress: "building",
   finished: "ready",
   completed: "ready",
+  cancel_requested: "received",
 };
 
 export const getOrderStatusInfo = (status?: string) => {

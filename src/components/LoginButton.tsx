@@ -4,6 +4,7 @@ import { LogOut, Mail, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { decodeUnicodeEscapes } from "@/lib/textUtils";
 
 export function LoginButton() {
   const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut } = useAuth();
@@ -106,6 +107,7 @@ export function LoginButton() {
       user.user_metadata?.name ||
       user.email ||
       "Profil";
+    const ordersLabel = decodeUnicodeEscapes("Mina beställningar");
     const initials = displayName.trim().charAt(0).toUpperCase() || "P";
 
     return (
@@ -144,7 +146,7 @@ export function LoginButton() {
               }}
               className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-gray-100 dark:hover:bg-gray-800"
             >
-              Mina best\u00e4llningar
+              {ordersLabel}
             </button>
             <button
               onClick={() => {

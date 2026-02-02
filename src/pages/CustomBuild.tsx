@@ -1519,7 +1519,7 @@ export default function CustomBuild() {
 
     if (!trimmedName) {
       setOfferStatus("error");
-      setOfferError("Ange ditt namn så att vi kan ?terkomma.");
+      setOfferError("Ange ditt namn så att vi kan återkomma.");
       return;
     }
 
@@ -1546,10 +1546,16 @@ export default function CustomBuild() {
 
     setOfferStatus("sending");
 
+    let timeoutId: number | undefined;
+
     try {
+      const controller = new AbortController();
+      timeoutId = window.setTimeout(() => controller.abort(), 15000);
+
       const response = await fetch(`${apiBase}/api/offer-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        signal: controller.signal,
         body: JSON.stringify({
           name: trimmedName,
           email: trimmedEmail,
@@ -1568,9 +1574,21 @@ export default function CustomBuild() {
 
       setOfferStatus("sent");
       setOfferForm(initialOfferForm);
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
     } catch (error) {
+      if (timeoutId) {
+        window.clearTimeout(timeoutId);
+      }
       setOfferStatus("error");
-      setOfferError(error instanceof Error ? error.message : "Kunde inte skicka offertförfrågan.");
+      const message =
+        error instanceof Error && error.name === "AbortError"
+          ? "Förfrågan tog för lång tid. Försök igen om en stund."
+          : error instanceof Error
+            ? error.message
+            : "Kunde inte skicka offertförfrågan.";
+      setOfferError(message);
     }
   };
 

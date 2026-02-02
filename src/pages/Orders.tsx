@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
-import { getUserOrders } from "@/lib/supabaseServices";
+import { getUserOrders, requestOrderCancel } from "@/lib/supabaseServices";
 import { getOrderStatusInfo, ORDER_STATUS_STEPS } from "@/lib/orderStatus";
 import { Clock, Package, ReceiptText } from "lucide-react";
 
@@ -30,6 +30,9 @@ export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
+  const [cancelingOrderId, setCancelingOrderId] = useState<string | null>(null);
+  const [cancelSuccess, setCancelSuccess] = useState<Record<string, boolean>>({});
+  const [cancelError, setCancelError] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!user) return;
@@ -43,7 +46,7 @@ export default function Orders() {
         setOrders(data as Order[]);
       } catch (error) {
         if (!isMounted) return;
-        setOrderError("Kunde inte hamta orderhistorik just nu.");
+        setOrderError("Kunde inte hämta orderhistorik just nu.");
       } finally {
         if (isMounted) setLoadingOrders(false);
       }
@@ -54,16 +57,40 @@ export default function Orders() {
     };
   }, [user]);
 
+  const handleCancelOrder = async (orderId: string) => {
+    try {
+      setCancelingOrderId(orderId);
+      setCancelError((prev) => ({ ...prev, [orderId]: "" }));
+      await requestOrderCancel(orderId);
+      setCancelSuccess((prev) => ({ ...prev, [orderId]: true }));
+      setOrders((prev) =>
+        prev.map((order) =>
+          order.id === orderId ? { ...order, status: "cancel_requested" } : order
+        )
+      );
+    } catch (error) {
+      setCancelError((prev) => ({
+        ...prev,
+        [orderId]:
+          error instanceof Error
+            ? error.message
+            : "Kunde inte skicka avbokningsförfrågan.",
+      }));
+    } finally {
+      setCancelingOrderId(null);
+    }
+  };
+
   const orderStats = useMemo(() => {
     const totalOrders = orders.length;
-    const totalCents = orders.reduce((sum, order) => sum + (order.total_cents ?? 0), 0);
+    const totalCents = orders.reduce((sum, order) => sum + (order.total_cents || 0), 0);
     const activeOrders = orders.filter((order) => {
       const status = getOrderStatusInfo(order.status);
       return status.step < ORDER_STATUS_STEPS.length;
     }).length;
     const latestOrderDate = orders[0]?.created_at
       ? new Date(orders[0].created_at).toLocaleDateString("sv-SE")
-      : "Ingen order an";
+      : "Ingen order än";
     return {
       totalOrders,
       totalCents,
@@ -78,7 +105,7 @@ export default function Orders() {
         <Navbar />
         <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="max-w-xl mx-auto text-center space-y-4">
-            <h1 className="text-3xl font-bold">Logga in for att se dina beställningar</h1>
+            <h1 className="text-3xl font-bold">Logga in för att se dina beställningar</h1>
             <p className="text-gray-600 dark:text-gray-300">
               Dina ordrar, kvitton och byggstatus finns i kontot.
             </p>
@@ -103,7 +130,7 @@ export default function Orders() {
           <p className="text-sm uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Mina beställningar</p>
           <h1 className="text-3xl font-bold">Din orderöversikt</h1>
           <p className="text-sm text-gray-600 dark:text-gray-300">
-            Se status, ETA och kvitton for alla dina byggen.
+            Se status, ETA och kvitton för alla dina byggen.
           </p>
         </div>
 
@@ -121,7 +148,7 @@ export default function Orders() {
           <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
             <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Senaste order</p>
             <p className="text-lg font-semibold mt-2">{orderStats.latestOrderDate}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">senaste bestallning</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">senaste beställning</p>
           </div>
           <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
             <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Totalt spenderat</p>
@@ -135,23 +162,29 @@ export default function Orders() {
         <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr] items-start">
           <div className="space-y-6">
             {loadingOrders && (
-              <p className="text-sm text-gray-600 dark:text-gray-300">Hamtar order...</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar order...</p>
             )}
             {orderError && (
               <p className="text-sm text-red-500">{orderError}</p>
             )}
             {!loadingOrders && !orderError && orders.length === 0 && (
               <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
-                Du har inga registrerade ordrar annu.
+                Du har inga registrerade ordrar ännu.
               </div>
             )}
 
             {orders.map((order) => {
               const statusInfo = getOrderStatusInfo(order.status);
               const stage = statusInfo.step;
+              const rawStatus = order.status || "received";
+              const canCancel =
+                stage === 1 &&
+                ["received", "ordering", "pending"].includes(rawStatus) &&
+                !cancelSuccess[order.id] &&
+                rawStatus !== "cancel_requested";
               const orderDate = order.created_at
                 ? new Date(order.created_at).toLocaleDateString("sv-SE")
-                : "Okant datum";
+                : "Okänt datum";
               const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
               const items = order.order_items || [];
 
@@ -231,7 +264,34 @@ export default function Orders() {
                     )}
                   </div>
 
-                  {stage === 5 && (
+                  {(canCancel || cancelSuccess[order.id] || cancelError[order.id]) && (
+                    <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] px-4 py-3 text-sm">
+                      {cancelSuccess[order.id] ? (
+                        <p className="text-emerald-600">
+                          Avbokningsförfrågan skickad. Vi återkommer via e-post.
+                        </p>
+                      ) : (
+                        <div className="flex flex-wrap items-center justify-between gap-3">
+                          <p className="text-gray-600 dark:text-gray-300">
+                            Du kan avbryta ordern innan produktionen har startat.
+                          </p>
+                          <button
+                            type="button"
+                            onClick={() => handleCancelOrder(order.id)}
+                            disabled={cancelingOrderId === order.id}
+                            className="inline-flex items-center justify-center rounded-lg border border-red-400 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950 disabled:opacity-60"
+                          >
+                            {cancelingOrderId === order.id ? "Skickar..." : "Avbryt order"}
+                          </button>
+                        </div>
+                      )}
+                      {cancelError[order.id] && (
+                        <p className="mt-2 text-sm text-red-500">{cancelError[order.id]}</p>
+                      )}
+                    </div>
+                  )}
+
+                  {stage === ORDER_STATUS_STEPS.length && (
                     <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
                       DatorHuset kontaktar dig om upphämtning och leverans. Vi ringer och skickar mejl.
                     </div>
@@ -258,8 +318,8 @@ export default function Orders() {
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
               <p className="font-semibold text-gray-900 dark:text-gray-100">Bra att veta</p>
               <ul className="mt-3 space-y-2">
-                <li>Vi skickar mejl vid varje statusandring.</li>
-                <li>Byggtiden varierar beroende pa komponenter.</li>
+                <li>Vi skickar mejl vid varje statusändring.</li>
+                <li>Byggtiden varierar beroende på komponenter.</li>
                 <li>Du kan få kvitto via e-post eller under ordern.</li>
               </ul>
             </div>

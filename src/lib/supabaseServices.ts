@@ -261,6 +261,25 @@ export async function addOrderItem(orderItem: {
   return data;
 }
 
+export async function requestOrderCancel(orderId: string) {
+  return apiRequest(`/api/orders/${orderId}/cancel-request`, {
+    method: 'POST',
+  });
+}
+
+export async function requestAccountDeleteCode() {
+  return apiRequest('/api/account-delete/request', {
+    method: 'POST',
+  });
+}
+
+export async function confirmAccountDelete(code: string) {
+  return apiRequest('/api/account-delete/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ code }),
+  });
+}
+
 // ============================================================
 // ADDRESS SERVICE
 // ============================================================

@@ -13,6 +13,7 @@ import { createClient } from "@supabase/supabase-js";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -161,12 +162,17 @@ const ALLOWED_PAYMENT_METHODS = new Set([
   ...PAYMENT_METHODS,
   ...(CUSTOM_PAYMENT_METHOD ? [CUSTOM_PAYMENT_METHOD] : []),
 ]);
+const CHECKOUT_EXPIRES_IN_SECONDS = Math.min(
+  Math.max(Number(process.env.CHECKOUT_EXPIRES_IN_SECONDS || 30 * 60), 30 * 60),
+  24 * 60 * 60
+);
 const STATUS_OPTIONS = new Set([
   "received",
   "ordering",
   "building",
   "postbuild",
   "ready",
+  "cancel_requested",
   "pending",
   "in_progress",
   "finished",
@@ -186,14 +192,15 @@ const DEFAULT_BUILD_CHECKLIST = [
 
 const STATUS_LABELS = {
   received: "Beställning mottagen",
-  ordering: "Beställer komponenterna",
-  building: "Bygger",
+  ordering: "Beställning mottagen",
+  building: "Bygger/Produktion",
   postbuild: "Post-bygg justeringar",
   ready: "Redo att hämta/frakta!",
   pending: "Beställning mottagen",
-  in_progress: "Bygger",
+  in_progress: "Bygger/Produktion",
   finished: "Redo att hämta/frakta!",
   completed: "Redo att hämta/frakta!",
+  cancel_requested: "Beställning mottagen",
 };
 const READY_MESSAGE =
   "DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
@@ -209,8 +216,10 @@ const SUPPORT_SMTP_PORT = Number(process.env.SUPPORT_SMTP_PORT || SMTP_PORT || 0
 const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER;
 const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
 const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.site>";
-const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "datorhuset.foretag@gmail.com";
-const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "datorhuset.foretag@gmail.com";
+const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "support@datorhuset.site";
+const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "support@datorhuset.site";
+const ORDER_CANCEL_TO =
+  process.env.ORDER_CANCEL_TO || "support@datorhuset.site,datorhuset.foretag@gmail.com";
 const DEFAULT_EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
 const SUPPORT_EMAIL_ENABLED = Boolean(
   SUPPORT_SMTP_HOST && SUPPORT_SMTP_PORT && SUPPORT_SMTP_USER && SUPPORT_SMTP_PASS
@@ -248,6 +257,10 @@ const escapeHtml = (value) =>
     };
     return map[char] || char;
   });
+
+const generateVerificationCode = () => String(Math.floor(100000 + Math.random() * 900000));
+
+const hashVerificationCode = (code) => crypto.createHash("sha256").update(code).digest("hex");
 
 const parseMultiplier = (value, fallback) => {
   const parsed = Number(value);
@@ -359,18 +372,55 @@ const recordWebhookEvent = async (event) => {
 };
 
 const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
-  const itemLines = items
-    .map((item) => `<li>${item.name} x${item.quantity} \u2013 ${formatCurrency(item.total)}</li>`)
+  const orderDate = order?.created_at
+    ? new Date(order.created_at).toLocaleDateString("sv-SE")
+    : new Date().toLocaleDateString("sv-SE");
+  const itemRows = items
+    .map(
+      (item) => `
+        <tr>
+          <td style="padding:8px 0;color:#111;">${escapeHtml(item.name)}</td>
+          <td style="padding:8px 0;color:#6b7280;text-align:center;">x${item.quantity}</td>
+          <td style="padding:8px 0;color:#111;text-align:right;">${formatCurrency(item.total)}</td>
+        </tr>
+      `
+    )
     .join("");
   return `
-    <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
-      <h2>${headline}</h2>
-      <p>${intro}</p>
-      <p><strong>Ordernummer:</strong> ${formatOrderNumber(order)}</p>
-      <p><strong>Total:</strong> ${formatCurrency((order.total_cents || 0) / 100)}</p>
-      <ul>${itemLines}</ul>
-      ${statusNote ? `<p><strong>Status:</strong> ${statusNote}</p>` : ""}
-      <p>Har du fr\u00e5gor? Svara p\u00e5 det h\u00e4r mailet s\u00e5 hj\u00e4lper vi dig.</p>
+    <div style="background:#f4f7fb;padding:24px;">
+      <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e5e7eb;">
+        <div style="padding:24px;background:linear-gradient(135deg,#0f1824 0%,#11667b 100%);color:#ffffff;">
+          <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" style="height:32px;display:block;" />
+          <h1 style="margin:12px 0 4px;font-size:22px;font-weight:700;">${headline}</h1>
+          <p style="margin:0;color:#dbe9ee;">${intro}</p>
+        </div>
+        <div style="padding:24px;color:#111;">
+          <h2 style="font-size:16px;margin:0 0 12px;">Orderdetaljer</h2>
+          <p style="margin:4px 0;"><strong>Ordernummer:</strong> ${formatOrderNumber(order)}</p>
+          <p style="margin:4px 0;"><strong>Datum:</strong> ${orderDate}</p>
+          <p style="margin:4px 0;"><strong>Total:</strong> ${formatCurrency((order.total_cents || 0) / 100)}</p>
+          ${statusNote ? `<p style="margin:4px 0;"><strong>Status:</strong> ${statusNote}</p>` : ""}
+          <div style="margin:16px 0;border-top:1px solid #e5e7eb;"></div>
+          <table style="width:100%;border-collapse:collapse;">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">PRODUKT</th>
+                <th style="text-align:center;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">ANTAL</th>
+                <th style="text-align:right;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">SUMMA</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemRows}
+            </tbody>
+          </table>
+          <div style="margin:20px 0;border-top:1px solid #e5e7eb;"></div>
+          <p style="margin:0;color:#6b7280;">Har du frågor? Svara på det här mailet så hjälper vi dig.</p>
+        </div>
+        <div style="padding:16px 24px;background:#0f1824;color:#d1d5db;font-size:12px;text-align:center;">
+          <p style="margin:0 0 6px;">Behöver du hjälp? Kontakta oss på support@datorhuset.site</p>
+          <p style="margin:0;">DatorHuset – Byggda för spel, skapande och vardag.</p>
+        </div>
+      </div>
     </div>
   `;
 };
@@ -461,6 +511,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
     const requestOrigin = req?.headers?.origin;
     const checkoutBaseUrl =
       requestOrigin && FRONTEND_URLS.includes(requestOrigin) ? requestOrigin : FRONTEND_URL;
+    const expiresAt = Math.floor(Date.now() / 1000) + CHECKOUT_EXPIRES_IN_SECONDS;
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: paymentMethodTypes,
@@ -471,6 +522,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
       billing_address_collection: "required",
       shipping_address_collection: { allowed_countries: ["SE"] },
       locale: "sv",
+      expires_at: expiresAt,
       metadata: {
         userId: user.id,
         fullName: safeFullName,
@@ -1326,6 +1378,243 @@ app.get("/api/orders/by-session/:sessionId", async (req, res) => {
   }
 });
 
+app.post("/api/orders/:orderId/cancel-request", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const orderId = sanitizeText(req.params?.orderId, 64);
+    if (!orderId) {
+      return res.status(400).json({ error: "Missing order id" });
+    }
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+
+    const { data: order, error } = await supabase
+      .from("orders")
+      .select(
+        `
+        id,
+        order_number,
+        status,
+        created_at,
+        customer_name,
+        customer_email,
+        customer_phone,
+        customer_address,
+        customer_postal_code,
+        customer_city,
+        total_cents,
+        order_items (
+          quantity,
+          unit_price_cents,
+          product:product_id (name)
+        )
+      `
+      )
+      .eq("id", orderId)
+      .eq("user_id", user.id)
+      .single();
+
+    if (error || !order) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    const status = order.status || "received";
+    if (!["received", "ordering", "pending"].includes(status)) {
+      return res.status(400).json({ error: "Ordern är redan i produktion och kan inte avbrytas." });
+    }
+
+    if (!supportMailer) {
+      return res.status(503).json({ error: "Support email service not configured" });
+    }
+
+    const orderNumber = order.order_number ?? order.id.slice(0, 8);
+    const orderDate = order.created_at
+      ? new Date(order.created_at).toLocaleDateString("sv-SE")
+      : "Okänt datum";
+    const items = Array.isArray(order.order_items) ? order.order_items : [];
+    const itemLines = items
+      .map((item) => {
+        const name = item.product?.name || "Produkt";
+        const quantity = Number(item.quantity || 1);
+        return `<li>${escapeHtml(name)} x${quantity}</li>`;
+      })
+      .join("");
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
+        <h2>Avbruten order</h2>
+        <p>En kund har begärt att avbryta sin order.</p>
+        <p><strong>Ordernummer:</strong> ${escapeHtml(String(orderNumber))}</p>
+        <p><strong>Datum:</strong> ${escapeHtml(orderDate)}</p>
+        <p><strong>Namn:</strong> ${escapeHtml(order.customer_name || "")}</p>
+        <p><strong>E-post:</strong> ${escapeHtml(order.customer_email || user.email || "")}</p>
+        <p><strong>Telefon:</strong> ${escapeHtml(order.customer_phone || "-")}</p>
+        <p><strong>Adress:</strong> ${escapeHtml(order.customer_address || "-")}</p>
+        <p><strong>Postnummer / Ort:</strong> ${escapeHtml(
+          `${order.customer_postal_code || ""} ${order.customer_city || ""}`.trim() || "-"
+        )}</p>
+        <p><strong>Total:</strong> ${formatCurrency((order.total_cents || 0) / 100)}</p>
+        ${itemLines ? `<p><strong>Produkter:</strong></p><ul>${itemLines}</ul>` : ""}
+      </div>
+    `;
+
+    await sendSupportEmail({
+      to: ORDER_CANCEL_TO,
+      subject: `Avbruten order #${orderNumber}`,
+      html,
+      replyTo: order.customer_email || user.email || undefined,
+    });
+
+    await supabase
+      .from("orders")
+      .update({ status: "cancel_requested", updated_at: new Date() })
+      .eq("id", order.id);
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Order cancel request error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/account-delete/request", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!user.email) {
+      return res.status(400).json({ error: "Missing user email" });
+    }
+
+    const code = generateVerificationCode();
+    const codeHash = hashVerificationCode(code);
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+
+    const { error } = await supabase.from("account_delete_codes").insert([
+      {
+        user_id: user.id,
+        code_hash: codeHash,
+        expires_at: expiresAt,
+      },
+    ]);
+
+    if (error) {
+      console.error("Account delete code insert error:", error);
+      return res.status(500).json({ error: "Kunde inte skapa verifieringskod" });
+    }
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
+        <h2>Bekräfta borttagning av konto</h2>
+        <p>Du har begärt att ta bort ditt DatorHuset-konto.</p>
+        <p>Använd koden nedan för att bekräfta:</p>
+        <p style="font-size:22px;font-weight:bold;letter-spacing:2px;">${code}</p>
+        <p>Koden är giltig i 15 minuter.</p>
+        <p>Om du inte begärde detta kan du ignorera mejlet.</p>
+      </div>
+    `;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Bekräfta borttagning av konto",
+      html,
+    });
+
+    res.json({ ok: true, expires_in_minutes: 15 });
+  } catch (error) {
+    console.error("Account delete request error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/account-delete/confirm", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    if (req?.headers?.origin && !FRONTEND_URLS.includes(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+
+    const code = sanitizeText(req.body?.code, 12).replace(/\s+/g, "");
+    if (!/^\d{6}$/.test(code)) {
+      return res.status(400).json({ error: "Ogiltig verifieringskod" });
+    }
+
+    const codeHash = hashVerificationCode(code);
+    const { data, error } = await supabase
+      .from("account_delete_codes")
+      .select("id, code_hash, expires_at, used_at")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error || !data) {
+      return res.status(400).json({ error: "Ingen verifieringskod hittades" });
+    }
+
+    if (data.used_at) {
+      return res.status(400).json({ error: "Verifieringskoden har redan använts" });
+    }
+
+    if (new Date(data.expires_at).getTime() < Date.now()) {
+      return res.status(400).json({ error: "Verifieringskoden har gått ut" });
+    }
+
+    if (data.code_hash !== codeHash) {
+      return res.status(400).json({ error: "Fel verifieringskod" });
+    }
+
+    await supabase
+      .from("account_delete_codes")
+      .update({ used_at: new Date() })
+      .eq("id", data.id);
+
+    await supabase.from("cart_items").delete().eq("user_id", user.id);
+    await supabase.from("user_addresses").delete().eq("user_id", user.id);
+    await supabase
+      .from("orders")
+      .update({
+        user_id: null,
+        customer_email: null,
+        customer_name: null,
+        customer_phone: null,
+        customer_address: null,
+        customer_postal_code: null,
+        customer_city: null,
+        shipping_address_id: null,
+      })
+      .eq("user_id", user.id);
+
+    await supabase.auth.admin.deleteUser(user.id);
+
+    res.json({ ok: true });
+  } catch (error) {
+    console.error("Account delete confirm error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -1400,7 +1689,7 @@ app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
         subject: `Uppdatering om din order hos DatorHuset`,
         html: buildOrderEmailHtml({
           headline: "Uppdatering om din order",
-          intro: `Hej ${data.customer_name || ""}! Vi har uppdaterat statusen p? din order.`,
+          intro: `Hej ${data.customer_name || ""}! Vi har uppdaterat statusen på din order.`,
           order: data,
           items: (data.order_items || []).map((item) => ({
             name: item.product?.name || "Produkt",
@@ -1742,13 +2031,13 @@ async function handleSuccessfulPayment(stripeSession) {
 
   await sendEmail({
     to: userEmail,
-    subject: "Din order hos DatorHuset Ar mottagen",
+    subject: "Orderbekräftelse – DatorHuset",
     html: buildOrderEmailHtml({
-      headline: "Tack fAr din bestAllning!",
-      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och bArjar behandla den.`,
+      headline: "Tack för din beställning!",
+      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och börjar behandla den.`,
       order,
       items: emailItems,
-      statusNote: "Order mottagen",
+      statusNote: "Beställning mottagen",
     }),
   });
 }

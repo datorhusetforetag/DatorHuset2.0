@@ -20,17 +20,25 @@ export default function CheckoutSuccess() {
 
   useEffect(() => {
     let isMounted = true;
+    const safetyTimeout = window.setTimeout(() => {
+      if (isMounted) setLoading(false);
+    }, 12000);
     const init = async () => {
       try {
-        await clearCart();
+        clearCart().catch((error) => {
+          console.warn("Failed to clear cart", error);
+        });
       } catch (error) {
         console.warn("Failed to clear cart", error);
       }
 
       if (sessionId && token) {
+        const controller = new AbortController();
+        const timeoutId = window.setTimeout(() => controller.abort(), 8000);
         try {
           const response = await fetch(`${apiBase}/api/orders/by-session/${sessionId}`, {
             headers: { Authorization: `Bearer ${token}` },
+            signal: controller.signal,
           });
           if (response.ok) {
             const data = await response.json();
@@ -41,6 +49,8 @@ export default function CheckoutSuccess() {
           }
         } catch (error) {
           console.warn("Failed to load order number", error);
+        } finally {
+          window.clearTimeout(timeoutId);
         }
       }
 
@@ -52,6 +62,7 @@ export default function CheckoutSuccess() {
     init();
     return () => {
       isMounted = false;
+      window.clearTimeout(safetyTimeout);
     };
   }, [apiBase, clearCart, sessionId, token]);
 

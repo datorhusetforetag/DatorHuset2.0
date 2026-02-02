@@ -159,7 +159,7 @@ export default function AdminOrders() {
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Order</p>
                   <h3 className="text-lg font-semibold text-white">
-                    #{order.order_number ?? order.id.slice(0, 8)}
+                    #{order.order_number ? order.id.slice(0, 8)}
                   </h3>
                   <p className="text-sm text-slate-400">Beställd: {orderDate}</p>
                 </div>
