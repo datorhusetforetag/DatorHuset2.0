@@ -963,7 +963,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
   const userEmail = stripeSession.customer_email;
   const fullName = stripeSession.metadata?.fullName;
   const sessionId = stripeSession.id;
-  const totalAmount = Number(stripeSession.amount_total ? 0); // in cents/ore
+  const totalAmount = Number(stripeSession.amount_total ?? 0); // in cents/ore
   const paymentStatus = stripeSession.payment_status;
   const sessionStatus = stripeSession.status;
 
