@@ -19,6 +19,7 @@ type OrderItem = {
 
 type Order = {
   id: string;
+  order_number?: string | number | null;
   created_at?: string;
   total_cents?: number;
   status?: string;
@@ -146,6 +147,10 @@ export default function Orders() {
                 : "Okänt datum";
               const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
               const items = order.order_items || [];
+              const orderNumber =
+                order.order_number === null || order.order_number === undefined || order.order_number === ""
+                  ? order.id.slice(0, 8)
+                  : String(order.order_number);
 
               return (
                 <div
@@ -155,7 +160,7 @@ export default function Orders() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Order</p>
-                      <p className="text-lg font-semibold mt-2">#{order.id.slice(0, 8)}</p>
+                      <p className="text-lg font-semibold mt-2">#{orderNumber}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
                     </div>
                     <div className="text-right">

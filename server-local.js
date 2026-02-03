@@ -984,7 +984,7 @@ app.get("/api/admin/orders.csv", async (req, res) => {
           .map((item) => `${item.product?.name || "Produkt"} x${item.quantity}`)
           .join("; ");
         return [
-          order.order_number ?? order.id,
+          formatOrderNumber(order),
           order.created_at,
           order.status,
           ((order.total_cents || 0) / 100).toFixed(2),
@@ -1084,7 +1084,7 @@ app.post("/api/admin/inventory", async (req, res) => {
     }
 
     const productId = sanitizeText(req.body?.productId, 64);
-    const quantity = Number(req.body?.quantity_in_stock ?? 0);
+    const quantity = Number(req.body?.quantity_in_stock ? 0);
     const isPreorder = Boolean(req.body?.is_preorder);
     const rawEtaDays = req.body?.eta_days;
     const etaRange =
@@ -1435,7 +1435,7 @@ app.post("/api/orders/:orderId/cancel-request", async (req, res) => {
       return res.status(503).json({ error: "Support email service not configured" });
     }
 
-    const orderNumber = order.order_number ?? order.id.slice(0, 8);
+    const orderNumber = formatOrderNumber(order);
     const orderDate = order.created_at
       ? new Date(order.created_at).toLocaleDateString("sv-SE")
       : "Okänt datum";
@@ -1519,13 +1519,39 @@ app.post("/api/account-delete/request", async (req, res) => {
     }
 
     const html = `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
-        <h2>Bekräfta borttagning av konto</h2>
-        <p>Du har begärt att ta bort ditt DatorHuset-konto.</p>
-        <p>Använd koden nedan för att bekräfta:</p>
-        <p style="font-size:22px;font-weight:bold;letter-spacing:2px;">${code}</p>
-        <p>Koden är giltig i 15 minuter.</p>
-        <p>Om du inte begärde detta kan du ignorera mejlet.</p>
+      <div style="margin:0;padding:0;background:#0f1824;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="center" style="padding:32px 16px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:640px;background:#ffffff;border-radius:16px;overflow:hidden;">
+                <tr>
+                  <td style="padding:28px 32px;background:linear-gradient(135deg,#0f1824 0%,#1c2c3f 100%);">
+                    <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
+                    <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">Kontosäkerhet</p>
+                    <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">Bekräfta borttagning av konto</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:28px 32px;color:#111827;">
+                    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Du har begärt att ta bort ditt DatorHuset-konto. Använd koden nedan för att bekräfta.</p>
+                    <div style="text-align:center;margin:24px 0;">
+                      <div style="display:inline-block;background:#facc15;color:#111827;font-weight:700;padding:12px 20px;border-radius:10px;letter-spacing:4px;font-size:20px;">
+                        ${code}
+                      </div>
+                    </div>
+                    <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">Koden är giltig i 15 minuter.</p>
+                    <p style="margin:0;font-size:13px;color:#6b7280;">Om du inte begärde detta kan du ignorera mejlet.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:18px 32px;background:#f8fafc;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
+                    DatorHuset - Datorer byggda för spel, skapande och vardag.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </div>
     `;
 
@@ -1831,7 +1857,7 @@ async function handleSuccessfulPayment(stripeSession) {
   const userEmail = stripeSession.customer_email;
   const fullName = stripeSession.metadata?.fullName;
   const sessionId = stripeSession.id;
-  const totalAmount = Number(stripeSession.amount_total ?? 0);
+  const totalAmount = Number(stripeSession.amount_total ? 0);
   const paymentStatus = stripeSession.payment_status;
   const sessionStatus = stripeSession.status;
 
@@ -1914,7 +1940,7 @@ async function handleSuccessfulPayment(stripeSession) {
 
   const orderItems = lineItems.map((lineItem) => {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    const unitAmount = Number(lineItem.price?.unit_amount ? 0);
     const productMeta =
       lineItem.price?.product && typeof lineItem.price.product === "object"
         ? lineItem.price.product.metadata
@@ -1935,7 +1961,7 @@ async function handleSuccessfulPayment(stripeSession) {
 
   const emailItems = lineItems.map((lineItem) => {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    const unitAmount = Number(lineItem.price?.unit_amount ? 0);
     return {
       name: lineItem.description || "Produkt",
       quantity,
@@ -1974,6 +2000,8 @@ async function handleSuccessfulPayment(stripeSession) {
     .single();
 
   if (orderError || !order) {
+
+  const formattedOrderNumber = formatOrderNumber(order);
     throw new Error(`Failed to create order: ${orderError?.message}`);
   }
 
@@ -1988,6 +2016,19 @@ async function handleSuccessfulPayment(stripeSession) {
           .from("orders")
           .update({ receipt_url: receiptUrl })
           .eq("id", order.id);
+      }
+      try {
+        await stripe.paymentIntents.update(stripeSession.payment_intent, {
+          metadata: {
+            ...(paymentIntent?.metadata || {}),
+            order_id: order.id,
+            order_number: formattedOrderNumber,
+            stripe_session_id: sessionId,
+          },
+          description: `DatorHuset order #${formattedOrderNumber}`,
+        });
+      } catch (error) {
+        console.warn("Failed to tag payment intent with order metadata", error);
       }
     } catch (error) {
       console.warn("Failed to attach receipt URL", error);

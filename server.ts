@@ -350,12 +350,14 @@ const buildOrderEmailHtml = ({
   order,
   items,
   statusNote,
+  receiptUrl,
 }: {
   headline: string;
   intro: string;
   order: any;
   items: { name: string; quantity: number; total: number }[];
   statusNote?: string | null;
+  receiptUrl?: string | null;
 }) => {
   const orderDate = order?.created_at
     ? new Date(order.created_at).toLocaleDateString("sv-SE")
@@ -371,41 +373,58 @@ const buildOrderEmailHtml = ({
       `
     )
     .join("");
+  const receiptLink =
+    receiptUrl || order?.receipt_url
+      ? `<div style="text-align:center;margin:20px 0;">
+           <a href="${receiptUrl || order?.receipt_url}" style="display:inline-block;background:#facc15;color:#111827;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:10px;">Visa kvitto</a>
+         </div>`
+      : "";
   return `
-    <div style="background:#f4f7fb;padding:24px;">
-      <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e5e7eb;">
-        <div style="padding:24px;background:linear-gradient(135deg,#0f1824 0%,#11667b 100%);color:#ffffff;">
-          <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" style="height:32px;display:block;" />
-          <h1 style="margin:12px 0 4px;font-size:22px;font-weight:700;">${headline}</h1>
-          <p style="margin:0;color:#dbe9ee;">${intro}</p>
-        </div>
-        <div style="padding:24px;color:#111;">
-          <h2 style="font-size:16px;margin:0 0 12px;">Orderdetaljer</h2>
-          <p style="margin:4px 0;"><strong>Ordernummer:</strong> ${formatOrderNumber(order)}</p>
-          <p style="margin:4px 0;"><strong>Datum:</strong> ${orderDate}</p>
-          <p style="margin:4px 0;"><strong>Total:</strong> ${formatCurrency((order.total_cents || 0) / 100)}</p>
-          ${statusNote ? `<p style="margin:4px 0;"><strong>Status:</strong> ${statusNote}</p>` : ""}
-          <div style="margin:16px 0;border-top:1px solid #e5e7eb;"></div>
-          <table style="width:100%;border-collapse:collapse;">
-            <thead>
+    <div style="margin:0;padding:0;background:#0f1824;">
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td align="center" style="padding:32px 16px;">
+            <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:640px;background:#ffffff;border-radius:16px;overflow:hidden;">
               <tr>
-                <th style="text-align:left;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">PRODUKT</th>
-                <th style="text-align:center;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">ANTAL</th>
-                <th style="text-align:right;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">SUMMA</th>
+                <td style="padding:28px 32px;background:linear-gradient(135deg,#0f1824 0%,#1c2c3f 100%);">
+                  <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
+                  <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">Orderbekräftelse</p>
+                  <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">${headline}</h1>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              ${itemRows}
-            </tbody>
-          </table>
-          <div style="margin:20px 0;border-top:1px solid #e5e7eb;"></div>
-          <p style="margin:0;color:#6b7280;">Har du frågor? Svara på det här mailet så hjälper vi dig.</p>
-        </div>
-        <div style="padding:16px 24px;background:#0f1824;color:#d1d5db;font-size:12px;text-align:center;">
-          <p style="margin:0 0 6px;">Behöver du hjälp? Kontakta oss på support@datorhuset.site</p>
-          <p style="margin:0;">DatorHuset – Byggda för spel, skapande och vardag.</p>
-        </div>
-      </div>
+              <tr>
+                <td style="padding:28px 32px;color:#111827;">
+                  <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">${intro}</p>
+                  <p style="margin:4px 0;"><strong>Ordernummer:</strong> ${formatOrderNumber(order)}</p>
+                  <p style="margin:4px 0;"><strong>Datum:</strong> ${orderDate}</p>
+                  <p style="margin:4px 0;"><strong>Total:</strong> ${formatCurrency((order.total_cents || 0) / 100)}</p>
+                  ${statusNote ? `<p style="margin:4px 0;"><strong>Status:</strong> ${statusNote}</p>` : ""}
+                  ${receiptLink}
+                  <div style="margin:16px 0;border-top:1px solid #e5e7eb;"></div>
+                  <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                      <tr>
+                        <th style="text-align:left;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">PRODUKT</th>
+                        <th style="text-align:center;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">ANTAL</th>
+                        <th style="text-align:right;padding:6px 0;color:#6b7280;font-size:12px;letter-spacing:0.04em;">SUMMA</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${itemRows}
+                    </tbody>
+                  </table>
+                  <p style="margin:20px 0 0;font-size:13px;color:#6b7280;">Behöver du hjälp? Svara på mailet eller besök <a href="https://datorhuset.site" style="color:#11667b;">datorhuset.site</a>.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:18px 32px;background:#f8fafc;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
+                  DatorHuset - Datorer byggda för spel, skapande och vardag.
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
     </div>
   `;
 };
@@ -944,7 +963,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
   const userEmail = stripeSession.customer_email;
   const fullName = stripeSession.metadata?.fullName;
   const sessionId = stripeSession.id;
-  const totalAmount = Number(stripeSession.amount_total ?? 0); // in cents/ore
+  const totalAmount = Number(stripeSession.amount_total ? 0); // in cents/ore
   const paymentStatus = stripeSession.payment_status;
   const sessionStatus = stripeSession.status;
 
@@ -1030,7 +1049,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
 
   const orderItems = lineItems.map((lineItem) => {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    const unitAmount = Number(lineItem.price?.unit_amount ? 0);
     const productMeta =
       lineItem.price?.product && typeof lineItem.price.product === "object"
         ? (lineItem.price.product as any).metadata
@@ -1051,7 +1070,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
 
   const emailItems = lineItems.map((lineItem) => {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    const unitAmount = Number(lineItem.price?.unit_amount ? 0);
     return {
       name: lineItem.description || "Produkt",
       quantity,
@@ -1094,17 +1113,36 @@ async function handleSuccessfulPayment(stripeSession: any) {
     throw new Error(`Failed to create order: ${orderError?.message}`);
   }
 
+  const formattedOrderNumber = formatOrderNumber(order);
+  let receiptUrl: string | null = null;
   if (stripeSession.payment_intent) {
     try {
       const paymentIntent = await stripe.paymentIntents.retrieve(stripeSession.payment_intent, {
         expand: ["latest_charge"],
       });
-      const receiptUrl = paymentIntent?.latest_charge?.receipt_url || null;
-      if (receiptUrl) {
+      receiptUrl = paymentIntent?.latest_charge?.receipt_url || null;
+      const receiptNumber = paymentIntent?.latest_charge?.receipt_number || null;
+      const receiptUpdate: Record<string, any> = {};
+      if (receiptUrl) receiptUpdate.receipt_url = receiptUrl;
+      if (receiptNumber) receiptUpdate.receipt_number = receiptNumber;
+      if (Object.keys(receiptUpdate).length) {
         await supabase
           .from("orders")
-          .update({ receipt_url: receiptUrl })
+          .update(receiptUpdate)
           .eq("id", order.id);
+      }
+      try {
+        await stripe.paymentIntents.update(stripeSession.payment_intent, {
+          metadata: {
+            ...(paymentIntent?.metadata || {}),
+            order_id: order.id,
+            order_number: formattedOrderNumber,
+            stripe_session_id: sessionId,
+          },
+          description: `DatorHuset order #${formattedOrderNumber}`,
+        });
+      } catch (error) {
+        console.warn("Failed to tag payment intent with order metadata", error);
       }
     } catch (error) {
       console.warn("Failed to attach receipt URL", error);
@@ -1158,6 +1196,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
       order,
       items: emailItems,
       statusNote: "Beställning mottagen",
+      receiptUrl,
     }),
   });
 
@@ -1309,7 +1348,7 @@ export async function requestOrderCancel(req: any, res: any) {
       return res.status(503).json({ error: "Support email service not configured" });
     }
 
-    const orderNumber = order.order_number ?? order.id.slice(0, 8);
+    const orderNumber = formatOrderNumber(order);
     const orderDate = order.created_at
       ? new Date(order.created_at).toLocaleDateString("sv-SE")
       : "Okänt datum";
@@ -1400,13 +1439,39 @@ export async function requestAccountDeleteCode(req: any, res: any) {
     }
 
     const html = `
-      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
-        <h2>Bekräfta borttagning av konto</h2>
-        <p>Du har begärt att ta bort ditt DatorHuset-konto.</p>
-        <p>Använd koden nedan för att bekräfta:</p>
-        <p style="font-size:22px;font-weight:bold;letter-spacing:2px;">${code}</p>
-        <p>Koden är giltig i ${ACCOUNT_DELETE_CODE_TTL_MINUTES} minuter.</p>
-        <p>Om du inte begärde detta kan du ignorera mejlet.</p>
+      <div style="margin:0;padding:0;background:#0f1824;">
+        <table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+          <tr>
+            <td align="center" style="padding:32px 16px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:640px;background:#ffffff;border-radius:16px;overflow:hidden;">
+                <tr>
+                  <td style="padding:28px 32px;background:linear-gradient(135deg,#0f1824 0%,#1c2c3f 100%);">
+                    <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
+                    <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">Kontosäkerhet</p>
+                    <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">Bekräfta borttagning av konto</h1>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:28px 32px;color:#111827;">
+                    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Du har begärt att ta bort ditt DatorHuset-konto. Använd koden nedan för att bekräfta.</p>
+                    <div style="text-align:center;margin:24px 0;">
+                      <div style="display:inline-block;background:#facc15;color:#111827;font-weight:700;padding:12px 20px;border-radius:10px;letter-spacing:4px;font-size:20px;">
+                        ${code}
+                      </div>
+                    </div>
+                    <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">Koden är giltig i ${ACCOUNT_DELETE_CODE_TTL_MINUTES} minuter.</p>
+                    <p style="margin:0;font-size:13px;color:#6b7280;">Om du inte begärde detta kan du ignorera mejlet.</p>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:18px 32px;background:#f8fafc;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
+                    DatorHuset - Datorer byggda för spel, skapande och vardag.
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
       </div>
     `;
 
@@ -1731,7 +1796,7 @@ export async function updateAdminInventory(req: any, res: any) {
     }
 
     const productId = sanitizeText(req.body?.productId, 64);
-    const quantity = Number(req.body?.quantity_in_stock ?? 0);
+    const quantity = Number(req.body?.quantity_in_stock ? 0);
     const isPreorder = Boolean(req.body?.is_preorder);
     const rawEtaDays = req.body?.eta_days;
     const etaRange =
@@ -2137,7 +2202,7 @@ export async function exportOrdersCsv(req: any, res: any) {
           .map((item: any) => `${item.product?.name || "Produkt"} x${item.quantity}`)
           .join("; ");
         return [
-          order.order_number ?? order.id,
+          formatOrderNumber(order),
           order.created_at,
           order.status,
           ((order.total_cents || 0) / 100).toFixed(2),

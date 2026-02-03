@@ -27,6 +27,7 @@ type Order = {
   customer_postal_code?: string | null;
   customer_city?: string | null;
   receipt_url?: string | null;
+  receipt_number?: string | null;
   order_items?: OrderItem[];
 };
 
@@ -54,7 +55,7 @@ export default function AdminOrders() {
       const data = await response.json();
       setOrders(data || []);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta beställningar.");
+      setLocalError(err instanceof Error ?err.message : "Kunde inte hämta beställningar.");
     } finally {
       setLoadingOrders(false);
     }
@@ -86,7 +87,7 @@ export default function AdminOrders() {
       link.remove();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "CSV-export misslyckades.");
+      setLocalError(err instanceof Error ?err.message : "CSV-export misslyckades.");
     }
   };
 
@@ -152,14 +153,19 @@ export default function AdminOrders() {
           const orderDate = order.created_at
             ? new Date(order.created_at).toLocaleDateString("sv-SE")
             : "Okänt datum";
+          const orderNumber =
+            order.order_number === null || order.order_number === undefined || order.order_number === ""
+              ? order.id.slice(0, 8)
+              : String(order.order_number);
           const statusInfo = getOrderStatusInfo(order.status || undefined);
           return (
+
             <div key={order.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Order</p>
                   <h3 className="text-lg font-semibold text-white">
-                    #{order.order_number ?? order.id.slice(0, 8)}
+                    #{orderNumber}
                   </h3>
                   <p className="text-sm text-slate-400">Beställd: {orderDate}</p>
                 </div>
@@ -183,6 +189,9 @@ export default function AdminOrders() {
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-slate-300">
+                  {order.receipt_number && (
+                    <p className="text-xs text-slate-400">Kvittonummer: {order.receipt_number}</p>
+                  )}
                   {order.receipt_url ? (
                     <a
                       href={order.receipt_url}
@@ -206,7 +215,7 @@ export default function AdminOrders() {
                       </span>
                       <span>
                         {item.unit_price_cents
-                          ? formatCurrency((item.unit_price_cents * item.quantity) / 100)
+                          ?formatCurrency((item.unit_price_cents * item.quantity) / 100)
                           : "-"}
                       </span>
                     </div>

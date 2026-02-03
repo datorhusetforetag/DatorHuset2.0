@@ -131,13 +131,17 @@ export default function AdminBuild() {
         {orders.map((order) => {
           const statusInfo = getOrderStatusInfo(order.status || undefined);
           const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
+          const orderNumber =
+            order.order_number === null || order.order_number === undefined || order.order_number === ""
+              ? order.id.slice(0, 8)
+              : String(order.order_number);
           return (
             <div key={order.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Order</p>
                   <h3 className="text-lg font-semibold text-white">
-                    #{order.order_number ?? order.id.slice(0, 8)}
+                    #{orderNumber}
                   </h3>
                   <p className="text-sm text-slate-400">{order.customer_name || "Okänt namn"}</p>
                   <p className="text-sm text-slate-400">{order.customer_email}</p>
