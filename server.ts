@@ -1049,7 +1049,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
 
   const orderItems = lineItems.map((lineItem) => {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ? 0);
+    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
     const productMeta =
       lineItem.price?.product && typeof lineItem.price.product === "object"
         ? (lineItem.price.product as any).metadata
@@ -1070,7 +1070,7 @@ async function handleSuccessfulPayment(stripeSession: any) {
 
   const emailItems = lineItems.map((lineItem) => {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ? 0);
+    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
     return {
       name: lineItem.description || "Produkt",
       quantity,
