@@ -173,7 +173,7 @@ export default function Orders() {
                       {items.length === 0 && (
                         <p className="text-sm text-gray-600 dark:text-gray-300">Inga produkter kopplade till ordern.</p>
                       )}
-                      <div className="space-y-3">
+                      <div className="space-y-4">
                         {items.map((item) => {
                           const itemTotal =
                             typeof item.product?.price_cents === "number"
@@ -182,9 +182,9 @@ export default function Orders() {
                           return (
                             <div
                               key={item.id}
-                              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#101a27] px-3 py-2"
+                              className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#101a27] p-4"
                             >
-                              <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-md bg-gray-200 dark:bg-gray-800">
+                              <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800">
                                 {item.product?.image_url ? (
                                   <img
                                     src={item.product.image_url}
@@ -198,12 +198,12 @@ export default function Orders() {
                                 )}
                               </div>
                               <div className="flex-1">
-                                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
                                   {item.product?.name || "Produkt"}
                                 </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">Antal: {item.quantity}</p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">Antal: {item.quantity}</p>
                               </div>
-                              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                              <div className="text-base font-semibold text-gray-900 dark:text-gray-100 sm:ml-auto">
                                 {itemTotal} kr
                               </div>
                             </div>
