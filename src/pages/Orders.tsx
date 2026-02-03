@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -13,6 +13,7 @@ type OrderItem = {
   product?: {
     name?: string;
     price_cents?: number;
+    image_url?: string | null;
   };
 };
 
@@ -81,23 +82,7 @@ export default function Orders() {
     }
   };
 
-  const orderStats = useMemo(() => {
-    const totalOrders = orders.length;
-    const totalCents = orders.reduce((sum, order) => sum + (order.total_cents || 0), 0);
-    const activeOrders = orders.filter((order) => {
-      const status = getOrderStatusInfo(order.status);
-      return status.step < ORDER_STATUS_STEPS.length;
-    }).length;
-    const latestOrderDate = orders[0]?.created_at
-      ? new Date(orders[0].created_at).toLocaleDateString("sv-SE")
-      : "Ingen order än";
-    return {
-      totalOrders,
-      totalCents,
-      activeOrders,
-      latestOrderDate,
-    };
-  }, [orders]);
+
 
   if (!user) {
     return (
@@ -134,33 +119,7 @@ export default function Orders() {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Totalt</p>
-            <p className="text-2xl font-bold mt-2">{orderStats.totalOrders}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">registrerade ordrar</p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Aktiva</p>
-            <p className="text-2xl font-bold mt-2">{orderStats.activeOrders}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">under behandling</p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Senaste order</p>
-            <p className="text-lg font-semibold mt-2">{orderStats.latestOrderDate}</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">senaste beställning</p>
-          </div>
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4">
-            <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Totalt spenderat</p>
-            <p className="text-lg font-semibold mt-2">
-              {(orderStats.totalCents / 100).toLocaleString("sv-SE")} kr
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">sammanlagt</p>
-          </div>
-        </div>
-
-        <div className="grid gap-6 lg:grid-cols-[1.6fr_1fr] items-start">
-          <div className="space-y-6">
+        <div className="space-y-6">
             {loadingOrders && (
               <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar order...</p>
             )}
@@ -189,7 +148,10 @@ export default function Orders() {
               const items = order.order_items || [];
 
               return (
-                <div key={order.id} className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+                <div
+                  key={order.id}
+                  className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6"
+                >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Order</p>
@@ -205,31 +167,58 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  <div className="mt-4 grid gap-4 md:grid-cols-[1.2fr_1fr]">
+                  <div className="mt-4 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
                     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Innehåll</p>
-                      <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                        {items.length === 0 && <p>Inga produkter kopplade till ordern.</p>}
-                        {items.map((item) => (
-                          <div key={item.id} className="flex justify-between gap-3">
-                            <span className="truncate">{item.product?.name || "Produkt"} x{item.quantity}</span>
-                            <span className="font-semibold text-gray-900 dark:text-gray-100">
-                              {typeof item.product?.price_cents === "number"
-                                ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
-                                : "--"} kr
-                            </span>
-                          </div>
-                        ))}
+                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Produkt</p>
+                      {items.length === 0 && (
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Inga produkter kopplade till ordern.</p>
+                      )}
+                      <div className="space-y-3">
+                        {items.map((item) => {
+                          const itemTotal =
+                            typeof item.product?.price_cents === "number"
+                              ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
+                              : "--";
+                          return (
+                            <div
+                              key={item.id}
+                              className="flex items-center gap-3 rounded-lg border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#101a27] px-3 py-2"
+                            >
+                              <div className="h-14 w-14 flex-shrink-0 overflow-hidden rounded-md bg-gray-200 dark:bg-gray-800">
+                                {item.product?.image_url ? (
+                                  <img
+                                    src={item.product.image_url}
+                                    alt={item.product?.name || "Produkt"}
+                                    className="h-full w-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">
+                                    Bild
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                  {item.product?.name || "Produkt"}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">Antal: {item.quantity}</p>
+                              </div>
+                              <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                {itemTotal} kr
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
 
                     <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#101a27] p-4">
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Status</p>
-                      <div className="flex flex-wrap gap-2">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {ORDER_STATUS_STEPS.map((label, index) => (
                           <span
                             key={label}
-                            className={`inline-flex min-h-[28px] items-center justify-center rounded-full px-3 text-xs font-semibold border ${
+                            className={`inline-flex min-h-[34px] items-center justify-center rounded-full px-3 text-xs font-semibold border text-center ${
                               stage >= index + 1
                                 ? "border-yellow-400 bg-yellow-400/20 text-gray-900 dark:text-yellow-200"
                                 : "border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
@@ -299,30 +288,29 @@ export default function Orders() {
                 </div>
               );
             })}
+        </div>
+
+        <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
+            <p className="font-semibold text-gray-900 dark:text-gray-100">Behov av hjälp?</p>
+            <p className="mt-3">
+              Har du frågor om leverans, uppgraderingar eller garanti? Kontakta oss så svarar vi snabbt.
+            </p>
+            <Link
+              to="/kundservice"
+              className="mt-4 inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+            >
+              Kontakta kundservice
+            </Link>
           </div>
 
-          <div className="space-y-6">
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
-              <p className="font-semibold text-gray-900 dark:text-gray-100">Behov av hjälp?</p>
-              <p className="mt-3">
-                Har du frågor om leverans, uppgraderingar eller garanti? Kontakta oss så svarar vi snabbt.
-              </p>
-              <Link
-                to="/kundservice"
-                className="mt-4 inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
-              >
-                Kontakta kundservice
-              </Link>
-            </div>
-
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
-              <p className="font-semibold text-gray-900 dark:text-gray-100">Bra att veta</p>
-              <ul className="mt-3 space-y-2">
-                <li>Vi skickar mejl vid varje statusändring.</li>
-                <li>Byggtiden varierar beroende på komponenter.</li>
-                <li>Du kan få kvitto via e-post eller under ordern.</li>
-              </ul>
-            </div>
+          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
+            <p className="font-semibold text-gray-900 dark:text-gray-100">Bra att veta</p>
+            <ul className="mt-3 space-y-2">
+              <li>Vi skickar mejl vid varje statusändring.</li>
+              <li>Byggtiden varierar beroende på komponenter.</li>
+              <li>Du kan få kvitto via e-post eller under ordern.</li>
+            </ul>
           </div>
         </div>
       </main>
