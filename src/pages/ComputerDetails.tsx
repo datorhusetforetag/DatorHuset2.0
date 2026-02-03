@@ -818,8 +818,8 @@ export default function ComputerDetails() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">2 ?rs garanti</p>
-              <p>Alla datorer levereras med garanti p? komponenter och montering.</p>
+              <p className="font-semibold text-gray-900 dark:text-white">2 års garanti</p>
+              <p>Alla datorer levereras med garanti på komponenter och montering.</p>
             </div>
             <div className="space-y-2">
               <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp</p>
@@ -830,7 +830,7 @@ export default function ComputerDetails() {
               <p>Vi hjälper dig med felsökning och uppgraderingar när du vill.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">Snabb ?terkoppling</p>
+              <p className="font-semibold text-gray-900 dark:text-white">Snabb återkoppling</p>
               <p>Kontakta oss så återkommer vi med nästa steg och tidsplan.</p>
             </div>
           </div>
