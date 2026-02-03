@@ -166,6 +166,8 @@ const CHECKOUT_EXPIRES_IN_SECONDS = Math.min(
   Math.max(Number(process.env.CHECKOUT_EXPIRES_IN_SECONDS || 30 * 60), 30 * 60),
   24 * 60 * 60
 );
+const SHIPPING_COST_CENTS = 70000;
+const SERVICE_FEE_CENTS = 500;
 const STATUS_OPTIONS = new Set([
   "received",
   "ordering",
@@ -437,7 +439,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
   }
 
   try {
-    const { userEmail, fullName, phone, address, postalCode, city, addressId } = req.body || {};
+    const { userEmail, fullName, phone, address, postalCode, city, addressId, shippingMethod } = req.body || {};
     if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
       return res.status(403).json({ error: "Origin not allowed" });
     }
@@ -450,22 +452,33 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
     const customerEmail = sanitizeText(user.email || userEmail, 120);
     const safeFullName = sanitizeText(fullName || user.user_metadata?.full_name || user.user_metadata?.username, 120);
     const safePhone = normalizePhone(phone);
-    const safeAddress = sanitizeText(address, 200);
-    const safePostalCode = sanitizeText(postalCode, 16);
-    const safeCity = sanitizeText(city, 80);
+    let safeAddress = sanitizeText(address, 200);
+    let safePostalCode = sanitizeText(postalCode, 16);
+    let safeCity = sanitizeText(city, 80);
     const safeAddressId = sanitizeText(addressId, 60);
+    const normalizedShippingMethod = shippingMethod === "postnord" ? "postnord" : "pickup";
+    const requiresShipping = normalizedShippingMethod === "postnord";
 
-    if (!customerEmail || !safeFullName || !safePhone || !safeAddress || !safePostalCode || !safeCity) {
+    if (!customerEmail || !safeFullName || !safePhone) {
       return res.status(400).json({ error: "Missing user information" });
     }
     if (!swedishPhoneRegex.test(safePhone)) {
       return res.status(400).json({ error: "Invalid phone number" });
     }
-    if (!swedishPostalRegex.test(safePostalCode)) {
-      return res.status(400).json({ error: "Invalid postal code" });
-    }
-    if (!swedishCityRegex.test(safeCity)) {
-      return res.status(400).json({ error: "Invalid city" });
+    if (requiresShipping) {
+      if (!safeAddress || !safePostalCode || !safeCity) {
+        return res.status(400).json({ error: "Missing shipping address" });
+      }
+      if (!swedishPostalRegex.test(safePostalCode)) {
+        return res.status(400).json({ error: "Invalid postal code" });
+      }
+      if (!swedishCityRegex.test(safeCity)) {
+        return res.status(400).json({ error: "Invalid city" });
+      }
+    } else {
+      safeAddress = safeAddress || "Upphämtning i Rinkeby Centrum";
+      safePostalCode = safePostalCode || "";
+      safeCity = safeCity || "";
     }
 
     const { data: dbCartItems, error: cartError } = await supabase
@@ -501,6 +514,30 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
         quantity,
       };
     });
+    const feeLineItems = [
+      {
+        price_data: {
+          currency: "sek",
+          product_data: {
+            name: "Serviceavgift",
+          },
+          unit_amount: SERVICE_FEE_CENTS,
+        },
+        quantity: 1,
+      },
+    ];
+    if (requiresShipping) {
+      feeLineItems.push({
+        price_data: {
+          currency: "sek",
+          product_data: {
+            name: "PostNord frakt",
+          },
+          unit_amount: SHIPPING_COST_CENTS,
+        },
+        quantity: 1,
+      });
+    }
 
     const paymentMethodTypes = [...PAYMENT_METHODS];
     const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
@@ -515,12 +552,12 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: paymentMethodTypes,
-      line_items,
+      line_items: [...line_items, ...feeLineItems],
       mode: "payment",
       client_reference_id: user.id,
       customer_email: customerEmail,
       billing_address_collection: "required",
-      shipping_address_collection: { allowed_countries: ["SE"] },
+      shipping_address_collection: requiresShipping ? { allowed_countries: ["SE"] } : undefined,
       locale: "sv",
       expires_at: expiresAt,
       metadata: {
@@ -532,6 +569,9 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
         postalCode: safePostalCode,
         city: safeCity,
         addressId: safeAddressId,
+        shippingMethod: normalizedShippingMethod,
+        shippingCostCents: requiresShipping ? String(SHIPPING_COST_CENTS) : "0",
+        serviceFeeCents: String(SERVICE_FEE_CENTS),
       },
       success_url: `${checkoutBaseUrl}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${checkoutBaseUrl}/cart`,
@@ -1938,43 +1978,39 @@ async function handleSuccessfulPayment(stripeSession) {
     throw new Error("No line items on session");
   }
 
-  const orderItems = lineItems.map((lineItem) => {
+  const orderItems = [];
+  const emailItems = [];
+  let productTotal = 0;
+
+  for (const lineItem of lineItems) {
     const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
     const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
+    if (!unitAmount || unitAmount < 1) {
+      throw new Error("Invalid line item price");
+    }
     const productMeta =
       lineItem.price?.product && typeof lineItem.price.product === "object"
         ? lineItem.price.product.metadata
         : null;
     const productId = sanitizeText(productMeta?.product_id, 64);
-    if (!productId) {
-      throw new Error("Missing product metadata on line item");
+    if (productId) {
+      orderItems.push({
+        product_id: productId,
+        unit_price_cents: unitAmount,
+        quantity,
+      });
+      productTotal += unitAmount * quantity;
     }
-    if (!unitAmount || unitAmount < 1) {
-      throw new Error("Invalid line item price");
-    }
-    return {
-      product_id: productId,
-      unit_price_cents: unitAmount,
-      quantity,
-    };
-  });
-
-  const emailItems = lineItems.map((lineItem) => {
-    const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
-    const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
-    return {
+    emailItems.push({
       name: lineItem.description || "Produkt",
       quantity,
       total: (unitAmount * quantity) / 100,
-    };
-  });
+    });
+  }
 
-  const lineItemTotal = orderItems.reduce(
-    (sum, item) => sum + item.unit_price_cents * item.quantity,
-    0
-  );
-  if (lineItemTotal !== totalAmount) {
-    console.warn(`Line item total mismatch for session ${sessionId}`);
+  const feeTotal = totalAmount - productTotal;
+  if (feeTotal < 0) {
+    console.warn(`Line item total exceeds payment amount for session ${sessionId}`);
   }
 
   const { data: order, error: orderError } = await supabase

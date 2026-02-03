@@ -42,6 +42,7 @@ export default function Checkout() {
   const [deliveryInstructions, setDeliveryInstructions] = useState("");
   const [doorCode, setDoorCode] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
+  const [shippingMethod, setShippingMethod] = useState<"pickup" | "postnord">("pickup");
   const [errors, setErrors] = useState({
     email: "",
     firstName: "",
@@ -52,6 +53,10 @@ export default function Checkout() {
     city: "",
   });
   const fullName = `${firstName} ${lastName}`.trim();
+  const requiresShipping = shippingMethod === "postnord";
+  const serviceFeeCents = 500;
+  const shippingCostCents = requiresShipping ? 70000 : 0;
+  const totalWithFees = totalPrice + serviceFeeCents + shippingCostCents;
 
   useEffect(() => {
     if (!user) return;
@@ -139,9 +144,17 @@ export default function Checkout() {
       firstName: firstName.trim().length >= 2 ? "" : "Ange f\u00f6rnamn.",
       lastName: lastName.trim().length >= 2 ? "" : "Ange efternamn.",
       phone: swedishPhoneRegex.test(normalizedPhone) ? "" : "Ange ett giltigt svenskt mobilnummer.",
-      address: address.trim().length >= 5 ? "" : "Ange en giltig adress.",
-      postalCode: swedishPostalRegex.test(postalCode.trim()) ? "" : "Ange ett giltigt postnummer.",
-      city: swedishCityRegex.test(city.trim()) ? "" : "Ange en giltig postort.",
+      address: requiresShipping ? (address.trim().length >= 5 ? "" : "Ange en giltig adress.") : "",
+      postalCode: requiresShipping
+        ? swedishPostalRegex.test(postalCode.trim())
+          ? ""
+          : "Ange ett giltigt postnummer."
+        : "",
+      city: requiresShipping
+        ? swedishCityRegex.test(city.trim())
+          ? ""
+          : "Ange en giltig postort."
+        : "",
     };
 
       setErrors(nextErrors);
@@ -182,7 +195,8 @@ export default function Checkout() {
           doorCode,
           deliveryTime,
           addressId: selectedAddressId,
-          totalCents: totalPrice,
+          totalCents: totalWithFees,
+          shippingMethod,
         }),
       });
 
@@ -210,9 +224,10 @@ export default function Checkout() {
     firstName.trim().length >= 2 &&
     lastName.trim().length >= 2 &&
     swedishPhoneRegex.test(phone.replace(/\s+/g, "")) &&
-    address.trim().length >= 5 &&
-    swedishPostalRegex.test(postalCode.trim()) &&
-    swedishCityRegex.test(city.trim());
+    (!requiresShipping ||
+      (address.trim().length >= 5 &&
+        swedishPostalRegex.test(postalCode.trim()) &&
+        swedishCityRegex.test(city.trim())));
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -228,7 +243,46 @@ export default function Checkout() {
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Leveransuppgifter</h2>
 
                 <div className="space-y-4">
-                  {addresses.length > 0 && (
+                  <div className="rounded-lg border border-gray-200 bg-white p-4">
+                    <h3 className="text-base font-semibold text-gray-900">Leveranss\u00e4tt</h3>
+                    <p className="text-sm text-gray-600 mt-1">Vi skickar endast inom Sverige.</p>
+                    <div className="mt-4 space-y-3">
+                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value="pickup"
+                          checked={shippingMethod === "pickup"}
+                          onChange={() => setShippingMethod("pickup")}
+                          className="mt-1"
+                        />
+                        <div>
+                          <p className="font-semibold text-gray-900">Upph\u00e4mtning i Rinkeby Centrum (gratis)</p>
+                          <p className="text-sm text-gray-600">
+                            H\u00e4mta upp din dator i Rinkeby Centrum efter att bygget \u00e4r klart.
+                          </p>
+                        </div>
+                      </label>
+                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
+                        <input
+                          type="radio"
+                          name="shippingMethod"
+                          value="postnord"
+                          checked={shippingMethod === "postnord"}
+                          onChange={() => setShippingMethod("postnord")}
+                          className="mt-1"
+                        />
+                        <div>
+                          <p className="font-semibold text-gray-900">PostNord frakt (700 kr)</p>
+                          <p className="text-sm text-gray-600">
+                            F\u00f6rs\u00e4krad och sp\u00e5rbar frakt. Leverans 1\u20133 vardagar efter att bygget \u00e4r klart.
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  {requiresShipping && addresses.length > 0 && (
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
                         {"Sparade adresser"}
@@ -338,111 +392,116 @@ export default function Checkout() {
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
                     </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        {"Adress"}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        autoComplete="street-address"
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        placeholder="Gatan 1"
-                        aria-invalid={Boolean(errors.address)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                          errors.address ? "border-red-400" : "border-gray-300"
-                        }`}
-                      />
-                      {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
-                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        {"Postnummer"}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        inputMode="numeric"
-                        pattern="^\\d{3}\\s?\\d{2}$"
-                        autoComplete="postal-code"
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
-                        placeholder="123 45"
-                        aria-invalid={Boolean(errors.postalCode)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                          errors.postalCode ? "border-red-400" : "border-gray-300"
-                        }`}
-                      />
-                      {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        {"Postort"}
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        autoComplete="address-level2"
-                        pattern="^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\\s-]+$"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
-                        placeholder="Stockholm"
-                        aria-invalid={Boolean(errors.city)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                          errors.city ? "border-red-400" : "border-gray-300"
-                        }`}
-                      />
-                      {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
-                    </div>
-                  </div>
-
-                  <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
-                    <h3 className="text-base font-semibold text-gray-900">Lägg till fraktinformation</h3>
-                    <p className="text-sm text-gray-600 mt-1">
-                      Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
-                    </p>
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {requiresShipping && (
+                    <>
                       <div>
                         <label className="block text-sm font-semibold text-gray-900 mb-2">
-                          Portkod (valfritt)
+                          {"Adress"}
                         </label>
                         <input
                           type="text"
-                          value={doorCode}
-                          onChange={(e) => setDoorCode(e.target.value)}
-                          placeholder="1234"
-                          className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                          required
+                          autoComplete="street-address"
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          placeholder="Gatan 1"
+                          aria-invalid={Boolean(errors.address)}
+                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                            errors.address ? "border-red-400" : "border-gray-300"
+                          }`}
                         />
+                        {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
                       </div>
-                      <div>
-                        <label className="block text-sm font-semibold text-gray-900 mb-2">
-                          Önskad leveranstid (valfritt)
-                        </label>
-                        <input
-                          type="text"
-                          value={deliveryTime}
-                          onChange={(e) => setDeliveryTime(e.target.value)}
-                          placeholder="Vardagar 17–20"
-                          className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
-                        />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-900 mb-2">
+                            {"Postnummer"}
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            inputMode="numeric"
+                            pattern="^\\d{3}\\s?\\d{2}$"
+                            autoComplete="postal-code"
+                            value={postalCode}
+                            onChange={(e) => setPostalCode(e.target.value)}
+                            placeholder="123 45"
+                            aria-invalid={Boolean(errors.postalCode)}
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                              errors.postalCode ? "border-red-400" : "border-gray-300"
+                            }`}
+                          />
+                          {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
+                        </div>
+                        <div>
+                          <label className="block text-sm font-semibold text-gray-900 mb-2">
+                            {"Postort"}
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            autoComplete="address-level2"
+                            pattern="^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\\s-]+$"
+                            value={city}
+                            onChange={(e) => setCity(e.target.value)}
+                            placeholder="Stockholm"
+                            aria-invalid={Boolean(errors.city)}
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
+                              errors.city ? "border-red-400" : "border-gray-300"
+                            }`}
+                          />
+                          {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
+                        </div>
                       </div>
-                    </div>
-                    <div className="mt-4">
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        Leveransinstruktioner (valfritt)
-                      </label>
-                      <textarea
-                        value={deliveryInstructions}
-                        onChange={(e) => setDeliveryInstructions(e.target.value)}
-                        placeholder="Lämna vid dörren / ring vid leverans / våning osv."
-                        className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
-                      />
-                    </div>
-                  </div>
+
+                      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+                        <h3 className="text-base font-semibold text-gray-900">Lägg till fraktinformation</h3>
+                        <p className="text-sm text-gray-600 mt-1">
+                          Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
+                        </p>
+                        <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-2">
+                              Portkod (valfritt)
+                            </label>
+                            <input
+                              type="text"
+                              value={doorCode}
+                              onChange={(e) => setDoorCode(e.target.value)}
+                              placeholder="1234"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-sm font-semibold text-gray-900 mb-2">
+                              Önskad leveranstid (valfritt)
+                            </label>
+                            <input
+                              type="text"
+                              value={deliveryTime}
+                              onChange={(e) => setDeliveryTime(e.target.value)}
+                              placeholder="Vardagar 17–20"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                            />
+                          </div>
+                        </div>
+                        <div className="mt-4">
+                          <label className="block text-sm font-semibold text-gray-900 mb-2">
+                            Leveransinstruktioner (valfritt)
+                          </label>
+                          <textarea
+                            value={deliveryInstructions}
+                            onChange={(e) => setDeliveryInstructions(e.target.value)}
+                            placeholder="Lämna vid dörren / ring vid leverans / våning osv."
+                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
@@ -472,7 +531,13 @@ export default function Checkout() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Frakt:</span>
-                    <span className="font-semibold text-green-600">Gratis</span>
+                    <span className="font-semibold text-gray-900">
+                      {requiresShipping ? "700 kr" : "0 kr (upphämtning)"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Serviceavgift:</span>
+                    <span className="font-semibold text-gray-900">5 kr</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Skatt:</span>
@@ -482,7 +547,7 @@ export default function Checkout() {
 
                 <div className="flex justify-between mb-6">
                   <span className="text-lg font-bold text-gray-900">Totalt:</span>
-                  <span className="text-2xl font-bold text-gray-900">{totalPrice / 100} kr</span>
+                  <span className="text-2xl font-bold text-gray-900">{totalWithFees / 100} kr</span>
                 </div>
 
                 <button

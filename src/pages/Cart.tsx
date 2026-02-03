@@ -8,6 +8,8 @@ import { COMPUTERS } from "@/data/computers";
 export default function Cart() {
   const { items, loading, removeFromCart, updateQuantity, totalPrice } = useCart();
   const navigate = useNavigate();
+  const serviceFeeCents = 500;
+  const totalWithService = totalPrice + serviceFeeCents;
 
   if (loading) {
     return (
@@ -148,7 +150,11 @@ export default function Cart() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Frakt:</span>
-                    <span className="font-semibold text-green-600">Gratis</span>
+                    <span className="font-semibold text-gray-900">Väljs i kassan (0 kr upphämtning / 700 kr PostNord)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Serviceavgift:</span>
+                    <span className="font-semibold text-gray-900">5 kr</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Skatt:</span>
@@ -158,7 +164,7 @@ export default function Cart() {
 
                 <div className="flex justify-between mb-6">
                   <span className="text-lg font-bold text-gray-900">Totalt:</span>
-                  <span className="text-2xl font-bold text-gray-900">{totalPrice / 100} kr</span>
+                  <span className="text-2xl font-bold text-gray-900">{totalWithService / 100} kr</span>
                 </div>
 
                 <button
