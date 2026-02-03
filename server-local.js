@@ -1084,7 +1084,7 @@ app.post("/api/admin/inventory", async (req, res) => {
     }
 
     const productId = sanitizeText(req.body?.productId, 64);
-    const quantity = Number(req.body?.quantity_in_stock ? 0);
+    const quantity = Number(req.body?.quantity_in_stock ?? 0);
     const isPreorder = Boolean(req.body?.is_preorder);
     const rawEtaDays = req.body?.eta_days;
     const etaRange =
