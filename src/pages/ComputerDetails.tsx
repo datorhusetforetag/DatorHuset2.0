@@ -12,6 +12,12 @@ import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { checkStock } from "@/lib/supabaseServices";
+import fortniteImage from "../../images/fortnite.jpg";
+import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
+import gta5Image from "../../images/Gta 5.jpg";
+import minecraftImage from "../../images/minecraft.jpg";
+import cs2Image from "../../images/cs2.jpg";
+import ghostImage from "../../images/Ghost Of Tsushima.jpg";
 
 const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
@@ -48,6 +54,14 @@ const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
 
 const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
 const gameList = Object.keys(GAME_FPS);
+const GAME_IMAGES: Record<string, string> = {
+  Fortnite: fortniteImage,
+  "Cyberpunk 2077": cyberpunkImage,
+  "GTA 5": gta5Image,
+  Minecraft: minecraftImage,
+  CS2: cs2Image,
+  "Ghost of Tsushima": ghostImage,
+};
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
 const DEFAULT_PRODUCT_INFO = [
@@ -909,8 +923,20 @@ export default function ComputerDetails() {
 
             <div className="bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-xl p-6 flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-28 h-28 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg flex items-center justify-center text-center text-sm text-gray-700 dark:text-gray-300">
-                  {selectedGame}
+                <div className="w-28 h-28 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                  {GAME_IMAGES[selectedGame] ? (
+                    <img
+                      src={GAME_IMAGES[selectedGame]}
+                      alt={selectedGame}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-center text-sm text-gray-700 dark:text-gray-300">
+                      {selectedGame}
+                    </div>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedResolution} {"\u00d7"} {selectedPreset}</p>
