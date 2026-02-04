@@ -135,17 +135,6 @@ export const COMPUTERS: Computer[] = [
       "/products/Voy_Red_Front_2000x.webp",
       "/products/Voy_Red_Side_2000x.webp",
     ],
-    usedVariant: {
-      price: 15500,
-      cpu: "AMD Ryzen 5 8400F eller 9600X",
-      gpu: "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB eller 9070 XT",
-      ram: "Dell 32GB DDR5 5600MHz",
-      storage: "Lexar Professional NM1090",
-      storagetype: "NVMe",
-      tier: "Gold",
-      usedParts: { cpu: true, gpu: true, ram: true },
-      productKey: "Plat build - Beg",
-    },
   },
   {
     id: "9",
