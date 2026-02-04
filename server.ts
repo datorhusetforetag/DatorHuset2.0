@@ -105,6 +105,117 @@ const STATUS_LABELS: Record<string, string> = {
 const READY_MESSAGE =
   "DatorHuset kommer ringa dig ang\u00e5ende n\u00e4r och vart du kan h\u00e4mta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
 const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
+const DEFAULT_FPS_MAP = {
+  Fortnite: {
+    supports: { dlss: true, frameGen: false, rayTracing: false },
+    base: {
+      "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100 },
+      "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85 },
+      "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55 },
+    },
+  },
+  "Cyberpunk 2077": {
+    supports: { dlss: true, frameGen: true, rayTracing: true },
+    base: {
+      "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60 },
+      "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45 },
+      "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28 },
+    },
+  },
+  "GTA 5": {
+    supports: { dlss: false, frameGen: false, rayTracing: false },
+    base: {
+      "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120 },
+      "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95 },
+      "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65 },
+    },
+  },
+  Minecraft: {
+    supports: { dlss: false, frameGen: false, rayTracing: true },
+    base: {
+      "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150 },
+      "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130 },
+      "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110 },
+    },
+  },
+  CS2: {
+    supports: { dlss: false, frameGen: false, rayTracing: false },
+    base: {
+      "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200 },
+      "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170 },
+      "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140 },
+    },
+  },
+  "Ghost of Tsushima": {
+    supports: { dlss: true, frameGen: true, rayTracing: false },
+    base: {
+      "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80 },
+      "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65 },
+      "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42 },
+    },
+  },
+};
+
+const buildDefaultFpsSettings = () => {
+  const games: Record<string, any> = {};
+  Object.entries(DEFAULT_FPS_MAP).forEach(([game, data]: any) => {
+    const resolutions: Record<string, any> = {};
+    Object.entries(data.base).forEach(([res, presets]: any) => {
+      const presetEntries: Record<string, any> = {};
+      Object.entries(presets).forEach(([preset, fps]: any) => {
+        const min = Math.max(1, Math.round(fps * 0.9));
+        const max = Math.max(min + 1, Math.round(fps * 1.1));
+        presetEntries[preset] = { base: { min, max } };
+      });
+      resolutions[res] = presetEntries;
+    });
+    games[game] = { supports: data.supports, resolutions };
+  });
+  return { games };
+};
+
+const sanitizeFpsSettings = (input: any) => {
+  if (!input || typeof input !== "object") {
+    return buildDefaultFpsSettings();
+  }
+  const fallback = buildDefaultFpsSettings();
+  const output: any = { games: {} };
+  const games = input.games && typeof input.games === "object" ? input.games : {};
+  Object.keys(fallback.games).forEach((game) => {
+    const fallbackGame = fallback.games[game];
+    const sourceGame = games[game] || {};
+    const supports = sourceGame.supports || fallbackGame.supports;
+    const safeSupports = {
+      dlss: Boolean(supports?.dlss),
+      frameGen: Boolean(supports?.frameGen),
+      rayTracing: Boolean(supports?.rayTracing),
+    };
+    const resolutions: any = {};
+    const sourceResolutions = sourceGame.resolutions || {};
+    Object.keys(fallbackGame.resolutions).forEach((res) => {
+      const presetOutput: any = {};
+      const sourcePresets = sourceResolutions[res] || {};
+      Object.keys(fallbackGame.resolutions[res]).forEach((preset) => {
+        const presetSource = sourcePresets[preset] || {};
+        const safePreset: any = {};
+        Object.entries(presetSource).forEach(([key, range]: any) => {
+          const min = Number(range?.min);
+          const max = Number(range?.max);
+          if (Number.isFinite(min) && Number.isFinite(max) && min > 0 && max >= min) {
+            safePreset[key] = { min, max };
+          }
+        });
+        if (!safePreset.base) {
+          safePreset.base = fallbackGame.resolutions[res][preset].base;
+        }
+        presetOutput[preset] = safePreset;
+      });
+      resolutions[res] = presetOutput;
+    });
+    output.games[game] = { supports: safeSupports, resolutions };
+  });
+  return output;
+};
 
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
@@ -2113,6 +2224,131 @@ export async function updateAdminUiSettings(req: any, res: any) {
     res.json({ fps: data.value });
   } catch (error) {
     console.error("Admin UI settings update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: get FPS settings per product
+ * GET /api/admin/products/:productId/fps-settings
+ */
+export async function getAdminProductFpsSettings(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `fps:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ fps: buildDefaultFpsSettings() });
+    }
+
+    res.json({ fps: sanitizeFpsSettings(data?.value) });
+  } catch (error) {
+    console.error("Admin FPS settings error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: update FPS settings per product
+ * POST /api/admin/products/:productId/fps-settings
+ */
+export async function updateAdminProductFpsSettings(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const fps = sanitizeFpsSettings(req.body?.fps);
+    const key = `fps:${productId}`;
+    const payload = {
+      key,
+      value: fps,
+      updated_at: new Date(),
+    };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("FPS settings update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update FPS settings" });
+    }
+
+    await logAdminAction(req, user, "product_fps_update", "ui_settings", key, {
+      product_id: productId,
+    });
+
+    res.json({ fps: data.value });
+  } catch (error) {
+    console.error("Admin FPS settings update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Public: get FPS settings per product
+ * GET /api/fps-settings/:productId
+ */
+export async function getProductFpsSettings(req: any, res: any) {
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+    const key = `fps:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ fps: buildDefaultFpsSettings() });
+    }
+
+    res.json({ fps: sanitizeFpsSettings(data?.value) });
+  } catch (error) {
+    console.error("FPS settings fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }

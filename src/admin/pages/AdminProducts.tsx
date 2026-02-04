@@ -20,8 +20,102 @@ type AdminProduct = {
   os?: string | null;
   slug?: string | null;
   legacy_id?: string | null;
-  dlss_multiplier?: number | null;
-  frame_gen_multiplier?: number | null;
+};
+
+type FpsRange = { min: number; max: number };
+type FpsPreset = Record<string, FpsRange>;
+type FpsSettings = {
+  games: Record<
+    string,
+    {
+      supports: { dlss: boolean; frameGen: boolean; rayTracing: boolean };
+      resolutions: Record<string, Record<string, FpsPreset>>;
+    }
+  >;
+};
+
+const FPS_GAMES = [
+  "Fortnite",
+  "Cyberpunk 2077",
+  "GTA 5",
+  "Minecraft",
+  "CS2",
+  "Ghost of Tsushima",
+];
+const FPS_RESOLUTIONS = ["1080p", "1440p", "4K"];
+const FPS_PRESETS = ["Low", "Medium", "High", "Ultra"];
+const FPS_MODE_LABELS: { key: string; label: string }[] = [
+  { key: "base", label: "Bas" },
+  { key: "dlss", label: "DLSS/FSR" },
+  { key: "frameGen", label: "Frame Generation" },
+  { key: "rayTracing", label: "Raytracing/Pathtracing" },
+  { key: "dlssFrameGen", label: "DLSS + Frame Gen" },
+  { key: "dlssRayTracing", label: "DLSS + Raytracing" },
+  { key: "frameGenRayTracing", label: "Frame Gen + Raytracing" },
+  { key: "dlssFrameGenRayTracing", label: "DLSS + Frame Gen + Raytracing" },
+];
+
+const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
+  Fortnite: {
+    "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100 },
+    "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85 },
+    "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55 },
+  },
+  "Cyberpunk 2077": {
+    "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60 },
+    "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45 },
+    "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28 },
+  },
+  "GTA 5": {
+    "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120 },
+    "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95 },
+    "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65 },
+  },
+  Minecraft: {
+    "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150 },
+    "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130 },
+    "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110 },
+  },
+  CS2: {
+    "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200 },
+    "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170 },
+    "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140 },
+  },
+  "Ghost of Tsushima": {
+    "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80 },
+    "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65 },
+    "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42 },
+  },
+};
+const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean; rayTracing: boolean }> = {
+  Fortnite: { dlss: true, frameGen: false, rayTracing: false },
+  "Cyberpunk 2077": { dlss: true, frameGen: true, rayTracing: true },
+  "GTA 5": { dlss: false, frameGen: false, rayTracing: false },
+  Minecraft: { dlss: false, frameGen: false, rayTracing: true },
+  CS2: { dlss: false, frameGen: false, rayTracing: false },
+  "Ghost of Tsushima": { dlss: true, frameGen: true, rayTracing: false },
+};
+
+const buildDefaultFpsSettings = (): FpsSettings => {
+  const games: FpsSettings["games"] = {};
+  FPS_GAMES.forEach((game) => {
+    const resolutions: Record<string, Record<string, FpsPreset>> = {};
+    FPS_RESOLUTIONS.forEach((res) => {
+      const presets: Record<string, FpsPreset> = {};
+      FPS_PRESETS.forEach((preset) => {
+        const fps = DEFAULT_FPS_BASE?.[game]?.[res]?.[preset] ?? 60;
+        const min = Math.max(1, Math.round(fps * 0.9));
+        const max = Math.max(min + 1, Math.round(fps * 1.1));
+        presets[preset] = { base: { min, max } };
+      });
+      resolutions[res] = presets;
+    });
+    games[game] = {
+      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true, rayTracing: false },
+      resolutions,
+    };
+  });
+  return { games };
 };
 
 export default function AdminProducts() {
@@ -31,6 +125,14 @@ export default function AdminProducts() {
   const [query, setQuery] = useState("");
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [fpsSettingsByProductId, setFpsSettingsByProductId] = useState<Record<string, FpsSettings>>(
+    {}
+  );
+  const [fpsUiStateByProductId, setFpsUiStateByProductId] = useState<
+    Record<string, { game: string; resolution: string; preset: string }>
+  >({});
+  const [fpsLoadingByProductId, setFpsLoadingByProductId] = useState<Record<string, boolean>>({});
+  const [fpsSavingByProductId, setFpsSavingByProductId] = useState<Record<string, boolean>>({});
   const [localError, setLocalError] = useState("");
 
   const loadProducts = async () => {
@@ -55,6 +157,135 @@ export default function AdminProducts() {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta produkter.");
     } finally {
       setLoadingProducts(false);
+    }
+  };
+
+  const ensureFpsUiState = (productId: string) => {
+    setFpsUiStateByProductId((prev) => {
+      if (prev[productId]) return prev;
+      return {
+        ...prev,
+        [productId]: {
+          game: FPS_GAMES[0],
+          resolution: FPS_RESOLUTIONS[0],
+          preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
+        },
+      };
+    });
+  };
+
+  const loadFpsSettings = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    setFpsLoadingByProductId((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta FPS-inställningar.");
+      }
+      const data = await response.json();
+      const fps = data?.fps || buildDefaultFpsSettings();
+      setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: fps }));
+      ensureFpsUiState(productId);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
+    } finally {
+      setFpsLoadingByProductId((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const updateFpsSettings = (productId: string, next: FpsSettings) => {
+    setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: next }));
+  };
+
+  const updateFpsSupport = (
+    productId: string,
+    game: string,
+    key: "dlss" | "frameGen" | "rayTracing",
+    value: boolean
+  ) => {
+    const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
+    const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
+    const next: FpsSettings = {
+      ...current,
+      games: {
+        ...current.games,
+        [game]: {
+          ...gameSettings,
+          supports: { ...gameSettings.supports, [key]: value },
+        },
+      },
+    };
+    updateFpsSettings(productId, next);
+  };
+
+  const updateFpsRange = (
+    productId: string,
+    game: string,
+    resolution: string,
+    preset: string,
+    modeKey: string,
+    field: "min" | "max",
+    value: number
+  ) => {
+    const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
+    const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
+    const resolutionSettings = gameSettings.resolutions[resolution] || {};
+    const presetSettings = resolutionSettings[preset] || {};
+    const modeSettings = presetSettings[modeKey] || { min: 1, max: 1 };
+
+    const nextMode = { ...modeSettings, [field]: value };
+    if (nextMode.min > nextMode.max) {
+      if (field === "min") nextMode.max = nextMode.min;
+      if (field === "max") nextMode.min = nextMode.max;
+    }
+
+    const next: FpsSettings = {
+      ...current,
+      games: {
+        ...current.games,
+        [game]: {
+          ...gameSettings,
+          resolutions: {
+            ...gameSettings.resolutions,
+            [resolution]: {
+              ...resolutionSettings,
+              [preset]: {
+                ...presetSettings,
+                [modeKey]: nextMode,
+              },
+            },
+          },
+        },
+      },
+    };
+    updateFpsSettings(productId, next);
+  };
+
+  const handleSaveFpsSettings = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    const fps = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
+    setFpsSavingByProductId((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ fps }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
+      }
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
+    } finally {
+      setFpsSavingByProductId((prev) => ({ ...prev, [productId]: false }));
     }
   };
 
@@ -103,8 +334,6 @@ export default function AdminProducts() {
           case_name: product.case_name,
           cpu_cooler: product.cpu_cooler,
           os: product.os,
-          dlss_multiplier: product.dlss_multiplier ?? null,
-          frame_gen_multiplier: product.frame_gen_multiplier ?? null,
         }),
       });
       if (!response.ok) {
@@ -176,6 +405,25 @@ export default function AdminProducts() {
 
       <div className="space-y-4">
         {filteredProducts.map((product) => {
+          const fpsSettings = fpsSettingsByProductId[product.id];
+          const fpsUi = fpsUiStateByProductId[product.id] || {
+            game: FPS_GAMES[0],
+            resolution: FPS_RESOLUTIONS[0],
+            preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
+          };
+          const selectedGameSettings =
+            fpsSettings?.games?.[fpsUi.game] ?? buildDefaultFpsSettings().games[fpsUi.game];
+          const selectedResolutionSettings =
+            selectedGameSettings?.resolutions?.[fpsUi.resolution] ||
+            selectedGameSettings?.resolutions?.[FPS_RESOLUTIONS[0]];
+          const selectedPresetSettings =
+            selectedResolutionSettings?.[fpsUi.preset] ||
+            selectedResolutionSettings?.[FPS_PRESETS[1] ?? FPS_PRESETS[0]];
+          const supports = selectedGameSettings?.supports || {
+            dlss: true,
+            frameGen: true,
+            rayTracing: false,
+          };
           return (
             <div key={product.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -300,40 +548,188 @@ export default function AdminProducts() {
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
-                <label className="text-xs text-slate-400">
-                  DLSS/FSR multiplier
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={product.dlss_multiplier ?? ""}
-                    onChange={(event) =>
-                      handleChange(
-                        product.id,
-                        "dlss_multiplier",
-                        event.target.value === "" ? null : Number(event.target.value)
-                      )
-                    }
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Frame Gen multiplier
-                  <input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={product.frame_gen_multiplier ?? ""}
-                    onChange={(event) =>
-                      handleChange(
-                        product.id,
-                        "frame_gen_multiplier",
-                        event.target.value === "" ? null : Number(event.target.value)
-                      )
-                    }
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 md:col-span-2 xl:col-span-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Uppskattad FPS</p>
+                      <p className="text-sm text-slate-300">Välj spel, upplösning och grafik för att justera FPS.</p>
+                    </div>
+                    {!fpsSettings ? (
+                      <button
+                        type="button"
+                        onClick={() => loadFpsSettings(product.id)}
+                        className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-xs font-semibold text-slate-100 hover:border-[#11667b] hover:text-[#11667b]"
+                        disabled={fpsLoadingByProductId[product.id]}
+                      >
+                        {fpsLoadingByProductId[product.id] ? "Laddar..." : "Ladda FPS-inställningar"}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSaveFpsSettings(product.id)}
+                        className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+                        disabled={fpsSavingByProductId[product.id]}
+                      >
+                        <Save className="h-4 w-4" />
+                        {fpsSavingByProductId[product.id] ? "Sparar..." : "Spara FPS-inställningar"}
+                      </button>
+                    )}
+                  </div>
+                  {fpsSettings && (
+                    <div className="mt-4 space-y-4">
+                      <div className="grid gap-3 md:grid-cols-3">
+                        <label className="text-xs text-slate-400">
+                          Spel
+                          <select
+                            value={fpsUi.game}
+                            onChange={(event) =>
+                              setFpsUiStateByProductId((prev) => ({
+                                ...prev,
+                                [product.id]: {
+                                  ...fpsUi,
+                                  game: event.target.value,
+                                  resolution: FPS_RESOLUTIONS[0],
+                                  preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
+                                },
+                              }))
+                            }
+                            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                          >
+                            {FPS_GAMES.map((game) => (
+                              <option key={game} value={game}>
+                                {game}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="text-xs text-slate-400">
+                          Upplösning
+                          <select
+                            value={fpsUi.resolution}
+                            onChange={(event) =>
+                              setFpsUiStateByProductId((prev) => ({
+                                ...prev,
+                                [product.id]: {
+                                  ...fpsUi,
+                                  resolution: event.target.value,
+                                  preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
+                                },
+                              }))
+                            }
+                            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                          >
+                            {FPS_RESOLUTIONS.map((res) => (
+                              <option key={res} value={res}>
+                                {res}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                        <label className="text-xs text-slate-400">
+                          Grafik
+                          <select
+                            value={fpsUi.preset}
+                            onChange={(event) =>
+                              setFpsUiStateByProductId((prev) => ({
+                                ...prev,
+                                [product.id]: { ...fpsUi, preset: event.target.value },
+                              }))
+                            }
+                            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                          >
+                            {FPS_PRESETS.map((preset) => (
+                              <option key={preset} value={preset}>
+                                {preset}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
+
+                      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={supports.dlss}
+                            onChange={(event) =>
+                              updateFpsSupport(product.id, fpsUi.game, "dlss", event.target.checked)
+                            }
+                          />
+                          DLSS/FSR tillgängligt
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={supports.frameGen}
+                            onChange={(event) =>
+                              updateFpsSupport(product.id, fpsUi.game, "frameGen", event.target.checked)
+                            }
+                          />
+                          Frame Generation tillgängligt
+                        </label>
+                        <label className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={supports.rayTracing}
+                            onChange={(event) =>
+                              updateFpsSupport(product.id, fpsUi.game, "rayTracing", event.target.checked)
+                            }
+                          />
+                          Raytracing/Pathtracing tillgängligt
+                        </label>
+                      </div>
+
+                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                        {FPS_MODE_LABELS.map((mode) => {
+                          const range = selectedPresetSettings?.[mode.key] || { min: 0, max: 0 };
+                          return (
+                            <div key={mode.key} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                              <p className="text-xs text-slate-400 mb-2">{mode.label}</p>
+                              <div className="flex gap-2">
+                                <input
+                                  type="number"
+                                  min={0}
+                                  value={range.min ?? ""}
+                                  onChange={(event) =>
+                                    updateFpsRange(
+                                      product.id,
+                                      fpsUi.game,
+                                      fpsUi.resolution,
+                                      fpsUi.preset,
+                                      mode.key,
+                                      "min",
+                                      Number(event.target.value)
+                                    )
+                                  }
+                                  className="w-full rounded-md border border-slate-700/60 bg-slate-900/60 px-2 py-1 text-xs text-slate-100"
+                                  placeholder="Min"
+                                />
+                                <input
+                                  type="number"
+                                  min={0}
+                                  value={range.max ?? ""}
+                                  onChange={(event) =>
+                                    updateFpsRange(
+                                      product.id,
+                                      fpsUi.game,
+                                      fpsUi.resolution,
+                                      fpsUi.preset,
+                                      mode.key,
+                                      "max",
+                                      Number(event.target.value)
+                                    )
+                                  }
+                                  className="w-full rounded-md border border-slate-700/60 bg-slate-900/60 px-2 py-1 text-xs text-slate-100"
+                                  placeholder="Max"
+                                />
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <label className="text-xs text-slate-400 md:col-span-2 xl:col-span-4">
                   Beskrivning
                   <textarea

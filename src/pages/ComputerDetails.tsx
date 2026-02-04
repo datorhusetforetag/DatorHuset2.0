@@ -19,7 +19,7 @@ import minecraftImage from "../../images/minecraft.jpg";
 import cs2Image from "../../images/cs2.jpg";
 import ghostImage from "../../images/Ghost Of Tsushima.jpg";
 
-const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
+const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
     "1080p": { Medium: 160, High: 130, Ultra: 100 },
     "1440p": { Medium: 140, High: 110, Ultra: 85 },
@@ -52,8 +52,34 @@ const GAME_FPS: Record<string, Record<string, Record<string, number>>> = {
   },
 };
 
-const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
-const gameList = Object.keys(GAME_FPS);
+const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean; rayTracing: boolean }> = {
+  Fortnite: { dlss: true, frameGen: false, rayTracing: false },
+  "Cyberpunk 2077": { dlss: true, frameGen: true, rayTracing: true },
+  "GTA 5": { dlss: false, frameGen: false, rayTracing: false },
+  Minecraft: { dlss: false, frameGen: false, rayTracing: true },
+  CS2: { dlss: false, frameGen: false, rayTracing: false },
+  "Ghost of Tsushima": { dlss: true, frameGen: true, rayTracing: false },
+};
+const buildDefaultFpsSettings = () => {
+  const games: Record<string, any> = {};
+  Object.entries(DEFAULT_FPS_BASE).forEach(([game, resolutions]) => {
+    const resEntries: Record<string, any> = {};
+    Object.entries(resolutions).forEach(([res, presets]) => {
+      const presetEntries: Record<string, any> = {};
+      Object.entries(presets).forEach(([preset, fps]) => {
+        const min = Math.max(1, Math.round(fps * 0.9));
+        const max = Math.max(min + 1, Math.round(fps * 1.1));
+        presetEntries[preset] = { base: { min, max } };
+      });
+      resEntries[res] = presetEntries;
+    });
+    games[game] = {
+      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true, rayTracing: false },
+      resolutions: resEntries,
+    };
+  });
+  return { games };
+};
 const GAME_IMAGES: Record<string, string> = {
   Fortnite: fortniteImage,
   "Cyberpunk 2077": cyberpunkImage,
@@ -234,11 +260,14 @@ export default function ComputerDetails() {
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
+  const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSettings());
+  const gameList = useMemo(() => Object.keys(fpsSettings.games || {}), [fpsSettings]);
   const [selectedGame, setSelectedGame] = useState(gameList[0]);
   const [selectedResolution, setSelectedResolution] = useState("1080p");
-  const [selectedPreset, setSelectedPreset] = useState<"Medium" | "High" | "Ultra">("High");
+  const [selectedPreset, setSelectedPreset] = useState("High");
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
+  const [rayTracingOn, setRayTracingOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const swiperRef = useRef<SwiperType | null>(null);
   const [inventoryStatus, setInventoryStatus] = useState<{
@@ -336,21 +365,91 @@ export default function ComputerDetails() {
       useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name
     ) ||
     getProductFromLookup(productLookup, computer.id);
-  const rawDlssMultiplier = Number(activeProduct?.dlss_multiplier);
-  const rawFrameGenMultiplier = Number(activeProduct?.frame_gen_multiplier);
-  const effectiveDlssMultiplier = Number.isFinite(rawDlssMultiplier)
-    ? rawDlssMultiplier
-    : DEFAULT_FPS_SETTINGS.dlssMultiplier;
-  const effectiveFrameGenMultiplier = Number.isFinite(rawFrameGenMultiplier)
-    ? rawFrameGenMultiplier
-    : DEFAULT_FPS_SETTINGS.frameGenMultiplier;
+  useEffect(() => {
+    if (!activeProductId) return;
+    let isMounted = true;
+    const loadFps = async () => {
+      try {
+        const response = await fetch(`/api/fps-settings/${activeProductId}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (isMounted && data?.fps?.games) {
+          setFpsSettings(data.fps);
+        }
+      } catch (error) {
+        console.error("Failed to load FPS settings", error);
+      }
+    };
+    loadFps();
+    return () => {
+      isMounted = false;
+    };
+  }, [activeProductId]);
 
-  const baseFps = GAME_FPS[selectedGame][selectedResolution][selectedPreset];
-  const multiplier =
-    (dlssOn ? effectiveDlssMultiplier : 1) * (frameGenOn ? effectiveFrameGenMultiplier : 1);
-  const finalFps = Math.round(baseFps * multiplier);
-  const fpsLow = Math.max(1, Math.round(finalFps * 0.9));
-  const fpsHigh = Math.round(finalFps * 1.1);
+  useEffect(() => {
+    if (!gameList.length) return;
+    if (!gameList.includes(selectedGame)) {
+      setSelectedGame(gameList[0]);
+    }
+  }, [gameList, selectedGame]);
+
+  useEffect(() => {
+    const gameSettings = fpsSettings.games?.[selectedGame];
+    const resolutions = Object.keys(gameSettings?.resolutions || {});
+    if (resolutions.length && !resolutions.includes(selectedResolution)) {
+      setSelectedResolution(resolutions[0]);
+    }
+  }, [fpsSettings, selectedGame, selectedResolution]);
+
+  useEffect(() => {
+    const gameSettings = fpsSettings.games?.[selectedGame];
+    const presets = Object.keys(gameSettings?.resolutions?.[selectedResolution] || {});
+    if (presets.length && !presets.includes(selectedPreset)) {
+      setSelectedPreset(presets[0]);
+    }
+  }, [fpsSettings, selectedGame, selectedResolution, selectedPreset]);
+
+  const gameSettings = fpsSettings.games?.[selectedGame];
+  const supports = gameSettings?.supports || {
+    dlss: true,
+    frameGen: true,
+    rayTracing: false,
+  };
+  useEffect(() => {
+    if (!supports.dlss && dlssOn) setDlssOn(false);
+    if (!supports.frameGen && frameGenOn) setFrameGenOn(false);
+    if (!supports.rayTracing && rayTracingOn) setRayTracingOn(false);
+  }, [supports, dlssOn, frameGenOn, rayTracingOn]);
+  const presetData = gameSettings?.resolutions?.[selectedResolution]?.[selectedPreset];
+  const getModeKey = () => {
+    if (dlssOn && frameGenOn && rayTracingOn) return "dlssFrameGenRayTracing";
+    if (dlssOn && frameGenOn) return "dlssFrameGen";
+    if (dlssOn && rayTracingOn) return "dlssRayTracing";
+    if (frameGenOn && rayTracingOn) return "frameGenRayTracing";
+    if (dlssOn) return "dlss";
+    if (frameGenOn) return "frameGen";
+    if (rayTracingOn) return "rayTracing";
+    return "base";
+  };
+  const resolveFpsRange = () => {
+    if (!presetData) {
+      return { min: 0, max: 0 };
+    }
+    const modeKey = getModeKey();
+    return (
+      presetData[modeKey] ||
+      presetData.dlssFrameGenRayTracing ||
+      presetData.dlssFrameGen ||
+      presetData.dlssRayTracing ||
+      presetData.frameGenRayTracing ||
+      presetData.dlss ||
+      presetData.frameGen ||
+      presetData.rayTracing ||
+      presetData.base ||
+      { min: 0, max: 0 }
+    );
+  };
+  const { min: fpsLow, max: fpsHigh } = resolveFpsRange();
 
   const merged = mergeProductFields(
     {
@@ -885,7 +984,7 @@ export default function ComputerDetails() {
                     onChange={(e) => setSelectedResolution(e.target.value)}
                     className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {Object.keys(GAME_FPS[selectedGame]).map((res) => (
+                    {Object.keys(gameSettings?.resolutions || {}).map((res) => (
                       <option key={res} value={res}>{res}</option>
                     ))}
                   </select>
@@ -895,10 +994,10 @@ export default function ComputerDetails() {
                   <select
                     id="preset"
                     value={selectedPreset}
-                    onChange={(e) => setSelectedPreset(e.target.value as "Medium" | "High" | "Ultra")}
+                    onChange={(e) => setSelectedPreset(e.target.value)}
                     className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {Object.keys(GAME_FPS[selectedGame][selectedResolution]).map((preset) => (
+                    {Object.keys(gameSettings?.resolutions?.[selectedResolution] || {}).map((preset) => (
                       <option key={preset} value={preset}>{preset}</option>
                     ))}
                   </select>
@@ -908,15 +1007,30 @@ export default function ComputerDetails() {
               <div className="flex gap-3 flex-wrap">
                 <button
                   onClick={() => setDlssOn((v) => !v)}
-                  className={`px-4 py-2 rounded-lg border ${dlssOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"} text-sm font-semibold`}
+                  disabled={!supports.dlss}
+                  className={`px-4 py-2 rounded-lg border ${
+                    dlssOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                  } text-sm font-semibold ${!supports.dlss ? "opacity-40 cursor-not-allowed" : ""}`}
                 >
                   DLSS / FSR {dlssOn ? "On" : "Off"}
                 </button>
                 <button
                   onClick={() => setFrameGenOn((v) => !v)}
-                  className={`px-4 py-2 rounded-lg border ${frameGenOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"} text-sm font-semibold`}
+                  disabled={!supports.frameGen}
+                  className={`px-4 py-2 rounded-lg border ${
+                    frameGenOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                  } text-sm font-semibold ${!supports.frameGen ? "opacity-40 cursor-not-allowed" : ""}`}
                 >
                   Frame generation {frameGenOn ? "On" : "Off"}
+                </button>
+                <button
+                  onClick={() => setRayTracingOn((v) => !v)}
+                  disabled={!supports.rayTracing}
+                  className={`px-4 py-2 rounded-lg border ${
+                    rayTracingOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                  } text-sm font-semibold ${!supports.rayTracing ? "opacity-40 cursor-not-allowed" : ""}`}
+                >
+                  Raytracing {rayTracingOn ? "On" : "Off"}
                 </button>
               </div>
             </div>

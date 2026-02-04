@@ -10,12 +10,12 @@ import winMouseImage from "../../images/WinMouse.png";
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
 const categories = [
-  { name: "Hj\u00e4lp mig v\u00e4lja", icon: HelpCircle, kind: "quiz" as const },
+  { name: "Hjälp mig välja", icon: HelpCircle, kind: "quiz" as const },
   { name: "Alla produkter", icon: Monitor, href: "/products?clear_filters=1" },
   { name: "Paket", icon: Package, href: "/products?category=paket&clear_filters=1" },
-  { name: "Budgetv\u00e4nlig", icon: Wallet, href: "/products?preset=budget" },
+  { name: "Budgetvänlig", icon: Wallet, href: "/products?preset=budget" },
   { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
-  { name: "B\u00e4sta Prestanda", icon: Rocket, href: "/products?preset=toptier" },
+  { name: "Bästa Prestanda", icon: Rocket, href: "/products?preset=toptier" },
 ];
 
 export const Hero = () => {
@@ -74,12 +74,12 @@ export const Hero = () => {
           <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[230px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Företagsdeal</h2>
-              <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
+              <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">{"Elektronik för företag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-20 sm:h-28 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
               <div>
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">{"P\u00e5 utvalda gamingdatorer hela veckan"}</p>
+                <p className="text-xs text-gray-600 dark:text-gray-300">{"På utvalda gamingdatorer hela veckan"}</p>
               </div>
               <img
                 src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=80"
@@ -96,8 +96,8 @@ export const Hero = () => {
               <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                 Veckans Deal - Få en gåva vid köpet!
               </h2>
-              <p className="text-white text-sm mb-4">{"F\u00e5 en exklusiv g\u00e5va n\u00e4r du handlar hos oss."}</p>
-              <p className="text-yellow-400 text-sm font-semibold">{"Allt st\u00f6d g\u00e5r till Min Stora Dag"}</p>
+              <p className="text-white text-sm mb-4">{"Få en exklusiv gåva när du handlar hos oss."}</p>
+              <p className="text-yellow-400 text-sm font-semibold">{"Musmatta, tangentbord eller en mus!"}</p>
             </div>
             <div className="flex gap-2 relative z-10">
               <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Gåva vid köp</span>
@@ -114,7 +114,7 @@ export const Hero = () => {
 
         {/* Popular categories section */}
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Popul\u00e4ra kategorier"}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Populära kategorier"}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
             {categories.map((category) =>
               category.kind === "quiz" ? (
@@ -148,12 +148,12 @@ export const Hero = () => {
             <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 sm:p-6 shadow-sm">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{"Hj\u00e4lp mig v\u00e4lja"}</h4>
+                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{"Hjälp mig välja"}</h4>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {"Besvara tv\u00e5 fr\u00e5gor s\u00e5 f\u00f6resl\u00e5r vi r\u00e4tt kategori direkt."}
+                    {"Besvara två frågor så föreslår vi rätt kategori direkt."}
                   </p>
                 </div>
-                <button type="button" onClick={() => setShowQuiz(false)} className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">{"St\u00e4ng"}</button>
+                <button type="button" onClick={() => setShowQuiz(false)} className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">{"Stäng"}</button>
               </div>
               <div className="mt-4 grid gap-4 md:grid-cols-1">
                 <div className="space-y-2">
