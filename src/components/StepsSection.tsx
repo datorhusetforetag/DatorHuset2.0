@@ -15,7 +15,7 @@ const steps = [
   },
   {
     title: "3. Leverans/hämta upp",
-    description: "Datorn är byggd och klar. Hämta upp den eller välj leverans (Postnord/annat).",
+    description: "Datorn är byggd och klar. Hämta upp den eller vi fixar frakt via Blocket!.",
     icon: (
       <div className="flex items-center gap-3">
         <RefreshCcw className="w-10 h-10 text-yellow-400 dark:text-yellow-300" />
@@ -66,4 +66,5 @@ export const StepsSection = () => {
       </div>
     </section>
   );
-};
+};
+

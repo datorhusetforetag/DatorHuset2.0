@@ -5,6 +5,7 @@ import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { buildUtmContent, withUtm } from "@/lib/utm";
+import winMouseImage from "../../images/WinMouse.png";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 
@@ -22,7 +23,6 @@ export const Hero = () => {
   const navigate = useNavigate();
   const [showQuiz, setShowQuiz] = useState(false);
   const [budgetChoice, setBudgetChoice] = useState("starter");
-  const [performanceNeed, setPerformanceNeed] = useState("balanced");
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
   const featuredComputers = useMemo(
@@ -73,7 +73,7 @@ export const Hero = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[230px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Veckans Deal</h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Företagsdeal</h2>
               <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">{"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-20 sm:h-28 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
@@ -91,15 +91,24 @@ export const Hero = () => {
             </div>
           </div>
 
-          <div className="bg-gray-900 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[220px] sm:min-h-[320px]">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{"GE GL\u00c4DJE"}</h2>
-              <p className="text-white text-sm mb-4">{"F\u00e5 chans till en tackg\u00e5va!"}</p>
+          <div className="bg-gray-900 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[220px] sm:min-h-[320px] relative overflow-hidden">
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+                Veckans Deal - Få en gåva vid köpet!
+              </h2>
+              <p className="text-white text-sm mb-4">{"F\u00e5 en exklusiv g\u00e5va n\u00e4r du handlar hos oss."}</p>
               <p className="text-yellow-400 text-sm font-semibold">{"Allt st\u00f6d g\u00e5r till Min Stora Dag"}</p>
             </div>
-            <div className="flex gap-2">
-              <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Julklapp</span>
+            <div className="flex gap-2 relative z-10">
+              <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Gåva vid köp</span>
             </div>
+            <img
+              src={winMouseImage}
+              alt="Gåva vid köp"
+              className="pointer-events-none absolute -right-6 -bottom-8 w-40 sm:w-48 md:w-56 opacity-90 drop-shadow-[0_20px_35px_rgba(0,0,0,0.35)]"
+              loading="lazy"
+              decoding="async"
+            />
           </div>
         </div>
 
@@ -146,7 +155,7 @@ export const Hero = () => {
                 </div>
                 <button type="button" onClick={() => setShowQuiz(false)} className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">{"St\u00e4ng"}</button>
               </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <div className="mt-4 grid gap-4 md:grid-cols-1">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-900 dark:text-gray-100" htmlFor="quiz-budget">
                     Budget
@@ -162,21 +171,6 @@ export const Hero = () => {
                     <option value="high">24 000 - 40 000 kr</option>
                   </select>
                 </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-900 dark:text-gray-100" htmlFor="quiz-performance">
-                    Prestanda
-                  </label>
-                  <select
-                    id="quiz-performance"
-                    value={performanceNeed}
-                    onChange={(e) => setPerformanceNeed(e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
-                  >
-                    <option value="office">{"Office datorer"}</option>
-                    <option value="gaming">{"Gaming datorer"}</option>
-                    <option value="balanced">{"Balans f\u00f6r jobb och gaming"}</option>
-                  </select>
-                </div>
               </div>
               <div className="mt-5 flex flex-col sm:flex-row gap-3">
                 <button
@@ -187,17 +181,10 @@ export const Hero = () => {
                       mid: [13500, 21000],
                       high: [24000, 40000],
                     };
-                    const tierFilters: Record<string, string[]> = {
-                      office: ["Bronze", "Silver"],
-                      gaming: ["Gold", "Platinum"],
-                      balanced: ["Silver", "Gold"],
-                    };
                     const [minPrice, maxPrice] = budgetRanges[budgetChoice] || budgetRanges.starter;
-                    const tiers = tierFilters[performanceNeed] || tierFilters.balanced;
                     const params = new URLSearchParams({
                       price_min: String(minPrice),
                       price_max: String(maxPrice),
-                      tiers: tiers.map((tier) => tier.toLowerCase()).join(","),
                     });
                     const recommendation = params.toString();
                     navigate(
@@ -205,7 +192,7 @@ export const Hero = () => {
                         utm_source: "homepage",
                         utm_medium: "quiz",
                         utm_campaign: "help_me_choose",
-                        utm_content: `${budgetChoice}-${performanceNeed}`,
+                        utm_content: budgetChoice,
                       })
                     );
                     setShowQuiz(false);

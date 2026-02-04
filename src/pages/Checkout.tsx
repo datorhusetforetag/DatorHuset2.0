@@ -103,7 +103,7 @@ export default function Checkout() {
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Du m\u00e5ste logga in f\u00f6r att checka ut"}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Du måste logga in för att checka ut</h1>
             <button
               onClick={() => navigate("/")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
@@ -123,12 +123,12 @@ export default function Checkout() {
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">{"Din kundvagn \u00e4r tom"}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn är tom</h1>
             <button
               onClick={() => navigate("/products")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
-              {"Forts\u00e4tt handla"}
+              Fortsätt handla
             </button>
           </div>
         </div>
@@ -141,7 +141,7 @@ export default function Checkout() {
     const normalizedPhone = phone.replace(/\s+/g, "");
     const nextErrors = {
       email: email.trim() ? "" : "Ange en giltig e-postadress.",
-      firstName: firstName.trim().length >= 2 ? "" : "Ange f\u00f6rnamn.",
+      firstName: firstName.trim().length >= 2 ? "" : "Ange förnamn.",
       lastName: lastName.trim().length >= 2 ? "" : "Ange efternamn.",
       phone: swedishPhoneRegex.test(normalizedPhone) ? "" : "Ange ett giltigt svenskt mobilnummer.",
       address: requiresShipping ? (address.trim().length >= 5 ? "" : "Ange en giltig adress.") : "",
@@ -163,7 +163,7 @@ export default function Checkout() {
 
   const handleCheckout = async () => {
     if (!validateFields()) {
-      alert("Kontrollera att alla f\u00e4lt \u00e4r korrekt ifyllda.");
+      alert("Kontrollera att alla fält är korrekt ifyllda.");
       return;
     }
 
@@ -244,7 +244,7 @@ export default function Checkout() {
 
                 <div className="space-y-4">
                   <div className="rounded-lg border border-gray-200 bg-white p-4">
-                    <h3 className="text-base font-semibold text-gray-900">Leveranss\u00e4tt</h3>
+                    <h3 className="text-base font-semibold text-gray-900">Leveranssätt</h3>
                     <p className="text-sm text-gray-600 mt-1">Vi skickar endast inom Sverige.</p>
                     <div className="mt-4 space-y-3">
                       <label className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
@@ -257,9 +257,9 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900">Upph\u00e4mtning i Rinkeby Centrum (gratis)</p>
+                          <p className="font-semibold text-gray-900">Upphämtning i Rinkeby Centrum (gratis)</p>
                           <p className="text-sm text-gray-600">
-                            H\u00e4mta upp din dator i Rinkeby Centrum efter att bygget \u00e4r klart.
+                            Hämta upp din dator i Rinkeby Centrum efter att bygget är klart.
                           </p>
                         </div>
                       </label>
@@ -275,7 +275,7 @@ export default function Checkout() {
                         <div>
                           <p className="font-semibold text-gray-900">PostNord frakt (700 kr)</p>
                           <p className="text-sm text-gray-600">
-                            F\u00f6rs\u00e4krad och sp\u00e5rbar frakt. Leverans 1\u20133 vardagar efter att bygget \u00e4r klart.
+                            Försäkrad och spårbar frakt. Leverans 1–3 vardagar efter att bygget är klart.
                           </p>
                         </div>
                       </label>
@@ -335,7 +335,7 @@ export default function Checkout() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        {"F\u00f6rnamn"}
+                        Förnamn
                       </label>
                       <input
                         type="text"
@@ -556,7 +556,7 @@ export default function Checkout() {
                   className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  {loading ? "Bearbetar..." : "G\u00e5 till betalning"}
+                  {loading ? "Bearbetar..." : "Gå till betalning"}
                 </button>
 
                 <button

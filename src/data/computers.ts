@@ -105,17 +105,6 @@ export const COMPUTERS: Computer[] = [
       "/products/Traveler_Front_1_2000x.webp",
       "/products/Traveler_Side_1_2000x.webp",
     ],
-    usedVariant: {
-      price: 11500,
-      cpu: "AMD Ryzen 5 5500 eller 5600X",
-      gpu: "PNY GeForce RTX 5060 Ti Dual Fan OC eller RTX 5070",
-      ram: "Corsair Dominator RGB DDR4 3600MHz 32GB",
-      storage: "2TB",
-      storagetype: "NVMe",
-      tier: "Silver",
-      usedParts: { cpu: true, gpu: true, ram: true },
-      productKey: "11k - Beg",
-    },
   },
   {
     id: "7",
