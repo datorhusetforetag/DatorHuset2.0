@@ -42,7 +42,12 @@ export const normalizeProductKey = (value: string) => {
 export async function loadProducts() {
   if (productCache.length === 0) {
     try {
-      productCache = await getProducts();
+      const rawProducts = await getProducts();
+      productCache = rawProducts.filter((product) => {
+        const name = (product.name || "").trim().toLowerCase();
+        const slug = (product.slug || "").trim().toLowerCase();
+        return name !== "remove" && slug !== "test";
+      });
       // Create mapping by tier and name for easy lookup
       productCache.forEach((product) => {
         if (product.legacy_id) {

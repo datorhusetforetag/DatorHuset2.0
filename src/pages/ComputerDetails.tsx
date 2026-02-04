@@ -986,58 +986,6 @@ export default function ComputerDetails() {
           </div>
         </div>
 
-        <div className="mt-12">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-            <div className="lg:w-1/3">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{"Kundomd\u00f6men"}</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                {"Recensioner fr\u00e5n kunder som k\u00f6pt den h\u00e4r modellen."}
-              </p>
-              <div className="mt-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-4">
-                <div className="text-3xl font-bold text-gray-900 dark:text-white">{reviewData.average.toFixed(1)}</div>
-                <div className="mt-2">{renderStars(Math.round(reviewData.average))}</div>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
-                  {reviewData.total} {"omd\u00f6men"}
-                </p>
-              </div>
-              <div className="mt-4 space-y-3">
-                {reviewData.breakdown.map((row) => {
-                  const percent = Math.round((row.count / reviewData.total) * 100);
-                  return (
-                    <div key={row.stars} className="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300">
-                      <span className="w-12">{row.stars} {"\u2605"}</span>
-                      <div className="flex-1 h-2 rounded-full bg-gray-200 dark:bg-gray-800">
-                        <div
-                          className="h-full rounded-full bg-yellow-400"
-                          style={{ width: `${percent}%` }}
-                        />
-                      </div>
-                      <span className="w-10 text-right">{row.count}</span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="lg:w-2/3 space-y-4">
-              {reviewData.reviews.map((review) => (
-                <div
-                  key={`${review.name}-${review.date}`}
-                  className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-5"
-                >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-semibold text-gray-900 dark:text-white">{review.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{review.date}</p>
-                    </div>
-                    {renderStars(review.rating)}
-                  </div>
-                  <p className="text-sm text-gray-700 dark:text-gray-300 mt-3">{review.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* Related */}
         <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{"Andra som tittat p\u00e5 samma produkt tittar \u00e4ven p\u00e5:"}</h2>

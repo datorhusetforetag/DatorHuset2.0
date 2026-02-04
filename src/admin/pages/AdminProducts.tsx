@@ -45,7 +45,12 @@ export default function AdminProducts() {
         throw new Error("Kunde inte hämta produkter.");
       }
       const data = await response.json();
-      setProducts(data || []);
+      const filtered = (data || []).filter((product: AdminProduct) => {
+        const name = (product.name || "").trim().toLowerCase();
+        const slug = (product.slug || "").trim().toLowerCase();
+        return name !== "remove" && slug !== "test";
+      });
+      setProducts(filtered);
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta produkter.");
     } finally {
