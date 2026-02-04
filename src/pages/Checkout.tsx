@@ -391,6 +391,7 @@ export default function Checkout() {
                         }`}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
+                      <p className="text-xs text-gray-500 mt-1">Ex: 07x xxx xx xx</p>
                     </div>
                   </div>
 

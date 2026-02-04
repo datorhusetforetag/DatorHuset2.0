@@ -128,6 +128,15 @@ export default function AdminProducts() {
   const [fpsSettingsByProductId, setFpsSettingsByProductId] = useState<Record<string, FpsSettings>>(
     {}
   );
+  const [usedVariantEnabledByProductId, setUsedVariantEnabledByProductId] = useState<
+    Record<string, boolean>
+  >({});
+  const [usedVariantLoadingByProductId, setUsedVariantLoadingByProductId] = useState<
+    Record<string, boolean>
+  >({});
+  const [usedVariantSavingByProductId, setUsedVariantSavingByProductId] = useState<
+    Record<string, boolean>
+  >({});
   const [fpsUiStateByProductId, setFpsUiStateByProductId] = useState<
     Record<string, { game: string; resolution: string; preset: string }>
   >({});
@@ -172,6 +181,55 @@ export default function AdminProducts() {
         },
       };
     });
+  };
+
+  const loadUsedVariantSetting = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    setUsedVariantLoadingByProductId((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-variant`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) {
+        throw new Error("Kunde inte hämta begagnad-flagga.");
+      }
+      const data = await response.json();
+      const enabled = typeof data?.enabled === "boolean" ? data.enabled : true;
+      setUsedVariantEnabledByProductId((prev) => ({ ...prev, [productId]: enabled }));
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta begagnad-flagga.");
+    } finally {
+      setUsedVariantLoadingByProductId((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const saveUsedVariantSetting = async (productId: string, enabled: boolean) => {
+    if (!token || !isAdmin) return;
+    setUsedVariantSavingByProductId((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-variant`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ enabled }),
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data?.error || "Kunde inte spara begagnad-flagga.");
+      }
+      const data = await response.json();
+      const nextEnabled = typeof data?.enabled === "boolean" ? data.enabled : enabled;
+      setUsedVariantEnabledByProductId((prev) => ({ ...prev, [productId]: nextEnabled }));
+    } catch (err) {
+      setUsedVariantEnabledByProductId((prev) => ({ ...prev, [productId]: enabled }));
+      setLocalError(err instanceof Error ? err.message : "Kunde inte spara begagnad-flagga.");
+    } finally {
+      setUsedVariantSavingByProductId((prev) => ({ ...prev, [productId]: false }));
+    }
   };
 
   const loadFpsSettings = async (productId: string) => {
@@ -296,6 +354,18 @@ export default function AdminProducts() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
+  useEffect(() => {
+    if (!isAdmin || !token || products.length === 0) return;
+    const missing = products
+      .map((product) => product.id)
+      .filter((id) => usedVariantEnabledByProductId[id] === undefined && !usedVariantLoadingByProductId[id]);
+    if (missing.length === 0) return;
+    missing.forEach((id) => {
+      void loadUsedVariantSetting(id);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, isAdmin, token]);
+
   const handleChange = (productId: string, field: keyof AdminProduct, value: string | number | null) => {
     setProducts((prev) =>
       prev.map((product) =>
@@ -411,6 +481,9 @@ export default function AdminProducts() {
             resolution: FPS_RESOLUTIONS[0],
             preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
           };
+          const usedVariantEnabled = usedVariantEnabledByProductId[product.id] ?? true;
+          const usedVariantSaving = usedVariantSavingByProductId[product.id];
+          const usedVariantLoading = usedVariantLoadingByProductId[product.id];
           const selectedGameSettings =
             fpsSettings?.games?.[fpsUi.game] ?? buildDefaultFpsSettings().games[fpsUi.game];
           const selectedResolutionSettings =
@@ -548,6 +621,33 @@ export default function AdminProducts() {
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
+                <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 md:col-span-2 xl:col-span-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Begagnad variant</p>
+                      <p className="text-sm text-slate-300">
+                        Styr om denna produkt ska kunna växlas till begagnade delar.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={usedVariantEnabled}
+                      onClick={() => saveUsedVariantSetting(product.id, !usedVariantEnabled)}
+                      disabled={usedVariantSaving || usedVariantLoading}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        usedVariantEnabled ? "bg-yellow-400" : "bg-slate-700"
+                      } ${usedVariantSaving || usedVariantLoading ? "opacity-60 cursor-not-allowed" : ""}`}
+                    >
+                      <span className="sr-only">Aktivera begagnad variant</span>
+                      <span
+                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                          usedVariantEnabled ? "translate-x-5" : "translate-x-1"
+                        }`}
+                      />
+                    </button>
+                  </div>
+                </div>
                 <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 md:col-span-2 xl:col-span-4">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>

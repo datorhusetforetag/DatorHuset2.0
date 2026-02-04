@@ -34,6 +34,7 @@ export interface Computer {
   classLabels?: string[];
   bundleIncludes?: string[];
   usedVariant?: ComputerVariant;
+  usedVariantEnabled?: boolean;
 }
 
 export const COMPUTERS: Computer[] = [
@@ -67,6 +68,7 @@ export const COMPUTERS: Computer[] = [
       usedParts: { cpu: true, gpu: true, ram: true },
       productKey: "Cheapo - Begagnade",
     },
+    usedVariantEnabled: false,
   },
   {
     id: "3",
@@ -86,6 +88,17 @@ export const COMPUTERS: Computer[] = [
       "/products/Horizon_Pro_Front_wEliteComponents_2000x.webp",
       "/products/Horizon_Pro_Side_wEliteComponents_2000x.webp",
     ],
+    usedVariant: {
+      price: 11000,
+      cpu: "Intel Core i5-12400F",
+      gpu: "RTX 3070 8GB",
+      ram: "32GB",
+      storage: "Sandisk WD Black SN7100",
+      storagetype: "NVMe",
+      tier: "Guld",
+      usedParts: { cpu: true, gpu: true, ram: true },
+      productKey: "Guldspiken",
+    },
   },
   {
     id: "5",

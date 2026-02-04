@@ -319,6 +319,14 @@ const sanitizeFpsSettings = (input) => {
   return output;
 };
 
+const parseUsedVariantSetting = (value, fallback = true) => {
+  if (value && typeof value === "object" && typeof value.enabled === "boolean") {
+    return value.enabled;
+  }
+  if (typeof value === "boolean") return value;
+  return fallback;
+};
+
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
@@ -1576,6 +1584,90 @@ app.post("/api/admin/products/:productId/fps-settings", async (req, res) => {
   }
 });
 
+app.get("/api/admin/products/:productId/used-variant", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `used_variant:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ enabled: true });
+    }
+
+    return res.json({ enabled: parseUsedVariantSetting(data?.value, true) });
+  } catch (error) {
+    console.error("Admin used variant fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/admin/products/:productId/used-variant", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const enabled = Boolean(req.body?.enabled);
+    const key = `used_variant:${productId}`;
+    const payload = { key, value: { enabled }, updated_at: new Date() };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Used variant update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update used variant setting" });
+    }
+
+    await logAdminAction(req, user, "product_used_variant_update", "ui_settings", key, {
+      product_id: productId,
+      enabled,
+    });
+
+    return res.json({ enabled: parseUsedVariantSetting(data?.value, enabled) });
+  } catch (error) {
+    console.error("Admin used variant update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 app.get("/api/fps-settings/:productId", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -1599,6 +1691,34 @@ app.get("/api/fps-settings/:productId", async (req, res) => {
     res.json({ fps: sanitizeFpsSettings(data?.value) });
   } catch (error) {
     console.error("FPS settings fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/used-variant/:productId", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `used_variant:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ enabled: true });
+    }
+
+    return res.json({ enabled: parseUsedVariantSetting(data?.value, true) });
+  } catch (error) {
+    console.error("Used variant fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

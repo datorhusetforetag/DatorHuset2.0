@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { RefreshCcw, ShieldAlert } from "lucide-react";
+import { Download, RefreshCcw, ShieldAlert } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
 
@@ -35,6 +35,7 @@ export default function AdminLogs() {
     useOutletContext<AdminAccessContext>();
   const [logs, setLogs] = useState<AdminLog[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [localError, setLocalError] = useState("");
 
   const loadLogs = async () => {
@@ -54,6 +55,86 @@ export default function AdminLogs() {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hamta loggar.");
     } finally {
       setLoadingLogs(false);
+    }
+  };
+
+  const exportLogs = async () => {
+    if (!token || !isAdmin) return;
+    setExporting(true);
+    setLocalError("");
+    try {
+      const allLogs: AdminLog[] = [];
+      const limit = 200;
+      let offset = 0;
+      let total = Number.POSITIVE_INFINITY;
+      while (offset < total) {
+        const response = await fetch(`${apiBase}/api/admin/logs?limit=${limit}&offset=${offset}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!response.ok) {
+          throw new Error("Kunde inte exportera loggar.");
+        }
+        const payload = await response.json();
+        const batch = payload?.data || [];
+        total = typeof payload?.total === "number" ? payload.total : offset + batch.length;
+        allLogs.push(...batch);
+        if (batch.length < limit) break;
+        offset += limit;
+      }
+
+      const headers = [
+        "created_at",
+        "action",
+        "resource_type",
+        "resource_id",
+        "order_id",
+        "previous_status",
+        "new_status",
+        "admin_user_id",
+        "ip_address",
+        "user_agent",
+        "metadata",
+      ];
+
+      const escapeCsv = (value: string) => {
+        if (value.includes('"') || value.includes(",") || value.includes("\n")) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      };
+
+      const rows = [headers.join(",")];
+      allLogs.forEach((log) => {
+        const values = [
+          log.created_at || "",
+          log.action || "",
+          log.resource_type || "",
+          log.resource_id || "",
+          log.order_id || "",
+          log.previous_status || "",
+          log.new_status || "",
+          log.admin_user_id || "",
+          log.ip_address || "",
+          log.user_agent || "",
+          log.metadata ? JSON.stringify(log.metadata) : "",
+        ].map((value) => escapeCsv(String(value)));
+        rows.push(values.join(","));
+      });
+
+      const csv = rows.join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `admin_logs_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte exportera loggar.");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -105,14 +186,25 @@ export default function AdminLogs() {
               Senaste admin-handelser for lager, produkter och orderstatus.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={loadLogs}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-xs font-semibold text-slate-200 hover:border-[#11667b] hover:text-[#11667b]"
-          >
-            <RefreshCcw className="h-4 w-4" />
-            {loadingLogs ? "Uppdaterar..." : "Uppdatera"}
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={exportLogs}
+              className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+              disabled={exporting}
+            >
+              <Download className="h-4 w-4" />
+              {exporting ? "Exporterar..." : "Exportera CSV"}
+            </button>
+            <button
+              type="button"
+              onClick={loadLogs}
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-xs font-semibold text-slate-200 hover:border-[#11667b] hover:text-[#11667b]"
+            >
+              <RefreshCcw className="h-4 w-4" />
+              {loadingLogs ? "Uppdaterar..." : "Uppdatera"}
+            </button>
+          </div>
         </div>
         {localError && <p className="mt-4 text-sm text-red-400">{localError}</p>}
       </div>

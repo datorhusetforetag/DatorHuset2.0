@@ -196,6 +196,7 @@ export default function Products() {
   const [showAllGpus, setShowAllGpus] = useState(false);
   const [showAllCpus, setShowAllCpus] = useState(false);
   const [showAllTiers, setShowAllTiers] = useState(false);
+  const [usedVariantEnabledMap, setUsedVariantEnabledMap] = useState<Record<string, boolean>>({});
   const { products } = useProducts();
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const [inventoryLoading, setInventoryLoading] = useState(true);
@@ -297,6 +298,50 @@ export default function Products() {
     });
     return map;
   }, [products]);
+
+  const getBaseProductId = (computer: Computer) => {
+    return (
+      productIdByName.get(normalizeProductKey(computer.name)) ||
+      productIdByName.get(normalizeProductKey(computer.id)) ||
+      null
+    );
+  };
+
+  const isUsedVariantEnabled = (computer: Computer) => {
+    if (!computer.usedVariant) return false;
+    const baseId = getBaseProductId(computer);
+    const apiValue = baseId ? usedVariantEnabledMap[baseId] : undefined;
+    return apiValue ?? computer.usedVariantEnabled ?? true;
+  };
+
+  useEffect(() => {
+    if (products.length === 0) return;
+    let active = true;
+    const loadUsedVariantSettings = async () => {
+      const targets = COMPUTERS.filter((computer) => computer.usedVariant)
+        .map((computer) => getBaseProductId(computer))
+        .filter((id): id is string => Boolean(id));
+      const missing = targets.filter((id) => usedVariantEnabledMap[id] === undefined);
+      if (missing.length === 0) return;
+      await Promise.all(
+        missing.map(async (id) => {
+          try {
+            const response = await fetch(`/api/used-variant/${id}`);
+            if (!response.ok) return;
+            const data = await response.json();
+            if (!active || typeof data?.enabled !== "boolean") return;
+            setUsedVariantEnabledMap((prev) => ({ ...prev, [id]: data.enabled }));
+          } catch (error) {
+            console.warn("Failed to load used-variant setting", error);
+          }
+        })
+      );
+    };
+    loadUsedVariantSettings();
+    return () => {
+      active = false;
+    };
+  }, [products, productIdByName, usedVariantEnabledMap]);
 
   useEffect(() => {
     let active = true;
@@ -429,8 +474,10 @@ export default function Products() {
         ["All in, all out - BLACK nybyggd", "All white, all out - NYPRIS"].includes(computer.name)
       );
     }
-    return showUsedOnly ? COMPUTERS.filter((computer) => computer.usedVariant) : COMPUTERS;
-  }, [preset, showUsedOnly]);
+    return showUsedOnly
+      ? COMPUTERS.filter((computer) => computer.usedVariant && isUsedVariantEnabled(computer))
+      : COMPUTERS;
+  }, [preset, showUsedOnly, usedVariantEnabledMap]);
   const getProductForVariant = (computer: Computer, useUsedVariant: boolean) => {
     const key =
       useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name;
@@ -470,7 +517,7 @@ export default function Products() {
         computer: cheapo,
         useUsedVariant: false,
       };
-      const usedCard = cheapo.usedVariant
+      const usedCard = cheapo.usedVariant && isUsedVariantEnabled(cheapo)
         ? {
             computer: cheapo,
             useUsedVariant: true,
@@ -483,9 +530,9 @@ export default function Products() {
     }
     return filterComputers.map((computer) => ({
       computer,
-      useUsedVariant: showUsedOnly && Boolean(computer.usedVariant),
+      useUsedVariant: showUsedOnly && isUsedVariantEnabled(computer),
     }));
-  }, [filterComputers, preset, showUsedOnly]);
+  }, [filterComputers, preset, showUsedOnly, usedVariantEnabledMap]);
   const gpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).gpu)));
   const cpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).cpu)));
   const tiers = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).tier)));

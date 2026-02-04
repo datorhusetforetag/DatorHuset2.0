@@ -1,9 +1,5 @@
 ﻿import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import type { Swiper as SwiperType } from "swiper";
-import { A11y } from "swiper/modules";
-import "swiper/css";
+import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
@@ -257,6 +253,7 @@ export default function ComputerDetails() {
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
   const [useUsedVariant, setUseUsedVariant] = useState(false);
+  const [usedVariantEnabled, setUsedVariantEnabled] = useState<boolean | null>(null);
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
@@ -269,7 +266,6 @@ export default function ComputerDetails() {
   const [frameGenOn, setFrameGenOn] = useState(false);
   const [rayTracingOn, setRayTracingOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
-  const swiperRef = useRef<SwiperType | null>(null);
   const [inventoryStatus, setInventoryStatus] = useState<{
     inStock: boolean;
     canPreorder: boolean;
@@ -287,14 +283,47 @@ export default function ComputerDetails() {
   const images = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
 
   useEffect(() => {
+    if (!baseProductId || !computer?.usedVariant) {
+      setUsedVariantEnabled(computer?.usedVariantEnabled ?? null);
+      return;
+    }
+    let active = true;
+    const loadUsedVariant = async () => {
+      try {
+        const response = await fetch(`/api/used-variant/${baseProductId}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!active) return;
+        if (typeof data?.enabled === "boolean") {
+          setUsedVariantEnabled(data.enabled);
+        }
+      } catch (error) {
+        console.warn("Failed to load used-variant setting", error);
+      }
+    };
+    loadUsedVariant();
+    return () => {
+      active = false;
+    };
+  }, [baseProductId, computer?.usedVariant, computer?.usedVariantEnabled]);
+
+  useEffect(() => {
     setSelectedImage(0);
-    swiperRef.current?.slideTo(0, 0);
   }, [computer?.id]);
+
+  const hasUsedVariant =
+    Boolean(computer?.usedVariant) && (usedVariantEnabled ?? computer?.usedVariantEnabled ?? true);
 
   useEffect(() => {
     const variant = searchParams.get("variant");
-    setUseUsedVariant(Boolean(variant === "used" && computer?.usedVariant));
-  }, [computer?.id, computer?.usedVariant, searchParams]);
+    setUseUsedVariant(Boolean(variant === "used" && hasUsedVariant));
+  }, [computer?.id, computer?.usedVariant, hasUsedVariant, searchParams]);
+
+  useEffect(() => {
+    if (!hasUsedVariant && useUsedVariant) {
+      setUseUsedVariant(false);
+    }
+  }, [hasUsedVariant, useUsedVariant]);
 
   useEffect(() => {
     if (!activeProductId) return;
@@ -356,8 +385,9 @@ export default function ComputerDetails() {
   };
 
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
-  const activeVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : null;
-  const fallbackName = useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
+  const activeVariant = useUsedVariant && hasUsedVariant && computer.usedVariant ? computer.usedVariant : null;
+  const fallbackName =
+    useUsedVariant && hasUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
   const activeProduct =
     getProductFromLookup(productLookup, activeProductId) ||
     getProductFromLookup(
@@ -436,18 +466,21 @@ export default function ComputerDetails() {
       return { min: 0, max: 0 };
     }
     const modeKey = getModeKey();
-    return (
-      presetData[modeKey] ||
-      presetData.dlssFrameGenRayTracing ||
-      presetData.dlssFrameGen ||
-      presetData.dlssRayTracing ||
-      presetData.frameGenRayTracing ||
-      presetData.dlss ||
-      presetData.frameGen ||
-      presetData.rayTracing ||
-      presetData.base ||
-      { min: 0, max: 0 }
+    const candidates = [
+      presetData[modeKey],
+      presetData.dlssFrameGenRayTracing,
+      presetData.dlssFrameGen,
+      presetData.dlssRayTracing,
+      presetData.frameGenRayTracing,
+      presetData.dlss,
+      presetData.frameGen,
+      presetData.rayTracing,
+      presetData.base,
+    ];
+    const match = candidates.find(
+      (range) => range && Number(range.min) > 0 && Number(range.max) >= Number(range.min)
     );
+    return match || { min: 0, max: 0 };
   };
   const { min: fpsLow, max: fpsHigh } = resolveFpsRange();
 
@@ -567,7 +600,6 @@ export default function ComputerDetails() {
       schema: "https://schema.org/OutOfStock",
     };
   }, [inventoryStatus]);
-  const hasUsedVariant = Boolean(computer.usedVariant);
   const showPreorderLabel = Boolean(inventoryStatus && !inventoryStatus.inStock && inventoryStatus.canPreorder);
   const etaLabel = useMemo(() => {
     if (!inventoryStatus || !inventoryStatus.canPreorder) return null;
@@ -694,33 +726,14 @@ export default function ComputerDetails() {
           <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
                         <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
               {hasMultipleImages ? (
-                <>
-                  <Swiper
-                    modules={[A11y]}
-                    onSwiper={(swiper) => {
-                      swiperRef.current = swiper;
-                    }}
-                    onSlideChange={(swiper) => setSelectedImage(swiper.realIndex)}
-                    spaceBetween={8}
-                    slidesPerView={1}
-                    className="h-full"
-                  >
-                    {images.map((src, index) => (
-                      <SwiperSlide key={`${src}-${index}`} className="h-full">
-                        <img
-                          src={src}
-                          alt={displayName}
-                          className="h-full w-full object-cover"
-                          loading="eager"
-                          decoding="async"
-                          draggable={false}
-                        />
-                      </SwiperSlide>
-                    ))}
-                  </Swiper>
-                  <div
-                  />
-                </>
+                <img
+                  src={resolvedImage}
+                  alt={displayName}
+                  className="w-full h-full object-cover"
+                  loading="eager"
+                  decoding="async"
+                  draggable={false}
+                />
               ) : (
                 <img
                   src={resolvedImage}
@@ -734,14 +747,16 @@ export default function ComputerDetails() {
               {hasMultipleImages && (
                 <>
                   <button
-                    onClick={() => swiperRef.current?.slidePrev()}
+                    onClick={() =>
+                      setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
+                    }
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
                     aria-label="Föregående bild"
                   >
                     <ChevronLeft className="w-5 h-5 mx-auto" />
                   </button>
                   <button
-                    onClick={() => swiperRef.current?.slideNext()}
+                    onClick={() => setSelectedImage((prev) => (prev + 1) % images.length)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
                     aria-label="Nästa bild"
                   >
@@ -754,10 +769,7 @@ export default function ComputerDetails() {
               {images.map((img, i) => (
                 <button
                   key={i}
-                  onClick={() => {
-                    swiperRef.current?.slideTo(i);
-                    setSelectedImage(i);
-                  }}
+                  onClick={() => setSelectedImage(i)}
                   className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border ${selectedImage === i ? "border-[#11667b]" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
@@ -1030,7 +1042,7 @@ export default function ComputerDetails() {
                     rayTracingOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
                   } text-sm font-semibold ${!supports.rayTracing ? "opacity-40 cursor-not-allowed" : ""}`}
                 >
-                  Raytracing {rayTracingOn ? "On" : "Off"}
+                  Raytracing / Pathtracing {rayTracingOn ? "On" : "Off"}
                 </button>
               </div>
             </div>

@@ -217,6 +217,14 @@ const sanitizeFpsSettings = (input: any) => {
   return output;
 };
 
+const parseUsedVariantSetting = (value: unknown, fallback = true) => {
+  if (value && typeof value === "object" && typeof (value as { enabled?: unknown }).enabled === "boolean") {
+    return (value as { enabled: boolean }).enabled;
+  }
+  if (typeof value === "boolean") return value;
+  return fallback;
+};
+
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
@@ -2326,6 +2334,100 @@ export async function updateAdminProductFpsSettings(req: any, res: any) {
 }
 
 /**
+ * Admin: fetch used variant toggle
+ * GET /api/admin/products/:productId/used-variant
+ */
+export async function getAdminProductUsedVariant(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `used_variant:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ enabled: true });
+    }
+
+    return res.json({ enabled: parseUsedVariantSetting(data?.value, true) });
+  } catch (error) {
+    console.error("Admin used variant fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: update used variant toggle
+ * POST /api/admin/products/:productId/used-variant
+ */
+export async function updateAdminProductUsedVariant(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const enabled = Boolean(req.body?.enabled);
+    const key = `used_variant:${productId}`;
+    const payload = { key, value: { enabled }, updated_at: new Date() };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Used variant update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update used variant setting" });
+    }
+
+    await logAdminAction(req, user, "product_used_variant_update", "ui_settings", key, {
+      product_id: productId,
+      enabled,
+    });
+
+    return res.json({ enabled: parseUsedVariantSetting(data?.value, enabled) });
+  } catch (error) {
+    console.error("Admin used variant update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
  * Public: get FPS settings per product
  * GET /api/fps-settings/:productId
  */
@@ -2349,6 +2451,34 @@ export async function getProductFpsSettings(req: any, res: any) {
     res.json({ fps: sanitizeFpsSettings(data?.value) });
   } catch (error) {
     console.error("FPS settings fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Public: get used variant toggle
+ * GET /api/used-variant/:productId
+ */
+export async function getProductUsedVariant(req: any, res: any) {
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+    const key = `used_variant:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ enabled: true });
+    }
+
+    return res.json({ enabled: parseUsedVariantSetting(data?.value, true) });
+  } catch (error) {
+    console.error("Used variant fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
