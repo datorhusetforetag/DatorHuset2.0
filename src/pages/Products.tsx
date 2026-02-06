@@ -285,6 +285,12 @@ export default function Products() {
   const productIdByName = useMemo(() => {
     const map = new Map<string, string>();
     products.forEach((product) => {
+      if (product.legacy_id) {
+        const legacyKey = normalizeProductKey(product.legacy_id);
+        if (legacyKey) {
+          map.set(legacyKey, product.id);
+        }
+      }
       const nameKey = normalizeProductKey(product.name);
       if (nameKey) {
         map.set(nameKey, product.id);
@@ -467,11 +473,11 @@ export default function Products() {
   }, [preset]);
   const filterComputers = useMemo(() => {
     if (preset === "budget") {
-      return COMPUTERS.filter((computer) => computer.name === "Cheapo - Ny");
+      return COMPUTERS.filter((computer) => computer.name === "Silver-Speedster");
     }
     if (preset === "toptier") {
       return COMPUTERS.filter((computer) =>
-        ["All in, all out - BLACK nybyggd", "All white, all out - NYPRIS"].includes(computer.name)
+        ["All Black, All Out", "All White, All Out"].includes(computer.name)
       );
     }
     return showUsedOnly
@@ -483,15 +489,25 @@ export default function Products() {
       useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name;
     const directMatch = getProductFromLookup(productLookup, key);
     if (directMatch) return directMatch;
+    if (useUsedVariant) {
+      const usedId = computer.usedVariant?.productKey
+        ? productIdByName.get(normalizeProductKey(computer.usedVariant.productKey))
+        : undefined;
+      return getProductFromLookup(productLookup, usedId);
+    }
     const lookupId =
       productIdByName.get(normalizeProductKey(key)) || productIdByName.get(normalizeProductKey(computer.id));
     return getProductFromLookup(productLookup, lookupId);
   };
   const getDisplayVariant = (computer: Computer, useUsedVariant: boolean) => {
     const baseVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : computer;
+    const fallbackName =
+      useUsedVariant && computer.usedVariant
+        ? computer.usedVariant.productKey || toUsedName(computer.name)
+        : computer.name;
     return mergeProductFields(
       {
-        name: computer.name,
+        name: fallbackName,
         price: baseVariant.price,
         cpu: baseVariant.cpu,
         gpu: baseVariant.gpu,
@@ -503,11 +519,8 @@ export default function Products() {
       getProductForVariant(computer, useUsedVariant),
     );
   };
-  const getDisplayName = (computer: Computer, useUsedVariant: boolean) => {
-    const product = getProductForVariant(computer, useUsedVariant);
-    if (product?.name) return product.name;
-    return useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
-  };
+  const getDisplayName = (computer: Computer, useUsedVariant: boolean) =>
+    getDisplayVariant(computer, useUsedVariant).name;
   type DisplayCard = { computer: Computer; useUsedVariant: boolean };
   const displayCards = useMemo<DisplayCard[]>(() => {
     if (preset === "budget") {

@@ -386,15 +386,15 @@ export default function ComputerDetails() {
 
   const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
   const activeVariant = useUsedVariant && hasUsedVariant && computer.usedVariant ? computer.usedVariant : null;
+  const usedDisplayName = computer.usedVariant?.productKey || toUsedName(computer.name);
   const fallbackName =
-    useUsedVariant && hasUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
-  const activeProduct =
-    getProductFromLookup(productLookup, activeProductId) ||
-    getProductFromLookup(
-      productLookup,
-      useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name
-    ) ||
-    getProductFromLookup(productLookup, computer.id);
+    useUsedVariant && hasUsedVariant && computer.usedVariant ? usedDisplayName : computer.name;
+  const activeProduct = useUsedVariant
+    ? (usedProductId ? getProductFromLookup(productLookup, usedProductId) : null) ||
+      (computer.usedVariant?.productKey ? getProductFromLookup(productLookup, computer.usedVariant.productKey) : null)
+    : getProductFromLookup(productLookup, activeProductId) ||
+      getProductFromLookup(productLookup, computer.name) ||
+      getProductFromLookup(productLookup, computer.id);
   useEffect(() => {
     if (!activeProductId) return;
     let isMounted = true;
