@@ -6,10 +6,10 @@ export type OrderStatusInfo = {
 };
 
 export const ORDER_STATUS_FLOW: OrderStatusInfo[] = [
-  { value: "received", label: "Best√§llning mottagen", eta: "1-2 dagar", step: 1 },
+  { value: "received", label: "Best‰llning mottagen", eta: "1-2 dagar", step: 1 },
   { value: "building", label: "Bygger/Produktion", eta: "1-3 dagar", step: 2 },
   { value: "postbuild", label: "Post-bygg justeringar", eta: "1-2 dagar", step: 3 },
-  { value: "ready", label: "Redo att h√§mta/frakta!", eta: "Kontakta kund", step: 4 },
+  { value: "ready", label: "Redo att h‰mta/frakta!", eta: "Kontakta kund", step: 4 },
 ];
 
 const STATUS_ALIASES: Record<string, string> = {
@@ -27,3 +27,4 @@ export const getOrderStatusInfo = (status?: string) => {
 };
 
 export const ORDER_STATUS_STEPS = ORDER_STATUS_FLOW.map((step) => step.label);
+
