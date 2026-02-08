@@ -69,21 +69,21 @@ export default function About() {
 
           <div className="grid gap-4 md:grid-cols-3">
             <img
-              src="/products/Horizon3_Elite_Hero_2000x.webp"
+              src="/products/newpc/allblack-main.jpg"
               alt="DatorHuset premiumbygge"
               className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
               loading="lazy"
               decoding="async"
             />
             <img
-              src="/products/Voyager_Hero_NoGeforce_2000x.webp"
+              src="/products/newpc/allwhite-1.jpg"
               alt="DatorHuset gamingdator"
               className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
               loading="lazy"
               decoding="async"
             />
             <img
-              src="/products/NavBase_Hero_Colorswap_2000x.webp"
+              src="/products/newpc/chieftecvisio-1.jpg"
               alt="DatorHuset kompakt dator"
               className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
               loading="lazy"

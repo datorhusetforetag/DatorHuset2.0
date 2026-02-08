@@ -1880,7 +1880,7 @@ export default function CustomBuild() {
               </div>
               <div className="relative">
                 <img
-                  src="/products/Horizon3_Elite_Hero_2000x.webp"
+                  src="/products/newpc/allblack-main.jpg"
                   alt="Custom bygg"
                   className="w-full h-56 sm:h-72 lg:h-80 object-cover rounded-3xl border border-white/10 shadow-xl"
                   loading="lazy"

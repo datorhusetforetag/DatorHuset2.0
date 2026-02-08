@@ -148,9 +148,9 @@ export default function Cart() {
                     <span className="text-gray-600">Delsumma:</span>
                     <span className="font-semibold text-gray-900">{totalPrice / 100} kr</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex items-start justify-between gap-4">
                     <span className="text-gray-600">Frakt:</span>
-                    <span className="font-semibold text-gray-900">Väljs i kassan (0 kr upphämtning / 700 kr PostNord)</span>
+                    <span className="font-semibold text-gray-900 text-right max-w-[16rem]">Väljs i kassan (0 kr upphämtning / 700 kr PostNord)</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Serviceavgift:</span>

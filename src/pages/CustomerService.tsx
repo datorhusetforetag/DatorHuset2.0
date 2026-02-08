@@ -1,4 +1,4 @@
-﻿import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 
@@ -7,20 +7,33 @@ export default function CustomerService() {
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="bg-yellow-400">
+        <section className="bg-yellow-400 overflow-hidden">
           <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
-            <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Kundservice</p>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Kontakta oss</h1>
-            <p className="text-gray-800 mt-4 max-w-2xl">
-              Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.
-            </p>
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <Link
-                to="/faq"
-                className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
-              >
-                Se FAQ
-              </Link>
+            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Kundservice</p>
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Kontakta oss</h1>
+                <p className="text-gray-800 mt-4 max-w-2xl">
+                  Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.
+                </p>
+                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                  <Link
+                    to="/faq"
+                    className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                  >
+                    Se FAQ
+                  </Link>
+                </div>
+              </div>
+              <div className="rounded-3xl border border-yellow-500/40 bg-yellow-300/40 p-4 sm:p-6">
+                <img
+                  src="/images/foretagsdeal.webp"
+                  alt="Företagsdeal gamingdator"
+                  className="w-full h-56 sm:h-72 lg:h-80 object-contain object-right drop-shadow-[0_20px_35px_rgba(0,0,0,0.25)]"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
           </div>
         </section>

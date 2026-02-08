@@ -76,15 +76,15 @@ export const Hero = () => {
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Företagsdeal</h2>
               <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">{"Elektronik för företag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
-            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-20 sm:h-28 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
-              <div>
+            <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-28 sm:h-36 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
+              <div className="relative z-10">
                 <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
                 <p className="text-xs text-gray-600 dark:text-gray-300">{"På utvalda gamingdatorer hela veckan"}</p>
               </div>
               <img
-                src="https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=800&q=80"
-                alt="Veckans deal"
-                className="h-full w-20 sm:w-32 md:w-40 object-cover rounded-lg shadow"
+                src="/images/foretagsdeal.webp"
+                alt="Gamingdator för företagsdeal"
+                className="h-[150%] sm:h-[180%] w-auto object-contain -mr-3 sm:-mr-6 drop-shadow-[0_16px_28px_rgba(0,0,0,0.25)]"
                 loading="lazy"
                 decoding="async"
               />

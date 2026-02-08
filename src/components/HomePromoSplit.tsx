@@ -17,7 +17,7 @@ export const HomePromoSplit = () => {
           <article className="relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_20px_60px_rgba(0,0,0,0.08)] min-h-[520px] sm:min-h-[560px] flex flex-col">
             <div className="relative h-48 sm:h-56 lg:h-64">
               <img
-                src="/products/Voyager_Hero_NoGeforce_2000x.webp"
+                src="/products/newpc/chieftecvisio-1.jpg"
                 alt="Service och reparation av datorer"
                 className="w-full h-full object-cover"
                 loading="lazy"
@@ -76,7 +76,7 @@ export const HomePromoSplit = () => {
           <article className="relative overflow-hidden rounded-3xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-[0_20px_60px_rgba(0,0,0,0.08)] min-h-[520px] sm:min-h-[560px] flex flex-col">
             <div className="relative h-48 sm:h-56 lg:h-64">
               <img
-                src="/products/Horizon3_Elite_Hero_2000x.webp"
+                src="/products/newpc/allwhite-1.jpg"
                 alt="Custom byggda datorer"
                 className="w-full h-full object-cover"
                 loading="lazy"

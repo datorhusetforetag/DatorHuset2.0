@@ -79,9 +79,9 @@ const DEFAULT_BANNER: BannerConfig = {
   title: "B\u00e4sta s\u00e4ljare inom station\u00e4ra datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
   images: [
-    "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
-    "/products/Horizon3_Elite_Hero_2000x.webp",
-    "/products/Voyager_Hero_NoGeforce_2000x.webp",
+    "/products/newpc/allblack-main.jpg",
+    "/products/newpc/allwhite-1.jpg",
+    "/products/newpc/chieftecvisio-1.jpg",
   ],
   background:
     "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
@@ -93,7 +93,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Budgetv\u00e4nligt",
     title: "Budget betyder inte d\u00e5ligt",
     description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
-    images: ["/products/NavBase_Hero_Colorswap_2000x.webp"],
+    images: ["/products/newpc/chieftecvisio-1.jpg"],
     stickers: [
       {
         label: "B\u00e4st i budget-klass",
@@ -107,7 +107,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Paket",
     title: "Allt du beh\u00f6ver, redo att k\u00f6ra",
     description: "Kompletta paket med dator, sk\u00e4rm och tillbeh\u00f6r i ett och samma k\u00f6p.",
-    images: ["/products/Horizon3_Elite_Hero_2000x.webp"],
+    images: ["/products/newpc/allwhite-1.jpg"],
     background:
       "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
     variant: "bundle",
@@ -117,9 +117,9 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     title: "Mest f\u00f6r pengarna",
     description: "V\u00e5ra mest prisv\u00e4rda byggen \u2013 noggrant utvalda f\u00f6r maximal valuta.",
     images: [
-      "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
-      "/products/Traveler_Hero_1_2000x.webp",
-      "/products/Voyager_Hero_NoGeforce_2000x.webp",
+      "/products/newpc/allblack-main.jpg",
+      "/products/newpc/allwhite-1.jpg",
+      "/products/newpc/chieftecvisio-1.jpg",
     ],
     stickers: [
       {
@@ -143,8 +143,8 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     title: "N\u00e4r bara det snabbaste duger",
     description: "Toppbyggen f\u00f6r dig som vill ha maximal kraft och kompromissl\u00f6s kvalitet.",
     images: [
-      "/products/Voy_Red_Hero_2000x.webp",
-      "/products/Voyager_Hero_NoGeforce_2000x_2.webp",
+      "/products/newpc/allblack-main.jpg",
+      "/products/newpc/allwhite-1.jpg",
     ],
     stickers: [
       {
