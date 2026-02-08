@@ -84,7 +84,7 @@ export const Hero = () => {
               <img
                 src="/images/foretagsdeal.webp"
                 alt="Gamingdator för företagsdeal"
-                className="h-[150%] sm:h-[180%] w-auto object-contain -mr-3 sm:-mr-6 drop-shadow-[0_16px_28px_rgba(0,0,0,0.25)]"
+                className="h-[88%] w-auto max-w-[42%] sm:max-w-[40%] md:max-w-[38%] object-contain object-right drop-shadow-[0_16px_28px_rgba(0,0,0,0.25)]"
                 loading="lazy"
                 decoding="async"
               />

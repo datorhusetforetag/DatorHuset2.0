@@ -14,7 +14,7 @@ export default function CustomerService() {
                 <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Kundservice</p>
                 <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Kontakta oss</h1>
                 <p className="text-gray-800 mt-4 max-w-2xl">
-                  Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.
+                  BehÃƒÆ’Ã‚Â¶ver du hjÃƒÆ’Ã‚Â¤lp med en bestÃƒÆ’Ã‚Â¤llning, service eller garanti? Vi svarar snabbt med tydliga besked.
                 </p>
                 <div className="mt-6 flex flex-col sm:flex-row gap-3">
                   <Link
@@ -27,9 +27,9 @@ export default function CustomerService() {
               </div>
               <div className="rounded-3xl border border-yellow-500/40 bg-yellow-300/40 p-4 sm:p-6">
                 <img
-                  src="/images/foretagsdeal.webp"
-                  alt="Företagsdeal gamingdator"
-                  className="w-full h-56 sm:h-72 lg:h-80 object-contain object-right drop-shadow-[0_20px_35px_rgba(0,0,0,0.25)]"
+                  src="/Datorhuset.png"
+                  alt="DatorHuset logo"
+                  className="w-full h-56 sm:h-72 lg:h-80 object-contain object-center"
                   loading="lazy"
                   decoding="async"
                 />
@@ -45,46 +45,46 @@ export default function CustomerService() {
               <p>E-post: <a className="text-blue-600 dark:text-blue-400" href="mailto:support@datorhuset.site">support@datorhuset.site</a></p>
             </div>
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
-              <h2 className="text-lg font-semibold">Öppettider</h2>
+              <h2 className="text-lg font-semibold">ÃƒÆ’Ã¢â‚¬â€œppettider</h2>
               <p>Svarstider: 11:00 - 15:00</p>
-              <p>Vi svarar på mail under vardagar.</p>
+              <p>Vi svarar pÃƒÆ’Ã‚Â¥ mail under vardagar.</p>
             </div>
           </div>
 
           <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-3">
-            <h2 className="text-lg font-semibold">Supportärenden</h2>
-            <p>För frågor om beställningar, returer eller fakturor: ange ordernummer och beskriv ärendet kort.</p>
-            <p>Teknisk support: beskriv problemet, vilka komponenter som används och bifoga bilder om möjligt.</p>
+            <h2 className="text-lg font-semibold">SupportÃƒÆ’Ã‚Â¤renden</h2>
+            <p>FÃƒÆ’Ã‚Â¶r frÃƒÆ’Ã‚Â¥gor om bestÃƒÆ’Ã‚Â¤llningar, returer eller fakturor: ange ordernummer och beskriv ÃƒÆ’Ã‚Â¤rendet kort.</p>
+            <p>Teknisk support: beskriv problemet, vilka komponenter som anvÃƒÆ’Ã‚Â¤nds och bifoga bilder om mÃƒÆ’Ã‚Â¶jligt.</p>
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Vanliga ärenden</h2>
+              <h2 className="text-lg font-semibold">Vanliga ÃƒÆ’Ã‚Â¤renden</h2>
               <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <li>Orderstatus, leveranstider och spårning</li>
-                <li>Ändringar i beställning eller uppgraderingar</li>
-                <li>Garantifrågor och reklamation</li>
-                <li>Felsökning, service och reparation</li>
-                <li>Företagslösningar och faktura</li>
+                <li>Orderstatus, leveranstider och spÃƒÆ’Ã‚Â¥rning</li>
+                <li>ÃƒÆ’Ã¢â‚¬Å¾ndringar i bestÃƒÆ’Ã‚Â¤llning eller uppgraderingar</li>
+                <li>GarantifrÃƒÆ’Ã‚Â¥gor och reklamation</li>
+                <li>FelsÃƒÆ’Ã‚Â¶kning, service och reparation</li>
+                <li>FÃƒÆ’Ã‚Â¶retagslÃƒÆ’Ã‚Â¶sningar och faktura</li>
               </ul>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Vi återkommer normalt inom 24 timmar på vardagar.
+                Vi ÃƒÆ’Ã‚Â¥terkommer normalt inom 24 timmar pÃƒÆ’Ã‚Â¥ vardagar.
               </p>
             </div>
 
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Så arbetar vi</h2>
+              <h2 className="text-lg font-semibold">SÃƒÆ’Ã‚Â¥ arbetar vi</h2>
               <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside">
-                <li>Du beskriver ditt ärende via mail eller formulär.</li>
-                <li>Vi återkommer med frågor eller förslag.</li>
-                <li>Du får en tydlig offert och tidsplan.</li>
-                <li>Vi uppdaterar dig när arbetet är klart.</li>
+                <li>Du beskriver ditt ÃƒÆ’Ã‚Â¤rende via mail eller formulÃƒÆ’Ã‚Â¤r.</li>
+                <li>Vi ÃƒÆ’Ã‚Â¥terkommer med frÃƒÆ’Ã‚Â¥gor eller fÃƒÆ’Ã‚Â¶rslag.</li>
+                <li>Du fÃƒÆ’Ã‚Â¥r en tydlig offert och tidsplan.</li>
+                <li>Vi uppdaterar dig nÃƒÆ’Ã‚Â¤r arbetet ÃƒÆ’Ã‚Â¤r klart.</li>
               </ol>
               <Link
                 to="/service-reparation"
                 className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
               >
-                Starta serviceärende
+                Starta serviceÃƒÆ’Ã‚Â¤rende
               </Link>
             </div>
           </div>
