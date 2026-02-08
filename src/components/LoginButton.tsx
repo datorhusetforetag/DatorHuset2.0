@@ -22,10 +22,6 @@ export function LoginButton() {
   const [resendCooldown, setResendCooldown] = useState(0);
   const navigate = useNavigate();
 
-  if (loading) {
-    return <div className="text-gray-600 text-sm dark:text-gray-300">Laddar...</div>;
-  }
-
   const resetForm = () => {
     setEmail("");
     setPassword("");
@@ -46,6 +42,10 @@ export function LoginButton() {
     }, 1000);
     return () => window.clearInterval(timer);
   }, [resendCooldown]);
+
+  if (loading) {
+    return <div className="text-gray-600 text-sm dark:text-gray-300">Laddar...</div>;
+  }
 
   const handleEmailLogin = async () => {
     setError(null);
