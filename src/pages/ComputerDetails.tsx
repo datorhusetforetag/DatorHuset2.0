@@ -17,44 +17,44 @@ import ghostImage from "../../images/Ghost Of Tsushima.jpg";
 
 const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
-    "1080p": { Medium: 160, High: 130, Ultra: 100 },
-    "1440p": { Medium: 140, High: 110, Ultra: 85 },
-    "4K": { Medium: 95, High: 70, Ultra: 55 },
+    "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100, "Ultra + Raytracing/Pathtracing": 85 },
+    "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85, "Ultra + Raytracing/Pathtracing": 70 },
+    "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55, "Ultra + Raytracing/Pathtracing": 45 },
   },
   "Cyberpunk 2077": {
-    "1080p": { Medium: 95, High: 75, Ultra: 60 },
-    "1440p": { Medium: 75, High: 60, Ultra: 45 },
-    "4K": { Medium: 50, High: 38, Ultra: 28 },
+    "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60, "Ultra + Raytracing/Pathtracing": 42 },
+    "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45, "Ultra + Raytracing/Pathtracing": 30 },
+    "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28, "Ultra + Raytracing/Pathtracing": 18 },
   },
   "GTA 5": {
-    "1080p": { Medium: 180, High: 150, Ultra: 120 },
-    "1440p": { Medium: 150, High: 125, Ultra: 95 },
-    "4K": { Medium: 110, High: 85, Ultra: 65 },
+    "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120, "Ultra + Raytracing/Pathtracing": 120 },
+    "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95, "Ultra + Raytracing/Pathtracing": 95 },
+    "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
   },
   Minecraft: {
-    "1080p": { Medium: 220, High: 180, Ultra: 150 },
-    "1440p": { Medium: 190, High: 160, Ultra: 130 },
-    "4K": { Medium: 160, High: 130, Ultra: 110 },
+    "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150, "Ultra + Raytracing/Pathtracing": 100 },
+    "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130, "Ultra + Raytracing/Pathtracing": 85 },
+    "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
   },
   CS2: {
-    "1080p": { Medium: 280, High: 240, Ultra: 200 },
-    "1440p": { Medium: 240, High: 200, Ultra: 170 },
-    "4K": { Medium: 200, High: 170, Ultra: 140 },
+    "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200, "Ultra + Raytracing/Pathtracing": 200 },
+    "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170, "Ultra + Raytracing/Pathtracing": 170 },
+    "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140, "Ultra + Raytracing/Pathtracing": 140 },
   },
   "Ghost of Tsushima": {
-    "1080p": { Medium: 120, High: 100, Ultra: 80 },
-    "1440p": { Medium: 100, High: 80, Ultra: 65 },
-    "4K": { Medium: 70, High: 55, Ultra: 42 },
+    "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80, "Ultra + Raytracing/Pathtracing": 65 },
+    "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65, "Ultra + Raytracing/Pathtracing": 50 },
+    "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42, "Ultra + Raytracing/Pathtracing": 32 },
   },
 };
 
-const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean; rayTracing: boolean }> = {
-  Fortnite: { dlss: true, frameGen: false, rayTracing: false },
-  "Cyberpunk 2077": { dlss: true, frameGen: true, rayTracing: true },
-  "GTA 5": { dlss: false, frameGen: false, rayTracing: false },
-  Minecraft: { dlss: false, frameGen: false, rayTracing: true },
-  CS2: { dlss: false, frameGen: false, rayTracing: false },
-  "Ghost of Tsushima": { dlss: true, frameGen: true, rayTracing: false },
+const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
+  Fortnite: { dlss: true, frameGen: false },
+  "Cyberpunk 2077": { dlss: true, frameGen: true },
+  "GTA 5": { dlss: false, frameGen: false },
+  Minecraft: { dlss: false, frameGen: false },
+  CS2: { dlss: false, frameGen: false },
+  "Ghost of Tsushima": { dlss: true, frameGen: true },
 };
 const buildDefaultFpsSettings = () => {
   const games: Record<string, any> = {};
@@ -70,7 +70,7 @@ const buildDefaultFpsSettings = () => {
       resEntries[res] = presetEntries;
     });
     games[game] = {
-      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true, rayTracing: false },
+      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true },
       resolutions: resEntries,
     };
   });
@@ -264,7 +264,6 @@ export default function ComputerDetails() {
   const [selectedPreset, setSelectedPreset] = useState("High");
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
-  const [rayTracingOn, setRayTracingOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [inventoryStatus, setInventoryStatus] = useState<{
     inStock: boolean;
@@ -443,22 +442,16 @@ export default function ComputerDetails() {
   const supports = gameSettings?.supports || {
     dlss: true,
     frameGen: true,
-    rayTracing: false,
   };
   useEffect(() => {
     if (!supports.dlss && dlssOn) setDlssOn(false);
     if (!supports.frameGen && frameGenOn) setFrameGenOn(false);
-    if (!supports.rayTracing && rayTracingOn) setRayTracingOn(false);
-  }, [supports, dlssOn, frameGenOn, rayTracingOn]);
+  }, [supports, dlssOn, frameGenOn]);
   const presetData = gameSettings?.resolutions?.[selectedResolution]?.[selectedPreset];
   const getModeKey = () => {
-    if (dlssOn && frameGenOn && rayTracingOn) return "dlssFrameGenRayTracing";
     if (dlssOn && frameGenOn) return "dlssFrameGen";
-    if (dlssOn && rayTracingOn) return "dlssRayTracing";
-    if (frameGenOn && rayTracingOn) return "frameGenRayTracing";
     if (dlssOn) return "dlss";
     if (frameGenOn) return "frameGen";
-    if (rayTracingOn) return "rayTracing";
     return "base";
   };
   const resolveFpsRange = () => {
@@ -468,21 +461,24 @@ export default function ComputerDetails() {
     const modeKey = getModeKey();
     const candidates = [
       presetData[modeKey],
-      presetData.dlssFrameGenRayTracing,
       presetData.dlssFrameGen,
-      presetData.dlssRayTracing,
-      presetData.frameGenRayTracing,
       presetData.dlss,
       presetData.frameGen,
-      presetData.rayTracing,
       presetData.base,
     ];
     const match = candidates.find(
-      (range) => range && Number(range.min) > 0 && Number(range.max) >= Number(range.min)
+      (range) =>
+        range &&
+        Number.isFinite(Number(range.min)) &&
+        Number.isFinite(Number(range.max)) &&
+        Number(range.min) >= 0 &&
+        Number(range.max) >= Number(range.min)
     );
     return match || { min: 0, max: 0 };
   };
   const { min: fpsLow, max: fpsHigh } = resolveFpsRange();
+  const averageFps =
+    Number.isFinite(fpsLow) && Number.isFinite(fpsHigh) ? Math.max(0, Math.round((fpsLow + fpsHigh) / 2)) : 0;
 
   const merged = mergeProductFields(
     {
@@ -1038,15 +1034,6 @@ export default function ComputerDetails() {
                 >
                   Frame generation {frameGenOn ? "On" : "Off"}
                 </button>
-                <button
-                  onClick={() => setRayTracingOn((v) => !v)}
-                  disabled={!supports.rayTracing}
-                  className={`px-4 py-2 rounded-lg border ${
-                    rayTracingOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
-                  } text-sm font-semibold ${!supports.rayTracing ? "opacity-40 cursor-not-allowed" : ""}`}
-                >
-                  Raytracing / Pathtracing {rayTracingOn ? "On" : "Off"}
-                </button>
               </div>
             </div>
 
@@ -1069,7 +1056,7 @@ export default function ComputerDetails() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedResolution} {"\u00d7"} {selectedPreset}</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{fpsLow} - {fpsHigh} FPS</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{averageFps} FPS</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{"Ber\u00e4knat med vald konfiguration"}</p>
                 </div>
               </div>

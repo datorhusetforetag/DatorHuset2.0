@@ -28,7 +28,7 @@ type FpsSettings = {
   games: Record<
     string,
     {
-      supports: { dlss: boolean; frameGen: boolean; rayTracing: boolean };
+      supports: { dlss: boolean; frameGen: boolean; rayTracing?: boolean };
       resolutions: Record<string, Record<string, FpsPreset>>;
     }
   >;
@@ -43,57 +43,53 @@ const FPS_GAMES = [
   "Ghost of Tsushima",
 ];
 const FPS_RESOLUTIONS = ["1080p", "1440p", "4K"];
-const FPS_PRESETS = ["Low", "Medium", "High", "Ultra"];
+const FPS_PRESETS = ["Low", "Medium", "High", "Ultra", "Ultra + Raytracing/Pathtracing"];
 const FPS_MODE_LABELS: { key: string; label: string }[] = [
   { key: "base", label: "Bas" },
   { key: "dlss", label: "DLSS/FSR" },
   { key: "frameGen", label: "Frame Generation" },
-  { key: "rayTracing", label: "Raytracing/Pathtracing" },
   { key: "dlssFrameGen", label: "DLSS + Frame Gen" },
-  { key: "dlssRayTracing", label: "DLSS + Raytracing" },
-  { key: "frameGenRayTracing", label: "Frame Gen + Raytracing" },
-  { key: "dlssFrameGenRayTracing", label: "DLSS + Frame Gen + Raytracing" },
 ];
 
 const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
-    "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100 },
-    "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85 },
-    "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55 },
+    "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100, "Ultra + Raytracing/Pathtracing": 85 },
+    "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85, "Ultra + Raytracing/Pathtracing": 70 },
+    "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55, "Ultra + Raytracing/Pathtracing": 45 },
   },
   "Cyberpunk 2077": {
-    "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60 },
-    "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45 },
-    "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28 },
+    "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60, "Ultra + Raytracing/Pathtracing": 42 },
+    "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45, "Ultra + Raytracing/Pathtracing": 30 },
+    "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28, "Ultra + Raytracing/Pathtracing": 18 },
   },
   "GTA 5": {
-    "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120 },
-    "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95 },
-    "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65 },
+    "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120, "Ultra + Raytracing/Pathtracing": 120 },
+    "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95, "Ultra + Raytracing/Pathtracing": 95 },
+    "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
   },
   Minecraft: {
-    "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150 },
-    "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130 },
-    "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110 },
+    "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150, "Ultra + Raytracing/Pathtracing": 100 },
+    "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130, "Ultra + Raytracing/Pathtracing": 85 },
+    "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
   },
   CS2: {
-    "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200 },
-    "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170 },
-    "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140 },
+    "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200, "Ultra + Raytracing/Pathtracing": 200 },
+    "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170, "Ultra + Raytracing/Pathtracing": 170 },
+    "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140, "Ultra + Raytracing/Pathtracing": 140 },
   },
   "Ghost of Tsushima": {
-    "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80 },
-    "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65 },
-    "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42 },
+    "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80, "Ultra + Raytracing/Pathtracing": 65 },
+    "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65, "Ultra + Raytracing/Pathtracing": 50 },
+    "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42, "Ultra + Raytracing/Pathtracing": 32 },
   },
 };
-const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean; rayTracing: boolean }> = {
-  Fortnite: { dlss: true, frameGen: false, rayTracing: false },
-  "Cyberpunk 2077": { dlss: true, frameGen: true, rayTracing: true },
-  "GTA 5": { dlss: false, frameGen: false, rayTracing: false },
-  Minecraft: { dlss: false, frameGen: false, rayTracing: true },
-  CS2: { dlss: false, frameGen: false, rayTracing: false },
-  "Ghost of Tsushima": { dlss: true, frameGen: true, rayTracing: false },
+const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
+  Fortnite: { dlss: true, frameGen: false },
+  "Cyberpunk 2077": { dlss: true, frameGen: true },
+  "GTA 5": { dlss: false, frameGen: false },
+  Minecraft: { dlss: false, frameGen: false },
+  CS2: { dlss: false, frameGen: false },
+  "Ghost of Tsushima": { dlss: true, frameGen: true },
 };
 
 const buildDefaultFpsSettings = (): FpsSettings => {
@@ -111,7 +107,7 @@ const buildDefaultFpsSettings = (): FpsSettings => {
       resolutions[res] = presets;
     });
     games[game] = {
-      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true, rayTracing: false },
+      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true },
       resolutions,
     };
   });
@@ -258,10 +254,19 @@ export default function AdminProducts() {
     setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: next }));
   };
 
+  const getAverageFps = (range?: FpsRange) => {
+    const min = Number(range?.min);
+    const max = Number(range?.max);
+    if (!Number.isFinite(min) && !Number.isFinite(max)) return 0;
+    if (!Number.isFinite(min)) return Math.max(0, Math.round(max));
+    if (!Number.isFinite(max)) return Math.max(0, Math.round(min));
+    return Math.max(0, Math.round((min + max) / 2));
+  };
+
   const updateFpsSupport = (
     productId: string,
     game: string,
-    key: "dlss" | "frameGen" | "rayTracing",
+    key: "dlss" | "frameGen",
     value: boolean
   ) => {
     const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
@@ -279,26 +284,20 @@ export default function AdminProducts() {
     updateFpsSettings(productId, next);
   };
 
-  const updateFpsRange = (
+  const updateFpsAverage = (
     productId: string,
     game: string,
     resolution: string,
     preset: string,
     modeKey: string,
-    field: "min" | "max",
     value: number
   ) => {
+    const safeValue = Math.max(0, Math.round(value));
     const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
     const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
     const resolutionSettings = gameSettings.resolutions[resolution] || {};
     const presetSettings = resolutionSettings[preset] || {};
-    const modeSettings = presetSettings[modeKey] || { min: 1, max: 1 };
-
-    const nextMode = { ...modeSettings, [field]: value };
-    if (nextMode.min > nextMode.max) {
-      if (field === "min") nextMode.max = nextMode.min;
-      if (field === "max") nextMode.min = nextMode.max;
-    }
+    const nextMode = { min: safeValue, max: safeValue };
 
     const next: FpsSettings = {
       ...current,
@@ -498,7 +497,6 @@ export default function AdminProducts() {
           const supports = selectedGameSettings?.supports || {
             dlss: true,
             frameGen: true,
-            rayTracing: false,
           };
           return (
             <div key={product.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
@@ -655,7 +653,7 @@ export default function AdminProducts() {
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Uppskattad FPS</p>
-                      <p className="text-sm text-slate-300">Välj spel, upplösning och grafik för att justera FPS.</p>
+                      <p className="text-sm text-slate-300">Välj spel, upplösning och grafik för att justera snitt-FPS.</p>
                     </div>
                     {!fpsSettings ? (
                       <button
@@ -770,16 +768,6 @@ export default function AdminProducts() {
                           />
                           Frame Generation tillgängligt
                         </label>
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={supports.rayTracing}
-                            onChange={(event) =>
-                              updateFpsSupport(product.id, fpsUi.game, "rayTracing", event.target.checked)
-                            }
-                          />
-                          Raytracing/Pathtracing tillgängligt
-                        </label>
                       </div>
 
                       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -792,38 +780,19 @@ export default function AdminProducts() {
                                 <input
                                   type="number"
                                   min={0}
-                                  value={range.min ?? ""}
+                                  value={getAverageFps(range)}
                                   onChange={(event) =>
-                                    updateFpsRange(
+                                    updateFpsAverage(
                                       product.id,
                                       fpsUi.game,
                                       fpsUi.resolution,
                                       fpsUi.preset,
                                       mode.key,
-                                      "min",
                                       Number(event.target.value)
                                     )
                                   }
                                   className="w-full rounded-md border border-slate-700/60 bg-slate-900/60 px-2 py-1 text-xs text-slate-100"
-                                  placeholder="Min"
-                                />
-                                <input
-                                  type="number"
-                                  min={0}
-                                  value={range.max ?? ""}
-                                  onChange={(event) =>
-                                    updateFpsRange(
-                                      product.id,
-                                      fpsUi.game,
-                                      fpsUi.resolution,
-                                      fpsUi.preset,
-                                      mode.key,
-                                      "max",
-                                      Number(event.target.value)
-                                    )
-                                  }
-                                  className="w-full rounded-md border border-slate-700/60 bg-slate-900/60 px-2 py-1 text-xs text-slate-100"
-                                  placeholder="Max"
+                                  placeholder="Snitt FPS"
                                 />
                               </div>
                             </div>

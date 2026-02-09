@@ -218,49 +218,49 @@ const DEFAULT_FPS_MAP = {
   Fortnite: {
     supports: { dlss: true, frameGen: false, rayTracing: false },
     base: {
-      "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100 },
-      "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85 },
-      "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55 },
+      "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100, "Ultra + Raytracing/Pathtracing": 85 },
+      "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85, "Ultra + Raytracing/Pathtracing": 70 },
+      "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55, "Ultra + Raytracing/Pathtracing": 45 },
     },
   },
   "Cyberpunk 2077": {
     supports: { dlss: true, frameGen: true, rayTracing: true },
     base: {
-      "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60 },
-      "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45 },
-      "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28 },
+      "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60, "Ultra + Raytracing/Pathtracing": 42 },
+      "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45, "Ultra + Raytracing/Pathtracing": 30 },
+      "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28, "Ultra + Raytracing/Pathtracing": 18 },
     },
   },
   "GTA 5": {
     supports: { dlss: false, frameGen: false, rayTracing: false },
     base: {
-      "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120 },
-      "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95 },
-      "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65 },
+      "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120, "Ultra + Raytracing/Pathtracing": 120 },
+      "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95, "Ultra + Raytracing/Pathtracing": 95 },
+      "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
     },
   },
   Minecraft: {
     supports: { dlss: false, frameGen: false, rayTracing: true },
     base: {
-      "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150 },
-      "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130 },
-      "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110 },
+      "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150, "Ultra + Raytracing/Pathtracing": 100 },
+      "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130, "Ultra + Raytracing/Pathtracing": 85 },
+      "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
     },
   },
   CS2: {
     supports: { dlss: false, frameGen: false, rayTracing: false },
     base: {
-      "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200 },
-      "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170 },
-      "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140 },
+      "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200, "Ultra + Raytracing/Pathtracing": 200 },
+      "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170, "Ultra + Raytracing/Pathtracing": 170 },
+      "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140, "Ultra + Raytracing/Pathtracing": 140 },
     },
   },
   "Ghost of Tsushima": {
     supports: { dlss: true, frameGen: true, rayTracing: false },
     base: {
-      "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80 },
-      "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65 },
-      "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42 },
+      "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80, "Ultra + Raytracing/Pathtracing": 65 },
+      "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65, "Ultra + Raytracing/Pathtracing": 50 },
+      "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42, "Ultra + Raytracing/Pathtracing": 32 },
     },
   },
 };
@@ -310,7 +310,7 @@ const sanitizeFpsSettings = (input) => {
         Object.entries(presetSource).forEach(([key, range]) => {
           const min = Number(range?.min);
           const max = Number(range?.max);
-          if (Number.isFinite(min) && Number.isFinite(max) && min > 0 && max >= min) {
+          if (Number.isFinite(min) && Number.isFinite(max) && min >= 0 && max >= min) {
             safePreset[key] = { min, max };
           }
         });
