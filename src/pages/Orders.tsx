@@ -312,7 +312,7 @@ export default function Orders() {
           <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
             <p className="font-semibold text-gray-900 dark:text-gray-100">Bra att veta</p>
             <ul className="mt-3 space-y-2">
-              <li>Vi skickar mejl vid varje statusändring.</li>
+              <li>Vi skickar mejl när bygget är klart.</li>
               <li>Byggtiden varierar beroende på komponenter.</li>
               <li>Du kan få kvitto via e-post eller under ordern.</li>
             </ul>
