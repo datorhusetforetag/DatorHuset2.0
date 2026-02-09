@@ -24,11 +24,16 @@ type AdminProduct = {
 
 type FpsRange = { min: number; max: number };
 type FpsPreset = Record<string, FpsRange>;
+type FpsVisibility = {
+  resolutions: Record<string, boolean>;
+  presets: Record<string, boolean>;
+};
 type FpsSettings = {
   games: Record<
     string,
     {
       supports: { dlss: boolean; frameGen: boolean; rayTracing?: boolean };
+      visibility: FpsVisibility;
       resolutions: Record<string, Record<string, FpsPreset>>;
     }
   >;
@@ -96,22 +101,94 @@ const buildDefaultFpsSettings = (): FpsSettings => {
   const games: FpsSettings["games"] = {};
   FPS_GAMES.forEach((game) => {
     const resolutions: Record<string, Record<string, FpsPreset>> = {};
+    const visibility: FpsVisibility = {
+      resolutions: {},
+      presets: {},
+    };
     FPS_RESOLUTIONS.forEach((res) => {
       const presets: Record<string, FpsPreset> = {};
+      visibility.resolutions[res] = true;
       FPS_PRESETS.forEach((preset) => {
         const fps = DEFAULT_FPS_BASE?.[game]?.[res]?.[preset] ?? 60;
         const min = Math.max(1, Math.round(fps * 0.9));
         const max = Math.max(min + 1, Math.round(fps * 1.1));
         presets[preset] = { base: { min, max } };
+        visibility.presets[preset] = true;
       });
       resolutions[res] = presets;
     });
     games[game] = {
       supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true },
+      visibility,
       resolutions,
     };
   });
   return { games };
+};
+
+const normalizeFpsSettings = (input: unknown): FpsSettings => {
+  const fallback = buildDefaultFpsSettings();
+  if (!input || typeof input !== "object") return fallback;
+  const source = input as Partial<FpsSettings>;
+  const next: FpsSettings = { games: {} };
+
+  FPS_GAMES.forEach((game) => {
+    const fallbackGame = fallback.games[game];
+    const sourceGame = source.games?.[game];
+    const supports = sourceGame?.supports ?? fallbackGame.supports;
+    const sourceVisibility =
+      sourceGame?.visibility && typeof sourceGame.visibility === "object"
+        ? sourceGame.visibility
+        : fallbackGame.visibility;
+    const normalizedVisibility: FpsVisibility = {
+      resolutions: {},
+      presets: {},
+    };
+
+    const resolutions: Record<string, Record<string, FpsPreset>> = {};
+    FPS_RESOLUTIONS.forEach((resolution) => {
+      normalizedVisibility.resolutions[resolution] =
+        typeof sourceVisibility.resolutions?.[resolution] === "boolean"
+          ? sourceVisibility.resolutions[resolution]
+          : true;
+      const sourcePresets = sourceGame?.resolutions?.[resolution] || {};
+      const nextPresets: Record<string, FpsPreset> = {};
+      FPS_PRESETS.forEach((preset) => {
+        normalizedVisibility.presets[preset] =
+          typeof sourceVisibility.presets?.[preset] === "boolean" ? sourceVisibility.presets[preset] : true;
+        const sourcePreset = sourcePresets[preset] || {};
+        const base = sourcePreset.base || fallbackGame.resolutions[resolution][preset].base;
+        const safeMin = Number.isFinite(Number(base?.min)) ? Math.max(0, Number(base.min)) : 0;
+        const safeMax = Number.isFinite(Number(base?.max)) ? Math.max(safeMin, Number(base.max)) : safeMin;
+        const normalizedPreset: FpsPreset = {
+          base: { min: safeMin, max: safeMax },
+        };
+        FPS_MODE_LABELS.forEach((mode) => {
+          if (mode.key === "base") return;
+          const modeValue = sourcePreset[mode.key];
+          const modeMin = Number(modeValue?.min);
+          const modeMax = Number(modeValue?.max);
+          if (Number.isFinite(modeMin) && Number.isFinite(modeMax) && modeMin >= 0 && modeMax >= modeMin) {
+            normalizedPreset[mode.key] = { min: modeMin, max: modeMax };
+          }
+        });
+        nextPresets[preset] = normalizedPreset;
+      });
+      resolutions[resolution] = nextPresets;
+    });
+
+    next.games[game] = {
+      supports: {
+        dlss: Boolean(supports?.dlss),
+        frameGen: Boolean(supports?.frameGen),
+        rayTracing: Boolean(supports?.rayTracing),
+      },
+      visibility: normalizedVisibility,
+      resolutions,
+    };
+  });
+
+  return next;
 };
 
 export default function AdminProducts() {
@@ -240,7 +317,7 @@ export default function AdminProducts() {
         throw new Error("Kunde inte hämta FPS-inställningar.");
       }
       const data = await response.json();
-      const fps = data?.fps || buildDefaultFpsSettings();
+      const fps = normalizeFpsSettings(data?.fps);
       setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: fps }));
       ensureFpsUiState(productId);
     } catch (err) {
@@ -251,7 +328,7 @@ export default function AdminProducts() {
   };
 
   const updateFpsSettings = (productId: string, next: FpsSettings) => {
-    setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: next }));
+    setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: normalizeFpsSettings(next) }));
   };
 
   const getAverageFps = (range?: FpsRange) => {
@@ -278,6 +355,34 @@ export default function AdminProducts() {
         [game]: {
           ...gameSettings,
           supports: { ...gameSettings.supports, [key]: value },
+        },
+      },
+    };
+    updateFpsSettings(productId, next);
+  };
+
+  const updateFpsVisibility = (
+    productId: string,
+    game: string,
+    group: "resolutions" | "presets",
+    key: string,
+    value: boolean
+  ) => {
+    const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
+    const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
+    const next: FpsSettings = {
+      ...current,
+      games: {
+        ...current.games,
+        [game]: {
+          ...gameSettings,
+          visibility: {
+            ...gameSettings.visibility,
+            [group]: {
+              ...(gameSettings.visibility?.[group] || {}),
+              [key]: value,
+            },
+          },
         },
       },
     };
@@ -340,7 +445,7 @@ export default function AdminProducts() {
         throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
       }
       if (data?.fps?.games) {
-        setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: data.fps }));
+        setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: normalizeFpsSettings(data.fps) }));
       }
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
@@ -683,17 +788,18 @@ export default function AdminProducts() {
                           Spel
                           <select
                             value={fpsUi.game}
-                            onChange={(event) =>
+                            onChange={(event) => {
+                              const nextGame = event.target.value;
                               setFpsUiStateByProductId((prev) => ({
                                 ...prev,
                                 [product.id]: {
                                   ...fpsUi,
-                                  game: event.target.value,
+                                  game: nextGame,
                                   resolution: FPS_RESOLUTIONS[0],
                                   preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
                                 },
-                              }))
-                            }
+                              }));
+                            }}
                             className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                           >
                             {FPS_GAMES.map((game) => (
@@ -707,16 +813,17 @@ export default function AdminProducts() {
                           Upplösning
                           <select
                             value={fpsUi.resolution}
-                            onChange={(event) =>
+                            onChange={(event) => {
+                              const nextResolution = event.target.value;
                               setFpsUiStateByProductId((prev) => ({
                                 ...prev,
                                 [product.id]: {
                                   ...fpsUi,
-                                  resolution: event.target.value,
+                                  resolution: nextResolution,
                                   preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
                                 },
-                              }))
-                            }
+                              }));
+                            }}
                             className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                           >
                             {FPS_RESOLUTIONS.map((res) => (
@@ -745,6 +852,67 @@ export default function AdminProducts() {
                             ))}
                           </select>
                         </label>
+                      </div>
+
+                      <div className="grid gap-3 md:grid-cols-2">
+                        <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                          <p className="text-xs text-slate-400 mb-2">Visa upplösningar på frontend</p>
+                          <div className="flex flex-wrap gap-2">
+                            {FPS_RESOLUTIONS.map((resolution) => {
+                              const enabled = selectedGameSettings?.visibility?.resolutions?.[resolution] !== false;
+                              return (
+                                <label
+                                  key={resolution}
+                                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-xs text-slate-200"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={enabled}
+                                    onChange={(event) =>
+                                      updateFpsVisibility(
+                                        product.id,
+                                        fpsUi.game,
+                                        "resolutions",
+                                        resolution,
+                                        event.target.checked
+                                      )
+                                    }
+                                  />
+                                  {resolution}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
+                        <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
+                          <p className="text-xs text-slate-400 mb-2">Visa grafiknivåer på frontend</p>
+                          <div className="flex flex-wrap gap-2">
+                            {FPS_PRESETS.map((preset) => {
+                              const enabled = selectedGameSettings?.visibility?.presets?.[preset] !== false;
+                              return (
+                                <label
+                                  key={preset}
+                                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-xs text-slate-200"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={enabled}
+                                    onChange={(event) =>
+                                      updateFpsVisibility(
+                                        product.id,
+                                        fpsUi.game,
+                                        "presets",
+                                        preset,
+                                        event.target.checked
+                                      )
+                                    }
+                                  />
+                                  {preset}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        </div>
                       </div>
 
                       <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">

@@ -60,9 +60,13 @@ const buildDefaultFpsSettings = () => {
   const games: Record<string, any> = {};
   Object.entries(DEFAULT_FPS_BASE).forEach(([game, resolutions]) => {
     const resEntries: Record<string, any> = {};
+    const resolutionVisibility: Record<string, boolean> = {};
+    const presetVisibility: Record<string, boolean> = {};
     Object.entries(resolutions).forEach(([res, presets]) => {
       const presetEntries: Record<string, any> = {};
+      resolutionVisibility[res] = true;
       Object.entries(presets).forEach(([preset, fps]) => {
+        presetVisibility[preset] = true;
         const min = Math.max(1, Math.round(fps * 0.9));
         const max = Math.max(min + 1, Math.round(fps * 1.1));
         presetEntries[preset] = { base: { min, max } };
@@ -71,10 +75,25 @@ const buildDefaultFpsSettings = () => {
     });
     games[game] = {
       supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true },
+      visibility: { resolutions: resolutionVisibility, presets: presetVisibility },
       resolutions: resEntries,
     };
   });
   return { games };
+};
+
+const getVisibleResolutions = (gameSettings?: any) => {
+  const all = Object.keys(gameSettings?.resolutions || {});
+  const visibility = gameSettings?.visibility?.resolutions || {};
+  const visible = all.filter((res) => visibility[res] !== false);
+  return visible;
+};
+
+const getVisiblePresets = (gameSettings: any, resolution: string) => {
+  const all = Object.keys(gameSettings?.resolutions?.[resolution] || {});
+  const visibility = gameSettings?.visibility?.presets || {};
+  const visible = all.filter((preset) => visibility[preset] !== false);
+  return visible;
 };
 const GAME_IMAGES: Record<string, string> = {
   Fortnite: fortniteImage,
@@ -424,21 +443,39 @@ export default function ComputerDetails() {
 
   useEffect(() => {
     const gameSettings = fpsSettings.games?.[selectedGame];
-    const resolutions = Object.keys(gameSettings?.resolutions || {});
-    if (resolutions.length && !resolutions.includes(selectedResolution)) {
+    const resolutions = getVisibleResolutions(gameSettings);
+    if (!resolutions.length) {
+      if (selectedResolution !== "") {
+        setSelectedResolution("");
+      }
+      return;
+    }
+    if (!resolutions.includes(selectedResolution)) {
       setSelectedResolution(resolutions[0]);
     }
   }, [fpsSettings, selectedGame, selectedResolution]);
 
   useEffect(() => {
     const gameSettings = fpsSettings.games?.[selectedGame];
-    const presets = Object.keys(gameSettings?.resolutions?.[selectedResolution] || {});
-    if (presets.length && !presets.includes(selectedPreset)) {
+    const presets = getVisiblePresets(gameSettings, selectedResolution);
+    if (!presets.length) {
+      if (selectedPreset !== "") {
+        setSelectedPreset("");
+      }
+      return;
+    }
+    if (!presets.includes(selectedPreset)) {
       setSelectedPreset(presets[0]);
     }
   }, [fpsSettings, selectedGame, selectedResolution, selectedPreset]);
 
   const gameSettings = fpsSettings.games?.[selectedGame];
+  const visibleResolutions = getVisibleResolutions(gameSettings);
+  const activeResolution = visibleResolutions.includes(selectedResolution)
+    ? selectedResolution
+    : visibleResolutions[0] || "";
+  const visiblePresets = getVisiblePresets(gameSettings, activeResolution);
+  const activePreset = visiblePresets.includes(selectedPreset) ? selectedPreset : visiblePresets[0] || "";
   const supports = gameSettings?.supports || {
     dlss: true,
     frameGen: true,
@@ -447,7 +484,7 @@ export default function ComputerDetails() {
     if (!supports.dlss && dlssOn) setDlssOn(false);
     if (!supports.frameGen && frameGenOn) setFrameGenOn(false);
   }, [supports, dlssOn, frameGenOn]);
-  const presetData = gameSettings?.resolutions?.[selectedResolution]?.[selectedPreset];
+  const presetData = gameSettings?.resolutions?.[activeResolution]?.[activePreset];
   const getModeKey = () => {
     if (dlssOn && frameGenOn) return "dlssFrameGen";
     if (dlssOn) return "dlss";
@@ -991,11 +1028,12 @@ export default function ComputerDetails() {
                   <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="res">Upplösning</label>
                   <select
                     id="res"
-                    value={selectedResolution}
+                    value={activeResolution}
                     onChange={(e) => setSelectedResolution(e.target.value)}
+                    disabled={visibleResolutions.length === 0}
                     className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {Object.keys(gameSettings?.resolutions || {}).map((res) => (
+                    {visibleResolutions.map((res) => (
                       <option key={res} value={res}>{res}</option>
                     ))}
                   </select>
@@ -1004,11 +1042,12 @@ export default function ComputerDetails() {
                   <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="preset">Grafik</label>
                   <select
                     id="preset"
-                    value={selectedPreset}
+                    value={activePreset}
                     onChange={(e) => setSelectedPreset(e.target.value)}
+                    disabled={visiblePresets.length === 0}
                     className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {Object.keys(gameSettings?.resolutions?.[selectedResolution] || {}).map((preset) => (
+                    {visiblePresets.map((preset) => (
                       <option key={preset} value={preset}>{preset}</option>
                     ))}
                   </select>
@@ -1055,7 +1094,7 @@ export default function ComputerDetails() {
                   )}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">{selectedResolution} {"\u00d7"} {selectedPreset}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">{activeResolution} {"\u00d7"} {activePreset}</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{averageFps} FPS</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">{"Ber\u00e4knat med vald konfiguration"}</p>
                 </div>

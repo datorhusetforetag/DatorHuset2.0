@@ -160,16 +160,24 @@ const buildDefaultFpsSettings = () => {
   const games: Record<string, any> = {};
   Object.entries(DEFAULT_FPS_MAP).forEach(([game, data]: any) => {
     const resolutions: Record<string, any> = {};
+    const resolutionVisibility: Record<string, boolean> = {};
+    const presetVisibility: Record<string, boolean> = {};
     Object.entries(data.base).forEach(([res, presets]: any) => {
       const presetEntries: Record<string, any> = {};
+      resolutionVisibility[res] = true;
       Object.entries(presets).forEach(([preset, fps]: any) => {
+        presetVisibility[preset] = true;
         const min = Math.max(1, Math.round(fps * 0.9));
         const max = Math.max(min + 1, Math.round(fps * 1.1));
         presetEntries[preset] = { base: { min, max } };
       });
       resolutions[res] = presetEntries;
     });
-    games[game] = { supports: data.supports, resolutions };
+    games[game] = {
+      supports: data.supports,
+      visibility: { resolutions: resolutionVisibility, presets: presetVisibility },
+      resolutions,
+    };
   });
   return { games };
 };
@@ -185,17 +193,37 @@ const sanitizeFpsSettings = (input: any) => {
     const fallbackGame = fallback.games[game];
     const sourceGame = games[game] || {};
     const supports = sourceGame.supports || fallbackGame.supports;
+    const sourceVisibility =
+      sourceGame.visibility && typeof sourceGame.visibility === "object" ? sourceGame.visibility : {};
+    const sourceResolutionVisibility =
+      sourceVisibility.resolutions && typeof sourceVisibility.resolutions === "object"
+        ? sourceVisibility.resolutions
+        : {};
+    const sourcePresetVisibility =
+      sourceVisibility.presets && typeof sourceVisibility.presets === "object"
+        ? sourceVisibility.presets
+        : {};
     const safeSupports = {
       dlss: Boolean(supports?.dlss),
       frameGen: Boolean(supports?.frameGen),
       rayTracing: Boolean(supports?.rayTracing),
     };
+    const safeVisibility = {
+      resolutions: {} as Record<string, boolean>,
+      presets: {} as Record<string, boolean>,
+    };
     const resolutions: any = {};
     const sourceResolutions = sourceGame.resolutions || {};
     Object.keys(fallbackGame.resolutions).forEach((res) => {
+      safeVisibility.resolutions[res] =
+        typeof sourceResolutionVisibility[res] === "boolean" ? sourceResolutionVisibility[res] : true;
       const presetOutput: any = {};
       const sourcePresets = sourceResolutions[res] || {};
       Object.keys(fallbackGame.resolutions[res]).forEach((preset) => {
+        if (safeVisibility.presets[preset] === undefined) {
+          safeVisibility.presets[preset] =
+            typeof sourcePresetVisibility[preset] === "boolean" ? sourcePresetVisibility[preset] : true;
+        }
         const presetSource = sourcePresets[preset] || {};
         const safePreset: any = {};
         Object.entries(presetSource).forEach(([key, range]: any) => {
@@ -212,7 +240,7 @@ const sanitizeFpsSettings = (input: any) => {
       });
       resolutions[res] = presetOutput;
     });
-    output.games[game] = { supports: safeSupports, resolutions };
+    output.games[game] = { supports: safeSupports, visibility: safeVisibility, resolutions };
   });
   return output;
 };
