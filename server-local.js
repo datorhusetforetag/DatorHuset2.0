@@ -148,10 +148,17 @@ const stripe = stripeSecretKey
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const HAS_SERVICE_ROLE_KEY = typeof supabaseServiceKey === "string" && supabaseServiceKey.trim().length > 0;
 const supabase =
   supabaseUrl && supabaseServiceKey
     ? createClient(supabaseUrl, supabaseServiceKey)
     : null;
+
+if (!HAS_SERVICE_ROLE_KEY) {
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations require the service role key to bypass RLS."
+  );
+}
 
 const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8080";
 const MAX_LINE_ITEMS = 50;
@@ -462,6 +469,17 @@ const logAdminAction = async (req, user, action, resourceType, resourceId, metad
   } catch (error) {
     console.warn("Admin audit log failed:", error);
   }
+};
+
+const requireServiceRoleKey = (res) => {
+  if (HAS_SERVICE_ROLE_KEY) return true;
+  console.error(
+    "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations require the service role key to bypass RLS."
+  );
+  res.status(503).json({
+    error: "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations are unavailable.",
+  });
+  return false;
 };
 
 const recordWebhookEvent = async (event) => {

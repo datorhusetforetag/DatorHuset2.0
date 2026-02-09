@@ -336,9 +336,12 @@ export default function AdminProducts() {
         },
         body: JSON.stringify({ fps }),
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        const data = await response.json();
         throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
+      }
+      if (data?.fps?.games) {
+        setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: data.fps }));
       }
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
