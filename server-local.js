@@ -216,53 +216,173 @@ const READY_MESSAGE =
 const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
 const DEFAULT_FPS_MAP = {
   Fortnite: {
-    supports: { dlss: true, frameGen: false, rayTracing: false },
+    supports: { dlss: true, frameGen: false, rayTracing: true },
     base: {
-      "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100, "Ultra + Raytracing/Pathtracing": 85 },
-      "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85, "Ultra + Raytracing/Pathtracing": 70 },
-      "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55, "Ultra + Raytracing/Pathtracing": 45 },
+      "1080p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 95 },
+      "1440p": { High: 120, Ultra: 120, "Ultra + Raytracing/Pathtracing": 95 },
+      "4K": { High: 70, Ultra: 70, "Ultra + Raytracing/Pathtracing": 95 },
     },
   },
   "Cyberpunk 2077": {
     supports: { dlss: true, frameGen: true, rayTracing: true },
     base: {
-      "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60, "Ultra + Raytracing/Pathtracing": 42 },
-      "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45, "Ultra + Raytracing/Pathtracing": 30 },
-      "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28, "Ultra + Raytracing/Pathtracing": 18 },
+      "1080p": { High: 90, Ultra: 90, "Ultra + Raytracing/Pathtracing": 65 },
+      "1440p": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 65 },
+      "4K": { High: 35, Ultra: 35, "Ultra + Raytracing/Pathtracing": 65 },
     },
   },
   "GTA 5": {
     supports: { dlss: false, frameGen: false, rayTracing: false },
     base: {
-      "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120, "Ultra + Raytracing/Pathtracing": 120 },
-      "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95, "Ultra + Raytracing/Pathtracing": 95 },
-      "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
+      "1080p": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
+      "1440p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 110 },
+      "4K": { High: 65, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
     },
   },
   Minecraft: {
     supports: { dlss: false, frameGen: false, rayTracing: true },
     base: {
-      "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150, "Ultra + Raytracing/Pathtracing": 100 },
-      "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130, "Ultra + Raytracing/Pathtracing": 85 },
-      "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
+      "1080p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 80 },
+      "1440p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 80 },
+      "4K": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 80 },
     },
   },
   CS2: {
     supports: { dlss: false, frameGen: false, rayTracing: false },
     base: {
-      "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200, "Ultra + Raytracing/Pathtracing": 200 },
-      "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170, "Ultra + Raytracing/Pathtracing": 170 },
-      "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140, "Ultra + Raytracing/Pathtracing": 140 },
+      "1080p": { High: 280, Ultra: 280, "Ultra + Raytracing/Pathtracing": 280 },
+      "1440p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 220 },
+      "4K": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
     },
   },
   "Ghost of Tsushima": {
-    supports: { dlss: true, frameGen: true, rayTracing: false },
+    supports: { dlss: true, frameGen: false, rayTracing: true },
     base: {
-      "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80, "Ultra + Raytracing/Pathtracing": 65 },
-      "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65, "Ultra + Raytracing/Pathtracing": 50 },
-      "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42, "Ultra + Raytracing/Pathtracing": 32 },
+      "1080p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
+      "1440p": { High: 75, Ultra: 75, "Ultra + Raytracing/Pathtracing": 70 },
+      "4K": { High: 45, Ultra: 45, "Ultra + Raytracing/Pathtracing": 70 },
     },
   },
+};
+
+const FPS_REPORT_PROFILES = {
+  silver_speedster: {
+    Fortnite: { high1080: 170, ultra1440: 120, ultra4k: 70, rt: { fps: 95, mode: "dlss" } },
+    "Cyberpunk 2077": { high1080: 90, ultra1440: 60, ultra4k: 35, rt: { fps: 65, mode: "dlssFrameGen" } },
+    "GTA 5": { high1080: 160, ultra1440: 110, ultra4k: 65, rt: null },
+    Minecraft: { high1080: 220, ultra1440: 170, ultra4k: 100, rt: { fps: 80, mode: "base" } },
+    "Ghost of Tsushima": { high1080: 110, ultra1440: 75, ultra4k: 45, rt: { fps: 70, mode: "dlss" } },
+    CS2: { high1080: 280, ultra1440: 220, ultra4k: 160, rt: null },
+  },
+  guldspiken: {
+    Fortnite: { high1080: 210, ultra1440: 150, ultra4k: 90, rt: { fps: 115, mode: "dlss" } },
+    "Cyberpunk 2077": { high1080: 110, ultra1440: 75, ultra4k: 45, rt: { fps: 80, mode: "dlss" } },
+    "GTA 5": { high1080: 190, ultra1440: 140, ultra4k: 85, rt: null },
+    Minecraft: { high1080: 260, ultra1440: 200, ultra4k: 130, rt: { fps: 95, mode: "base" } },
+    "Ghost of Tsushima": { high1080: 130, ultra1440: 95, ultra4k: 60, rt: { fps: 85, mode: "dlss" } },
+    CS2: { high1080: 340, ultra1440: 260, ultra4k: 190, rt: null },
+  },
+  platina_sleeper: {
+    Fortnite: { high1080: 230, ultra1440: 170, ultra4k: 105, rt: { fps: 130, mode: "dlss" } },
+    "Cyberpunk 2077": { high1080: 125, ultra1440: 90, ultra4k: 55, rt: { fps: 85, mode: "dlss" } },
+    "GTA 5": { high1080: 210, ultra1440: 160, ultra4k: 100, rt: null },
+    Minecraft: { high1080: 290, ultra1440: 230, ultra4k: 150, rt: { fps: 110, mode: "base" } },
+    "Ghost of Tsushima": { high1080: 150, ultra1440: 110, ultra4k: 70, rt: { fps: 95, mode: "dlss" } },
+    CS2: { high1080: 380, ultra1440: 300, ultra4k: 220, rt: null },
+  },
+  platina_frostbyte: {
+    Fortnite: { high1080: 260, ultra1440: 200, ultra4k: 130, rt: { fps: 155, mode: "dlss" } },
+    "Cyberpunk 2077": { high1080: 150, ultra1440: 110, ultra4k: 70, rt: { fps: 105, mode: "dlss" } },
+    "GTA 5": { high1080: 230, ultra1440: 180, ultra4k: 120, rt: null },
+    Minecraft: { high1080: 320, ultra1440: 260, ultra4k: 170, rt: { fps: 130, mode: "base" } },
+    "Ghost of Tsushima": { high1080: 170, ultra1440: 130, ultra4k: 85, rt: { fps: 115, mode: "dlss" } },
+    CS2: { high1080: 420, ultra1440: 330, ultra4k: 250, rt: null },
+  },
+  all_out_5080: {
+    Fortnite: { high1080: 320, ultra1440: 250, ultra4k: 170, rt: { fps: 210, mode: "dlssFrameGen" } },
+    "Cyberpunk 2077": { high1080: 180, ultra1440: 140, ultra4k: 95, rt: { fps: 150, mode: "dlssFrameGen" } },
+    "GTA 5": { high1080: 260, ultra1440: 210, ultra4k: 150, rt: null },
+    Minecraft: { high1080: 400, ultra1440: 320, ultra4k: 210, rt: { fps: 180, mode: "base" } },
+    "Ghost of Tsushima": { high1080: 210, ultra1440: 170, ultra4k: 120, rt: { fps: 160, mode: "dlss" } },
+    CS2: { high1080: 520, ultra1440: 420, ultra4k: 320, rt: null },
+  },
+};
+
+const buildFpsSettingsFromReportProfile = (profile) => {
+  const games = {};
+  const resolutions = ["1080p", "1440p", "4K"];
+  const rtPreset = "Ultra + Raytracing/Pathtracing";
+
+  Object.entries(profile).forEach(([game, row]) => {
+    const supports = {
+      dlss: row.rt?.mode === "dlss" || row.rt?.mode === "dlssFrameGen",
+      frameGen: row.rt?.mode === "dlssFrameGen",
+      rayTracing: Boolean(row.rt),
+    };
+    const gameResolutions = {
+      "1080p": {
+        High: { base: { min: row.high1080, max: row.high1080 } },
+      },
+      "1440p": {
+        Ultra: { base: { min: row.ultra1440, max: row.ultra1440 } },
+      },
+      "4K": {
+        Ultra: { base: { min: row.ultra4k, max: row.ultra4k } },
+      },
+    };
+    if (row.rt) {
+      resolutions.forEach((res) => {
+        const rtRange = { min: row.rt.fps, max: row.rt.fps };
+        const rtData = { base: { ...rtRange } };
+        if (row.rt.mode === "dlss") {
+          rtData.dlss = { ...rtRange };
+        } else if (row.rt.mode === "dlssFrameGen") {
+          rtData.dlss = { ...rtRange };
+          rtData.frameGen = { ...rtRange };
+          rtData.dlssFrameGen = { ...rtRange };
+        }
+        gameResolutions[res][rtPreset] = rtData;
+      });
+    }
+    games[game] = {
+      supports,
+      visibility: {
+        resolutions: { "1080p": true, "1440p": true, "4K": true },
+        presets: { High: true, Ultra: true, [rtPreset]: Boolean(row.rt) },
+      },
+      resolutions: gameResolutions,
+    };
+  });
+
+  return { games };
+};
+
+const normalizeFpsProfileName = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const resolveFpsReportProfileKey = (productName) => {
+  const key = normalizeFpsProfileName(productName);
+  if (!key) return null;
+  if (key.includes("silver-speedster")) return "silver_speedster";
+  if (key.includes("guldspiken") || key.includes("glimmrande-guldigaspiken")) return "guldspiken";
+  if (key.includes("platina-sleeper")) return "platina_sleeper";
+  if (key.includes("platina-frostbyte") || key.includes("platina-coldbyte")) return "platina_frostbyte";
+  if (key.includes("all-black-all-out") || key.includes("all-white-all-out") || key.includes("all-black-white-all-out")) {
+    return "all_out_5080";
+  }
+  return null;
+};
+
+const buildReportedFpsSettingsForProductName = (productName) => {
+  const profileKey = resolveFpsReportProfileKey(productName);
+  if (!profileKey) return null;
+  const profile = FPS_REPORT_PROFILES[profileKey];
+  return profile ? buildFpsSettingsFromReportProfile(profile) : null;
 };
 
 const buildDefaultFpsSettings = () => {
@@ -291,11 +411,14 @@ const buildDefaultFpsSettings = () => {
   return { games };
 };
 
-const sanitizeFpsSettings = (input) => {
+const sanitizeFpsSettings = (input, fallbackInput) => {
+  const fallback =
+    fallbackInput && typeof fallbackInput === "object" && fallbackInput.games
+      ? fallbackInput
+      : buildDefaultFpsSettings();
   if (!input || typeof input !== "object") {
-    return buildDefaultFpsSettings();
+    return fallback;
   }
-  const fallback = buildDefaultFpsSettings();
   const output = { games: {} };
   const games = input.games && typeof input.games === "object" ? input.games : {};
   Object.keys(fallback.games).forEach((game) => {
@@ -1548,6 +1671,22 @@ app.post("/api/admin/ui-settings", async (req, res) => {
   }
 });
 
+const getDefaultFpsSettingsForProduct = async (productId) => {
+  try {
+    const { data } = await supabase
+      .from("products")
+      .select("name, slug, legacy_id")
+      .eq("id", productId)
+      .maybeSingle();
+    const productName = String(data?.name || data?.slug || data?.legacy_id || "").trim();
+    const reported = buildReportedFpsSettingsForProductName(productName);
+    return reported || buildDefaultFpsSettings();
+  } catch (error) {
+    console.error("Default FPS profile lookup failed:", error);
+    return buildDefaultFpsSettings();
+  }
+};
+
 app.get("/api/admin/products/:productId/fps-settings", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -1573,11 +1712,12 @@ app.get("/api/admin/products/:productId/fps-settings", async (req, res) => {
       .eq("key", key)
       .single();
 
-    if (error) {
-      return res.json({ fps: buildDefaultFpsSettings() });
+    const fallback = await getDefaultFpsSettingsForProduct(productId);
+    if (error || !data?.value) {
+      return res.json({ fps: fallback });
     }
 
-    res.json({ fps: sanitizeFpsSettings(data?.value) });
+    res.json({ fps: sanitizeFpsSettings(data?.value, fallback) });
   } catch (error) {
     console.error("Admin FPS settings error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -1605,7 +1745,8 @@ app.post("/api/admin/products/:productId/fps-settings", async (req, res) => {
       return res.status(400).json({ error: "Missing product id" });
     }
 
-    const fps = sanitizeFpsSettings(req.body?.fps);
+    const fallback = await getDefaultFpsSettingsForProduct(productId);
+    const fps = sanitizeFpsSettings(req.body?.fps, fallback);
     const key = `fps:${productId}`;
     const payload = { key, value: fps, updated_at: new Date() };
 
@@ -1731,11 +1872,12 @@ app.get("/api/fps-settings/:productId", async (req, res) => {
       .eq("key", key)
       .single();
 
-    if (error) {
-      return res.json({ fps: buildDefaultFpsSettings() });
+    const fallback = await getDefaultFpsSettingsForProduct(productId);
+    if (error || !data?.value) {
+      return res.json({ fps: fallback });
     }
 
-    res.json({ fps: sanitizeFpsSettings(data?.value) });
+    res.json({ fps: sanitizeFpsSettings(data?.value, fallback) });
   } catch (error) {
     console.error("FPS settings fetch error:", error);
     res.status(500).json({ error: "Internal server error" });

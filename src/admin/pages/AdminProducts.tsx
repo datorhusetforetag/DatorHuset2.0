@@ -48,7 +48,7 @@ const FPS_GAMES = [
   "Ghost of Tsushima",
 ];
 const FPS_RESOLUTIONS = ["1080p", "1440p", "4K"];
-const FPS_PRESETS = ["Low", "Medium", "High", "Ultra", "Ultra + Raytracing/Pathtracing"];
+const FPS_PRESETS = ["High", "Ultra", "Ultra + Raytracing/Pathtracing"];
 const FPS_MODE_LABELS: { key: string; label: string }[] = [
   { key: "base", label: "Bas" },
   { key: "dlss", label: "DLSS/FSR" },
@@ -58,34 +58,34 @@ const FPS_MODE_LABELS: { key: string; label: string }[] = [
 
 const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
-    "1080p": { Low: 180, Medium: 160, High: 130, Ultra: 100, "Ultra + Raytracing/Pathtracing": 85 },
-    "1440p": { Low: 160, Medium: 140, High: 110, Ultra: 85, "Ultra + Raytracing/Pathtracing": 70 },
-    "4K": { Low: 120, Medium: 95, High: 70, Ultra: 55, "Ultra + Raytracing/Pathtracing": 45 },
+    "1080p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 95 },
+    "1440p": { High: 120, Ultra: 120, "Ultra + Raytracing/Pathtracing": 95 },
+    "4K": { High: 70, Ultra: 70, "Ultra + Raytracing/Pathtracing": 95 },
   },
   "Cyberpunk 2077": {
-    "1080p": { Low: 110, Medium: 95, High: 75, Ultra: 60, "Ultra + Raytracing/Pathtracing": 42 },
-    "1440p": { Low: 90, Medium: 75, High: 60, Ultra: 45, "Ultra + Raytracing/Pathtracing": 30 },
-    "4K": { Low: 65, Medium: 50, High: 38, Ultra: 28, "Ultra + Raytracing/Pathtracing": 18 },
+    "1080p": { High: 90, Ultra: 90, "Ultra + Raytracing/Pathtracing": 65 },
+    "1440p": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 65 },
+    "4K": { High: 35, Ultra: 35, "Ultra + Raytracing/Pathtracing": 65 },
   },
   "GTA 5": {
-    "1080p": { Low: 200, Medium: 180, High: 150, Ultra: 120, "Ultra + Raytracing/Pathtracing": 120 },
-    "1440p": { Low: 170, Medium: 150, High: 125, Ultra: 95, "Ultra + Raytracing/Pathtracing": 95 },
-    "4K": { Low: 130, Medium: 110, High: 85, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
+    "1080p": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
+    "1440p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 110 },
+    "4K": { High: 65, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
   },
   Minecraft: {
-    "1080p": { Low: 240, Medium: 220, High: 180, Ultra: 150, "Ultra + Raytracing/Pathtracing": 100 },
-    "1440p": { Low: 210, Medium: 190, High: 160, Ultra: 130, "Ultra + Raytracing/Pathtracing": 85 },
-    "4K": { Low: 180, Medium: 160, High: 130, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
+    "1080p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 80 },
+    "1440p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 80 },
+    "4K": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 80 },
   },
   CS2: {
-    "1080p": { Low: 320, Medium: 280, High: 240, Ultra: 200, "Ultra + Raytracing/Pathtracing": 200 },
-    "1440p": { Low: 280, Medium: 240, High: 200, Ultra: 170, "Ultra + Raytracing/Pathtracing": 170 },
-    "4K": { Low: 230, Medium: 200, High: 170, Ultra: 140, "Ultra + Raytracing/Pathtracing": 140 },
+    "1080p": { High: 280, Ultra: 280, "Ultra + Raytracing/Pathtracing": 280 },
+    "1440p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 220 },
+    "4K": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
   },
   "Ghost of Tsushima": {
-    "1080p": { Low: 135, Medium: 120, High: 100, Ultra: 80, "Ultra + Raytracing/Pathtracing": 65 },
-    "1440p": { Low: 115, Medium: 100, High: 80, Ultra: 65, "Ultra + Raytracing/Pathtracing": 50 },
-    "4K": { Low: 85, Medium: 70, High: 55, Ultra: 42, "Ultra + Raytracing/Pathtracing": 32 },
+    "1080p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
+    "1440p": { High: 75, Ultra: 75, "Ultra + Raytracing/Pathtracing": 70 },
+    "4K": { High: 45, Ultra: 45, "Ultra + Raytracing/Pathtracing": 70 },
   },
 };
 const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
@@ -94,7 +94,7 @@ const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }>
   "GTA 5": { dlss: false, frameGen: false },
   Minecraft: { dlss: false, frameGen: false },
   CS2: { dlss: false, frameGen: false },
-  "Ghost of Tsushima": { dlss: true, frameGen: true },
+  "Ghost of Tsushima": { dlss: true, frameGen: false },
 };
 
 const buildDefaultFpsSettings = (): FpsSettings => {
