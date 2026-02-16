@@ -4,6 +4,7 @@ import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Plus, Minus } from "lucide-react";
 import { COMPUTERS } from "@/data/computers";
+import { resolveProductImage } from "@/lib/productImageResolver";
 
 export default function Cart() {
   const { items, loading, removeFromCart, updateQuantity, totalPrice } = useCart();
@@ -68,11 +69,7 @@ export default function Cart() {
                           computer.id === product?.id ||
                           computer.id === String(product?.id)
                       );
-                      const imageSrc =
-                        product?.image_url ||
-                        product?.image ||
-                        product?.imageUrl ||
-                        fallbackComputer?.image;
+                      const imageSrc = resolveProductImage(product, fallbackComputer?.image);
 
                       return (
                         <div className="w-full sm:w-24 h-32 sm:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded flex items-center justify-center flex-shrink-0 overflow-hidden">

@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
+import { resolveProductImage } from "@/lib/productImageResolver";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 
@@ -58,7 +59,7 @@ export const Navbar = () => {
         storage: mergedFields.storage,
         storagetype: mergedFields.storagetype,
         tier: mergedFields.tier,
-        image: product?.image_url || computer.image,
+        image: resolveProductImage(product, computer.image) || computer.image,
       };
     });
     return merged

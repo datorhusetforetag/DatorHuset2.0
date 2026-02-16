@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import { getUserAddresses } from "@/lib/supabaseServices";
+import { resolveProductImage } from "@/lib/productImageResolver";
 
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
@@ -105,7 +106,7 @@ export default function Checkout() {
 
   if (cartLoading) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center text-gray-600">Laddar kundvagn...</div>
@@ -117,7 +118,7 @@ export default function Checkout() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
@@ -137,7 +138,7 @@ export default function Checkout() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24">
           <div className="container mx-auto px-4 py-12">
@@ -145,7 +146,7 @@ export default function Checkout() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
                   <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5">
                     <h2 className="text-xl font-bold text-gray-900 mb-2">Logga in för att slutföra köpet</h2>
                     <p className="text-sm text-gray-700 mb-4">
@@ -155,7 +156,7 @@ export default function Checkout() {
                       <LoginButton />
                       <button
                         onClick={() => navigate('/cart')}
-                        className="px-4 py-2 border border-gray-300 text-gray-900 font-semibold rounded hover:bg-gray-100 transition-colors"
+                        className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
                         Tillbaka till kundvagn
                       </button>
@@ -165,20 +166,34 @@ export default function Checkout() {
               </div>
 
               <div>
-                <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 lg:sticky lg:top-24">
+                <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800 lg:sticky lg:top-24">
                   <h2 className="text-xl font-bold text-gray-900 mb-6">Ordersammanfattning</h2>
 
-                  <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
-                    {items.map((item) => (
-                      <div key={item.id} className="flex justify-between text-sm">
-                        <span className="text-gray-600">
-                          {item.product?.name} x{item.quantity}
-                        </span>
-                        <span className="font-semibold text-gray-900">
-                          {((item.product?.price_cents || 0) * item.quantity) / 100} kr
-                        </span>
-                      </div>
-                    ))}
+                  <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                    {items.map((item) => {
+                      const imageSrc = resolveProductImage(item.product);
+                      return (
+                        <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
+                          <div className="flex min-w-0 items-center gap-3">
+                            {imageSrc ? (
+                              <img
+                                src={imageSrc}
+                                alt={item.product?.name || "Produkt"}
+                                className="h-12 w-12 rounded object-cover border border-gray-200 dark:border-gray-700"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                            ) : null}
+                            <span className="text-gray-600 dark:text-gray-300 truncate">
+                              {item.product?.name} x{item.quantity}
+                            </span>
+                          </div>
+                          <span className="font-semibold text-gray-900 dark:text-gray-100">
+                            {((item.product?.price_cents || 0) * item.quantity) / 100} kr
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
@@ -303,7 +318,7 @@ export default function Checkout() {
         swedishCityRegex.test(city.trim())));
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
@@ -312,11 +327,11 @@ export default function Checkout() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2">
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+              <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Leveransuppgifter</h2>
 
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-gray-200 bg-white p-4">
+                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
                     <h3 className="text-base font-semibold text-gray-900">Leveranssätt</h3>
                     <p className="text-sm text-gray-600 mt-1">Vi skickar endast inom Sverige.</p>
                     <div className="mt-4 space-y-3">
@@ -369,7 +384,7 @@ export default function Checkout() {
                             const selected = addresses.find((item) => item.id === nextId);
                             if (selected) applyAddress(selected);
                           }}
-                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900"
+                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
                         >
                           <option value="">Välj adress...</option>
                           {addresses.map((saved) => (
@@ -398,8 +413,8 @@ export default function Checkout() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
                       aria-invalid={Boolean(errors.email)}
-                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                        errors.email ? "border-red-400" : "border-gray-300"
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                        errors.email ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                       }`}
                     />
                     {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
@@ -418,8 +433,8 @@ export default function Checkout() {
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Jan"
                         aria-invalid={Boolean(errors.firstName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                          errors.firstName ? "border-red-400" : "border-gray-300"
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                          errors.firstName ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                         }`}
                       />
                       {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
@@ -436,8 +451,8 @@ export default function Checkout() {
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Svensson"
                         aria-invalid={Boolean(errors.lastName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                          errors.lastName ? "border-red-400" : "border-gray-300"
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                          errors.lastName ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                         }`}
                       />
                       {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
@@ -459,8 +474,8 @@ export default function Checkout() {
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="07x xxx xx xx"
                         aria-invalid={Boolean(errors.phone)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                          errors.phone ? "border-red-400" : "border-gray-300"
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                          errors.phone ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                         }`}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
@@ -482,8 +497,8 @@ export default function Checkout() {
                           onChange={(e) => setAddress(e.target.value)}
                           placeholder="Gatan 1"
                           aria-invalid={Boolean(errors.address)}
-                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                            errors.address ? "border-red-400" : "border-gray-300"
+                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                            errors.address ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                           }`}
                         />
                         {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
@@ -504,8 +519,8 @@ export default function Checkout() {
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="123 45"
                             aria-invalid={Boolean(errors.postalCode)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                              errors.postalCode ? "border-red-400" : "border-gray-300"
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                              errors.postalCode ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                             }`}
                           />
                           {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
@@ -523,15 +538,15 @@ export default function Checkout() {
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Stockholm"
                             aria-invalid={Boolean(errors.city)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 ${
-                              errors.city ? "border-red-400" : "border-gray-300"
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                              errors.city ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                             }`}
                           />
                           {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
                         </div>
                       </div>
 
-                      <div className="mt-6 rounded-lg border border-gray-200 bg-white p-4">
+                      <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
                         <h3 className="text-base font-semibold text-gray-900">Lägg till fraktinformation</h3>
                         <p className="text-sm text-gray-600 mt-1">
                           Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
@@ -546,7 +561,7 @@ export default function Checkout() {
                               value={doorCode}
                               onChange={(e) => setDoorCode(e.target.value)}
                               placeholder="1234"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                             />
                           </div>
                           <div>
@@ -558,7 +573,7 @@ export default function Checkout() {
                               value={deliveryTime}
                               onChange={(e) => setDeliveryTime(e.target.value)}
                               placeholder="Vardagar 17–20"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                             />
                           </div>
                         </div>
@@ -570,7 +585,7 @@ export default function Checkout() {
                             value={deliveryInstructions}
                             onChange={(e) => setDeliveryInstructions(e.target.value)}
                             placeholder="Lämna vid dörren / ring vid leverans / våning osv."
-                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white text-gray-900 placeholder:text-gray-500 border-gray-300"
+                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                           />
                         </div>
                       </div>
@@ -582,20 +597,34 @@ export default function Checkout() {
 
             {/* Order Summary */}
             <div>
-              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 lg:sticky lg:top-24">
+              <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800 lg:sticky lg:top-24">
                 <h2 className="text-xl font-bold text-gray-900 mb-6">Ordersammanfattning</h2>
 
-                <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
-                  {items.map((item) => (
-                    <div key={item.id} className="flex justify-between text-sm">
-                      <span className="text-gray-600">
-                        {item.product?.name} x{item.quantity}
-                      </span>
-                      <span className="font-semibold text-gray-900">
-                        {((item.product?.price_cents || 0) * item.quantity) / 100} kr
-                      </span>
-                    </div>
-                  ))}
+                <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                  {items.map((item) => {
+                    const imageSrc = resolveProductImage(item.product);
+                    return (
+                      <div key={item.id} className="flex items-center justify-between gap-3 text-sm">
+                        <div className="flex min-w-0 items-center gap-3">
+                          {imageSrc ? (
+                            <img
+                              src={imageSrc}
+                              alt={item.product?.name || "Produkt"}
+                              className="h-12 w-12 rounded object-cover border border-gray-200 dark:border-gray-700"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                          ) : null}
+                          <span className="text-gray-600 dark:text-gray-300 truncate">
+                            {item.product?.name} x{item.quantity}
+                          </span>
+                        </div>
+                        <span className="font-semibold text-gray-900 dark:text-gray-100">
+                          {((item.product?.price_cents || 0) * item.quantity) / 100} kr
+                        </span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
@@ -635,7 +664,7 @@ export default function Checkout() {
 
                 <button
                   onClick={() => navigate("/cart")}
-                  className="w-full mt-3 px-4 py-3 border border-gray-300 text-gray-900 font-semibold rounded hover:bg-gray-100 transition-colors"
+                  className="w-full mt-3 px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                 >
                   Tillbaka till kundvagn
                 </button>

@@ -5,12 +5,16 @@ import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { getUserOrders, requestOrderCancel } from "@/lib/supabaseServices";
 import { getOrderStatusInfo, ORDER_STATUS_STEPS } from "@/lib/orderStatus";
+import { resolveProductImage } from "@/lib/productImageResolver";
 import { Clock, Package, ReceiptText } from "lucide-react";
 
 type OrderItem = {
   id: string;
   quantity: number;
   product?: {
+    id?: string;
+    legacy_id?: string | number | null;
+    slug?: string | null;
     name?: string;
     price_cents?: number;
     image_url?: string | null;
@@ -184,15 +188,16 @@ export default function Orders() {
                             typeof item.product?.price_cents === "number"
                               ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
                               : "--";
+                          const imageSrc = resolveProductImage(item.product);
                           return (
                             <div
                               key={item.id}
                               className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#101a27] p-4"
                             >
                               <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800">
-                                {item.product?.image_url ? (
+                                {imageSrc ? (
                                   <img
-                                    src={item.product.image_url}
+                                    src={imageSrc}
                                     alt={item.product?.name || "Produkt"}
                                     className="h-full w-full object-cover"
                                   />
