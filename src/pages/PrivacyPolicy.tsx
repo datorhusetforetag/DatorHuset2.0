@@ -101,10 +101,23 @@ export default function PrivacyPolicy() {
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
-        <section className="bg-yellow-400">
+        <section className="bg-yellow-400 overflow-hidden">
           <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
-            <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Integritet</p>
-            <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Integritetspolicy</h1>
+            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center">
+              <div>
+                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Integritet</p>
+                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Integritetspolicy</h1>
+              </div>
+              <div className="flex items-center justify-center">
+                <img
+                  src="/Datorhuset.png"
+                  alt="DatorHuset logo"
+                  className="w-full max-w-md h-56 sm:h-72 lg:h-80 object-contain object-center"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
           </div>
         </section>
 
