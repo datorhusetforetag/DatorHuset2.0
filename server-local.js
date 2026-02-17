@@ -20,6 +20,13 @@ dotenv.config();
 const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
+app.use((req, res, next) => {
+  if (process.env.NODE_ENV === "production" && req.headers["x-forwarded-proto"] === "http") {
+    const host = req.headers.host || "";
+    return res.redirect(301, `https://${host}${req.originalUrl}`);
+  }
+  return next();
+});
 const PORT = process.env.PORT || 3001;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -2399,6 +2406,45 @@ app.post("/api/webhook", async (req, res) => {
   }
 
   res.json({ received: true });
+});
+
+app.post("/api/metrics", rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => getRateLimitKey(req, "metrics"),
+}), (req, res) => {
+  const name = sanitizeText(req.body?.name, 16);
+  const id = sanitizeText(req.body?.id, 64);
+  const pathValue = sanitizeText(req.body?.path, 160);
+  const rating = sanitizeText(req.body?.rating, 16);
+  const value = Number(req.body?.value);
+
+  if (!name || !id || !pathValue || !Number.isFinite(value)) {
+    return res.status(400).json({ error: "Invalid metric payload" });
+  }
+
+  console.log(
+    `[web-vitals] ${name}=${Math.round(value * 100) / 100} rating=${rating || "n/a"} path=${pathValue} id=${id}`,
+  );
+  return res.status(204).send();
+});
+
+app.post("/api/analytics", rateLimit({
+  windowMs: 60 * 1000,
+  max: 200,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => getRateLimitKey(req, "analytics"),
+}), (req, res) => {
+  const eventName = sanitizeText(req.body?.event, 64);
+  const pathValue = sanitizeText(req.body?.path, 160);
+  if (!eventName || !pathValue) {
+    return res.status(400).json({ error: "Invalid analytics payload" });
+  }
+  console.log(`[analytics] event=${eventName} path=${pathValue}`);
+  return res.status(204).send();
 });
 
 /**

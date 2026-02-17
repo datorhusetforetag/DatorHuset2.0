@@ -6,13 +6,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Suspense, lazy } from "react";
 import NotFound from "./pages/NotFound.tsx";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { ConsentBanner } from "./components/ConsentBanner";
 import { AdminLayout } from "./admin/AdminLayout";
 import { AdminNotFound } from "./admin/AdminNotFound";
-import AdminInventory from "./admin/pages/AdminInventory";
-import AdminOrders from "./admin/pages/AdminOrders";
-import AdminBuild from "./admin/pages/AdminBuild";
-import AdminProducts from "./admin/pages/AdminProducts";
-import AdminLogs from "./admin/pages/AdminLogs";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
@@ -31,6 +27,11 @@ const ServiceRepair = lazy(() => import("./pages/ServiceRepair.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
+const AdminInventory = lazy(() => import("./admin/pages/AdminInventory.tsx"));
+const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
+const AdminBuild = lazy(() => import("./admin/pages/AdminBuild.tsx"));
+const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
+const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
 const queryClient = new QueryClient();
 const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
 
@@ -87,6 +88,7 @@ const App = () => (
             </Routes>
           </Suspense>
         </ScrollToTop>
+        <ConsentBanner />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

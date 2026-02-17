@@ -1,10 +1,54 @@
 ﻿import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { SeoJsonLd } from "@/components/SeoJsonLd";
 
 export default function CustomerService() {
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "DatorHuset",
+    url: "https://datorhuset.site/",
+    image: "https://datorhuset.site/Datorhuset.png",
+    email: "support@datorhuset.site",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Stockholm",
+      addressCountry: "SE",
+    },
+    areaServed: "SE",
+    openingHoursSpecification: [
+      {
+        "@type": "OpeningHoursSpecification",
+        dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+        opens: "11:00",
+        closes: "15:00",
+      },
+    ],
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Hem",
+        item: "https://datorhuset.site/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Kundservice",
+        item: "https://datorhuset.site/kundservice",
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+      <SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />
       <Navbar />
       <main className="flex-1">
         <section className="bg-yellow-400 overflow-hidden">

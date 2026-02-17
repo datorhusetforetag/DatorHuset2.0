@@ -9,7 +9,7 @@ import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 
-const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
+const FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
 const DEFAULT_PRICE_RANGE: [number, number] = [0, 40000];
 const RAM_PRICE_TOOLTIP =

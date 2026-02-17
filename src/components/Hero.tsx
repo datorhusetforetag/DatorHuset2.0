@@ -7,7 +7,7 @@ import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/
 import { buildUtmContent, withUtm } from "@/lib/utm";
 import winMouseImage from "../../images/WinMouse.png";
 
-const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
+const FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
 
 const categories = [
   { name: "Hjälp mig välja", icon: HelpCircle, kind: "quiz" as const },

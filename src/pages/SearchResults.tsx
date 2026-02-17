@@ -1,286 +1,161 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+﻿import { useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Search } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { Separator } from "@/components/ui/separator";
-import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { Footer } from "@/components/Footer";
 import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
-import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-
-type TierKey = "platinum" | "gold" | "silver" | "bronze" | "diamond" | "paket";
-
-interface Computer {
-  id: string;
-  name: string;
-  price: number;
-  cpu: string;
-  gpu: string;
-  ram: string;
-  tier: TierKey;
-  discount?: number;
-}
-
-const normalizeTier = (tier: string): TierKey => {
-  const normalized = tier.toLowerCase();
-  if (
-    normalized === "platinum" ||
-    normalized === "gold" ||
-    normalized === "silver" ||
-    normalized === "bronze" ||
-    normalized === "diamond" ||
-    normalized === "paket"
-  ) {
-    return normalized;
-  }
-  return "silver";
-};
-
-interface SearchResult extends Computer {
-  matchType: "name" | "cpu" | "gpu";
-  matchText: string;
-}
+import { buildProductLookup } from "@/lib/productOverrides";
+import { buildSearchCatalog, buildSearchState } from "@/lib/siteSearch";
 
 export default function SearchResults() {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
-  const computers = useMemo<Computer[]>(
+  const catalog = useMemo(
     () =>
-      COMPUTERS.map((computer) => {
-        const product =
-          getProductFromLookup(productLookup, computer.name) ||
-          getProductFromLookup(productLookup, computer.id);
-        const merged = mergeProductFields(
-          {
-            name: computer.name,
-            price: computer.price,
-            cpu: computer.cpu,
-            gpu: computer.gpu,
-            ram: computer.ram,
-            storage: computer.storage,
-            storagetype: computer.storagetype,
-            tier: computer.tier,
-          },
-          product,
-        );
-        return {
-          id: computer.id,
-          name: merged.name,
-          price: merged.price,
-          cpu: merged.cpu,
-          gpu: merged.gpu,
-          ram: merged.ram,
-          tier: normalizeTier(merged.tier),
-        };
+      buildSearchCatalog({
+        computers: COMPUTERS,
+        productLookup,
       }),
     [productLookup],
   );
 
-  const results = useMemo(() => {
-    if (!searchQuery.trim()) return [];
+  const searchState = useMemo(
+    () =>
+      buildSearchState({
+        query: searchQuery,
+        catalog,
+        limit: 18,
+      }),
+    [catalog, searchQuery],
+  );
 
-    const query = searchQuery.toLowerCase();
-    const foundResults: SearchResult[] = [];
-
-    computers.forEach((computer) => {
-      // Search by name
-      if (computer.name.toLowerCase().includes(query)) {
-        foundResults.push({
-          ...computer,
-          matchType: "name",
-          matchText: computer.name,
-        });
-      }
-      // Search by CPU
-      else if (computer.cpu.toLowerCase().includes(query)) {
-        foundResults.push({
-          ...computer,
-          matchType: "cpu",
-          matchText: computer.cpu,
-        });
-      }
-      // Search by GPU
-      else if (computer.gpu.toLowerCase().includes(query)) {
-        foundResults.push({
-          ...computer,
-          matchType: "gpu",
-          matchText: computer.gpu,
-        });
-      }
-    });
-
-    return foundResults;
-  }, [searchQuery]);
-
-  const tierColors: Record<TierKey, string> = {
-    platinum: "from-yellow-500/20 to-yellow-600/20",
-    gold: "from-amber-500/20 to-amber-600/20",
-    silver: "from-gray-500/20 to-gray-600/20",
-    bronze: "from-orange-500/20 to-orange-600/20",
-    diamond: "from-cyan-500/20 to-cyan-600/20",
-    paket: "from-emerald-500/20 to-emerald-600/20",
-  };
-
-  const tierBadgeStyles: Record<TierKey, string> = {
-    platinum: "bg-yellow-500/20 text-yellow-700 dark:text-yellow-200",
-    gold: "bg-amber-500/20 text-amber-700 dark:text-amber-200",
-    silver: "bg-gray-500/20 text-gray-700 dark:text-gray-200",
-    bronze: "bg-orange-500/20 text-orange-700 dark:text-orange-200",
-    diamond: "bg-cyan-500/20 text-cyan-700 dark:text-cyan-200",
-    paket: "bg-emerald-500/20 text-emerald-700 dark:text-emerald-200",
-  };
-
-  const tierLabels: Record<TierKey, string> = {
-    platinum: "Platina",
-    gold: "Guld",
-    silver: "Silver",
-    bronze: "Bronze",
-    diamond: "Diamond",
-    paket: "Paket",
-  };
+  const hasTypedQuery = searchQuery.trim().length > 0;
+  const hasResults = searchState.products.length > 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
       <Navbar />
-      <div className="pt-20">
-        <div className="container mx-auto px-4 py-8">
-          {/* Back Button */}
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/")}
-            className="mb-6"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Tillbaka
-          </Button>
 
-          {/* Search Input */}
-          <div className="mb-8 max-w-2xl">
-            <input
-              type="text"
-              placeholder="Sök efter datornamn eller komponenter (t.ex. RTX 4080, i9)..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-3 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all text-lg"
-              autoFocus
-            />
+      <main className="flex-1 pt-20 sm:pt-24">
+        <div className="container mx-auto px-4 py-10">
+          <button
+            type="button"
+            onClick={() => navigate("/")}
+            className="inline-flex items-center gap-2 mb-6 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:hover:border-[#11667b]"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Tillbaka
+          </button>
+
+          <div className="max-w-3xl">
+            <label className="text-xs uppercase tracking-[0.22em] text-gray-500 dark:text-gray-300">Sök</label>
+            <div className="relative mt-2">
+              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-gray-300" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Sök efter dator, grafikkort, processor eller kategori"
+                className="h-12 w-full rounded-xl border-2 border-yellow-400 bg-white pl-12 pr-4 text-sm outline-none focus:border-yellow-500 dark:border-gray-600 dark:bg-gray-900"
+                autoFocus
+              />
+            </div>
           </div>
 
-          <Separator className="mb-8" />
+          {searchState.correctedQuery && hasTypedQuery && (
+            <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
+              Visar närmaste träffar för <span className="font-semibold">{searchQuery}</span>. Menade du{" "}
+              <button
+                type="button"
+                className="font-semibold text-[#11667b] hover:underline"
+                onClick={() => setSearchQuery(searchState.correctedQuery || "")}
+              >
+                {searchState.correctedQuery}
+              </button>
+              ?
+            </p>
+          )}
 
-          {/* Results */}
-          {searchQuery.trim() === "" ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                Börja skriva för att söka efter datorer och komponenter
-              </p>
-            </div>
-          ) : results.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground text-lg">
-                Inga resultaten hittades för "{searchQuery}"
-              </p>
-            </div>
-          ) : (
-            <div>
-              <p className="text-muted-foreground mb-6">
-                {results.length} resultat hittade
-              </p>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {results.map((computer) => {
-                  const finalPrice = computer.discount
-                    ? computer.price * (1 - computer.discount / 100)
-                    : computer.price;
+          {searchState.categories.length > 0 && (
+            <section className="mt-8">
+              <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-300">
+                Kategoriförslag
+              </h2>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {searchState.categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    to={category.path}
+                    className="rounded-xl border border-gray-200 bg-white p-4 hover:border-[#11667b] hover:shadow-sm dark:border-gray-700 dark:bg-gray-900"
+                  >
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
+                    <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">{category.description}</p>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
 
-                  return (
+          <section className="mt-8">
+            {hasTypedQuery && !hasResults ? (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-900">
+                <p className="text-base font-semibold">Inga produkter matchade "{searchQuery}".</p>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  Testa ett produktnamn, en komponent eller välj en kategori ovan.
+                </p>
+              </div>
+            ) : !hasTypedQuery ? (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-700 dark:bg-gray-900">
+                <p className="text-base font-semibold">Börja skriva för att söka</p>
+                <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                  Exempel: RTX 5080, Ryzen 7, budget eller paket.
+                </p>
+              </div>
+            ) : (
+              <>
+                <p className="mb-4 text-sm text-gray-600 dark:text-gray-300">
+                  {searchState.products.length} produktresultat
+                </p>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {searchState.products.map((result) => (
                     <Link
-                      key={`${computer.id}-${computer.matchType}`}
-                      to={`/computer/${computer.id}`}
-                      className="no-underline"
+                      key={result.id}
+                      to={`/computer/${result.id}`}
+                      className="overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-[#11667b] hover:shadow-md dark:border-gray-700 dark:bg-gray-900"
                     >
-                      <div className="bg-card rounded-lg border border-border overflow-hidden hover:border-primary/50 transition-all hover:shadow-lg cursor-pointer group h-full">
-                        {/* Image */}
-                        <div className={`w-full h-48 bg-gradient-to-br ${tierColors[computer.tier]} flex items-center justify-center group-hover:from-primary/20 group-hover:to-secondary/20 transition-colors`}>
-                          <div className="text-center">
-                            <div className="text-4xl mb-2">💻</div>
-                            <p className="text-xs text-muted-foreground">Produktbild</p>
-                          </div>
-                        </div>
-
-                        <div className="p-6">
-                          <div className="flex items-start justify-between mb-3">
-                            <h3 className="text-lg font-semibold flex-1">
-                              {computer.name}
-                            </h3>
-                            <span
-                              className={`text-xs font-semibold px-2 py-1 rounded-full ${tierBadgeStyles[computer.tier]}`}
-                            >
-                              {tierLabels[computer.tier]}
-                            </span>
-                          </div>
-
-                          {/* Match Info */}
-                          <div className="bg-primary/10 rounded px-2 py-1 mb-3">
-                            <p className="text-xs text-primary font-semibold">
-                              {computer.matchType === "name"
-                                ? "Matchar namn"
-                                : computer.matchType === "cpu"
-                                ? "Matchar processor"
-                                : "Matchar grafikkort"}
-                            </p>
-                            <p className="text-xs text-foreground truncate">
-                              {computer.matchText}
-                            </p>
-                          </div>
-
-                          {/* Specs Summary */}
-                          <div className="space-y-2 mb-4 text-sm text-muted-foreground">
-                            <p>
-                              <span className="font-semibold text-foreground">CPU:</span>{" "}
-                              {computer.cpu}
-                            </p>
-                            <p>
-                              <span className="font-semibold text-foreground">GPU:</span>{" "}
-                              {computer.gpu}
-                            </p>
-                            <p>
-                              <span className="font-semibold text-foreground">RAM:</span>{" "}
-                              {computer.ram}
-                            </p>
-                          </div>
-
-                          <Separator className="mb-4" />
-
-                          {/* Price */}
-                          <div className="flex items-baseline gap-2">
-                            {computer.discount ? (
-                              <>
-                                <span className="text-xl font-bold text-primary">
-                                  {finalPrice.toLocaleString("sv-SE")} kr
-                                </span>
-                                <span className="text-xs text-muted-foreground line-through">
-                                  {computer.price.toLocaleString("sv-SE")} kr
-                                </span>
-                              </>
-                            ) : (
-                              <span className="text-xl font-bold text-primary">
-                                {computer.price.toLocaleString("sv-SE")} kr
-                              </span>
-                            )}
-                          </div>
-                        </div>
+                      <div className="h-44 bg-gray-100 dark:bg-gray-800">
+                        {result.image ? (
+                          <img
+                            src={result.image}
+                            alt={result.name}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        ) : null}
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">{result.name}</h3>
+                        <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">{result.cpu}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300">{result.gpu}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-300">{result.ram}</p>
+                        <p className="mt-3 text-xl font-bold text-gray-900 dark:text-gray-100">
+                          {result.price.toLocaleString("sv-SE")} kr
+                        </p>
                       </div>
                     </Link>
-                  );
-                })}
-              </div>
-            </div>
-          )}
+                  ))}
+                </div>
+              </>
+            )}
+          </section>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

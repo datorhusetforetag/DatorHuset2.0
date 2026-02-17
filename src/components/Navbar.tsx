@@ -5,8 +5,8 @@ import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
 import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
-import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { resolveProductImage } from "@/lib/productImageResolver";
+import { buildProductLookup } from "@/lib/productOverrides";
+import { buildSearchCatalog, buildSearchState } from "@/lib/siteSearch";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 
@@ -26,54 +26,40 @@ export const Navbar = () => {
   const { user } = useAuth();
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
+  const searchCatalog = useMemo(
+    () =>
+      buildSearchCatalog({
+        computers: COMPUTERS,
+        productLookup,
+      }),
+    [productLookup],
+  );
   const showBackButton = location.pathname !== "/";
   const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
 
-  const searchResults = useMemo(() => {
-    const query = searchInput.trim().toLowerCase();
-    if (!query) return [];
-    const merged = COMPUTERS.map((computer) => {
-      const product =
-        getProductFromLookup(productLookup, computer.name) ||
-        getProductFromLookup(productLookup, computer.id);
-      const mergedFields = mergeProductFields(
-        {
-          name: computer.name,
-          price: computer.price,
-          cpu: computer.cpu,
-          gpu: computer.gpu,
-          ram: computer.ram,
-          storage: computer.storage,
-          storagetype: computer.storagetype,
-          tier: computer.tier,
-        },
-        product,
-      );
-      return {
-        ...computer,
-        name: mergedFields.name,
-        price: mergedFields.price,
-        cpu: mergedFields.cpu,
-        gpu: mergedFields.gpu,
-        ram: mergedFields.ram,
-        storage: mergedFields.storage,
-        storagetype: mergedFields.storagetype,
-        tier: mergedFields.tier,
-        image: resolveProductImage(product, computer.image) || computer.image,
-      };
-    });
-    return merged
-      .filter(
-        (computer) =>
-          computer.name.toLowerCase().includes(query) ||
-          computer.cpu.toLowerCase().includes(query) ||
-          computer.gpu.toLowerCase().includes(query)
-      )
-      .slice(0, 5);
-  }, [productLookup, searchInput]);
+  const searchState = useMemo(
+    () =>
+      buildSearchState({
+        query: searchInput,
+        catalog: searchCatalog,
+        limit: 6,
+      }),
+    [searchCatalog, searchInput],
+  );
+
+  const hasSearchEntries =
+    searchState.products.length > 0 ||
+    searchState.categories.length > 0 ||
+    Boolean(searchState.correctedQuery);
 
   const handleSelectSearch = (id: string) => {
     navigate(`/computer/${id}`);
+    setSearchInput("");
+    setShowSearchResults(false);
+  };
+
+  const handleSelectCategory = (path: string) => {
+    navigate(path);
     setSearchInput("");
     setShowSearchResults(false);
   };
@@ -111,6 +97,95 @@ export const Navbar = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const renderSearchDropdown = (isMobile = false) => {
+    if (!showSearchResults || !hasSearchEntries) return null;
+    const firstProduct = searchState.products[0];
+
+    return (
+      <div
+        className={`absolute left-0 right-0 top-full mt-2 rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50 bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700 ${
+          isMobile ? "max-h-[70vh] overflow-y-auto" : ""
+        }`}
+      >
+        {searchState.correctedQuery && (
+          <div className="px-4 py-2 text-xs border-b border-gray-200 text-gray-600 dark:text-gray-300 dark:border-gray-700">
+            Visar närmaste träffar för <span className="font-semibold">{searchInput}</span>. Menade du{" "}
+            <button
+              type="button"
+              onMouseDown={() => handleSelectSearch(firstProduct?.id || "")}
+              className="font-semibold text-[#11667b] hover:underline"
+              disabled={!firstProduct}
+            >
+              {searchState.correctedQuery}
+            </button>
+            ?
+          </div>
+        )}
+
+        {searchState.categories.length > 0 && (
+          <div className="border-b border-gray-200 dark:border-gray-700">
+            <p className="px-4 pt-3 pb-2 text-[11px] uppercase tracking-[0.2em] font-semibold text-gray-500 dark:text-gray-300">
+              Kategoriförslag
+            </p>
+            <div className="px-2 pb-2">
+              {searchState.categories.map((category) => (
+                <button
+                  key={category.id}
+                  onMouseDown={() => handleSelectCategory(category.path)}
+                  className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
+                  <span className="block text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</span>
+                  <span className="block text-xs text-gray-600 dark:text-gray-300">{category.description}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {searchState.products.length > 0 && (
+          <div>
+            <p className="px-4 pt-3 pb-2 text-[11px] uppercase tracking-[0.2em] font-semibold text-gray-500 dark:text-gray-300">
+              Produkter
+            </p>
+            <div className="pb-2">
+              {searchState.products.map((result) => (
+                <button
+                  key={result.id}
+                  onMouseDown={() => handleSelectSearch(result.id)}
+                  className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 dark:hover:bg-gray-700"
+                >
+                  {result.image ? (
+                    <img
+                      src={result.image}
+                      alt={result.name}
+                      className="h-12 w-12 rounded-md object-cover bg-gray-100 dark:bg-gray-900"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="h-12 w-12 rounded-md bg-gray-100 dark:bg-gray-900" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <span className="font-semibold text-sm text-gray-900 dark:text-gray-100 block truncate">
+                      {result.name}
+                    </span>
+                    <span className="text-xs text-gray-600 truncate dark:text-gray-300 block">
+                      {result.cpu} | {result.gpu} | {result.ram}
+                    </span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-gray-100 block">
+                      {result.price.toLocaleString("sv-SE")} kr
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+      </div>
+    );
+  };
 
   return (
     <nav className="sticky top-0 left-0 right-0 z-50 backdrop-blur supports-[backdrop-filter]:backdrop-blur overflow-visible">
@@ -262,7 +337,7 @@ export const Navbar = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-yellow-300" />
                 <input
                   type="text"
-                  placeholder="Sök bland produkter"
+                  placeholder="Sök bland produkter, komponenter och kategorier"
                   value={searchInput}
                   onChange={(e) => {
                     setSearchInput(e.target.value);
@@ -270,44 +345,19 @@ export const Navbar = () => {
                   }}
                   onFocus={() => setShowSearchResults(true)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && searchResults[0]) {
-                      handleSelectSearch(searchResults[0].id);
+                    if (e.key === "Enter") {
+                      if (searchState.products[0]) {
+                        handleSelectSearch(searchState.products[0].id);
+                        return;
+                      }
+                      if (searchState.categories[0]) {
+                        handleSelectCategory(searchState.categories[0].path);
+                      }
                     }
                   }}
-                  className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:border-gray-600 dark:focus:border-yellow-400"
+                  className="w-full h-12 pl-11 pr-4 border-2 border-yellow-400 rounded-lg text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:border-gray-600 dark:focus:border-yellow-400"
                 />
-                {showSearchResults && searchResults.length > 0 && (
-                  <div
-                    className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
-                  >
-                    {searchResults.map((result) => (
-                      <button
-                        key={result.id}
-                        onMouseDown={() => handleSelectSearch(result.id)}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 dark:hover:bg-gray-700"
-                      >
-                        <img
-                          src={result.image}
-                          alt={result.name}
-                          className="h-12 w-12 rounded-md object-cover bg-gray-100 dark:bg-gray-900"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <span className="font-semibold text-sm text-gray-900 dark:text-gray-100 block truncate">
-                            {result.name}
-                          </span>
-                          <span className="text-xs text-gray-600 truncate dark:text-gray-300 block">
-                            {result.cpu} | {result.gpu} | {result.ram}
-                          </span>
-                          <span className="text-sm font-bold text-gray-900 dark:text-gray-100 block">
-                            {result.price.toLocaleString("sv-SE")} kr
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {renderSearchDropdown(false)}
               </div>
             </div>
 
@@ -363,7 +413,7 @@ export const Navbar = () => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-yellow-400" />
                 <input
                   type="text"
-                  placeholder="Sök bland produkter"
+                  placeholder="Sök bland produkter, komponenter och kategorier"
                   value={searchInput}
                   onChange={(e) => {
                     setSearchInput(e.target.value);
@@ -371,44 +421,19 @@ export const Navbar = () => {
                   }}
                   onFocus={() => setShowSearchResults(true)}
                   onKeyDown={(e) => {
-                    if (e.key === "Enter" && searchResults[0]) {
-                      handleSelectSearch(searchResults[0].id);
+                    if (e.key === "Enter") {
+                      if (searchState.products[0]) {
+                        handleSelectSearch(searchState.products[0].id);
+                        return;
+                      }
+                      if (searchState.categories[0]) {
+                        handleSelectCategory(searchState.categories[0].path);
+                      }
                     }
                   }}
-                  className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:border-gray-600"
+                  className="w-full h-11 pl-11 pr-4 border-2 border-yellow-400 rounded-lg text-sm text-gray-900 placeholder:text-gray-500 focus:outline-none focus:border-yellow-500 transition-all dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:border-gray-600"
                 />
-                {showSearchResults && searchResults.length > 0 && (
-                  <div
-                    className="absolute left-0 right-0 top-full mt-2 bg-white text-gray-900 rounded shadow-lg border border-gray-200 overflow-hidden z-50 dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700"
-                  >
-                    {searchResults.map((result) => (
-                      <button
-                        key={result.id}
-                        onMouseDown={() => handleSelectSearch(result.id)}
-                        className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-3 dark:hover:bg-gray-700"
-                      >
-                        <img
-                          src={result.image}
-                          alt={result.name}
-                          className="h-12 w-12 rounded-md object-cover bg-gray-100 dark:bg-gray-900"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                        <div className="flex-1 min-w-0">
-                          <span className="font-semibold text-sm text-gray-900 dark:text-gray-100 block truncate">
-                            {result.name}
-                          </span>
-                          <span className="text-xs text-gray-600 truncate dark:text-gray-300 block">
-                            {result.cpu} | {result.gpu} | {result.ram}
-                          </span>
-                          <span className="text-sm font-bold text-gray-900 dark:text-gray-100 block">
-                            {result.price.toLocaleString("sv-SE")} kr
-                          </span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {renderSearchDropdown(true)}
               </div>
 
               {isAdmin && (
