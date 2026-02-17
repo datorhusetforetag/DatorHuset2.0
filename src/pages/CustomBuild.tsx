@@ -1180,17 +1180,6 @@ const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
   psu: 1290,
   cooling: 990,
 };
-const STORE_NAMES = [
-  "Komplett",
-  "Inet",
-  "Webhallen",
-  "NetOnNet",
-  "Dustin",
-  "Proshop",
-  "Elgiganten",
-  "Amazon",
-];
-const MONTH_LABELS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const initialOfferForm = {
@@ -1200,14 +1189,6 @@ const initialOfferForm = {
   notes: "",
 };
 
-
-const hashString = (value: string) => {
-  let hash = 0;
-  for (let i = 0; i < value.length; i += 1) {
-    hash = (hash * 31 + value.charCodeAt(i)) % 100000;
-  }
-  return hash;
-};
 
 const getBasePrice = (item: ComponentItem, category: CategoryKey) =>
   item.price && item.price > 0 ? item.price : CATEGORY_BASE_PRICE[category];
@@ -1236,38 +1217,6 @@ const decodeBuildSelection = (encoded: string) => {
   return result;
 };
 
-const buildPriceHistory = (basePrice: number) =>
-  MONTH_LABELS.map((_, index) => {
-    const trend = 1.08 - index * 0.03;
-    const wobble = (index % 3) * 0.01;
-    const multiplier = Math.max(0.72, trend + wobble);
-    return Math.max(100, Math.round(basePrice * multiplier));
-  });
-
-const buildStorePrices = (item: ComponentItem, category: CategoryKey) => {
-  const basePrice = getBasePrice(item, category);
-  const hash = hashString(`${item.id}-${item.name}-${category}`);
-  const stores = STORE_NAMES.map((name, index) => {
-    const variance = ((hash + index * 17) % 9 - 4) * 0.01;
-    const price = Math.max(100, Math.round(basePrice * (1 + variance)));
-    const inStock = (hash + index) % 4 !== 0;
-    return { name, price, inStock };
-  }).sort((a, b) => a.price - b.price);
-  const cheapest = stores[0]?.price ?? basePrice;
-  return stores.map((store) => ({ ...store, isCheapest: store.price === cheapest }));
-};
-
-const buildSpecList = (item: ComponentItem) => {
-  const specs = [...item.specs];
-  if (item.socket && !specs.some((spec) => spec.includes(item.socket))) {
-    specs.push(`Socket ${item.socket}`);
-  }
-  if (item.ramType && !specs.some((spec) => spec.includes(item.ramType))) {
-    specs.push(item.ramType);
-  }
-  return specs;
-};
-
 export default function CustomBuild() {
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
   const [offerOpen, setOfferOpen] = useState(false);
@@ -1291,7 +1240,7 @@ export default function CustomBuild() {
     psu: null,
     cooling: null,
   });
-  const [detailItem, setDetailItem] = useState<{ item: ComponentItem; category: CategoryKey } | null>(null);
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -1434,28 +1383,6 @@ export default function CustomBuild() {
     });
   }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu, priceRange]);
 
-  const detailData = useMemo(() => {
-    if (!detailItem) {
-      return null;
-    }
-    const basePrice = getBasePrice(detailItem.item, detailItem.category);
-    const specs = buildSpecList(detailItem.item);
-    const history = buildPriceHistory(basePrice);
-    const stores = buildStorePrices(detailItem.item, detailItem.category);
-    const cheapestStore = stores[0] ?? null;
-    const inStockStore = stores.find((store) => store.inStock) ?? stores[0] ?? null;
-    const image =
-      detailItem.item.image ?? CATEGORY_IMAGES[detailItem.category]?.src ?? FALLBACK_COMPONENT_IMAGE;
-    return {
-      basePrice,
-      specs,
-      history,
-      stores,
-      cheapestStore,
-      inStockStore,
-      image,
-    };
-  }, [detailItem]);
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
@@ -1489,14 +1416,6 @@ export default function CustomBuild() {
     scrollToCategoryPicker();
   };
 
-  const handleOpenDetails = (item: ComponentItem) => {
-    setDetailItem({ item, category: activeCategory });
-  };
-  const detailIsSelected = detailItem
-    ? selected[detailItem.category]?.id === detailItem.item.id
-    : false;
-  const detailHistoryMax = detailData ? Math.max(...detailData.history) : 0;
-  const detailHistoryMin = detailData ? Math.min(...detailData.history) : 0;
 
   const updateOfferField = (field: keyof typeof initialOfferForm) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = event.target.value;
@@ -1691,164 +1610,6 @@ export default function CustomBuild() {
                 {offerStatus === "sending" ? "Skickar..." : "Skicka offertförfrågan"}
               </button>
             </form>
-          </DialogContent>
-        ) : null}
-      </Dialog>
-      <Dialog
-        open={Boolean(detailItem)}
-        onOpenChange={(open) => {
-          if (!open) {
-            setDetailItem(null);
-          }
-        }}
-      >
-        {detailItem && detailData ? (
-          <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white dark:bg-[#0f1824]">
-            <DialogHeader>
-              <DialogTitle>{detailItem.item.name}</DialogTitle>
-              <DialogDescription className="text-gray-600 dark:text-gray-400">
-                Utokad vy for specifikationer, pris och lagerstatus.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-              <div className="space-y-6">
-                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="relative w-full md:w-52 aspect-square">
-                      <img
-                        src={detailData.image}
-                        alt={detailItem.item.name}
-                        className="w-full h-full object-cover rounded-xl border border-gray-200 dark:border-gray-800"
-                        loading="lazy"
-                        decoding="async"
-                      />
-                      <span className="absolute top-2 left-2 rounded-full bg-white/90 text-gray-700 border border-gray-200 px-2 py-1 text-xs shadow-sm dark:bg-gray-900/90 dark:text-gray-200 dark:border-gray-700">
-                        {detailItem.item.brand}
-                      </span>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponent</p>
-                      <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-2">
-                        {detailItem.item.name}
-                      </h3>
-                      <div className="mt-3 flex flex-wrap items-center gap-3">
-                        <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                          {formatPrice(detailData.basePrice)} kr
-                        </span>
-                        {detailData.cheapestStore ? (
-                          <span className="text-xs font-semibold bg-yellow-400 text-gray-900 px-3 py-1 rounded-full">
-                            L?gsta pris hos {detailData.cheapestStore.name}
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {detailData.specs.map((spec) => (
-                          <span
-                            key={spec}
-                            className="text-xs border border-gray-200 text-gray-700 bg-gray-100 px-2.5 py-1 rounded-full dark:border-gray-700 dark:text-gray-200 dark:bg-gray-800"
-                          >
-                            {spec}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setSelected((prev) => ({
-                              ...prev,
-                              [detailItem.category]: detailIsSelected ? null : detailItem.item,
-                            }))
-                          }
-                          className={`rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
-                            detailIsSelected
-                              ? "bg-yellow-400 text-gray-900"
-                              : "border border-yellow-400 text-yellow-700 dark:text-yellow-300 hover:bg-[#11667b] hover:text-white hover:border-[#11667b]"
-                          }`}
-                        >
-                          {detailIsSelected ? "Vald" : "Välj"}
-                        </button>
-                        {detailData.inStockStore ? (
-                          <span className="inline-flex items-center text-xs font-semibold text-green-700 bg-green-100 px-3 py-1 rounded-full dark:text-green-200 dark:bg-green-900/40">
-                            I lager hos {detailData.inStockStore.name}
-                          </span>
-                        ) : null}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Prishistorik</p>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Senaste 12 m?nader</span>
-                  </div>
-                  <div className="mt-4 flex items-end gap-1 h-28">
-                    {detailData.history.map((value, index) => {
-                      const range = detailHistoryMax - detailHistoryMin || 1;
-                      const height = ((value - detailHistoryMin) / range) * 100;
-                      return (
-                        <div key={`${value}-${index}`} className="flex-1">
-                          <div
-                            className="w-full rounded-md bg-yellow-400/80"
-                            style={{ height: `${Math.max(8, height)}%` }}
-                          />
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-3 grid grid-cols-6 gap-2 text-[10px] text-gray-500 dark:text-gray-400">
-                    {MONTH_LABELS.slice(0, 6).map((label) => (
-                      <span key={label} className="text-center">
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    Prisdata ar demo tills riktig koppling ar klar.
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Butiker</p>
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {detailData.stores.length} jamforelser
-                  </span>
-                </div>
-                <div className="mt-4 space-y-3">
-                  {detailData.stores.map((store) => (
-                    <div
-                      key={store.name}
-                      className={`rounded-xl border px-3 py-3 flex items-center justify-between gap-3 ${
-                        store.isCheapest
-                          ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
-                          : "border-gray-200 dark:border-gray-800"
-                      }`}
-                    >
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{store.name}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {store.inStock ? "I lager" : "Ej i lager"}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                          {formatPrice(store.price)} kr
-                        </span>
-                        <button
-                          type="button"
-                          className="rounded-lg border border-yellow-400 px-3 py-1 text-xs font-semibold text-yellow-700 hover:bg-[#11667b] hover:text-white hover:border-[#11667b] dark:text-yellow-300"
-                        >
-                          Till butik
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
           </DialogContent>
         ) : null}
       </Dialog>
@@ -2087,15 +1848,6 @@ export default function CustomBuild() {
                     return (
                       <div
                         key={item.id}
-                        role="button"
-                        tabIndex={0}
-                        onClick={() => handleOpenDetails(item)}
-                        onKeyDown={(event) => {
-                          if (event.key === "Enter" || event.key === " ") {
-                            event.preventDefault();
-                            handleOpenDetails(item);
-                          }
-                        }}
                         className={`rounded-2xl border bg-white p-3 shadow-sm transition-colors dark:bg-gray-900/80 sm:p-4 ${
                           isSelected ? "border-yellow-400 ring-1 ring-yellow-300/30" : "border-gray-200 dark:border-gray-800"
                         }`}
@@ -2262,3 +2014,4 @@ export default function CustomBuild() {
     </div>
   );
 }
+
