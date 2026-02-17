@@ -643,7 +643,7 @@ export default function ComputerDetails() {
     const imageUrls = (images.length ? images : [computer.image]).map((img) =>
       img.startsWith("http") ? img : new URL(img, baseUrl).toString()
     );
-    return {
+    const productSchema = {
       "@context": "https://schema.org",
       "@type": "Product",
       name: displayName,
@@ -678,6 +678,33 @@ export default function ComputerDetails() {
           worstRating: "1",
         },
       })),
+    };
+    const breadcrumbSchema = {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Hem",
+          item: `${baseUrl}/`,
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: "Produkter",
+          item: `${baseUrl}/products`,
+        },
+        {
+          "@type": "ListItem",
+          position: 3,
+          name: displayName,
+          item: `${baseUrl}/computer/${computer.id}`,
+        },
+      ],
+    };
+    return {
+      "@context": "https://schema.org",
+      "@graph": [productSchema, breadcrumbSchema],
     };
   }, [availability.schema, computer, displayName, displayPrice, displaySpecs, images, reviewData]);
 
@@ -1116,7 +1143,7 @@ export default function ComputerDetails() {
                 key={item.id}
                 className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 space-y-4"
               >
-                <div className="h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+                <div className="h-52 sm:h-56 md:h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
                   <img
                     src={item.image}
                     alt={item.name}
