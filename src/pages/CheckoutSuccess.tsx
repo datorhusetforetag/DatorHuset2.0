@@ -1,5 +1,5 @@
 ﻿import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { CheckCircle, Loader } from "lucide-react";
@@ -14,15 +14,21 @@ export default function CheckoutSuccess() {
   const [loading, setLoading] = useState(true);
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<string | null>(null);
+  const hasInitializedRef = useRef(false);
   const sessionId = searchParams.get("session_id");
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
   const token = session?.access_token || "";
 
   useEffect(() => {
+    if (hasInitializedRef.current) return;
+    hasInitializedRef.current = true;
+
     let isMounted = true;
+    const controller = new AbortController();
     const safetyTimeout = window.setTimeout(() => {
       if (isMounted) setLoading(false);
     }, 12000);
+
     const init = async () => {
       try {
         clearCart().catch((error) => {
@@ -33,7 +39,6 @@ export default function CheckoutSuccess() {
       }
 
       if (sessionId && token) {
-        const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), 8000);
         try {
           const response = await fetch(`${apiBase}/api/orders/by-session/${sessionId}`, {
@@ -59,12 +64,13 @@ export default function CheckoutSuccess() {
       }
     };
 
-    init();
+    void init();
     return () => {
       isMounted = false;
+      controller.abort();
       window.clearTimeout(safetyTimeout);
     };
-  }, [apiBase, clearCart, sessionId, token]);
+  }, [apiBase, sessionId, token]);
 
   if (loading) {
     return (
