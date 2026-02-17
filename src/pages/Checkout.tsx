@@ -134,12 +134,12 @@ export default function Checkout() {
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn Ã¤r tom</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn är tom</h1>
             <button
               onClick={() => navigate("/products")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
             >
-              FortsÃ¤tt handla
+              Fortsätt handla
             </button>
           </div>
         </div>
@@ -160,9 +160,9 @@ export default function Checkout() {
               <div className="lg:col-span-2">
                 <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
                   <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5">
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Logga in fÃ¶r att slutfÃ¶ra kÃ¶pet</h2>
+                    <h2 className="text-xl font-bold text-gray-900 mb-2">Logga in för att slutföra köpet</h2>
                     <p className="text-sm text-gray-700 mb-4">
-                      Du kan lÃ¤gga produkter i kundvagnen utan konto. FÃ¶r att gÃ¥ vidare till betalning behÃ¶ver du logga in.
+                      Du kan lägga produkter i kundvagnen utan konto. För att gå vidare till betalning behöver du logga in.
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
                       <LoginButton />
@@ -241,7 +241,7 @@ export default function Checkout() {
     const normalizedPhone = phone.replace(/\s+/g, "");
     const nextErrors = {
       email: email.trim() ? "" : "Ange en giltig e-postadress.",
-      firstName: firstName.trim().length >= 2 ? "" : "Ange fÃ¶rnamn.",
+      firstName: firstName.trim().length >= 2 ? "" : "Ange förnamn.",
       lastName: lastName.trim().length >= 2 ? "" : "Ange efternamn.",
       phone: swedishPhoneRegex.test(normalizedPhone) ? "" : "Ange ett giltigt svenskt mobilnummer.",
       address: requiresShipping ? (address.trim().length >= 5 ? "" : "Ange en giltig adress.") : "",
@@ -272,7 +272,7 @@ export default function Checkout() {
     });
 
     if (!validateFields()) {
-      alert("Kontrollera att alla fÃ¤lt Ã¤r korrekt ifyllda.");
+      alert("Kontrollera att alla fält är korrekt ifyllda.");
       return;
     }
 
@@ -368,7 +368,7 @@ export default function Checkout() {
 
                 <div className="space-y-4">
                   <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
-                    <h3 className="text-base font-semibold text-gray-900">LeveranssÃ¤tt</h3>
+                    <h3 className="text-base font-semibold text-gray-900">Leveranssätt</h3>
                     <p className="text-sm text-gray-600 mt-1">Vi skickar endast inom Sverige.</p>
                     <div className="mt-4 space-y-3">
                       <label className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
@@ -381,9 +381,9 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900">UpphÃ¤mtning i Rinkeby Centrum (gratis)</p>
+                          <p className="font-semibold text-gray-900">Upphämtning i Rinkeby Centrum (gratis)</p>
                           <p className="text-sm text-gray-600">
-                            HÃ¤mta upp din dator i Rinkeby Centrum efter att bygget Ã¤r klart.
+                            Hämta upp din dator i Rinkeby Centrum efter att bygget är klart.
                           </p>
                         </div>
                       </label>
@@ -399,7 +399,7 @@ export default function Checkout() {
                         <div>
                           <p className="font-semibold text-gray-900">PostNord frakt (700 kr)</p>
                           <p className="text-sm text-gray-600">
-                            FÃ¶rsÃ¤krad och spÃ¥rbar frakt. Leverans 1â€“3 vardagar efter att bygget Ã¤r klart.
+                            Försäkrad och spårbar frakt. Leverans 1-3 vardagar efter att bygget är klart.
                           </p>
                         </div>
                       </label>
@@ -422,7 +422,7 @@ export default function Checkout() {
                           }}
                           className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
                         >
-                          <option value="">VÃ¤lj adress...</option>
+                          <option value="">Välj adress...</option>
                           {addresses.map((saved) => (
                             <option key={saved.id} value={saved.id}>
                               {saved.label || saved.address_line1}
@@ -431,7 +431,7 @@ export default function Checkout() {
                           ))}
                         </select>
                         {loadingAddresses && (
-                          <span className="text-xs text-gray-500">HÃ¤mtar adresser...</span>
+                          <span className="text-xs text-gray-500">Hämtar adresser...</span>
                         )}
                       </div>
                     </div>
@@ -459,7 +459,7 @@ export default function Checkout() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-semibold text-gray-900 mb-2">
-                        FÃ¶rnamn
+                        Förnamn
                       </label>
                       <input
                         type="text"
@@ -583,9 +583,9 @@ export default function Checkout() {
                       </div>
 
                       <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
-                        <h3 className="text-base font-semibold text-gray-900">LÃ¤gg till fraktinformation</h3>
+                        <h3 className="text-base font-semibold text-gray-900">Lägg till fraktinformation</h3>
                         <p className="text-sm text-gray-600 mt-1">
-                          HjÃ¤lp budet att leverera snabbare (portkod, Ã¶nskad tid, instruktioner).
+                          Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
                         </p>
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
@@ -602,13 +602,13 @@ export default function Checkout() {
                           </div>
                           <div>
                             <label className="block text-sm font-semibold text-gray-900 mb-2">
-                              Ã–nskad leveranstid (valfritt)
+                              Önskad leveranstid (valfritt)
                             </label>
                             <input
                               type="text"
                               value={deliveryTime}
                               onChange={(e) => setDeliveryTime(e.target.value)}
-                              placeholder="Vardagar 17â€“20"
+                              placeholder="Vardagar 17-20"
                               className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                             />
                           </div>
@@ -620,7 +620,7 @@ export default function Checkout() {
                           <textarea
                             value={deliveryInstructions}
                             onChange={(e) => setDeliveryInstructions(e.target.value)}
-                            placeholder="LÃ¤mna vid dÃ¶rren / ring vid leverans / vÃ¥ning osv."
+                            placeholder="Lämna vid dörren / ring vid leverans / våning osv."
                             className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                           />
                         </div>
@@ -693,7 +693,7 @@ export default function Checkout() {
                   className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  {loading ? "Bearbetar..." : "GÃ¥ till betalning"}
+                  {loading ? "Bearbetar..." : "Gå till betalning"}
                 </button>
 
                 <button
