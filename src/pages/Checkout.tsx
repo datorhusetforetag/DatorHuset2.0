@@ -121,7 +121,7 @@ export default function Checkout() {
       <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-          <div className="text-center text-gray-600">Laddar kundvagn...</div>
+          <div className="text-center text-gray-600 dark:text-gray-200">Laddar kundvagn...</div>
         </div>
         <Footer />
       </div>
@@ -134,7 +134,7 @@ export default function Checkout() {
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-4">Din kundvagn är tom</h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Din kundvagn är tom</h1>
             <button
               onClick={() => navigate("/products")}
               className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
@@ -154,14 +154,14 @@ export default function Checkout() {
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24">
           <div className="container mx-auto px-4 py-12">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Kassa</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Kassa</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
                   <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5">
-                    <h2 className="text-xl font-bold text-gray-900 mb-2">Logga in för att slutföra köpet</h2>
-                    <p className="text-sm text-gray-700 mb-4">
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Logga in för att slutföra köpet</h2>
+                    <p className="text-sm text-gray-700 dark:text-gray-200 mb-4">
                       Du kan lägga produkter i kundvagnen utan konto. För att gå vidare till betalning behöver du logga in.
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
@@ -179,7 +179,7 @@ export default function Checkout() {
 
               <div>
                 <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800 lg:sticky lg:top-24">
-                  <h2 className="text-xl font-bold text-gray-900 mb-6">Ordersammanfattning</h2>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Ordersammanfattning</h2>
 
                   <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                     {items.map((item) => {
@@ -196,7 +196,7 @@ export default function Checkout() {
                                 decoding="async"
                               />
                             ) : null}
-                            <span className="text-gray-600 dark:text-gray-300 truncate">
+                            <span className="text-gray-600 dark:text-gray-200 truncate">
                               {item.product?.name} x{item.quantity}
                             </span>
                           </div>
@@ -208,24 +208,24 @@ export default function Checkout() {
                     })}
                   </div>
 
-                  <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
+                  <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Delsumma:</span>
-                      <span className="font-semibold text-gray-900">{totalPrice / 100} kr</span>
+                      <span className="text-gray-600 dark:text-gray-200">Delsumma:</span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">{totalPrice / 100} kr</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Serviceavgift:</span>
-                      <span className="font-semibold text-gray-900">5 kr</span>
+                      <span className="text-gray-600 dark:text-gray-200">Serviceavgift:</span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">5 kr</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600">Frakt:</span>
-                      <span className="font-semibold text-gray-900">Väljs i kassan</span>
+                      <span className="text-gray-600 dark:text-gray-200">Frakt:</span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100">Väljs i kassan</span>
                     </div>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-lg font-bold text-gray-900">Totalt (exkl. frakt):</span>
-                    <span className="text-2xl font-bold text-gray-900">{(totalPrice + serviceFeeCents) / 100} kr</span>
+                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt (exkl. frakt):</span>
+                    <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{(totalPrice + serviceFeeCents) / 100} kr</span>
                   </div>
                 </div>
               </div>
@@ -358,20 +358,20 @@ export default function Checkout() {
       <Navbar />
       <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-8">Kassa</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Kassa</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2">
               <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Leveransuppgifter</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Leveransuppgifter</h2>
 
                 <div className="space-y-4">
                   <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
-                    <h3 className="text-base font-semibold text-gray-900">Leveranssätt</h3>
-                    <p className="text-sm text-gray-600 mt-1">Vi skickar endast inom Sverige.</p>
+                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Leveranssätt</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-200 mt-1">Vi skickar endast inom Sverige.</p>
                     <div className="mt-4 space-y-3">
-                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
+                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
                         <input
                           type="radio"
                           name="shippingMethod"
@@ -381,13 +381,13 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900">Upphämtning i Rinkeby Centrum (gratis)</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">Upphämtning i Rinkeby Centrum (gratis)</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-200">
                             Hämta upp din dator i Rinkeby Centrum efter att bygget är klart.
                           </p>
                         </div>
                       </label>
-                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 p-3">
+                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
                         <input
                           type="radio"
                           name="shippingMethod"
@@ -397,8 +397,8 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900">PostNord frakt (700 kr)</p>
-                          <p className="text-sm text-gray-600">
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">PostNord frakt (700 kr)</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-200">
                             Försäkrad och spårbar frakt. Leverans 1-3 vardagar efter att bygget är klart.
                           </p>
                         </div>
@@ -408,7 +408,7 @@ export default function Checkout() {
 
                   {requiresShipping && addresses.length > 0 && (
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                         {"Sparade adresser"}
                       </label>
                       <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -431,13 +431,13 @@ export default function Checkout() {
                           ))}
                         </select>
                         {loadingAddresses && (
-                          <span className="text-xs text-gray-500">Hämtar adresser...</span>
+                          <span className="text-xs text-gray-500 dark:text-gray-300">Hämtar adresser...</span>
                         )}
                       </div>
                     </div>
                   )}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-900 mb-2">
+                    <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       {"E-postadress"}
                     </label>
                     <input
@@ -458,7 +458,7 @@ export default function Checkout() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                         Förnamn
                       </label>
                       <input
@@ -476,7 +476,7 @@ export default function Checkout() {
                       {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                         {"Efternamn"}
                       </label>
                       <input
@@ -497,7 +497,7 @@ export default function Checkout() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 mb-2">
+                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                         {"Mobil nr"}
                       </label>
                       <input
@@ -515,14 +515,14 @@ export default function Checkout() {
                         }`}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
-                      <p className="text-xs text-gray-500 mt-1">Ex: 07x xxx xx xx</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">Ex: 07x xxx xx xx</p>
                     </div>
                   </div>
 
                   {requiresShipping && (
                     <>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-900 mb-2">
+                        <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                           {"Adress"}
                         </label>
                         <input
@@ -542,7 +542,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                             {"Postnummer"}
                           </label>
                           <input
@@ -562,7 +562,7 @@ export default function Checkout() {
                           {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                             {"Postort"}
                           </label>
                           <input
@@ -583,13 +583,13 @@ export default function Checkout() {
                       </div>
 
                       <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
-                        <h3 className="text-base font-semibold text-gray-900">Lägg till fraktinformation</h3>
-                        <p className="text-sm text-gray-600 mt-1">
+                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Lägg till fraktinformation</h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-200 mt-1">
                           Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
                         </p>
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">
+                            <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                               Portkod (valfritt)
                             </label>
                             <input
@@ -601,7 +601,7 @@ export default function Checkout() {
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-semibold text-gray-900 mb-2">
+                            <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                               Önskad leveranstid (valfritt)
                             </label>
                             <input
@@ -614,7 +614,7 @@ export default function Checkout() {
                           </div>
                         </div>
                         <div className="mt-4">
-                          <label className="block text-sm font-semibold text-gray-900 mb-2">
+                          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
                             Leveransinstruktioner (valfritt)
                           </label>
                           <textarea
@@ -634,7 +634,7 @@ export default function Checkout() {
             {/* Order Summary */}
             <div>
               <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800 lg:sticky lg:top-24">
-                <h2 className="text-xl font-bold text-gray-900 mb-6">Ordersammanfattning</h2>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Ordersammanfattning</h2>
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   {items.map((item) => {
@@ -651,7 +651,7 @@ export default function Checkout() {
                               decoding="async"
                             />
                           ) : null}
-                          <span className="text-gray-600 dark:text-gray-300 truncate">
+                          <span className="text-gray-600 dark:text-gray-200 truncate">
                             {item.product?.name} x{item.quantity}
                           </span>
                         </div>
@@ -663,28 +663,28 @@ export default function Checkout() {
                   })}
                 </div>
 
-                <div className="space-y-3 mb-6 pb-6 border-b border-gray-200">
+                <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Delsumma:</span>
-                    <span className="font-semibold text-gray-900">{totalPrice / 100} kr</span>
+                    <span className="text-gray-600 dark:text-gray-200">Delsumma:</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">{totalPrice / 100} kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Frakt:</span>
-                    <span className="font-semibold text-gray-900">Väljs i kassan</span>
+                    <span className="text-gray-600 dark:text-gray-200">Frakt:</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">Väljs i kassan</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Serviceavgift:</span>
-                    <span className="font-semibold text-gray-900">5 kr</span>
+                    <span className="text-gray-600 dark:text-gray-200">Serviceavgift:</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">5 kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Skatt:</span>
-                    <span className="font-semibold text-gray-900">Inkluderad</span>
+                    <span className="text-gray-600 dark:text-gray-200">Skatt:</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">Inkluderad</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between mb-6">
-                  <span className="text-lg font-bold text-gray-900">Totalt:</span>
-                  <span className="text-2xl font-bold text-gray-900">{totalWithFees / 100} kr</span>
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt:</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalWithFees / 100} kr</span>
                 </div>
 
                 <button
