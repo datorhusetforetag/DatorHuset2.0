@@ -3,14 +3,26 @@ import { Footer } from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
 import { Trash2, Plus, Minus } from "lucide-react";
+import { useEffect } from "react";
 import { COMPUTERS } from "@/data/computers";
 import { resolveProductImage } from "@/lib/productImageResolver";
+import { trackEvent } from "@/lib/analytics";
 
 export default function Cart() {
   const { items, loading, removeFromCart, updateQuantity, totalPrice } = useCart();
   const navigate = useNavigate();
   const serviceFeeCents = 500;
   const totalWithService = totalPrice + serviceFeeCents;
+
+  useEffect(() => {
+    void trackEvent({
+      event: "cart_viewed",
+      properties: {
+        itemCount: items.length,
+        totalCents: totalPrice,
+      },
+    });
+  }, [items.length, totalPrice]);
 
   if (loading) {
     return (
@@ -142,7 +154,7 @@ export default function Cart() {
                   </div>
                   <div className="flex items-start justify-between gap-4">
                     <span className="text-gray-600 dark:text-gray-300">Frakt:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100 text-right max-w-[16rem]">Väljs i kassan (0 kr upphämtning / 700 kr PostNord)</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100 text-right max-w-[16rem]">Väljs i kassan</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-300">Serviceavgift:</span>
@@ -160,7 +172,16 @@ export default function Cart() {
                 </div>
 
                 <button
-                  onClick={() => navigate("/checkout")}
+                  onClick={() => {
+                    void trackEvent({
+                      event: "checkout_click_from_cart",
+                      properties: {
+                        itemCount: items.length,
+                        totalCents: totalWithService,
+                      },
+                    });
+                    navigate("/checkout");
+                  }}
                   className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white transition-colors mb-3"
                 >
                   Gå till kassa
