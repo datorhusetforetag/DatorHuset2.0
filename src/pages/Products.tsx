@@ -1077,6 +1077,7 @@ export default function Products() {
                     )
                   );
                   const primaryCardImage = cardImageCandidates[0] || FALLBACK_IMAGE;
+                  const useContainImageFit = primaryCardImage.includes("/products/newpc/cg530");
 
                   const detailPath = useUsedVariant
                     ? `/computer/${computer.id}?variant=used`
@@ -1089,7 +1090,7 @@ export default function Products() {
                           <img
                             src={primaryCardImage}
                             alt={displayName}
-                            className="w-full h-full object-cover"
+                            className={`w-full h-full ${useContainImageFit ? "object-contain p-2 sm:p-3" : "object-cover"}`}
                             loading="lazy"
                             decoding="async"
                             data-image-index="0"

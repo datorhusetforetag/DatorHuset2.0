@@ -781,6 +781,9 @@ export default function ComputerDetails() {
   const comparisonItems = [computer, ...comparisonPool];
   const hasMultipleImages = detailImageCandidates.length > 1;
   const resolvedImage = detailImageCandidates[selectedImage] || detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
+  const shouldContainImage = (imagePath?: string | null) =>
+    Boolean(imagePath && imagePath.includes("/products/newpc/cg530"));
+  const mainImageContain = shouldContainImage(resolvedImage);
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -811,7 +814,7 @@ export default function ComputerDetails() {
               <img
                 src={resolvedImage}
                 alt={displayName}
-                className="w-full h-full object-cover"
+                className={`w-full h-full ${mainImageContain ? "object-contain p-2 sm:p-3" : "object-cover"}`}
                 loading="eager"
                 decoding="async"
                 draggable={false}
@@ -861,7 +864,7 @@ export default function ComputerDetails() {
                   <img
                     src={img}
                     alt={`${displayName} vy ${i + 1}`}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full ${shouldContainImage(img) ? "object-contain p-1" : "object-cover"}`}
                     loading="lazy"
                     decoding="async"
                     onError={(e) => {
@@ -1172,7 +1175,7 @@ export default function ComputerDetails() {
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full ${shouldContainImage(item.image) ? "object-contain p-1" : "object-cover"}`}
                     loading="lazy"
                     decoding="async"
                   />
@@ -1233,7 +1236,7 @@ export default function ComputerDetails() {
                   <img
                     src={related.image}
                     alt={related.name}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full ${shouldContainImage(related.image) ? "object-contain p-1" : "object-cover"}`}
                     loading="lazy"
                     decoding="async"
                   />

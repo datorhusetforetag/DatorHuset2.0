@@ -120,12 +120,12 @@ export const COMPUTERS: Computer[] = [
     tier: "Platina",
     rating: 4.6,
     reviews: 0,
-    image: "/products/newpc/cg530_new3.jpg",
+    image: "/products/newpc/cg530_new.png",
     images: [
+      "/products/newpc/cg530_new.png",
       "/products/newpc/cg530_new3.jpg",
       "/products/newpc/cg530_new2.jpg",
       "/products/newpc/cg530_new4.jpg",
-      "/products/newpc/cg530_new.png",
     ],
   },
   {
@@ -140,12 +140,12 @@ export const COMPUTERS: Computer[] = [
     tier: "Platina",
     rating: 4.7,
     reviews: 0,
-    image: "/products/newpc/cg530_new2.jpg",
+    image: "/products/newpc/cg530_new.png",
     images: [
+      "/products/newpc/cg530_new.png",
       "/products/newpc/cg530_new2.jpg",
       "/products/newpc/cg530_new3.jpg",
       "/products/newpc/cg530_new4.jpg",
-      "/products/newpc/cg530_new.png",
     ],
     usedVariant: {
       price: 22600,
