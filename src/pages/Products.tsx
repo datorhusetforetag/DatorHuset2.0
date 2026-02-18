@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
+import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import { getAllInventory } from "@/lib/supabaseServices";
 
 const FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
@@ -1068,6 +1069,14 @@ export default function Products() {
                       : null;
 
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
+                  const cardImageCandidates = Array.from(
+                    new Set(
+                      [computer.image, ...(computer.images || []), FALLBACK_IMAGE]
+                        .map((path) => normalizeProductImagePath(path) || "")
+                        .filter(Boolean)
+                    )
+                  );
+                  const primaryCardImage = cardImageCandidates[0] || FALLBACK_IMAGE;
 
                   const detailPath = useUsedVariant
                     ? `/computer/${computer.id}?variant=used`
@@ -1078,12 +1087,20 @@ export default function Products() {
                       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
                         <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
                           <img
-                            src={computer.image}
+                            src={primaryCardImage}
                             alt={displayName}
                             className="w-full h-full object-cover"
                             loading="lazy"
                             decoding="async"
+                            data-image-index="0"
                             onError={(e) => {
+                              const currentIndex = Number(e.currentTarget.dataset.imageIndex || "0");
+                              const nextIndex = currentIndex + 1;
+                              if (nextIndex < cardImageCandidates.length) {
+                                e.currentTarget.src = cardImageCandidates[nextIndex];
+                                e.currentTarget.dataset.imageIndex = String(nextIndex);
+                                return;
+                              }
                               e.currentTarget.src = FALLBACK_IMAGE;
                             }}
                           />

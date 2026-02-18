@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
+import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import { checkStock } from "@/lib/supabaseServices";
 import fortniteImage from "../../images/fortnite.jpg";
 import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
@@ -117,6 +118,7 @@ const DEFAULT_PRODUCT_INFO = [
       "Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.",
   },
 ];
+const DETAIL_FALLBACK_IMAGE = "/products/newpc/allblack-main.jpg";
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
@@ -298,7 +300,25 @@ export default function ComputerDetails() {
     : null;
   const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 
-  const images = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
+  const images = useMemo(() => {
+    const rawImages = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
+    return Array.from(
+      new Set(
+        rawImages
+          .map((image) => normalizeProductImagePath(image) || "")
+          .filter(Boolean)
+      )
+    );
+  }, [computer]);
+  const detailImageCandidates = useMemo(
+    () =>
+      Array.from(
+        new Set(
+          [...images, normalizeProductImagePath(computer?.image) || "", DETAIL_FALLBACK_IMAGE].filter(Boolean)
+        )
+      ),
+    [computer?.image, images]
+  );
 
   useEffect(() => {
     if (!baseProductId || !computer?.usedVariant) {
@@ -640,7 +660,7 @@ export default function ComputerDetails() {
   }, [inventoryStatus]);
   const structuredData = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.site";
-    const imageUrls = (images.length ? images : [computer.image]).map((img) =>
+    const imageUrls = (detailImageCandidates.length ? detailImageCandidates : [computer.image]).map((img) =>
       img.startsWith("http") ? img : new URL(img, baseUrl).toString()
     );
     const productSchema = {
@@ -706,7 +726,7 @@ export default function ComputerDetails() {
       "@context": "https://schema.org",
       "@graph": [productSchema, breadcrumbSchema],
     };
-  }, [availability.schema, computer, displayName, displayPrice, displaySpecs, images, reviewData]);
+  }, [availability.schema, computer, detailImageCandidates, displayName, displayPrice, displaySpecs, reviewData]);
 
   const renderStars = (rating: number) => (
     <div className="flex items-center gap-1">
@@ -759,8 +779,8 @@ export default function ComputerDetails() {
     : [...sameTier, ...comparisonCandidates.filter((c) => c.tier !== computer.tier)]
   ).slice(0, 2);
   const comparisonItems = [computer, ...comparisonPool];
-  const hasMultipleImages = images.length > 1;
-  const resolvedImage = images[selectedImage] || computer.image;
+  const hasMultipleImages = detailImageCandidates.length > 1;
+  const resolvedImage = detailImageCandidates[selectedImage] || detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -788,30 +808,32 @@ export default function ComputerDetails() {
               <div className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 shadow-sm backdrop-blur dark:bg-black/70 dark:text-gray-100">
                 Ungefärligt hur bygget ska se ut som
               </div>
-              {hasMultipleImages ? (
-                <img
-                  src={resolvedImage}
-                  alt={displayName}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                  decoding="async"
-                  draggable={false}
-                />
-              ) : (
-                <img
-                  src={resolvedImage}
-                  alt={displayName}
-                  className="w-full h-full object-cover"
-                  loading="eager"
-                  decoding="async"
-                  draggable={false}
-                />
-              )}
+              <img
+                src={resolvedImage}
+                alt={displayName}
+                className="w-full h-full object-cover"
+                loading="eager"
+                decoding="async"
+                draggable={false}
+                data-image-index={String(selectedImage)}
+                onError={(e) => {
+                  const currentIndex = Number(e.currentTarget.dataset.imageIndex || "0");
+                  const nextIndex = currentIndex + 1;
+                  if (nextIndex < detailImageCandidates.length) {
+                    setSelectedImage(nextIndex);
+                    e.currentTarget.dataset.imageIndex = String(nextIndex);
+                    return;
+                  }
+                  e.currentTarget.src = DETAIL_FALLBACK_IMAGE;
+                }}
+              />
               {hasMultipleImages && (
                 <>
                   <button
                     onClick={() =>
-                      setSelectedImage((prev) => (prev - 1 + images.length) % images.length)
+                      setSelectedImage(
+                        (prev) => (prev - 1 + detailImageCandidates.length) % detailImageCandidates.length
+                      )
                     }
                     className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
                     aria-label="Föregående bild"
@@ -819,7 +841,7 @@ export default function ComputerDetails() {
                     <ChevronLeft className="w-5 h-5 mx-auto" />
                   </button>
                   <button
-                    onClick={() => setSelectedImage((prev) => (prev + 1) % images.length)}
+                    onClick={() => setSelectedImage((prev) => (prev + 1) % detailImageCandidates.length)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
                     aria-label="Nästa bild"
                   >
@@ -829,7 +851,7 @@ export default function ComputerDetails() {
               )}
             </div>
             <div className="flex gap-3 justify-center flex-wrap">
-              {images.map((img, i) => (
+              {detailImageCandidates.map((img, i) => (
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
@@ -842,6 +864,9 @@ export default function ComputerDetails() {
                     className="w-full h-full object-cover"
                     loading="lazy"
                     decoding="async"
+                    onError={(e) => {
+                      e.currentTarget.src = DETAIL_FALLBACK_IMAGE;
+                    }}
                   />
                 </button>
               ))}

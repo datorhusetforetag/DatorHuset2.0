@@ -10,6 +10,18 @@ type ProductLike = {
   imageUrl?: string | null;
 };
 
+const LEGACY_IMAGE_PATH_MAP: Record<string, string> = {
+  "/products/newpc/cg530-1.jpg": "/products/newpc/cg530_new2.jpg",
+  "/products/newpc/cg530-2.jpg": "/products/newpc/cg530_new3.jpg",
+  "/products/newpc/cg530-3.jpg": "/products/newpc/cg530_new4.jpg",
+};
+
+export const normalizeProductImagePath = (value?: string | null) => {
+  if (!value) return null;
+  const trimmed = value.trim();
+  return LEGACY_IMAGE_PATH_MAP[trimmed] || trimmed;
+};
+
 const normalize = (value: string | number | null | undefined) => {
   if (value === null || value === undefined) return "";
   return String(value)
@@ -26,7 +38,7 @@ const imageByKey = new Map<string, string>();
 const addImageKey = (key: string | number | null | undefined, image: string) => {
   const normalized = normalize(key);
   if (!normalized) return;
-  imageByKey.set(normalized, image);
+  imageByKey.set(normalized, normalizeProductImagePath(image) || image);
 };
 
 COMPUTERS.forEach((computer) => {
@@ -50,12 +62,18 @@ const getCanonicalImage = (product?: ProductLike | null) => {
 };
 
 export const resolveProductImage = (product?: ProductLike | null, fallbackImage?: string | null) => {
+  const canonical = getCanonicalImage(product);
+  const normalizedFallback = normalizeProductImagePath(fallbackImage);
+  const normalizedImageUrl = normalizeProductImagePath(product?.image_url);
+  const normalizedImage = normalizeProductImagePath(product?.image);
+  const normalizedImageAlt = normalizeProductImagePath(product?.imageUrl);
+
   return (
-    getCanonicalImage(product) ||
-    fallbackImage ||
-    product?.image_url ||
-    product?.image ||
-    product?.imageUrl ||
+    canonical ||
+    normalizedFallback ||
+    normalizedImageUrl ||
+    normalizedImage ||
+    normalizedImageAlt ||
     null
   );
 };
