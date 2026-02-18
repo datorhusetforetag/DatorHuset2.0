@@ -1,14 +1,12 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { Boxes, ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck, Wrench } from "lucide-react";
+import { ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck } from "lucide-react";
 import { useAdminAccess } from "./useAdminAccess";
 
 const navItems = [
-  { to: "/lager", label: "Lager", icon: Boxes },
-  { to: "/produkter", label: "Produkt-UI", icon: LayoutGrid },
-  { to: "/bestallningar", label: "BestAllningar", icon: ClipboardList },
-  { to: "/bygg", label: "Byggstatus", icon: Wrench },
-  { to: "/logs", label: "Logs", icon: ScrollText },
+  { to: "/produkter", label: "Produkter & Lager", icon: LayoutGrid },
+  { to: "/bestallningar", label: "Beställningar", icon: ClipboardList },
+  { to: "/logs", label: "Loggar", icon: ScrollText },
 ];
 
 export const AdminLayout = () => {
@@ -114,11 +112,7 @@ export const AdminLayout = () => {
                 <img src="/datorhuset.jpg" alt="DatorHuset" className="h-9 w-9 rounded-full border border-slate-700/60" />
                 <span className="text-sm font-semibold">Adminportal</span>
               </div>
-              <button
-                type="button"
-                onClick={() => setNavOpen(false)}
-                className="text-slate-400 hover:text-white"
-              >
+              <button type="button" onClick={() => setNavOpen(false)} className="text-slate-400 hover:text-white">
                 Stäng
               </button>
             </div>

@@ -208,53 +208,106 @@ const FPS_REPORT_PROFILES: Record<string, FpsReportProfile> = {
   },
 };
 
+const DLSS_FSR_MODE_SET = new Set(["quality", "balanced", "performance"]);
+
+const sanitizeFpsLabel = (value: unknown, maxLength = 80) => {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+};
+
+const clampFpsValue = (value: unknown, fallback = 0) => {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return Math.max(0, Math.round(fallback));
+  return Math.max(0, Math.round(parsed));
+};
+
+const normalizeDlssFsrMode = (value: unknown, enabled: boolean) => {
+  if (!enabled) return null;
+  const normalized = sanitizeFpsLabel(value, 24).toLowerCase();
+  if (DLSS_FSR_MODE_SET.has(normalized)) return normalized;
+  return "balanced";
+};
+
+const buildDefaultFpsSettings = () => {
+  const entries: any[] = [];
+  Object.entries(DEFAULT_FPS_MAP).forEach(([game, data]: any) => {
+    const supportsDlssFsr = Boolean(data?.supports?.dlss);
+    const supportsFrameGeneration = Boolean(data?.supports?.frameGen);
+    Object.entries(data?.base || {}).forEach(([resolution, graphicsMap]: any) => {
+      Object.entries(graphicsMap || {}).forEach(([graphics, fps]: any) => {
+        entries.push({
+          game,
+          resolution,
+          graphics,
+          baseFps: clampFpsValue(fps, 60),
+          supportsDlssFsr,
+          dlssFsrMode: supportsDlssFsr ? "balanced" : null,
+          supportsFrameGeneration,
+        });
+      });
+    });
+  });
+  return { version: 2, entries };
+};
+
 const buildFpsSettingsFromReportProfile = (profile: FpsReportProfile) => {
-  const games: Record<string, any> = {};
+  const entries: any[] = [];
   const resolutions = ["1080p", "1440p", "4K"];
   const rtPreset = "Ultra + Raytracing/Pathtracing";
 
   Object.entries(profile).forEach(([game, row]) => {
-    const supports = {
-      dlss: row.rt?.mode === "dlss" || row.rt?.mode === "dlssFrameGen",
-      frameGen: row.rt?.mode === "dlssFrameGen",
-      rayTracing: Boolean(row.rt),
-    };
-    const gameResolutions: Record<string, any> = {
-      "1080p": {
-        High: { base: { min: row.high1080, max: row.high1080 } },
-      },
-      "1440p": {
-        Ultra: { base: { min: row.ultra1440, max: row.ultra1440 } },
-      },
-      "4K": {
-        Ultra: { base: { min: row.ultra4k, max: row.ultra4k } },
-      },
-    };
+    const supportsDlssFsr = row.rt?.mode === "dlss" || row.rt?.mode === "dlssFrameGen";
+    const supportsFrameGeneration = row.rt?.mode === "dlssFrameGen";
+    const dlssFsrMode = supportsDlssFsr
+      ? row.rt?.mode === "dlssFrameGen"
+        ? "performance"
+        : "balanced"
+      : null;
+
+    entries.push({
+      game,
+      resolution: "1080p",
+      graphics: "High",
+      baseFps: clampFpsValue(row.high1080, 0),
+      supportsDlssFsr,
+      dlssFsrMode,
+      supportsFrameGeneration,
+    });
+    entries.push({
+      game,
+      resolution: "1440p",
+      graphics: "Ultra",
+      baseFps: clampFpsValue(row.ultra1440, 0),
+      supportsDlssFsr,
+      dlssFsrMode,
+      supportsFrameGeneration,
+    });
+    entries.push({
+      game,
+      resolution: "4K",
+      graphics: "Ultra",
+      baseFps: clampFpsValue(row.ultra4k, 0),
+      supportsDlssFsr,
+      dlssFsrMode,
+      supportsFrameGeneration,
+    });
+
     if (row.rt) {
-      resolutions.forEach((res) => {
-        const rtRange = { min: row.rt!.fps, max: row.rt!.fps };
-        const rtData: Record<string, any> = { base: { ...rtRange } };
-        if (row.rt?.mode === "dlss") {
-          rtData.dlss = { ...rtRange };
-        } else if (row.rt?.mode === "dlssFrameGen") {
-          rtData.dlss = { ...rtRange };
-          rtData.frameGen = { ...rtRange };
-          rtData.dlssFrameGen = { ...rtRange };
-        }
-        gameResolutions[res][rtPreset] = rtData;
+      resolutions.forEach((resolution) => {
+        entries.push({
+          game,
+          resolution,
+          graphics: rtPreset,
+          baseFps: clampFpsValue(row.rt?.fps, 0),
+          supportsDlssFsr,
+          dlssFsrMode,
+          supportsFrameGeneration,
+        });
       });
     }
-    games[game] = {
-      supports,
-      visibility: {
-        resolutions: { "1080p": true, "1440p": true, "4K": true },
-        presets: { High: true, Ultra: true, [rtPreset]: Boolean(row.rt) },
-      },
-      resolutions: gameResolutions,
-    };
   });
 
-  return { games };
+  return { version: 2, entries };
 };
 
 const normalizeFpsProfileName = (value: string) =>
@@ -289,96 +342,89 @@ const buildReportedFpsSettingsForProductName = (productName: string) => {
   return profile ? buildFpsSettingsFromReportProfile(profile) : null;
 };
 
-const buildDefaultFpsSettings = () => {
-  const games: Record<string, any> = {};
-  Object.entries(DEFAULT_FPS_MAP).forEach(([game, data]: any) => {
-    const resolutions: Record<string, any> = {};
-    const resolutionVisibility: Record<string, boolean> = {};
-    const presetVisibility: Record<string, boolean> = {};
-    Object.entries(data.base).forEach(([res, presets]: any) => {
-      const presetEntries: Record<string, any> = {};
-      resolutionVisibility[res] = true;
-      Object.entries(presets).forEach(([preset, fps]: any) => {
-        presetVisibility[preset] = true;
-        const min = Math.max(1, Math.round(fps * 0.9));
-        const max = Math.max(min + 1, Math.round(fps * 1.1));
-        presetEntries[preset] = { base: { min, max } };
+const normalizeLegacyFpsSettings = (input: any) => {
+  const entries: any[] = [];
+  const games = input?.games && typeof input.games === "object" ? input.games : {};
+  Object.entries(games).forEach(([game, gameSettings]: any) => {
+    const supportsDlssFsr = Boolean(gameSettings?.supports?.dlss);
+    const supportsFrameGeneration = Boolean(gameSettings?.supports?.frameGen);
+    const dlssFsrMode = supportsDlssFsr ? "balanced" : null;
+    const resolutions =
+      gameSettings?.resolutions && typeof gameSettings.resolutions === "object"
+        ? gameSettings.resolutions
+        : {};
+    Object.entries(resolutions).forEach(([resolution, graphicsMap]: any) => {
+      Object.entries(graphicsMap || {}).forEach(([graphics, presetData]: any) => {
+        const firstRange =
+          presetData?.base ||
+          presetData?.dlssFrameGen ||
+          presetData?.dlss ||
+          presetData?.frameGen ||
+          null;
+        const min = Number(firstRange?.min);
+        const max = Number(firstRange?.max);
+        const baseFps =
+          Number.isFinite(min) && Number.isFinite(max) ? Math.max(0, Math.round((min + max) / 2)) : 0;
+        entries.push({
+          game,
+          resolution,
+          graphics,
+          baseFps,
+          supportsDlssFsr,
+          dlssFsrMode,
+          supportsFrameGeneration,
+        });
       });
-      resolutions[res] = presetEntries;
     });
-    games[game] = {
-      supports: data.supports,
-      visibility: { resolutions: resolutionVisibility, presets: presetVisibility },
-      resolutions,
-    };
   });
-  return { games };
+  return entries;
+};
+
+const sanitizeFpsEntries = (entries: any[]) => {
+  if (!Array.isArray(entries)) return [];
+  const deduped = new Map<string, any>();
+  entries.forEach((entry) => {
+    const game = sanitizeFpsLabel(entry?.game, 80);
+    const resolution = sanitizeFpsLabel(entry?.resolution, 40);
+    const graphics = sanitizeFpsLabel(entry?.graphics, 80);
+    if (!game || !resolution || !graphics) return;
+    const supportsDlssFsr = Boolean(entry?.supportsDlssFsr);
+    const supportsFrameGeneration = Boolean(entry?.supportsFrameGeneration);
+    const dlssFsrMode = normalizeDlssFsrMode(entry?.dlssFsrMode, supportsDlssFsr);
+    const key = `${game.toLowerCase()}::${resolution.toLowerCase()}::${graphics.toLowerCase()}`;
+    deduped.set(key, {
+      game,
+      resolution,
+      graphics,
+      baseFps: clampFpsValue(entry?.baseFps, 0),
+      supportsDlssFsr,
+      dlssFsrMode,
+      supportsFrameGeneration,
+    });
+  });
+  return Array.from(deduped.values());
 };
 
 const sanitizeFpsSettings = (input: any, fallbackInput?: any) => {
   const fallback =
-    fallbackInput && typeof fallbackInput === "object" && fallbackInput.games
+    fallbackInput && typeof fallbackInput === "object" && Array.isArray(fallbackInput.entries)
       ? fallbackInput
       : buildDefaultFpsSettings();
+  const fallbackEntries = sanitizeFpsEntries(fallback.entries || []);
   if (!input || typeof input !== "object") {
-    return fallback;
+    return { version: 2, entries: fallbackEntries };
   }
-  const output: any = { games: {} };
-  const games = input.games && typeof input.games === "object" ? input.games : {};
-  Object.keys(fallback.games).forEach((game) => {
-    const fallbackGame = fallback.games[game];
-    const sourceGame = games[game] || {};
-    const supports = sourceGame.supports || fallbackGame.supports;
-    const sourceVisibility =
-      sourceGame.visibility && typeof sourceGame.visibility === "object" ? sourceGame.visibility : {};
-    const sourceResolutionVisibility =
-      sourceVisibility.resolutions && typeof sourceVisibility.resolutions === "object"
-        ? sourceVisibility.resolutions
-        : {};
-    const sourcePresetVisibility =
-      sourceVisibility.presets && typeof sourceVisibility.presets === "object"
-        ? sourceVisibility.presets
-        : {};
-    const safeSupports = {
-      dlss: Boolean(supports?.dlss),
-      frameGen: Boolean(supports?.frameGen),
-      rayTracing: Boolean(supports?.rayTracing),
-    };
-    const safeVisibility = {
-      resolutions: {} as Record<string, boolean>,
-      presets: {} as Record<string, boolean>,
-    };
-    const resolutions: any = {};
-    const sourceResolutions = sourceGame.resolutions || {};
-    Object.keys(fallbackGame.resolutions).forEach((res) => {
-      safeVisibility.resolutions[res] =
-        typeof sourceResolutionVisibility[res] === "boolean" ? sourceResolutionVisibility[res] : true;
-      const presetOutput: any = {};
-      const sourcePresets = sourceResolutions[res] || {};
-      Object.keys(fallbackGame.resolutions[res]).forEach((preset) => {
-        if (safeVisibility.presets[preset] === undefined) {
-          safeVisibility.presets[preset] =
-            typeof sourcePresetVisibility[preset] === "boolean" ? sourcePresetVisibility[preset] : true;
-        }
-        const presetSource = sourcePresets[preset] || {};
-        const safePreset: any = {};
-        Object.entries(presetSource).forEach(([key, range]: any) => {
-          const min = Number(range?.min);
-          const max = Number(range?.max);
-          if (Number.isFinite(min) && Number.isFinite(max) && min >= 0 && max >= min) {
-            safePreset[key] = { min, max };
-          }
-        });
-        if (!safePreset.base) {
-          safePreset.base = fallbackGame.resolutions[res][preset].base;
-        }
-        presetOutput[preset] = safePreset;
-      });
-      resolutions[res] = presetOutput;
-    });
-    output.games[game] = { supports: safeSupports, visibility: safeVisibility, resolutions };
-  });
-  return output;
+
+  let entries = sanitizeFpsEntries(input.entries);
+  if (entries.length === 0 && input.games && typeof input.games === "object") {
+    entries = sanitizeFpsEntries(normalizeLegacyFpsSettings(input));
+  }
+
+  if (entries.length === 0) {
+    entries = fallbackEntries;
+  }
+
+  return { version: 2, entries };
 };
 
 const parseUsedVariantSetting = (value: unknown, fallback = true) => {
@@ -2200,7 +2246,7 @@ export async function getAdminProducts(req: any, res: any) {
     const { data, error } = await supabase
       .from("products")
       .select(
-        "id, name, slug, legacy_id, description, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, dlss_multiplier, frame_gen_multiplier"
+        "id, name, slug, legacy_id, description, price_cents, currency, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, rating, reviews_count, dlss_multiplier, frame_gen_multiplier"
       )
       .order("name", { ascending: true });
 
@@ -2211,6 +2257,122 @@ export async function getAdminProducts(req: any, res: any) {
     res.json(data || []);
   } catch (error) {
     console.error("Admin products error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: create product listing
+ * POST /api/admin/products
+ */
+export async function createAdminProduct(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const name = sanitizeText(req.body?.name, 120);
+    const description = sanitizeText(req.body?.description, 1000);
+    const cpu = sanitizeText(req.body?.cpu, 120);
+    const gpu = sanitizeText(req.body?.gpu, 120);
+    const ram = sanitizeText(req.body?.ram, 120);
+    const storage = sanitizeText(req.body?.storage, 120);
+    const storageType = sanitizeText(req.body?.storage_type, 40);
+    const tier = sanitizeText(req.body?.tier, 40);
+    const motherboard = sanitizeText(req.body?.motherboard, 120);
+    const psu = sanitizeText(req.body?.psu, 120);
+    const caseName = sanitizeText(req.body?.case_name, 120);
+    const cpuCooler = sanitizeText(req.body?.cpu_cooler, 120);
+    const os = sanitizeText(req.body?.os, 80);
+    const legacyId = sanitizeText(req.body?.legacy_id, 80);
+    const currency = sanitizeText(req.body?.currency, 8).toUpperCase() || "SEK";
+    const priceCents = Math.max(0, Math.round(Number(req.body?.price_cents ?? 0)));
+    const rating = Number.isFinite(Number(req.body?.rating)) ? Number(req.body.rating) : 4.5;
+    const reviewsCount = Number.isFinite(Number(req.body?.reviews_count))
+      ? Math.max(0, Math.round(Number(req.body.reviews_count)))
+      : 0;
+
+    if (!name) {
+      return res.status(400).json({ error: "Missing product name" });
+    }
+    if (!cpu || !gpu || !ram || !storage || !storageType || !tier) {
+      return res.status(400).json({ error: "Missing required product fields" });
+    }
+
+    const slugify = (value: string) =>
+      String(value || "")
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 80);
+    const baseSlug = slugify(req.body?.slug || name) || `produkt-${Date.now()}`;
+    let slug = baseSlug;
+    for (let i = 0; i < 12; i += 1) {
+      const { data: existing, error: slugError } = await supabase
+        .from("products")
+        .select("id")
+        .eq("slug", slug)
+        .maybeSingle();
+      if (slugError) {
+        return res.status(500).json({ error: "Failed to validate slug uniqueness" });
+      }
+      if (!existing) break;
+      slug = `${baseSlug}-${i + 2}`.slice(0, 80);
+    }
+
+    const payload: Record<string, any> = {
+      name,
+      slug,
+      legacy_id: legacyId || null,
+      description: description || null,
+      price_cents: priceCents,
+      currency,
+      cpu,
+      gpu,
+      ram,
+      storage,
+      storage_type: storageType,
+      tier,
+      motherboard: motherboard || null,
+      psu: psu || null,
+      case_name: caseName || null,
+      cpu_cooler: cpuCooler || null,
+      os: os || null,
+      rating: Math.max(0, Math.min(5, rating)),
+      reviews_count: reviewsCount,
+      updated_at: new Date(),
+    };
+
+    const { data, error } = await supabase.from("products").insert([payload]).select().single();
+
+    if (error || !data) {
+      console.error("Product create failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to create product" });
+    }
+
+    await logAdminAction(req, user, "product_create", "product", data.id, {
+      name,
+      slug,
+      tier,
+      price_cents: priceCents,
+    });
+
+    return res.status(201).json(data);
+  } catch (error) {
+    console.error("Admin product create error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
@@ -2238,6 +2400,8 @@ export async function updateAdminProduct(req: any, res: any) {
 
     const { productId } = req.params;
     const name = sanitizeText(req.body?.name, 120);
+    const slug = sanitizeText(req.body?.slug, 80);
+    const legacyId = sanitizeText(req.body?.legacy_id, 80);
     const description = sanitizeText(req.body?.description, 1000);
     const cpu = sanitizeText(req.body?.cpu, 120);
     const gpu = sanitizeText(req.body?.gpu, 120);
@@ -2262,6 +2426,8 @@ export async function updateAdminProduct(req: any, res: any) {
 
     const payload: Record<string, any> = {
       name,
+      slug: slug || undefined,
+      legacy_id: legacyId || null,
       description: description || null,
       cpu,
       gpu,
@@ -2278,6 +2444,9 @@ export async function updateAdminProduct(req: any, res: any) {
       frame_gen_multiplier: frameGenMultiplier,
       updated_at: new Date(),
     };
+    if (!slug) {
+      delete payload.slug;
+    }
 
     const { data, error } = await supabase.from("products").update(payload).eq("id", productId).select().single();
 
@@ -2288,6 +2457,8 @@ export async function updateAdminProduct(req: any, res: any) {
 
     await logAdminAction(req, user, "product_update", "product", productId, {
       name,
+      slug: slug || null,
+      legacy_id: legacyId || null,
       cpu,
       gpu,
       ram,

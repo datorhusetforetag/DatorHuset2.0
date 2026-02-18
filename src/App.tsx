@@ -27,9 +27,7 @@ const ServiceRepair = lazy(() => import("./pages/ServiceRepair.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
-const AdminInventory = lazy(() => import("./admin/pages/AdminInventory.tsx"));
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
-const AdminBuild = lazy(() => import("./admin/pages/AdminBuild.tsx"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
 const queryClient = new QueryClient();
@@ -53,11 +51,11 @@ const App = () => (
               {isAdminApp ? (
                 <>
                   <Route path="/" element={<AdminLayout />}>
-                    <Route index element={<AdminInventory />} />
-                    <Route path="lager" element={<AdminInventory />} />
+                    <Route index element={<AdminProducts />} />
+                    <Route path="lager" element={<AdminProducts />} />
                     <Route path="produkter" element={<AdminProducts />} />
                     <Route path="bestallningar" element={<AdminOrders />} />
-                    <Route path="bygg" element={<AdminBuild />} />
+                    <Route path="bygg" element={<AdminOrders />} />
                     <Route path="logs" element={<AdminLogs />} />
                   </Route>
                   <Route path="*" element={<AdminNotFound />} />

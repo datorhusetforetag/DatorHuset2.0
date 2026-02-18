@@ -8,6 +8,15 @@ import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
+import {
+  buildDefaultFpsSandboxSettings,
+  computeSandboxFps,
+  findSandboxEntry,
+  getSandboxGames,
+  getSandboxGraphics,
+  getSandboxResolutions,
+  normalizeFpsSandboxSettings,
+} from "@/lib/fpsSandbox";
 import { checkStock } from "@/lib/supabaseServices";
 import fortniteImage from "../../images/fortnite.jpg";
 import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
@@ -16,86 +25,6 @@ import minecraftImage from "../../images/minecraft.jpg";
 import cs2Image from "../../images/cs2.jpg";
 import ghostImage from "../../images/Ghost Of Tsushima.jpg";
 
-const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
-  Fortnite: {
-    "1080p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 95 },
-    "1440p": { High: 120, Ultra: 120, "Ultra + Raytracing/Pathtracing": 95 },
-    "4K": { High: 70, Ultra: 70, "Ultra + Raytracing/Pathtracing": 95 },
-  },
-  "Cyberpunk 2077": {
-    "1080p": { High: 90, Ultra: 90, "Ultra + Raytracing/Pathtracing": 65 },
-    "1440p": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 65 },
-    "4K": { High: 35, Ultra: 35, "Ultra + Raytracing/Pathtracing": 65 },
-  },
-  "GTA 5": {
-    "1080p": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
-    "1440p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 110 },
-    "4K": { High: 65, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
-  },
-  Minecraft: {
-    "1080p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 80 },
-    "1440p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 80 },
-    "4K": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 80 },
-  },
-  CS2: {
-    "1080p": { High: 280, Ultra: 280, "Ultra + Raytracing/Pathtracing": 280 },
-    "1440p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 220 },
-    "4K": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
-  },
-  "Ghost of Tsushima": {
-    "1080p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
-    "1440p": { High: 75, Ultra: 75, "Ultra + Raytracing/Pathtracing": 70 },
-    "4K": { High: 45, Ultra: 45, "Ultra + Raytracing/Pathtracing": 70 },
-  },
-};
-
-const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
-  Fortnite: { dlss: true, frameGen: false },
-  "Cyberpunk 2077": { dlss: true, frameGen: true },
-  "GTA 5": { dlss: false, frameGen: false },
-  Minecraft: { dlss: false, frameGen: false },
-  CS2: { dlss: false, frameGen: false },
-  "Ghost of Tsushima": { dlss: true, frameGen: false },
-};
-const buildDefaultFpsSettings = () => {
-  const games: Record<string, any> = {};
-  Object.entries(DEFAULT_FPS_BASE).forEach(([game, resolutions]) => {
-    const resEntries: Record<string, any> = {};
-    const resolutionVisibility: Record<string, boolean> = {};
-    const presetVisibility: Record<string, boolean> = {};
-    Object.entries(resolutions).forEach(([res, presets]) => {
-      const presetEntries: Record<string, any> = {};
-      resolutionVisibility[res] = true;
-      Object.entries(presets).forEach(([preset, fps]) => {
-        presetVisibility[preset] = true;
-        const min = Math.max(1, Math.round(fps * 0.9));
-        const max = Math.max(min + 1, Math.round(fps * 1.1));
-        presetEntries[preset] = { base: { min, max } };
-      });
-      resEntries[res] = presetEntries;
-    });
-    games[game] = {
-      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true },
-      visibility: { resolutions: resolutionVisibility, presets: presetVisibility },
-      resolutions: resEntries,
-    };
-  });
-  return { games };
-};
-
-const getVisibleResolutions = (gameSettings?: any) => {
-  const all = Object.keys(gameSettings?.resolutions || {});
-  const visibility = gameSettings?.visibility?.resolutions || {};
-  const visible = all.filter((res) => visibility[res] !== false);
-  return visible;
-};
-
-const getVisiblePresets = (gameSettings: any, resolution: string) => {
-  const all = Object.keys(gameSettings?.resolutions?.[resolution] || {});
-  const visibility = gameSettings?.visibility?.presets || {};
-  const visible = all.filter((preset) => visibility[preset] !== false);
-  return visible;
-};
 const GAME_IMAGES: Record<string, string> = {
   Fortnite: fortniteImage,
   "Cyberpunk 2077": cyberpunkImage,
@@ -119,6 +48,12 @@ const DEFAULT_PRODUCT_INFO = [
   },
 ];
 const DETAIL_FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
+const DISABLED_FEATURE_TOOLTIP = "funktion ej implementerad i spelet";
+const DLSS_MODE_LABELS: Record<string, string> = {
+  quality: "Quality",
+  balanced: "Balanced",
+  performance: "Performance",
+};
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
@@ -278,11 +213,11 @@ export default function ComputerDetails() {
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
-  const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSettings());
-  const gameList = useMemo(() => Object.keys(fpsSettings.games || {}), [fpsSettings]);
-  const [selectedGame, setSelectedGame] = useState(gameList[0]);
-  const [selectedResolution, setSelectedResolution] = useState("1080p");
-  const [selectedPreset, setSelectedPreset] = useState("High");
+  const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSandboxSettings());
+  const gameList = useMemo(() => getSandboxGames(fpsSettings), [fpsSettings]);
+  const [selectedGame, setSelectedGame] = useState("");
+  const [selectedResolution, setSelectedResolution] = useState("");
+  const [selectedPreset, setSelectedPreset] = useState("");
   const [dlssOn, setDlssOn] = useState(false);
   const [frameGenOn, setFrameGenOn] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -441,8 +376,8 @@ export default function ComputerDetails() {
         const response = await fetch(`/api/fps-settings/${activeProductId}`);
         if (!response.ok) return;
         const data = await response.json();
-        if (isMounted && data?.fps?.games) {
-          setFpsSettings(data.fps);
+        if (isMounted && data?.fps) {
+          setFpsSettings(normalizeFpsSandboxSettings(data.fps));
         }
       } catch (error) {
         console.error("Failed to load FPS settings", error);
@@ -461,81 +396,57 @@ export default function ComputerDetails() {
     }
   }, [gameList, selectedGame]);
 
+  const visibleResolutions = useMemo(
+    () => (selectedGame ? getSandboxResolutions(fpsSettings, selectedGame) : []),
+    [fpsSettings, selectedGame]
+  );
+
   useEffect(() => {
-    const gameSettings = fpsSettings.games?.[selectedGame];
-    const resolutions = getVisibleResolutions(gameSettings);
-    if (!resolutions.length) {
+    if (!visibleResolutions.length) {
       if (selectedResolution !== "") {
         setSelectedResolution("");
       }
       return;
     }
-    if (!resolutions.includes(selectedResolution)) {
-      setSelectedResolution(resolutions[0]);
+    if (!visibleResolutions.includes(selectedResolution)) {
+      setSelectedResolution(visibleResolutions[0]);
     }
-  }, [fpsSettings, selectedGame, selectedResolution]);
+  }, [selectedResolution, visibleResolutions]);
+
+  const activeResolution = visibleResolutions.includes(selectedResolution)
+    ? selectedResolution
+    : visibleResolutions[0] || "";
+  const visiblePresets = useMemo(
+    () => (selectedGame && activeResolution ? getSandboxGraphics(fpsSettings, selectedGame, activeResolution) : []),
+    [activeResolution, fpsSettings, selectedGame]
+  );
 
   useEffect(() => {
-    const gameSettings = fpsSettings.games?.[selectedGame];
-    const presets = getVisiblePresets(gameSettings, selectedResolution);
-    if (!presets.length) {
+    if (!visiblePresets.length) {
       if (selectedPreset !== "") {
         setSelectedPreset("");
       }
       return;
     }
-    if (!presets.includes(selectedPreset)) {
-      setSelectedPreset(presets[0]);
+    if (!visiblePresets.includes(selectedPreset)) {
+      setSelectedPreset(visiblePresets[0]);
     }
-  }, [fpsSettings, selectedGame, selectedResolution, selectedPreset]);
+  }, [selectedPreset, visiblePresets]);
 
-  const gameSettings = fpsSettings.games?.[selectedGame];
-  const visibleResolutions = getVisibleResolutions(gameSettings);
-  const activeResolution = visibleResolutions.includes(selectedResolution)
-    ? selectedResolution
-    : visibleResolutions[0] || "";
-  const visiblePresets = getVisiblePresets(gameSettings, activeResolution);
   const activePreset = visiblePresets.includes(selectedPreset) ? selectedPreset : visiblePresets[0] || "";
-  const supports = gameSettings?.supports || {
-    dlss: true,
-    frameGen: true,
+  const activeFpsEntry = findSandboxEntry(fpsSettings, selectedGame, activeResolution, activePreset);
+  const supports = {
+    dlss: Boolean(activeFpsEntry?.supportsDlssFsr),
+    frameGen: Boolean(activeFpsEntry?.supportsFrameGeneration),
   };
   useEffect(() => {
     if (!supports.dlss && dlssOn) setDlssOn(false);
     if (!supports.frameGen && frameGenOn) setFrameGenOn(false);
   }, [supports, dlssOn, frameGenOn]);
-  const presetData = gameSettings?.resolutions?.[activeResolution]?.[activePreset];
-  const getModeKey = () => {
-    if (dlssOn && frameGenOn) return "dlssFrameGen";
-    if (dlssOn) return "dlss";
-    if (frameGenOn) return "frameGen";
-    return "base";
-  };
-  const resolveFpsRange = () => {
-    if (!presetData) {
-      return { min: 0, max: 0 };
-    }
-    const modeKey = getModeKey();
-    const candidates = [
-      presetData[modeKey],
-      presetData.dlssFrameGen,
-      presetData.dlss,
-      presetData.frameGen,
-      presetData.base,
-    ];
-    const match = candidates.find(
-      (range) =>
-        range &&
-        Number.isFinite(Number(range.min)) &&
-        Number.isFinite(Number(range.max)) &&
-        Number(range.min) >= 0 &&
-        Number(range.max) >= Number(range.min)
-    );
-    return match || { min: 0, max: 0 };
-  };
-  const { min: fpsLow, max: fpsHigh } = resolveFpsRange();
-  const averageFps =
-    Number.isFinite(fpsLow) && Number.isFinite(fpsHigh) ? Math.max(0, Math.round((fpsLow + fpsHigh) / 2)) : 0;
+  const averageFps = computeSandboxFps(activeFpsEntry, {
+    dlssFsrOn: dlssOn,
+    frameGenerationOn: frameGenOn,
+  });
 
   const merged = mergeProductFields(
     {
@@ -1110,6 +1021,13 @@ export default function ComputerDetails() {
                 <button
                   onClick={() => setDlssOn((v) => !v)}
                   disabled={!supports.dlss}
+                  title={
+                    !supports.dlss
+                      ? DISABLED_FEATURE_TOOLTIP
+                      : activeFpsEntry?.dlssFsrMode
+                        ? `Läge: ${DLSS_MODE_LABELS[activeFpsEntry.dlssFsrMode] || activeFpsEntry.dlssFsrMode}`
+                        : undefined
+                  }
                   className={`px-4 py-2 rounded-lg border ${
                     dlssOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
                   } text-sm font-semibold ${!supports.dlss ? "opacity-40 cursor-not-allowed" : ""}`}
@@ -1119,6 +1037,7 @@ export default function ComputerDetails() {
                 <button
                   onClick={() => setFrameGenOn((v) => !v)}
                   disabled={!supports.frameGen}
+                  title={!supports.frameGen ? DISABLED_FEATURE_TOOLTIP : undefined}
                   className={`px-4 py-2 rounded-lg border ${
                     frameGenOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
                   } text-sm font-semibold ${!supports.frameGen ? "opacity-40 cursor-not-allowed" : ""}`}

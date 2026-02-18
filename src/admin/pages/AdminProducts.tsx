@@ -1,12 +1,21 @@
-﻿import { useEffect, useMemo, useState } from "react";
-import { RefreshCcw, Save, Search } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, RefreshCcw, Save, Search, Trash2 } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
+import {
+  createEmptyFpsEntry,
+  FpsSandboxEntry,
+  FpsSandboxSettings,
+  normalizeFpsSandboxSettings,
+} from "@/lib/fpsSandbox";
 
 type AdminProduct = {
   id: string;
   name: string;
+  slug?: string | null;
+  legacy_id?: string | null;
   description?: string | null;
+  price_cents?: number | null;
   cpu?: string | null;
   gpu?: string | null;
   ram?: string | null;
@@ -18,518 +27,426 @@ type AdminProduct = {
   case_name?: string | null;
   cpu_cooler?: string | null;
   os?: string | null;
-  slug?: string | null;
-  legacy_id?: string | null;
 };
 
-type FpsRange = { min: number; max: number };
-type FpsPreset = Record<string, FpsRange>;
-type FpsVisibility = {
-  resolutions: Record<string, boolean>;
-  presets: Record<string, boolean>;
-};
-type FpsSettings = {
-  games: Record<
-    string,
-    {
-      supports: { dlss: boolean; frameGen: boolean; rayTracing?: boolean };
-      visibility: FpsVisibility;
-      resolutions: Record<string, Record<string, FpsPreset>>;
-    }
-  >;
+type InventoryItem = {
+  product_id: string;
+  quantity_in_stock?: number | null;
+  is_preorder?: boolean | null;
+  allow_preorder?: boolean | null;
+  eta_days?: number | null;
+  eta_note?: string | null;
+  product?: { price_cents?: number | null };
 };
 
-const FPS_GAMES = [
-  "Fortnite",
-  "Cyberpunk 2077",
-  "GTA 5",
-  "Minecraft",
-  "CS2",
-  "Ghost of Tsushima",
-];
-const FPS_RESOLUTIONS = ["1080p", "1440p", "4K"];
-const FPS_PRESETS = ["High", "Ultra", "Ultra + Raytracing/Pathtracing"];
-const FPS_MODE_LABELS: { key: string; label: string }[] = [
-  { key: "base", label: "Bas" },
-  { key: "dlss", label: "DLSS/FSR" },
-  { key: "frameGen", label: "Frame Generation" },
-  { key: "dlssFrameGen", label: "DLSS + Frame Gen" },
-];
-
-const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
-  Fortnite: {
-    "1080p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 95 },
-    "1440p": { High: 120, Ultra: 120, "Ultra + Raytracing/Pathtracing": 95 },
-    "4K": { High: 70, Ultra: 70, "Ultra + Raytracing/Pathtracing": 95 },
-  },
-  "Cyberpunk 2077": {
-    "1080p": { High: 90, Ultra: 90, "Ultra + Raytracing/Pathtracing": 65 },
-    "1440p": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 65 },
-    "4K": { High: 35, Ultra: 35, "Ultra + Raytracing/Pathtracing": 65 },
-  },
-  "GTA 5": {
-    "1080p": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
-    "1440p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 110 },
-    "4K": { High: 65, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
-  },
-  Minecraft: {
-    "1080p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 80 },
-    "1440p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 80 },
-    "4K": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 80 },
-  },
-  CS2: {
-    "1080p": { High: 280, Ultra: 280, "Ultra + Raytracing/Pathtracing": 280 },
-    "1440p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 220 },
-    "4K": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
-  },
-  "Ghost of Tsushima": {
-    "1080p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 70 },
-    "1440p": { High: 75, Ultra: 75, "Ultra + Raytracing/Pathtracing": 70 },
-    "4K": { High: 45, Ultra: 45, "Ultra + Raytracing/Pathtracing": 70 },
-  },
-};
-const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
-  Fortnite: { dlss: true, frameGen: false },
-  "Cyberpunk 2077": { dlss: true, frameGen: true },
-  "GTA 5": { dlss: false, frameGen: false },
-  Minecraft: { dlss: false, frameGen: false },
-  CS2: { dlss: false, frameGen: false },
-  "Ghost of Tsushima": { dlss: true, frameGen: false },
+type CatalogItem = AdminProduct & {
+  quantity_in_stock: number;
+  is_preorder: boolean;
+  eta_input: string;
+  eta_note: string;
+  used_variant_enabled: boolean;
 };
 
-const buildDefaultFpsSettings = (): FpsSettings => {
-  const games: FpsSettings["games"] = {};
-  FPS_GAMES.forEach((game) => {
-    const resolutions: Record<string, Record<string, FpsPreset>> = {};
-    const visibility: FpsVisibility = {
-      resolutions: {},
-      presets: {},
-    };
-    FPS_RESOLUTIONS.forEach((res) => {
-      const presets: Record<string, FpsPreset> = {};
-      visibility.resolutions[res] = true;
-      FPS_PRESETS.forEach((preset) => {
-        const fps = DEFAULT_FPS_BASE?.[game]?.[res]?.[preset] ?? 60;
-        const min = Math.max(1, Math.round(fps * 0.9));
-        const max = Math.max(min + 1, Math.round(fps * 1.1));
-        presets[preset] = { base: { min, max } };
-        visibility.presets[preset] = true;
-      });
-      resolutions[res] = presets;
-    });
-    games[game] = {
-      supports: DEFAULT_FPS_SUPPORTS[game] || { dlss: true, frameGen: true },
-      visibility,
-      resolutions,
-    };
-  });
-  return { games };
+type ListingDraft = {
+  name: string;
+  slug: string;
+  legacy_id: string;
+  description: string;
+  price_cents: number;
+  cpu: string;
+  gpu: string;
+  ram: string;
+  storage: string;
+  storage_type: string;
+  tier: string;
+  motherboard: string;
+  psu: string;
+  case_name: string;
+  cpu_cooler: string;
+  os: string;
+  quantity_in_stock: number;
+  is_preorder: boolean;
+  eta_input: string;
+  eta_note: string;
 };
 
-const normalizeFpsSettings = (input: unknown): FpsSettings => {
-  const fallback = buildDefaultFpsSettings();
-  if (!input || typeof input !== "object") return fallback;
-  const source = input as Partial<FpsSettings>;
-  const next: FpsSettings = { games: {} };
+const PRODUCT_FORM_FIELDS = [
+  "name",
+  "slug",
+  "legacy_id",
+  "price_cents",
+  "cpu",
+  "gpu",
+  "ram",
+  "storage",
+  "storage_type",
+  "tier",
+  "motherboard",
+  "psu",
+  "case_name",
+  "cpu_cooler",
+  "os",
+  "quantity_in_stock",
+  "eta_input",
+  "eta_note",
+] as const;
 
-  FPS_GAMES.forEach((game) => {
-    const fallbackGame = fallback.games[game];
-    const sourceGame = source.games?.[game];
-    const supports = sourceGame?.supports ?? fallbackGame.supports;
-    const sourceVisibility =
-      sourceGame?.visibility && typeof sourceGame.visibility === "object"
-        ? sourceGame.visibility
-        : fallbackGame.visibility;
-    const normalizedVisibility: FpsVisibility = {
-      resolutions: {},
-      presets: {},
-    };
-
-    const resolutions: Record<string, Record<string, FpsPreset>> = {};
-    FPS_RESOLUTIONS.forEach((resolution) => {
-      normalizedVisibility.resolutions[resolution] =
-        typeof sourceVisibility.resolutions?.[resolution] === "boolean"
-          ? sourceVisibility.resolutions[resolution]
-          : true;
-      const sourcePresets = sourceGame?.resolutions?.[resolution] || {};
-      const nextPresets: Record<string, FpsPreset> = {};
-      FPS_PRESETS.forEach((preset) => {
-        normalizedVisibility.presets[preset] =
-          typeof sourceVisibility.presets?.[preset] === "boolean" ? sourceVisibility.presets[preset] : true;
-        const sourcePreset = sourcePresets[preset] || {};
-        const base = sourcePreset.base || fallbackGame.resolutions[resolution][preset].base;
-        const safeMin = Number.isFinite(Number(base?.min)) ? Math.max(0, Number(base.min)) : 0;
-        const safeMax = Number.isFinite(Number(base?.max)) ? Math.max(safeMin, Number(base.max)) : safeMin;
-        const normalizedPreset: FpsPreset = {
-          base: { min: safeMin, max: safeMax },
-        };
-        FPS_MODE_LABELS.forEach((mode) => {
-          if (mode.key === "base") return;
-          const modeValue = sourcePreset[mode.key];
-          const modeMin = Number(modeValue?.min);
-          const modeMax = Number(modeValue?.max);
-          if (Number.isFinite(modeMin) && Number.isFinite(modeMax) && modeMin >= 0 && modeMax >= modeMin) {
-            normalizedPreset[mode.key] = { min: modeMin, max: modeMax };
-          }
-        });
-        nextPresets[preset] = normalizedPreset;
-      });
-      resolutions[resolution] = nextPresets;
-    });
-
-    next.games[game] = {
-      supports: {
-        dlss: Boolean(supports?.dlss),
-        frameGen: Boolean(supports?.frameGen),
-        rayTracing: Boolean(supports?.rayTracing),
-      },
-      visibility: normalizedVisibility,
-      resolutions,
-    };
-  });
-
-  return next;
+const FIELD_LABELS: Record<(typeof PRODUCT_FORM_FIELDS)[number], string> = {
+  name: "Titel",
+  slug: "Slug",
+  legacy_id: "Legacy-ID",
+  price_cents: "Pris (öre)",
+  cpu: "CPU",
+  gpu: "GPU",
+  ram: "RAM",
+  storage: "Lagring",
+  storage_type: "Lagringstyp",
+  tier: "Kategori",
+  motherboard: "Moderkort",
+  psu: "PSU",
+  case_name: "Chassi",
+  cpu_cooler: "CPU-kylare",
+  os: "Operativsystem",
+  quantity_in_stock: "Antal i lager",
+  eta_input: "ETA (dagar)",
+  eta_note: "ETA-notis",
 };
+
+const EMPTY_DRAFT: ListingDraft = {
+  name: "",
+  slug: "",
+  legacy_id: "",
+  description: "",
+  price_cents: 0,
+  cpu: "",
+  gpu: "",
+  ram: "",
+  storage: "",
+  storage_type: "SSD",
+  tier: "Silver",
+  motherboard: "",
+  psu: "",
+  case_name: "",
+  cpu_cooler: "",
+  os: "Windows 11 Pro",
+  quantity_in_stock: 0,
+  is_preorder: false,
+  eta_input: "",
+  eta_note: "",
+};
+
+const toEtaInput = (inventory?: InventoryItem | null) => {
+  if (!inventory) return "";
+  const note = String(inventory.eta_note || "");
+  const range = note.match(/ETA\s+(\d+\s*-\s*\d+)\s*dagar/i);
+  if (range?.[1]) return range[1].replace(/\s+/g, "");
+  if (inventory.eta_days !== null && inventory.eta_days !== undefined) return String(inventory.eta_days);
+  return "";
+};
+
+const parseEta = (etaInputRaw: string, etaNoteRaw: string) => {
+  const etaInput = etaInputRaw.trim();
+  const etaNote = etaNoteRaw.trim();
+  if (/^\d+\s*-\s*\d+$/.test(etaInput)) {
+    const compact = etaInput.replace(/\s+/g, "");
+    return { eta_days: null, eta_note: etaNote || `ETA ${compact} dagar` };
+  }
+  if (/^\d+$/.test(etaInput)) {
+    return { eta_days: Number(etaInput), eta_note: etaNote || null };
+  }
+  return { eta_days: null, eta_note: etaNote || null };
+};
+
+const slugify = (value: string) =>
+  String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
 
 export default function AdminProducts() {
   const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
-  const [products, setProducts] = useState<AdminProduct[]>([]);
+  const [items, setItems] = useState<CatalogItem[]>([]);
   const [query, setQuery] = useState("");
-  const [loadingProducts, setLoadingProducts] = useState(false);
+  const [loadingItems, setLoadingItems] = useState(false);
   const [savingId, setSavingId] = useState<string | null>(null);
-  const [fpsSettingsByProductId, setFpsSettingsByProductId] = useState<Record<string, FpsSettings>>(
-    {}
-  );
-  const [usedVariantEnabledByProductId, setUsedVariantEnabledByProductId] = useState<
-    Record<string, boolean>
-  >({});
-  const [usedVariantLoadingByProductId, setUsedVariantLoadingByProductId] = useState<
-    Record<string, boolean>
-  >({});
-  const [usedVariantSavingByProductId, setUsedVariantSavingByProductId] = useState<
-    Record<string, boolean>
-  >({});
-  const [fpsUiStateByProductId, setFpsUiStateByProductId] = useState<
-    Record<string, { game: string; resolution: string; preset: string }>
-  >({});
-  const [fpsLoadingByProductId, setFpsLoadingByProductId] = useState<Record<string, boolean>>({});
-  const [fpsSavingByProductId, setFpsSavingByProductId] = useState<Record<string, boolean>>({});
   const [localError, setLocalError] = useState("");
 
-  const loadProducts = async () => {
+  const [draft, setDraft] = useState<ListingDraft>(EMPTY_DRAFT);
+  const [createUsedVariant, setCreateUsedVariant] = useState(false);
+  const [usedDraft, setUsedDraft] = useState<Partial<ListingDraft>>({});
+  const [creating, setCreating] = useState(false);
+
+  const [draftFpsEntries, setDraftFpsEntries] = useState<FpsSandboxEntry[]>([]);
+  const [fpsByProduct, setFpsByProduct] = useState<Record<string, FpsSandboxSettings>>({});
+  const [fpsLoadingByProduct, setFpsLoadingByProduct] = useState<Record<string, boolean>>({});
+  const [fpsSavingByProduct, setFpsSavingByProduct] = useState<Record<string, boolean>>({});
+
+  const loadItems = async () => {
     if (!token || !isAdmin) return;
-    setLoadingProducts(true);
+    setLoadingItems(true);
     setLocalError("");
     try {
-      const response = await fetch(`${apiBase}/api/admin/products`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error("Kunde inte hämta produkter.");
-      }
-      const data = await response.json();
-      const filtered = (data || []).filter((product: AdminProduct) => {
-        const name = (product.name || "").trim().toLowerCase();
-        const slug = (product.slug || "").trim().toLowerCase();
-        return name !== "remove" && slug !== "test";
-      });
-      setProducts(filtered);
+      const [productsRes, inventoryRes] = await Promise.all([
+        fetch(`${apiBase}/api/admin/products`, { headers: { Authorization: `Bearer ${token}` } }),
+        fetch(`${apiBase}/api/admin/inventory`, { headers: { Authorization: `Bearer ${token}` } }),
+      ]);
+      if (!productsRes.ok) throw new Error("Kunde inte hämta produkter.");
+      if (!inventoryRes.ok) throw new Error("Kunde inte hämta lager.");
+
+      const products: AdminProduct[] = await productsRes.json();
+      const inventory: InventoryItem[] = await inventoryRes.json();
+      const inventoryMap = new Map(inventory.map((row) => [row.product_id, row]));
+      const merged = (products || [])
+        .filter((product) => {
+          const name = (product.name || "").trim().toLowerCase();
+          const slug = (product.slug || "").trim().toLowerCase();
+          return name !== "remove" && slug !== "test";
+        })
+        .map((product) => {
+          const inv = inventoryMap.get(product.id);
+          const invPrice = Number(inv?.product?.price_cents ?? NaN);
+          return {
+            ...product,
+            price_cents: Number.isFinite(invPrice) ? invPrice : Number(product.price_cents || 0),
+            quantity_in_stock: Math.max(0, Number(inv?.quantity_in_stock ?? 0)),
+            is_preorder: Boolean(inv?.is_preorder ?? inv?.allow_preorder),
+            eta_input: toEtaInput(inv),
+            eta_note: String(inv?.eta_note || ""),
+            used_variant_enabled: true,
+          } as CatalogItem;
+        });
+      setItems(merged);
+
+      const flags = await Promise.all(
+        merged.map(async (item) => {
+          try {
+            const response = await fetch(`${apiBase}/api/admin/products/${item.id}/used-variant`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) return [item.id, true] as const;
+            const data = await response.json();
+            return [item.id, Boolean(data?.enabled ?? true)] as const;
+          } catch {
+            return [item.id, true] as const;
+          }
+        })
+      );
+      const flagMap = new Map(flags);
+      setItems((prev) => prev.map((item) => ({ ...item, used_variant_enabled: flagMap.get(item.id) ?? true })));
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta produkter.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta data.");
     } finally {
-      setLoadingProducts(false);
-    }
-  };
-
-  const ensureFpsUiState = (productId: string) => {
-    setFpsUiStateByProductId((prev) => {
-      if (prev[productId]) return prev;
-      return {
-        ...prev,
-        [productId]: {
-          game: FPS_GAMES[0],
-          resolution: FPS_RESOLUTIONS[0],
-          preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
-        },
-      };
-    });
-  };
-
-  const loadUsedVariantSetting = async (productId: string) => {
-    if (!token || !isAdmin) return;
-    setUsedVariantLoadingByProductId((prev) => ({ ...prev, [productId]: true }));
-    setLocalError("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-variant`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error("Kunde inte hämta begagnad-flagga.");
-      }
-      const data = await response.json();
-      const enabled = typeof data?.enabled === "boolean" ? data.enabled : true;
-      setUsedVariantEnabledByProductId((prev) => ({ ...prev, [productId]: enabled }));
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta begagnad-flagga.");
-    } finally {
-      setUsedVariantLoadingByProductId((prev) => ({ ...prev, [productId]: false }));
-    }
-  };
-
-  const saveUsedVariantSetting = async (productId: string, enabled: boolean) => {
-    if (!token || !isAdmin) return;
-    setUsedVariantSavingByProductId((prev) => ({ ...prev, [productId]: true }));
-    setLocalError("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-variant`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ enabled }),
-      });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data?.error || "Kunde inte spara begagnad-flagga.");
-      }
-      const data = await response.json();
-      const nextEnabled = typeof data?.enabled === "boolean" ? data.enabled : enabled;
-      setUsedVariantEnabledByProductId((prev) => ({ ...prev, [productId]: nextEnabled }));
-    } catch (err) {
-      setUsedVariantEnabledByProductId((prev) => ({ ...prev, [productId]: enabled }));
-      setLocalError(err instanceof Error ? err.message : "Kunde inte spara begagnad-flagga.");
-    } finally {
-      setUsedVariantSavingByProductId((prev) => ({ ...prev, [productId]: false }));
-    }
-  };
-
-  const loadFpsSettings = async (productId: string) => {
-    if (!token || !isAdmin) return;
-    setFpsLoadingByProductId((prev) => ({ ...prev, [productId]: true }));
-    setLocalError("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!response.ok) {
-        throw new Error("Kunde inte hämta FPS-inställningar.");
-      }
-      const data = await response.json();
-      const fps = normalizeFpsSettings(data?.fps);
-      setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: fps }));
-      ensureFpsUiState(productId);
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
-    } finally {
-      setFpsLoadingByProductId((prev) => ({ ...prev, [productId]: false }));
-    }
-  };
-
-  const updateFpsSettings = (productId: string, next: FpsSettings) => {
-    setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: normalizeFpsSettings(next) }));
-  };
-
-  const getAverageFps = (range?: FpsRange) => {
-    const min = Number(range?.min);
-    const max = Number(range?.max);
-    if (!Number.isFinite(min) && !Number.isFinite(max)) return 0;
-    if (!Number.isFinite(min)) return Math.max(0, Math.round(max));
-    if (!Number.isFinite(max)) return Math.max(0, Math.round(min));
-    return Math.max(0, Math.round((min + max) / 2));
-  };
-
-  const updateFpsSupport = (
-    productId: string,
-    game: string,
-    key: "dlss" | "frameGen",
-    value: boolean
-  ) => {
-    const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
-    const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
-    const next: FpsSettings = {
-      ...current,
-      games: {
-        ...current.games,
-        [game]: {
-          ...gameSettings,
-          supports: { ...gameSettings.supports, [key]: value },
-        },
-      },
-    };
-    updateFpsSettings(productId, next);
-  };
-
-  const updateFpsVisibility = (
-    productId: string,
-    game: string,
-    group: "resolutions" | "presets",
-    key: string,
-    value: boolean
-  ) => {
-    const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
-    const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
-    const next: FpsSettings = {
-      ...current,
-      games: {
-        ...current.games,
-        [game]: {
-          ...gameSettings,
-          visibility: {
-            ...gameSettings.visibility,
-            [group]: {
-              ...(gameSettings.visibility?.[group] || {}),
-              [key]: value,
-            },
-          },
-        },
-      },
-    };
-    updateFpsSettings(productId, next);
-  };
-
-  const updateFpsAverage = (
-    productId: string,
-    game: string,
-    resolution: string,
-    preset: string,
-    modeKey: string,
-    value: number
-  ) => {
-    const safeValue = Math.max(0, Math.round(value));
-    const current = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
-    const gameSettings = current.games[game] || buildDefaultFpsSettings().games[game];
-    const resolutionSettings = gameSettings.resolutions[resolution] || {};
-    const presetSettings = resolutionSettings[preset] || {};
-    const nextMode = { min: safeValue, max: safeValue };
-
-    const next: FpsSettings = {
-      ...current,
-      games: {
-        ...current.games,
-        [game]: {
-          ...gameSettings,
-          resolutions: {
-            ...gameSettings.resolutions,
-            [resolution]: {
-              ...resolutionSettings,
-              [preset]: {
-                ...presetSettings,
-                [modeKey]: nextMode,
-              },
-            },
-          },
-        },
-      },
-    };
-    updateFpsSettings(productId, next);
-  };
-
-  const handleSaveFpsSettings = async (productId: string) => {
-    if (!token || !isAdmin) return;
-    const fps = fpsSettingsByProductId[productId] || buildDefaultFpsSettings();
-    setFpsSavingByProductId((prev) => ({ ...prev, [productId]: true }));
-    setLocalError("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ fps }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
-      }
-      if (data?.fps?.games) {
-        setFpsSettingsByProductId((prev) => ({ ...prev, [productId]: normalizeFpsSettings(data.fps) }));
-      }
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
-    } finally {
-      setFpsSavingByProductId((prev) => ({ ...prev, [productId]: false }));
+      setLoadingItems(false);
     }
   };
 
   useEffect(() => {
-    if (isAdmin) {
-      loadProducts();
-    }
+    if (isAdmin) void loadItems();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
-  useEffect(() => {
-    if (!isAdmin || !token || products.length === 0) return;
-    const missing = products
-      .map((product) => product.id)
-      .filter((id) => usedVariantEnabledByProductId[id] === undefined && !usedVariantLoadingByProductId[id]);
-    if (missing.length === 0) return;
-    missing.forEach((id) => {
-      void loadUsedVariantSetting(id);
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products, isAdmin, token]);
-
-  const handleChange = (productId: string, field: keyof AdminProduct, value: string | number | null) => {
-    setProducts((prev) =>
-      prev.map((product) =>
-        product.id === productId
-          ? {
-              ...product,
-              [field]: typeof value === "string" ? value : value,
-            }
-          : product
-      )
-    );
+  const setItem = <K extends keyof CatalogItem>(id: string, key: K, value: CatalogItem[K]) => {
+    setItems((prev) => prev.map((item) => (item.id === id ? { ...item, [key]: value } : item)));
   };
 
-  const handleSave = async (product: AdminProduct) => {
+  const saveItem = async (item: CatalogItem) => {
     if (!token || !isAdmin) return;
-    setSavingId(product.id);
+    setSavingId(item.id);
     setLocalError("");
     try {
-      const response = await fetch(`${apiBase}/api/admin/products/${product.id}`, {
+      const productRes = await fetch(`${apiBase}/api/admin/products/${item.id}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          name: product.name,
-          description: product.description,
-          cpu: product.cpu,
-          gpu: product.gpu,
-          ram: product.ram,
-          storage: product.storage,
-          storage_type: product.storage_type,
-          tier: product.tier,
-          motherboard: product.motherboard,
-          psu: product.psu,
-          case_name: product.case_name,
-          cpu_cooler: product.cpu_cooler,
-          os: product.os,
+          name: item.name,
+          slug: item.slug || "",
+          legacy_id: item.legacy_id || "",
+          description: item.description || "",
+          cpu: item.cpu || "",
+          gpu: item.gpu || "",
+          ram: item.ram || "",
+          storage: item.storage || "",
+          storage_type: item.storage_type || "",
+          tier: item.tier || "",
+          motherboard: item.motherboard || "",
+          psu: item.psu || "",
+          case_name: item.case_name || "",
+          cpu_cooler: item.cpu_cooler || "",
+          os: item.os || "",
         }),
       });
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data?.error || "Kunde inte spara produkten.");
-      }
+      const productData = await productRes.json().catch(() => ({}));
+      if (!productRes.ok) throw new Error(productData?.error || "Kunde inte spara produkt.");
+
+      const eta = parseEta(item.eta_input, item.eta_note);
+      const inventoryRes = await fetch(`${apiBase}/api/admin/inventory`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          productId: item.id,
+          quantity_in_stock: Math.max(0, Number(item.quantity_in_stock || 0)),
+          is_preorder: Boolean(item.is_preorder),
+          eta_days: eta.eta_days,
+          eta_note: eta.eta_note,
+          price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
+        }),
+      });
+      const inventoryData = await inventoryRes.json().catch(() => ({}));
+      if (!inventoryRes.ok) throw new Error(inventoryData?.error || "Kunde inte spara lager.");
+
+      const usedRes = await fetch(`${apiBase}/api/admin/products/${item.id}/used-variant`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ enabled: Boolean(item.used_variant_enabled) }),
+      });
+      const usedData = await usedRes.json().catch(() => ({}));
+      if (!usedRes.ok) throw new Error(usedData?.error || "Kunde inte spara begagnad variant.");
     } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Kunde inte spara produkten.");
+      setLocalError(err instanceof Error ? err.message : "Kunde inte spara.");
     } finally {
       setSavingId(null);
     }
   };
-  const filteredProducts = useMemo(() => {
+
+  const loadFps = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    setFpsLoadingByProduct((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Kunde inte hämta FPS-inställningar.");
+      const data = await response.json();
+      setFpsByProduct((prev) => ({ ...prev, [productId]: normalizeFpsSandboxSettings(data?.fps) }));
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
+    } finally {
+      setFpsLoadingByProduct((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const updateFpsEntry = (productId: string, index: number, patch: Partial<FpsSandboxEntry>) => {
+    setFpsByProduct((prev) => {
+      const current = prev[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
+      const entries = current.entries.map((entry, i) => (i === index ? { ...entry, ...patch } : entry));
+      return { ...prev, [productId]: normalizeFpsSandboxSettings({ version: 2, entries }) };
+    });
+  };
+
+  const saveFps = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    const fps = fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
+    setFpsSavingByProduct((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ fps }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
+      setFpsByProduct((prev) => ({ ...prev, [productId]: normalizeFpsSandboxSettings(data?.fps || fps) }));
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
+    } finally {
+      setFpsSavingByProduct((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const createProduct = async (input: ListingDraft) => {
+    const response = await fetch(`${apiBase}/api/admin/products`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        ...input,
+        slug: input.slug || slugify(input.name),
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.error || "Kunde inte skapa produkt.");
+    return data as AdminProduct;
+  };
+
+  const saveInventoryForCreatedProduct = async (productId: string, input: ListingDraft) => {
+    const eta = parseEta(input.eta_input, input.eta_note);
+    const response = await fetch(`${apiBase}/api/admin/inventory`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        productId,
+        quantity_in_stock: Math.max(0, Number(input.quantity_in_stock || 0)),
+        is_preorder: Boolean(input.is_preorder),
+        eta_days: eta.eta_days,
+        eta_note: eta.eta_note,
+        price_cents: Math.max(0, Math.round(Number(input.price_cents || 0))),
+      }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.error || "Kunde inte spara lager för ny produkt.");
+  };
+
+  const createListing = async () => {
+    if (!token || !isAdmin) return;
+    if (!draft.name || !draft.cpu || !draft.gpu || !draft.ram || !draft.storage) {
+      setLocalError("Fyll i titel, CPU, GPU, RAM och lagring innan du skapar produkten.");
+      return;
+    }
+    setCreating(true);
+    setLocalError("");
+    try {
+      const baseProduct = await createProduct(draft);
+      await saveInventoryForCreatedProduct(baseProduct.id, draft);
+      if (draftFpsEntries.length > 0) {
+        await fetch(`${apiBase}/api/admin/products/${baseProduct.id}/fps-settings`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ fps: normalizeFpsSandboxSettings({ version: 2, entries: draftFpsEntries }) }),
+        });
+      }
+
+      if (createUsedVariant) {
+        const resolvedUsed: ListingDraft = {
+          ...draft,
+          ...usedDraft,
+          name: (usedDraft.name || `${draft.name} - Begagnade`).trim(),
+          slug: (usedDraft.slug || `${slugify(draft.name)}-begagnade`).trim(),
+          legacy_id: (usedDraft.legacy_id || "").trim(),
+          price_cents: Math.max(0, Number(usedDraft.price_cents ?? draft.price_cents)),
+        };
+        const usedProduct = await createProduct(resolvedUsed);
+        await saveInventoryForCreatedProduct(usedProduct.id, resolvedUsed);
+        await fetch(`${apiBase}/api/admin/products/${baseProduct.id}/used-variant`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ enabled: true }),
+        });
+      }
+
+      setDraft(EMPTY_DRAFT);
+      setUsedDraft({});
+      setCreateUsedVariant(false);
+      setDraftFpsEntries([]);
+      await loadItems();
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte skapa produkt.");
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const filteredItems = useMemo(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return products;
-    return products.filter((product) =>
-      `${product.name} ${product.slug ?? ""} ${product.legacy_id ?? ""}`.toLowerCase().includes(term)
+    if (!term) return items;
+    return items.filter((item) =>
+      `${item.name} ${item.slug || ""} ${item.legacy_id || ""} ${item.id}`.toLowerCase().includes(term)
     );
-  }, [products, query]);
+  }, [items, query]);
 
   if (!token) {
     return (
@@ -552,12 +469,12 @@ export default function AdminProducts() {
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Adminpanel</p>
-          <h2 className="text-2xl font-semibold">Produkt-UI</h2>
-          <p className="text-sm text-slate-400">Uppdatera titel, specs och multiplikatorer.</p>
+          <h2 className="text-2xl font-semibold">Produkter & lager</h2>
+          <p className="text-sm text-slate-400">Produktinfo, pris, lager, begagnad variant och uppskattad FPS.</p>
         </div>
         <button
           type="button"
-          onClick={loadProducts}
+          onClick={() => void loadItems()}
           className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b]"
         >
           <RefreshCcw className="h-4 w-4" />
@@ -568,444 +485,235 @@ export default function AdminProducts() {
       {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
-      {loadingProducts && <p className="text-sm text-slate-400">Laddar produkter...</p>}
+      {loadingItems && <p className="text-sm text-slate-400">Laddar produkter...</p>}
+
+      <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
+        <h3 className="text-lg font-semibold text-white">Skapa ny produkt</h3>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {PRODUCT_FORM_FIELDS.map((key) => (
+            <label key={`draft-${key}`} className="text-xs text-slate-400">
+              {FIELD_LABELS[key]}
+              <input
+                type={key === "price_cents" || key === "quantity_in_stock" ? "number" : "text"}
+                value={String(draft[key] ?? "")}
+                onChange={(event) =>
+                  setDraft((prev) => ({
+                    ...prev,
+                    [key]:
+                      key === "price_cents" || key === "quantity_in_stock"
+                        ? Math.max(0, Number(event.target.value) || 0)
+                        : event.target.value,
+                  }))
+                }
+                className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+              />
+            </label>
+          ))}
+          <label className="text-xs text-slate-400">
+            Förbeställning
+            <select
+              value={draft.is_preorder ? "true" : "false"}
+              onChange={(event) => setDraft((prev) => ({ ...prev, is_preorder: event.target.value === "true" }))}
+              className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+            >
+              <option value="false">Nej</option>
+              <option value="true">Ja</option>
+            </select>
+          </label>
+        </div>
+        <label className="block text-xs text-slate-400">
+          Beskrivning
+          <textarea
+            rows={2}
+            value={draft.description}
+            onChange={(event) => setDraft((prev) => ({ ...prev, description: event.target.value }))}
+            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+          />
+        </label>
+        <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-3">
+          <label className="inline-flex items-center gap-2 text-sm text-slate-200">
+            <input type="checkbox" checked={createUsedVariant} onChange={(event) => setCreateUsedVariant(event.target.checked)} />
+            Skapa begagnad variant
+          </label>
+          {createUsedVariant && (
+            <div className="grid gap-3 md:grid-cols-2">
+              <label className="text-xs text-slate-400">
+                Begagnad titel
+                <input
+                  type="text"
+                  value={usedDraft.name || ""}
+                  onChange={(event) => setUsedDraft((prev) => ({ ...prev, name: event.target.value }))}
+                  className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                />
+              </label>
+              <label className="text-xs text-slate-400">
+                Begagnat pris (öre)
+                <input
+                  type="number"
+                  value={usedDraft.price_cents ?? ""}
+                  onChange={(event) => setUsedDraft((prev) => ({ ...prev, price_cents: Math.max(0, Number(event.target.value) || 0) }))}
+                  className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                />
+              </label>
+            </div>
+          )}
+        </div>
+        <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-2">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-slate-200">FPS-variabler för nya produkten</p>
+            <button type="button" onClick={() => setDraftFpsEntries((prev) => [...prev, createEmptyFpsEntry()])} className="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
+              <Plus className="h-3.5 w-3.5" /> Lägg till
+            </button>
+          </div>
+          {draftFpsEntries.map((entry, index) => (
+            <div key={`draft-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
+              <input value={entry.game} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, game: event.target.value } : row))} placeholder="Spel" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+              <input value={entry.resolution} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, resolution: event.target.value } : row))} placeholder="Upplösning" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+              <input value={entry.graphics} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, graphics: event.target.value } : row))} placeholder="Grafik" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+              <input type="number" min={0} value={entry.baseFps} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, baseFps: Math.max(0, Number(event.target.value) || 0) } : row))} placeholder="Bas-FPS" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+              <select
+                value={entry.supportsDlssFsr ? "true" : "false"}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) =>
+                      i === index
+                        ? {
+                            ...row,
+                            supportsDlssFsr: event.target.value === "true",
+                            dlssFsrMode: event.target.value === "true" ? row.dlssFsrMode || "balanced" : null,
+                          }
+                        : row
+                    )
+                  )
+                }
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+              >
+                <option value="false">DLSS/FSR: Nej</option>
+                <option value="true">DLSS/FSR: Ja</option>
+              </select>
+              <select
+                value={entry.dlssFsrMode || "balanced"}
+                disabled={!entry.supportsDlssFsr}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) =>
+                      i === index ? { ...row, dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] } : row
+                    )
+                  )
+                }
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-40"
+              >
+                <option value="quality">Mode: Quality</option>
+                <option value="balanced">Mode: Balanced</option>
+                <option value="performance">Mode: Performance</option>
+              </select>
+              <select
+                value={entry.supportsFrameGeneration ? "true" : "false"}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) =>
+                      i === index ? { ...row, supportsFrameGeneration: event.target.value === "true" } : row
+                    )
+                  )
+                }
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+              >
+                <option value="false">Frame Gen: Nej</option>
+                <option value="true">Frame Gen: Ja</option>
+              </select>
+              <button type="button" onClick={() => setDraftFpsEntries((prev) => prev.filter((_, i) => i !== index))} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
+            </div>
+          ))}
+        </div>
+        <button type="button" onClick={createListing} disabled={creating} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
+          <Save className="h-4 w-4" /> {creating ? "Skapar..." : "Skapa produkt"}
+        </button>
+      </section>
 
       <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/60 px-4 py-3">
         <Search className="h-4 w-4 text-slate-400" />
-        <input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="Sök produkt"
-          className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
-        />
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Sök produkt" className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none" />
       </div>
 
       <div className="space-y-4">
-        {filteredProducts.map((product) => {
-          const fpsSettings = fpsSettingsByProductId[product.id];
-          const fpsUi = fpsUiStateByProductId[product.id] || {
-            game: FPS_GAMES[0],
-            resolution: FPS_RESOLUTIONS[0],
-            preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
-          };
-          const usedVariantEnabled = usedVariantEnabledByProductId[product.id] ?? true;
-          const usedVariantSaving = usedVariantSavingByProductId[product.id];
-          const usedVariantLoading = usedVariantLoadingByProductId[product.id];
-          const selectedGameSettings =
-            fpsSettings?.games?.[fpsUi.game] ?? buildDefaultFpsSettings().games[fpsUi.game];
-          const selectedResolutionSettings =
-            selectedGameSettings?.resolutions?.[fpsUi.resolution] ||
-            selectedGameSettings?.resolutions?.[FPS_RESOLUTIONS[0]];
-          const selectedPresetSettings =
-            selectedResolutionSettings?.[fpsUi.preset] ||
-            selectedResolutionSettings?.[FPS_PRESETS[1] ?? FPS_PRESETS[0]];
-          const supports = selectedGameSettings?.supports || {
-            dlss: true,
-            frameGen: true,
-          };
-          return (
-            <div key={product.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="text-lg font-semibold text-white">{product.name}</p>
-                  <p className="text-xs text-slate-500">{product.id}</p>
-                </div>
-                <div className="text-right text-sm text-slate-300">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Slug</p>
-                  <p className="text-sm">{product.slug || "-"}</p>
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500 mt-2">Legacy ID</p>
-                  <p className="text-sm">{product.legacy_id || "-"}</p>
-                </div>
+        {filteredItems.map((item) => (
+          <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-lg font-semibold text-white">{item.name}</p>
+                <p className="text-xs text-slate-500">{item.id}</p>
               </div>
-
-              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <label className="text-xs text-slate-400">
-                  Titel
-                  <input
-                    type="text"
-                    value={product.name}
-                    onChange={(event) => handleChange(product.id, "name", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  CPU
-                  <input
-                    type="text"
-                    value={product.cpu ?? ""}
-                    onChange={(event) => handleChange(product.id, "cpu", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  GPU
-                  <input
-                    type="text"
-                    value={product.gpu ?? ""}
-                    onChange={(event) => handleChange(product.id, "gpu", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  RAM
-                  <input
-                    type="text"
-                    value={product.ram ?? ""}
-                    onChange={(event) => handleChange(product.id, "ram", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Lagring
-                  <input
-                    type="text"
-                    value={product.storage ?? ""}
-                    onChange={(event) => handleChange(product.id, "storage", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Lagringstyp
-                  <input
-                    type="text"
-                    value={product.storage_type ?? ""}
-                    onChange={(event) => handleChange(product.id, "storage_type", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Kategori
-                  <input
-                    type="text"
-                    value={product.tier ?? ""}
-                    onChange={(event) => handleChange(product.id, "tier", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Moderkort
-                  <input
-                    type="text"
-                    value={product.motherboard ?? ""}
-                    onChange={(event) => handleChange(product.id, "motherboard", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Nätaggregat
-                  <input
-                    type="text"
-                    value={product.psu ?? ""}
-                    onChange={(event) => handleChange(product.id, "psu", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Chassi
-                  <input
-                    type="text"
-                    value={product.case_name ?? ""}
-                    onChange={(event) => handleChange(product.id, "case_name", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  CPU-kylare
-                  <input
-                    type="text"
-                    value={product.cpu_cooler ?? ""}
-                    onChange={(event) => handleChange(product.id, "cpu_cooler", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <label className="text-xs text-slate-400">
-                  Operativsystem
-                  <input
-                    type="text"
-                    value={product.os ?? ""}
-                    onChange={(event) => handleChange(product.id, "os", event.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                  />
-                </label>
-                <div className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 md:col-span-2 xl:col-span-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Begagnad variant</p>
-                      <p className="text-sm text-slate-300">
-                        Styr om denna produkt ska kunna växlas till begagnade delar.
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      role="switch"
-                      aria-checked={usedVariantEnabled}
-                      onClick={() => saveUsedVariantSetting(product.id, !usedVariantEnabled)}
-                      disabled={usedVariantSaving || usedVariantLoading}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        usedVariantEnabled ? "bg-yellow-400" : "bg-slate-700"
-                      } ${usedVariantSaving || usedVariantLoading ? "opacity-60 cursor-not-allowed" : ""}`}
-                    >
-                      <span className="sr-only">Aktivera begagnad variant</span>
-                      <span
-                        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
-                          usedVariantEnabled ? "translate-x-5" : "translate-x-1"
-                        }`}
-                      />
-                    </button>
-                  </div>
-                </div>
-                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-4 md:col-span-2 xl:col-span-4">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Uppskattad FPS</p>
-                      <p className="text-sm text-slate-300">Välj spel, upplösning och grafik för att justera snitt-FPS.</p>
-                    </div>
-                    {!fpsSettings ? (
-                      <button
-                        type="button"
-                        onClick={() => loadFpsSettings(product.id)}
-                        className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-xs font-semibold text-slate-100 hover:border-[#11667b] hover:text-[#11667b]"
-                        disabled={fpsLoadingByProductId[product.id]}
-                      >
-                        {fpsLoadingByProductId[product.id] ? "Laddar..." : "Ladda FPS-inställningar"}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => handleSaveFpsSettings(product.id)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
-                        disabled={fpsSavingByProductId[product.id]}
-                      >
-                        <Save className="h-4 w-4" />
-                        {fpsSavingByProductId[product.id] ? "Sparar..." : "Spara FPS-inställningar"}
-                      </button>
-                    )}
-                  </div>
-                  {fpsSettings && (
-                    <div className="mt-4 space-y-4">
-                      <div className="grid gap-3 md:grid-cols-3">
-                        <label className="text-xs text-slate-400">
-                          Spel
-                          <select
-                            value={fpsUi.game}
-                            onChange={(event) => {
-                              const nextGame = event.target.value;
-                              setFpsUiStateByProductId((prev) => ({
-                                ...prev,
-                                [product.id]: {
-                                  ...fpsUi,
-                                  game: nextGame,
-                                  resolution: FPS_RESOLUTIONS[0],
-                                  preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
-                                },
-                              }));
-                            }}
-                            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                          >
-                            {FPS_GAMES.map((game) => (
-                              <option key={game} value={game}>
-                                {game}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="text-xs text-slate-400">
-                          Upplösning
-                          <select
-                            value={fpsUi.resolution}
-                            onChange={(event) => {
-                              const nextResolution = event.target.value;
-                              setFpsUiStateByProductId((prev) => ({
-                                ...prev,
-                                [product.id]: {
-                                  ...fpsUi,
-                                  resolution: nextResolution,
-                                  preset: FPS_PRESETS[1] ?? FPS_PRESETS[0],
-                                },
-                              }));
-                            }}
-                            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                          >
-                            {FPS_RESOLUTIONS.map((res) => (
-                              <option key={res} value={res}>
-                                {res}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                        <label className="text-xs text-slate-400">
-                          Grafik
-                          <select
-                            value={fpsUi.preset}
-                            onChange={(event) =>
-                              setFpsUiStateByProductId((prev) => ({
-                                ...prev,
-                                [product.id]: { ...fpsUi, preset: event.target.value },
-                              }))
-                            }
-                            className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                          >
-                            {FPS_PRESETS.map((preset) => (
-                              <option key={preset} value={preset}>
-                                {preset}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      </div>
-
-                      <div className="grid gap-3 md:grid-cols-2">
-                        <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                          <p className="text-xs text-slate-400 mb-2">Visa upplösningar på frontend</p>
-                          <div className="flex flex-wrap gap-2">
-                            {FPS_RESOLUTIONS.map((resolution) => {
-                              const enabled = selectedGameSettings?.visibility?.resolutions?.[resolution] !== false;
-                              return (
-                                <label
-                                  key={resolution}
-                                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-xs text-slate-200"
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={enabled}
-                                    onChange={(event) =>
-                                      updateFpsVisibility(
-                                        product.id,
-                                        fpsUi.game,
-                                        "resolutions",
-                                        resolution,
-                                        event.target.checked
-                                      )
-                                    }
-                                  />
-                                  {resolution}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </div>
-                        <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                          <p className="text-xs text-slate-400 mb-2">Visa grafiknivåer på frontend</p>
-                          <div className="flex flex-wrap gap-2">
-                            {FPS_PRESETS.map((preset) => {
-                              const enabled = selectedGameSettings?.visibility?.presets?.[preset] !== false;
-                              return (
-                                <label
-                                  key={preset}
-                                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-xs text-slate-200"
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={enabled}
-                                    onChange={(event) =>
-                                      updateFpsVisibility(
-                                        product.id,
-                                        fpsUi.game,
-                                        "presets",
-                                        preset,
-                                        event.target.checked
-                                      )
-                                    }
-                                  />
-                                  {preset}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-4 text-xs text-slate-300">
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={supports.dlss}
-                            onChange={(event) =>
-                              updateFpsSupport(product.id, fpsUi.game, "dlss", event.target.checked)
-                            }
-                          />
-                          DLSS/FSR tillgängligt
-                        </label>
-                        <label className="flex items-center gap-2">
-                          <input
-                            type="checkbox"
-                            checked={supports.frameGen}
-                            onChange={(event) =>
-                              updateFpsSupport(product.id, fpsUi.game, "frameGen", event.target.checked)
-                            }
-                          />
-                          Frame Generation tillgängligt
-                        </label>
-                      </div>
-
-                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                        {FPS_MODE_LABELS.map((mode) => {
-                          const range = selectedPresetSettings?.[mode.key] || { min: 0, max: 0 };
-                          return (
-                            <div key={mode.key} className="rounded-lg border border-slate-800 bg-slate-950/60 p-3">
-                              <p className="text-xs text-slate-400 mb-2">{mode.label}</p>
-                              <div className="flex gap-2">
-                                <input
-                                  type="number"
-                                  min={0}
-                                  value={getAverageFps(range)}
-                                  onChange={(event) =>
-                                    updateFpsAverage(
-                                      product.id,
-                                      fpsUi.game,
-                                      fpsUi.resolution,
-                                      fpsUi.preset,
-                                      mode.key,
-                                      Number(event.target.value)
-                                    )
-                                  }
-                                  className="w-full rounded-md border border-slate-700/60 bg-slate-900/60 px-2 py-1 text-xs text-slate-100"
-                                  placeholder="Snitt FPS"
-                                />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <label className="text-xs text-slate-400 md:col-span-2 xl:col-span-4">
-                  Beskrivning
-                  <textarea
-                    value={product.description ?? ""}
-                    onChange={(event) => handleChange(product.id, "description", event.target.value)}
-                    className="mt-1 min-h-[96px] w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                    placeholder="Skriv Produktinfo-texter har. Separera stycken med en tom rad."
-                  />
-                </label>
-              </div>
-
-              <div className="mt-4 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => handleSave(product)}
-                  className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
-                  disabled={savingId === product.id}
-                >
-                  <Save className="h-4 w-4" />
-                  {savingId === product.id ? "Sparar..." : "Spara ändringar"}
-                </button>
-              </div>
+              <button type="button" onClick={() => void saveItem(item)} disabled={savingId === item.id} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
+                <Save className="h-4 w-4" /> {savingId === item.id ? "Sparar..." : "Spara"}
+              </button>
             </div>
-          );
-        })}
-
-        {!loadingProducts && filteredProducts.length === 0 && (
-          <p className="text-sm text-slate-400">Inga produkter matchar din sökning.</p>
-        )}
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+              {PRODUCT_FORM_FIELDS.map((key) => (
+                <label key={`${item.id}-${key}`} className="text-xs text-slate-400">
+                  {FIELD_LABELS[key]}
+                  <input
+                    type={key === "price_cents" || key === "quantity_in_stock" ? "number" : "text"}
+                    value={String(item[key] ?? "")}
+                    onChange={(event) => setItem(item.id, key, (key === "price_cents" || key === "quantity_in_stock" ? Math.max(0, Number(event.target.value) || 0) : event.target.value) as CatalogItem[typeof key])}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                </label>
+              ))}
+              <label className="text-xs text-slate-400">
+                Förbeställning
+                <select value={item.is_preorder ? "true" : "false"} onChange={(event) => setItem(item.id, "is_preorder", event.target.value === "true")} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100">
+                  <option value="false">Nej</option><option value="true">Ja</option>
+                </select>
+              </label>
+              <label className="text-xs text-slate-400">
+                Begagnad variant
+                <select value={item.used_variant_enabled ? "true" : "false"} onChange={(event) => setItem(item.id, "used_variant_enabled", event.target.value === "true")} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100">
+                  <option value="false">Av</option><option value="true">På</option>
+                </select>
+              </label>
+            </div>
+            <label className="block text-xs text-slate-400">
+              Beskrivning
+              <textarea value={item.description || ""} onChange={(event) => setItem(item.id, "description", event.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100" />
+            </label>
+            <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-200">Uppskattad FPS (sandbox)</p>
+                {!fpsByProduct[item.id] ? (
+                  <button type="button" onClick={() => void loadFps(item.id)} disabled={fpsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{fpsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), createEmptyFpsEntry()] }) }))} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">Lägg till</button>
+                    <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id]} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
+                  </div>
+                )}
+              </div>
+              {(fpsByProduct[item.id]?.entries || []).map((entry, index) => (
+                <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
+                  <input value={entry.game} onChange={(event) => updateFpsEntry(item.id, index, { game: event.target.value })} placeholder="Spel" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                  <input value={entry.resolution} onChange={(event) => updateFpsEntry(item.id, index, { resolution: event.target.value })} placeholder="Upplösning" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                  <input value={entry.graphics} onChange={(event) => updateFpsEntry(item.id, index, { graphics: event.target.value })} placeholder="Grafik" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                  <input type="number" min={0} value={entry.baseFps} onChange={(event) => updateFpsEntry(item.id, index, { baseFps: Math.max(0, Number(event.target.value) || 0) })} placeholder="Bas-FPS" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                  <select value={entry.supportsDlssFsr ? "true" : "false"} onChange={(event) => updateFpsEntry(item.id, index, { supportsDlssFsr: event.target.value === "true", dlssFsrMode: event.target.value === "true" ? entry.dlssFsrMode || "balanced" : null })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
+                    <option value="false">DLSS/FSR: Nej</option>
+                    <option value="true">DLSS/FSR: Ja</option>
+                  </select>
+                  <select value={entry.dlssFsrMode || "balanced"} disabled={!entry.supportsDlssFsr} onChange={(event) => updateFpsEntry(item.id, index, { dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-40">
+                    <option value="quality">Mode: Quality</option>
+                    <option value="balanced">Mode: Balanced</option>
+                    <option value="performance">Mode: Performance</option>
+                  </select>
+                  <select value={entry.supportsFrameGeneration ? "true" : "false"} onChange={(event) => updateFpsEntry(item.id, index, { supportsFrameGeneration: event.target.value === "true" })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
+                    <option value="false">Frame Gen: Nej</option>
+                    <option value="true">Frame Gen: Ja</option>
+                  </select>
+                  <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: (prev[item.id]?.entries || []).filter((_, i) => i !== index) }) }))} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
+                </div>
+              ))}
+            </div>
+          </section>
+        ))}
       </div>
     </div>
   );
 }
-
-
-
-
-
-
