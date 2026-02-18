@@ -855,7 +855,7 @@ export default function ComputerDetails() {
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border ${selectedImage === i ? "border-[#11667b]" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
+                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border-2 transition-all duration-200 ${selectedImage === i ? "border-[#22d3ee] ring-4 ring-[#22d3ee]/55 shadow-[0_0_24px_rgba(34,211,238,0.7)] scale-105" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
                   <img
