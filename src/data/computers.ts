@@ -50,11 +50,10 @@ export const COMPUTERS: Computer[] = [
     tier: "Silver",
     rating: 4.2,
     reviews: 0,
-    image: "/products/newpc/chieftecvisio-1.jpg",
+    image: "/products/newpc/chieftecvista-1.jpg",
     images: [
-      "/products/newpc/chieftecvisio-1.jpg",
-      "/products/newpc/chieftecvisio-2.webp",
-      "/products/newpc/chieftecvisio-3.jpg",
+      "/products/newpc/chieftecvista-1.jpg",
+      "/products/newpc/chieftecvista-2.avif",
     ],
   },
   {

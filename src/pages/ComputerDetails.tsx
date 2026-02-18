@@ -118,7 +118,7 @@ const DEFAULT_PRODUCT_INFO = [
       "Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.",
   },
 ];
-const DETAIL_FALLBACK_IMAGE = "/products/newpc/allblack-main.jpg";
+const DETAIL_FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
@@ -314,7 +314,7 @@ export default function ComputerDetails() {
     () =>
       Array.from(
         new Set(
-          [...images, normalizeProductImagePath(computer?.image) || "", DETAIL_FALLBACK_IMAGE].filter(Boolean)
+          [...images, normalizeProductImagePath(computer?.image) || ""].filter(Boolean)
         )
       ),
     [computer?.image, images]
