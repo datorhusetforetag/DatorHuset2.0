@@ -295,6 +295,24 @@ export default function AdminProducts() {
       );
       const flagMap = new Map(flags);
       setItems((prev) => prev.map((item) => ({ ...item, used_variant_enabled: flagMap.get(item.id) ?? true })));
+
+      const fpsPairs = await Promise.all(
+        merged.map(async (item) => {
+          try {
+            const response = await fetch(`${apiBase}/api/admin/products/${item.id}/fps-settings`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            if (!response.ok) {
+              return [item.id, normalizeFpsSandboxSettings({ version: 2, entries: [] })] as const;
+            }
+            const data = await response.json();
+            return [item.id, normalizeFpsSandboxSettings(data?.fps || { version: 2, entries: [] })] as const;
+          } catch {
+            return [item.id, normalizeFpsSandboxSettings({ version: 2, entries: [] })] as const;
+          }
+        })
+      );
+      setFpsByProduct(Object.fromEntries(fpsPairs));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta data.");
     } finally {
@@ -930,7 +948,7 @@ export default function AdminProducts() {
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-200">Uppskattad FPS (sandbox)</p>
+                <p className="text-sm text-slate-200">FPS-variabler för produkten</p>
                 {!fpsByProduct[item.id] ? (
                   <button type="button" onClick={() => void loadFps(item.id)} disabled={fpsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{fpsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
                 ) : (
