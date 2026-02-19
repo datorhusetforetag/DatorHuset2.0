@@ -17,6 +17,10 @@ import {
   getSandboxResolutions,
   normalizeFpsSandboxSettings,
 } from "@/lib/fpsSandbox";
+import {
+  DEFAULT_USED_PARTS_SETTINGS,
+  sanitizeUsedPartsSettings,
+} from "@/lib/usedParts";
 import { checkStock } from "@/lib/supabaseServices";
 import fortniteImage from "../../images/fortnite.jpg";
 import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
@@ -210,6 +214,7 @@ export default function ComputerDetails() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [useUsedVariant, setUseUsedVariant] = useState(false);
   const [usedVariantEnabled, setUsedVariantEnabled] = useState<boolean | null>(null);
+  const [usedPartsFromApi, setUsedPartsFromApi] = useState<Record<string, boolean> | null>(null);
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
@@ -390,6 +395,29 @@ export default function ComputerDetails() {
   }, [activeProductId]);
 
   useEffect(() => {
+    if (!useUsedVariant || !activeProductId) {
+      setUsedPartsFromApi(null);
+      return;
+    }
+    let isMounted = true;
+    const loadUsedParts = async () => {
+      try {
+        const response = await fetch(`/api/used-parts/${activeProductId}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        if (!isMounted) return;
+        setUsedPartsFromApi(sanitizeUsedPartsSettings(data?.used_parts));
+      } catch (error) {
+        console.warn("Failed to load used-parts settings", error);
+      }
+    };
+    loadUsedParts();
+    return () => {
+      isMounted = false;
+    };
+  }, [activeProductId, useUsedVariant]);
+
+  useEffect(() => {
     if (!gameList.length) return;
     if (!gameList.includes(selectedGame)) {
       setSelectedGame(gameList[0]);
@@ -477,22 +505,38 @@ export default function ComputerDetails() {
     cpuCooler: merged.cpuCooler,
     os: osValue,
   };
-  const usedParts = activeVariant?.usedParts ?? {};
+  const fallbackUsedParts = sanitizeUsedPartsSettings({
+    ...(activeVariant?.usedParts || {}),
+    case_name: activeVariant?.usedParts?.caseName,
+    cpu_cooler: activeVariant?.usedParts?.cpuCooler,
+  });
+  const usedParts = useMemo(
+    () =>
+      useUsedVariant
+        ? sanitizeUsedPartsSettings(usedPartsFromApi || fallbackUsedParts)
+        : DEFAULT_USED_PARTS_SETTINGS,
+    [fallbackUsedParts, useUsedVariant, usedPartsFromApi]
+  );
   const specRows = useMemo(
     () => {
       const rows = [
         { label: "Processor (CPU)", value: displaySpecs.cpu, used: usedParts.cpu },
         { label: "Grafikkort (GPU)", value: displaySpecs.gpu, used: usedParts.gpu },
-        { label: "RAM-minne", value: displaySpecs.ram, used: true, tooltip: RAM_PRICE_TOOLTIP },
+        {
+          label: "RAM-minne",
+          value: displaySpecs.ram,
+          used: usedParts.ram,
+          tooltip: usedParts.ram ? RAM_PRICE_TOOLTIP : undefined,
+        },
         {
           label: "Lagring",
           value: `${displaySpecs.storage} ${displaySpecs.storagetype}`.trim(),
           used: usedParts.storage,
         },
-        { label: "Moderkort", value: displaySpecs.motherboard, used: false },
-        { label: "Nätaggregat", value: displaySpecs.psu, used: false },
-        { label: "Chassi", value: displaySpecs.caseName, used: false },
-        { label: "CPU-kylare", value: displaySpecs.cpuCooler, used: false },
+        { label: "Moderkort", value: displaySpecs.motherboard, used: usedParts.motherboard },
+        { label: "Nätaggregat", value: displaySpecs.psu, used: usedParts.psu },
+        { label: "Chassi", value: displaySpecs.caseName, used: usedParts.case_name },
+        { label: "CPU-kylare", value: displaySpecs.cpuCooler, used: usedParts.cpu_cooler },
         { label: "Operativsystem", value: displaySpecs.os, used: false },
         { label: "Kategori", value: displaySpecs.tier, used: false },
       ];
@@ -516,7 +560,12 @@ export default function ComputerDetails() {
       displaySpecs.os,
       usedParts.cpu,
       usedParts.gpu,
+      usedParts.ram,
       usedParts.storage,
+      usedParts.motherboard,
+      usedParts.psu,
+      usedParts.case_name,
+      usedParts.cpu_cooler,
     ],
   );
   const productInfoSections = useMemo(() => {
@@ -896,7 +945,7 @@ export default function ComputerDetails() {
             </div>
             <div className="space-y-3 text-sm">
               {specRows.map((row, index) => {
-                const showUsedBadge = row.label === "RAM-minne" ? true : row.used;
+                const showUsedBadge = Boolean(row.used);
                 return (
                 <div
                   key={row.label}

@@ -538,6 +538,19 @@ const parseUsedVariantSetting = (value, fallback = true) => {
   return fallback;
 };
 
+
+const USED_PART_KEYS = ["cpu", "gpu", "ram", "storage", "motherboard", "psu", "case_name", "cpu_cooler"];
+
+const parseUsedPartsSetting = (value, fallback) => {
+  const base = fallback && typeof fallback === "object" ? fallback : {};
+  const source = value && typeof value === "object" ? value : {};
+  const next = {};
+  USED_PART_KEYS.forEach((key) => {
+    next[key] = Boolean(source[key] ?? base[key]);
+  });
+  return next;
+};
+
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
@@ -2028,6 +2041,89 @@ app.post("/api/admin/products/:productId/used-variant", async (req, res) => {
   }
 });
 
+app.get("/api/admin/products/:productId/used-parts", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `used_parts:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ used_parts: parseUsedPartsSetting(null, null) });
+    }
+
+    return res.json({ used_parts: parseUsedPartsSetting(data?.value, null) });
+  } catch (error) {
+    console.error("Admin used-parts fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.post("/api/admin/products/:productId/used-parts", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const usedParts = parseUsedPartsSetting(req.body?.used_parts, null);
+    const key = `used_parts:${productId}`;
+    const payload = { key, value: usedParts, updated_at: new Date() };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Used-parts update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update used-parts setting" });
+    }
+
+    await logAdminAction(req, user, "product_used_parts_update", "ui_settings", key, {
+      product_id: productId,
+      used_parts: usedParts,
+    });
+
+    return res.json({ used_parts: parseUsedPartsSetting(data?.value, usedParts) });
+  } catch (error) {
+    console.error("Admin used-parts update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 app.get("/api/fps-settings/:productId", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -2084,6 +2180,33 @@ app.get("/api/used-variant/:productId", async (req, res) => {
   }
 });
 
+app.get("/api/used-parts/:productId", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `used_parts:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ used_parts: parseUsedPartsSetting(null, null) });
+    }
+
+    return res.json({ used_parts: parseUsedPartsSetting(data?.value, null) });
+  } catch (error) {
+    console.error("Used-parts fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 app.get("/api/orders/by-session/:sessionId", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -2871,4 +2994,8 @@ app.listen(PORT, () => {
   console.log(`Stripe API Server running on http://localhost:${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
 });
+
+
+
+
 

@@ -3,6 +3,12 @@ export type UsedParts = {
   gpu?: boolean;
   ram?: boolean;
   storage?: boolean;
+  motherboard?: boolean;
+  psu?: boolean;
+  case_name?: boolean;
+  cpu_cooler?: boolean;
+  caseName?: boolean;
+  cpuCooler?: boolean;
 };
 
 export interface ComputerVariant {

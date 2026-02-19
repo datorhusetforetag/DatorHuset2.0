@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Stripe Checkout Backend API
  * 
  * This is a Node.js/Express server that handles Stripe checkout sessions.
@@ -435,6 +435,19 @@ const parseUsedVariantSetting = (value: unknown, fallback = true) => {
   return fallback;
 };
 
+
+const USED_PART_KEYS = ["cpu", "gpu", "ram", "storage", "motherboard", "psu", "case_name", "cpu_cooler"];
+
+const parseUsedPartsSetting = (value: unknown, fallback: unknown) => {
+  const base = fallback && typeof fallback === "object" ? (fallback as Record<string, unknown>) : {};
+  const source = value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+  const next: Record<string, boolean> = {};
+  USED_PART_KEYS.forEach((key) => {
+    next[key] = Boolean(source[key] ?? base[key]);
+  });
+  return next;
+};
+
 const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
@@ -719,7 +732,7 @@ const buildOrderEmailHtml = ({
               <tr>
                 <td style="padding:28px 32px;background:linear-gradient(135deg,#0f1824 0%,#1c2c3f 100%);">
                   <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
-                  <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">Orderbekräftelse</p>
+                  <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">OrderbekrÃ¤ftelse</p>
                   <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">${headline}</h1>
                 </td>
               </tr>
@@ -744,12 +757,12 @@ const buildOrderEmailHtml = ({
                       ${itemRows}
                     </tbody>
                   </table>
-                  <p style="margin:20px 0 0;font-size:13px;color:#6b7280;">Behöver du hjälp? Svara på mailet eller besök <a href="https://datorhuset.site" style="color:#11667b;">datorhuset.site</a>.</p>
+                  <p style="margin:20px 0 0;font-size:13px;color:#6b7280;">BehÃ¶ver du hjÃ¤lp? Svara pÃ¥ mailet eller besÃ¶k <a href="https://datorhuset.site" style="color:#11667b;">datorhuset.site</a>.</p>
                 </td>
               </tr>
               <tr>
                 <td style="padding:18px 32px;background:#f8fafc;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
-                  DatorHuset - Datorer byggda för spel, skapande och vardag.
+                  DatorHuset - Datorer byggda fÃ¶r spel, skapande och vardag.
                 </td>
               </tr>
             </table>
@@ -818,7 +831,7 @@ export async function createCheckoutSession(req: any, res: any) {
         return res.status(400).json({ error: "Invalid city" });
       }
     } else {
-      safeAddress = safeAddress || "Upphämtning i Rinkeby Centrum";
+      safeAddress = safeAddress || "UpphÃ¤mtning i Rinkeby Centrum";
       safePostalCode = safePostalCode || "";
       safeCity = safeCity || "";
     }
@@ -1051,7 +1064,7 @@ export async function submitOfferRequest(req: any, res: any) {
 
     const html = `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
-        <h2>Offertförfrågan (Custom build)</h2>
+        <h2>OffertfÃ¶rfrÃ¥gan (Custom build)</h2>
         <p><strong>Namn:</strong> ${escapeHtml(name)}</p>
         <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
         <p><strong>Telefon:</strong> ${escapeHtml(phone || "-")}</p>
@@ -1059,7 +1072,7 @@ export async function submitOfferRequest(req: any, res: any) {
         <p><strong>Total:</strong> ${formatCurrency(totalPrice)}</p>
         <p><strong>Valda komponenter:</strong></p>
         ${componentListHtml}
-        ${shareUrl ? `<p><strong>Länk:</strong> <a href="${escapeHtml(shareUrl)}">${escapeHtml(shareUrl)}</a></p>` : ""}
+        ${shareUrl ? `<p><strong>LÃ¤nk:</strong> <a href="${escapeHtml(shareUrl)}">${escapeHtml(shareUrl)}</a></p>` : ""}
       </div>
     `;
 
@@ -1554,13 +1567,13 @@ async function handleSuccessfulPayment(stripeSession: any) {
 
   await sendEmail({
     to: userEmail,
-    subject: "Orderbekräftelse – DatorHuset",
+    subject: "OrderbekrÃ¤ftelse â€“ DatorHuset",
     html: buildOrderEmailHtml({
-      headline: "Tack för din beställning!",
-      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och börjar behandla den.`,
+      headline: "Tack fÃ¶r din bestÃ¤llning!",
+      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och bÃ¶rjar behandla den.`,
       order,
       items: emailItems,
-      statusNote: "Beställning mottagen",
+      statusNote: "BestÃ¤llning mottagen",
       receiptUrl,
     }),
   });
@@ -1706,7 +1719,7 @@ export async function requestOrderCancel(req: any, res: any) {
 
     const status = order.status || "received";
     if (!["received", "ordering", "pending"].includes(status)) {
-      return res.status(400).json({ error: "Ordern är redan i produktion och kan inte avbrytas." });
+      return res.status(400).json({ error: "Ordern Ã¤r redan i produktion och kan inte avbrytas." });
     }
 
     if (!supportMailer) {
@@ -1716,7 +1729,7 @@ export async function requestOrderCancel(req: any, res: any) {
     const orderNumber = formatOrderNumber(order);
     const orderDate = order.created_at
       ? new Date(order.created_at).toLocaleDateString("sv-SE")
-      : "Okänt datum";
+      : "OkÃ¤nt datum";
     const items = Array.isArray(order.order_items) ? order.order_items : [];
     const itemLines = items
       .map((item: any) => {
@@ -1729,7 +1742,7 @@ export async function requestOrderCancel(req: any, res: any) {
     const html = `
       <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
         <h2>Avbruten order</h2>
-        <p>En kund har begärt att avbryta sin order.</p>
+        <p>En kund har begÃ¤rt att avbryta sin order.</p>
         <p><strong>Ordernummer:</strong> ${escapeHtml(String(orderNumber))}</p>
         <p><strong>Datum:</strong> ${escapeHtml(orderDate)}</p>
         <p><strong>Namn:</strong> ${escapeHtml(order.customer_name || "")}</p>
@@ -1779,7 +1792,7 @@ export async function requestAccountDeleteCode(req: any, res: any) {
 
     const deleteKey = `delete:${user.id}:${getRequestIp(req)}`;
     if (isRateLimited(deleteKey, ACCOUNT_DELETE_RATE_LIMIT_MAX, ACCOUNT_DELETE_RATE_LIMIT_WINDOW_MS)) {
-      return res.status(429).json({ error: "För många försök. Vänta en stund och prova igen." });
+      return res.status(429).json({ error: "FÃ¶r mÃ¥nga fÃ¶rsÃ¶k. VÃ¤nta en stund och prova igen." });
     }
 
     if (!user.email) {
@@ -1812,25 +1825,25 @@ export async function requestAccountDeleteCode(req: any, res: any) {
                 <tr>
                   <td style="padding:28px 32px;background:linear-gradient(135deg,#0f1824 0%,#1c2c3f 100%);">
                     <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
-                    <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">Kontosäkerhet</p>
-                    <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">Bekräfta borttagning av konto</h1>
+                    <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">KontosÃ¤kerhet</p>
+                    <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">BekrÃ¤fta borttagning av konto</h1>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:28px 32px;color:#111827;">
-                    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Du har begärt att ta bort ditt DatorHuset-konto. Använd koden nedan för att bekräfta.</p>
+                    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Du har begÃ¤rt att ta bort ditt DatorHuset-konto. AnvÃ¤nd koden nedan fÃ¶r att bekrÃ¤fta.</p>
                     <div style="text-align:center;margin:24px 0;">
                       <div style="display:inline-block;background:#facc15;color:#111827;font-weight:700;padding:12px 20px;border-radius:10px;letter-spacing:4px;font-size:20px;">
                         ${code}
                       </div>
                     </div>
-                    <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">Koden är giltig i ${ACCOUNT_DELETE_CODE_TTL_MINUTES} minuter.</p>
-                    <p style="margin:0;font-size:13px;color:#6b7280;">Om du inte begärde detta kan du ignorera mejlet.</p>
+                    <p style="margin:0 0 12px;font-size:13px;color:#6b7280;">Koden Ã¤r giltig i ${ACCOUNT_DELETE_CODE_TTL_MINUTES} minuter.</p>
+                    <p style="margin:0;font-size:13px;color:#6b7280;">Om du inte begÃ¤rde detta kan du ignorera mejlet.</p>
                   </td>
                 </tr>
                 <tr>
                   <td style="padding:18px 32px;background:#f8fafc;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280;">
-                    DatorHuset - Datorer byggda för spel, skapande och vardag.
+                    DatorHuset - Datorer byggda fÃ¶r spel, skapande och vardag.
                   </td>
                 </tr>
               </table>
@@ -1842,7 +1855,7 @@ export async function requestAccountDeleteCode(req: any, res: any) {
 
     await sendEmail({
       to: user.email,
-      subject: "Bekräfta borttagning av konto",
+      subject: "BekrÃ¤fta borttagning av konto",
       html,
     });
 
@@ -1886,11 +1899,11 @@ export async function confirmAccountDelete(req: any, res: any) {
     }
 
     if (data.used_at) {
-      return res.status(400).json({ error: "Verifieringskoden har redan använts" });
+      return res.status(400).json({ error: "Verifieringskoden har redan anvÃ¤nts" });
     }
 
     if (new Date(data.expires_at).getTime() < Date.now()) {
-      return res.status(400).json({ error: "Verifieringskoden har gått ut" });
+      return res.status(400).json({ error: "Verifieringskoden har gÃ¥tt ut" });
     }
 
     if (data.code_hash !== codeHash) {
@@ -2065,7 +2078,7 @@ export async function updateOrderStatusAdmin(req: any, res: any) {
         subject: "Uppdatering om din order hos DatorHuset",
         html: buildOrderEmailHtml({
           headline: "Uppdatering om din order",
-          intro: `Hej ${data.customer_name || ""}! Vi har uppdaterat statusen på din order.`,
+          intro: `Hej ${data.customer_name || ""}! Vi har uppdaterat statusen pÃ¥ din order.`,
           order: data,
           items: (data.order_items || []).map((item: any) => ({
             name: item.product?.name || "Produkt",
@@ -2781,6 +2794,100 @@ export async function updateAdminProductUsedVariant(req: any, res: any) {
 }
 
 /**
+ * Admin: fetch used component tags
+ * GET /api/admin/products/:productId/used-parts
+ */
+export async function getAdminProductUsedParts(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const key = `used_parts:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ used_parts: parseUsedPartsSetting(null, null) });
+    }
+
+    return res.json({ used_parts: parseUsedPartsSetting(data?.value, null) });
+  } catch (error) {
+    console.error("Admin used-parts fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Admin: update used component tags
+ * POST /api/admin/products/:productId/used-parts
+ */
+export async function updateAdminProductUsedParts(req: any, res: any) {
+  try {
+    const { user, error: authError } = await getAuthUser(req);
+    if (authError || !user) {
+      return res.status(401).json({ error: authError || "Unauthorized" });
+    }
+    if (!isAdminUser(user)) {
+      return res.status(403).json({ error: "Forbidden" });
+    }
+    if (!requireServiceRoleKey(res)) {
+      return;
+    }
+    const adminKey = `admin:${user.id}:${getRequestIp(req)}`;
+    if (isRateLimited(adminKey, ADMIN_RATE_LIMIT_MAX, ADMIN_RATE_LIMIT_WINDOW_MS)) {
+      return res.status(429).json({ error: "Too many admin requests" });
+    }
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const usedParts = parseUsedPartsSetting(req.body?.used_parts, null);
+    const key = `used_parts:${productId}`;
+    const payload = { key, value: usedParts, updated_at: new Date() };
+
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .upsert([payload], { onConflict: "key" })
+      .select()
+      .single();
+
+    if (error || !data) {
+      console.error("Used-parts update failed:", error);
+      return res.status(500).json({ error: error?.message || "Failed to update used-parts setting" });
+    }
+
+    await logAdminAction(req, user, "product_used_parts_update", "ui_settings", key, {
+      product_id: productId,
+      used_parts: usedParts,
+    });
+
+    return res.json({ used_parts: parseUsedPartsSetting(data?.value, usedParts) });
+  } catch (error) {
+    console.error("Admin used-parts update error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
  * Public: get FPS settings per product
  * GET /api/fps-settings/:productId
  */
@@ -2833,6 +2940,34 @@ export async function getProductUsedVariant(req: any, res: any) {
     return res.json({ enabled: parseUsedVariantSetting(data?.value, true) });
   } catch (error) {
     console.error("Used variant fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+
+/**
+ * Public: get used component tags
+ * GET /api/used-parts/:productId
+ */
+export async function getProductUsedParts(req: any, res: any) {
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+    const key = `used_parts:${productId}`;
+    const { data, error } = await supabase
+      .from("ui_settings")
+      .select("key, value")
+      .eq("key", key)
+      .single();
+
+    if (error) {
+      return res.json({ used_parts: parseUsedPartsSetting(null, null) });
+    }
+
+    return res.json({ used_parts: parseUsedPartsSetting(data?.value, null) });
+  } catch (error) {
+    console.error("Used-parts fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 }
@@ -3019,3 +3154,4 @@ export async function getAdminLogs(req: any, res: any) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+

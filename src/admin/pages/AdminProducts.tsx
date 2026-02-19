@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { Plus, RefreshCcw, Save, Search, Trash2 } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
@@ -6,8 +6,17 @@ import {
   createEmptyFpsEntry,
   FpsSandboxEntry,
   FpsSandboxSettings,
+  FPS_SANDBOX_GAME_OPTIONS,
+  FPS_SANDBOX_RESOLUTION_OPTIONS,
   normalizeFpsSandboxSettings,
 } from "@/lib/fpsSandbox";
+import {
+  DEFAULT_USED_PARTS_SETTINGS,
+  sanitizeUsedPartsSettings,
+  USED_PART_KEYS,
+  USED_PART_LABELS,
+  UsedPartsSettings,
+} from "@/lib/usedParts";
 
 type AdminProduct = {
   id: string;
@@ -70,7 +79,9 @@ type ListingDraft = {
   eta_note: string;
 };
 
-const PRODUCT_FORM_FIELDS = [
+type ListingField = Exclude<keyof ListingDraft, "is_preorder" | "description">;
+
+const PRODUCT_FORM_FIELDS: ListingField[] = [
   "name",
   "slug",
   "legacy_id",
@@ -89,9 +100,9 @@ const PRODUCT_FORM_FIELDS = [
   "quantity_in_stock",
   "eta_input",
   "eta_note",
-] as const;
+];
 
-const FIELD_LABELS: Record<(typeof PRODUCT_FORM_FIELDS)[number], string> = {
+const FIELD_LABELS: Record<ListingField, string> = {
   name: "Titel",
   slug: "Slug",
   legacy_id: "Legacy-ID",
@@ -111,6 +122,8 @@ const FIELD_LABELS: Record<(typeof PRODUCT_FORM_FIELDS)[number], string> = {
   eta_input: "ETA (dagar)",
   eta_note: "ETA-notis",
 };
+
+const NUMERIC_FIELDS = new Set<ListingField>(["price_cents", "quantity_in_stock"]);
 
 const EMPTY_DRAFT: ListingDraft = {
   name: "",
@@ -166,6 +179,47 @@ const slugify = (value: string) =>
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
 
+const buildUsedDraftFromBase = (base: ListingDraft): ListingDraft => {
+  const baseSlug = base.slug || slugify(base.name);
+  return {
+    ...base,
+    name: base.name ? `${base.name} - Begagnade` : "",
+    slug: baseSlug ? `${baseSlug}-begagnade` : "",
+  };
+};
+
+const normalizeFpsEditorEntry = (entry: FpsSandboxEntry): FpsSandboxEntry => {
+  const game = FPS_SANDBOX_GAME_OPTIONS.includes(entry.game as (typeof FPS_SANDBOX_GAME_OPTIONS)[number])
+    ? entry.game
+    : FPS_SANDBOX_GAME_OPTIONS[0];
+  const resolution = FPS_SANDBOX_RESOLUTION_OPTIONS.includes(
+    entry.resolution as (typeof FPS_SANDBOX_RESOLUTION_OPTIONS)[number]
+  )
+    ? entry.resolution
+    : FPS_SANDBOX_RESOLUTION_OPTIONS[0];
+  const supportsDlssFsr = Boolean(entry.supportsDlssFsr);
+  return {
+    game,
+    resolution,
+    graphics: String(entry.graphics || ""),
+    baseFps: Math.max(0, Number(entry.baseFps) || 0),
+    supportsDlssFsr,
+    dlssFsrMode: supportsDlssFsr ? "balanced" : null,
+    supportsFrameGeneration: Boolean(entry.supportsFrameGeneration),
+  };
+};
+
+const makeNewFpsEntry = (): FpsSandboxEntry =>
+  normalizeFpsEditorEntry({
+    ...createEmptyFpsEntry(),
+    game: FPS_SANDBOX_GAME_OPTIONS[0],
+    resolution: FPS_SANDBOX_RESOLUTION_OPTIONS[0],
+    graphics: "",
+  });
+
+const hasInvalidFpsEntries = (entries: FpsSandboxEntry[]) =>
+  entries.some((entry) => !String(entry.graphics || "").trim());
+
 export default function AdminProducts() {
   const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
@@ -177,13 +231,17 @@ export default function AdminProducts() {
 
   const [draft, setDraft] = useState<ListingDraft>(EMPTY_DRAFT);
   const [createUsedVariant, setCreateUsedVariant] = useState(false);
-  const [usedDraft, setUsedDraft] = useState<Partial<ListingDraft>>({});
+  const [usedDraft, setUsedDraft] = useState<ListingDraft>(buildUsedDraftFromBase(EMPTY_DRAFT));
+  const [usedDraftParts, setUsedDraftParts] = useState<UsedPartsSettings>(DEFAULT_USED_PARTS_SETTINGS);
   const [creating, setCreating] = useState(false);
 
   const [draftFpsEntries, setDraftFpsEntries] = useState<FpsSandboxEntry[]>([]);
   const [fpsByProduct, setFpsByProduct] = useState<Record<string, FpsSandboxSettings>>({});
   const [fpsLoadingByProduct, setFpsLoadingByProduct] = useState<Record<string, boolean>>({});
   const [fpsSavingByProduct, setFpsSavingByProduct] = useState<Record<string, boolean>>({});
+  const [usedPartsByProduct, setUsedPartsByProduct] = useState<Record<string, UsedPartsSettings>>({});
+  const [usedPartsLoadingByProduct, setUsedPartsLoadingByProduct] = useState<Record<string, boolean>>({});
+  const [usedPartsSavingByProduct, setUsedPartsSavingByProduct] = useState<Record<string, boolean>>({});
 
   const loadItems = async () => {
     if (!token || !isAdmin) return;
@@ -251,6 +309,31 @@ export default function AdminProducts() {
 
   const setItem = <K extends keyof CatalogItem>(id: string, key: K, value: CatalogItem[K]) => {
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, [key]: value } : item)));
+  };
+
+  const setDraftField = (key: ListingField, rawValue: string) => {
+    setDraft((prev) => ({
+      ...prev,
+      [key]: NUMERIC_FIELDS.has(key) ? Math.max(0, Number(rawValue) || 0) : rawValue,
+    }));
+  };
+
+  const setUsedDraftField = (key: ListingField, rawValue: string) => {
+    setUsedDraft((prev) => ({
+      ...prev,
+      [key]: NUMERIC_FIELDS.has(key) ? Math.max(0, Number(rawValue) || 0) : rawValue,
+    }));
+  };
+
+  const persistUsedParts = async (productId: string, value: UsedPartsSettings) => {
+    const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-parts`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ used_parts: value }),
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data?.error || "Kunde inte spara begagnade komponenttaggar.");
+    return sanitizeUsedPartsSettings(data?.used_parts);
   };
 
   const saveItem = async (item: CatalogItem) => {
@@ -322,7 +405,10 @@ export default function AdminProducts() {
       });
       if (!response.ok) throw new Error("Kunde inte hämta FPS-inställningar.");
       const data = await response.json();
-      setFpsByProduct((prev) => ({ ...prev, [productId]: normalizeFpsSandboxSettings(data?.fps) }));
+      setFpsByProduct((prev) => ({
+        ...prev,
+        [productId]: normalizeFpsSandboxSettings(data?.fps || { version: 2, entries: [] }),
+      }));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
     } finally {
@@ -333,14 +419,22 @@ export default function AdminProducts() {
   const updateFpsEntry = (productId: string, index: number, patch: Partial<FpsSandboxEntry>) => {
     setFpsByProduct((prev) => {
       const current = prev[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
-      const entries = current.entries.map((entry, i) => (i === index ? { ...entry, ...patch } : entry));
+      const entries = current.entries.map((entry, i) =>
+        i === index ? normalizeFpsEditorEntry({ ...entry, ...patch }) : entry
+      );
       return { ...prev, [productId]: normalizeFpsSandboxSettings({ version: 2, entries }) };
     });
   };
 
   const saveFps = async (productId: string) => {
     if (!token || !isAdmin) return;
-    const fps = fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
+    const current = fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
+    const entries = current.entries.map((entry) => normalizeFpsEditorEntry(entry));
+    if (hasInvalidFpsEntries(entries)) {
+      setLocalError("Alla FPS-rader måste ha en grafik-text innan de kan sparas.");
+      return;
+    }
+    const fps = normalizeFpsSandboxSettings({ version: 2, entries });
     setFpsSavingByProduct((prev) => ({ ...prev, [productId]: true }));
     setLocalError("");
     try {
@@ -359,6 +453,38 @@ export default function AdminProducts() {
     }
   };
 
+  const loadUsedParts = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    setUsedPartsLoadingByProduct((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-parts`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error("Kunde inte hämta begagnade komponenttaggar.");
+      const data = await response.json();
+      setUsedPartsByProduct((prev) => ({ ...prev, [productId]: sanitizeUsedPartsSettings(data?.used_parts) }));
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte hämta begagnade komponenttaggar.");
+    } finally {
+      setUsedPartsLoadingByProduct((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
+
+  const saveUsedParts = async (productId: string) => {
+    if (!token || !isAdmin) return;
+    setUsedPartsSavingByProduct((prev) => ({ ...prev, [productId]: true }));
+    setLocalError("");
+    try {
+      const current = sanitizeUsedPartsSettings(usedPartsByProduct[productId]);
+      const saved = await persistUsedParts(productId, current);
+      setUsedPartsByProduct((prev) => ({ ...prev, [productId]: saved }));
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte spara begagnade komponenttaggar.");
+    } finally {
+      setUsedPartsSavingByProduct((prev) => ({ ...prev, [productId]: false }));
+    }
+  };
   const createProduct = async (input: ListingDraft) => {
     const response = await fetch(`${apiBase}/api/admin/products`, {
       method: "POST",
@@ -397,30 +523,35 @@ export default function AdminProducts() {
       setLocalError("Fyll i titel, CPU, GPU, RAM och lagring innan du skapar produkten.");
       return;
     }
+
+    const normalizedDraftFps = draftFpsEntries.map((entry) => normalizeFpsEditorEntry(entry));
+    if (hasInvalidFpsEntries(normalizedDraftFps)) {
+      setLocalError("Alla FPS-rader måste ha en grafik-text innan du kan skapa produkten.");
+      return;
+    }
+
     setCreating(true);
     setLocalError("");
     try {
       const baseProduct = await createProduct(draft);
       await saveInventoryForCreatedProduct(baseProduct.id, draft);
-      if (draftFpsEntries.length > 0) {
+      if (normalizedDraftFps.length > 0) {
         await fetch(`${apiBase}/api/admin/products/${baseProduct.id}/fps-settings`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ fps: normalizeFpsSandboxSettings({ version: 2, entries: draftFpsEntries }) }),
+          body: JSON.stringify({ fps: normalizeFpsSandboxSettings({ version: 2, entries: normalizedDraftFps }) }),
         });
       }
 
       if (createUsedVariant) {
         const resolvedUsed: ListingDraft = {
-          ...draft,
           ...usedDraft,
           name: (usedDraft.name || `${draft.name} - Begagnade`).trim(),
           slug: (usedDraft.slug || `${slugify(draft.name)}-begagnade`).trim(),
-          legacy_id: (usedDraft.legacy_id || "").trim(),
-          price_cents: Math.max(0, Number(usedDraft.price_cents ?? draft.price_cents)),
         };
         const usedProduct = await createProduct(resolvedUsed);
         await saveInventoryForCreatedProduct(usedProduct.id, resolvedUsed);
+        await persistUsedParts(usedProduct.id, usedDraftParts);
         await fetch(`${apiBase}/api/admin/products/${baseProduct.id}/used-variant`, {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -429,7 +560,8 @@ export default function AdminProducts() {
       }
 
       setDraft(EMPTY_DRAFT);
-      setUsedDraft({});
+      setUsedDraft(buildUsedDraftFromBase(EMPTY_DRAFT));
+      setUsedDraftParts(DEFAULT_USED_PARTS_SETTINGS);
       setCreateUsedVariant(false);
       setDraftFpsEntries([]);
       await loadItems();
@@ -494,17 +626,9 @@ export default function AdminProducts() {
             <label key={`draft-${key}`} className="text-xs text-slate-400">
               {FIELD_LABELS[key]}
               <input
-                type={key === "price_cents" || key === "quantity_in_stock" ? "number" : "text"}
+                type={NUMERIC_FIELDS.has(key) ? "number" : "text"}
                 value={String(draft[key] ?? "")}
-                onChange={(event) =>
-                  setDraft((prev) => ({
-                    ...prev,
-                    [key]:
-                      key === "price_cents" || key === "quantity_in_stock"
-                        ? Math.max(0, Number(event.target.value) || 0)
-                        : event.target.value,
-                  }))
-                }
+                onChange={(event) => setDraftField(key, event.target.value)}
                 className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
               />
             </label>
@@ -530,101 +654,192 @@ export default function AdminProducts() {
             className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
           />
         </label>
+
         <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-3">
           <label className="inline-flex items-center gap-2 text-sm text-slate-200">
-            <input type="checkbox" checked={createUsedVariant} onChange={(event) => setCreateUsedVariant(event.target.checked)} />
+            <input
+              type="checkbox"
+              checked={createUsedVariant}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                setCreateUsedVariant(enabled);
+                if (enabled) {
+                  setUsedDraft(buildUsedDraftFromBase(draft));
+                  setUsedDraftParts(DEFAULT_USED_PARTS_SETTINGS);
+                }
+              }}
+            />
             Skapa begagnad variant
           </label>
+
           {createUsedVariant && (
-            <div className="grid gap-3 md:grid-cols-2">
-              <label className="text-xs text-slate-400">
-                Begagnad titel
-                <input
-                  type="text"
-                  value={usedDraft.name || ""}
-                  onChange={(event) => setUsedDraft((prev) => ({ ...prev, name: event.target.value }))}
+            <>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setUsedDraft(buildUsedDraftFromBase(draft))}
+                  className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100"
+                >
+                  Kopiera från basprodukt
+                </button>
+              </div>
+
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                {PRODUCT_FORM_FIELDS.map((key) => (
+                  <label key={`used-draft-${key}`} className="text-xs text-slate-400">
+                    {FIELD_LABELS[key]}
+                    <input
+                      type={NUMERIC_FIELDS.has(key) ? "number" : "text"}
+                      value={String(usedDraft[key] ?? "")}
+                      onChange={(event) => setUsedDraftField(key, event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                    />
+                  </label>
+                ))}
+                <label className="text-xs text-slate-400">
+                  Förbeställning
+                  <select
+                    value={usedDraft.is_preorder ? "true" : "false"}
+                    onChange={(event) => setUsedDraft((prev) => ({ ...prev, is_preorder: event.target.value === "true" }))}
+                    className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  >
+                    <option value="false">Nej</option>
+                    <option value="true">Ja</option>
+                  </select>
+                </label>
+              </div>
+
+              <label className="block text-xs text-slate-400">
+                Beskrivning
+                <textarea
+                  rows={2}
+                  value={usedDraft.description}
+                  onChange={(event) => setUsedDraft((prev) => ({ ...prev, description: event.target.value }))}
                   className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                 />
               </label>
-              <label className="text-xs text-slate-400">
-                Begagnat pris (öre)
-                <input
-                  type="number"
-                  value={usedDraft.price_cents ?? ""}
-                  onChange={(event) => setUsedDraft((prev) => ({ ...prev, price_cents: Math.max(0, Number(event.target.value) || 0) }))}
-                  className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                />
-              </label>
-            </div>
+
+              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 space-y-2">
+                <p className="text-sm text-slate-200">Begagnade komponenttaggar för varianten</p>
+                <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+                  {USED_PART_KEYS.map((key) => (
+                    <label key={`used-draft-part-${key}`} className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 bg-slate-950/70 px-3 py-2 text-xs text-slate-200">
+                      <input
+                        type="checkbox"
+                        checked={usedDraftParts[key]}
+                        onChange={(event) =>
+                          setUsedDraftParts((prev) => ({ ...prev, [key]: event.target.checked }))
+                        }
+                      />
+                      {USED_PART_LABELS[key]}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
         </div>
+
         <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-2">
           <div className="flex items-center justify-between">
             <p className="text-sm text-slate-200">FPS-variabler för nya produkten</p>
-            <button type="button" onClick={() => setDraftFpsEntries((prev) => [...prev, createEmptyFpsEntry()])} className="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
+            <button
+              type="button"
+              onClick={() => setDraftFpsEntries((prev) => [...prev, makeNewFpsEntry()])}
+              className="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100"
+            >
               <Plus className="h-3.5 w-3.5" /> Lägg till
             </button>
           </div>
           {draftFpsEntries.map((entry, index) => (
-            <div key={`draft-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
-              <input value={entry.game} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, game: event.target.value } : row))} placeholder="Spel" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-              <input value={entry.resolution} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, resolution: event.target.value } : row))} placeholder="Upplösning" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-              <input value={entry.graphics} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, graphics: event.target.value } : row))} placeholder="Grafik" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-              <input type="number" min={0} value={entry.baseFps} onChange={(event) => setDraftFpsEntries((prev) => prev.map((row, i) => i === index ? { ...row, baseFps: Math.max(0, Number(event.target.value) || 0) } : row))} placeholder="Bas-FPS" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+            <div key={`draft-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-7 items-end">
               <select
-                value={entry.supportsDlssFsr ? "true" : "false"}
+                value={entry.game}
                 onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) => (i === index ? normalizeFpsEditorEntry({ ...row, game: event.target.value }) : row))
+                  )
+                }
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+              >
+                {FPS_SANDBOX_GAME_OPTIONS.map((game) => (
+                  <option key={`draft-game-${game}`} value={game}>{game}</option>
+                ))}
+              </select>
+              <select
+                value={entry.resolution}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) => (i === index ? normalizeFpsEditorEntry({ ...row, resolution: event.target.value }) : row))
+                  )
+                }
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+              >
+                {FPS_SANDBOX_RESOLUTION_OPTIONS.map((resolution) => (
+                  <option key={`draft-resolution-${resolution}`} value={resolution}>{resolution}</option>
+                ))}
+              </select>
+              <input
+                value={entry.graphics}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) => (i === index ? normalizeFpsEditorEntry({ ...row, graphics: event.target.value }) : row))
+                  )
+                }
+                placeholder="Grafik (fri text)"
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+              />
+              <input
+                type="number"
+                min={0}
+                value={entry.baseFps}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) => (i === index ? normalizeFpsEditorEntry({ ...row, baseFps: Math.max(0, Number(event.target.value) || 0) }) : row))
+                  )
+                }
+                placeholder="Bas-FPS"
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+              />
+              <button
+                type="button"
+                onClick={() =>
                   setDraftFpsEntries((prev) =>
                     prev.map((row, i) =>
                       i === index
-                        ? {
+                        ? normalizeFpsEditorEntry({
                             ...row,
-                            supportsDlssFsr: event.target.value === "true",
-                            dlssFsrMode: event.target.value === "true" ? row.dlssFsrMode || "balanced" : null,
-                          }
+                            supportsDlssFsr: !row.supportsDlssFsr,
+                            dlssFsrMode: !row.supportsDlssFsr ? "balanced" : null,
+                          })
                         : row
                     )
                   )
                 }
-                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
+                className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsDlssFsr ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}
               >
-                <option value="false">DLSS/FSR: Nej</option>
-                <option value="true">DLSS/FSR: Ja</option>
-              </select>
-              <select
-                value={entry.dlssFsrMode || "balanced"}
-                disabled={!entry.supportsDlssFsr}
-                onChange={(event) =>
+                DLSS/FSR {entry.supportsDlssFsr ? "På" : "Av"}
+              </button>
+              <button
+                type="button"
+                onClick={() =>
                   setDraftFpsEntries((prev) =>
                     prev.map((row, i) =>
-                      i === index ? { ...row, dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] } : row
+                      i === index
+                        ? normalizeFpsEditorEntry({ ...row, supportsFrameGeneration: !row.supportsFrameGeneration })
+                        : row
                     )
                   )
                 }
-                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-40"
+                className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsFrameGeneration ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}
               >
-                <option value="quality">Mode: Quality</option>
-                <option value="balanced">Mode: Balanced</option>
-                <option value="performance">Mode: Performance</option>
-              </select>
-              <select
-                value={entry.supportsFrameGeneration ? "true" : "false"}
-                onChange={(event) =>
-                  setDraftFpsEntries((prev) =>
-                    prev.map((row, i) =>
-                      i === index ? { ...row, supportsFrameGeneration: event.target.value === "true" } : row
-                    )
-                  )
-                }
-                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100"
-              >
-                <option value="false">Frame Gen: Nej</option>
-                <option value="true">Frame Gen: Ja</option>
-              </select>
+                Frame Gen {entry.supportsFrameGeneration ? "På" : "Av"}
+              </button>
               <button type="button" onClick={() => setDraftFpsEntries((prev) => prev.filter((_, i) => i !== index))} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
             </div>
           ))}
         </div>
+
         <button type="button" onClick={createListing} disabled={creating} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
           <Save className="h-4 w-4" /> {creating ? "Skapar..." : "Skapa produkt"}
         </button>
@@ -652,9 +867,15 @@ export default function AdminProducts() {
                 <label key={`${item.id}-${key}`} className="text-xs text-slate-400">
                   {FIELD_LABELS[key]}
                   <input
-                    type={key === "price_cents" || key === "quantity_in_stock" ? "number" : "text"}
+                    type={NUMERIC_FIELDS.has(key) ? "number" : "text"}
                     value={String(item[key] ?? "")}
-                    onChange={(event) => setItem(item.id, key, (key === "price_cents" || key === "quantity_in_stock" ? Math.max(0, Number(event.target.value) || 0) : event.target.value) as CatalogItem[typeof key])}
+                    onChange={(event) =>
+                      setItem(
+                        item.id,
+                        key,
+                        (NUMERIC_FIELDS.has(key) ? Math.max(0, Number(event.target.value) || 0) : event.target.value) as CatalogItem[typeof key]
+                      )
+                    }
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
@@ -676,6 +897,37 @@ export default function AdminProducts() {
               Beskrivning
               <textarea value={item.description || ""} onChange={(event) => setItem(item.id, "description", event.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100" />
             </label>
+
+            <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-slate-200">Begagnade komponenttaggar</p>
+                {!usedPartsByProduct[item.id] ? (
+                  <button type="button" onClick={() => void loadUsedParts(item.id)} disabled={usedPartsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{usedPartsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
+                ) : (
+                  <button type="button" onClick={() => void saveUsedParts(item.id)} disabled={usedPartsSavingByProduct[item.id]} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{usedPartsSavingByProduct[item.id] ? "Sparar..." : "Spara taggar"}</button>
+                )}
+              </div>
+              {usedPartsByProduct[item.id] ? (
+                <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-4">
+                  {USED_PART_KEYS.map((key) => (
+                    <label key={`${item.id}-used-${key}`} className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 bg-slate-950/70 px-3 py-2 text-xs text-slate-200">
+                      <input
+                        type="checkbox"
+                        checked={Boolean(usedPartsByProduct[item.id]?.[key])}
+                        onChange={(event) =>
+                          setUsedPartsByProduct((prev) => ({
+                            ...prev,
+                            [item.id]: sanitizeUsedPartsSettings({ ...prev[item.id], [key]: event.target.checked }),
+                          }))
+                        }
+                      />
+                      {USED_PART_LABELS[key]}
+                    </label>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-slate-200">Uppskattad FPS (sandbox)</p>
@@ -683,30 +935,31 @@ export default function AdminProducts() {
                   <button type="button" onClick={() => void loadFps(item.id)} disabled={fpsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{fpsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
                 ) : (
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), createEmptyFpsEntry()] }) }))} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">Lägg till</button>
+                    <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), makeNewFpsEntry()] }) }))} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">Lägg till</button>
                     <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id]} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
                   </div>
                 )}
               </div>
               {(fpsByProduct[item.id]?.entries || []).map((entry, index) => (
-                <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
-                  <input value={entry.game} onChange={(event) => updateFpsEntry(item.id, index, { game: event.target.value })} placeholder="Spel" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-                  <input value={entry.resolution} onChange={(event) => updateFpsEntry(item.id, index, { resolution: event.target.value })} placeholder="Upplösning" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-                  <input value={entry.graphics} onChange={(event) => updateFpsEntry(item.id, index, { graphics: event.target.value })} placeholder="Grafik" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-7 items-end">
+                  <select value={entry.game} onChange={(event) => updateFpsEntry(item.id, index, { game: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
+                    {FPS_SANDBOX_GAME_OPTIONS.map((game) => (
+                      <option key={`${item.id}-game-${game}`} value={game}>{game}</option>
+                    ))}
+                  </select>
+                  <select value={entry.resolution} onChange={(event) => updateFpsEntry(item.id, index, { resolution: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
+                    {FPS_SANDBOX_RESOLUTION_OPTIONS.map((resolution) => (
+                      <option key={`${item.id}-resolution-${resolution}`} value={resolution}>{resolution}</option>
+                    ))}
+                  </select>
+                  <input value={entry.graphics} onChange={(event) => updateFpsEntry(item.id, index, { graphics: event.target.value })} placeholder="Grafik (fri text)" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
                   <input type="number" min={0} value={entry.baseFps} onChange={(event) => updateFpsEntry(item.id, index, { baseFps: Math.max(0, Number(event.target.value) || 0) })} placeholder="Bas-FPS" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-                  <select value={entry.supportsDlssFsr ? "true" : "false"} onChange={(event) => updateFpsEntry(item.id, index, { supportsDlssFsr: event.target.value === "true", dlssFsrMode: event.target.value === "true" ? entry.dlssFsrMode || "balanced" : null })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
-                    <option value="false">DLSS/FSR: Nej</option>
-                    <option value="true">DLSS/FSR: Ja</option>
-                  </select>
-                  <select value={entry.dlssFsrMode || "balanced"} disabled={!entry.supportsDlssFsr} onChange={(event) => updateFpsEntry(item.id, index, { dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-40">
-                    <option value="quality">Mode: Quality</option>
-                    <option value="balanced">Mode: Balanced</option>
-                    <option value="performance">Mode: Performance</option>
-                  </select>
-                  <select value={entry.supportsFrameGeneration ? "true" : "false"} onChange={(event) => updateFpsEntry(item.id, index, { supportsFrameGeneration: event.target.value === "true" })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
-                    <option value="false">Frame Gen: Nej</option>
-                    <option value="true">Frame Gen: Ja</option>
-                  </select>
+                  <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsDlssFsr: !entry.supportsDlssFsr, dlssFsrMode: !entry.supportsDlssFsr ? "balanced" : null })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsDlssFsr ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
+                    DLSS/FSR {entry.supportsDlssFsr ? "På" : "Av"}
+                  </button>
+                  <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsFrameGeneration: !entry.supportsFrameGeneration })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsFrameGeneration ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
+                    Frame Gen {entry.supportsFrameGeneration ? "På" : "Av"}
+                  </button>
                   <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: (prev[item.id]?.entries || []).filter((_, i) => i !== index) }) }))} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
                 </div>
               ))}
@@ -717,3 +970,10 @@ export default function AdminProducts() {
     </div>
   );
 }
+
+
+
+
+
+
+
