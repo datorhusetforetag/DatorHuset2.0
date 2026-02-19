@@ -26,6 +26,7 @@ export const FRAME_GENERATION_MULTIPLIER = 1.8;
 export const FPS_SANDBOX_GAME_OPTIONS = [
   "Fortnite",
   "Cyberpunk 2077",
+  "Ghost of Tsushima",
   "GTA 5",
   "Minecraft",
   "CS2",
@@ -43,6 +44,11 @@ const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> =
     "1080p": { High: 90, Ultra: 90, "Ultra + Raytracing/Pathtracing": 65 },
     "1440p": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 65 },
     "4K": { High: 35, Ultra: 35, "Ultra + Raytracing/Pathtracing": 65 },
+  },
+  "Ghost of Tsushima": {
+    "1080p": { High: 140, Ultra: 140, "Ultra + Raytracing/Pathtracing": 85 },
+    "1440p": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 65 },
+    "4K": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 40 },
   },
   "GTA 5": {
     "1080p": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
@@ -64,6 +70,7 @@ const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> =
 const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
   Fortnite: { dlss: true, frameGen: false },
   "Cyberpunk 2077": { dlss: true, frameGen: true },
+  "Ghost of Tsushima": { dlss: true, frameGen: true },
   "GTA 5": { dlss: false, frameGen: false },
   Minecraft: { dlss: false, frameGen: false },
   CS2: { dlss: false, frameGen: false },
