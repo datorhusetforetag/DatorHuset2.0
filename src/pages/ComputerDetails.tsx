@@ -475,6 +475,17 @@ export default function ComputerDetails() {
     dlssFsrOn: dlssOn,
     frameGenerationOn: frameGenOn,
   });
+  const dlssTooltipText = !supports.dlss
+    ? DISABLED_FEATURE_TOOLTIP
+    : activeFpsEntry?.dlssFsrMode
+      ? `Läge: ${DLSS_MODE_LABELS[activeFpsEntry.dlssFsrMode] || activeFpsEntry.dlssFsrMode}`
+      : "";
+  const frameGenTooltipText = !supports.frameGen ? DISABLED_FEATURE_TOOLTIP : "";
+  const hasFpsData =
+    gameList.length > 0 &&
+    visibleResolutions.length > 0 &&
+    visiblePresets.length > 0 &&
+    Boolean(activeFpsEntry);
 
   const merged = mergeProductFields(
     {
@@ -1028,11 +1039,16 @@ export default function ComputerDetails() {
                   id="game"
                   value={selectedGame}
                   onChange={(e) => setSelectedGame(e.target.value)}
+                  disabled={gameList.length === 0}
                   className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                 >
-                  {gameList.map((game) => (
-                    <option key={game} value={game}>{game}</option>
-                  ))}
+                  {gameList.length ? (
+                    gameList.map((game) => (
+                      <option key={game} value={game}>{game}</option>
+                    ))
+                  ) : (
+                    <option value="">Inga spel tillgängliga</option>
+                  )}
                 </select>
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -1045,9 +1061,13 @@ export default function ComputerDetails() {
                     disabled={visibleResolutions.length === 0}
                     className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {visibleResolutions.map((res) => (
-                      <option key={res} value={res}>{res}</option>
-                    ))}
+                    {visibleResolutions.length ? (
+                      visibleResolutions.map((res) => (
+                        <option key={res} value={res}>{res}</option>
+                      ))
+                    ) : (
+                      <option value="">Ingen upplösning</option>
+                    )}
                   </select>
                 </div>
                 <div className="space-y-2">
@@ -1059,40 +1079,54 @@ export default function ComputerDetails() {
                     disabled={visiblePresets.length === 0}
                     className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
                   >
-                    {visiblePresets.map((preset) => (
-                      <option key={preset} value={preset}>{preset}</option>
-                    ))}
+                    {visiblePresets.length ? (
+                      visiblePresets.map((preset) => (
+                        <option key={preset} value={preset}>{preset}</option>
+                      ))
+                    ) : (
+                      <option value="">Ingen grafikprofil</option>
+                    )}
                   </select>
                 </div>
               </div>
 
               <div className="flex gap-3 flex-wrap">
-                <button
-                  onClick={() => setDlssOn((v) => !v)}
-                  disabled={!supports.dlss}
-                  title={
-                    !supports.dlss
-                      ? DISABLED_FEATURE_TOOLTIP
-                      : activeFpsEntry?.dlssFsrMode
-                        ? `Läge: ${DLSS_MODE_LABELS[activeFpsEntry.dlssFsrMode] || activeFpsEntry.dlssFsrMode}`
-                        : undefined
-                  }
-                  className={`px-4 py-2 rounded-lg border ${
-                    dlssOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
-                  } text-sm font-semibold ${!supports.dlss ? "opacity-40 cursor-not-allowed" : ""}`}
-                >
-                  DLSS / FSR {dlssOn ? "On" : "Off"}
-                </button>
-                <button
-                  onClick={() => setFrameGenOn((v) => !v)}
-                  disabled={!supports.frameGen}
-                  title={!supports.frameGen ? DISABLED_FEATURE_TOOLTIP : undefined}
-                  className={`px-4 py-2 rounded-lg border ${
-                    frameGenOn ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30" : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
-                  } text-sm font-semibold ${!supports.frameGen ? "opacity-40 cursor-not-allowed" : ""}`}
-                >
-                  Frame generation {frameGenOn ? "On" : "Off"}
-                </button>
+                <span className="relative group">
+                  <button
+                    onClick={() => setDlssOn((v) => !v)}
+                    disabled={!supports.dlss}
+                    className={`px-4 py-2 rounded-lg border ${
+                      dlssOn
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
+                        : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                    } text-sm font-semibold ${!supports.dlss ? "opacity-40 cursor-not-allowed" : ""}`}
+                  >
+                    DLSS / FSR {dlssOn ? "On" : "Off"}
+                  </button>
+                  {dlssTooltipText ? (
+                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                      {dlssTooltipText}
+                    </span>
+                  ) : null}
+                </span>
+                <span className="relative group">
+                  <button
+                    onClick={() => setFrameGenOn((v) => !v)}
+                    disabled={!supports.frameGen}
+                    className={`px-4 py-2 rounded-lg border ${
+                      frameGenOn
+                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
+                        : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                    } text-sm font-semibold ${!supports.frameGen ? "opacity-40 cursor-not-allowed" : ""}`}
+                  >
+                    Frame generation {frameGenOn ? "On" : "Off"}
+                  </button>
+                  {frameGenTooltipText ? (
+                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                      {frameGenTooltipText}
+                    </span>
+                  ) : null}
+                </span>
               </div>
             </div>
 
@@ -1115,8 +1149,10 @@ export default function ComputerDetails() {
                 </div>
                 <div className="space-y-2">
                   <p className="text-gray-600 dark:text-gray-300 text-sm">{activeResolution} {"\u00d7"} {activePreset}</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{averageFps} FPS</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">{"Ber\u00e4knat med vald konfiguration"}</p>
+                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{hasFpsData ? `${averageFps} FPS` : "-"}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    {hasFpsData ? "Beräknat med vald konfiguration" : "Inga FPS-variabler finns för den här produkten ännu"}
+                  </p>
                 </div>
               </div>
             </div>

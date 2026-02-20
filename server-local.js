@@ -14,6 +14,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
+import { z } from "zod";
 
 dotenv.config();
 
@@ -221,6 +222,7 @@ const STATUS_LABELS = {
 const READY_MESSAGE =
   "DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
 const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
+const EMPTY_FPS_SETTINGS = { version: 2, entries: [] };
 const DEFAULT_FPS_MAP = {
   Fortnite: {
     supports: { dlss: true, frameGen: false, rayTracing: true },
@@ -632,9 +634,16 @@ const getAuthUser = async (req) => {
   return { user: data.user, error: null };
 };
 
-const isAdminUser = (user) => {
-  const isAdmin = user?.app_metadata?.is_admin === true || user?.app_metadata?.role === "admin";
-  if (!isAdmin) return false;
+const ADMIN_ROLES = ["readonly", "ops", "admin"];
+
+const getAdminRole = (user) => {
+  if (user?.app_metadata?.is_admin === true) return "admin";
+  const rawRole = String(user?.app_metadata?.role || "").trim().toLowerCase();
+  if (ADMIN_ROLES.includes(rawRole)) return rawRole;
+  return null;
+};
+
+const passesAdminSecurityChecks = (user) => {
   if (ADMIN_EMAIL_ALLOWLIST.length > 0) {
     const email = String(user?.email || "").toLowerCase();
     if (!ADMIN_EMAIL_ALLOWLIST.includes(email)) return false;
@@ -647,6 +656,40 @@ const isAdminUser = (user) => {
   }
   return true;
 };
+
+const isAdminUser = (user) => {
+  return getAdminRole(user) === "admin" && passesAdminSecurityChecks(user);
+};
+
+const canAccessAdminPortal = (user) => {
+  const role = getAdminRole(user);
+  return Boolean(role) && passesAdminSecurityChecks(user);
+};
+
+const hasAdminPermission = (user, allowedRoles = ["readonly", "ops", "admin"]) => {
+  if (!passesAdminSecurityChecks(user)) return false;
+  const role = getAdminRole(user);
+  return Boolean(role && allowedRoles.includes(role));
+};
+
+const requireAdminPermission = async (req, res, allowedRoles = ["readonly", "ops", "admin"]) => {
+  const { user, error: authError } = await getAuthUser(req);
+  if (authError || !user) {
+    res.status(401).json({ error: authError || "Unauthorized" });
+    return null;
+  }
+  if (!hasAdminPermission(user, allowedRoles)) {
+    res.status(403).json({ error: "Forbidden" });
+    return null;
+  }
+  return { user, role: getAdminRole(user) };
+};
+
+const jsonError = (res, status, code, message, details = null) =>
+  res.status(status).json({
+    ok: false,
+    error: { code, message, details },
+  });
 
 const formatCurrency = (value) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
@@ -697,6 +740,345 @@ const requireServiceRoleKey = (res) => {
     error: "SUPABASE_SERVICE_ROLE_KEY is missing. Admin mutations are unavailable.",
   });
   return false;
+};
+
+const LISTING_SELECT_FIELDS =
+  "id, name, slug, legacy_id, description, price_cents, currency, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, rating, reviews_count, updated_at";
+const LISTING_SORT_FIELD_MAP = {
+  name: "name",
+  updated_at: "updated_at",
+  price_cents: "price_cents",
+  created_at: "created_at",
+};
+
+const slugifyValue = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+
+const parseEtaFromListingPayload = (input) => {
+  const etaInput = sanitizeText(input?.eta_input, 24);
+  const etaNote = sanitizeText(input?.eta_note, 200);
+  if (/^\d+\s*-\s*\d+$/.test(etaInput)) {
+    const compact = etaInput.replace(/\s+/g, "");
+    return { eta_days: null, eta_note: etaNote || `ETA ${compact} dagar` };
+  }
+  const etaDaysRaw = input?.eta_days;
+  const etaDays = etaDaysRaw === null || etaDaysRaw === undefined ? null : Number(etaDaysRaw);
+  if (Number.isFinite(etaDays) && etaDays >= 0) {
+    return { eta_days: Math.round(etaDays), eta_note: etaNote || null };
+  }
+  return { eta_days: null, eta_note: etaNote || null };
+};
+
+const ensureUniqueSlug = async (slugInput, name, excludeProductId = "") => {
+  const baseSlug = slugifyValue(slugInput || name) || `produkt-${Date.now()}`;
+  let slug = baseSlug;
+  for (let i = 0; i < 16; i += 1) {
+    let query = supabase.from("products").select("id").eq("slug", slug);
+    if (excludeProductId) {
+      query = query.neq("id", excludeProductId);
+    }
+    const { data: existing, error } = await query.maybeSingle();
+    if (error) {
+      throw new Error("Kunde inte validera slug.");
+    }
+    if (!existing) return slug;
+    slug = `${baseSlug}-${i + 2}`.slice(0, 80);
+  }
+  return `${baseSlug}-${Date.now()}`.slice(0, 80);
+};
+
+const listingWriteSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  slug: z.string().trim().max(80).optional().nullable(),
+  legacy_id: z.string().trim().max(80).optional().nullable(),
+  description: z.string().trim().max(1000).optional().nullable(),
+  price_cents: z.number().finite().min(0),
+  currency: z.string().trim().max(8).optional().nullable(),
+  cpu: z.string().trim().min(1).max(120),
+  gpu: z.string().trim().min(1).max(120),
+  ram: z.string().trim().min(1).max(120),
+  storage: z.string().trim().min(1).max(120),
+  storage_type: z.string().trim().min(1).max(40),
+  tier: z.string().trim().min(1).max(40),
+  motherboard: z.string().trim().max(120).optional().nullable(),
+  psu: z.string().trim().max(120).optional().nullable(),
+  case_name: z.string().trim().max(120).optional().nullable(),
+  cpu_cooler: z.string().trim().max(120).optional().nullable(),
+  os: z.string().trim().max(80).optional().nullable(),
+  quantity_in_stock: z.number().int().min(0),
+  is_preorder: z.boolean(),
+  eta_days: z.number().int().min(0).optional().nullable(),
+  eta_input: z.string().trim().max(24).optional().nullable(),
+  eta_note: z.string().trim().max(200).optional().nullable(),
+  used_variant_enabled: z.boolean().optional(),
+  used_parts: z.record(z.boolean()).optional(),
+  fps: z.any().optional(),
+  expected_updated_at: z.string().datetime().optional().nullable(),
+});
+
+const createListingRequestSchema = z.object({
+  listing: listingWriteSchema,
+  fps: z.any().optional(),
+  used_variant: z
+    .object({
+      enabled: z.boolean(),
+      listing: listingWriteSchema.optional(),
+      used_parts: z.record(z.boolean()).optional(),
+    })
+    .optional(),
+});
+
+const updateListingRequestSchema = z.object({
+  listing: listingWriteSchema,
+  fps: z.any().optional(),
+  used_parts: z.record(z.boolean()).optional(),
+  expected_updated_at: z.string().datetime().optional().nullable(),
+});
+
+const buildListingResponse = ({
+  product,
+  inventoryByProductId,
+  fpsByProductId,
+  usedVariantByProductId,
+  usedPartsByProductId,
+}) => {
+  const inventoryRow = inventoryByProductId.get(product.id) || null;
+  const fallbackFps = EMPTY_FPS_SETTINGS;
+  return {
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    legacy_id: product.legacy_id,
+    description: product.description,
+    price_cents: Number(product.price_cents || 0),
+    currency: product.currency || "SEK",
+    cpu: product.cpu,
+    gpu: product.gpu,
+    ram: product.ram,
+    storage: product.storage,
+    storage_type: product.storage_type,
+    tier: product.tier,
+    motherboard: product.motherboard,
+    psu: product.psu,
+    case_name: product.case_name,
+    cpu_cooler: product.cpu_cooler,
+    os: product.os,
+    quantity_in_stock: Math.max(0, Number(inventoryRow?.quantity_in_stock ?? 0)),
+    is_preorder: Boolean(inventoryRow?.is_preorder ?? inventoryRow?.allow_preorder),
+    eta_days: inventoryRow?.eta_days ?? null,
+    eta_note: inventoryRow?.eta_note || "",
+    updated_at: product.updated_at || null,
+    inventory_updated_at: inventoryRow?.updated_at || null,
+    used_variant_enabled: parseUsedVariantSetting(usedVariantByProductId.get(product.id), true),
+    used_parts: parseUsedPartsSetting(usedPartsByProductId.get(product.id), null),
+    fps: sanitizeFpsSettings(fpsByProductId.get(product.id), fallbackFps),
+  };
+};
+
+const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name", order = "asc", productId = "" }) => {
+  const safeLimit = Math.min(250, Math.max(1, Number(limit) || 200));
+  const safeOffset = Math.max(0, Number(offset) || 0);
+  const sortField = LISTING_SORT_FIELD_MAP[String(sort || "").toLowerCase()] || "name";
+  const ascending = String(order || "").toLowerCase() !== "desc";
+  const term = sanitizeText(q, 80);
+  const idFilter = sanitizeText(productId, 80);
+
+  let productQuery = supabase
+    .from("products")
+    .select(LISTING_SELECT_FIELDS, { count: "exact" })
+    .order(sortField, { ascending });
+
+  if (idFilter) {
+    productQuery = productQuery.eq("id", idFilter);
+  }
+  if (term) {
+    const escaped = term.replace(/[%]/g, "");
+    productQuery = productQuery.or(`name.ilike.%${escaped}%,slug.ilike.%${escaped}%,legacy_id.ilike.%${escaped}%`);
+  }
+  if (!idFilter) {
+    productQuery = productQuery.range(safeOffset, safeOffset + safeLimit - 1);
+  }
+
+  const { data: productsRaw, error: productsError, count } = await productQuery;
+  if (productsError) throw new Error(productsError.message || "Kunde inte hämta produkter.");
+
+  const products = (productsRaw || []).filter((product) => {
+    const name = String(product.name || "").trim().toLowerCase();
+    const slug = String(product.slug || "").trim().toLowerCase();
+    return name !== "remove" && slug !== "test";
+  });
+
+  if (products.length === 0) {
+    return { data: [], total: idFilter ? 0 : count || 0, limit: safeLimit, offset: safeOffset };
+  }
+
+  const productIds = products.map((product) => product.id);
+  const settingsKeys = productIds.flatMap((id) => [`fps:${id}`, `used_variant:${id}`, `used_parts:${id}`]);
+
+  const [inventoryResponse, settingsResponse] = await Promise.all([
+    supabase.from("inventory").select("*").in("product_id", productIds),
+    supabase.from("ui_settings").select("key, value").in("key", settingsKeys),
+  ]);
+
+  if (inventoryResponse.error) throw new Error(inventoryResponse.error.message || "Kunde inte hämta lagerdata.");
+  if (settingsResponse.error) throw new Error(settingsResponse.error.message || "Kunde inte hämta listinställningar.");
+
+  const inventoryByProductId = new Map((inventoryResponse.data || []).map((row) => [row.product_id, row]));
+  const fpsByProductId = new Map();
+  const usedVariantByProductId = new Map();
+  const usedPartsByProductId = new Map();
+
+  (settingsResponse.data || []).forEach((setting) => {
+    const key = String(setting.key || "");
+    if (key.startsWith("fps:")) {
+      fpsByProductId.set(key.slice(4), setting.value);
+      return;
+    }
+    if (key.startsWith("used_variant:")) {
+      usedVariantByProductId.set(key.slice(13), setting.value);
+      return;
+    }
+    if (key.startsWith("used_parts:")) {
+      usedPartsByProductId.set(key.slice(11), setting.value);
+    }
+  });
+
+  const data = products.map((product) =>
+    buildListingResponse({
+      product,
+      inventoryByProductId,
+      fpsByProductId,
+      usedVariantByProductId,
+      usedPartsByProductId,
+    })
+  );
+
+  return { data, total: idFilter ? data.length : count || data.length, limit: safeLimit, offset: safeOffset };
+};
+
+const persistListingState = async ({ req, user, productId, listing, fpsInput, usedPartsInput, role }) => {
+  if (!productId) throw new Error("Missing product id.");
+  const parsedListing = listingWriteSchema.parse(listing);
+
+  const {
+    data: currentProduct,
+    error: currentProductError,
+  } = await supabase.from("products").select("id, updated_at").eq("id", productId).maybeSingle();
+  if (currentProductError) {
+    throw new Error(currentProductError.message || "Kunde inte läsa produkt.");
+  }
+  if (!currentProduct) {
+    throw new Error("Produkten finns inte.");
+  }
+
+  const expectedUpdatedAt = parsedListing.expected_updated_at || null;
+  if (expectedUpdatedAt && currentProduct.updated_at) {
+    const expected = new Date(expectedUpdatedAt).getTime();
+    const current = new Date(currentProduct.updated_at).getTime();
+    if (Number.isFinite(expected) && Number.isFinite(current) && expected !== current) {
+      const err = new Error("LISTING_VERSION_CONFLICT");
+      err.code = "LISTING_VERSION_CONFLICT";
+      throw err;
+    }
+  }
+
+  const slug = await ensureUniqueSlug(parsedListing.slug, parsedListing.name, productId);
+  const payload = {
+    name: sanitizeText(parsedListing.name, 120),
+    slug,
+    legacy_id: sanitizeText(parsedListing.legacy_id, 80) || null,
+    description: sanitizeText(parsedListing.description, 1000) || null,
+    price_cents: Math.max(0, Math.round(Number(parsedListing.price_cents || 0))),
+    currency: sanitizeText(parsedListing.currency, 8).toUpperCase() || "SEK",
+    cpu: sanitizeText(parsedListing.cpu, 120),
+    gpu: sanitizeText(parsedListing.gpu, 120),
+    ram: sanitizeText(parsedListing.ram, 120),
+    storage: sanitizeText(parsedListing.storage, 120),
+    storage_type: sanitizeText(parsedListing.storage_type, 40),
+    tier: sanitizeText(parsedListing.tier, 40),
+    motherboard: sanitizeText(parsedListing.motherboard, 120) || null,
+    psu: sanitizeText(parsedListing.psu, 120) || null,
+    case_name: sanitizeText(parsedListing.case_name, 120) || null,
+    cpu_cooler: sanitizeText(parsedListing.cpu_cooler, 120) || null,
+    os: sanitizeText(parsedListing.os, 80) || null,
+    updated_at: new Date(),
+  };
+
+  const { data: product, error: updateError } = await supabase
+    .from("products")
+    .update(payload)
+    .eq("id", productId)
+    .select(LISTING_SELECT_FIELDS)
+    .single();
+  if (updateError || !product) {
+    throw new Error(updateError?.message || "Kunde inte uppdatera produkt.");
+  }
+
+  if (!["admin", "ops"].includes(role)) {
+    return product;
+  }
+
+  const eta = parseEtaFromListingPayload(parsedListing);
+  const inventoryPayload = {
+    product_id: productId,
+    quantity_in_stock: Math.max(0, Math.round(Number(parsedListing.quantity_in_stock || 0))),
+    is_preorder: Boolean(parsedListing.is_preorder),
+    eta_days: eta.eta_days,
+    eta_note: eta.eta_note || null,
+    updated_at: new Date(),
+  };
+  const { error: inventoryError } = await supabase
+    .from("inventory")
+    .upsert([inventoryPayload], { onConflict: "product_id" });
+  if (inventoryError) {
+    throw new Error(inventoryError.message || "Kunde inte uppdatera lager.");
+  }
+
+  const normalizedUsedVariantEnabled =
+    typeof parsedListing.used_variant_enabled === "boolean"
+      ? parsedListing.used_variant_enabled
+      : true;
+  const usedVariantKey = `used_variant:${productId}`;
+  const { error: usedVariantError } = await supabase.from("ui_settings").upsert(
+    [{ key: usedVariantKey, value: { enabled: normalizedUsedVariantEnabled }, updated_at: new Date() }],
+    { onConflict: "key" }
+  );
+  if (usedVariantError) {
+    throw new Error(usedVariantError.message || "Kunde inte uppdatera begagnad-flagga.");
+  }
+
+  const normalizedUsedParts = parseUsedPartsSetting(usedPartsInput || parsedListing.used_parts, null);
+  const usedPartsKey = `used_parts:${productId}`;
+  const { error: usedPartsError } = await supabase
+    .from("ui_settings")
+    .upsert([{ key: usedPartsKey, value: normalizedUsedParts, updated_at: new Date() }], { onConflict: "key" });
+  if (usedPartsError) {
+    throw new Error(usedPartsError.message || "Kunde inte uppdatera begagnade komponenttaggar.");
+  }
+
+  const normalizedFps = sanitizeFpsSettings(fpsInput || parsedListing.fps, EMPTY_FPS_SETTINGS);
+  const fpsKey = `fps:${productId}`;
+  const { error: fpsError } = await supabase
+    .from("ui_settings")
+    .upsert([{ key: fpsKey, value: normalizedFps, updated_at: new Date() }], { onConflict: "key" });
+  if (fpsError) {
+    throw new Error(fpsError.message || "Kunde inte uppdatera FPS-variabler.");
+  }
+
+  await logAdminAction(req, user, "listing_update_v2", "listing", productId, {
+    name: payload.name,
+    role,
+    quantity_in_stock: inventoryPayload.quantity_in_stock,
+    is_preorder: inventoryPayload.is_preorder,
+  });
+
+  return product;
 };
 
 const recordWebhookEvent = async (event) => {
@@ -1254,6 +1636,497 @@ app.delete("/api/addresses/:addressId", async (req, res) => {
   }
 });
 
+app.get("/api/admin/v2/listings", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+
+    const { data, total, limit, offset } = await loadAdminListings({
+      limit: Number(req.query?.limit || 200),
+      offset: Number(req.query?.offset || 0),
+      q: String(req.query?.q || ""),
+      sort: String(req.query?.sort || "name"),
+      order: String(req.query?.order || "asc"),
+    });
+    return res.json({ ok: true, data, total, limit, offset });
+  } catch (error) {
+    console.error("Admin v2 listings error:", error);
+    return jsonError(res, 500, "LISTINGS_FETCH_FAILED", "Kunde inte hämta listningar.");
+  }
+});
+
+app.get("/api/admin/v2/listings/:productId", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
+    }
+    const result = await loadAdminListings({ productId });
+    const listing = result.data[0] || null;
+    if (!listing) {
+      return jsonError(res, 404, "LISTING_NOT_FOUND", "Listningen hittades inte.");
+    }
+    return res.json({ ok: true, data: listing });
+  } catch (error) {
+    console.error("Admin v2 listing fetch error:", error);
+    return jsonError(res, 500, "LISTING_FETCH_FAILED", "Kunde inte hämta listningen.");
+  }
+});
+
+app.post("/api/admin/v2/listings", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const parsed = createListingRequestSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för listning.", parsed.error.flatten());
+    }
+
+    const { listing, used_variant: usedVariant, fps } = parsed.data;
+    const baseSlug = await ensureUniqueSlug(listing.slug, listing.name);
+    const basePayload = {
+      name: sanitizeText(listing.name, 120),
+      slug: baseSlug,
+      legacy_id: sanitizeText(listing.legacy_id, 80) || null,
+      description: sanitizeText(listing.description, 1000) || null,
+      price_cents: Math.max(0, Math.round(Number(listing.price_cents || 0))),
+      currency: sanitizeText(listing.currency, 8).toUpperCase() || "SEK",
+      cpu: sanitizeText(listing.cpu, 120),
+      gpu: sanitizeText(listing.gpu, 120),
+      ram: sanitizeText(listing.ram, 120),
+      storage: sanitizeText(listing.storage, 120),
+      storage_type: sanitizeText(listing.storage_type, 40),
+      tier: sanitizeText(listing.tier, 40),
+      motherboard: sanitizeText(listing.motherboard, 120) || null,
+      psu: sanitizeText(listing.psu, 120) || null,
+      case_name: sanitizeText(listing.case_name, 120) || null,
+      cpu_cooler: sanitizeText(listing.cpu_cooler, 120) || null,
+      os: sanitizeText(listing.os, 80) || null,
+      rating: 4.5,
+      reviews_count: 0,
+      updated_at: new Date(),
+    };
+
+    const { data: createdBase, error: createBaseError } = await supabase
+      .from("products")
+      .insert([basePayload])
+      .select(LISTING_SELECT_FIELDS)
+      .single();
+    if (createBaseError || !createdBase) {
+      return jsonError(
+        res,
+        500,
+        "LISTING_CREATE_FAILED",
+        createBaseError?.message || "Kunde inte skapa baslistning."
+      );
+    }
+
+    await persistListingState({
+      req,
+      user,
+      productId: createdBase.id,
+      listing: {
+        ...listing,
+        used_variant_enabled: usedVariant?.enabled ?? listing.used_variant_enabled ?? false,
+      },
+      fpsInput: fps,
+      usedPartsInput: listing.used_parts,
+      role,
+    });
+
+    let usedVariantProductId = null;
+    if (usedVariant?.enabled && usedVariant.listing) {
+      const usedSlug = await ensureUniqueSlug(usedVariant.listing.slug, usedVariant.listing.name);
+      const usedPayload = {
+        ...basePayload,
+        name: sanitizeText(usedVariant.listing.name, 120),
+        slug: usedSlug,
+        legacy_id: sanitizeText(usedVariant.listing.legacy_id, 80) || null,
+        description: sanitizeText(usedVariant.listing.description, 1000) || null,
+        price_cents: Math.max(0, Math.round(Number(usedVariant.listing.price_cents || 0))),
+        cpu: sanitizeText(usedVariant.listing.cpu, 120),
+        gpu: sanitizeText(usedVariant.listing.gpu, 120),
+        ram: sanitizeText(usedVariant.listing.ram, 120),
+        storage: sanitizeText(usedVariant.listing.storage, 120),
+        storage_type: sanitizeText(usedVariant.listing.storage_type, 40),
+        tier: sanitizeText(usedVariant.listing.tier, 40),
+        motherboard: sanitizeText(usedVariant.listing.motherboard, 120) || null,
+        psu: sanitizeText(usedVariant.listing.psu, 120) || null,
+        case_name: sanitizeText(usedVariant.listing.case_name, 120) || null,
+        cpu_cooler: sanitizeText(usedVariant.listing.cpu_cooler, 120) || null,
+        os: sanitizeText(usedVariant.listing.os, 80) || null,
+        updated_at: new Date(),
+      };
+
+      const { data: createdUsed, error: createUsedError } = await supabase
+        .from("products")
+        .insert([usedPayload])
+        .select(LISTING_SELECT_FIELDS)
+        .single();
+      if (createUsedError || !createdUsed) {
+        return jsonError(
+          res,
+          500,
+          "USED_VARIANT_CREATE_FAILED",
+          createUsedError?.message || "Kunde inte skapa begagnad variant."
+        );
+      }
+
+      await persistListingState({
+        req,
+        user,
+        productId: createdUsed.id,
+        listing: {
+          ...usedVariant.listing,
+          used_variant_enabled: true,
+        },
+        fpsInput: usedVariant.listing.fps,
+        usedPartsInput: usedVariant.used_parts || usedVariant.listing.used_parts,
+        role,
+      });
+      usedVariantProductId = createdUsed.id;
+
+      await supabase.from("ui_settings").upsert(
+        [
+          {
+            key: `used_variant_link:${createdBase.id}`,
+            value: { product_id: createdUsed.id },
+            updated_at: new Date(),
+          },
+        ],
+        { onConflict: "key" }
+      );
+    }
+
+    await logAdminAction(req, user, "listing_create_v2", "listing", createdBase.id, {
+      role,
+      used_variant_product_id: usedVariantProductId,
+    });
+
+    const loaded = await loadAdminListings({ productId: createdBase.id });
+    return res.status(201).json({
+      ok: true,
+      data: loaded.data[0] || null,
+      used_variant_product_id: usedVariantProductId,
+    });
+  } catch (error) {
+    console.error("Admin v2 listing create error:", error);
+    return jsonError(res, 500, "LISTING_CREATE_FAILED", "Kunde inte skapa listning.");
+  }
+});
+
+app.put("/api/admin/v2/listings/:productId", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
+    }
+
+    const parsed = updateListingRequestSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för listning.", parsed.error.flatten());
+    }
+
+    const { listing, fps, used_parts: usedParts, expected_updated_at: expectedUpdatedAt } = parsed.data;
+    try {
+      await persistListingState({
+        req,
+        user,
+        role,
+        productId,
+        listing: { ...listing, expected_updated_at: expectedUpdatedAt || listing.expected_updated_at || null },
+        fpsInput: fps,
+        usedPartsInput: usedParts,
+      });
+    } catch (error) {
+      if (error?.code === "LISTING_VERSION_CONFLICT") {
+        return jsonError(
+          res,
+          409,
+          "LISTING_VERSION_CONFLICT",
+          "Listningen har ändrats av någon annan. Ladda om innan du sparar igen."
+        );
+      }
+      throw error;
+    }
+
+    const loaded = await loadAdminListings({ productId });
+    const data = loaded.data[0] || null;
+    return res.json({ ok: true, data });
+  } catch (error) {
+    console.error("Admin v2 listing update error:", error);
+    return jsonError(res, 500, "LISTING_UPDATE_FAILED", "Kunde inte uppdatera listning.");
+  }
+});
+
+app.get("/api/admin/v2/listings/:productId/fps", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
+    }
+    const { data: listingRows } = await loadAdminListings({ productId });
+    const listing = listingRows[0];
+    if (!listing) {
+      return jsonError(res, 404, "LISTING_NOT_FOUND", "Listningen hittades inte.");
+    }
+    return res.json({ ok: true, data: listing.fps });
+  } catch (error) {
+    console.error("Admin v2 FPS fetch error:", error);
+    return jsonError(res, 500, "FPS_FETCH_FAILED", "Kunde inte hämta FPS-variabler.");
+  }
+});
+
+app.put("/api/admin/v2/listings/:productId/fps", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
+    }
+
+    const fps = sanitizeFpsSettings(req.body?.fps, EMPTY_FPS_SETTINGS);
+    const expectedUpdatedAt = sanitizeText(req.body?.expected_updated_at, 80);
+    if (expectedUpdatedAt) {
+      const { data: product } = await supabase.from("products").select("updated_at").eq("id", productId).maybeSingle();
+      if (product?.updated_at) {
+        const expected = new Date(expectedUpdatedAt).getTime();
+        const current = new Date(product.updated_at).getTime();
+        if (Number.isFinite(expected) && Number.isFinite(current) && expected !== current) {
+          return jsonError(
+            res,
+            409,
+            "LISTING_VERSION_CONFLICT",
+            "Listningen har ändrats av någon annan. Ladda om innan du sparar igen."
+          );
+        }
+      }
+    }
+
+    const key = `fps:${productId}`;
+    const { error } = await supabase.from("ui_settings").upsert(
+      [{ key, value: fps, updated_at: new Date() }],
+      { onConflict: "key" }
+    );
+    if (error) {
+      return jsonError(res, 500, "FPS_SAVE_FAILED", error.message || "Kunde inte spara FPS-variabler.");
+    }
+    await logAdminAction(req, user, "listing_fps_update_v2", "listing", productId, { role });
+    return res.json({ ok: true, data: fps });
+  } catch (error) {
+    console.error("Admin v2 FPS save error:", error);
+    return jsonError(res, 500, "FPS_SAVE_FAILED", "Kunde inte spara FPS-variabler.");
+  }
+});
+
+app.get("/api/admin/v2/orders", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+
+    const limit = Math.min(200, Math.max(1, Number(req.query?.limit || 100)));
+    const offset = Math.max(0, Number(req.query?.offset || 0));
+    const statusFilter = sanitizeText(req.query?.status, 40);
+    const term = sanitizeText(req.query?.q, 80);
+
+    let query = supabase
+      .from("orders")
+      .select(
+        `
+        *,
+        order_items (
+          *,
+          product:product_id (name, price_cents, cpu, gpu, ram, storage)
+        )
+      `,
+        { count: "exact" }
+      )
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (statusFilter) {
+      query = query.eq("status", statusFilter);
+    }
+    if (term) {
+      const escaped = term.replace(/[%]/g, "");
+      query = query.or(
+        `customer_name.ilike.%${escaped}%,customer_email.ilike.%${escaped}%,customer_phone.ilike.%${escaped}%,order_number.ilike.%${escaped}%`
+      );
+    }
+
+    const { data, error, count } = await query;
+    if (error) {
+      return jsonError(res, 500, "ORDERS_FETCH_FAILED", error.message || "Kunde inte hämta beställningar.");
+    }
+    return res.json({ ok: true, data: data || [], total: count || 0, limit, offset });
+  } catch (error) {
+    console.error("Admin v2 orders error:", error);
+    return jsonError(res, 500, "ORDERS_FETCH_FAILED", "Kunde inte hämta beställningar.");
+  }
+});
+
+app.patch("/api/admin/v2/orders/:orderId/byggstatus", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const orderId = sanitizeText(req.params?.orderId, 64);
+    const nextStatus = sanitizeText(req.body?.status, 32);
+    const expectedUpdatedAt = sanitizeText(req.body?.expected_updated_at, 80);
+    if (!orderId || !STATUS_OPTIONS.has(nextStatus)) {
+      return jsonError(res, 400, "INVALID_STATUS", "Ogiltig byggstatus.");
+    }
+
+    const { data: currentOrder, error: currentOrderError } = await supabase
+      .from("orders")
+      .select("id, updated_at")
+      .eq("id", orderId)
+      .maybeSingle();
+    if (currentOrderError || !currentOrder) {
+      return jsonError(res, 404, "ORDER_NOT_FOUND", "Beställningen hittades inte.");
+    }
+    if (expectedUpdatedAt && currentOrder.updated_at) {
+      const expected = new Date(expectedUpdatedAt).getTime();
+      const current = new Date(currentOrder.updated_at).getTime();
+      if (Number.isFinite(expected) && Number.isFinite(current) && expected !== current) {
+        return jsonError(
+          res,
+          409,
+          "ORDER_VERSION_CONFLICT",
+          "Beställningen har ändrats av någon annan. Ladda om innan du sparar igen."
+        );
+      }
+    }
+
+    const statusMessage = nextStatus === "ready" ? READY_MESSAGE : STATUS_LABELS[nextStatus] || null;
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ status: nextStatus, status_message: statusMessage, updated_at: new Date() })
+      .eq("id", orderId)
+      .select()
+      .single();
+    if (error || !data) {
+      return jsonError(res, 500, "ORDER_STATUS_UPDATE_FAILED", error?.message || "Kunde inte uppdatera byggstatus.");
+    }
+
+    await logAdminAction(req, user, "order_status_update_v2", "order", orderId, {
+      status: nextStatus,
+      role,
+    });
+    return res.json({ ok: true, data });
+  } catch (error) {
+    console.error("Admin v2 byggstatus error:", error);
+    return jsonError(res, 500, "ORDER_STATUS_UPDATE_FAILED", "Kunde inte uppdatera byggstatus.");
+  }
+});
+
+app.patch("/api/admin/v2/orders/:orderId/checklista", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const orderId = sanitizeText(req.params?.orderId, 64);
+    const checklist = Array.isArray(req.body?.build_checklist) ? req.body.build_checklist : null;
+    const expectedUpdatedAt = sanitizeText(req.body?.expected_updated_at, 80);
+    if (!orderId || !checklist) {
+      return jsonError(res, 400, "INVALID_CHECKLIST", "Ogiltig checklista.");
+    }
+    if (expectedUpdatedAt) {
+      const { data: currentOrder } = await supabase
+        .from("orders")
+        .select("updated_at")
+        .eq("id", orderId)
+        .maybeSingle();
+      if (currentOrder?.updated_at) {
+        const expected = new Date(expectedUpdatedAt).getTime();
+        const current = new Date(currentOrder.updated_at).getTime();
+        if (Number.isFinite(expected) && Number.isFinite(current) && expected !== current) {
+          return jsonError(
+            res,
+            409,
+            "ORDER_VERSION_CONFLICT",
+            "Beställningen har ändrats av någon annan. Ladda om innan du sparar igen."
+          );
+        }
+      }
+    }
+    const sanitizedChecklist = checklist.map((entry) => ({
+      id: sanitizeText(entry?.id, 40),
+      label: sanitizeText(entry?.label, 80),
+      done: Boolean(entry?.done),
+    }));
+
+    const { data, error } = await supabase
+      .from("orders")
+      .update({ build_checklist: sanitizedChecklist, updated_at: new Date() })
+      .eq("id", orderId)
+      .select("id, build_checklist, updated_at")
+      .single();
+    if (error || !data) {
+      return jsonError(
+        res,
+        500,
+        "ORDER_CHECKLIST_UPDATE_FAILED",
+        error?.message || "Kunde inte uppdatera checklista."
+      );
+    }
+
+    await logAdminAction(req, user, "order_checklist_update_v2", "order", orderId, { role });
+    return res.json({ ok: true, data });
+  } catch (error) {
+    console.error("Admin v2 checklist error:", error);
+    return jsonError(res, 500, "ORDER_CHECKLIST_UPDATE_FAILED", "Kunde inte uppdatera checklista.");
+  }
+});
+
 app.get("/api/admin/me", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -1263,10 +2136,12 @@ app.get("/api/admin/me", async (req, res) => {
     if (authError || !user) {
       return res.status(401).json({ error: authError || "Unauthorized" });
     }
+    const role = getAdminRole(user);
     return res.json({
       id: user.id,
       email: user.email,
-      isAdmin: isAdminUser(user),
+      isAdmin: canAccessAdminPortal(user),
+      role: role || null,
     });
   } catch (error) {
     console.error("Admin me error:", error);
@@ -1897,7 +2772,7 @@ app.get("/api/admin/products/:productId/fps-settings", async (req, res) => {
       .eq("key", key)
       .single();
 
-    const fallback = await getDefaultFpsSettingsForProduct(productId);
+    const fallback = EMPTY_FPS_SETTINGS;
     if (error || !data?.value) {
       return res.json({ fps: fallback });
     }
@@ -1930,7 +2805,7 @@ app.post("/api/admin/products/:productId/fps-settings", async (req, res) => {
       return res.status(400).json({ error: "Missing product id" });
     }
 
-    const fallback = await getDefaultFpsSettingsForProduct(productId);
+    const fallback = EMPTY_FPS_SETTINGS;
     const fps = sanitizeFpsSettings(req.body?.fps, fallback);
     const key = `fps:${productId}`;
     const payload = { key, value: fps, updated_at: new Date() };
@@ -2140,7 +3015,7 @@ app.get("/api/fps-settings/:productId", async (req, res) => {
       .eq("key", key)
       .single();
 
-    const fallback = await getDefaultFpsSettingsForProduct(productId);
+    const fallback = EMPTY_FPS_SETTINGS;
     if (error || !data?.value) {
       return res.json({ fps: fallback });
     }

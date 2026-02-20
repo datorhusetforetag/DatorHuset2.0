@@ -18,6 +18,8 @@ import {
   UsedPartsSettings,
 } from "@/lib/usedParts";
 
+const DRAFT_STORAGE_KEY = "admin-products-v2-draft";
+
 type AdminProduct = {
   id: string;
   name: string;
@@ -51,9 +53,14 @@ type InventoryItem = {
 type CatalogItem = AdminProduct & {
   quantity_in_stock: number;
   is_preorder: boolean;
+  eta_days?: number | null;
   eta_input: string;
   eta_note: string;
   used_variant_enabled: boolean;
+  used_parts?: UsedPartsSettings;
+  fps?: FpsSandboxSettings;
+  updated_at?: string | null;
+  inventory_updated_at?: string | null;
 };
 
 type ListingDraft = {
@@ -188,6 +195,8 @@ const buildUsedDraftFromBase = (base: ListingDraft): ListingDraft => {
   };
 };
 
+const DEFAULT_USED_DRAFT = buildUsedDraftFromBase(EMPTY_DRAFT);
+
 const normalizeFpsEditorEntry = (entry: FpsSandboxEntry): FpsSandboxEntry => {
   const game = FPS_SANDBOX_GAME_OPTIONS.includes(entry.game as (typeof FPS_SANDBOX_GAME_OPTIONS)[number])
     ? entry.game
@@ -221,8 +230,9 @@ const hasInvalidFpsEntries = (entries: FpsSandboxEntry[]) =>
   entries.some((entry) => !String(entry.graphics || "").trim());
 
 export default function AdminProducts() {
-  const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
+  const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
+  const canMutate = role === "admin" || role === "ops" || role === "";
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [query, setQuery] = useState("");
   const [loadingItems, setLoadingItems] = useState(false);
@@ -231,7 +241,7 @@ export default function AdminProducts() {
 
   const [draft, setDraft] = useState<ListingDraft>(EMPTY_DRAFT);
   const [createUsedVariant, setCreateUsedVariant] = useState(false);
-  const [usedDraft, setUsedDraft] = useState<ListingDraft>(buildUsedDraftFromBase(EMPTY_DRAFT));
+  const [usedDraft, setUsedDraft] = useState<ListingDraft>({ ...DEFAULT_USED_DRAFT });
   const [usedDraftParts, setUsedDraftParts] = useState<UsedPartsSettings>(DEFAULT_USED_PARTS_SETTINGS);
   const [creating, setCreating] = useState(false);
 
@@ -242,77 +252,69 @@ export default function AdminProducts() {
   const [usedPartsByProduct, setUsedPartsByProduct] = useState<Record<string, UsedPartsSettings>>({});
   const [usedPartsLoadingByProduct, setUsedPartsLoadingByProduct] = useState<Record<string, boolean>>({});
   const [usedPartsSavingByProduct, setUsedPartsSavingByProduct] = useState<Record<string, boolean>>({});
+  const [dirtyProductIds, setDirtyProductIds] = useState<Record<string, boolean>>({});
+  const [lastSavedByProduct, setLastSavedByProduct] = useState<Record<string, string>>({});
+  const [lastDraftAutosaveAt, setLastDraftAutosaveAt] = useState<string>("");
+  const [draftHydrated, setDraftHydrated] = useState(false);
+
+  const mapListingToCatalogItem = (row: any): CatalogItem => ({
+    id: row.id,
+    name: row.name || "",
+    slug: row.slug || "",
+    legacy_id: row.legacy_id || "",
+    description: row.description || "",
+    price_cents: Number(row.price_cents || 0),
+    cpu: row.cpu || "",
+    gpu: row.gpu || "",
+    ram: row.ram || "",
+    storage: row.storage || "",
+    storage_type: row.storage_type || "",
+    tier: row.tier || "",
+    motherboard: row.motherboard || "",
+    psu: row.psu || "",
+    case_name: row.case_name || "",
+    cpu_cooler: row.cpu_cooler || "",
+    os: row.os || "",
+    quantity_in_stock: Math.max(0, Number(row.quantity_in_stock || 0)),
+    is_preorder: Boolean(row.is_preorder),
+    eta_days: Number.isFinite(Number(row.eta_days)) ? Number(row.eta_days) : null,
+    eta_input: toEtaInput({
+      eta_days: Number.isFinite(Number(row.eta_days)) ? Number(row.eta_days) : null,
+      eta_note: row.eta_note || "",
+    }),
+    eta_note: String(row.eta_note || ""),
+    used_variant_enabled: Boolean(row.used_variant_enabled ?? true),
+    used_parts: sanitizeUsedPartsSettings(row.used_parts),
+    fps: normalizeFpsSandboxSettings(row.fps || { version: 2, entries: [] }),
+    updated_at: row.updated_at || null,
+    inventory_updated_at: row.inventory_updated_at || null,
+  });
 
   const loadItems = async () => {
     if (!token || !isAdmin) return;
     setLoadingItems(true);
     setLocalError("");
     try {
-      const [productsRes, inventoryRes] = await Promise.all([
-        fetch(`${apiBase}/api/admin/products`, { headers: { Authorization: `Bearer ${token}` } }),
-        fetch(`${apiBase}/api/admin/inventory`, { headers: { Authorization: `Bearer ${token}` } }),
-      ]);
-      if (!productsRes.ok) throw new Error("Kunde inte hämta produkter.");
-      if (!inventoryRes.ok) throw new Error("Kunde inte hämta lager.");
+      const response = await fetch(`${apiBase}/api/admin/v2/listings?limit=300`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta produkter.");
+      }
 
-      const products: AdminProduct[] = await productsRes.json();
-      const inventory: InventoryItem[] = await inventoryRes.json();
-      const inventoryMap = new Map(inventory.map((row) => [row.product_id, row]));
-      const merged = (products || [])
-        .filter((product) => {
-          const name = (product.name || "").trim().toLowerCase();
-          const slug = (product.slug || "").trim().toLowerCase();
-          return name !== "remove" && slug !== "test";
-        })
-        .map((product) => {
-          const inv = inventoryMap.get(product.id);
-          const invPrice = Number(inv?.product?.price_cents ?? NaN);
-          return {
-            ...product,
-            price_cents: Number.isFinite(invPrice) ? invPrice : Number(product.price_cents || 0),
-            quantity_in_stock: Math.max(0, Number(inv?.quantity_in_stock ?? 0)),
-            is_preorder: Boolean(inv?.is_preorder ?? inv?.allow_preorder),
-            eta_input: toEtaInput(inv),
-            eta_note: String(inv?.eta_note || ""),
-            used_variant_enabled: true,
-          } as CatalogItem;
-        });
-      setItems(merged);
+      const rows: CatalogItem[] = Array.isArray(payload?.data) ? payload.data.map(mapListingToCatalogItem) : [];
 
-      const flags = await Promise.all(
-        merged.map(async (item) => {
-          try {
-            const response = await fetch(`${apiBase}/api/admin/products/${item.id}/used-variant`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!response.ok) return [item.id, true] as const;
-            const data = await response.json();
-            return [item.id, Boolean(data?.enabled ?? true)] as const;
-          } catch {
-            return [item.id, true] as const;
-          }
-        })
+      setItems(rows);
+      setFpsByProduct(
+        Object.fromEntries(
+          rows.map((item) => [item.id, normalizeFpsSandboxSettings(item.fps || { version: 2, entries: [] })])
+        )
       );
-      const flagMap = new Map(flags);
-      setItems((prev) => prev.map((item) => ({ ...item, used_variant_enabled: flagMap.get(item.id) ?? true })));
-
-      const fpsPairs = await Promise.all(
-        merged.map(async (item) => {
-          try {
-            const response = await fetch(`${apiBase}/api/admin/products/${item.id}/fps-settings`, {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-            if (!response.ok) {
-              return [item.id, normalizeFpsSandboxSettings({ version: 2, entries: [] })] as const;
-            }
-            const data = await response.json();
-            return [item.id, normalizeFpsSandboxSettings(data?.fps || { version: 2, entries: [] })] as const;
-          } catch {
-            return [item.id, normalizeFpsSandboxSettings({ version: 2, entries: [] })] as const;
-          }
-        })
+      setUsedPartsByProduct(
+        Object.fromEntries(rows.map((item) => [item.id, sanitizeUsedPartsSettings(item.used_parts)]))
       );
-      setFpsByProduct(Object.fromEntries(fpsPairs));
+      setDirtyProductIds({});
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta data.");
     } finally {
@@ -325,7 +327,83 @@ export default function AdminProducts() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (!raw) {
+        setDraftHydrated(true);
+        return;
+      }
+      const parsed = JSON.parse(raw);
+      if (parsed?.draft) setDraft({ ...EMPTY_DRAFT, ...parsed.draft });
+      if (typeof parsed?.createUsedVariant === "boolean") setCreateUsedVariant(parsed.createUsedVariant);
+      if (parsed?.usedDraft) setUsedDraft({ ...DEFAULT_USED_DRAFT, ...parsed.usedDraft });
+      if (parsed?.usedDraftParts) setUsedDraftParts(sanitizeUsedPartsSettings(parsed.usedDraftParts));
+      if (Array.isArray(parsed?.draftFpsEntries)) {
+        setDraftFpsEntries(parsed.draftFpsEntries.map((entry: FpsSandboxEntry) => normalizeFpsEditorEntry(entry)));
+      }
+      if (typeof parsed?.savedAt === "string") setLastDraftAutosaveAt(parsed.savedAt);
+    } catch {
+      // Ignore invalid localStorage payloads.
+    } finally {
+      setDraftHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!draftHydrated) return;
+    const payload = {
+      draft,
+      createUsedVariant,
+      usedDraft,
+      usedDraftParts,
+      draftFpsEntries,
+      savedAt: new Date().toISOString(),
+    };
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
+    setLastDraftAutosaveAt(payload.savedAt);
+  }, [draft, createUsedVariant, usedDraft, usedDraftParts, draftFpsEntries, draftHydrated]);
+
+  const hasDraftChanges = useMemo(() => {
+    const defaultState = {
+      draft: EMPTY_DRAFT,
+      createUsedVariant: false,
+      usedDraft: DEFAULT_USED_DRAFT,
+      usedDraftParts: DEFAULT_USED_PARTS_SETTINGS,
+      draftFpsEntries: [],
+    };
+    const currentState = { draft, createUsedVariant, usedDraft, usedDraftParts, draftFpsEntries };
+    return JSON.stringify(defaultState) !== JSON.stringify(currentState);
+  }, [draft, createUsedVariant, usedDraft, usedDraftParts, draftFpsEntries]);
+
+  useEffect(() => {
+    const hasDirtyProducts = Object.values(dirtyProductIds).some(Boolean);
+    if (!hasDirtyProducts && !hasDraftChanges) return;
+    const onBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [dirtyProductIds, hasDraftChanges]);
+
+  const markProductDirty = (id: string) => {
+    setDirtyProductIds((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const clearProductDirty = (id: string) => {
+    setDirtyProductIds((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
+
+  const resolveApiErrorMessage = (data: any, fallback: string) =>
+    data?.error?.message || data?.error || fallback;
+
   const setItem = <K extends keyof CatalogItem>(id: string, key: K, value: CatalogItem[K]) => {
+    markProductDirty(id);
     setItems((prev) => prev.map((item) => (item.id === id ? { ...item, [key]: value } : item)));
   };
 
@@ -343,69 +421,69 @@ export default function AdminProducts() {
     }));
   };
 
-  const persistUsedParts = async (productId: string, value: UsedPartsSettings) => {
-    const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-parts`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ used_parts: value }),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data?.error || "Kunde inte spara begagnade komponenttaggar.");
-    return sanitizeUsedPartsSettings(data?.used_parts);
-  };
-
   const saveItem = async (item: CatalogItem) => {
     if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte spara ändringar.");
+      return;
+    }
     setSavingId(item.id);
     setLocalError("");
     try {
-      const productRes = await fetch(`${apiBase}/api/admin/products/${item.id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          name: item.name,
-          slug: item.slug || "",
-          legacy_id: item.legacy_id || "",
-          description: item.description || "",
-          cpu: item.cpu || "",
-          gpu: item.gpu || "",
-          ram: item.ram || "",
-          storage: item.storage || "",
-          storage_type: item.storage_type || "",
-          tier: item.tier || "",
-          motherboard: item.motherboard || "",
-          psu: item.psu || "",
-          case_name: item.case_name || "",
-          cpu_cooler: item.cpu_cooler || "",
-          os: item.os || "",
-        }),
-      });
-      const productData = await productRes.json().catch(() => ({}));
-      if (!productRes.ok) throw new Error(productData?.error || "Kunde inte spara produkt.");
-
       const eta = parseEta(item.eta_input, item.eta_note);
-      const inventoryRes = await fetch(`${apiBase}/api/admin/inventory`, {
-        method: "POST",
+      const fps = normalizeFpsSandboxSettings(
+        fpsByProduct[item.id] || item.fps || { version: 2, entries: [] }
+      );
+      const usedParts = sanitizeUsedPartsSettings(usedPartsByProduct[item.id] || item.used_parts);
+      if (hasInvalidFpsEntries(fps.entries)) {
+        throw new Error("Alla FPS-rader måste ha en grafik-text innan de kan sparas.");
+      }
+
+      const listing = {
+        name: item.name || "",
+        slug: item.slug || "",
+        legacy_id: item.legacy_id || "",
+        description: item.description || "",
+        price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
+        currency: "SEK",
+        cpu: item.cpu || "",
+        gpu: item.gpu || "",
+        ram: item.ram || "",
+        storage: item.storage || "",
+        storage_type: item.storage_type || "",
+        tier: item.tier || "",
+        motherboard: item.motherboard || "",
+        psu: item.psu || "",
+        case_name: item.case_name || "",
+        cpu_cooler: item.cpu_cooler || "",
+        os: item.os || "",
+        quantity_in_stock: Math.max(0, Number(item.quantity_in_stock || 0)),
+        is_preorder: Boolean(item.is_preorder),
+        eta_days: eta.eta_days,
+        eta_note: eta.eta_note || "",
+        used_variant_enabled: Boolean(item.used_variant_enabled),
+        expected_updated_at: item.updated_at || null,
+      };
+
+      const response = await fetch(`${apiBase}/api/admin/v2/listings/${item.id}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
         body: JSON.stringify({
-          productId: item.id,
-          quantity_in_stock: Math.max(0, Number(item.quantity_in_stock || 0)),
-          is_preorder: Boolean(item.is_preorder),
-          eta_days: eta.eta_days,
-          eta_note: eta.eta_note,
-          price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
+          listing,
+          fps,
+          used_parts: usedParts,
+          expected_updated_at: item.updated_at || null,
         }),
       });
-      const inventoryData = await inventoryRes.json().catch(() => ({}));
-      if (!inventoryRes.ok) throw new Error(inventoryData?.error || "Kunde inte spara lager.");
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte spara produkt."));
 
-      const usedRes = await fetch(`${apiBase}/api/admin/products/${item.id}/used-variant`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ enabled: Boolean(item.used_variant_enabled) }),
-      });
-      const usedData = await usedRes.json().catch(() => ({}));
-      if (!usedRes.ok) throw new Error(usedData?.error || "Kunde inte spara begagnad variant.");
+      const saved = data?.data ? mapListingToCatalogItem(data.data) : item;
+      setItems((prev) => prev.map((row) => (row.id === item.id ? saved : row)));
+      setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings(data?.data?.fps || fps) }));
+      setUsedPartsByProduct((prev) => ({ ...prev, [item.id]: sanitizeUsedPartsSettings(data?.data?.used_parts || usedParts) }));
+      clearProductDirty(item.id);
+      setLastSavedByProduct((prev) => ({ ...prev, [item.id]: new Date().toISOString() }));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte spara.");
     } finally {
@@ -418,14 +496,14 @@ export default function AdminProducts() {
     setFpsLoadingByProduct((prev) => ({ ...prev, [productId]: true }));
     setLocalError("");
     try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
+      const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}/fps`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error("Kunde inte hämta FPS-inställningar.");
       const data = await response.json();
+      if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte hämta FPS-inställningar."));
       setFpsByProduct((prev) => ({
         ...prev,
-        [productId]: normalizeFpsSandboxSettings(data?.fps || { version: 2, entries: [] }),
+        [productId]: normalizeFpsSandboxSettings(data?.data || { version: 2, entries: [] }),
       }));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta FPS-inställningar.");
@@ -435,6 +513,7 @@ export default function AdminProducts() {
   };
 
   const updateFpsEntry = (productId: string, index: number, patch: Partial<FpsSandboxEntry>) => {
+    markProductDirty(productId);
     setFpsByProduct((prev) => {
       const current = prev[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
       const entries = current.entries.map((entry, i) =>
@@ -446,6 +525,10 @@ export default function AdminProducts() {
 
   const saveFps = async (productId: string) => {
     if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte spara FPS.");
+      return;
+    }
     const current = fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] });
     const entries = current.entries.map((entry) => normalizeFpsEditorEntry(entry));
     if (hasInvalidFpsEntries(entries)) {
@@ -456,14 +539,16 @@ export default function AdminProducts() {
     setFpsSavingByProduct((prev) => ({ ...prev, [productId]: true }));
     setLocalError("");
     try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/fps-settings`, {
-        method: "POST",
+      const item = items.find((entry) => entry.id === productId);
+      const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}/fps`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ fps }),
+        body: JSON.stringify({ fps, expected_updated_at: item?.updated_at || null }),
       });
       const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data?.error || "Kunde inte spara FPS-inställningar.");
-      setFpsByProduct((prev) => ({ ...prev, [productId]: normalizeFpsSandboxSettings(data?.fps || fps) }));
+      if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte spara FPS-inställningar."));
+      setFpsByProduct((prev) => ({ ...prev, [productId]: normalizeFpsSandboxSettings(data?.data || fps) }));
+      setLastSavedByProduct((prev) => ({ ...prev, [productId]: new Date().toISOString() }));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte spara FPS-inställningar.");
     } finally {
@@ -476,12 +561,12 @@ export default function AdminProducts() {
     setUsedPartsLoadingByProduct((prev) => ({ ...prev, [productId]: true }));
     setLocalError("");
     try {
-      const response = await fetch(`${apiBase}/api/admin/products/${productId}/used-parts`, {
+      const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!response.ok) throw new Error("Kunde inte hämta begagnade komponenttaggar.");
       const data = await response.json();
-      setUsedPartsByProduct((prev) => ({ ...prev, [productId]: sanitizeUsedPartsSettings(data?.used_parts) }));
+      if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte hämta begagnade komponenttaggar."));
+      setUsedPartsByProduct((prev) => ({ ...prev, [productId]: sanitizeUsedPartsSettings(data?.data?.used_parts) }));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta begagnade komponenttaggar.");
     } finally {
@@ -491,52 +576,102 @@ export default function AdminProducts() {
 
   const saveUsedParts = async (productId: string) => {
     if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte spara taggar.");
+      return;
+    }
     setUsedPartsSavingByProduct((prev) => ({ ...prev, [productId]: true }));
     setLocalError("");
     try {
       const current = sanitizeUsedPartsSettings(usedPartsByProduct[productId]);
-      const saved = await persistUsedParts(productId, current);
+      const item = items.find((entry) => entry.id === productId);
+      const listing = {
+        name: item?.name || "",
+        slug: item?.slug || "",
+        legacy_id: item?.legacy_id || "",
+        description: item?.description || "",
+        price_cents: Math.max(0, Math.round(Number(item?.price_cents || 0))),
+        currency: "SEK",
+        cpu: item?.cpu || "",
+        gpu: item?.gpu || "",
+        ram: item?.ram || "",
+        storage: item?.storage || "",
+        storage_type: item?.storage_type || "",
+        tier: item?.tier || "",
+        motherboard: item?.motherboard || "",
+        psu: item?.psu || "",
+        case_name: item?.case_name || "",
+        cpu_cooler: item?.cpu_cooler || "",
+        os: item?.os || "",
+        quantity_in_stock: Math.max(0, Number(item?.quantity_in_stock || 0)),
+        is_preorder: Boolean(item?.is_preorder),
+        eta_days: item?.eta_days ?? null,
+        eta_note: item?.eta_note || "",
+        used_variant_enabled: Boolean(item?.used_variant_enabled),
+        expected_updated_at: item?.updated_at || null,
+      };
+      const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          listing,
+          used_parts: current,
+          fps: fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] }),
+          expected_updated_at: item?.updated_at || null,
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(resolveApiErrorMessage(data, "Kunde inte spara begagnade komponenttaggar."));
+      }
+      const saved = sanitizeUsedPartsSettings(data?.data?.used_parts || current);
       setUsedPartsByProduct((prev) => ({ ...prev, [productId]: saved }));
+      if (data?.data) {
+        setItems((prev) => prev.map((row) => (row.id === productId ? mapListingToCatalogItem(data.data) : row)));
+      }
+      setLastSavedByProduct((prev) => ({ ...prev, [productId]: new Date().toISOString() }));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte spara begagnade komponenttaggar.");
     } finally {
       setUsedPartsSavingByProduct((prev) => ({ ...prev, [productId]: false }));
     }
   };
-  const createProduct = async (input: ListingDraft) => {
-    const response = await fetch(`${apiBase}/api/admin/products`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
-        ...input,
-        slug: input.slug || slugify(input.name),
-      }),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data?.error || "Kunde inte skapa produkt.");
-    return data as AdminProduct;
-  };
-
-  const saveInventoryForCreatedProduct = async (productId: string, input: ListingDraft) => {
-    const eta = parseEta(input.eta_input, input.eta_note);
-    const response = await fetch(`${apiBase}/api/admin/inventory`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
-        productId,
-        quantity_in_stock: Math.max(0, Number(input.quantity_in_stock || 0)),
-        is_preorder: Boolean(input.is_preorder),
-        eta_days: eta.eta_days,
-        eta_note: eta.eta_note,
-        price_cents: Math.max(0, Math.round(Number(input.price_cents || 0))),
-      }),
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data?.error || "Kunde inte spara lager för ny produkt.");
+  const mapDraftToListingPayload = (input: ListingDraft, overrides?: Partial<ListingDraft>) => {
+    const merged = { ...input, ...(overrides || {}) };
+    const eta = parseEta(merged.eta_input, merged.eta_note);
+    return {
+      name: merged.name || "",
+      slug: merged.slug || slugify(merged.name),
+      legacy_id: merged.legacy_id || "",
+      description: merged.description || "",
+      price_cents: Math.max(0, Math.round(Number(merged.price_cents || 0))),
+      currency: "SEK",
+      cpu: merged.cpu || "",
+      gpu: merged.gpu || "",
+      ram: merged.ram || "",
+      storage: merged.storage || "",
+      storage_type: merged.storage_type || "",
+      tier: merged.tier || "",
+      motherboard: merged.motherboard || "",
+      psu: merged.psu || "",
+      case_name: merged.case_name || "",
+      cpu_cooler: merged.cpu_cooler || "",
+      os: merged.os || "",
+      quantity_in_stock: Math.max(0, Number(merged.quantity_in_stock || 0)),
+      is_preorder: Boolean(merged.is_preorder),
+      eta_days: eta.eta_days,
+      eta_note: eta.eta_note || "",
+      eta_input: merged.eta_input || "",
+      used_variant_enabled: true,
+    };
   };
 
   const createListing = async () => {
     if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte skapa produkter.");
+      return;
+    }
     if (!draft.name || !draft.cpu || !draft.gpu || !draft.ram || !draft.storage) {
       setLocalError("Fyll i titel, CPU, GPU, RAM och lagring innan du skapar produkten.");
       return;
@@ -551,37 +686,38 @@ export default function AdminProducts() {
     setCreating(true);
     setLocalError("");
     try {
-      const baseProduct = await createProduct(draft);
-      await saveInventoryForCreatedProduct(baseProduct.id, draft);
-      if (normalizedDraftFps.length > 0) {
-        await fetch(`${apiBase}/api/admin/products/${baseProduct.id}/fps-settings`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ fps: normalizeFpsSandboxSettings({ version: 2, entries: normalizedDraftFps }) }),
-        });
-      }
-
+      const baseListing = mapDraftToListingPayload(draft);
+      const payload: any = {
+        listing: baseListing,
+        fps: normalizeFpsSandboxSettings({ version: 2, entries: normalizedDraftFps }),
+      };
       if (createUsedVariant) {
-        const resolvedUsed: ListingDraft = {
-          ...usedDraft,
-          name: (usedDraft.name || `${draft.name} - Begagnade`).trim(),
-          slug: (usedDraft.slug || `${slugify(draft.name)}-begagnade`).trim(),
+        payload.used_variant = {
+          enabled: true,
+          listing: mapDraftToListingPayload(usedDraft, {
+            name: (usedDraft.name || `${draft.name} - Begagnade`).trim(),
+            slug: (usedDraft.slug || `${slugify(draft.name)}-begagnade`).trim(),
+          }),
+          used_parts: usedDraftParts,
         };
-        const usedProduct = await createProduct(resolvedUsed);
-        await saveInventoryForCreatedProduct(usedProduct.id, resolvedUsed);
-        await persistUsedParts(usedProduct.id, usedDraftParts);
-        await fetch(`${apiBase}/api/admin/products/${baseProduct.id}/used-variant`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-          body: JSON.stringify({ enabled: true }),
-        });
+      }
+      const response = await fetch(`${apiBase}/api/admin/v2/listings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(resolveApiErrorMessage(data, "Kunde inte skapa produkt."));
       }
 
       setDraft(EMPTY_DRAFT);
-      setUsedDraft(buildUsedDraftFromBase(EMPTY_DRAFT));
+      setUsedDraft({ ...DEFAULT_USED_DRAFT });
       setUsedDraftParts(DEFAULT_USED_PARTS_SETTINGS);
       setCreateUsedVariant(false);
       setDraftFpsEntries([]);
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+      setLastDraftAutosaveAt("");
       await loadItems();
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte skapa produkt.");
@@ -634,11 +770,16 @@ export default function AdminProducts() {
 
       {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
+      {isAdmin && !canMutate && <p className="text-sm text-yellow-300">Du har läsbehörighet (readonly).</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingItems && <p className="text-sm text-slate-400">Laddar produkter...</p>}
 
       <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
         <h3 className="text-lg font-semibold text-white">Skapa ny produkt</h3>
+        <p className="text-xs text-slate-400">
+          Utkast autosparas lokalt
+          {lastDraftAutosaveAt ? ` • Senast sparad ${new Date(lastDraftAutosaveAt).toLocaleTimeString("sv-SE")}` : ""}
+        </p>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           {PRODUCT_FORM_FIELDS.map((key) => (
             <label key={`draft-${key}`} className="text-xs text-slate-400">
@@ -858,7 +999,7 @@ export default function AdminProducts() {
           ))}
         </div>
 
-        <button type="button" onClick={createListing} disabled={creating} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
+        <button type="button" onClick={createListing} disabled={creating || !canMutate} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
           <Save className="h-4 w-4" /> {creating ? "Skapar..." : "Skapa produkt"}
         </button>
       </section>
@@ -875,8 +1016,15 @@ export default function AdminProducts() {
               <div>
                 <p className="text-lg font-semibold text-white">{item.name}</p>
                 <p className="text-xs text-slate-500">{item.id}</p>
+                {dirtyProductIds[item.id] ? (
+                  <p className="text-xs text-yellow-300">Osparade ändringar</p>
+                ) : lastSavedByProduct[item.id] ? (
+                  <p className="text-xs text-slate-400">
+                    Senast sparad {new Date(lastSavedByProduct[item.id]).toLocaleTimeString("sv-SE")}
+                  </p>
+                ) : null}
               </div>
-              <button type="button" onClick={() => void saveItem(item)} disabled={savingId === item.id} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
+              <button type="button" onClick={() => void saveItem(item)} disabled={savingId === item.id || !canMutate} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
                 <Save className="h-4 w-4" /> {savingId === item.id ? "Sparar..." : "Spara"}
               </button>
             </div>
@@ -922,7 +1070,7 @@ export default function AdminProducts() {
                 {!usedPartsByProduct[item.id] ? (
                   <button type="button" onClick={() => void loadUsedParts(item.id)} disabled={usedPartsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{usedPartsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
                 ) : (
-                  <button type="button" onClick={() => void saveUsedParts(item.id)} disabled={usedPartsSavingByProduct[item.id]} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{usedPartsSavingByProduct[item.id] ? "Sparar..." : "Spara taggar"}</button>
+                  <button type="button" onClick={() => void saveUsedParts(item.id)} disabled={usedPartsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{usedPartsSavingByProduct[item.id] ? "Sparar..." : "Spara taggar"}</button>
                 )}
               </div>
               {usedPartsByProduct[item.id] ? (
@@ -932,12 +1080,13 @@ export default function AdminProducts() {
                       <input
                         type="checkbox"
                         checked={Boolean(usedPartsByProduct[item.id]?.[key])}
-                        onChange={(event) =>
+                        onChange={(event) => {
+                          markProductDirty(item.id);
                           setUsedPartsByProduct((prev) => ({
                             ...prev,
                             [item.id]: sanitizeUsedPartsSettings({ ...prev[item.id], [key]: event.target.checked }),
-                          }))
-                        }
+                          }));
+                        }}
                       />
                       {USED_PART_LABELS[key]}
                     </label>
@@ -953,8 +1102,11 @@ export default function AdminProducts() {
                   <button type="button" onClick={() => void loadFps(item.id)} disabled={fpsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{fpsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
                 ) : (
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), makeNewFpsEntry()] }) }))} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">Lägg till</button>
-                    <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id]} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
+                    <button type="button" onClick={() => {
+                      markProductDirty(item.id);
+                      setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), makeNewFpsEntry()] }) }));
+                    }} disabled={!canMutate} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">Lägg till</button>
+                    <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
                   </div>
                 )}
               </div>
@@ -978,7 +1130,10 @@ export default function AdminProducts() {
                   <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsFrameGeneration: !entry.supportsFrameGeneration })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsFrameGeneration ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
                     Frame Gen {entry.supportsFrameGeneration ? "På" : "Av"}
                   </button>
-                  <button type="button" onClick={() => setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: (prev[item.id]?.entries || []).filter((_, i) => i !== index) }) }))} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
+                  <button type="button" onClick={() => {
+                    markProductDirty(item.id);
+                    setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: (prev[item.id]?.entries || []).filter((_, i) => i !== index) }) }));
+                  }} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
                 </div>
               ))}
             </div>

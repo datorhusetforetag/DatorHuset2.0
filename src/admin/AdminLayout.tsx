@@ -11,7 +11,7 @@ const navItems = [
 
 export const AdminLayout = () => {
   const access = useAdminAccess();
-  const { user, signInWithGoogle, signOut } = access;
+  const { user, role, signInWithGoogle, signOut } = access;
   const [navOpen, setNavOpen] = useState(false);
 
   const displayName = useMemo(() => {
@@ -44,6 +44,7 @@ export const AdminLayout = () => {
             <div className="hidden items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/60 px-3 py-1 lg:flex">
               <ShieldCheck className="h-4 w-4 text-[#11667b]" />
               <span>{displayName}</span>
+              {role ? <span className="text-[10px] uppercase tracking-[0.15em] text-slate-400">({role})</span> : null}
             </div>
             {user ? (
               <button

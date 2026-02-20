@@ -3,6 +3,7 @@ import { useAuth } from "@/context/AuthContext";
 
 export type AdminAccessState = {
   isAdmin: boolean;
+  role: "readonly" | "ops" | "admin" | "";
   loading: boolean;
   error: string;
 };
@@ -33,6 +34,7 @@ export const useAdminAccess = (): AdminAccessContext => {
   const { session, user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
   const [state, setState] = useState<AdminAccessState>({
     isAdmin: false,
+    role: "",
     loading: true,
     error: "",
   });
@@ -46,17 +48,17 @@ export const useAdminAccess = (): AdminAccessContext => {
     if (authLoading) return;
     if (!token) {
       cachedToken = "";
-      cachedState = { isAdmin: false, loading: false, error: "" };
+      cachedState = { isAdmin: false, role: "", loading: false, error: "" };
       cachedAt = 0;
       cooldownUntil = 0;
       lastVerifiedToken = "";
       lastVerifiedAt = 0;
-      setState({ isAdmin: false, loading: false, error: "" });
+      setState({ isAdmin: false, role: "", loading: false, error: "" });
       return;
     }
 
     if (!apiBase) {
-      setState({ isAdmin: false, loading: false, error: "API-bas saknas i adminmiljön." });
+      setState({ isAdmin: false, role: "", loading: false, error: "API-bas saknas i adminmiljön." });
       return;
     }
 
@@ -97,6 +99,7 @@ export const useAdminAccess = (): AdminAccessContext => {
           return (
             cachedState || {
               isAdmin: false,
+              role: "",
               loading: false,
               error: "För många förfrågningar. Försök igen om en liten stund.",
             }
@@ -106,12 +109,16 @@ export const useAdminAccess = (): AdminAccessContext => {
         if (!response.ok || !data?.isAdmin) {
           return {
             isAdmin: false,
+            role: "",
             loading: false,
             error: data?.error || "Du saknar behörighet för adminpanelen.",
           };
         }
 
-        return { isAdmin: true, loading: false, error: "" };
+        const role = data?.role === "readonly" || data?.role === "ops" || data?.role === "admin"
+          ? data.role
+          : "admin";
+        return { isAdmin: true, role, loading: false, error: "" };
       })();
 
       const nextState = await refreshPromise;
@@ -124,6 +131,7 @@ export const useAdminAccess = (): AdminAccessContext => {
     } catch (error) {
       const nextState: AdminAccessState = {
         isAdmin: false,
+        role: "",
         loading: false,
         error: error instanceof Error ? error.message : "Kunde inte verifiera admin-åtkomst.",
       };

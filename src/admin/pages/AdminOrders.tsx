@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Download, RefreshCcw, ShieldAlert, Wrench } from "lucide-react";
+import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Wrench } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
 import { getOrderStatusInfo, ORDER_STATUS_FLOW } from "@/lib/orderStatus";
@@ -21,6 +21,7 @@ type Order = {
   id: string;
   order_number?: string | number | null;
   created_at?: string | null;
+  updated_at?: string | null;
   status?: string | null;
   total_cents?: number | null;
   customer_name?: string | null;
@@ -47,27 +48,35 @@ const DEFAULT_CHECKLIST: BuildChecklistItem[] = [
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
+const readApiError = (data: any, fallback: string) => data?.error?.message || data?.error || fallback;
+
 export default function AdminOrders() {
-  const { isAdmin, loading, error, token, apiBase, signInWithGoogle } =
+  const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
+  const canMutate = role === "admin" || role === "ops" || role === "";
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [savingOrder, setSavingOrder] = useState<string | null>(null);
   const [localError, setLocalError] = useState("");
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
 
   const loadOrders = async () => {
     if (!token || !isAdmin) return;
     setLoadingOrders(true);
     setLocalError("");
     try {
-      const response = await fetch(`${apiBase}/api/admin/orders`, {
+      const params = new URLSearchParams({ limit: "200" });
+      if (query.trim()) params.set("q", query.trim());
+      if (statusFilter) params.set("status", statusFilter);
+      const response = await fetch(`${apiBase}/api/admin/v2/orders?${params.toString()}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error("Kunde inte hämta beställningar.");
+        throw new Error(readApiError(data, "Kunde inte hämta beställningar."));
       }
-      const data = await response.json();
-      setOrders(data || []);
+      setOrders(Array.isArray(data?.data) ? data.data : []);
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Kunde inte hämta beställningar.");
     } finally {
@@ -103,23 +112,27 @@ export default function AdminOrders() {
     }
   };
 
-  const handleStatusChange = async (orderId: string, status: string) => {
+  const handleStatusChange = async (order: Order, status: string) => {
     if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte uppdatera byggstatus.");
+      return;
+    }
     try {
-      setSavingOrder(orderId);
-      const response = await fetch(`${apiBase}/api/orders/${orderId}/status`, {
-        method: "POST",
+      setSavingOrder(order.id);
+      const response = await fetch(`${apiBase}/api/admin/v2/orders/${order.id}/byggstatus`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status }),
+        body: JSON.stringify({ status, expected_updated_at: order.updated_at || null }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(data?.error || "Kunde inte uppdatera byggstatus.");
+        throw new Error(readApiError(data, "Kunde inte uppdatera byggstatus."));
       }
-      setOrders((prev) => prev.map((order) => (order.id === orderId ? { ...order, ...data } : order)));
+      setOrders((prev) => prev.map((entry) => (entry.id === order.id ? { ...entry, ...(data?.data || {}) } : entry)));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Statusuppdatering misslyckades.");
     } finally {
@@ -129,28 +142,38 @@ export default function AdminOrders() {
 
   const handleChecklistToggle = async (order: Order, checklistItemId: string) => {
     if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte uppdatera checklistan.");
+      return;
+    }
     const baseChecklist = order.build_checklist?.length ? order.build_checklist : DEFAULT_CHECKLIST;
     const updatedChecklist = baseChecklist.map((item) =>
       item.id === checklistItemId ? { ...item, done: !item.done } : item
     );
     try {
       setSavingOrder(order.id);
-      const response = await fetch(`${apiBase}/api/admin/orders/${order.id}/checklist`, {
-        method: "POST",
+      const response = await fetch(`${apiBase}/api/admin/v2/orders/${order.id}/checklista`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ build_checklist: updatedChecklist }),
+        body: JSON.stringify({ build_checklist: updatedChecklist, expected_updated_at: order.updated_at || null }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(data?.error || "Kunde inte uppdatera checklistan.");
+        throw new Error(readApiError(data, "Kunde inte uppdatera checklistan."));
       }
       setOrders((prev) =>
         prev.map((entry) =>
           entry.id === order.id
-            ? { ...entry, build_checklist: Array.isArray(data?.build_checklist) ? data.build_checklist : updatedChecklist }
+            ? {
+                ...entry,
+                build_checklist: Array.isArray(data?.data?.build_checklist)
+                  ? data.data.build_checklist
+                  : updatedChecklist,
+                updated_at: data?.data?.updated_at || entry.updated_at,
+              }
             : entry
         )
       );
@@ -207,13 +230,45 @@ export default function AdminOrders() {
         </div>
       </div>
 
+      <div className="grid gap-3 rounded-xl border border-slate-800 bg-slate-900/60 p-4 md:grid-cols-[1fr_180px_auto]">
+        <label className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2">
+          <Search className="h-4 w-4 text-slate-400" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Sök order, kund eller e-post"
+            className="w-full bg-transparent text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none"
+          />
+        </label>
+        <select
+          value={statusFilter}
+          onChange={(event) => setStatusFilter(event.target.value)}
+          className="rounded-lg border border-slate-800 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+        >
+          <option value="">Alla statusar</option>
+          {ORDER_STATUS_FLOW.map((status) => (
+            <option key={`filter-${status.value}`} value={status.value}>
+              {status.label}
+            </option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => void loadOrders()}
+          className="rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-[#11667b] hover:text-[#11667b]"
+        >
+          Filtrera
+        </button>
+      </div>
+
       {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
       {!loading && error && (
         <div className="flex items-start gap-3 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">
-          <ShieldAlert className="h-4 w-4 mt-0.5" />
+          <ShieldAlert className="mt-0.5 h-4 w-4" />
           <p>{error}</p>
         </div>
       )}
+      {isAdmin && !canMutate && <p className="text-sm text-yellow-300">Du har läsbehörighet (readonly).</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingOrders && <p className="text-sm text-slate-400">Laddar beställningar...</p>}
 
@@ -249,15 +304,17 @@ export default function AdminOrders() {
               <div className="mt-4 grid gap-4 lg:grid-cols-[1.2fr_1fr]">
                 <div className="space-y-1 text-sm text-slate-300">
                   <p className="font-semibold text-white">{order.customer_name || "Okänt namn"}</p>
-                  <p>{order.customer_email}</p>
-                  <p>{order.customer_phone}</p>
-                  <p>{order.customer_address}</p>
+                  <p>{order.customer_email || "-"}</p>
+                  <p>{order.customer_phone || "-"}</p>
+                  <p>{order.customer_address || "-"}</p>
                   <p>
-                    {order.customer_postal_code} {order.customer_city}
+                    {order.customer_postal_code || ""} {order.customer_city || ""}
                   </p>
                 </div>
                 <div className="space-y-2 text-sm text-slate-300">
-                  {order.receipt_number && <p className="text-xs text-slate-400">Kvittonummer: {order.receipt_number}</p>}
+                  {order.receipt_number && (
+                    <p className="text-xs text-slate-400">Kvittonummer: {order.receipt_number}</p>
+                  )}
                   {order.receipt_url ? (
                     <a href={order.receipt_url} className="inline-flex font-semibold text-[#9dd4e0] hover:text-white">
                       Visa kvitto
@@ -269,7 +326,7 @@ export default function AdminOrders() {
               </div>
 
               <div className="mt-4 border-t border-slate-800 pt-4">
-                <p className="text-sm font-semibold text-white mb-2">Produkter</p>
+                <p className="mb-2 text-sm font-semibold text-white">Produkter</p>
                 <div className="space-y-1 text-sm text-slate-300">
                   {(order.order_items || []).map((item) => (
                     <div key={item.id} className="flex justify-between">
@@ -288,7 +345,8 @@ export default function AdminOrders() {
                 <label className="text-sm font-semibold text-slate-100">Byggstatus</label>
                 <select
                   value={statusInfo.value}
-                  onChange={(event) => void handleStatusChange(order.id, event.target.value)}
+                  onChange={(event) => void handleStatusChange(order, event.target.value)}
+                  disabled={!canMutate}
                   className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                 >
                   {ORDER_STATUS_FLOW.map((option) => (
@@ -301,7 +359,7 @@ export default function AdminOrders() {
               </div>
 
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-                <div className="flex items-center gap-2 mb-3 text-xs text-slate-400 uppercase tracking-[0.2em]">
+                <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
                   <CheckCircle2 className="h-4 w-4 text-[#11667b]" />
                   Byggchecklista
                 </div>
@@ -314,9 +372,10 @@ export default function AdminOrders() {
                       <input
                         type="checkbox"
                         checked={Boolean(item.done)}
+                        disabled={!canMutate}
                         onChange={() => void handleChecklistToggle(order, item.id)}
                       />
-                      <span className={item.done ? "line-through text-slate-500" : ""}>{item.label}</span>
+                      <span className={item.done ? "text-slate-500 line-through" : ""}>{item.label}</span>
                     </label>
                   ))}
                 </div>
@@ -325,9 +384,10 @@ export default function AdminOrders() {
           );
         })}
 
-        {!loadingOrders && orders.length === 0 && <p className="text-sm text-slate-400">Inga beställningar hittades.</p>}
+        {!loadingOrders && orders.length === 0 && (
+          <p className="text-sm text-slate-400">Inga beställningar hittades.</p>
+        )}
       </div>
     </div>
   );
 }
-
