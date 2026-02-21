@@ -796,7 +796,10 @@ const ensureUniqueSlug = async (slugInput, name, excludeProductId = "") => {
 const listingWriteSchema = z.object({
   name: z.string().trim().min(1).max(120),
   slug: z.string().trim().max(80).optional().nullable(),
-  legacy_id: z.string().trim().max(80).optional().nullable(),
+  legacy_id: z.preprocess(
+    (value) => (value === null || value === undefined ? "" : String(value)),
+    z.string().trim().max(80)
+  ).optional().nullable(),
   description: z.string().trim().max(1000).optional().nullable(),
   price_cents: z.number().finite().min(0),
   currency: z.string().trim().max(8).optional().nullable(),
