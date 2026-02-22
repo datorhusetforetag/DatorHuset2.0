@@ -9,6 +9,7 @@ import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import { getAllInventory } from "@/lib/supabaseServices";
+import { sanitizeUsedPartsSettings, UsedPartsSettings } from "@/lib/usedParts";
 
 const FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
@@ -74,6 +75,31 @@ type InventoryEntry = {
   eta_days?: number | null;
   eta_note?: string | null;
 };
+
+type ProductImagesResponse = {
+  images?: string[];
+  image_url?: string | null;
+};
+
+type CardUsedPartsSource = {
+  cpu?: boolean;
+  gpu?: boolean;
+  ram?: boolean;
+  storage?: boolean;
+  motherboard?: boolean;
+  psu?: boolean;
+  case_name?: boolean;
+  cpu_cooler?: boolean;
+  caseName?: boolean;
+  cpuCooler?: boolean;
+};
+
+const toUsedPartsSettings = (source?: CardUsedPartsSource | null): UsedPartsSettings =>
+  sanitizeUsedPartsSettings({
+    ...(source || {}),
+    case_name: source?.case_name ?? source?.caseName,
+    cpu_cooler: source?.cpu_cooler ?? source?.cpuCooler,
+  });
 
 const DEFAULT_BANNER: BannerConfig = {
   eyebrow: "Topplistan",
@@ -198,6 +224,9 @@ export default function Products() {
   const [showAllCpus, setShowAllCpus] = useState(false);
   const [showAllTiers, setShowAllTiers] = useState(false);
   const [usedVariantEnabledMap, setUsedVariantEnabledMap] = useState<Record<string, boolean>>({});
+  const [usedPartsByProductId, setUsedPartsByProductId] = useState<Record<string, UsedPartsSettings>>({});
+  const [usedPartsConfiguredByProductId, setUsedPartsConfiguredByProductId] = useState<Record<string, boolean>>({});
+  const [imagesByProductId, setImagesByProductId] = useState<Record<string, string[]>>({});
   const { products } = useProducts();
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const [inventoryLoading, setInventoryLoading] = useState(true);
@@ -349,6 +378,126 @@ export default function Products() {
       active = false;
     };
   }, [products, productIdByName, usedVariantEnabledMap]);
+
+  useEffect(() => {
+    if (products.length === 0) return;
+    let active = true;
+    const loadProductImages = async () => {
+      const targets = Array.from(
+        new Set(
+          COMPUTERS.flatMap((computer) => {
+            const ids: string[] = [];
+            const baseId =
+              productIdByName.get(normalizeProductKey(computer.name)) ||
+              productIdByName.get(normalizeProductKey(computer.id));
+            if (baseId) ids.push(baseId);
+            if (computer.usedVariant?.productKey) {
+              const usedId = productIdByName.get(normalizeProductKey(computer.usedVariant.productKey));
+              if (usedId) ids.push(usedId);
+            }
+            return ids;
+          })
+        )
+      );
+      const missing = targets.filter((id) => !imagesByProductId[id]);
+      if (missing.length === 0) return;
+      const loaded = await Promise.all(
+        missing.map(async (id) => {
+          try {
+            const response = await fetch(`/api/product-images/${id}`);
+            const data = (await response.json().catch(() => ({}))) as ProductImagesResponse;
+            if (!response.ok) return { id, images: [] as string[] };
+            const combined = Array.from(
+              new Set(
+                [data?.image_url || "", ...(Array.isArray(data?.images) ? data.images : [])]
+                  .map((entry) => normalizeProductImagePath(entry || "") || "")
+                  .filter(Boolean)
+              )
+            );
+            return { id, images: combined };
+          } catch (error) {
+            console.warn("Failed to load product images", error);
+            return { id, images: [] as string[] };
+          }
+        })
+      );
+      if (!active) return;
+      setImagesByProductId((prev) => {
+        const next = { ...prev };
+        loaded.forEach((entry) => {
+          next[entry.id] = entry.images;
+        });
+        return next;
+      });
+    };
+    loadProductImages();
+    return () => {
+      active = false;
+    };
+  }, [imagesByProductId, productIdByName, products]);
+
+  useEffect(() => {
+    if (products.length === 0) return;
+    let active = true;
+    const loadUsedPartsSettings = async () => {
+      const targets = Array.from(
+        new Set(
+          COMPUTERS.flatMap((computer) => {
+            const ids: string[] = [];
+            const baseId =
+              productIdByName.get(normalizeProductKey(computer.name)) ||
+              productIdByName.get(normalizeProductKey(computer.id));
+            if (baseId) ids.push(baseId);
+            if (computer.usedVariant?.productKey) {
+              const usedId = productIdByName.get(normalizeProductKey(computer.usedVariant.productKey));
+              if (usedId) ids.push(usedId);
+            }
+            return ids;
+          })
+        )
+      );
+      const missing = targets.filter((id) => usedPartsConfiguredByProductId[id] === undefined);
+      if (missing.length === 0) return;
+      const loaded = await Promise.all(
+        missing.map(async (id) => {
+          try {
+            const response = await fetch(`/api/used-parts/${id}`);
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) {
+              return { id, configured: false, used_parts: sanitizeUsedPartsSettings(null) };
+            }
+            return {
+              id,
+              configured: data?.configured === true,
+              used_parts: sanitizeUsedPartsSettings(data?.used_parts),
+            };
+          } catch (error) {
+            console.warn("Failed to load used-parts setting", error);
+            return { id, configured: false, used_parts: sanitizeUsedPartsSettings(null) };
+          }
+        })
+      );
+      if (!active) return;
+      setUsedPartsConfiguredByProductId((prev) => {
+        const next = { ...prev };
+        loaded.forEach((entry) => {
+          next[entry.id] = entry.configured;
+        });
+        return next;
+      });
+      setUsedPartsByProductId((prev) => {
+        const next = { ...prev };
+        loaded.forEach((entry) => {
+          next[entry.id] = entry.used_parts;
+        });
+        return next;
+      });
+    };
+    loadUsedPartsSettings();
+    return () => {
+      active = false;
+    };
+  }, [products, productIdByName, usedPartsConfiguredByProductId]);
 
   useEffect(() => {
     let active = true;
@@ -522,6 +671,24 @@ export default function Products() {
   };
   const getDisplayName = (computer: Computer, useUsedVariant: boolean) =>
     getDisplayVariant(computer, useUsedVariant).name;
+  const getImageCandidatesForVariant = (
+    productId: string | null,
+    fallbackImages: string[]
+  ) => {
+    const fromApi = productId ? imagesByProductId[productId] || [] : [];
+    const merged = Array.from(new Set([...fromApi, ...fallbackImages].filter(Boolean)));
+    return merged.length > 0 ? merged : [FALLBACK_IMAGE];
+  };
+  const getUsedPartsForVariant = (
+    computer: Computer,
+    useUsedVariant: boolean,
+    productId: string | null
+  ): UsedPartsSettings => {
+    const fallback = toUsedPartsSettings(useUsedVariant ? computer.usedVariant?.usedParts : null);
+    if (!productId) return fallback;
+    if (usedPartsConfiguredByProductId[productId] !== true) return fallback;
+    return sanitizeUsedPartsSettings(usedPartsByProductId[productId]);
+  };
   type DisplayCard = { computer: Computer; useUsedVariant: boolean };
   const displayCards = useMemo<DisplayCard[]>(() => {
     if (preset === "budget") {
@@ -1044,6 +1211,7 @@ export default function Products() {
                   const supabaseId =
                     productIdByName.get(normalizeProductKey(supabaseKey)) ||
                     productIdByName.get(normalizeProductKey(computer.id));
+                  const usedParts = getUsedPartsForVariant(computer, useUsedVariant, supabaseId || null);
                   const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
                   const hasInventory = Boolean(inventory);
                   const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
@@ -1069,13 +1237,14 @@ export default function Products() {
                       : null;
 
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
-                  const cardImageCandidates = Array.from(
+                  const fallbackCardImages = Array.from(
                     new Set(
                       [computer.image, ...(computer.images || []), FALLBACK_IMAGE]
                         .map((path) => normalizeProductImagePath(path) || "")
                         .filter(Boolean)
                     )
                   );
+                  const cardImageCandidates = getImageCandidatesForVariant(supabaseId || null, fallbackCardImages);
                   const primaryCardImage = cardImageCandidates[0] || FALLBACK_IMAGE;
 
                   const detailPath = useUsedVariant
@@ -1138,24 +1307,47 @@ export default function Products() {
                           </div>
 
                           <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
-                            <p className="truncate">CPU: {variant.cpu}</p>
-                            <p className="truncate">GPU: {variant.gpu}</p>
+                            <p className="flex flex-wrap items-center gap-2">
+                              <span className="truncate">CPU: {variant.cpu}</span>
+                              {usedParts.cpu ? (
+                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                                  Begagnade
+                                </span>
+                              ) : null}
+                            </p>
+                            <p className="flex flex-wrap items-center gap-2">
+                              <span className="truncate">GPU: {variant.gpu}</span>
+                              {usedParts.gpu ? (
+                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                                  Begagnade
+                                </span>
+                              ) : null}
+                            </p>
                             <p className="flex flex-wrap items-center gap-2">
                               <span>
                                 RAM:{" "}
-                                <span className="cursor-help" title={RAM_PRICE_TOOLTIP}>
+                                <span className={usedParts.ram ? "cursor-help" : ""} title={usedParts.ram ? RAM_PRICE_TOOLTIP : undefined}>
                                   {variant.ram}
                                 </span>
                               </span>
-                              <span
-                                className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
-                                title={RAM_PRICE_TOOLTIP}
-                              >
-                                Begagnade
-                              </span>
+                              {usedParts.ram ? (
+                                <span
+                                  className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
+                                  title={RAM_PRICE_TOOLTIP}
+                                >
+                                  Begagnade
+                                </span>
+                              ) : null}
                             </p>
-                            <p className="truncate">
-                              Lagring: {variant.storage} {variant.storagetype}
+                            <p className="flex flex-wrap items-center gap-2">
+                              <span className="truncate">
+                                Lagring: {variant.storage} {variant.storagetype}
+                              </span>
+                              {usedParts.storage ? (
+                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                                  Begagnade
+                                </span>
+                              ) : null}
                             </p>
                           </div>
 

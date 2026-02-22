@@ -32,6 +32,9 @@ const PORT = process.env.PORT || 3001;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const distPath = path.join(__dirname, "dist");
+const PRODUCT_IMAGE_BUCKET = String(process.env.SUPABASE_PRODUCT_IMAGES_BUCKET || "product-images").trim() || "product-images";
+const MAX_UPLOAD_IMAGE_BYTES = Math.max(200_000, Number(process.env.MAX_UPLOAD_IMAGE_BYTES || 8 * 1024 * 1024));
+const JSON_BODY_LIMIT = process.env.JSON_BODY_LIMIT || "15mb";
 
 const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
 const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
@@ -144,7 +147,7 @@ app.use(cors({
   credentials: true,
 }));
 app.use("/api/webhook", express.raw({ type: "application/json" })); // raw for Stripe
-app.use(express.json({ limit: "100kb" }));
+app.use(express.json({ limit: JSON_BODY_LIMIT }));
 app.use("/api/", apiLimiter);
 app.use("/api/admin", adminLimiter);
 
@@ -593,6 +596,51 @@ const sanitizeText = (value, maxLength = 120) => {
   return value.trim().slice(0, maxLength);
 };
 
+const sanitizeImageUrl = (value) => {
+  const normalized = sanitizeText(value, 500);
+  if (!normalized) return "";
+  if (normalized.startsWith("/") || /^https?:\/\//i.test(normalized)) return normalized;
+  return "";
+};
+
+const sanitizeImageList = (value, fallbackPrimary = "") => {
+  const source = Array.isArray(value) ? value : [];
+  const normalized = [];
+  source.forEach((entry) => {
+    const image = sanitizeImageUrl(entry);
+    if (image && !normalized.includes(image)) {
+      normalized.push(image);
+    }
+  });
+  const fallback = sanitizeImageUrl(fallbackPrimary);
+  if (fallback && !normalized.includes(fallback)) {
+    normalized.unshift(fallback);
+  }
+  return normalized.slice(0, 10);
+};
+
+const parseProductImagesSetting = (value, fallbackPrimary = "") => {
+  if (Array.isArray(value)) return sanitizeImageList(value, fallbackPrimary);
+  if (value && typeof value === "object" && Array.isArray(value.images)) {
+    return sanitizeImageList(value.images, fallbackPrimary);
+  }
+  return sanitizeImageList([], fallbackPrimary);
+};
+
+const ensureImagePathSlug = (value, fallback = "listing") =>
+  slugifyValue(value || fallback || "listing").slice(0, 60) || "listing";
+
+const buildStoragePublicUrl = (bucket, objectPath) => {
+  const encodedSegments = String(objectPath || "")
+    .split("/")
+    .filter(Boolean)
+    .map((segment) => encodeURIComponent(segment));
+  if (encodedSegments.length === 0) return "";
+  const encodedPath = encodedSegments.join("/");
+  if (!supabaseUrl) return `/storage/v1/object/public/${bucket}/${encodedPath}`;
+  return `${supabaseUrl.replace(/\/+$/, "")}/storage/v1/object/public/${bucket}/${encodedPath}`;
+};
+
 const escapeHtml = (value) =>
   String(value).replace(/[&<>"']/g, (char) => {
     const map = {
@@ -743,7 +791,7 @@ const requireServiceRoleKey = (res) => {
 };
 
 const LISTING_SELECT_FIELDS =
-  "id, name, slug, legacy_id, description, price_cents, currency, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, rating, reviews_count, updated_at";
+  "id, name, slug, legacy_id, description, image_url, price_cents, currency, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, rating, reviews_count, updated_at";
 const LISTING_SORT_FIELD_MAP = {
   name: "name",
   updated_at: "updated_at",
@@ -801,6 +849,8 @@ const listingWriteSchema = z.object({
     z.string().trim().max(80)
   ).optional().nullable(),
   description: z.string().trim().max(1000).optional().nullable(),
+  image_url: z.string().trim().max(500).optional().nullable(),
+  images: z.array(z.string().trim().max(500)).max(10).optional(),
   price_cents: z.number().finite().min(0),
   currency: z.string().trim().max(8).optional().nullable(),
   cpu: z.string().trim().min(1).max(120),
@@ -844,21 +894,52 @@ const updateListingRequestSchema = z.object({
   expected_updated_at: z.string().datetime({ offset: true }).optional().nullable(),
 });
 
+const uploadListingImageSchema = z.object({
+  file_name: z.string().trim().max(160).optional().nullable(),
+  mime_type: z.string().trim().max(80),
+  data_base64: z.string().trim().min(16),
+  listing_slug: z.string().trim().max(80).optional().nullable(),
+  variant: z.enum(["base", "used"]).optional().default("base"),
+});
+
+const UPLOAD_IMAGE_MIME_TO_EXT = {
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/avif": "avif",
+};
+
 const buildListingResponse = ({
   product,
   inventoryByProductId,
   fpsByProductId,
   usedVariantByProductId,
   usedPartsByProductId,
+  productImagesByProductId,
+  variantLinkByBaseId,
+  variantBaseByUsedId,
 }) => {
   const inventoryRow = inventoryByProductId.get(product.id) || null;
   const fallbackFps = EMPTY_FPS_SETTINGS;
+  const imageUrl = sanitizeImageUrl(product.image_url);
+  const images = parseProductImagesSetting(productImagesByProductId.get(product.id), imageUrl);
+  const linkedUsedId = sanitizeText(variantLinkByBaseId.get(product.id), 80);
+  const linkedBaseId = sanitizeText(variantBaseByUsedId.get(product.id), 80);
+  const linkedProductId = linkedUsedId || linkedBaseId || null;
+  const variantRole = linkedUsedId ? "base" : linkedBaseId ? "used" : null;
+  const variantGroupId = linkedUsedId ? product.id : linkedBaseId || null;
   return {
     id: product.id,
     name: product.name,
     slug: product.slug,
     legacy_id: product.legacy_id,
     description: product.description,
+    image_url: imageUrl || null,
+    images,
+    linked_product_id: linkedProductId,
+    variant_role: variantRole,
+    variant_group_id: variantGroupId,
     price_cents: Number(product.price_cents || 0),
     currency: product.currency || "SEK",
     cpu: product.cpu,
@@ -922,7 +1003,13 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
   }
 
   const productIds = products.map((product) => product.id);
-  const settingsKeys = productIds.flatMap((id) => [`fps:${id}`, `used_variant:${id}`, `used_parts:${id}`]);
+  const settingsKeys = productIds.flatMap((id) => [
+    `fps:${id}`,
+    `used_variant:${id}`,
+    `used_parts:${id}`,
+    `product_images:${id}`,
+    `used_variant_link:${id}`,
+  ]);
 
   const [inventoryResponse, settingsResponse] = await Promise.all([
     supabase.from("inventory").select("*").in("product_id", productIds),
@@ -936,6 +1023,9 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
   const fpsByProductId = new Map();
   const usedVariantByProductId = new Map();
   const usedPartsByProductId = new Map();
+  const productImagesByProductId = new Map();
+  const variantLinkByBaseId = new Map();
+  const variantBaseByUsedId = new Map();
 
   (settingsResponse.data || []).forEach((setting) => {
     const key = String(setting.key || "");
@@ -949,6 +1039,19 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
     }
     if (key.startsWith("used_parts:")) {
       usedPartsByProductId.set(key.slice(11), setting.value);
+      return;
+    }
+    if (key.startsWith("product_images:")) {
+      productImagesByProductId.set(key.slice(15), setting.value);
+      return;
+    }
+    if (key.startsWith("used_variant_link:")) {
+      const baseId = sanitizeText(key.slice(18), 80);
+      const usedId = sanitizeText(setting?.value?.product_id || setting?.value, 80);
+      if (baseId && usedId) {
+        variantLinkByBaseId.set(baseId, usedId);
+        variantBaseByUsedId.set(usedId, baseId);
+      }
     }
   });
 
@@ -959,6 +1062,9 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
       fpsByProductId,
       usedVariantByProductId,
       usedPartsByProductId,
+      productImagesByProductId,
+      variantLinkByBaseId,
+      variantBaseByUsedId,
     })
   );
 
@@ -972,7 +1078,7 @@ const persistListingState = async ({ req, user, productId, listing, fpsInput, us
   const {
     data: currentProduct,
     error: currentProductError,
-  } = await supabase.from("products").select("id, updated_at").eq("id", productId).maybeSingle();
+  } = await supabase.from("products").select("id, updated_at, image_url").eq("id", productId).maybeSingle();
   if (currentProductError) {
     throw new Error(currentProductError.message || "Kunde inte läsa produkt.");
   }
@@ -992,11 +1098,18 @@ const persistListingState = async ({ req, user, productId, listing, fpsInput, us
   }
 
   const slug = await ensureUniqueSlug(parsedListing.slug, parsedListing.name, productId);
+  const sanitizedPrimaryImage = sanitizeImageUrl(parsedListing.image_url);
+  const normalizedImages = sanitizeImageList(parsedListing.images, sanitizedPrimaryImage);
+  const resolvedImageUrl =
+    parsedListing.image_url === undefined
+      ? sanitizeImageUrl(currentProduct.image_url) || null
+      : sanitizedPrimaryImage || null;
   const payload = {
     name: sanitizeText(parsedListing.name, 120),
     slug,
     legacy_id: sanitizeText(parsedListing.legacy_id, 80) || null,
     description: sanitizeText(parsedListing.description, 1000) || null,
+    image_url: resolvedImageUrl,
     price_cents: Math.max(0, Math.round(Number(parsedListing.price_cents || 0))),
     currency: sanitizeText(parsedListing.currency, 8).toUpperCase() || "SEK",
     cpu: sanitizeText(parsedListing.cpu, 120),
@@ -1072,6 +1185,19 @@ const persistListingState = async ({ req, user, productId, listing, fpsInput, us
     .upsert([{ key: fpsKey, value: normalizedFps, updated_at: new Date() }], { onConflict: "key" });
   if (fpsError) {
     throw new Error(fpsError.message || "Kunde inte uppdatera FPS-variabler.");
+  }
+
+  if (parsedListing.images !== undefined || parsedListing.image_url !== undefined) {
+    const imagesKey = `product_images:${productId}`;
+    const imagesPayload = {
+      key: imagesKey,
+      value: { version: 1, images: normalizedImages },
+      updated_at: new Date(),
+    };
+    const { error: imagesError } = await supabase.from("ui_settings").upsert([imagesPayload], { onConflict: "key" });
+    if (imagesError) {
+      throw new Error(imagesError.message || "Kunde inte uppdatera produktbilder.");
+    }
   }
 
   await logAdminAction(req, user, "listing_update_v2", "listing", productId, {
@@ -1685,6 +1811,78 @@ app.get("/api/admin/v2/listings/:productId", async (req, res) => {
   }
 });
 
+app.post("/api/admin/v2/uploads/product-image", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const parsed = uploadListingImageSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för bilduppladdning.", parsed.error.flatten());
+    }
+
+    const { file_name: fileNameInput, mime_type: mimeTypeInput, data_base64: dataBase64, listing_slug: listingSlug, variant } = parsed.data;
+    const mimeType = String(mimeTypeInput || "").toLowerCase();
+    const extension = UPLOAD_IMAGE_MIME_TO_EXT[mimeType];
+    if (!extension) {
+      return jsonError(res, 400, "INVALID_FILE_TYPE", "Endast JPG, PNG, WEBP och AVIF stöds.");
+    }
+
+    const base64Payload = String(dataBase64 || "").replace(/^data:[^;]+;base64,/i, "");
+    const binary = Buffer.from(base64Payload, "base64");
+    if (!binary || binary.length === 0) {
+      return jsonError(res, 400, "INVALID_IMAGE_DATA", "Kunde inte läsa bilddata.");
+    }
+    if (binary.length > MAX_UPLOAD_IMAGE_BYTES) {
+      return jsonError(
+        res,
+        400,
+        "IMAGE_TOO_LARGE",
+        `Bilden är för stor. Maxstorlek är ${Math.round(MAX_UPLOAD_IMAGE_BYTES / (1024 * 1024))} MB.`
+      );
+    }
+
+    const safeSlug = ensureImagePathSlug(listingSlug, variant === "used" ? "begagnad-variant" : "basprodukt");
+    const fileBase = ensureImagePathSlug(fileNameInput || `image-${Date.now()}`, "bild");
+    const objectPath = `listings/${safeSlug}/${Date.now()}-${fileBase}.${extension}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from(PRODUCT_IMAGE_BUCKET)
+      .upload(objectPath, binary, {
+        contentType: mimeType,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return jsonError(
+        res,
+        500,
+        "IMAGE_UPLOAD_FAILED",
+        uploadError.message || "Kunde inte ladda upp bilden. Kontrollera bucket-inställningen."
+      );
+    }
+
+    const publicUrlData = supabase.storage.from(PRODUCT_IMAGE_BUCKET).getPublicUrl(objectPath);
+    const url = sanitizeImageUrl(publicUrlData?.data?.publicUrl) || buildStoragePublicUrl(PRODUCT_IMAGE_BUCKET, objectPath);
+
+    return res.status(201).json({
+      ok: true,
+      data: {
+        url,
+        bucket: PRODUCT_IMAGE_BUCKET,
+        path: objectPath,
+      },
+    });
+  } catch (error) {
+    console.error("Admin listing image upload error:", error);
+    return jsonError(res, 500, "IMAGE_UPLOAD_FAILED", "Kunde inte ladda upp bild.");
+  }
+});
+
 app.post("/api/admin/v2/listings", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
@@ -1702,11 +1900,13 @@ app.post("/api/admin/v2/listings", async (req, res) => {
 
     const { listing, used_variant: usedVariant, fps } = parsed.data;
     const baseSlug = await ensureUniqueSlug(listing.slug, listing.name);
+    const baseImageUrl = sanitizeImageUrl(listing.image_url) || null;
     const basePayload = {
       name: sanitizeText(listing.name, 120),
       slug: baseSlug,
       legacy_id: sanitizeText(listing.legacy_id, 80) || null,
       description: sanitizeText(listing.description, 1000) || null,
+      image_url: baseImageUrl,
       price_cents: Math.max(0, Math.round(Number(listing.price_cents || 0))),
       currency: sanitizeText(listing.currency, 8).toUpperCase() || "SEK",
       cpu: sanitizeText(listing.cpu, 120),
@@ -1755,12 +1955,14 @@ app.post("/api/admin/v2/listings", async (req, res) => {
     let usedVariantProductId = null;
     if (usedVariant?.enabled && usedVariant.listing) {
       const usedSlug = await ensureUniqueSlug(usedVariant.listing.slug, usedVariant.listing.name);
+      const usedImageUrl = sanitizeImageUrl(usedVariant.listing.image_url) || null;
       const usedPayload = {
         ...basePayload,
         name: sanitizeText(usedVariant.listing.name, 120),
         slug: usedSlug,
         legacy_id: sanitizeText(usedVariant.listing.legacy_id, 80) || null,
         description: sanitizeText(usedVariant.listing.description, 1000) || null,
+        image_url: usedImageUrl,
         price_cents: Math.max(0, Math.round(Number(usedVariant.listing.price_cents || 0))),
         cpu: sanitizeText(usedVariant.listing.cpu, 120),
         gpu: sanitizeText(usedVariant.listing.gpu, 120),
@@ -3073,15 +3275,56 @@ app.get("/api/used-parts/:productId", async (req, res) => {
       .from("ui_settings")
       .select("key, value")
       .eq("key", key)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      return res.json({ used_parts: parseUsedPartsSetting(null, null) });
+      return res.status(500).json({ error: error?.message || "Failed to read used-parts setting" });
     }
 
-    return res.json({ used_parts: parseUsedPartsSetting(data?.value, null) });
+    if (!data?.value) {
+      return res.json({ configured: false, used_parts: null });
+    }
+
+    return res.json({ configured: true, used_parts: parseUsedPartsSetting(data?.value, null) });
   } catch (error) {
     console.error("Used-parts fetch error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+app.get("/api/product-images/:productId", async (req, res) => {
+  if (!supabase) {
+    return res.status(503).json({ error: "Supabase not configured." });
+  }
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+
+    const [productResponse, settingsResponse] = await Promise.all([
+      supabase.from("products").select("id, image_url").eq("id", productId).maybeSingle(),
+      supabase.from("ui_settings").select("key, value").eq("key", `product_images:${productId}`).maybeSingle(),
+    ]);
+
+    if (productResponse.error) {
+      return res.status(500).json({ error: productResponse.error.message || "Failed to read product image." });
+    }
+    if (settingsResponse.error) {
+      return res.status(500).json({ error: settingsResponse.error.message || "Failed to read product images." });
+    }
+
+    const primary = sanitizeImageUrl(productResponse.data?.image_url);
+    const images = parseProductImagesSetting(settingsResponse.data?.value, primary);
+
+    return res.json({
+      product_id: productId,
+      configured: Boolean(settingsResponse.data?.value),
+      image_url: primary || null,
+      images,
+    });
+  } catch (error) {
+    console.error("Product images fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

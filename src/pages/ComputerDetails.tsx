@@ -18,7 +18,6 @@ import {
   normalizeFpsSandboxSettings,
 } from "@/lib/fpsSandbox";
 import {
-  DEFAULT_USED_PARTS_SETTINGS,
   sanitizeUsedPartsSettings,
 } from "@/lib/usedParts";
 import { checkStock } from "@/lib/supabaseServices";
@@ -58,11 +57,37 @@ const DLSS_MODE_LABELS: Record<string, string> = {
   balanced: "Balanced",
   performance: "Performance",
 };
+
+type ProductImagesResponse = {
+  images?: string[];
+  image_url?: string | null;
+};
+
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
   return replaced === trimmed ? `${trimmed} - Begagnade` : replaced;
 };
+
+type DetailUsedPartsSource = {
+  cpu?: boolean;
+  gpu?: boolean;
+  ram?: boolean;
+  storage?: boolean;
+  motherboard?: boolean;
+  psu?: boolean;
+  case_name?: boolean;
+  cpu_cooler?: boolean;
+  caseName?: boolean;
+  cpuCooler?: boolean;
+};
+
+const toUsedPartsSettings = (source?: DetailUsedPartsSource | null) =>
+  sanitizeUsedPartsSettings({
+    ...(source || {}),
+    case_name: source?.case_name ?? source?.caseName,
+    cpu_cooler: source?.cpu_cooler ?? source?.cpuCooler,
+  });
 
 const TOP_SELLER_REVIEWS: Record<
   string,
@@ -215,6 +240,8 @@ export default function ComputerDetails() {
   const [useUsedVariant, setUseUsedVariant] = useState(false);
   const [usedVariantEnabled, setUsedVariantEnabled] = useState<boolean | null>(null);
   const [usedPartsFromApi, setUsedPartsFromApi] = useState<Record<string, boolean> | null>(null);
+  const [usedPartsConfigured, setUsedPartsConfigured] = useState<boolean>(false);
+  const [productImagesFromApi, setProductImagesFromApi] = useState<string[]>([]);
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
@@ -241,7 +268,14 @@ export default function ComputerDetails() {
   const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 
   const images = useMemo(() => {
-    const rawImages = computer?.images?.length ? computer.images : computer ? [computer.image] : [];
+    const rawImages =
+      productImagesFromApi.length > 0
+        ? productImagesFromApi
+        : computer?.images?.length
+          ? computer.images
+          : computer
+            ? [computer.image]
+            : [];
     return Array.from(
       new Set(
         rawImages
@@ -249,7 +283,7 @@ export default function ComputerDetails() {
           .filter(Boolean)
       )
     );
-  }, [computer]);
+  }, [computer, productImagesFromApi]);
   const detailImageCandidates = useMemo(
     () =>
       Array.from(
@@ -395,7 +429,38 @@ export default function ComputerDetails() {
   }, [activeProductId]);
 
   useEffect(() => {
-    if (!useUsedVariant || !activeProductId) {
+    if (!activeProductId) {
+      setProductImagesFromApi([]);
+      return;
+    }
+    let isMounted = true;
+    const loadProductImages = async () => {
+      try {
+        const response = await fetch(`/api/product-images/${activeProductId}`);
+        const data = (await response.json().catch(() => ({}))) as ProductImagesResponse;
+        if (!response.ok || !isMounted) return;
+        const merged = Array.from(
+          new Set(
+            [data?.image_url || "", ...(Array.isArray(data?.images) ? data.images : [])]
+              .map((image) => normalizeProductImagePath(image || "") || "")
+              .filter(Boolean)
+          )
+        );
+        setProductImagesFromApi(merged);
+      } catch (error) {
+        console.warn("Failed to load product images", error);
+        if (isMounted) setProductImagesFromApi([]);
+      }
+    };
+    loadProductImages();
+    return () => {
+      isMounted = false;
+    };
+  }, [activeProductId]);
+
+  useEffect(() => {
+    if (!activeProductId) {
+      setUsedPartsConfigured(false);
       setUsedPartsFromApi(null);
       return;
     }
@@ -406,16 +471,22 @@ export default function ComputerDetails() {
         if (!response.ok) return;
         const data = await response.json();
         if (!isMounted) return;
-        setUsedPartsFromApi(sanitizeUsedPartsSettings(data?.used_parts));
+        const configured = data?.configured === true;
+        setUsedPartsConfigured(configured);
+        setUsedPartsFromApi(configured ? sanitizeUsedPartsSettings(data?.used_parts) : null);
       } catch (error) {
         console.warn("Failed to load used-parts settings", error);
+        if (isMounted) {
+          setUsedPartsConfigured(false);
+          setUsedPartsFromApi(null);
+        }
       }
     };
     loadUsedParts();
     return () => {
       isMounted = false;
     };
-  }, [activeProductId, useUsedVariant]);
+  }, [activeProductId]);
 
   useEffect(() => {
     if (!gameList.length) return;
@@ -516,17 +587,11 @@ export default function ComputerDetails() {
     cpuCooler: merged.cpuCooler,
     os: osValue,
   };
-  const fallbackUsedParts = sanitizeUsedPartsSettings({
-    ...(activeVariant?.usedParts || {}),
-    case_name: activeVariant?.usedParts?.caseName,
-    cpu_cooler: activeVariant?.usedParts?.cpuCooler,
-  });
+  const baseUsedParts = (computer as Computer & { usedParts?: DetailUsedPartsSource }).usedParts || null;
+  const fallbackUsedParts = toUsedPartsSettings(useUsedVariant ? activeVariant?.usedParts : baseUsedParts);
   const usedParts = useMemo(
-    () =>
-      useUsedVariant
-        ? sanitizeUsedPartsSettings(usedPartsFromApi || fallbackUsedParts)
-        : DEFAULT_USED_PARTS_SETTINGS,
-    [fallbackUsedParts, useUsedVariant, usedPartsFromApi]
+    () => (usedPartsConfigured ? sanitizeUsedPartsSettings(usedPartsFromApi) : fallbackUsedParts),
+    [fallbackUsedParts, usedPartsConfigured, usedPartsFromApi]
   );
   const specRows = useMemo(
     () => {
