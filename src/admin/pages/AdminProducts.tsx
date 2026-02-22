@@ -907,13 +907,117 @@ export default function AdminProducts() {
     }
   };
 
-  const filteredItems = useMemo(() => {
+  const knownBaseNameKeys = useMemo(
+    () => new Set(COMPUTERS.map((computer) => normalizeProductKey(computer.name)).filter(Boolean)),
+    []
+  );
+  const knownUsedNameKeys = useMemo(
+    () =>
+      new Set(
+        COMPUTERS.map((computer) => normalizeProductKey(computer.usedVariant?.productKey || "")).filter(Boolean)
+      ),
+    []
+  );
+
+  const itemsById = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
+
+  const itemIdByLookupKey = useMemo(() => {
+    const map = new Map<string, string>();
+    items.forEach((item) => {
+      const candidates = [item.id, item.name, item.slug, item.legacy_id];
+      candidates.forEach((candidate) => {
+        const normalized = normalizeProductKey(String(candidate || ""));
+        if (normalized && !map.has(normalized)) {
+          map.set(normalized, item.id);
+        }
+      });
+    });
+    return map;
+  }, [items]);
+
+  const knownVariantPairIds = useMemo(() => {
+    const pairs: Array<{ baseId: string; usedId: string }> = [];
+    COMPUTERS.forEach((computer) => {
+      if (!computer.usedVariant?.productKey) return;
+      const baseId =
+        itemIdByLookupKey.get(normalizeProductKey(computer.name)) ||
+        itemIdByLookupKey.get(normalizeProductKey(computer.id));
+      const usedId = itemIdByLookupKey.get(normalizeProductKey(computer.usedVariant.productKey));
+      if (!baseId || !usedId || baseId === usedId) return;
+      pairs.push({ baseId, usedId });
+    });
+    return pairs;
+  }, [itemIdByLookupKey]);
+
+  const pairedById = useMemo(() => {
+    const map = new Map<string, string>();
+    const availableIds = new Set(items.map((item) => item.id));
+
+    items.forEach((item) => {
+      const linkedId = String(item.linked_product_id || "").trim();
+      if (!linkedId || !availableIds.has(linkedId) || linkedId === item.id) return;
+      map.set(item.id, linkedId);
+      if (!map.has(linkedId)) {
+        map.set(linkedId, item.id);
+      }
+    });
+
+    knownVariantPairIds.forEach(({ baseId, usedId }) => {
+      if (!map.has(baseId)) map.set(baseId, usedId);
+      if (!map.has(usedId)) map.set(usedId, baseId);
+    });
+
+    return map;
+  }, [items, knownVariantPairIds]);
+
+  const getItemVariantRole = (item: CatalogItem): "base" | "used" | null => {
+    if (item.variant_role === "base" || item.variant_role === "used") return item.variant_role;
+    const normalizedName = normalizeProductKey(item.name);
+    if (knownBaseNameKeys.has(normalizedName)) return "base";
+    if (knownUsedNameKeys.has(normalizedName)) return "used";
+    return null;
+  };
+
+  const groupedItems = useMemo(() => {
+    const groups: Array<{ id: string; items: CatalogItem[] }> = [];
+    const seen = new Set<string>();
+    const indexById = new Map(items.map((item, index) => [item.id, index]));
+
+    items.forEach((item) => {
+      if (seen.has(item.id)) return;
+      const partnerId = pairedById.get(item.id);
+      const partner = partnerId ? itemsById.get(partnerId) : undefined;
+      if (partner && !seen.has(partner.id)) {
+        const pair = [item, partner];
+        pair.sort((a, b) => {
+          const roleA = getItemVariantRole(a);
+          const roleB = getItemVariantRole(b);
+          const rankA = roleA === "base" ? 0 : roleA === "used" ? 1 : 2;
+          const rankB = roleB === "base" ? 0 : roleB === "used" ? 1 : 2;
+          if (rankA !== rankB) return rankA - rankB;
+          return (indexById.get(a.id) || 0) - (indexById.get(b.id) || 0);
+        });
+        groups.push({ id: `group:${pair.map((entry) => entry.id).sort().join(":")}`, items: pair });
+        seen.add(item.id);
+        seen.add(partner.id);
+        return;
+      }
+      groups.push({ id: `single:${item.id}`, items: [item] });
+      seen.add(item.id);
+    });
+
+    return groups;
+  }, [items, itemsById, pairedById]);
+
+  const visibleGroupedItems = useMemo(() => {
     const term = query.trim().toLowerCase();
-    if (!term) return items;
-    return items.filter((item) =>
-      `${item.name} ${item.slug || ""} ${item.legacy_id || ""} ${item.id}`.toLowerCase().includes(term)
+    if (!term) return groupedItems;
+    return groupedItems.filter((group) =>
+      group.items.some((item) =>
+        `${item.name} ${item.slug || ""} ${item.legacy_id || ""} ${item.id}`.toLowerCase().includes(term)
+      )
     );
-  }, [items, query]);
+  }, [groupedItems, query]);
 
   if (!token) {
     return (
@@ -1303,11 +1407,31 @@ export default function AdminProducts() {
       </div>
 
       <div className="space-y-4">
-        {filteredItems.map((item) => (
+        {visibleGroupedItems.map((group) => (
+          <div key={group.id} className="space-y-4">
+            {group.items.length > 1 ? (
+              <div className="rounded-xl border border-[#11667b]/40 bg-[#11667b]/10 px-4 py-2 text-xs text-slate-200">
+                Samma datorgrupp: basvariant + begagnad variant
+              </div>
+            ) : null}
+            {group.items.map((item) => {
+              const variantRole = getItemVariantRole(item);
+              return (
           <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <p className="text-lg font-semibold text-white">{item.name}</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg font-semibold text-white">{item.name}</p>
+                  {variantRole === "base" ? (
+                    <span className="rounded-full border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[11px] font-semibold text-sky-200">
+                      Basvariant
+                    </span>
+                  ) : variantRole === "used" ? (
+                    <span className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-2 py-0.5 text-[11px] font-semibold text-yellow-200">
+                      Begagnad variant
+                    </span>
+                  ) : null}
+                </div>
                 <p className="text-xs text-slate-500">{item.id}</p>
                 {dirtyProductIds[item.id] ? (
                   <p className="text-xs text-yellow-300">Osparade ändringar</p>
@@ -1431,6 +1555,9 @@ export default function AdminProducts() {
               ))}
             </div>
           </section>
+              );
+            })}
+          </div>
         ))}
       </div>
     </div>
