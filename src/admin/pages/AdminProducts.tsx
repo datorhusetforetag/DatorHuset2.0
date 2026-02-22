@@ -1,7 +1,9 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCcw, Save, Search, Trash2 } from "lucide-react";
+import { Plus, RefreshCcw, Save, Search, Trash2, Upload } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
+import { COMPUTERS } from "@/data/computers";
+import { normalizeProductKey } from "@/hooks/useProducts";
 import {
   createEmptyFpsEntry,
   FpsSandboxEntry,
@@ -26,6 +28,8 @@ type AdminProduct = {
   slug?: string | null;
   legacy_id?: string | null;
   description?: string | null;
+  image_url?: string | null;
+  images?: string[] | null;
   price_cents?: number | null;
   cpu?: string | null;
   gpu?: string | null;
@@ -59,6 +63,9 @@ type CatalogItem = AdminProduct & {
   used_variant_enabled: boolean;
   used_parts?: UsedPartsSettings;
   fps?: FpsSandboxSettings;
+  linked_product_id?: string | null;
+  variant_role?: "base" | "used" | null;
+  variant_group_id?: string | null;
   updated_at?: string | null;
   inventory_updated_at?: string | null;
 };
@@ -239,6 +246,40 @@ const makeNewFpsEntry = (): FpsSandboxEntry =>
 const hasInvalidFpsEntries = (entries: FpsSandboxEntry[]) =>
   entries.some((entry) => !String(entry.graphics || "").trim());
 
+const sanitizeImageInputUrl = (value: string) => {
+  const trimmed = String(value || "").trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("/") || /^https?:\/\//i.test(trimmed)) return trimmed;
+  return "";
+};
+
+const dedupeImageUrls = (input: string[]) => {
+  const next: string[] = [];
+  input.forEach((entry) => {
+    const normalized = sanitizeImageInputUrl(entry);
+    if (normalized && !next.includes(normalized)) {
+      next.push(normalized);
+    }
+  });
+  return next.slice(0, 10);
+};
+
+const fileToBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      const base64 = result.split(",")[1] || "";
+      if (!base64) {
+        reject(new Error("Kunde inte läsa filen."));
+        return;
+      }
+      resolve(base64);
+    };
+    reader.onerror = () => reject(new Error("Kunde inte läsa filen."));
+    reader.readAsDataURL(file);
+  });
+
 export default function AdminProducts() {
   const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
@@ -253,6 +294,12 @@ export default function AdminProducts() {
   const [createUsedVariant, setCreateUsedVariant] = useState(false);
   const [usedDraft, setUsedDraft] = useState<ListingDraft>({ ...DEFAULT_USED_DRAFT });
   const [usedDraftParts, setUsedDraftParts] = useState<UsedPartsSettings>(DEFAULT_USED_PARTS_SETTINGS);
+  const [draftImages, setDraftImages] = useState<string[]>([]);
+  const [usedDraftImages, setUsedDraftImages] = useState<string[]>([]);
+  const [draftImageUrlInput, setDraftImageUrlInput] = useState("");
+  const [usedDraftImageUrlInput, setUsedDraftImageUrlInput] = useState("");
+  const [uploadingBaseImages, setUploadingBaseImages] = useState(false);
+  const [uploadingUsedImages, setUploadingUsedImages] = useState(false);
   const [creating, setCreating] = useState(false);
 
   const [draftFpsEntries, setDraftFpsEntries] = useState<FpsSandboxEntry[]>([]);
@@ -273,6 +320,8 @@ export default function AdminProducts() {
     slug: String(row.slug ?? ""),
     legacy_id: String(row.legacy_id ?? ""),
     description: String(row.description ?? ""),
+    image_url: String(row.image_url ?? ""),
+    images: Array.isArray(row.images) ? row.images.map((entry: unknown) => String(entry || "")).filter(Boolean) : [],
     price_cents: Number(row.price_cents || 0),
     cpu: String(row.cpu ?? ""),
     gpu: String(row.gpu ?? ""),
@@ -296,6 +345,9 @@ export default function AdminProducts() {
     used_variant_enabled: Boolean(row.used_variant_enabled ?? true),
     used_parts: sanitizeUsedPartsSettings(row.used_parts),
     fps: normalizeFpsSandboxSettings(row.fps || { version: 2, entries: [] }),
+    linked_product_id: row.linked_product_id ? String(row.linked_product_id) : null,
+    variant_role: row.variant_role === "base" || row.variant_role === "used" ? row.variant_role : null,
+    variant_group_id: row.variant_group_id ? String(row.variant_group_id) : null,
     updated_at: row.updated_at || null,
     inventory_updated_at: row.inventory_updated_at || null,
   });
@@ -349,6 +401,8 @@ export default function AdminProducts() {
       if (typeof parsed?.createUsedVariant === "boolean") setCreateUsedVariant(parsed.createUsedVariant);
       if (parsed?.usedDraft) setUsedDraft({ ...DEFAULT_USED_DRAFT, ...parsed.usedDraft });
       if (parsed?.usedDraftParts) setUsedDraftParts(sanitizeUsedPartsSettings(parsed.usedDraftParts));
+      if (Array.isArray(parsed?.draftImages)) setDraftImages(dedupeImageUrls(parsed.draftImages));
+      if (Array.isArray(parsed?.usedDraftImages)) setUsedDraftImages(dedupeImageUrls(parsed.usedDraftImages));
       if (Array.isArray(parsed?.draftFpsEntries)) {
         setDraftFpsEntries(parsed.draftFpsEntries.map((entry: FpsSandboxEntry) => normalizeFpsEditorEntry(entry)));
       }
@@ -367,12 +421,14 @@ export default function AdminProducts() {
       createUsedVariant,
       usedDraft,
       usedDraftParts,
+      draftImages,
+      usedDraftImages,
       draftFpsEntries,
       savedAt: new Date().toISOString(),
     };
     localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(payload));
     setLastDraftAutosaveAt(payload.savedAt);
-  }, [draft, createUsedVariant, usedDraft, usedDraftParts, draftFpsEntries, draftHydrated]);
+  }, [draft, createUsedVariant, usedDraft, usedDraftParts, draftImages, usedDraftImages, draftFpsEntries, draftHydrated]);
 
   const hasDraftChanges = useMemo(() => {
     const defaultState = {
@@ -380,11 +436,13 @@ export default function AdminProducts() {
       createUsedVariant: false,
       usedDraft: DEFAULT_USED_DRAFT,
       usedDraftParts: DEFAULT_USED_PARTS_SETTINGS,
+      draftImages: [],
+      usedDraftImages: [],
       draftFpsEntries: [],
     };
-    const currentState = { draft, createUsedVariant, usedDraft, usedDraftParts, draftFpsEntries };
+    const currentState = { draft, createUsedVariant, usedDraft, usedDraftParts, draftImages, usedDraftImages, draftFpsEntries };
     return JSON.stringify(defaultState) !== JSON.stringify(currentState);
-  }, [draft, createUsedVariant, usedDraft, usedDraftParts, draftFpsEntries]);
+  }, [draft, createUsedVariant, usedDraft, usedDraftParts, draftImages, usedDraftImages, draftFpsEntries]);
 
   useEffect(() => {
     const hasDirtyProducts = Object.values(dirtyProductIds).some(Boolean);
@@ -439,6 +497,95 @@ export default function AdminProducts() {
       ...prev,
       [key]: NUMERIC_FIELDS.has(key) ? Math.max(0, Number(rawValue) || 0) : rawValue,
     }));
+  };
+
+  const addImageUrlToDraft = (target: "base" | "used", rawUrl: string) => {
+    const normalized = sanitizeImageInputUrl(rawUrl);
+    if (!normalized) {
+      setLocalError("Bildlänk måste börja med / eller http(s)://");
+      return;
+    }
+    if (target === "base") {
+      setDraftImages((prev) => dedupeImageUrls([...prev, normalized]));
+      setDraftImageUrlInput("");
+      return;
+    }
+    setUsedDraftImages((prev) => dedupeImageUrls([...prev, normalized]));
+    setUsedDraftImageUrlInput("");
+  };
+
+  const removeDraftImageAt = (target: "base" | "used", index: number) => {
+    if (target === "base") {
+      setDraftImages((prev) => prev.filter((_, i) => i !== index));
+      return;
+    }
+    setUsedDraftImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const moveDraftImage = (target: "base" | "used", index: number, direction: "up" | "down") => {
+    const updater = (images: string[]) => {
+      const next = [...images];
+      const swapIndex = direction === "up" ? index - 1 : index + 1;
+      if (swapIndex < 0 || swapIndex >= next.length) return next;
+      const tmp = next[index];
+      next[index] = next[swapIndex];
+      next[swapIndex] = tmp;
+      return next;
+    };
+    if (target === "base") {
+      setDraftImages(updater);
+      return;
+    }
+    setUsedDraftImages(updater);
+  };
+
+  const uploadDraftImages = async (target: "base" | "used", files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte ladda upp bilder.");
+      return;
+    }
+    setLocalError("");
+    if (target === "base") setUploadingBaseImages(true);
+    if (target === "used") setUploadingUsedImages(true);
+    try {
+      const listingSlugHint =
+        target === "base"
+          ? (draft.slug || draft.name || "basprodukt")
+          : (usedDraft.slug || usedDraft.name || "begagnad-variant");
+      const uploadedUrls: string[] = [];
+      for (const file of Array.from(files)) {
+        const base64 = await fileToBase64(file);
+        const response = await fetch(`${apiBase}/api/admin/v2/uploads/product-image`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            file_name: file.name,
+            mime_type: file.type || "image/jpeg",
+            data_base64: base64,
+            listing_slug: listingSlugHint,
+            variant: target,
+          }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(resolveApiErrorMessage(data, "Kunde inte ladda upp bild."));
+        }
+        const url = sanitizeImageInputUrl(String(data?.data?.url || ""));
+        if (url) uploadedUrls.push(url);
+      }
+      if (target === "base") {
+        setDraftImages((prev) => dedupeImageUrls([...prev, ...uploadedUrls]));
+      } else {
+        setUsedDraftImages((prev) => dedupeImageUrls([...prev, ...uploadedUrls]));
+      }
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte ladda upp bild.");
+    } finally {
+      if (target === "base") setUploadingBaseImages(false);
+      if (target === "used") setUploadingUsedImages(false);
+    }
   };
 
   const saveItem = async (item: CatalogItem) => {
@@ -659,14 +806,21 @@ export default function AdminProducts() {
       setUsedPartsSavingByProduct((prev) => ({ ...prev, [productId]: false }));
     }
   };
-  const mapDraftToListingPayload = (input: ListingDraft, overrides?: Partial<ListingDraft>) => {
+  const mapDraftToListingPayload = (
+    input: ListingDraft,
+    images: string[],
+    overrides?: Partial<ListingDraft>
+  ) => {
     const merged = { ...input, ...(overrides || {}) };
     const eta = parseEta(merged.eta_input, merged.eta_note);
+    const normalizedImages = dedupeImageUrls(images);
     return {
       name: merged.name || "",
       slug: merged.slug || slugify(merged.name),
       legacy_id: merged.legacy_id || "",
       description: merged.description || "",
+      image_url: normalizedImages[0] || "",
+      images: normalizedImages,
       price_cents: Math.max(0, Math.round(Number(merged.price_cents || 0))),
       currency: "SEK",
       cpu: merged.cpu || "",
@@ -709,7 +863,7 @@ export default function AdminProducts() {
     setCreating(true);
     setLocalError("");
     try {
-      const baseListing = mapDraftToListingPayload(draft);
+      const baseListing = mapDraftToListingPayload(draft, draftImages);
       const payload: any = {
         listing: baseListing,
         fps: normalizeFpsSandboxSettings({ version: 2, entries: normalizedDraftFps }),
@@ -717,7 +871,7 @@ export default function AdminProducts() {
       if (createUsedVariant) {
         payload.used_variant = {
           enabled: true,
-          listing: mapDraftToListingPayload(usedDraft, {
+          listing: mapDraftToListingPayload(usedDraft, usedDraftImages, {
             name: (usedDraft.name || `${draft.name} - Begagnade`).trim(),
             slug: (usedDraft.slug || `${slugify(draft.name)}-begagnade`).trim(),
           }),
@@ -737,6 +891,10 @@ export default function AdminProducts() {
       setDraft(EMPTY_DRAFT);
       setUsedDraft({ ...DEFAULT_USED_DRAFT });
       setUsedDraftParts(DEFAULT_USED_PARTS_SETTINGS);
+      setDraftImages([]);
+      setUsedDraftImages([]);
+      setDraftImageUrlInput("");
+      setUsedDraftImageUrlInput("");
       setCreateUsedVariant(false);
       setDraftFpsEntries([]);
       localStorage.removeItem(DRAFT_STORAGE_KEY);
@@ -838,6 +996,60 @@ export default function AdminProducts() {
         </label>
 
         <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-slate-200">Bilder för produkten</p>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
+              <Upload className="h-3.5 w-3.5" />
+              {uploadingBaseImages ? "Laddar upp..." : "Ladda upp"}
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                disabled={uploadingBaseImages || !canMutate}
+                onChange={(event) => {
+                  void uploadDraftImages("base", event.target.files);
+                  event.currentTarget.value = "";
+                }}
+              />
+            </label>
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={draftImageUrlInput}
+              onChange={(event) => setDraftImageUrlInput(event.target.value)}
+              placeholder="Bild-URL eller /sökväg"
+              className="w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+            />
+            <button
+              type="button"
+              onClick={() => addImageUrlToDraft("base", draftImageUrlInput)}
+              className="rounded-lg border border-slate-700/60 px-3 py-2 text-xs text-slate-100"
+            >
+              Lägg till
+            </button>
+          </div>
+          {draftImages.length > 0 ? (
+            <div className="space-y-2">
+              {draftImages.map((image, index) => (
+                <div key={`draft-image-${image}-${index}`} className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/70 px-2 py-2">
+                  <img src={image} alt={`Produktbild ${index + 1}`} className="h-10 w-16 rounded object-cover" />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-xs text-slate-200">{image}</p>
+                    <p className="text-[11px] text-slate-400">{index === 0 ? "Primär bild" : `Bild ${index + 1}`}</p>
+                  </div>
+                  <button type="button" onClick={() => moveDraftImage("base", index, "up")} disabled={index === 0} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Upp</button>
+                  <button type="button" onClick={() => moveDraftImage("base", index, "down")} disabled={index === draftImages.length - 1} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Ner</button>
+                  <button type="button" onClick={() => removeDraftImageAt("base", index)} className="rounded border border-red-500/40 px-2 py-1 text-[11px] text-red-300">Ta bort</button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-slate-500">Ingen bild uppladdad ännu.</p>
+          )}
+        </div>
+
+        <div className="rounded-lg border border-slate-800 bg-slate-950/50 p-3 space-y-3">
           <label className="inline-flex items-center gap-2 text-sm text-slate-200">
             <input
               type="checkbox"
@@ -848,6 +1060,7 @@ export default function AdminProducts() {
                 if (enabled) {
                   setUsedDraft(buildUsedDraftFromBase(draft));
                   setUsedDraftParts(DEFAULT_USED_PARTS_SETTINGS);
+                  setUsedDraftImages(draftImages);
                 }
               }}
             />
@@ -859,7 +1072,10 @@ export default function AdminProducts() {
               <div className="flex justify-end">
                 <button
                   type="button"
-                  onClick={() => setUsedDraft(buildUsedDraftFromBase(draft))}
+                  onClick={() => {
+                    setUsedDraft(buildUsedDraftFromBase(draft));
+                    setUsedDraftImages(draftImages);
+                  }}
                   className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100"
                 >
                   Kopiera från basprodukt
@@ -900,6 +1116,60 @@ export default function AdminProducts() {
                   className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                 />
               </label>
+
+              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm text-slate-200">Bilder för begagnad variant</p>
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
+                    <Upload className="h-3.5 w-3.5" />
+                    {uploadingUsedImages ? "Laddar upp..." : "Ladda upp"}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="hidden"
+                      disabled={uploadingUsedImages || !canMutate}
+                      onChange={(event) => {
+                        void uploadDraftImages("used", event.target.files);
+                        event.currentTarget.value = "";
+                      }}
+                    />
+                  </label>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    value={usedDraftImageUrlInput}
+                    onChange={(event) => setUsedDraftImageUrlInput(event.target.value)}
+                    placeholder="Bild-URL eller /sökväg"
+                    className="w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => addImageUrlToDraft("used", usedDraftImageUrlInput)}
+                    className="rounded-lg border border-slate-700/60 px-3 py-2 text-xs text-slate-100"
+                  >
+                    Lägg till
+                  </button>
+                </div>
+                {usedDraftImages.length > 0 ? (
+                  <div className="space-y-2">
+                    {usedDraftImages.map((image, index) => (
+                      <div key={`used-draft-image-${image}-${index}`} className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/70 px-2 py-2">
+                        <img src={image} alt={`Begagnad bild ${index + 1}`} className="h-10 w-16 rounded object-cover" />
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-xs text-slate-200">{image}</p>
+                          <p className="text-[11px] text-slate-400">{index === 0 ? "Primär bild" : `Bild ${index + 1}`}</p>
+                        </div>
+                        <button type="button" onClick={() => moveDraftImage("used", index, "up")} disabled={index === 0} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Upp</button>
+                        <button type="button" onClick={() => moveDraftImage("used", index, "down")} disabled={index === usedDraftImages.length - 1} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Ner</button>
+                        <button type="button" onClick={() => removeDraftImageAt("used", index)} className="rounded border border-red-500/40 px-2 py-1 text-[11px] text-red-300">Ta bort</button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-500">Ingen bild uppladdad ännu.</p>
+                )}
+              </div>
 
               <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-3 space-y-2">
                 <p className="text-sm text-slate-200">Begagnade komponenttaggar för varianten</p>
