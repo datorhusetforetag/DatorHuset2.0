@@ -177,6 +177,16 @@ const parseEta = (etaInputRaw: string, etaNoteRaw: string) => {
   return { eta_days: null, eta_note: etaNote || null };
 };
 
+const toTextValue = (value: unknown) => String(value ?? "");
+
+const toExpectedUpdatedAt = (value: unknown) => {
+  const raw = typeof value === "string" ? value.trim() : "";
+  if (!raw) return null;
+  const parsed = new Date(raw);
+  if (!Number.isFinite(parsed.getTime())) return null;
+  return parsed.toISOString();
+};
+
 const slugify = (value: string) =>
   String(value || "")
     .toLowerCase()
@@ -399,8 +409,18 @@ export default function AdminProducts() {
     });
   };
 
-  const resolveApiErrorMessage = (data: any, fallback: string) =>
-    data?.error?.message || data?.error || fallback;
+  const resolveApiErrorMessage = (data: any, fallback: string) => {
+    const baseMessage = data?.error?.message || data?.error || fallback;
+    const fieldErrors = data?.error?.details?.fieldErrors;
+    if (fieldErrors && typeof fieldErrors === "object") {
+      const firstField = Object.keys(fieldErrors)[0];
+      const firstFieldError = Array.isArray(fieldErrors[firstField]) ? fieldErrors[firstField][0] : "";
+      if (firstField && firstFieldError) {
+        return `${baseMessage} (${firstField}: ${firstFieldError})`;
+      }
+    }
+    return baseMessage;
+  };
 
   const setItem = <K extends keyof CatalogItem>(id: string, key: K, value: CatalogItem[K]) => {
     markProductDirty(id);
@@ -430,6 +450,7 @@ export default function AdminProducts() {
     setSavingId(item.id);
     setLocalError("");
     try {
+      const expectedUpdatedAt = toExpectedUpdatedAt(item.updated_at);
       const eta = parseEta(item.eta_input, item.eta_note);
       const fps = normalizeFpsSandboxSettings(
         fpsByProduct[item.id] || item.fps || { version: 2, entries: [] }
@@ -440,29 +461,29 @@ export default function AdminProducts() {
       }
 
       const listing = {
-        name: item.name || "",
-        slug: item.slug || "",
-        legacy_id: item.legacy_id || "",
-        description: item.description || "",
+        name: toTextValue(item.name),
+        slug: toTextValue(item.slug),
+        legacy_id: toTextValue(item.legacy_id),
+        description: toTextValue(item.description),
         price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
         currency: "SEK",
-        cpu: item.cpu || "",
-        gpu: item.gpu || "",
-        ram: item.ram || "",
-        storage: item.storage || "",
-        storage_type: item.storage_type || "",
-        tier: item.tier || "",
-        motherboard: item.motherboard || "",
-        psu: item.psu || "",
-        case_name: item.case_name || "",
-        cpu_cooler: item.cpu_cooler || "",
-        os: item.os || "",
-        quantity_in_stock: Math.max(0, Number(item.quantity_in_stock || 0)),
+        cpu: toTextValue(item.cpu),
+        gpu: toTextValue(item.gpu),
+        ram: toTextValue(item.ram),
+        storage: toTextValue(item.storage),
+        storage_type: toTextValue(item.storage_type),
+        tier: toTextValue(item.tier),
+        motherboard: toTextValue(item.motherboard),
+        psu: toTextValue(item.psu),
+        case_name: toTextValue(item.case_name),
+        cpu_cooler: toTextValue(item.cpu_cooler),
+        os: toTextValue(item.os),
+        quantity_in_stock: Math.max(0, Math.round(Number(item.quantity_in_stock || 0))),
         is_preorder: Boolean(item.is_preorder),
         eta_days: eta.eta_days,
-        eta_note: eta.eta_note || "",
+        eta_note: toTextValue(eta.eta_note),
         used_variant_enabled: Boolean(item.used_variant_enabled),
-        expected_updated_at: item.updated_at || null,
+        expected_updated_at: expectedUpdatedAt,
       };
 
       const response = await fetch(`${apiBase}/api/admin/v2/listings/${item.id}`, {
@@ -472,7 +493,7 @@ export default function AdminProducts() {
           listing,
           fps,
           used_parts: usedParts,
-          expected_updated_at: item.updated_at || null,
+          expected_updated_at: expectedUpdatedAt,
         }),
       });
       const data = await response.json().catch(() => ({}));
@@ -540,10 +561,11 @@ export default function AdminProducts() {
     setLocalError("");
     try {
       const item = items.find((entry) => entry.id === productId);
+      const expectedUpdatedAt = toExpectedUpdatedAt(item?.updated_at);
       const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}/fps`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ fps, expected_updated_at: item?.updated_at || null }),
+        body: JSON.stringify({ fps, expected_updated_at: expectedUpdatedAt }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte spara FPS-inställningar."));
@@ -585,30 +607,31 @@ export default function AdminProducts() {
     try {
       const current = sanitizeUsedPartsSettings(usedPartsByProduct[productId]);
       const item = items.find((entry) => entry.id === productId);
+      const expectedUpdatedAt = toExpectedUpdatedAt(item?.updated_at);
       const listing = {
-        name: item?.name || "",
-        slug: item?.slug || "",
-        legacy_id: item?.legacy_id || "",
-        description: item?.description || "",
+        name: toTextValue(item?.name),
+        slug: toTextValue(item?.slug),
+        legacy_id: toTextValue(item?.legacy_id),
+        description: toTextValue(item?.description),
         price_cents: Math.max(0, Math.round(Number(item?.price_cents || 0))),
         currency: "SEK",
-        cpu: item?.cpu || "",
-        gpu: item?.gpu || "",
-        ram: item?.ram || "",
-        storage: item?.storage || "",
-        storage_type: item?.storage_type || "",
-        tier: item?.tier || "",
-        motherboard: item?.motherboard || "",
-        psu: item?.psu || "",
-        case_name: item?.case_name || "",
-        cpu_cooler: item?.cpu_cooler || "",
-        os: item?.os || "",
-        quantity_in_stock: Math.max(0, Number(item?.quantity_in_stock || 0)),
+        cpu: toTextValue(item?.cpu),
+        gpu: toTextValue(item?.gpu),
+        ram: toTextValue(item?.ram),
+        storage: toTextValue(item?.storage),
+        storage_type: toTextValue(item?.storage_type),
+        tier: toTextValue(item?.tier),
+        motherboard: toTextValue(item?.motherboard),
+        psu: toTextValue(item?.psu),
+        case_name: toTextValue(item?.case_name),
+        cpu_cooler: toTextValue(item?.cpu_cooler),
+        os: toTextValue(item?.os),
+        quantity_in_stock: Math.max(0, Math.round(Number(item?.quantity_in_stock || 0))),
         is_preorder: Boolean(item?.is_preorder),
         eta_days: item?.eta_days ?? null,
-        eta_note: item?.eta_note || "",
+        eta_note: toTextValue(item?.eta_note),
         used_variant_enabled: Boolean(item?.used_variant_enabled),
-        expected_updated_at: item?.updated_at || null,
+        expected_updated_at: expectedUpdatedAt,
       };
       const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}`, {
         method: "PUT",
@@ -617,7 +640,7 @@ export default function AdminProducts() {
           listing,
           used_parts: current,
           fps: fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] }),
-          expected_updated_at: item?.updated_at || null,
+          expected_updated_at: expectedUpdatedAt,
         }),
       });
       const data = await response.json().catch(() => ({}));
@@ -657,7 +680,7 @@ export default function AdminProducts() {
       case_name: merged.case_name || "",
       cpu_cooler: merged.cpu_cooler || "",
       os: merged.os || "",
-      quantity_in_stock: Math.max(0, Number(merged.quantity_in_stock || 0)),
+      quantity_in_stock: Math.max(0, Math.round(Number(merged.quantity_in_stock || 0))),
       is_preorder: Boolean(merged.is_preorder),
       eta_days: eta.eta_days,
       eta_note: eta.eta_note || "",

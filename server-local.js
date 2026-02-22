@@ -822,7 +822,7 @@ const listingWriteSchema = z.object({
   used_variant_enabled: z.boolean().optional(),
   used_parts: z.record(z.boolean()).optional(),
   fps: z.any().optional(),
-  expected_updated_at: z.string().datetime().optional().nullable(),
+  expected_updated_at: z.string().datetime({ offset: true }).optional().nullable(),
 });
 
 const createListingRequestSchema = z.object({
@@ -841,7 +841,7 @@ const updateListingRequestSchema = z.object({
   listing: listingWriteSchema,
   fps: z.any().optional(),
   used_parts: z.record(z.boolean()).optional(),
-  expected_updated_at: z.string().datetime().optional().nullable(),
+  expected_updated_at: z.string().datetime({ offset: true }).optional().nullable(),
 });
 
 const buildListingResponse = ({
