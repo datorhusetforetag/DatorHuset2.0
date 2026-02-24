@@ -15,6 +15,14 @@ import rateLimit from "express-rate-limit";
 import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { z } from "zod";
+import {
+  ADMIN_FPS_GAME_OPTIONS,
+  ADMIN_FPS_RESOLUTION_OPTIONS,
+  createListingRequestSchema,
+  formatZodValidationError,
+  listingWriteSchema,
+  updateListingRequestSchema,
+} from "./shared/adminListingContract.js";
 
 dotenv.config();
 
@@ -108,6 +116,65 @@ const getRateLimitKey = (req, prefix) => {
   const token = getAuthToken(req);
   const subject = token ? getJwtSubject(token) : "";
   return `${prefix}:${subject || "anon"}:${ip}`;
+};
+
+const logStructured = (level, event, payload = {}) => {
+  const entry = {
+    ts: new Date().toISOString(),
+    level,
+    event,
+    ...payload,
+  };
+  const serialized = JSON.stringify(entry);
+  if (level === "error") {
+    console.error(serialized);
+    return;
+  }
+  if (level === "warn") {
+    console.warn(serialized);
+    return;
+  }
+  console.log(serialized);
+};
+
+const API_CACHE_TTL_MS = Math.max(5_000, Number(process.env.API_CACHE_TTL_MS || 30_000));
+const responseCache = new Map();
+
+const getCached = (key) => {
+  const cached = responseCache.get(key);
+  if (!cached) return null;
+  if (cached.expiresAt <= Date.now()) {
+    responseCache.delete(key);
+    return null;
+  }
+  return cached.value;
+};
+
+const setCached = (key, value, ttlMs = API_CACHE_TTL_MS) => {
+  responseCache.set(key, { value, expiresAt: Date.now() + Math.max(1_000, ttlMs) });
+};
+
+const invalidateCacheByPrefix = (prefix) => {
+  for (const key of responseCache.keys()) {
+    if (key.startsWith(prefix)) {
+      responseCache.delete(key);
+    }
+  }
+};
+
+const invalidateProductCaches = (productIds = []) => {
+  invalidateCacheByPrefix("admin:listings:");
+  productIds
+    .map((id) => sanitizeText(id, 80))
+    .filter(Boolean)
+    .forEach((id) => {
+      invalidateCacheByPrefix(`public:fps:${id}`);
+      invalidateCacheByPrefix(`public:used_parts:${id}`);
+      invalidateCacheByPrefix(`public:used_variant:${id}`);
+      invalidateCacheByPrefix(`public:product_images:${id}`);
+      invalidateCacheByPrefix(`admin:listing:${id}`);
+      invalidateCacheByPrefix(`admin:listing_fps:${id}`);
+    });
 };
 
 const isAllowedStripeIp = (req) => {
@@ -320,7 +387,9 @@ const FPS_REPORT_PROFILES = {
   },
 };
 
-const DLSS_FSR_MODE_SET = new Set(["quality", "balanced", "performance"]);
+const DLSS_FSR_MODE_SET = new Set(ADMIN_DLSS_FSR_MODE_OPTIONS);
+const FPS_GAME_OPTION_SET = new Set(ADMIN_FPS_GAME_OPTIONS);
+const FPS_RESOLUTION_OPTION_SET = new Set(ADMIN_FPS_RESOLUTION_OPTIONS);
 
 const sanitizeFpsLabel = (value, maxLength = 80) => {
   if (typeof value !== "string") return "";
@@ -496,6 +565,8 @@ const sanitizeFpsEntries = (entries) => {
     const resolution = sanitizeFpsLabel(entry?.resolution, 40);
     const graphics = sanitizeFpsLabel(entry?.graphics, 80);
     if (!game || !resolution || !graphics) return;
+    if (!FPS_GAME_OPTION_SET.has(game)) return;
+    if (!FPS_RESOLUTION_OPTION_SET.has(resolution)) return;
     const supportsDlssFsr = Boolean(entry?.supportsDlssFsr);
     const supportsFrameGeneration = Boolean(entry?.supportsFrameGeneration);
     const dlssFsrMode = normalizeDlssFsrMode(entry?.dlssFsrMode, supportsDlssFsr);
@@ -596,9 +667,18 @@ const sanitizeText = (value, maxLength = 120) => {
   return value.trim().slice(0, maxLength);
 };
 
+const LEGACY_BLOCKED_IMAGE_TOKENS = ["chieftecvisio", "placeholder"];
+
+const isBlockedLegacyImagePath = (value) => {
+  const normalized = String(value || "").trim().toLowerCase();
+  if (!normalized) return false;
+  return LEGACY_BLOCKED_IMAGE_TOKENS.some((token) => normalized.includes(token));
+};
+
 const sanitizeImageUrl = (value) => {
   const normalized = sanitizeText(value, 500);
   if (!normalized) return "";
+  if (isBlockedLegacyImagePath(normalized)) return "";
   if (normalized.startsWith("/") || /^https?:\/\//i.test(normalized)) return normalized;
   return "";
 };
@@ -613,8 +693,8 @@ const sanitizeImageList = (value, fallbackPrimary = "") => {
     }
   });
   const fallback = sanitizeImageUrl(fallbackPrimary);
-  if (fallback && !normalized.includes(fallback)) {
-    normalized.unshift(fallback);
+  if (fallback && normalized.length === 0 && !normalized.includes(fallback)) {
+    normalized.push(fallback);
   }
   return normalized.slice(0, 10);
 };
@@ -841,59 +921,6 @@ const ensureUniqueSlug = async (slugInput, name, excludeProductId = "") => {
   return `${baseSlug}-${Date.now()}`.slice(0, 80);
 };
 
-const listingWriteSchema = z.object({
-  name: z.string().trim().min(1).max(120),
-  slug: z.string().trim().max(80).optional().nullable(),
-  legacy_id: z.preprocess(
-    (value) => (value === null || value === undefined ? "" : String(value)),
-    z.string().trim().max(80)
-  ).optional().nullable(),
-  description: z.string().trim().max(1000).optional().nullable(),
-  image_url: z.string().trim().max(500).optional().nullable(),
-  images: z.array(z.string().trim().max(500)).max(10).optional(),
-  price_cents: z.number().finite().min(0),
-  currency: z.string().trim().max(8).optional().nullable(),
-  cpu: z.string().trim().min(1).max(120),
-  gpu: z.string().trim().min(1).max(120),
-  ram: z.string().trim().min(1).max(120),
-  storage: z.string().trim().min(1).max(120),
-  storage_type: z.string().trim().min(1).max(40),
-  tier: z.string().trim().min(1).max(40),
-  motherboard: z.string().trim().max(120).optional().nullable(),
-  psu: z.string().trim().max(120).optional().nullable(),
-  case_name: z.string().trim().max(120).optional().nullable(),
-  cpu_cooler: z.string().trim().max(120).optional().nullable(),
-  os: z.string().trim().max(80).optional().nullable(),
-  quantity_in_stock: z.number().int().min(0),
-  is_preorder: z.boolean(),
-  eta_days: z.number().int().min(0).optional().nullable(),
-  eta_input: z.string().trim().max(24).optional().nullable(),
-  eta_note: z.string().trim().max(200).optional().nullable(),
-  used_variant_enabled: z.boolean().optional(),
-  used_parts: z.record(z.boolean()).optional(),
-  fps: z.any().optional(),
-  expected_updated_at: z.string().datetime({ offset: true }).optional().nullable(),
-});
-
-const createListingRequestSchema = z.object({
-  listing: listingWriteSchema,
-  fps: z.any().optional(),
-  used_variant: z
-    .object({
-      enabled: z.boolean(),
-      listing: listingWriteSchema.optional(),
-      used_parts: z.record(z.boolean()).optional(),
-    })
-    .optional(),
-});
-
-const updateListingRequestSchema = z.object({
-  listing: listingWriteSchema,
-  fps: z.any().optional(),
-  used_parts: z.record(z.boolean()).optional(),
-  expected_updated_at: z.string().datetime({ offset: true }).optional().nullable(),
-});
-
 const uploadListingImageSchema = z.object({
   file_name: z.string().trim().max(160).optional().nullable(),
   mime_type: z.string().trim().max(80),
@@ -919,16 +946,24 @@ const buildListingResponse = ({
   productImagesByProductId,
   variantLinkByBaseId,
   variantBaseByUsedId,
+  listingGroupByProductId,
 }) => {
   const inventoryRow = inventoryByProductId.get(product.id) || null;
   const fallbackFps = EMPTY_FPS_SETTINGS;
   const imageUrl = sanitizeImageUrl(product.image_url);
   const images = parseProductImagesSetting(productImagesByProductId.get(product.id), imageUrl);
+  const groupMeta = listingGroupByProductId.get(product.id) || null;
   const linkedUsedId = sanitizeText(variantLinkByBaseId.get(product.id), 80);
   const linkedBaseId = sanitizeText(variantBaseByUsedId.get(product.id), 80);
-  const linkedProductId = linkedUsedId || linkedBaseId || null;
-  const variantRole = linkedUsedId ? "base" : linkedBaseId ? "used" : null;
-  const variantGroupId = linkedUsedId ? product.id : linkedBaseId || null;
+  const derivedLinkedProductId = linkedUsedId || linkedBaseId || null;
+  const derivedVariantRole = linkedUsedId ? "base" : linkedBaseId ? "used" : null;
+  const derivedGroupId = linkedUsedId ? product.id : linkedBaseId || null;
+  const linkedProductId = sanitizeText(groupMeta?.linked_product_id, 80) || derivedLinkedProductId;
+  const variantRole =
+    groupMeta?.variant_role === "base" || groupMeta?.variant_role === "used"
+      ? groupMeta.variant_role
+      : derivedVariantRole;
+  const listingGroupId = sanitizeText(groupMeta?.group_id, 120) || derivedGroupId;
   return {
     id: product.id,
     name: product.name,
@@ -939,7 +974,8 @@ const buildListingResponse = ({
     images,
     linked_product_id: linkedProductId,
     variant_role: variantRole,
-    variant_group_id: variantGroupId,
+    variant_group_id: listingGroupId,
+    listing_group_id: listingGroupId,
     price_cents: Number(product.price_cents || 0),
     currency: product.currency || "SEK",
     cpu: product.cpu,
@@ -1009,6 +1045,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
     `used_parts:${id}`,
     `product_images:${id}`,
     `used_variant_link:${id}`,
+    `listing_group:${id}`,
   ]);
 
   const [inventoryResponse, settingsResponse] = await Promise.all([
@@ -1026,6 +1063,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
   const productImagesByProductId = new Map();
   const variantLinkByBaseId = new Map();
   const variantBaseByUsedId = new Map();
+  const listingGroupByProductId = new Map();
 
   (settingsResponse.data || []).forEach((setting) => {
     const key = String(setting.key || "");
@@ -1052,6 +1090,17 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
         variantLinkByBaseId.set(baseId, usedId);
         variantBaseByUsedId.set(usedId, baseId);
       }
+      return;
+    }
+    if (key.startsWith("listing_group:")) {
+      const id = sanitizeText(key.slice(14), 80);
+      const value = setting?.value && typeof setting.value === "object" ? setting.value : {};
+      if (!id) return;
+      listingGroupByProductId.set(id, {
+        group_id: sanitizeText(value?.group_id, 120),
+        variant_role: value?.variant_role === "base" || value?.variant_role === "used" ? value.variant_role : null,
+        linked_product_id: sanitizeText(value?.linked_product_id, 80),
+      });
     }
   });
 
@@ -1065,10 +1114,43 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
       productImagesByProductId,
       variantLinkByBaseId,
       variantBaseByUsedId,
+      listingGroupByProductId,
     })
   );
 
   return { data, total: idFilter ? data.length : count || data.length, limit: safeLimit, offset: safeOffset };
+};
+
+const upsertListingGroupSettings = async ({ baseId, usedId = null }) => {
+  const baseProductId = sanitizeText(baseId, 80);
+  const usedProductId = sanitizeText(usedId, 80);
+  if (!baseProductId) return;
+  const payload = [
+    {
+      key: `listing_group:${baseProductId}`,
+      value: {
+        group_id: baseProductId,
+        variant_role: "base",
+        linked_product_id: usedProductId || null,
+      },
+      updated_at: new Date(),
+    },
+  ];
+  if (usedProductId) {
+    payload.push({
+      key: `listing_group:${usedProductId}`,
+      value: {
+        group_id: baseProductId,
+        variant_role: "used",
+        linked_product_id: baseProductId,
+      },
+      updated_at: new Date(),
+    });
+  }
+  const { error } = await supabase.from("ui_settings").upsert(payload, { onConflict: "key" });
+  if (error) {
+    throw new Error(error.message || "Kunde inte uppdatera listningsgrupp.");
+  }
 };
 
 const persistListingState = async ({ req, user, productId, listing, fpsInput, usedPartsInput, role }) => {
@@ -1772,15 +1854,28 @@ app.get("/api/admin/v2/listings", async (req, res) => {
   try {
     const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
     if (!access) return;
+    const cacheKey = `admin:listings:${JSON.stringify({
+      limit: Number(req.query?.limit || 200),
+      offset: Number(req.query?.offset || 0),
+      q: String(req.query?.q || ""),
+      sort: String(req.query?.sort || "name"),
+      order: String(req.query?.order || "asc"),
+    })}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
-    const { data, total, limit, offset } = await loadAdminListings({
+    const payload = await loadAdminListings({
       limit: Number(req.query?.limit || 200),
       offset: Number(req.query?.offset || 0),
       q: String(req.query?.q || ""),
       sort: String(req.query?.sort || "name"),
       order: String(req.query?.order || "asc"),
     });
-    return res.json({ ok: true, data, total, limit, offset });
+    const response = { ok: true, data: payload.data, total: payload.total, limit: payload.limit, offset: payload.offset };
+    setCached(cacheKey, response);
+    return res.json(response);
   } catch (error) {
     console.error("Admin v2 listings error:", error);
     return jsonError(res, 500, "LISTINGS_FETCH_FAILED", "Kunde inte hämta listningar.");
@@ -1799,12 +1894,19 @@ app.get("/api/admin/v2/listings/:productId", async (req, res) => {
     if (!productId) {
       return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
     }
+    const cacheKey = `admin:listing:${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
     const result = await loadAdminListings({ productId });
     const listing = result.data[0] || null;
     if (!listing) {
       return jsonError(res, 404, "LISTING_NOT_FOUND", "Listningen hittades inte.");
     }
-    return res.json({ ok: true, data: listing });
+    const response = { ok: true, data: listing };
+    setCached(cacheKey, response);
+    return res.json(response);
   } catch (error) {
     console.error("Admin v2 listing fetch error:", error);
     return jsonError(res, 500, "LISTING_FETCH_FAILED", "Kunde inte hämta listningen.");
@@ -1822,7 +1924,13 @@ app.post("/api/admin/v2/uploads/product-image", async (req, res) => {
 
     const parsed = uploadListingImageSchema.safeParse(req.body || {});
     if (!parsed.success) {
-      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för bilduppladdning.", parsed.error.flatten());
+      const details = formatZodValidationError(parsed.error);
+      logStructured("warn", "admin.validation_failed", {
+        endpoint: "/api/admin/v2/uploads/product-image",
+        code: "VALIDATION_FAILED",
+        details,
+      });
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för bilduppladdning.", details);
     }
 
     const { file_name: fileNameInput, mime_type: mimeTypeInput, data_base64: dataBase64, listing_slug: listingSlug, variant } = parsed.data;
@@ -1895,7 +2003,13 @@ app.post("/api/admin/v2/listings", async (req, res) => {
 
     const parsed = createListingRequestSchema.safeParse(req.body || {});
     if (!parsed.success) {
-      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för listning.", parsed.error.flatten());
+      const details = formatZodValidationError(parsed.error);
+      logStructured("warn", "admin.validation_failed", {
+        endpoint: "/api/admin/v2/listings",
+        code: "VALIDATION_FAILED",
+        details,
+      });
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för listning.", details);
     }
 
     const { listing, used_variant: usedVariant, fps } = parsed.data;
@@ -1951,7 +2065,6 @@ app.post("/api/admin/v2/listings", async (req, res) => {
       usedPartsInput: listing.used_parts,
       role,
     });
-
     let usedVariantProductId = null;
     if (usedVariant?.enabled && usedVariant.listing) {
       const usedSlug = await ensureUniqueSlug(usedVariant.listing.slug, usedVariant.listing.name);
@@ -2006,6 +2119,8 @@ app.post("/api/admin/v2/listings", async (req, res) => {
       });
       usedVariantProductId = createdUsed.id;
 
+      await upsertListingGroupSettings({ baseId: createdBase.id, usedId: createdUsed.id });
+
       await supabase.from("ui_settings").upsert(
         [
           {
@@ -2018,9 +2133,19 @@ app.post("/api/admin/v2/listings", async (req, res) => {
       );
     }
 
+    await upsertListingGroupSettings({ baseId: createdBase.id, usedId: usedVariantProductId });
+
+    invalidateProductCaches([createdBase.id, usedVariantProductId]);
+
     await logAdminAction(req, user, "listing_create_v2", "listing", createdBase.id, {
       role,
       used_variant_product_id: usedVariantProductId,
+    });
+    logStructured("info", "admin.listing_created", {
+      actor_id: user?.id || null,
+      product_id: createdBase.id,
+      used_variant_product_id: usedVariantProductId,
+      role,
     });
 
     const loaded = await loadAdminListings({ productId: createdBase.id });
@@ -2052,7 +2177,14 @@ app.put("/api/admin/v2/listings/:productId", async (req, res) => {
 
     const parsed = updateListingRequestSchema.safeParse(req.body || {});
     if (!parsed.success) {
-      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för listning.", parsed.error.flatten());
+      const details = formatZodValidationError(parsed.error);
+      logStructured("warn", "admin.validation_failed", {
+        endpoint: "/api/admin/v2/listings/:productId",
+        product_id: productId,
+        code: "VALIDATION_FAILED",
+        details,
+      });
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för listning.", details);
     }
 
     const { listing, fps, used_parts: usedParts, expected_updated_at: expectedUpdatedAt } = parsed.data;
@@ -2080,6 +2212,13 @@ app.put("/api/admin/v2/listings/:productId", async (req, res) => {
 
     const loaded = await loadAdminListings({ productId });
     const data = loaded.data[0] || null;
+    invalidateProductCaches([productId, data?.linked_product_id || null]);
+    logStructured("info", "admin.listing_updated", {
+      actor_id: user?.id || null,
+      product_id: productId,
+      linked_product_id: data?.linked_product_id || null,
+      role,
+    });
     return res.json({ ok: true, data });
   } catch (error) {
     console.error("Admin v2 listing update error:", error);
@@ -2098,12 +2237,19 @@ app.get("/api/admin/v2/listings/:productId/fps", async (req, res) => {
     if (!productId) {
       return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
     }
+    const cacheKey = `admin:listing_fps:${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
     const { data: listingRows } = await loadAdminListings({ productId });
     const listing = listingRows[0];
     if (!listing) {
       return jsonError(res, 404, "LISTING_NOT_FOUND", "Listningen hittades inte.");
     }
-    return res.json({ ok: true, data: listing.fps });
+    const response = { ok: true, data: listing.fps };
+    setCached(cacheKey, response);
+    return res.json(response);
   } catch (error) {
     console.error("Admin v2 FPS fetch error:", error);
     return jsonError(res, 500, "FPS_FETCH_FAILED", "Kunde inte hämta FPS-variabler.");
@@ -2151,6 +2297,7 @@ app.put("/api/admin/v2/listings/:productId/fps", async (req, res) => {
     if (error) {
       return jsonError(res, 500, "FPS_SAVE_FAILED", error.message || "Kunde inte spara FPS-variabler.");
     }
+    invalidateProductCaches([productId]);
     await logAdminAction(req, user, "listing_fps_update_v2", "listing", productId, { role });
     return res.json({ ok: true, data: fps });
   } catch (error) {
@@ -2853,6 +3000,7 @@ app.post("/api/admin/products/:productId", async (req, res) => {
       os: os || null,
     });
 
+    invalidateProductCaches([productId]);
     res.json(data);
   } catch (error) {
     console.error("Admin product update error:", error);
@@ -3030,6 +3178,7 @@ app.post("/api/admin/products/:productId/fps-settings", async (req, res) => {
       product_id: productId,
     });
 
+    invalidateProductCaches([productId]);
     res.json({ fps: data.value });
   } catch (error) {
     console.error("Admin FPS settings update error:", error);
@@ -3114,6 +3263,7 @@ app.post("/api/admin/products/:productId/used-variant", async (req, res) => {
       enabled,
     });
 
+    invalidateProductCaches([productId]);
     return res.json({ enabled: parseUsedVariantSetting(data?.value, enabled) });
   } catch (error) {
     console.error("Admin used variant update error:", error);
@@ -3198,6 +3348,7 @@ app.post("/api/admin/products/:productId/used-parts", async (req, res) => {
       used_parts: usedParts,
     });
 
+    invalidateProductCaches([productId]);
     return res.json({ used_parts: parseUsedPartsSetting(data?.value, usedParts) });
   } catch (error) {
     console.error("Admin used-parts update error:", error);
@@ -3213,6 +3364,11 @@ app.get("/api/fps-settings/:productId", async (req, res) => {
     if (!productId) {
       return res.status(400).json({ error: "Missing product id" });
     }
+    const cacheKey = `public:fps:${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
     const key = `fps:${productId}`;
     const { data, error } = await supabase
       .from("ui_settings")
@@ -3222,10 +3378,14 @@ app.get("/api/fps-settings/:productId", async (req, res) => {
 
     const fallback = EMPTY_FPS_SETTINGS;
     if (error || !data?.value) {
-      return res.json({ fps: fallback });
+      const response = { fps: fallback };
+      setCached(cacheKey, response);
+      return res.json(response);
     }
 
-    res.json({ fps: sanitizeFpsSettings(data?.value, fallback) });
+    const response = { fps: sanitizeFpsSettings(data?.value, fallback) };
+    setCached(cacheKey, response);
+    res.json(response);
   } catch (error) {
     console.error("FPS settings fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -3241,6 +3401,11 @@ app.get("/api/used-variant/:productId", async (req, res) => {
     if (!productId) {
       return res.status(400).json({ error: "Missing product id" });
     }
+    const cacheKey = `public:used_variant:${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
     const key = `used_variant:${productId}`;
     const { data, error } = await supabase
@@ -3250,10 +3415,14 @@ app.get("/api/used-variant/:productId", async (req, res) => {
       .single();
 
     if (error) {
-      return res.json({ enabled: true });
+      const response = { enabled: true };
+      setCached(cacheKey, response);
+      return res.json(response);
     }
 
-    return res.json({ enabled: parseUsedVariantSetting(data?.value, true) });
+    const response = { enabled: parseUsedVariantSetting(data?.value, true) };
+    setCached(cacheKey, response);
+    return res.json(response);
   } catch (error) {
     console.error("Used variant fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -3269,6 +3438,11 @@ app.get("/api/used-parts/:productId", async (req, res) => {
     if (!productId) {
       return res.status(400).json({ error: "Missing product id" });
     }
+    const cacheKey = `public:used_parts:${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
     const key = `used_parts:${productId}`;
     const { data, error } = await supabase
@@ -3282,10 +3456,14 @@ app.get("/api/used-parts/:productId", async (req, res) => {
     }
 
     if (!data?.value) {
-      return res.json({ configured: false, used_parts: null });
+      const response = { configured: false, used_parts: null };
+      setCached(cacheKey, response);
+      return res.json(response);
     }
 
-    return res.json({ configured: true, used_parts: parseUsedPartsSetting(data?.value, null) });
+    const response = { configured: true, used_parts: parseUsedPartsSetting(data?.value, null) };
+    setCached(cacheKey, response);
+    return res.json(response);
   } catch (error) {
     console.error("Used-parts fetch error:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -3300,6 +3478,11 @@ app.get("/api/product-images/:productId", async (req, res) => {
     const productId = sanitizeText(req.params?.productId, 80);
     if (!productId) {
       return res.status(400).json({ error: "Missing product id" });
+    }
+    const cacheKey = `public:product_images:${productId}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
     }
 
     const [productResponse, settingsResponse] = await Promise.all([
@@ -3317,12 +3500,14 @@ app.get("/api/product-images/:productId", async (req, res) => {
     const primary = sanitizeImageUrl(productResponse.data?.image_url);
     const images = parseProductImagesSetting(settingsResponse.data?.value, primary);
 
-    return res.json({
+    const response = {
       product_id: productId,
       configured: Boolean(settingsResponse.data?.value),
       image_url: primary || null,
       images,
-    });
+    };
+    setCached(cacheKey, response);
+    return res.json(response);
   } catch (error) {
     console.error("Product images fetch error:", error);
     res.status(500).json({ error: "Internal server error" });

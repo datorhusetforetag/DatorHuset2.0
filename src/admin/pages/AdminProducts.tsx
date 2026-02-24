@@ -19,6 +19,12 @@ import {
   USED_PART_LABELS,
   UsedPartsSettings,
 } from "@/lib/usedParts";
+import {
+  ADMIN_DLSS_FSR_MODE_OPTIONS,
+  createListingRequestSchema as sharedCreateListingRequestSchema,
+  formatZodValidationError as formatContractValidationError,
+  updateListingRequestSchema as sharedUpdateListingRequestSchema,
+} from "../../../shared/adminListingContract.js";
 
 const DRAFT_STORAGE_KEY = "admin-products-v2-draft";
 
@@ -30,6 +36,7 @@ type AdminProduct = {
   description?: string | null;
   image_url?: string | null;
   images?: string[] | null;
+  listing_group_id?: string | null;
   price_cents?: number | null;
   cpu?: string | null;
   gpu?: string | null;
@@ -64,6 +71,7 @@ type CatalogItem = AdminProduct & {
   used_parts?: UsedPartsSettings;
   fps?: FpsSandboxSettings;
   linked_product_id?: string | null;
+  listing_group_id?: string | null;
   variant_role?: "base" | "used" | null;
   variant_group_id?: string | null;
   updated_at?: string | null;
@@ -224,13 +232,19 @@ const normalizeFpsEditorEntry = (entry: FpsSandboxEntry): FpsSandboxEntry => {
     ? entry.resolution
     : FPS_SANDBOX_RESOLUTION_OPTIONS[0];
   const supportsDlssFsr = Boolean(entry.supportsDlssFsr);
+  const normalizedDlssMode =
+    supportsDlssFsr && ADMIN_DLSS_FSR_MODE_OPTIONS.includes(entry.dlssFsrMode as (typeof ADMIN_DLSS_FSR_MODE_OPTIONS)[number])
+      ? entry.dlssFsrMode
+      : supportsDlssFsr
+        ? "balanced"
+        : null;
   return {
     game,
     resolution,
     graphics: String(entry.graphics || ""),
     baseFps: Math.max(0, Number(entry.baseFps) || 0),
     supportsDlssFsr,
-    dlssFsrMode: supportsDlssFsr ? "balanced" : null,
+    dlssFsrMode: normalizedDlssMode,
     supportsFrameGeneration: Boolean(entry.supportsFrameGeneration),
   };
 };
@@ -346,6 +360,7 @@ export default function AdminProducts() {
     used_parts: sanitizeUsedPartsSettings(row.used_parts),
     fps: normalizeFpsSandboxSettings(row.fps || { version: 2, entries: [] }),
     linked_product_id: row.linked_product_id ? String(row.linked_product_id) : null,
+    listing_group_id: row.listing_group_id ? String(row.listing_group_id) : row.variant_group_id ? String(row.variant_group_id) : null,
     variant_role: row.variant_role === "base" || row.variant_role === "used" ? row.variant_role : null,
     variant_group_id: row.variant_group_id ? String(row.variant_group_id) : null,
     updated_at: row.updated_at || null,
@@ -469,7 +484,7 @@ export default function AdminProducts() {
 
   const resolveApiErrorMessage = (data: any, fallback: string) => {
     const baseMessage = data?.error?.message || data?.error || fallback;
-    const fieldErrors = data?.error?.details?.fieldErrors;
+    const fieldErrors = data?.error?.details?.fieldErrors || data?.error?.details?.field_errors;
     if (fieldErrors && typeof fieldErrors === "object") {
       const firstField = Object.keys(fieldErrors)[0];
       const firstFieldError = Array.isArray(fieldErrors[firstField]) ? fieldErrors[firstField][0] : "";
@@ -478,6 +493,17 @@ export default function AdminProducts() {
       }
     }
     return baseMessage;
+  };
+
+  const getValidationMessage = (error: any, fallback: string) => {
+    const details = formatContractValidationError(error);
+    const fieldErrors = details?.fieldErrors || {};
+    const firstField = Object.keys(fieldErrors)[0];
+    const firstFieldError = Array.isArray(fieldErrors[firstField]) ? fieldErrors[firstField][0] : "";
+    if (firstField && firstFieldError) {
+      return `${fallback} (${firstField}: ${firstFieldError})`;
+    }
+    return fallback;
   };
 
   const setItem = <K extends keyof CatalogItem>(id: string, key: K, value: CatalogItem[K]) => {
@@ -630,18 +656,25 @@ export default function AdminProducts() {
         eta_days: eta.eta_days,
         eta_note: toTextValue(eta.eta_note),
         used_variant_enabled: Boolean(item.used_variant_enabled),
+        listing_group_id: toTextValue(item.listing_group_id),
         expected_updated_at: expectedUpdatedAt,
       };
+
+      const requestPayload = {
+        listing,
+        fps,
+        used_parts: usedParts,
+        expected_updated_at: expectedUpdatedAt,
+      };
+      const parsedPayload = sharedUpdateListingRequestSchema.safeParse(requestPayload);
+      if (!parsedPayload.success) {
+        throw new Error(getValidationMessage(parsedPayload.error, "Ogiltig payload för listning."));
+      }
 
       const response = await fetch(`${apiBase}/api/admin/v2/listings/${item.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          listing,
-          fps,
-          used_parts: usedParts,
-          expected_updated_at: expectedUpdatedAt,
-        }),
+        body: JSON.stringify(parsedPayload.data),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte spara produkt."));
@@ -778,17 +811,24 @@ export default function AdminProducts() {
         eta_days: item?.eta_days ?? null,
         eta_note: toTextValue(item?.eta_note),
         used_variant_enabled: Boolean(item?.used_variant_enabled),
+        listing_group_id: toTextValue(item?.listing_group_id),
         expected_updated_at: expectedUpdatedAt,
       };
+      const requestPayload = {
+        listing,
+        used_parts: current,
+        fps: fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] }),
+        expected_updated_at: expectedUpdatedAt,
+      };
+      const parsedPayload = sharedUpdateListingRequestSchema.safeParse(requestPayload);
+      if (!parsedPayload.success) {
+        throw new Error(getValidationMessage(parsedPayload.error, "Ogiltig payload för listning."));
+      }
+
       const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          listing,
-          used_parts: current,
-          fps: fpsByProduct[productId] || normalizeFpsSandboxSettings({ version: 2, entries: [] }),
-          expected_updated_at: expectedUpdatedAt,
-        }),
+        body: JSON.stringify(parsedPayload.data),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -878,10 +918,15 @@ export default function AdminProducts() {
           used_parts: usedDraftParts,
         };
       }
+      const parsedPayload = sharedCreateListingRequestSchema.safeParse(payload);
+      if (!parsedPayload.success) {
+        throw new Error(getValidationMessage(parsedPayload.error, "Ogiltig payload för listning."));
+      }
+
       const response = await fetch(`${apiBase}/api/admin/v2/listings`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(parsedPayload.data),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -982,6 +1027,34 @@ export default function AdminProducts() {
     const groups: Array<{ id: string; items: CatalogItem[] }> = [];
     const seen = new Set<string>();
     const indexById = new Map(items.map((item, index) => [item.id, index]));
+    const groupedByListingGroup = new Map<string, CatalogItem[]>();
+
+    items.forEach((item) => {
+      const groupId = String(item.listing_group_id || item.variant_group_id || "").trim();
+      if (!groupId) return;
+      const key = `gid:${groupId}`;
+      const existing = groupedByListingGroup.get(key);
+      if (existing) {
+        existing.push(item);
+      } else {
+        groupedByListingGroup.set(key, [item]);
+      }
+    });
+
+    groupedByListingGroup.forEach((groupItems, key) => {
+      if (groupItems.length <= 1) return;
+      const nextGroup = [...groupItems];
+      nextGroup.sort((a, b) => {
+        const roleA = getItemVariantRole(a);
+        const roleB = getItemVariantRole(b);
+        const rankA = roleA === "base" ? 0 : roleA === "used" ? 1 : 2;
+        const rankB = roleB === "base" ? 0 : roleB === "used" ? 1 : 2;
+        if (rankA !== rankB) return rankA - rankB;
+        return (indexById.get(a.id) || 0) - (indexById.get(b.id) || 0);
+      });
+      groups.push({ id: key, items: nextGroup });
+      nextGroup.forEach((entry) => seen.add(entry.id));
+    });
 
     items.forEach((item) => {
       if (seen.has(item.id)) return;
@@ -1308,7 +1381,7 @@ export default function AdminProducts() {
             </button>
           </div>
           {draftFpsEntries.map((entry, index) => (
-            <div key={`draft-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-7 items-end">
+            <div key={`draft-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
               <select
                 value={entry.game}
                 onChange={(event) =>
@@ -1376,6 +1449,26 @@ export default function AdminProducts() {
               >
                 DLSS/FSR {entry.supportsDlssFsr ? "På" : "Av"}
               </button>
+              <select
+                value={entry.dlssFsrMode || "balanced"}
+                disabled={!entry.supportsDlssFsr}
+                onChange={(event) =>
+                  setDraftFpsEntries((prev) =>
+                    prev.map((row, i) =>
+                      i === index
+                        ? normalizeFpsEditorEntry({ ...row, dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] })
+                        : row
+                    )
+                  )
+                }
+                className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-50"
+              >
+                {ADMIN_DLSS_FSR_MODE_OPTIONS.map((mode) => (
+                  <option key={`draft-dlss-mode-${mode}`} value={mode}>
+                    DLSS/FSR: {mode}
+                  </option>
+                ))}
+              </select>
               <button
                 type="button"
                 onClick={() =>
@@ -1528,7 +1621,7 @@ export default function AdminProducts() {
                 )}
               </div>
               {(fpsByProduct[item.id]?.entries || []).map((entry, index) => (
-                <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-7 items-end">
+                <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
                   <select value={entry.game} onChange={(event) => updateFpsEntry(item.id, index, { game: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
                     {FPS_SANDBOX_GAME_OPTIONS.map((game) => (
                       <option key={`${item.id}-game-${game}`} value={game}>{game}</option>
@@ -1544,6 +1637,18 @@ export default function AdminProducts() {
                   <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsDlssFsr: !entry.supportsDlssFsr, dlssFsrMode: !entry.supportsDlssFsr ? "balanced" : null })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsDlssFsr ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
                     DLSS/FSR {entry.supportsDlssFsr ? "På" : "Av"}
                   </button>
+                  <select
+                    value={entry.dlssFsrMode || "balanced"}
+                    disabled={!entry.supportsDlssFsr}
+                    onChange={(event) => updateFpsEntry(item.id, index, { dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] })}
+                    className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-50"
+                  >
+                    {ADMIN_DLSS_FSR_MODE_OPTIONS.map((mode) => (
+                      <option key={`${item.id}-dlss-mode-${mode}`} value={mode}>
+                        DLSS/FSR: {mode}
+                      </option>
+                    ))}
+                  </select>
                   <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsFrameGeneration: !entry.supportsFrameGeneration })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsFrameGeneration ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
                     Frame Gen {entry.supportsFrameGeneration ? "På" : "Av"}
                   </button>

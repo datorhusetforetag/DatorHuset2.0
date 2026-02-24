@@ -33,6 +33,8 @@ export const FPS_SANDBOX_GAME_OPTIONS = [
 ] as const;
 
 export const FPS_SANDBOX_RESOLUTION_OPTIONS = ["1080p", "1440p", "4K"] as const;
+const FPS_SANDBOX_GAME_OPTION_SET = new Set<string>(FPS_SANDBOX_GAME_OPTIONS);
+const FPS_SANDBOX_RESOLUTION_OPTION_SET = new Set<string>(FPS_SANDBOX_RESOLUTION_OPTIONS);
 
 const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
@@ -104,6 +106,8 @@ const sanitizeEntries = (entries: unknown): FpsSandboxEntry[] => {
     const resolution = sanitizeLabel((entry as FpsSandboxEntry)?.resolution, 40);
     const graphics = sanitizeLabel((entry as FpsSandboxEntry)?.graphics, 80);
     if (!game || !resolution || !graphics) return;
+    if (!FPS_SANDBOX_GAME_OPTION_SET.has(game)) return;
+    if (!FPS_SANDBOX_RESOLUTION_OPTION_SET.has(resolution)) return;
     const supportsDlssFsr = Boolean((entry as FpsSandboxEntry)?.supportsDlssFsr);
     const supportsFrameGeneration = Boolean((entry as FpsSandboxEntry)?.supportsFrameGeneration);
     const dlssFsrMode = normalizeMode((entry as FpsSandboxEntry)?.dlssFsrMode, supportsDlssFsr);

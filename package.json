@@ -14,6 +14,7 @@
     "start": "node server-local.js",
     "serve:dev": "node server-local.js",
     "test:admin-api-smoke": "node tests/admin-v2.smoke.mjs",
+    "test:admin-api-integration": "node tests/admin-v2.integration.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },

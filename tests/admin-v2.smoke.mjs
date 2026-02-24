@@ -18,6 +18,13 @@ const run = async () => {
   assert.equal(listingsRes.ok, true, "GET /api/admin/v2/listings should return 200");
   const listingsJson = await listingsRes.json();
   assert.equal(Array.isArray(listingsJson?.data), true, "listings response should contain data[]");
+  if (listingsJson.data[0]) {
+    assert.equal(
+      Object.prototype.hasOwnProperty.call(listingsJson.data[0], "listing_group_id"),
+      true,
+      "listing response should include listing_group_id"
+    );
+  }
 
   if (listingsJson.data.length > 0) {
     const listingId = listingsJson.data[0].id;

@@ -11,7 +11,7 @@ import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { sanitizeUsedPartsSettings, UsedPartsSettings } from "@/lib/usedParts";
 
-const FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
+const FALLBACK_IMAGE = "/Datorhuset.png";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
 const DEFAULT_PRICE_RANGE: [number, number] = [0, 40000];
 const RAM_PRICE_TOOLTIP =
@@ -108,7 +108,7 @@ const DEFAULT_BANNER: BannerConfig = {
   images: [
     "/products/newpc/allblack-main.jpg",
     "/products/newpc/allwhite-1.jpg",
-    "/products/newpc/chieftecvisio-1.jpg",
+    "/products/newpc/chieftecvista-1.jpg",
   ],
   background:
     "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
@@ -120,7 +120,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Budgetv\u00e4nligt",
     title: "Budget betyder inte d\u00e5ligt",
     description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
-    images: ["/products/newpc/chieftecvisio-1.jpg"],
+    images: ["/products/newpc/chieftecvista-1.jpg"],
     stickers: [
       {
         label: "B\u00e4st i budget-klass",
@@ -146,7 +146,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     images: [
       "/products/newpc/allblack-main.jpg",
       "/products/newpc/allwhite-1.jpg",
-      "/products/newpc/chieftecvisio-1.jpg",
+      "/products/newpc/chieftecvista-1.jpg",
     ],
     stickers: [
       {
@@ -409,7 +409,7 @@ export default function Products() {
             if (!response.ok) return { id, images: [] as string[] };
             const combined = Array.from(
               new Set(
-                [data?.image_url || "", ...(Array.isArray(data?.images) ? data.images : [])]
+                [...(Array.isArray(data?.images) ? data.images : []), data?.image_url || ""]
                   .map((entry) => normalizeProductImagePath(entry || "") || "")
                   .filter(Boolean)
               )
@@ -676,8 +676,9 @@ export default function Products() {
     fallbackImages: string[]
   ) => {
     const fromApi = productId ? imagesByProductId[productId] || [] : [];
-    const merged = Array.from(new Set([...fromApi, ...fallbackImages].filter(Boolean)));
-    return merged.length > 0 ? merged : [FALLBACK_IMAGE];
+    if (fromApi.length > 0) return fromApi;
+    const normalizedFallback = Array.from(new Set(fallbackImages.filter(Boolean)));
+    return normalizedFallback.length > 0 ? normalizedFallback : [FALLBACK_IMAGE];
   };
   const getUsedPartsForVariant = (
     computer: Computer,
