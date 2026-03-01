@@ -7,7 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { getProductIdByName, useProducts } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { normalizeProductImagePath } from "@/lib/productImageResolver";
+import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
 import {
   buildDefaultFpsSandboxSettings,
   computeSandboxFps,
@@ -50,7 +50,7 @@ const DEFAULT_PRODUCT_INFO = [
       "Modern grafik med ray tracing och AI-förbättringar levererar skarpa bilder och mjuk upplevelse även i krävande titlar.",
   },
 ];
-const DETAIL_FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
+const DETAIL_FALLBACK_IMAGE = "/Datorhuset.png";
 const DISABLED_FEATURE_TOOLTIP = "funktion ej implementerad i spelet";
 const DLSS_MODE_LABELS: Record<string, string> = {
   quality: "Quality",
@@ -268,14 +268,7 @@ export default function ComputerDetails() {
   const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 
   const images = useMemo(() => {
-    const rawImages =
-      productImagesFromApi.length > 0
-        ? productImagesFromApi
-        : computer?.images?.length
-          ? computer.images
-          : computer
-            ? [computer.image]
-            : [];
+    const rawImages = productImagesFromApi.length > 0 ? productImagesFromApi : [];
     return Array.from(
       new Set(
         rawImages
@@ -283,15 +276,10 @@ export default function ComputerDetails() {
           .filter(Boolean)
       )
     );
-  }, [computer, productImagesFromApi]);
+  }, [productImagesFromApi]);
   const detailImageCandidates = useMemo(
-    () =>
-      Array.from(
-        new Set(
-          [...images, normalizeProductImagePath(computer?.image) || ""].filter(Boolean)
-        )
-      ),
-    [computer?.image, images]
+    () => (images.length > 0 ? images : [DETAIL_FALLBACK_IMAGE]),
+    [images]
   );
 
   useEffect(() => {
@@ -441,7 +429,7 @@ export default function ComputerDetails() {
         if (!response.ok || !isMounted) return;
         const merged = Array.from(
           new Set(
-            [data?.image_url || "", ...(Array.isArray(data?.images) ? data.images : [])]
+            [...(Array.isArray(data?.images) ? data.images : []), data?.image_url || ""]
               .map((image) => normalizeProductImagePath(image || "") || "")
               .filter(Boolean)
           )
@@ -696,9 +684,10 @@ export default function ComputerDetails() {
   }, [inventoryStatus]);
   const structuredData = useMemo(() => {
     const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.site";
-    const imageUrls = (detailImageCandidates.length ? detailImageCandidates : [computer.image]).map((img) =>
-      img.startsWith("http") ? img : new URL(img, baseUrl).toString()
-    );
+    const imageUrls = (detailImageCandidates.length
+      ? detailImageCandidates
+      : [DETAIL_FALLBACK_IMAGE]
+    ).map((img) => (img.startsWith("http") ? img : new URL(img, baseUrl).toString()));
     const productSchema = {
       "@context": "https://schema.org",
       "@type": "Product",
@@ -781,6 +770,7 @@ export default function ComputerDetails() {
     () =>
       COMPUTERS.map((item) => {
         const product = getProductFromLookup(productLookup, item.name);
+        const resolvedItemImage = resolveProductImage(product, DETAIL_FALLBACK_IMAGE) || DETAIL_FALLBACK_IMAGE;
         const mergedItem = mergeProductFields(
           {
             name: item.name,
@@ -796,6 +786,8 @@ export default function ComputerDetails() {
         );
         return {
           ...item,
+          image: resolvedItemImage,
+          images: [resolvedItemImage],
           name: mergedItem.name,
           price: mergedItem.price,
           cpu: mergedItem.cpu,
@@ -814,7 +806,10 @@ export default function ComputerDetails() {
     ? sameTier
     : [...sameTier, ...comparisonCandidates.filter((c) => c.tier !== computer.tier)]
   ).slice(0, 2);
-  const comparisonItems = [computer, ...comparisonPool];
+  const currentComparisonItem =
+    enrichedComputers.find((entry) => entry.id === computer.id) ||
+    ({ ...computer, image: detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE, images: detailImageCandidates } as Computer);
+  const comparisonItems = [currentComparisonItem, ...comparisonPool];
   const hasMultipleImages = detailImageCandidates.length > 1;
   const resolvedImage = detailImageCandidates[selectedImage] || detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
 

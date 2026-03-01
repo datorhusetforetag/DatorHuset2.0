@@ -667,7 +667,13 @@ const sanitizeText = (value, maxLength = 120) => {
   return value.trim().slice(0, maxLength);
 };
 
-const LEGACY_BLOCKED_IMAGE_TOKENS = ["chieftecvisio", "placeholder"];
+const LEGACY_IMAGE_PATH_MAP = {
+  "/products/newpc/cg530-1.jpg": "/products/newpc/cg530_new2.jpg",
+  "/products/newpc/cg530-2.jpg": "/products/newpc/cg530_new3.jpg",
+  "/products/newpc/cg530-3.jpg": "/products/newpc/cg530_new4.jpg",
+};
+
+const LEGACY_BLOCKED_IMAGE_TOKENS = ["chieftecvisio", "chieftecvista", "placeholder"];
 
 const isBlockedLegacyImagePath = (value) => {
   const normalized = String(value || "").trim().toLowerCase();
@@ -678,8 +684,9 @@ const isBlockedLegacyImagePath = (value) => {
 const sanitizeImageUrl = (value) => {
   const normalized = sanitizeText(value, 500);
   if (!normalized) return "";
-  if (isBlockedLegacyImagePath(normalized)) return "";
-  if (normalized.startsWith("/") || /^https?:\/\//i.test(normalized)) return normalized;
+  const mapped = LEGACY_IMAGE_PATH_MAP[normalized] || normalized;
+  if (isBlockedLegacyImagePath(mapped)) return "";
+  if (mapped.startsWith("/") || /^https?:\/\//i.test(mapped)) return mapped;
   return "";
 };
 

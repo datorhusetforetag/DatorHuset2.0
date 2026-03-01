@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { normalizeProductImagePath } from "@/lib/productImageResolver";
+import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { sanitizeUsedPartsSettings, UsedPartsSettings } from "@/lib/usedParts";
 
@@ -108,7 +108,7 @@ const DEFAULT_BANNER: BannerConfig = {
   images: [
     "/products/newpc/allblack-main.jpg",
     "/products/newpc/allwhite-1.jpg",
-    "/products/newpc/chieftecvista-1.jpg",
+    "/products/newpc/cg530_new.png",
   ],
   background:
     "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
@@ -120,7 +120,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Budgetv\u00e4nligt",
     title: "Budget betyder inte d\u00e5ligt",
     description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
-    images: ["/products/newpc/chieftecvista-1.jpg"],
+    images: ["/products/newpc/cg530_new.png"],
     stickers: [
       {
         label: "B\u00e4st i budget-klass",
@@ -146,7 +146,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     images: [
       "/products/newpc/allblack-main.jpg",
       "/products/newpc/allwhite-1.jpg",
-      "/products/newpc/chieftecvista-1.jpg",
+      "/products/newpc/cg530_new.png",
     ],
     stickers: [
       {
@@ -1240,7 +1240,10 @@ export default function Products() {
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
                   const fallbackCardImages = Array.from(
                     new Set(
-                      [computer.image, ...(computer.images || []), FALLBACK_IMAGE]
+                      [
+                        resolveProductImage(getProductForVariant(computer, useUsedVariant), FALLBACK_IMAGE) || "",
+                        FALLBACK_IMAGE,
+                      ]
                         .map((path) => normalizeProductImagePath(path) || "")
                         .filter(Boolean)
                     )

@@ -16,10 +16,21 @@ const LEGACY_IMAGE_PATH_MAP: Record<string, string> = {
   "/products/newpc/cg530-3.jpg": "/products/newpc/cg530_new4.jpg",
 };
 
+const LEGACY_IMAGE_BLOCKLIST = ["chieftecvisio", "chieftecvista", "placeholder"];
+
+export const isLegacyBlockedProductImagePath = (value?: string | null) => {
+  if (!value) return false;
+  const normalized = value.trim().toLowerCase();
+  if (!normalized) return false;
+  return LEGACY_IMAGE_BLOCKLIST.some((token) => normalized.includes(token));
+};
+
 export const normalizeProductImagePath = (value?: string | null) => {
   if (!value) return null;
   const trimmed = value.trim();
-  return LEGACY_IMAGE_PATH_MAP[trimmed] || trimmed;
+  const mapped = LEGACY_IMAGE_PATH_MAP[trimmed] || trimmed;
+  if (isLegacyBlockedProductImagePath(mapped)) return null;
+  return mapped;
 };
 
 const normalize = (value: string | number | null | undefined) => {
@@ -38,7 +49,9 @@ const imageByKey = new Map<string, string>();
 const addImageKey = (key: string | number | null | undefined, image: string) => {
   const normalized = normalize(key);
   if (!normalized) return;
-  imageByKey.set(normalized, normalizeProductImagePath(image) || image);
+  const normalizedImage = normalizeProductImagePath(image);
+  if (!normalizedImage) return;
+  imageByKey.set(normalized, normalizedImage);
 };
 
 COMPUTERS.forEach((computer) => {
@@ -69,11 +82,11 @@ export const resolveProductImage = (product?: ProductLike | null, fallbackImage?
   const normalizedImageAlt = normalizeProductImagePath(product?.imageUrl);
 
   return (
-    canonical ||
-    normalizedFallback ||
     normalizedImageUrl ||
     normalizedImage ||
     normalizedImageAlt ||
+    canonical ||
+    normalizedFallback ||
     null
   );
 };

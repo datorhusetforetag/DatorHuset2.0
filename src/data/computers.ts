@@ -56,10 +56,9 @@ export const COMPUTERS: Computer[] = [
     tier: "Silver",
     rating: 4.2,
     reviews: 0,
-    image: "/products/newpc/chieftecvista-1.jpg",
+    image: "/Datorhuset.png",
     images: [
-      "/products/newpc/chieftecvista-1.jpg",
-      "/products/newpc/chieftecvista-2.avif",
+      "/Datorhuset.png",
     ],
   },
   {
@@ -74,11 +73,9 @@ export const COMPUTERS: Computer[] = [
     tier: "Guld",
     rating: 4.4,
     reviews: 0,
-    image: "/products/newpc/chieftecvisio-1.jpg",
+    image: "/Datorhuset.png",
     images: [
-      "/products/newpc/chieftecvisio-1.jpg",
-      "/products/newpc/chieftecvisio-2.webp",
-      "/products/newpc/chieftecvisio-3.jpg",
+      "/Datorhuset.png",
     ],
     usedVariantEnabled: false,
   },
@@ -94,11 +91,9 @@ export const COMPUTERS: Computer[] = [
     tier: "Guld",
     rating: 4.6,
     reviews: 0,
-    image: "/products/newpc/chieftecvisio-1.jpg",
+    image: "/Datorhuset.png",
     images: [
-      "/products/newpc/chieftecvisio-1.jpg",
-      "/products/newpc/chieftecvisio-2.webp",
-      "/products/newpc/chieftecvisio-3.jpg",
+      "/Datorhuset.png",
     ],
     usedVariant: {
       price: 12200,

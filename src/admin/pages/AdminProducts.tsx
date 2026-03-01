@@ -19,6 +19,7 @@ import {
   USED_PART_LABELS,
   UsedPartsSettings,
 } from "@/lib/usedParts";
+import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import {
   ADMIN_DLSS_FSR_MODE_OPTIONS,
   createListingRequestSchema as sharedCreateListingRequestSchema,
@@ -263,7 +264,9 @@ const hasInvalidFpsEntries = (entries: FpsSandboxEntry[]) =>
 const sanitizeImageInputUrl = (value: string) => {
   const trimmed = String(value || "").trim();
   if (!trimmed) return "";
-  if (trimmed.startsWith("/") || /^https?:\/\//i.test(trimmed)) return trimmed;
+  const normalized = normalizeProductImagePath(trimmed);
+  if (!normalized) return "";
+  if (normalized.startsWith("/") || /^https?:\/\//i.test(normalized)) return normalized;
   return "";
 };
 
@@ -329,13 +332,22 @@ export default function AdminProducts() {
   const [draftHydrated, setDraftHydrated] = useState(false);
 
   const mapListingToCatalogItem = (row: any): CatalogItem => ({
+    // Keep UI payloads free from legacy placeholder paths.
+    ...(() => {
+      const normalizedImages = dedupeImageUrls([
+        ...(Array.isArray(row.images) ? row.images.map((entry: unknown) => String(entry || "")) : []),
+        String(row.image_url ?? ""),
+      ]);
+      return {
+        image_url: normalizedImages[0] || "",
+        images: normalizedImages,
+      };
+    })(),
     id: row.id,
     name: String(row.name ?? ""),
     slug: String(row.slug ?? ""),
     legacy_id: String(row.legacy_id ?? ""),
     description: String(row.description ?? ""),
-    image_url: String(row.image_url ?? ""),
-    images: Array.isArray(row.images) ? row.images.map((entry: unknown) => String(entry || "")).filter(Boolean) : [],
     price_cents: Number(row.price_cents || 0),
     cpu: String(row.cpu ?? ""),
     gpu: String(row.gpu ?? ""),

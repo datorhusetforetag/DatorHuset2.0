@@ -96,7 +96,7 @@ export default function About() {
               decoding="async"
             />
             <img
-              src="/products/newpc/chieftecvisio-1.jpg"
+              src="/products/newpc/cg530_new.png"
               alt="DatorHuset kompakt dator"
               className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
               loading="lazy"
