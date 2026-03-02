@@ -45,6 +45,8 @@ export default function Checkout() {
   const [deliveryInstructions, setDeliveryInstructions] = useState("");
   const [doorCode, setDoorCode] = useState("");
   const [deliveryTime, setDeliveryTime] = useState("");
+  const [acceptedPrivacyPolicy, setAcceptedPrivacyPolicy] = useState(false);
+  const [acceptedTermsOfService, setAcceptedTermsOfService] = useState(false);
   const [shippingMethod, setShippingMethod] = useState<"pickup" | "postnord">("pickup");
   const [errors, setErrors] = useState({
     email: "",
@@ -275,6 +277,10 @@ export default function Checkout() {
       alert("Kontrollera att alla fält är korrekt ifyllda.");
       return;
     }
+    if (!acceptedPrivacyPolicy || !acceptedTermsOfService) {
+      alert("Du måste godkänna Integritetspolicy och Allmänna villkor innan betalning.");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -351,7 +357,9 @@ export default function Checkout() {
     (!requiresShipping ||
       (address.trim().length >= 5 &&
         swedishPostalRegex.test(postalCode.trim()) &&
-        swedishCityRegex.test(city.trim())));
+        swedishCityRegex.test(city.trim()))) &&
+    acceptedPrivacyPolicy &&
+    acceptedTermsOfService;
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -685,6 +693,49 @@ export default function Checkout() {
                 <div className="flex justify-between mb-6">
                   <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt:</span>
                   <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalWithFees / 100} kr</span>
+                </div>
+
+                <div className="mb-5 space-y-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-[#101a27]">
+                  <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
+                    <input
+                      type="checkbox"
+                      checked={acceptedPrivacyPolicy}
+                      onChange={(event) => setAcceptedPrivacyPolicy(event.target.checked)}
+                      className="mt-1"
+                    />
+                    <span>
+                      Jag godkänner{" "}
+                      <a
+                        href="/privacy-policy"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-semibold text-[#11667b] hover:underline"
+                      >
+                        Integritetspolicy
+                      </a>
+                      .
+                    </span>
+                  </label>
+                  <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
+                    <input
+                      type="checkbox"
+                      checked={acceptedTermsOfService}
+                      onChange={(event) => setAcceptedTermsOfService(event.target.checked)}
+                      className="mt-1"
+                    />
+                    <span>
+                      Jag godkänner{" "}
+                      <a
+                        href="/terms-of-service"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-semibold text-[#11667b] hover:underline"
+                      >
+                        Allmänna villkor
+                      </a>
+                      .
+                    </span>
+                  </label>
                 </div>
 
                 <button

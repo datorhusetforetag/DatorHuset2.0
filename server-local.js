@@ -66,11 +66,25 @@ const STRIPE_EXPECT_LIVEMODE =
       ? false
       : null;
 
+const createRateLimitJsonHandler = (message) => (req, res, _next, options) => {
+  const now = Date.now();
+  const resetTimeValue = req?.rateLimit?.resetTime;
+  const resetAt = resetTimeValue ? new Date(resetTimeValue).getTime() : now + Number(options?.windowMs || 0);
+  const retryAfterSeconds = Math.max(1, Math.ceil((resetAt - now) / 1000));
+  res.set("Retry-After", String(retryAfterSeconds));
+  return res.status(options?.statusCode || 429).json({
+    error: message,
+    code: "RATE_LIMITED",
+    retry_after_seconds: retryAfterSeconds,
+  });
+};
+
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 120,
   standardHeaders: true,
   legacyHeaders: false,
+  handler: createRateLimitJsonHandler("För många API-förfrågningar. Försök igen om en liten stund."),
 });
 const checkoutLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
@@ -78,13 +92,15 @@ const checkoutLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => getRateLimitKey(req, "checkout"),
+  handler: createRateLimitJsonHandler("För många checkout-förfrågningar. Vänta en stund och försök igen."),
 });
 const adminLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
-  max: 120,
+  max: 300,
   standardHeaders: true,
   legacyHeaders: false,
   keyGenerator: (req) => getRateLimitKey(req, "admin"),
+  handler: createRateLimitJsonHandler("För många förfrågningar. Försök igen om en liten stund."),
 });
 
 const getRequestIp = (req) => {
@@ -671,22 +687,94 @@ const LEGACY_IMAGE_PATH_MAP = {
   "/products/newpc/cg530-1.jpg": "/products/newpc/cg530_new2.jpg",
   "/products/newpc/cg530-2.jpg": "/products/newpc/cg530_new3.jpg",
   "/products/newpc/cg530-3.jpg": "/products/newpc/cg530_new4.jpg",
+  "/products/newpc/chieftecvisio-1.jpg": "/products/newpc/chieftecvisio_new.png",
+  "/products/newpc/chieftecvisio-2.webp": "/products/newpc/chieftecvisio_new2.png",
+  "/products/newpc/chieftecvisio-3.jpg": "/products/newpc/chieftecvisio_new2.png",
+  "/products/newpc/chieftecvista-1.jpg": "/products/newpc/chieftecvisio_new.png",
+  "/products/newpc/chieftecvista-2.avif": "/products/newpc/chieftecvisio_new2.png",
+  "/chieftecvisio-1.jpg": "/products/newpc/chieftecvisio_new.png",
+  "/chieftecvisio-2.webp": "/products/newpc/chieftecvisio_new2.png",
+  "/chieftecvisio-3.jpg": "/products/newpc/chieftecvisio_new2.png",
+  "/chieftecvista-1.jpg": "/products/newpc/chieftecvisio_new.png",
+  "/chieftecvista-2.avif": "/products/newpc/chieftecvisio_new2.png",
 };
 
-const LEGACY_BLOCKED_IMAGE_TOKENS = ["chieftecvisio", "chieftecvista", "placeholder"];
+const LEGACY_BLOCKED_IMAGE_BASENAMES = new Set([
+  "chieftecvisio-1.jpg",
+  "chieftecvisio-2.webp",
+  "chieftecvisio-3.jpg",
+  "chieftecvista-1.jpg",
+  "chieftecvista-2.avif",
+  "horizon3_elite_front_2000x.webp",
+  "horizon3_elite_hero_2000x.webp",
+  "horizon3_elite_side_2000x.webp",
+  "horizon_pro_front_welitecomponents_2000x.webp",
+  "horizon_pro_hero_welitecomponents_2000x.webp",
+  "horizon_pro_side_welitecomponents_2000x.webp",
+  "navbase_front_colorswap_2000x.webp",
+  "navbase_hero_colorswap_2000x.webp",
+  "navbase_side_colorswap_2000x.webp",
+  "navpro_front_colorswap_2000x.webp",
+  "navpro_hero_colorswap_2000x.webp",
+  "navpro_side_colorswap_2000x.webp",
+  "traveler_back_2000x.webp",
+  "traveler_front_1_2000x.webp",
+  "traveler_hero_1_2000x.webp",
+  "traveler_side_1_2000x.webp",
+  "traveler_top_2000x.webp",
+  "voy_red_front_2000x.webp",
+  "voy_red_hero_2000x.webp",
+  "voy_red_side_2000x.webp",
+  "voyelite_hero_new_2000x.webp",
+  "voyelite_side_new_2000x.webp",
+  "voyager_front_nogeforce_2000x.webp",
+  "voyager_front_nogeforce_2000x_2.webp",
+  "voyager_hero_nogeforce_2000x.webp",
+  "voyager_hero_nogeforce_2000x_2.webp",
+  "voyager_side_nogeforce_2000x.webp",
+  "voyager_side_nogeforce_2000x_2.webp",
+]);
+
+const LEGACY_BLOCKED_IMAGE_TOKENS = [
+  "placeholder",
+  "horizon3_",
+  "horizon_pro_",
+  "navbase_",
+  "navpro_",
+  "traveler_",
+  "voyager_",
+  "voy_red_",
+  "voyelite_",
+];
+
+const normalizeImagePathKey = (value) => {
+  const normalized = String(value || "").trim().replace(/\\/g, "/").toLowerCase();
+  if (!normalized) return "";
+  return normalized.startsWith("/") ? normalized : `/${normalized}`;
+};
+
+const getImageBasename = (value) => {
+  const clean = String(value || "").split("?")[0].split("#")[0];
+  const parts = clean.split("/");
+  return (parts[parts.length - 1] || "").toLowerCase();
+};
 
 const isBlockedLegacyImagePath = (value) => {
-  const normalized = String(value || "").trim().toLowerCase();
+  const normalized = normalizeImagePathKey(value);
   if (!normalized) return false;
+  const basename = getImageBasename(normalized);
+  if (LEGACY_BLOCKED_IMAGE_BASENAMES.has(basename)) return true;
   return LEGACY_BLOCKED_IMAGE_TOKENS.some((token) => normalized.includes(token));
 };
 
 const sanitizeImageUrl = (value) => {
-  const normalized = sanitizeText(value, 500);
+  const normalized = sanitizeText(value, 500).replace(/\\/g, "/");
   if (!normalized) return "";
-  const mapped = LEGACY_IMAGE_PATH_MAP[normalized] || normalized;
-  if (isBlockedLegacyImagePath(mapped)) return "";
-  if (mapped.startsWith("/") || /^https?:\/\//i.test(mapped)) return mapped;
+  const lookupKey = normalizeImagePathKey(normalized);
+  const mapped = LEGACY_IMAGE_PATH_MAP[lookupKey] || normalized;
+  const absolute = /^https?:\/\//i.test(mapped) ? mapped : mapped.startsWith("/") ? mapped : `/${mapped}`;
+  if (isBlockedLegacyImagePath(absolute)) return "";
+  if (absolute.startsWith("/") || /^https?:\/\//i.test(absolute)) return absolute;
   return "";
 };
 

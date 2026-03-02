@@ -30,6 +30,16 @@ let lastRequestAt = 0;
 let lastVerifiedToken = "";
 let lastVerifiedAt = 0;
 
+const parseApiPayload = async (response: Response) => {
+  const raw = await response.text();
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return { error: raw };
+  }
+};
+
 export const useAdminAccess = (): AdminAccessContext => {
   const { session, user, loading: authLoading, signInWithGoogle, signOut } = useAuth();
   const [state, setState] = useState<AdminAccessState>({
@@ -91,7 +101,7 @@ export const useAdminAccess = (): AdminAccessContext => {
         const response = await fetch(`${apiBase}/api/admin/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
+        const data = await parseApiPayload(response);
 
         if (response.status === 429) {
           const retryAfter = Number(response.headers.get("Retry-After") || 0);

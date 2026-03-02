@@ -73,9 +73,10 @@ export const COMPUTERS: Computer[] = [
     tier: "Guld",
     rating: 4.4,
     reviews: 0,
-    image: "/Datorhuset.png",
+    image: "/products/newpc/chieftecvisio_new.png",
     images: [
-      "/Datorhuset.png",
+      "/products/newpc/chieftecvisio_new.png",
+      "/products/newpc/chieftecvisio_new2.png",
     ],
     usedVariantEnabled: false,
   },
@@ -91,9 +92,10 @@ export const COMPUTERS: Computer[] = [
     tier: "Guld",
     rating: 4.6,
     reviews: 0,
-    image: "/Datorhuset.png",
+    image: "/products/newpc/chieftecvisio_new.png",
     images: [
-      "/Datorhuset.png",
+      "/products/newpc/chieftecvisio_new.png",
+      "/products/newpc/chieftecvisio_new2.png",
     ],
     usedVariant: {
       price: 12200,
