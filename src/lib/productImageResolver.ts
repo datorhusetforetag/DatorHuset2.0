@@ -17,16 +17,17 @@ const LEGACY_IMAGE_PATH_MAP: Record<string, string> = {
   "/products/newpc/chieftecvisio-1.jpg": "/products/newpc/chieftecvisio_new.png",
   "/products/newpc/chieftecvisio-2.webp": "/products/newpc/chieftecvisio_new2.png",
   "/products/newpc/chieftecvisio-3.jpg": "/products/newpc/chieftecvisio_new2.png",
-  "/products/newpc/chieftecvista-1.jpg": "/products/newpc/chieftecvisio_new.png",
-  "/products/newpc/chieftecvista-2.avif": "/products/newpc/chieftecvisio_new2.png",
+  "/products/newpc/chieftecvista-1.jpg": "/products/newpc/chieftecvista_new.png",
+  "/products/newpc/chieftecvista-2.avif": "/products/newpc/chieftecvista_new2.jpg",
   "/chieftecvisio-1.jpg": "/products/newpc/chieftecvisio_new.png",
   "/chieftecvisio-2.webp": "/products/newpc/chieftecvisio_new2.png",
   "/chieftecvisio-3.jpg": "/products/newpc/chieftecvisio_new2.png",
-  "/chieftecvista-1.jpg": "/products/newpc/chieftecvisio_new.png",
-  "/chieftecvista-2.avif": "/products/newpc/chieftecvisio_new2.png",
+  "/chieftecvista-1.jpg": "/products/newpc/chieftecvista_new.png",
+  "/chieftecvista-2.avif": "/products/newpc/chieftecvista_new2.jpg",
 };
 
 const LEGACY_BLOCKED_IMAGE_BASENAMES = new Set([
+  "datorhuset.png",
   "chieftecvisio-1.jpg",
   "chieftecvisio-2.webp",
   "chieftecvisio-3.jpg",

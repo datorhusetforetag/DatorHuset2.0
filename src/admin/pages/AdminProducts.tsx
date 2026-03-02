@@ -281,6 +281,43 @@ const dedupeImageUrls = (input: string[]) => {
   return next.slice(0, 10);
 };
 
+const COMPUTER_IMAGE_LOOKUP = (() => {
+  const lookup = new Map<string, string[]>();
+  const add = (rawKey: unknown, images: string[]) => {
+    const key = normalizeProductKey(String(rawKey || ""));
+    if (!key || lookup.has(key)) return;
+    lookup.set(key, images);
+  };
+  COMPUTERS.forEach((computer) => {
+    const images = dedupeImageUrls([...(Array.isArray(computer.images) ? computer.images : []), computer.image || ""]);
+    if (images.length === 0) return;
+    add(computer.id, images);
+    add(computer.name, images);
+    if (computer.usedVariant?.productKey) {
+      add(computer.usedVariant.productKey, images);
+    }
+  });
+  return lookup;
+})();
+
+const resolveFallbackListingImages = (row: {
+  id?: unknown;
+  name?: unknown;
+  slug?: unknown;
+  legacy_id?: unknown;
+}) => {
+  const candidates = [row.id, row.name, row.slug, row.legacy_id];
+  for (const candidate of candidates) {
+    const key = normalizeProductKey(String(candidate || ""));
+    if (!key) continue;
+    const images = COMPUTER_IMAGE_LOOKUP.get(key);
+    if (images && images.length > 0) {
+      return [...images];
+    }
+  }
+  return [];
+};
+
 const fileToBase64 = (file: File) =>
   new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
@@ -319,6 +356,8 @@ export default function AdminProducts() {
   const [uploadingUsedImages, setUploadingUsedImages] = useState(false);
   const [itemImageUrlInputByProduct, setItemImageUrlInputByProduct] = useState<Record<string, string>>({});
   const [uploadingItemImagesByProduct, setUploadingItemImagesByProduct] = useState<Record<string, boolean>>({});
+  const [imagesExpandedByProduct, setImagesExpandedByProduct] = useState<Record<string, boolean>>({});
+  const [draggedItemImage, setDraggedItemImage] = useState<{ productId: string; index: number } | null>(null);
   const [creating, setCreating] = useState(false);
 
   const [draftFpsEntries, setDraftFpsEntries] = useState<FpsSandboxEntry[]>([]);
@@ -341,9 +380,11 @@ export default function AdminProducts() {
         ...(Array.isArray(row.images) ? row.images.map((entry: unknown) => String(entry || "")) : []),
         String(row.image_url ?? ""),
       ]);
+      const fallbackImages = normalizedImages.length > 0 ? [] : resolveFallbackListingImages(row);
+      const finalImages = normalizedImages.length > 0 ? normalizedImages : fallbackImages;
       return {
-        image_url: normalizedImages[0] || "",
-        images: normalizedImages,
+        image_url: finalImages[0] || "",
+        images: finalImages,
       };
     })(),
     id: row.id,
@@ -677,6 +718,17 @@ export default function AdminProducts() {
     setItemImages(productId, current);
   };
 
+  const reorderItemImage = (productId: string, fromIndex: number, toIndex: number) => {
+    if (fromIndex === toIndex) return;
+    const item = items.find((entry) => entry.id === productId);
+    const current = Array.isArray(item?.images) ? [...item.images] : [];
+    if (fromIndex < 0 || toIndex < 0 || fromIndex >= current.length || toIndex >= current.length) return;
+    const [moved] = current.splice(fromIndex, 1);
+    if (!moved) return;
+    current.splice(toIndex, 0, moved);
+    setItemImages(productId, current);
+  };
+
   const uploadItemImages = async (item: CatalogItem, files: FileList | null) => {
     if (!files || files.length === 0) return;
     if (!token || !isAdmin) return;
@@ -891,6 +943,10 @@ export default function AdminProducts() {
       }
       return { ...prev, [productId]: next };
     });
+  };
+
+  const toggleImagePanel = (productId: string) => {
+    setImagesExpandedByProduct((prev) => ({ ...prev, [productId]: !prev[productId] }));
   };
 
   const saveUsedParts = async (productId: string) => {
@@ -1628,6 +1684,8 @@ export default function AdminProducts() {
             ) : null}
             {group.items.map((item) => {
               const variantRole = getItemVariantRole(item);
+              const itemImages = Array.isArray(item.images) ? item.images : [];
+              const isImagePanelOpen = Boolean(imagesExpandedByProduct[item.id]);
               return (
           <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -1694,61 +1752,140 @@ export default function AdminProducts() {
             </label>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-3">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-sm text-slate-200">Bilder för produkten (bild 1 = thumbnail på produktsidan)</p>
-                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
-                  <Upload className="h-3.5 w-3.5" />
-                  {uploadingItemImagesByProduct[item.id] ? "Laddar upp..." : "Ladda upp"}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    className="hidden"
-                    disabled={uploadingItemImagesByProduct[item.id] || !canMutate}
-                    onChange={(event) => {
-                      void uploadItemImages(item, event.target.files);
-                      event.currentTarget.value = "";
-                    }}
-                  />
-                </label>
-              </div>
-
-              <div className="flex gap-2">
-                <input
-                  value={itemImageUrlInputByProduct[item.id] || ""}
-                  onChange={(event) =>
-                    setItemImageUrlInputByProduct((prev) => ({ ...prev, [item.id]: event.target.value }))
-                  }
-                  placeholder="Bild-URL eller /sökväg"
-                  className="w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
-                />
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-slate-200">Bilder för produkten (bild 1 = thumbnail på produktsidan)</p>
+                  <span className="rounded-full border border-slate-700/60 px-2 py-0.5 text-[11px] text-slate-300">
+                    {itemImages.length} st
+                  </span>
+                </div>
                 <button
                   type="button"
-                  onClick={() => addImageUrlToItem(item.id, itemImageUrlInputByProduct[item.id] || "")}
-                  className="rounded-lg border border-slate-700/60 px-3 py-2 text-xs text-slate-100"
+                  onClick={() => toggleImagePanel(item.id)}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100"
                 >
-                  Lägg till
+                  {isImagePanelOpen ? (
+                    <>
+                      <ChevronUp className="h-3.5 w-3.5" /> Dölj
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-3.5 w-3.5" /> Se/redigera bilder
+                    </>
+                  )}
                 </button>
               </div>
 
-              {(Array.isArray(item.images) ? item.images : []).length > 0 ? (
-                <div className="space-y-2">
-                  {(item.images || []).map((image, index) => (
-                    <div key={`${item.id}-image-${image}-${index}`} className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/70 px-2 py-2">
-                      <img src={image} alt={`Produktbild ${index + 1}`} className="h-10 w-16 rounded object-cover" />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs text-slate-200">{image}</p>
-                        <p className="text-[11px] text-slate-400">{index === 0 ? "Primär bild / thumbnail" : `Bild ${index + 1}`}</p>
-                      </div>
-                      <button type="button" onClick={() => moveItemImage(item.id, index, "up")} disabled={index === 0} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Upp</button>
-                      <button type="button" onClick={() => moveItemImage(item.id, index, "down")} disabled={index === (item.images || []).length - 1} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Ner</button>
-                      <button type="button" onClick={() => removeItemImageAt(item.id, index)} className="rounded border border-red-500/40 px-2 py-1 text-[11px] text-red-300">Ta bort</button>
+              {isImagePanelOpen ? (
+                <div className="space-y-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
+                      <Upload className="h-3.5 w-3.5" />
+                      {uploadingItemImagesByProduct[item.id] ? "Laddar upp..." : "Ladda upp från enhet"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        disabled={uploadingItemImagesByProduct[item.id] || !canMutate}
+                        onChange={(event) => {
+                          void uploadItemImages(item, event.target.files);
+                          event.currentTarget.value = "";
+                        }}
+                      />
+                    </label>
+                    <span className="text-[11px] text-slate-400">
+                      Dra en bild åt vänster för att göra den tidigare i ordningen.
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2">
+                    <input
+                      value={itemImageUrlInputByProduct[item.id] || ""}
+                      onChange={(event) =>
+                        setItemImageUrlInputByProduct((prev) => ({ ...prev, [item.id]: event.target.value }))
+                      }
+                      placeholder="Bild-URL eller /sökväg (valfritt)"
+                      className="w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => addImageUrlToItem(item.id, itemImageUrlInputByProduct[item.id] || "")}
+                      className="rounded-lg border border-slate-700/60 px-3 py-2 text-xs text-slate-100"
+                    >
+                      Lägg till
+                    </button>
+                  </div>
+
+                  {itemImages.length > 0 ? (
+                    <div className="flex gap-3 overflow-x-auto pb-1">
+                      {itemImages.map((image, index) => (
+                        <div
+                          key={`${item.id}-image-${image}-${index}`}
+                          draggable={canMutate}
+                          onDragStart={(event) => {
+                            if (!canMutate) return;
+                            event.dataTransfer.effectAllowed = "move";
+                            event.dataTransfer.setData("text/plain", `${item.id}:${index}`);
+                            setDraggedItemImage({ productId: item.id, index });
+                          }}
+                          onDragOver={(event) => {
+                            if (draggedItemImage?.productId !== item.id) return;
+                            event.preventDefault();
+                            event.dataTransfer.dropEffect = "move";
+                          }}
+                          onDrop={(event) => {
+                            event.preventDefault();
+                            if (draggedItemImage?.productId !== item.id) return;
+                            reorderItemImage(item.id, draggedItemImage.index, index);
+                            setDraggedItemImage(null);
+                          }}
+                          onDragEnd={() => setDraggedItemImage(null)}
+                          className={`min-w-[220px] rounded-lg border px-2 py-2 ${
+                            draggedItemImage?.productId === item.id && draggedItemImage.index === index
+                              ? "border-[#22d3ee]/60 bg-[#22d3ee]/10"
+                              : "border-slate-800 bg-slate-950/70"
+                          }`}
+                        >
+                          <img src={image} alt={`Produktbild ${index + 1}`} className="h-24 w-full rounded object-cover" />
+                          <div className="mt-2 space-y-1">
+                            <p className="truncate text-xs text-slate-200">{image}</p>
+                            <p className="text-[11px] text-slate-400">{index === 0 ? "Primär bild / thumbnail" : `Bild ${index + 1}`}</p>
+                          </div>
+                          <div className="mt-2 flex items-center gap-2">
+                            <button
+                              type="button"
+                              onClick={() => moveItemImage(item.id, index, "up")}
+                              disabled={index === 0 || !canMutate}
+                              className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40"
+                            >
+                              Upp
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveItemImage(item.id, index, "down")}
+                              disabled={index === itemImages.length - 1 || !canMutate}
+                              className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40"
+                            >
+                              Ner
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeItemImageAt(item.id, index)}
+                              disabled={!canMutate}
+                              className="rounded border border-red-500/40 px-2 py-1 text-[11px] text-red-300 disabled:opacity-40"
+                            >
+                              Ta bort
+                            </button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
+                  ) : (
+                    <p className="text-xs text-slate-500">Ingen bild uppladdad ännu.</p>
+                  )}
                 </div>
-              ) : (
-                <p className="text-xs text-slate-500">Ingen bild uppladdad ännu.</p>
-              )}
+              ) : null}
             </div>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">

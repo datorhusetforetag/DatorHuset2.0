@@ -56,9 +56,11 @@ export const COMPUTERS: Computer[] = [
     tier: "Silver",
     rating: 4.2,
     reviews: 0,
-    image: "/Datorhuset.png",
+    image: "/products/newpc/chieftecvista_new.png",
     images: [
-      "/Datorhuset.png",
+      "/products/newpc/chieftecvista_new.png",
+      "/products/newpc/chieftecvista_new2.jpg",
+      "/products/newpc/chieftecvista_new3.jpg",
     ],
   },
   {
