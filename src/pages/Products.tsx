@@ -411,7 +411,7 @@ export default function Products() {
               new Set(
                 [...(Array.isArray(data?.images) ? data.images : []), data?.image_url || ""]
                   .map((entry) => normalizeProductImagePath(entry || "") || "")
-                  .filter(Boolean)
+                  .filter((entry) => Boolean(entry) && !/\/datorhuset\.png$/i.test(entry))
               )
             );
             return { id, images: combined };
@@ -1241,6 +1241,8 @@ export default function Products() {
                   const fallbackCardImages = Array.from(
                     new Set(
                       [
+                        ...(Array.isArray(computer.images) ? computer.images : []),
+                        computer.image || "",
                         resolveProductImage(getProductForVariant(computer, useUsedVariant), FALLBACK_IMAGE) || "",
                         FALLBACK_IMAGE,
                       ]

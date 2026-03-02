@@ -267,8 +267,19 @@ export default function ComputerDetails() {
     : null;
   const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 
+  const fallbackComputerImages = useMemo(() => {
+    if (!computer) return [];
+    return Array.from(
+      new Set(
+        [...(Array.isArray(computer.images) ? computer.images : []), computer.image || ""]
+          .map((image) => normalizeProductImagePath(image) || "")
+          .filter(Boolean)
+      )
+    );
+  }, [computer]);
+
   const images = useMemo(() => {
-    const rawImages = productImagesFromApi.length > 0 ? productImagesFromApi : [];
+    const rawImages = productImagesFromApi.length > 0 ? productImagesFromApi : fallbackComputerImages;
     return Array.from(
       new Set(
         rawImages
@@ -276,11 +287,12 @@ export default function ComputerDetails() {
           .filter(Boolean)
       )
     );
-  }, [productImagesFromApi]);
-  const detailImageCandidates = useMemo(
-    () => (images.length > 0 ? images : [DETAIL_FALLBACK_IMAGE]),
-    [images]
-  );
+  }, [fallbackComputerImages, productImagesFromApi]);
+  const detailImageCandidates = useMemo(() => {
+    if (images.length > 0) return images;
+    if (fallbackComputerImages.length > 0) return fallbackComputerImages;
+    return [DETAIL_FALLBACK_IMAGE];
+  }, [fallbackComputerImages, images]);
 
   useEffect(() => {
     if (!baseProductId || !computer?.usedVariant) {
@@ -422,6 +434,7 @@ export default function ComputerDetails() {
       return;
     }
     let isMounted = true;
+    setProductImagesFromApi([]);
     const loadProductImages = async () => {
       try {
         const response = await fetch(`/api/product-images/${activeProductId}`);
@@ -431,7 +444,7 @@ export default function ComputerDetails() {
           new Set(
             [...(Array.isArray(data?.images) ? data.images : []), data?.image_url || ""]
               .map((image) => normalizeProductImagePath(image || "") || "")
-              .filter(Boolean)
+              .filter((image) => Boolean(image) && !/\/datorhuset\.png$/i.test(image))
           )
         );
         setProductImagesFromApi(merged);
