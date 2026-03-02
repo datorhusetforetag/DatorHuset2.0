@@ -1687,11 +1687,11 @@ export default function AdminProducts() {
               const itemImages = Array.isArray(item.images) ? item.images : [];
               const isImagePanelOpen = Boolean(imagesExpandedByProduct[item.id]);
               return (
-          <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-semibold text-white">{item.name}</p>
+          <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 md:p-5 space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <p className="truncate text-lg font-semibold text-white">{item.name}</p>
                   {variantRole === "base" ? (
                     <span className="rounded-full border border-sky-400/40 bg-sky-500/10 px-2 py-0.5 text-[11px] font-semibold text-sky-200">
                       Basvariant
@@ -1702,7 +1702,7 @@ export default function AdminProducts() {
                     </span>
                   ) : null}
                 </div>
-                <p className="text-xs text-slate-500">{item.id}</p>
+                <p className="truncate text-xs text-slate-500">{item.id}</p>
                 {dirtyProductIds[item.id] ? (
                   <p className="text-xs text-yellow-300">Osparade ändringar</p>
                 ) : lastSavedByProduct[item.id] ? (
@@ -1711,45 +1711,87 @@ export default function AdminProducts() {
                   </p>
                 ) : null}
               </div>
-              <button type="button" onClick={() => void saveItem(item)} disabled={savingId === item.id || !canMutate} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
+              <button
+                type="button"
+                onClick={() => void saveItem(item)}
+                disabled={savingId === item.id || !canMutate}
+                className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
+              >
                 <Save className="h-4 w-4" /> {savingId === item.id ? "Sparar..." : "Spara"}
               </button>
             </div>
-            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-              {PRODUCT_FORM_FIELDS.map((key) => (
-                <label key={`${item.id}-${key}`} className="text-xs text-slate-400">
-                  {FIELD_LABELS[key]}
-                  <input
-                    type={NUMERIC_FIELDS.has(key) ? "number" : "text"}
-                    value={String(item[key] ?? "")}
-                    onChange={(event) =>
-                      setItem(
-                        item.id,
-                        key,
-                        (NUMERIC_FIELDS.has(key) ? Math.max(0, Number(event.target.value) || 0) : event.target.value) as CatalogItem[typeof key]
-                      )
-                    }
+
+            <div className="grid gap-4 xl:grid-cols-12">
+              <div className="xl:col-span-9 space-y-4">
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3">
+                  <p className="text-xs uppercase tracking-[0.16em] text-slate-400">Grunddata</p>
+                  <div className="mt-3 grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
+                    {PRODUCT_FORM_FIELDS.map((key) => (
+                      <label key={`${item.id}-${key}`} className="text-xs text-slate-400">
+                        {FIELD_LABELS[key]}
+                        <input
+                          type={NUMERIC_FIELDS.has(key) ? "number" : "text"}
+                          value={String(item[key] ?? "")}
+                          onChange={(event) =>
+                            setItem(
+                              item.id,
+                              key,
+                              (NUMERIC_FIELDS.has(key) ? Math.max(0, Number(event.target.value) || 0) : event.target.value) as CatalogItem[typeof key]
+                            )
+                          }
+                          className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                        />
+                      </label>
+                    ))}
+                    <label className="text-xs text-slate-400">
+                      Förbeställning
+                      <select
+                        value={item.is_preorder ? "true" : "false"}
+                        onChange={(event) => setItem(item.id, "is_preorder", event.target.value === "true")}
+                        className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                      >
+                        <option value="false">Nej</option>
+                        <option value="true">Ja</option>
+                      </select>
+                    </label>
+                    <label className="text-xs text-slate-400">
+                      Begagnad variant
+                      <select
+                        value={item.used_variant_enabled ? "true" : "false"}
+                        onChange={(event) => setItem(item.id, "used_variant_enabled", event.target.value === "true")}
+                        className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                      >
+                        <option value="false">Av</option>
+                        <option value="true">På</option>
+                      </select>
+                    </label>
+                  </div>
+                </div>
+
+                <label className="block text-xs text-slate-400">
+                  Beskrivning
+                  <textarea
+                    value={item.description || ""}
+                    onChange={(event) => setItem(item.id, "description", event.target.value)}
+                    rows={3}
                     className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
                   />
                 </label>
-              ))}
-              <label className="text-xs text-slate-400">
-                Förbeställning
-                <select value={item.is_preorder ? "true" : "false"} onChange={(event) => setItem(item.id, "is_preorder", event.target.value === "true")} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100">
-                  <option value="false">Nej</option><option value="true">Ja</option>
-                </select>
-              </label>
-              <label className="text-xs text-slate-400">
-                Begagnad variant
-                <select value={item.used_variant_enabled ? "true" : "false"} onChange={(event) => setItem(item.id, "used_variant_enabled", event.target.value === "true")} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100">
-                  <option value="false">Av</option><option value="true">På</option>
-                </select>
-              </label>
+              </div>
+
+              <div className="xl:col-span-3">
+                <div className="rounded-xl border border-slate-800 bg-slate-950/40 p-3 text-xs text-slate-300">
+                  <p className="mb-2 uppercase tracking-[0.16em] text-slate-400">Snabbpanel</p>
+                  <div className="space-y-1">
+                    <p className="truncate"><span className="text-slate-500">Slug:</span> {item.slug || "-"}</p>
+                    <p><span className="text-slate-500">Pris:</span> {Number(item.price_cents || 0).toLocaleString("sv-SE")} öre</p>
+                    <p><span className="text-slate-500">Lager:</span> {Math.max(0, Number(item.quantity_in_stock || 0))}</p>
+                    <p><span className="text-slate-500">Bilder:</span> {itemImages.length}</p>
+                    <p><span className="text-slate-500">FPS-rader:</span> {(fpsByProduct[item.id]?.entries || []).length}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <label className="block text-xs text-slate-400">
-              Beskrivning
-              <textarea value={item.description || ""} onChange={(event) => setItem(item.id, "description", event.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100" />
-            </label>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-3">
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -1818,7 +1860,7 @@ export default function AdminProducts() {
                   </div>
 
                   {itemImages.length > 0 ? (
-                    <div className="flex gap-3 overflow-x-auto pb-1">
+                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                       {itemImages.map((image, index) => (
                         <div
                           key={`${item.id}-image-${image}-${index}`}
@@ -1841,18 +1883,20 @@ export default function AdminProducts() {
                             setDraggedItemImage(null);
                           }}
                           onDragEnd={() => setDraggedItemImage(null)}
-                          className={`min-w-[220px] rounded-lg border px-2 py-2 ${
+                          className={`rounded-lg border px-2 py-2 ${
                             draggedItemImage?.productId === item.id && draggedItemImage.index === index
                               ? "border-[#22d3ee]/60 bg-[#22d3ee]/10"
                               : "border-slate-800 bg-slate-950/70"
                           }`}
                         >
-                          <img src={image} alt={`Produktbild ${index + 1}`} className="h-24 w-full rounded object-cover" />
+                          <img src={image} alt={`Produktbild ${index + 1}`} className="h-28 w-full rounded object-cover" />
                           <div className="mt-2 space-y-1">
                             <p className="truncate text-xs text-slate-200">{image}</p>
-                            <p className="text-[11px] text-slate-400">{index === 0 ? "Primär bild / thumbnail" : `Bild ${index + 1}`}</p>
+                            <p className="text-[11px] text-slate-400">
+                              {index === 0 ? "Primär bild / thumbnail" : `Bild ${index + 1}`}
+                            </p>
                           </div>
-                          <div className="mt-2 flex items-center gap-2">
+                          <div className="mt-2 flex flex-wrap items-center gap-2">
                             <button
                               type="button"
                               onClick={() => moveItemImage(item.id, index, "up")}
