@@ -16,6 +16,7 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { z } from "zod";
 import {
+  ADMIN_DLSS_FSR_MODE_OPTIONS,
   ADMIN_FPS_GAME_OPTIONS,
   ADMIN_FPS_RESOLUTION_OPTIONS,
   createListingRequestSchema,

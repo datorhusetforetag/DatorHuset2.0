@@ -1,5 +1,5 @@
 ﻿import { useEffect, useMemo, useState } from "react";
-import { Plus, RefreshCcw, Save, Search, Trash2, Upload } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, RefreshCcw, Save, Search, Trash2, Upload } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
 import { COMPUTERS } from "@/data/computers";
@@ -325,6 +325,7 @@ export default function AdminProducts() {
   const [fpsByProduct, setFpsByProduct] = useState<Record<string, FpsSandboxSettings>>({});
   const [fpsLoadingByProduct, setFpsLoadingByProduct] = useState<Record<string, boolean>>({});
   const [fpsSavingByProduct, setFpsSavingByProduct] = useState<Record<string, boolean>>({});
+  const [fpsExpandedByProduct, setFpsExpandedByProduct] = useState<Record<string, boolean>>({});
   const [usedPartsByProduct, setUsedPartsByProduct] = useState<Record<string, UsedPartsSettings>>({});
   const [usedPartsLoadingByProduct, setUsedPartsLoadingByProduct] = useState<Record<string, boolean>>({});
   const [usedPartsSavingByProduct, setUsedPartsSavingByProduct] = useState<Record<string, boolean>>({});
@@ -880,6 +881,16 @@ export default function AdminProducts() {
     } finally {
       setUsedPartsLoadingByProduct((prev) => ({ ...prev, [productId]: false }));
     }
+  };
+
+  const toggleFpsPanel = (productId: string) => {
+    setFpsExpandedByProduct((prev) => {
+      const next = !prev[productId];
+      if (next && !fpsByProduct[productId] && !fpsLoadingByProduct[productId]) {
+        void loadFps(productId);
+      }
+      return { ...prev, [productId]: next };
+    });
   };
 
   const saveUsedParts = async (productId: string) => {
@@ -1773,57 +1784,81 @@ export default function AdminProducts() {
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-200">FPS-variabler för produkten</p>
-                {!fpsByProduct[item.id] ? (
-                  <button type="button" onClick={() => void loadFps(item.id)} disabled={fpsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{fpsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
-                ) : (
-                  <div className="flex gap-2">
-                    <button type="button" onClick={() => {
-                      markProductDirty(item.id);
-                      setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), makeNewFpsEntry()] }) }));
-                    }} disabled={!canMutate} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">Lägg till</button>
-                    <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
-                  </div>
-                )}
-              </div>
-              {(fpsByProduct[item.id]?.entries || []).map((entry, index) => (
-                <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
-                  <select value={entry.game} onChange={(event) => updateFpsEntry(item.id, index, { game: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
-                    {FPS_SANDBOX_GAME_OPTIONS.map((game) => (
-                      <option key={`${item.id}-game-${game}`} value={game}>{game}</option>
-                    ))}
-                  </select>
-                  <select value={entry.resolution} onChange={(event) => updateFpsEntry(item.id, index, { resolution: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
-                    {FPS_SANDBOX_RESOLUTION_OPTIONS.map((resolution) => (
-                      <option key={`${item.id}-resolution-${resolution}`} value={resolution}>{resolution}</option>
-                    ))}
-                  </select>
-                  <input value={entry.graphics} onChange={(event) => updateFpsEntry(item.id, index, { graphics: event.target.value })} placeholder="Grafik (fri text)" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-                  <input type="number" min={0} value={entry.baseFps} onChange={(event) => updateFpsEntry(item.id, index, { baseFps: Math.max(0, Number(event.target.value) || 0) })} placeholder="Bas-FPS" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
-                  <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsDlssFsr: !entry.supportsDlssFsr, dlssFsrMode: !entry.supportsDlssFsr ? "balanced" : null })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsDlssFsr ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
-                    DLSS/FSR {entry.supportsDlssFsr ? "På" : "Av"}
-                  </button>
-                  <select
-                    value={entry.dlssFsrMode || "balanced"}
-                    disabled={!entry.supportsDlssFsr}
-                    onChange={(event) => updateFpsEntry(item.id, index, { dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] })}
-                    className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-50"
-                  >
-                    {ADMIN_DLSS_FSR_MODE_OPTIONS.map((mode) => (
-                      <option key={`${item.id}-dlss-mode-${mode}`} value={mode}>
-                        DLSS/FSR: {mode}
-                      </option>
-                    ))}
-                  </select>
-                  <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsFrameGeneration: !entry.supportsFrameGeneration })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsFrameGeneration ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
-                    Frame Gen {entry.supportsFrameGeneration ? "På" : "Av"}
-                  </button>
-                  <button type="button" onClick={() => {
-                    markProductDirty(item.id);
-                    setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: (prev[item.id]?.entries || []).filter((_, i) => i !== index) }) }));
-                  }} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm text-slate-200">FPS-variabler för produkten</p>
+                  <span className="rounded-full border border-slate-700/60 px-2 py-0.5 text-[11px] text-slate-300">
+                    {(fpsByProduct[item.id]?.entries || []).length} st
+                  </span>
                 </div>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => toggleFpsPanel(item.id)}
+                  className="inline-flex items-center gap-1 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100"
+                >
+                  {fpsExpandedByProduct[item.id] ? (
+                    <>
+                      <ChevronUp className="h-3.5 w-3.5" /> Dölj
+                    </>
+                  ) : (
+                    <>
+                      <ChevronDown className="h-3.5 w-3.5" /> Öppna
+                    </>
+                  )}
+                </button>
+              </div>
+              {fpsExpandedByProduct[item.id] ? (
+                <>
+                  {!fpsByProduct[item.id] ? (
+                    <button type="button" onClick={() => void loadFps(item.id)} disabled={fpsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{fpsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <button type="button" onClick={() => {
+                        markProductDirty(item.id);
+                        setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), makeNewFpsEntry()] }) }));
+                      }} disabled={!canMutate} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">Lägg till</button>
+                      <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
+                    </div>
+                  )}
+                  {(fpsByProduct[item.id]?.entries || []).map((entry, index) => (
+                    <div key={`${item.id}-fps-${index}`} className="grid gap-2 md:grid-cols-2 xl:grid-cols-8 items-end">
+                      <select value={entry.game} onChange={(event) => updateFpsEntry(item.id, index, { game: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
+                        {FPS_SANDBOX_GAME_OPTIONS.map((game) => (
+                          <option key={`${item.id}-game-${game}`} value={game}>{game}</option>
+                        ))}
+                      </select>
+                      <select value={entry.resolution} onChange={(event) => updateFpsEntry(item.id, index, { resolution: event.target.value })} className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100">
+                        {FPS_SANDBOX_RESOLUTION_OPTIONS.map((resolution) => (
+                          <option key={`${item.id}-resolution-${resolution}`} value={resolution}>{resolution}</option>
+                        ))}
+                      </select>
+                      <input value={entry.graphics} onChange={(event) => updateFpsEntry(item.id, index, { graphics: event.target.value })} placeholder="Grafik (fri text)" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                      <input type="number" min={0} value={entry.baseFps} onChange={(event) => updateFpsEntry(item.id, index, { baseFps: Math.max(0, Number(event.target.value) || 0) })} placeholder="Bas-FPS" className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100" />
+                      <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsDlssFsr: !entry.supportsDlssFsr, dlssFsrMode: !entry.supportsDlssFsr ? "balanced" : null })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsDlssFsr ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
+                        DLSS/FSR {entry.supportsDlssFsr ? "På" : "Av"}
+                      </button>
+                      <select
+                        value={entry.dlssFsrMode || "balanced"}
+                        disabled={!entry.supportsDlssFsr}
+                        onChange={(event) => updateFpsEntry(item.id, index, { dlssFsrMode: event.target.value as FpsSandboxEntry["dlssFsrMode"] })}
+                        className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-2 py-2 text-sm text-slate-100 disabled:opacity-50"
+                      >
+                        {ADMIN_DLSS_FSR_MODE_OPTIONS.map((mode) => (
+                          <option key={`${item.id}-dlss-mode-${mode}`} value={mode}>
+                            DLSS/FSR: {mode}
+                          </option>
+                        ))}
+                      </select>
+                      <button type="button" onClick={() => updateFpsEntry(item.id, index, { supportsFrameGeneration: !entry.supportsFrameGeneration })} className={`rounded-lg border px-2 py-2 text-sm font-semibold ${entry.supportsFrameGeneration ? "border-emerald-500/60 bg-emerald-500/15 text-emerald-200" : "border-slate-700/60 text-slate-100"}`}>
+                        Frame Gen {entry.supportsFrameGeneration ? "På" : "Av"}
+                      </button>
+                      <button type="button" onClick={() => {
+                        markProductDirty(item.id);
+                        setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: (prev[item.id]?.entries || []).filter((_, i) => i !== index) }) }));
+                      }} className="h-[38px] rounded-lg border border-red-500/40 text-red-300"><Trash2 className="h-4 w-4 mx-auto" /></button>
+                    </div>
+                  ))}
+                </>
+              ) : null}
             </div>
           </section>
               );
