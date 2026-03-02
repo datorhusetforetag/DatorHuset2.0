@@ -317,6 +317,8 @@ export default function AdminProducts() {
   const [usedDraftImageUrlInput, setUsedDraftImageUrlInput] = useState("");
   const [uploadingBaseImages, setUploadingBaseImages] = useState(false);
   const [uploadingUsedImages, setUploadingUsedImages] = useState(false);
+  const [itemImageUrlInputByProduct, setItemImageUrlInputByProduct] = useState<Record<string, string>>({});
+  const [uploadingItemImagesByProduct, setUploadingItemImagesByProduct] = useState<Record<string, boolean>>({});
   const [creating, setCreating] = useState(false);
 
   const [draftFpsEntries, setDraftFpsEntries] = useState<FpsSandboxEntry[]>([]);
@@ -626,6 +628,96 @@ export default function AdminProducts() {
     }
   };
 
+  const setItemImages = (productId: string, images: string[]) => {
+    const normalized = dedupeImageUrls(images);
+    markProductDirty(productId);
+    setItems((prev) =>
+      prev.map((item) =>
+        item.id === productId
+          ? {
+              ...item,
+              images: normalized,
+              image_url: normalized[0] || "",
+            }
+          : item
+      )
+    );
+  };
+
+  const addImageUrlToItem = (productId: string, rawUrl: string) => {
+    const normalized = sanitizeImageInputUrl(rawUrl);
+    if (!normalized) {
+      setLocalError("Bildlänk måste börja med / eller http(s)://");
+      return;
+    }
+    const item = items.find((entry) => entry.id === productId);
+    const current = Array.isArray(item?.images) ? item.images : item?.image_url ? [item.image_url] : [];
+    setItemImages(productId, [...current, normalized]);
+    setItemImageUrlInputByProduct((prev) => ({ ...prev, [productId]: "" }));
+  };
+
+  const removeItemImageAt = (productId: string, index: number) => {
+    const item = items.find((entry) => entry.id === productId);
+    const current = Array.isArray(item?.images) ? item.images : [];
+    setItemImages(
+      productId,
+      current.filter((_, imageIndex) => imageIndex !== index)
+    );
+  };
+
+  const moveItemImage = (productId: string, index: number, direction: "up" | "down") => {
+    const item = items.find((entry) => entry.id === productId);
+    const current = Array.isArray(item?.images) ? [...item.images] : [];
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    if (swapIndex < 0 || swapIndex >= current.length) return;
+    const tmp = current[index];
+    current[index] = current[swapIndex];
+    current[swapIndex] = tmp;
+    setItemImages(productId, current);
+  };
+
+  const uploadItemImages = async (item: CatalogItem, files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte ladda upp bilder.");
+      return;
+    }
+    setLocalError("");
+    setUploadingItemImagesByProduct((prev) => ({ ...prev, [item.id]: true }));
+    try {
+      const uploadedUrls: string[] = [];
+      const variant = item.variant_role === "used" ? "used" : "base";
+      const listingSlugHint = item.slug || item.name || item.id;
+      for (const file of Array.from(files)) {
+        const base64 = await fileToBase64(file);
+        const response = await fetch(`${apiBase}/api/admin/v2/uploads/product-image`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            file_name: file.name,
+            mime_type: file.type || "image/jpeg",
+            data_base64: base64,
+            listing_slug: listingSlugHint,
+            variant,
+          }),
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+          throw new Error(resolveApiErrorMessage(data, "Kunde inte ladda upp bild."));
+        }
+        const url = sanitizeImageInputUrl(String(data?.data?.url || ""));
+        if (url) uploadedUrls.push(url);
+      }
+      const current = Array.isArray(item.images) ? item.images : item.image_url ? [item.image_url] : [];
+      setItemImages(item.id, [...current, ...uploadedUrls]);
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte ladda upp bild.");
+    } finally {
+      setUploadingItemImagesByProduct((prev) => ({ ...prev, [item.id]: false }));
+    }
+  };
+
   const saveItem = async (item: CatalogItem) => {
     if (!token || !isAdmin) return;
     if (!canMutate) {
@@ -650,6 +742,8 @@ export default function AdminProducts() {
         slug: toTextValue(item.slug),
         legacy_id: toTextValue(item.legacy_id),
         description: toTextValue(item.description),
+        image_url: toTextValue(item.image_url),
+        images: dedupeImageUrls(Array.isArray(item.images) ? item.images : []),
         price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
         currency: "SEK",
         cpu: toTextValue(item.cpu),
@@ -805,6 +899,8 @@ export default function AdminProducts() {
         slug: toTextValue(item?.slug),
         legacy_id: toTextValue(item?.legacy_id),
         description: toTextValue(item?.description),
+        image_url: toTextValue(item?.image_url),
+        images: dedupeImageUrls(Array.isArray(item?.images) ? item?.images : []),
         price_cents: Math.max(0, Math.round(Number(item?.price_cents || 0))),
         currency: "SEK",
         cpu: toTextValue(item?.cpu),
@@ -1585,6 +1681,64 @@ export default function AdminProducts() {
               Beskrivning
               <textarea value={item.description || ""} onChange={(event) => setItem(item.id, "description", event.target.value)} rows={2} className="mt-1 w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100" />
             </label>
+
+            <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-3">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-sm text-slate-200">Bilder för produkten (bild 1 = thumbnail på produktsidan)</p>
+                <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100">
+                  <Upload className="h-3.5 w-3.5" />
+                  {uploadingItemImagesByProduct[item.id] ? "Laddar upp..." : "Ladda upp"}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    className="hidden"
+                    disabled={uploadingItemImagesByProduct[item.id] || !canMutate}
+                    onChange={(event) => {
+                      void uploadItemImages(item, event.target.files);
+                      event.currentTarget.value = "";
+                    }}
+                  />
+                </label>
+              </div>
+
+              <div className="flex gap-2">
+                <input
+                  value={itemImageUrlInputByProduct[item.id] || ""}
+                  onChange={(event) =>
+                    setItemImageUrlInputByProduct((prev) => ({ ...prev, [item.id]: event.target.value }))
+                  }
+                  placeholder="Bild-URL eller /sökväg"
+                  className="w-full rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+                />
+                <button
+                  type="button"
+                  onClick={() => addImageUrlToItem(item.id, itemImageUrlInputByProduct[item.id] || "")}
+                  className="rounded-lg border border-slate-700/60 px-3 py-2 text-xs text-slate-100"
+                >
+                  Lägg till
+                </button>
+              </div>
+
+              {(Array.isArray(item.images) ? item.images : []).length > 0 ? (
+                <div className="space-y-2">
+                  {(item.images || []).map((image, index) => (
+                    <div key={`${item.id}-image-${image}-${index}`} className="flex items-center gap-2 rounded-lg border border-slate-800 bg-slate-950/70 px-2 py-2">
+                      <img src={image} alt={`Produktbild ${index + 1}`} className="h-10 w-16 rounded object-cover" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs text-slate-200">{image}</p>
+                        <p className="text-[11px] text-slate-400">{index === 0 ? "Primär bild / thumbnail" : `Bild ${index + 1}`}</p>
+                      </div>
+                      <button type="button" onClick={() => moveItemImage(item.id, index, "up")} disabled={index === 0} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Upp</button>
+                      <button type="button" onClick={() => moveItemImage(item.id, index, "down")} disabled={index === (item.images || []).length - 1} className="rounded border border-slate-700/60 px-2 py-1 text-[11px] text-slate-200 disabled:opacity-40">Ner</button>
+                      <button type="button" onClick={() => removeItemImageAt(item.id, index)} className="rounded border border-red-500/40 px-2 py-1 text-[11px] text-red-300">Ta bort</button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500">Ingen bild uppladdad ännu.</p>
+              )}
+            </div>
 
             <div className="rounded-xl border border-slate-800 bg-slate-950/50 p-3 space-y-2">
               <div className="flex items-center justify-between">

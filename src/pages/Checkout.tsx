@@ -161,7 +161,7 @@ export default function Checkout() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-                  <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5">
+                  <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5 dark:border-yellow-600/40 dark:bg-[#1a2533]">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Logga in för att slutföra köpet</h2>
                     <p className="text-sm text-gray-700 dark:text-gray-200 mb-4">
                       Du kan lägga produkter i kundvagnen utan konto. För att gå vidare till betalning behöver du logga in.

@@ -739,12 +739,21 @@ const LEGACY_BLOCKED_IMAGE_TOKENS = [
   "placeholder",
   "horizon3_",
   "horizon_pro_",
+  "horizon",
   "navbase_",
   "navpro_",
+  "navpro",
+  "navbase",
   "traveler_",
+  "traveler",
   "voyager_",
+  "voyager",
   "voy_red_",
   "voyelite_",
+  "voy_red",
+  "voyelite",
+  "colorswap",
+  "nogeforce",
 ];
 
 const normalizeImagePathKey = (value) => {
