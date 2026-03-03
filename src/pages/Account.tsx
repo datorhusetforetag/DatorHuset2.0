@@ -59,7 +59,6 @@ export default function Account() {
     full_name: "",
     phone: "",
     address_line1: "",
-    address_line2: "",
     postal_code: "",
     city: "",
     is_default: false,
@@ -259,7 +258,7 @@ export default function Account() {
         full_name: addressForm.full_name,
         phone: normalizedPhone || null,
         address_line1: addressForm.address_line1,
-        address_line2: addressForm.address_line2 || null,
+        address_line2: null,
         postal_code: addressForm.postal_code,
         city: addressForm.city,
         country: "SE",
@@ -275,7 +274,6 @@ export default function Account() {
         full_name: "",
         phone: "",
         address_line1: "",
-        address_line2: "",
         postal_code: "",
         city: "",
         is_default: false,
@@ -356,8 +354,8 @@ export default function Account() {
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-[1.05fr_1.4fr]">
-          <div className="flex flex-col gap-6 h-full lg:justify-between">
+        <div className="grid items-start gap-8 lg:grid-cols-2">
+          <div className="flex flex-col gap-6">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <User className="w-5 h-5 text-[#11667b]" />
@@ -478,57 +476,6 @@ export default function Account() {
               </Link>
             </div>
 
-            <div className="rounded-2xl border border-red-200 dark:border-red-900 bg-white dark:bg-gray-900 p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <Trash2 className="w-5 h-5 text-red-500" />
-                <h2 className="text-xl font-semibold">Radera konto</h2>
-              </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
-                Detta tar bort ditt konto och din tillgång till tjänsten. Du får en verifieringskod via e-post innan radering.
-              </p>
-              <div className="mt-4 grid gap-3">
-                <input
-                  type="password"
-                  value={deletePassword}
-                  onChange={(event) => setDeletePassword(event.target.value)}
-                  placeholder="Ange ditt lösenord"
-                  className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
-                />
-                <button
-                  type="button"
-                  onClick={handleSendDeleteCode}
-                  disabled={deleteStatus === "sending"}
-                  className="inline-flex items-center justify-center rounded-lg border border-red-400 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950 disabled:opacity-60"
-                >
-                  {deleteStatus === "sending" ? "Skickar kod..." : "Skicka verifieringskod"}
-                </button>
-                {deleteCodeRequested && (
-                  <>
-                    <input
-                      type="text"
-                      value={deleteCode}
-                      onChange={(event) => setDeleteCode(event.target.value)}
-                      placeholder="Verifieringskod från e-post"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleConfirmDelete}
-                      disabled={deleteStatus === "deleting" || deleteStatus === "sending"}
-                      className="inline-flex items-center justify-center rounded-lg bg-red-500 text-white px-4 py-2 text-xs font-semibold hover:bg-red-600 disabled:opacity-60"
-                    >
-                      {deleteStatus === "deleting" ? "Raderar..." : "Radera konto"}
-                    </button>
-                  </>
-                )}
-                {deleteMessage && (
-                  <p className="text-xs text-emerald-600">{deleteMessage}</p>
-                )}
-                {deleteError && (
-                  <p className="text-xs text-red-500">{deleteError}</p>
-                )}
-              </div>
-            </div>
           </div>
 
           <div className="space-y-6">
@@ -548,7 +495,6 @@ export default function Account() {
                     {defaultAddress.full_name || profileName}
                   </p>
                   <p>{defaultAddress.address_line1}</p>
-                  {defaultAddress.address_line2 && <p>{defaultAddress.address_line2}</p>}
                   <p>{defaultAddress.postal_code} {defaultAddress.city}</p>
                   <p>{defaultAddress.country || "SE"}</p>
                 </div>
@@ -580,9 +526,7 @@ export default function Account() {
                         )}
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-300">{address.full_name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">
-                        {address.address_line1}{address.address_line2 ? `, ${address.address_line2}` : ""}
-                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-300">{address.address_line1}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-300">{address.postal_code} {address.city}</p>
                       <div className="flex flex-wrap gap-3 text-sm font-semibold text-[#11667b]">
                         {!address.is_default && (
@@ -649,13 +593,6 @@ export default function Account() {
 
                   <input
                     type="text"
-                    placeholder="Adressrad 2 (valfritt)"
-                    value={addressForm.address_line2}
-                    onChange={(event) => setAddressForm((prev) => ({ ...prev, address_line2: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
-                  />
-                  <input
-                    type="text"
                     placeholder="Postnummer"
                     value={addressForm.postal_code}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, postal_code: event.target.value }))}
@@ -693,6 +630,58 @@ export default function Account() {
                   {savingAddress ? "Sparar..." : "Spara adress"}
                 </button>
               </form>
+            </div>
+
+            <div className="rounded-2xl border border-red-200 dark:border-red-900 bg-white dark:bg-gray-900 p-6">
+              <div className="flex items-center gap-3 mb-3">
+                <Trash2 className="w-5 h-5 text-red-500" />
+                <h2 className="text-xl font-semibold">Radera konto</h2>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Detta tar bort ditt konto och din tillgång till tjänsten. Du får en verifieringskod via e-post innan radering.
+              </p>
+              <div className="mt-4 grid gap-3">
+                <input
+                  type="password"
+                  value={deletePassword}
+                  onChange={(event) => setDeletePassword(event.target.value)}
+                  placeholder="Ange ditt lösenord"
+                  className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={handleSendDeleteCode}
+                  disabled={deleteStatus === "sending"}
+                  className="inline-flex items-center justify-center rounded-lg border border-red-400 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950 disabled:opacity-60"
+                >
+                  {deleteStatus === "sending" ? "Skickar kod..." : "Skicka verifieringskod"}
+                </button>
+                {deleteCodeRequested && (
+                  <>
+                    <input
+                      type="text"
+                      value={deleteCode}
+                      onChange={(event) => setDeleteCode(event.target.value)}
+                      placeholder="Verifieringskod från e-post"
+                      className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleConfirmDelete}
+                      disabled={deleteStatus === "deleting" || deleteStatus === "sending"}
+                      className="inline-flex items-center justify-center rounded-lg bg-red-500 text-white px-4 py-2 text-xs font-semibold hover:bg-red-600 disabled:opacity-60"
+                    >
+                      {deleteStatus === "deleting" ? "Raderar..." : "Radera konto"}
+                    </button>
+                  </>
+                )}
+                {deleteMessage && (
+                  <p className="text-xs text-emerald-600">{deleteMessage}</p>
+                )}
+                {deleteError && (
+                  <p className="text-xs text-red-500">{deleteError}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>

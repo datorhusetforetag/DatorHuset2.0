@@ -219,10 +219,10 @@ export default function Products() {
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [showUsedOnly, setShowUsedOnly] = useState(false);
+  const [showInStockOnly, setShowInStockOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [showAllGpus, setShowAllGpus] = useState(false);
   const [showAllCpus, setShowAllCpus] = useState(false);
-  const [showAllTiers, setShowAllTiers] = useState(false);
   const [usedVariantEnabledMap, setUsedVariantEnabledMap] = useState<Record<string, boolean>>({});
   const [usedPartsByProductId, setUsedPartsByProductId] = useState<Record<string, UsedPartsSettings>>({});
   const [usedPartsConfiguredByProductId, setUsedPartsConfiguredByProductId] = useState<Record<string, boolean>>({});
@@ -532,6 +532,7 @@ export default function Products() {
       setSelectedCPUs([]);
       setSelectedTiers([]);
       setShowUsedOnly(false);
+      setShowInStockOnly(false);
       return;
     }
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
@@ -543,6 +544,7 @@ export default function Products() {
         selectedCPUs?: string[];
         selectedTiers?: string[];
         showUsedOnly?: boolean;
+        showInStockOnly?: boolean;
       };
       if (Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) {
         setPriceRange(normalizePriceRange(parsed.priceRange));
@@ -562,6 +564,9 @@ export default function Products() {
       if (typeof parsed.showUsedOnly === "boolean") {
         setShowUsedOnly(parsed.showUsedOnly);
       }
+      if (typeof parsed.showInStockOnly === "boolean") {
+        setShowInStockOnly(parsed.showInStockOnly);
+      }
     } catch (error) {
       console.warn("Failed to read saved filters", error);
     }
@@ -578,6 +583,7 @@ export default function Products() {
       setSelectedCPUs([]);
       setSelectedTiers([]);
       setShowUsedOnly(false);
+      setShowInStockOnly(false);
     }
     hasAppliedCategory.current = true;
   }, [activeCategory]);
@@ -608,9 +614,10 @@ export default function Products() {
       selectedCPUs,
       selectedTiers,
       showUsedOnly,
+      showInStockOnly,
     };
     localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(payload));
-  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers, showUsedOnly]);
+  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers, showUsedOnly, showInStockOnly]);
 
   const preset = searchParams.get("preset")?.toLowerCase() || "";
   useEffect(() => {
@@ -619,6 +626,7 @@ export default function Products() {
     setSelectedCPUs([]);
     setSelectedTiers([]);
     setShowUsedOnly(false);
+    setShowInStockOnly(false);
     setPriceRange(DEFAULT_PRICE_RANGE);
   }, [preset]);
   const filterComputers = useMemo(() => {
@@ -736,13 +744,10 @@ export default function Products() {
   );
   const visibleGpus = gpuOptions.slice(0, filterPreviewCount);
   const visibleCpus = cpuOptions.slice(0, filterPreviewCount);
-  const visibleTiers = tierOptions.slice(0, filterPreviewCount);
   const extraGpus = gpuOptions.slice(filterPreviewCount);
   const extraCpus = cpuOptions.slice(filterPreviewCount);
-  const extraTiers = tierOptions.slice(filterPreviewCount);
   const hasMoreGpus = gpuOptions.length > filterPreviewCount;
   const hasMoreCpus = cpuOptions.length > filterPreviewCount;
-  const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
     return displayCards.filter((card) => {
@@ -775,8 +780,17 @@ export default function Products() {
       const tierMatch =
         selectedTiers.length === 0 ||
         selectedTiers.some((label) => tierLabelMap.get(label)?.includes(variant.tier));
+      const supabaseKey =
+        card.useUsedVariant && card.computer.usedVariant?.productKey
+          ? card.computer.usedVariant.productKey
+          : card.computer.name;
+      const supabaseId =
+        productIdByName.get(normalizeProductKey(supabaseKey)) ||
+        productIdByName.get(normalizeProductKey(card.computer.id));
+      const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
+      const inStockMatch = !showInStockOnly || Boolean(inventory && (inventory.quantity_in_stock ?? 0) > 0);
 
-      return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
+      return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch && inStockMatch;
     });
   }, [
     activeCategory,
@@ -788,6 +802,9 @@ export default function Products() {
     cpuLabelMap,
     tierLabelMap,
     displayCards,
+    inventoryMap,
+    productIdByName,
+    showInStockOnly,
   ]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
@@ -804,6 +821,7 @@ export default function Products() {
     setSelectedCPUs([]);
     setSelectedTiers([]);
     setShowUsedOnly(false);
+    setShowInStockOnly(false);
   };
 
   const categoryLabel = (() => {
@@ -818,6 +836,9 @@ export default function Products() {
   if (categoryLabel) activeFilters.push(categoryLabel);
   if (showUsedOnly) {
     activeFilters.push("Begagnade datorer");
+  }
+  if (showInStockOnly) {
+    activeFilters.push("Endast i lager");
   }
   if (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1]) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
@@ -958,6 +979,15 @@ export default function Products() {
                 <label className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
                   <input
                     type="checkbox"
+                    checked={showInStockOnly}
+                    onChange={() => setShowInStockOnly((prev) => !prev)}
+                    className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                  />
+                  <span>Se varor i lager</span>
+                </label>
+                <label className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+                  <input
+                    type="checkbox"
                     checked={showUsedOnly}
                     onChange={() => setShowUsedOnly((prev) => !prev)}
                     className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
@@ -1094,62 +1124,22 @@ export default function Products() {
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
-                <div
-                  className={`transition-all duration-300 ${
-                    showAllTiers
-                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
-                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    {visibleTiers.map((option) => (
-                      <label
-                        key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedTiers.includes(option.label)}
-                          onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                        />
-                        <span className="capitalize">{option.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      showAllTiers ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
-                    }`}
-                  >
-                    <div className="mt-3 space-y-3">
-                      {extraTiers.map((option) => (
-                        <label
-                          key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedTiers.includes(option.label)}
-                            onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                          />
-                          <span className="capitalize">{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                <div className="space-y-3">
+                  {tierOptions.map((option) => (
+                    <label
+                      key={option.label}
+                      className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedTiers.includes(option.label)}
+                        onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                        className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                      />
+                      <span className="capitalize">{option.label}</span>
+                    </label>
+                  ))}
                 </div>
-                {hasMoreTiers && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllTiers((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
-                  >
-                    {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </button>
-                )}
               </div>
 
               <button

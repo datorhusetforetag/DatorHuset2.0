@@ -23,7 +23,7 @@ export const AdminLayout = () => {
   return (
     <div className="min-h-screen bg-[#0f1824] text-slate-100">
       <header className="sticky top-0 z-40 border-b border-slate-800 bg-[#0f1824]/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-4 py-3 lg:px-6">
+        <div className="mx-auto flex w-full max-w-[1800px] items-center justify-between px-4 py-3 lg:px-6">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -69,7 +69,7 @@ export const AdminLayout = () => {
         </div>
       </header>
 
-      <div className="mx-auto flex w-full max-w-6xl gap-6 px-4 py-6 lg:px-6">
+      <div className="mx-auto flex w-full max-w-[1800px] gap-6 px-4 py-6 lg:px-6">
         <aside className="hidden w-64 flex-shrink-0 lg:block">
           <nav className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 shadow-lg">
             <p className="mb-3 text-xs uppercase tracking-[0.3em] text-slate-500">Administration</p>

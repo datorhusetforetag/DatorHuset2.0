@@ -10,12 +10,12 @@ const steps = [
   {
     title: "2. Vi bygger och packar din dator",
     description:
-      "Vi köper komponenterna och bygger datorn. Byggtiden varierar mellan 3-12 dagar beroende på om det är en färdigbyggd eller custom dator.",
+      "Vi köper komponenterna och bygger datorn. Byggtiden varierar från 3 dagar till några veckor beroende på om du beställer en helt ny dator, en dator med begagnade komponenter eller en custom-bygg. Se FAQ för mer information.",
     icon: <Package className="w-14 h-14 text-yellow-400 dark:text-yellow-300" />,
   },
   {
     title: "3. Leverans/hämta upp",
-    description: "Datorn är byggd och klar. Hämta upp den eller vi fixar frakt via Blocket!.",
+    description: "Datorn är byggd och klar. Hämta upp den eller välj fraktalternativ.",
     icon: (
       <div className="flex items-center gap-3">
         <RefreshCcw className="w-10 h-10 text-yellow-400 dark:text-yellow-300" />
@@ -67,4 +67,3 @@ export const StepsSection = () => {
     </section>
   );
 };
-

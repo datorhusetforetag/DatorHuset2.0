@@ -1682,11 +1682,12 @@ export default function AdminProducts() {
                 Samma datorgrupp: basvariant + begagnad variant
               </div>
             ) : null}
-            {group.items.map((item) => {
-              const variantRole = getItemVariantRole(item);
-              const itemImages = Array.isArray(item.images) ? item.images : [];
-              const isImagePanelOpen = Boolean(imagesExpandedByProduct[item.id]);
-              return (
+            <div className={group.items.length > 1 ? "grid gap-4 xl:grid-cols-2" : "grid gap-4"}>
+              {group.items.map((item) => {
+                const variantRole = getItemVariantRole(item);
+                const itemImages = Array.isArray(item.images) ? item.images : [];
+                const isImagePanelOpen = Boolean(imagesExpandedByProduct[item.id]);
+                return (
           <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 md:p-5 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
               <div className="min-w-0">
@@ -2042,8 +2043,9 @@ export default function AdminProducts() {
               ) : null}
             </div>
           </section>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         ))}
       </div>

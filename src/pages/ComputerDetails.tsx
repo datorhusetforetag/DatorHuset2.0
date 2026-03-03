@@ -1006,8 +1006,8 @@ export default function ComputerDetails() {
             </div>
 
             <div className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
-              <p>Beräknad leverans: 3-5 arbetsdagar</p>
-              <p>Fri frakt vid köp över 5000 kr</p>
+              <p>Beräknad leverans: 1-2 arbetsdagar</p>
+              <p>Byggtid: i lager 1-2 dagar, förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade delar) 1-2 veckor.</p>
             </div>
           </div>
         </div>
@@ -1075,11 +1075,11 @@ export default function ComputerDetails() {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
           <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">2 års garanti</p>
-              <p>Alla datorer levereras med garanti på komponenter och montering.</p>
+              <p className="font-semibold text-gray-900 dark:text-white">3 års reklamationsrätt</p>
+              <p>Du har rätt att reklamera och skicka tillbaka varan om ett ursprungligt fel upptäcks.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp</p>
+              <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp vid frakt!</p>
               <p>Testa i lugn och ro. Returnera om den inte passar dina behov.</p>
             </div>
             <div className="space-y-2">

@@ -736,6 +736,11 @@ export default function Checkout() {
                       .
                     </span>
                   </label>
+                  {requiresShipping && (
+                    <p className="rounded-lg border border-yellow-300/70 bg-yellow-50 px-3 py-2 text-xs text-gray-700 dark:border-yellow-700/50 dark:bg-yellow-900/20 dark:text-yellow-100">
+                      Vid frakt demonterar vi grafikkortet för säker transport. Du får en videoguide för montering när varan levereras. Vid frågor är du välkommen att mejla oss.
+                    </p>
+                  )}
                 </div>
 
                 <button

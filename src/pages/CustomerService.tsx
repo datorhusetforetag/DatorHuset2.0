@@ -95,8 +95,8 @@ export default function CustomerService() {
             </div>
             <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
               <h2 className="text-lg font-semibold">Öppettider</h2>
-              <p>Svarstider: 11:00 - 15:00</p>
-              <p>Vi svarar på mail under vardagar.</p>
+              <p>Svarstider på mejl: 11:00 - 03:00</p>
+              <p>Vi svarar på mejl både under vardagar och helger.</p>
             </div>
           </div>
 

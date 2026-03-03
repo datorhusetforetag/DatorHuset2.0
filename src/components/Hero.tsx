@@ -1,16 +1,16 @@
-import { ChevronLeft, ChevronRight, Hammer, HelpCircle, Monitor, Package, Rocket, Wallet } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Hammer, Monitor, Package, Rocket, Wallet } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useMemo, useRef } from "react";
 import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
+import { resolveProductImage } from "@/lib/productImageResolver";
 import { buildUtmContent, withUtm } from "@/lib/utm";
 import winMouseImage from "../../images/WinMouse.png";
 
-const FALLBACK_IMAGE = "/products/newpc/chieftecvisio-1.jpg";
+const FALLBACK_IMAGE = "/Datorhuset.png";
 
 const categories = [
-  { name: "Hjälp mig välja", icon: HelpCircle, kind: "quiz" as const },
   { name: "Alla produkter", icon: Monitor, href: "/products?clear_filters=1" },
   { name: "Paket", icon: Package, href: "/products?category=paket&clear_filters=1" },
   { name: "Budgetvänlig", icon: Wallet, href: "/products?preset=budget" },
@@ -20,9 +20,6 @@ const categories = [
 
 export const Hero = () => {
   const carouselRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const [showQuiz, setShowQuiz] = useState(false);
-  const [budgetChoice, setBudgetChoice] = useState("starter");
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
   const featuredComputers = useMemo(
@@ -44,6 +41,7 @@ export const Hero = () => {
           },
           product,
         );
+        const image = resolveProductImage(product, computer.image) || FALLBACK_IMAGE;
         return {
           ...computer,
           name: merged.name,
@@ -54,6 +52,7 @@ export const Hero = () => {
           storage: merged.storage,
           storagetype: merged.storagetype,
           tier: merged.tier,
+          image,
         };
       }),
     [productLookup],
@@ -73,13 +72,13 @@ export const Hero = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[230px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Företagsdeal</h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Veckansbygg!</h2>
               <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">{"Elektronik för företag"} <ChevronRight className="inline w-5 h-5" /></p>
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-28 sm:h-36 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
-              <div className="relative z-10">
-                <p className="text-sm text-gray-700 dark:text-gray-200 font-semibold">Spara upp till 20%</p>
-                <p className="text-xs text-gray-600 dark:text-gray-300">{"På utvalda gamingdatorer hela veckan"}</p>
+              <div className="relative z-10 pr-3">
+                <p className="text-sm uppercase tracking-[0.18em] text-gray-600 dark:text-gray-300">Nyhet</p>
+                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">Platina Frostbyte är nu i lager!</p>
               </div>
               <img
                 src="/images/foretagsdeal.webp"
@@ -97,7 +96,7 @@ export const Hero = () => {
                 Veckans Deal - Få en gåva vid köpet!
               </h2>
               <p className="text-white text-sm mb-4">{"Få en exklusiv gåva när du handlar hos oss."}</p>
-              <p className="text-yellow-400 text-sm font-semibold">{"Musmatta, tangentbord eller en mus!"}</p>
+              <p className="text-yellow-400 text-sm font-semibold">{"Musmatta, tangentbord, mus eller uppgraderade komponenter!"}</p>
             </div>
             <div className="flex gap-2 relative z-10">
               <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">Gåva vid köp</span>
@@ -115,111 +114,23 @@ export const Hero = () => {
         {/* Popular categories section */}
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Populära kategorier"}</h3>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {categories.map((category) =>
-              category.kind === "quiz" ? (
-                <button
-                  key={category.name}
-                  type="button"
-                  onClick={() => setShowQuiz((prev) => !prev)}
-                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
-                >
-                  <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
-                </button>
-              ) : (
-                <Link
-                  key={category.name}
-                  to={withUtm(category.href, {
-                    utm_source: "homepage",
-                    utm_medium: "category_card",
-                    utm_campaign: "populara_kategorier",
-                    utm_content: buildUtmContent(category.name),
-                  })}
-                  className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
-                >
-                  <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
-                  <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
-                </Link>
-              )
-            )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {categories.map((category) => (
+              <Link
+                key={category.name}
+                to={withUtm(category.href, {
+                  utm_source: "homepage",
+                  utm_medium: "category_card",
+                  utm_campaign: "populara_kategorier",
+                  utm_content: buildUtmContent(category.name),
+                })}
+                className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
+              >
+                <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
+                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
+              </Link>
+            ))}
           </div>
-          {showQuiz && (
-            <div className="mt-6 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 p-4 sm:p-6 shadow-sm">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                <div>
-                  <h4 className="text-lg font-bold text-gray-900 dark:text-gray-100">{"Hjälp mig välja"}</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {"Besvara två frågor så föreslår vi rätt kategori direkt."}
-                  </p>
-                </div>
-                <button type="button" onClick={() => setShowQuiz(false)} className="text-sm font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">{"Stäng"}</button>
-              </div>
-              <div className="mt-4 grid gap-4 md:grid-cols-1">
-                <div className="space-y-2">
-                  <label className="text-sm font-semibold text-gray-900 dark:text-gray-100" htmlFor="quiz-budget">
-                    Budget
-                  </label>
-                  <select
-                    id="quiz-budget"
-                    value={budgetChoice}
-                    onChange={(e) => setBudgetChoice(e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
-                  >
-                    <option value="starter">7 500 - 12 500 kr</option>
-                    <option value="mid">13 500 - 21 000 kr</option>
-                    <option value="high">24 000 - 40 000 kr</option>
-                  </select>
-                </div>
-              </div>
-              <div className="mt-5 flex flex-col sm:flex-row gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    const budgetRanges: Record<string, [number, number]> = {
-                      starter: [7500, 12500],
-                      mid: [13500, 21000],
-                      high: [24000, 40000],
-                    };
-                    const [minPrice, maxPrice] = budgetRanges[budgetChoice] || budgetRanges.starter;
-                    const params = new URLSearchParams({
-                      price_min: String(minPrice),
-                      price_max: String(maxPrice),
-                    });
-                    const recommendation = params.toString();
-                    navigate(
-                      withUtm(`/products?${recommendation}`, {
-                        utm_source: "homepage",
-                        utm_medium: "quiz",
-                        utm_campaign: "help_me_choose",
-                        utm_content: budgetChoice,
-                      })
-                    );
-                    setShowQuiz(false);
-                  }}
-                  className="bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
-                >
-                  Visa rekommenderade datorer
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    navigate(
-                      withUtm("/products?clear_filters=1", {
-                        utm_source: "homepage",
-                        utm_medium: "quiz",
-                        utm_campaign: "help_me_choose",
-                        utm_content: "alla-produkter",
-                      })
-                    )
-                  }
-                  className="border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 font-semibold px-6 py-3 rounded-lg hover:border-[#11667b] hover:text-[#11667b] transition-colors"
-                >
-                  Se alla produkter
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Featured Products Section */}
