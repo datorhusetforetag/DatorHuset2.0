@@ -44,6 +44,14 @@ const distPath = path.join(__dirname, "dist");
 const PRODUCT_IMAGE_BUCKET = String(process.env.SUPABASE_PRODUCT_IMAGES_BUCKET || "product-images").trim() || "product-images";
 const MAX_UPLOAD_IMAGE_BYTES = Math.max(200_000, Number(process.env.MAX_UPLOAD_IMAGE_BYTES || 8 * 1024 * 1024));
 const JSON_BODY_LIMIT = process.env.JSON_BODY_LIMIT || "15mb";
+const PRISJAKT_API_BASE_URL = String(process.env.PRISJAKT_API_BASE_URL || "https://api.pj.nu").replace(/\/+$/, "");
+const PRISJAKT_AUTH_URL = String(process.env.PRISJAKT_AUTH_URL || "https://auth.pj.nu/oauth2/token").trim();
+const PRISJAKT_MARKET = String(process.env.PRISJAKT_MARKET || "se").trim().toLowerCase();
+const PRISJAKT_REF = String(process.env.PRISJAKT_REF || "").trim();
+const PRISJAKT_CLIENT_ID = String(process.env.PRISJAKT_CLIENT_ID || "").trim();
+const PRISJAKT_CLIENT_SECRET = String(process.env.PRISJAKT_CLIENT_SECRET || "").trim();
+const PRISJAKT_SCOPE = String(process.env.PRISJAKT_SCOPE || "").trim();
+const PRISJAKT_REQUEST_TIMEOUT_MS = Math.max(2000, Number(process.env.PRISJAKT_REQUEST_TIMEOUT_MS || 12000));
 
 const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
 const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
@@ -156,6 +164,10 @@ const logStructured = (level, event, payload = {}) => {
 
 const API_CACHE_TTL_MS = Math.max(5_000, Number(process.env.API_CACHE_TTL_MS || 30_000));
 const responseCache = new Map();
+let prisjaktTokenCache = {
+  token: "",
+  expiresAt: 0,
+};
 
 const getCached = (key) => {
   const cached = responseCache.get(key);
@@ -682,6 +694,233 @@ const supportMailer = SUPPORT_EMAIL_ENABLED
 const sanitizeText = (value, maxLength = 120) => {
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
+};
+
+const hasPrisjaktCredentials = () =>
+  Boolean(PRISJAKT_CLIENT_ID && PRISJAKT_CLIENT_SECRET && PRISJAKT_REF);
+
+const parseMoneyValue = (...candidates) => {
+  for (const candidate of candidates) {
+    if (typeof candidate === "number" && Number.isFinite(candidate)) return candidate;
+    if (typeof candidate === "string") {
+      const normalized = candidate
+        .replace(/\s+/g, "")
+        .replace(",", ".")
+        .replace(/[^0-9.-]/g, "");
+      const parsed = Number(normalized);
+      if (Number.isFinite(parsed)) return parsed;
+    }
+  }
+  return null;
+};
+
+const firstText = (...candidates) => {
+  for (const candidate of candidates) {
+    if (typeof candidate === "string") {
+      const clean = sanitizeText(candidate, 240);
+      if (clean) return clean;
+    }
+  }
+  return "";
+};
+
+const firstArray = (...candidates) => {
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate)) return candidate;
+  }
+  return [];
+};
+
+const normalizePrisjaktOfferList = (source) => {
+  const rawOffers = firstArray(
+    source?.offers,
+    source?.shopOffers,
+    source?.storeOffers,
+    source?.prices,
+    source?.merchants,
+    source?.retailers
+  );
+  const deduped = new Map();
+
+  rawOffers.forEach((offer) => {
+    const store = firstText(
+      offer?.store?.name,
+      offer?.shop?.name,
+      offer?.merchant?.name,
+      offer?.retailer?.name,
+      offer?.storeName,
+      offer?.shopName,
+      offer?.seller
+    );
+    const basePrice = parseMoneyValue(
+      offer?.price?.value,
+      offer?.price?.amount,
+      offer?.price?.incVat,
+      offer?.price?.excludingShipping,
+      offer?.price,
+      offer?.amount,
+      offer?.value
+    );
+    if (!store || basePrice === null) return;
+    const shippingPrice = parseMoneyValue(
+      offer?.shipping?.value,
+      offer?.shipping?.amount,
+      offer?.shippingPrice,
+      offer?.freight
+    );
+    const totalPrice = parseMoneyValue(
+      offer?.price?.includingShipping,
+      offer?.price?.incShipping,
+      offer?.priceIncludingShipping
+    );
+    const priceWithShipping =
+      totalPrice !== null ? totalPrice : shippingPrice !== null ? basePrice + shippingPrice : null;
+    const currency = firstText(
+      offer?.price?.currency,
+      offer?.currency,
+      source?.price?.currency
+    ) || "SEK";
+    const productUrl = firstText(
+      offer?.url,
+      offer?.trackingUrl,
+      offer?.offerUrl,
+      offer?.deepLink
+    );
+    const availability = firstText(
+      offer?.availability,
+      offer?.stock?.status,
+      offer?.stockStatus
+    );
+    const key = `${store.toLowerCase()}::${Math.round(basePrice * 100)}::${productUrl.toLowerCase()}`;
+    if (deduped.has(key)) return;
+    deduped.set(key, {
+      store,
+      price: Math.max(0, Math.round(basePrice)),
+      currency,
+      shipping_price: shippingPrice !== null ? Math.max(0, Math.round(shippingPrice)) : null,
+      total_price: priceWithShipping !== null ? Math.max(0, Math.round(priceWithShipping)) : null,
+      product_url: productUrl || null,
+      availability: availability || null,
+    });
+  });
+
+  return Array.from(deduped.values()).sort((a, b) => {
+    const aRank = a.total_price ?? a.price;
+    const bRank = b.total_price ?? b.price;
+    return aRank - bRank;
+  });
+};
+
+const normalizePrisjaktSuggestionProducts = (payload) => {
+  const rawList = firstArray(
+    payload?.products,
+    payload?.items,
+    payload?.results,
+    payload?.hits,
+    payload?.data,
+    payload
+  );
+  const deduped = new Map();
+  rawList.forEach((entry) => {
+    const productId = firstText(
+      String(entry?.productId || ""),
+      String(entry?.id || ""),
+      String(entry?.product?.id || "")
+    );
+    if (!productId) return;
+    if (deduped.has(productId)) return;
+    const title = firstText(
+      entry?.name,
+      entry?.title,
+      entry?.productName,
+      entry?.product?.name
+    ) || productId;
+    deduped.set(productId, {
+      product_id: productId,
+      title,
+      offers: normalizePrisjaktOfferList(entry),
+    });
+  });
+  return Array.from(deduped.values());
+};
+
+const getPrisjaktAccessToken = async (forceRefresh = false) => {
+  const now = Date.now();
+  if (!forceRefresh && prisjaktTokenCache.token && prisjaktTokenCache.expiresAt > now + 10_000) {
+    return prisjaktTokenCache.token;
+  }
+  if (!hasPrisjaktCredentials()) {
+    throw new Error("PRISJAKT_NOT_CONFIGURED");
+  }
+
+  const body = new URLSearchParams();
+  body.set("grant_type", "client_credentials");
+  body.set("client_id", PRISJAKT_CLIENT_ID);
+  body.set("client_secret", PRISJAKT_CLIENT_SECRET);
+  if (PRISJAKT_SCOPE) {
+    body.set("scope", PRISJAKT_SCOPE);
+  }
+
+  const response = await fetch(PRISJAKT_AUTH_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: body.toString(),
+    signal: AbortSignal.timeout(PRISJAKT_REQUEST_TIMEOUT_MS),
+  });
+  const raw = await response.text();
+  let payload = {};
+  try {
+    payload = raw ? JSON.parse(raw) : {};
+  } catch (error) {
+    payload = { raw };
+  }
+
+  if (!response.ok) {
+    const message =
+      firstText(payload?.error_description, payload?.error, payload?.message) ||
+      "Kunde inte autentisera mot Prisjakt.";
+    const authError = new Error(message);
+    authError.status = response.status;
+    throw authError;
+  }
+
+  const token = firstText(payload?.access_token);
+  const expiresIn = Number(payload?.expires_in || 3600);
+  if (!token) {
+    throw new Error("PRISJAKT_TOKEN_MISSING");
+  }
+  prisjaktTokenCache = {
+    token,
+    expiresAt: now + Math.max(60, Math.floor(expiresIn)) * 1000,
+  };
+  return token;
+};
+
+const fetchPrisjaktJson = async (url, token) => {
+  const response = await fetch(url, {
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    signal: AbortSignal.timeout(PRISJAKT_REQUEST_TIMEOUT_MS),
+  });
+  const raw = await response.text();
+  let payload = {};
+  try {
+    payload = raw ? JSON.parse(raw) : {};
+  } catch (error) {
+    payload = { raw };
+  }
+  if (!response.ok) {
+    const message =
+      firstText(payload?.message, payload?.error_description, payload?.error) ||
+      `Prisjakt-anrop misslyckades (${response.status}).`;
+    const requestError = new Error(message);
+    requestError.status = response.status;
+    requestError.payload = payload;
+    throw requestError;
+  }
+  return payload;
 };
 
 const LEGACY_IMAGE_PATH_MAP = {
@@ -1776,6 +2015,131 @@ app.post("/api/offer-request", async (req, res) => {
   } catch (error) {
     console.error("Offer request error:", error);
     return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/**
+ * GET /api/custom-build/prisjakt-offers
+ */
+app.get("/api/custom-build/prisjakt-offers", async (req, res) => {
+  try {
+    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const query = sanitizeText(String(req.query?.query || ""), 180);
+    const limitRaw = Number(req.query?.limit || 3);
+    const limit = Math.min(5, Math.max(1, Number.isFinite(limitRaw) ? Math.round(limitRaw) : 3));
+    if (query.length < 2) {
+      return jsonError(res, 400, "INVALID_QUERY", "Sökfrasen måste vara minst 2 tecken.");
+    }
+    if (!hasPrisjaktCredentials()) {
+      return jsonError(
+        res,
+        503,
+        "PRISJAKT_NOT_CONFIGURED",
+        "Prisjakt-integration saknar konfiguration i servermiljön."
+      );
+    }
+
+    const cacheKey = `public:prisjakt:${query.toLowerCase()}:${limit}`;
+    const cached = getCached(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
+
+    const buildSuggestionsUrl = () => {
+      const url = new URL(`${PRISJAKT_API_BASE_URL}/partner-search/suggestions`);
+      url.searchParams.set("market", PRISJAKT_MARKET);
+      url.searchParams.set("ref", PRISJAKT_REF);
+      url.searchParams.set("product", query);
+      url.searchParams.set("limit", String(limit));
+      return url.toString();
+    };
+
+    const buildProductUrl = (productId) => {
+      const encodedProductId = encodeURIComponent(productId);
+      const url = new URL(`${PRISJAKT_API_BASE_URL}/partner-search/products/${encodedProductId}`);
+      url.searchParams.set("market", PRISJAKT_MARKET);
+      url.searchParams.set("ref", PRISJAKT_REF);
+      return url.toString();
+    };
+
+    let token = await getPrisjaktAccessToken(false);
+    let suggestionsPayload;
+    try {
+      suggestionsPayload = await fetchPrisjaktJson(buildSuggestionsUrl(), token);
+    } catch (error) {
+      if (error?.status === 401) {
+        token = await getPrisjaktAccessToken(true);
+        suggestionsPayload = await fetchPrisjaktJson(buildSuggestionsUrl(), token);
+      } else {
+        throw error;
+      }
+    }
+
+    const suggestedProducts = normalizePrisjaktSuggestionProducts(suggestionsPayload).slice(0, limit);
+    if (suggestedProducts.length === 0) {
+      const response = {
+        ok: true,
+        query,
+        products: [],
+      };
+      setCached(cacheKey, response, 15_000);
+      return res.json(response);
+    }
+
+    const productDetails = await Promise.all(
+      suggestedProducts.map(async (suggestedProduct) => {
+        try {
+          let productPayload;
+          try {
+            productPayload = await fetchPrisjaktJson(buildProductUrl(suggestedProduct.product_id), token);
+          } catch (error) {
+            if (error?.status === 401) {
+              token = await getPrisjaktAccessToken(true);
+              productPayload = await fetchPrisjaktJson(buildProductUrl(suggestedProduct.product_id), token);
+            } else {
+              throw error;
+            }
+          }
+
+          const normalizedProducts = normalizePrisjaktSuggestionProducts(productPayload);
+          const resolvedProduct =
+            normalizedProducts.find((entry) => entry.product_id === suggestedProduct.product_id) ||
+            normalizedProducts[0] ||
+            null;
+          const offers =
+            resolvedProduct?.offers?.length > 0
+              ? resolvedProduct.offers
+              : suggestedProduct.offers || [];
+
+          return {
+            product_id: suggestedProduct.product_id,
+            title: resolvedProduct?.title || suggestedProduct.title,
+            offers: offers.slice(0, 20),
+          };
+        } catch (error) {
+          return {
+            product_id: suggestedProduct.product_id,
+            title: suggestedProduct.title,
+            offers: (suggestedProduct.offers || []).slice(0, 20),
+          };
+        }
+      })
+    );
+
+    const response = {
+      ok: true,
+      query,
+      products: productDetails,
+    };
+    setCached(cacheKey, response, 60_000);
+    return res.json(response);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Kunde inte hämta prisdata från Prisjakt.";
+    console.error("Prisjakt custom build error:", error);
+    return jsonError(res, 502, "PRISJAKT_FETCH_FAILED", message);
   }
 });
 

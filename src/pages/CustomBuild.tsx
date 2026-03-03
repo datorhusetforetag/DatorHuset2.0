@@ -129,6 +129,32 @@ type ComponentItem = {
   highlight?: string;
   socket?: "AM4" | "AM5" | "LGA1700" | "LGA1200";
   ramType?: "DDR4" | "DDR5";
+  selectedStore?: string;
+  selectedCurrency?: string;
+  selectedProductUrl?: string | null;
+  selectedTotalPrice?: number | null;
+};
+
+type PrisjaktStoreOffer = {
+  store: string;
+  price: number;
+  currency?: string;
+  shipping_price?: number | null;
+  total_price?: number | null;
+  product_url?: string | null;
+  availability?: string | null;
+};
+
+type PrisjaktProductResult = {
+  product_id: string;
+  title: string;
+  offers: PrisjaktStoreOffer[];
+};
+
+type PrisjaktOffersResponse = {
+  ok: boolean;
+  query: string;
+  products: PrisjaktProductResult[];
 };
 
 type CategoryConfig = {
@@ -1170,6 +1196,8 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
 };
 
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
+const formatCurrencyPrice = (price: number, currency = "SEK") =>
+  new Intl.NumberFormat("sv-SE", { style: "currency", currency }).format(price);
 const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
   cpu: 2990,
   gpu: 6990,
@@ -1181,6 +1209,7 @@ const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
   cooling: 990,
 };
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const normalizeApiBase = (value: string) => value.replace(/\/+$/, "");
 
 const initialOfferForm = {
   name: "",
@@ -1219,6 +1248,7 @@ const decodeBuildSelection = (encoded: string) => {
 
 export default function CustomBuild() {
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
+  const normalizedApiBase = normalizeApiBase(apiBase);
   const [offerOpen, setOfferOpen] = useState(false);
   const [offerForm, setOfferForm] = useState(initialOfferForm);
   const [offerStatus, setOfferStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
@@ -1240,6 +1270,14 @@ export default function CustomBuild() {
     psu: null,
     cooling: null,
   });
+  const [storePickerOpen, setStorePickerOpen] = useState(false);
+  const [storePickerCategory, setStorePickerCategory] = useState<CategoryKey | null>(null);
+  const [storePickerComponent, setStorePickerComponent] = useState<ComponentItem | null>(null);
+  const [storePickerProducts, setStorePickerProducts] = useState<PrisjaktProductResult[]>([]);
+  const [storePickerActiveProductId, setStorePickerActiveProductId] = useState("");
+  const [storePickerLoading, setStorePickerLoading] = useState(false);
+  const [storePickerError, setStorePickerError] = useState("");
+  const [storePickerCache, setStorePickerCache] = useState<Record<string, PrisjaktOffersResponse>>({});
 
 
   useEffect(() => {
@@ -1394,6 +1432,19 @@ export default function CustomBuild() {
   const showNextBubble = Boolean(
     selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
   );
+  const activeStorePickerProduct = useMemo(() => {
+    if (storePickerProducts.length === 0) return null;
+    return (
+      storePickerProducts.find((product) => product.product_id === storePickerActiveProductId) ||
+      storePickerProducts[0]
+    );
+  }, [storePickerProducts, storePickerActiveProductId]);
+
+  const getNextCategoryKey = (currentCategory: CategoryKey) => {
+    const currentIndex = CATEGORY_ORDER.indexOf(currentCategory);
+    if (currentIndex < 0 || currentIndex >= CATEGORY_ORDER.length - 1) return null;
+    return CATEGORY_ORDER[currentIndex + 1];
+  };
 
   const handleNextBubbleClick = () => {
     if (nextCategory) {
@@ -1408,6 +1459,115 @@ export default function CustomBuild() {
   const scrollToCategoryPicker = () => {
     const target = document.getElementById("component-picker");
     target?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const advanceAfterSelection = (currentCategory: CategoryKey) => {
+    const nextCategoryKey = getNextCategoryKey(currentCategory);
+    if (nextCategoryKey) {
+      setActiveCategory(nextCategoryKey);
+      setTimeout(() => {
+        scrollToCategoryPicker();
+      }, 120);
+      return;
+    }
+    const summary = document.getElementById("build-summary");
+    summary?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  const handleStorePickerClose = () => {
+    setStorePickerOpen(false);
+    setStorePickerCategory(null);
+    setStorePickerComponent(null);
+    setStorePickerProducts([]);
+    setStorePickerActiveProductId("");
+    setStorePickerLoading(false);
+    setStorePickerError("");
+  };
+
+  const openStorePickerForComponent = async (categoryKey: CategoryKey, item: ComponentItem) => {
+    const cacheKey = `${categoryKey}:${item.id}`;
+    setStorePickerOpen(true);
+    setStorePickerCategory(categoryKey);
+    setStorePickerComponent(item);
+    setStorePickerError("");
+    setStorePickerLoading(true);
+    setStorePickerProducts([]);
+    setStorePickerActiveProductId("");
+
+    const cachedResult = storePickerCache[cacheKey];
+    if (cachedResult) {
+      const products = Array.isArray(cachedResult.products) ? cachedResult.products : [];
+      setStorePickerProducts(products);
+      setStorePickerActiveProductId(products[0]?.product_id || "");
+      setStorePickerLoading(false);
+      if (products.length === 0) {
+        setStorePickerError("Inga Prisjakt-träffar hittades för komponenten.");
+      }
+      return;
+    }
+
+    try {
+      const endpoint = `${normalizedApiBase}/api/custom-build/prisjakt-offers?query=${encodeURIComponent(
+        item.name
+      )}&limit=3`;
+      const response = await fetch(endpoint);
+      const data = (await response.json().catch(() => ({}))) as PrisjaktOffersResponse & {
+        error?: { message?: string } | string;
+      };
+      if (!response.ok) {
+        const fallbackMessage =
+          typeof data?.error === "string"
+            ? data.error
+            : data?.error?.message || "Kunde inte hämta butikpriser från Prisjakt.";
+        throw new Error(fallbackMessage);
+      }
+      const products = Array.isArray(data?.products) ? data.products : [];
+      setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, query: item.name, products } }));
+      setStorePickerProducts(products);
+      setStorePickerActiveProductId(products[0]?.product_id || "");
+      if (products.length === 0) {
+        setStorePickerError("Inga Prisjakt-träffar hittades för komponenten.");
+      }
+    } catch (error) {
+      setStorePickerError(
+        error instanceof Error ? error.message : "Kunde inte hämta butikpriser från Prisjakt."
+      );
+    } finally {
+      setStorePickerLoading(false);
+    }
+  };
+
+  const selectComponentAndAdvance = (
+    categoryKey: CategoryKey,
+    component: ComponentItem,
+    selectedOffer?: PrisjaktStoreOffer
+  ) => {
+    const normalizedPrice = Math.max(
+      0,
+      Math.round(selectedOffer?.total_price ?? selectedOffer?.price ?? component.price ?? 0)
+    );
+    const selectedComponent: ComponentItem = {
+      ...component,
+      price: normalizedPrice,
+      selectedStore: selectedOffer?.store || undefined,
+      selectedCurrency: selectedOffer?.currency || "SEK",
+      selectedProductUrl: selectedOffer?.product_url || null,
+      selectedTotalPrice:
+        selectedOffer?.total_price !== undefined && selectedOffer?.total_price !== null
+          ? Math.max(0, Math.round(selectedOffer.total_price))
+          : null,
+    };
+    setSelected((prev) => ({
+      ...prev,
+      [categoryKey]: selectedComponent,
+    }));
+    handleStorePickerClose();
+    advanceAfterSelection(categoryKey);
+  };
+
+  const handleSelectWithoutStore = () => {
+    if (!storePickerCategory || !storePickerComponent) return;
+    selectComponentAndAdvance(storePickerCategory, storePickerComponent);
   };
 
   const handleCategorySelect = (key: CategoryKey) => {
@@ -1471,7 +1631,7 @@ export default function CustomBuild() {
       const controller = new AbortController();
       timeoutId = window.setTimeout(() => controller.abort(), 15000);
 
-      const response = await fetch(`${apiBase}/api/offer-request`, {
+      const response = await fetch(`${normalizedApiBase}/api/offer-request`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         signal: controller.signal,
@@ -1613,6 +1773,129 @@ export default function CustomBuild() {
           </DialogContent>
         ) : null}
       </Dialog>
+      <Dialog
+        open={storePickerOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            handleStorePickerClose();
+          }
+        }}
+      >
+        {storePickerOpen ? (
+          <DialogContent className="max-w-3xl bg-white dark:bg-[#0f1824]">
+            <DialogHeader>
+              <DialogTitle>Välj butik och pris</DialogTitle>
+              <DialogDescription className="text-gray-600 dark:text-gray-400">
+                {storePickerComponent
+                  ? `Jämför butiker för ${storePickerComponent.name} via Prisjakt.`
+                  : "Jämför butikernas priser via Prisjakt."}
+              </DialogDescription>
+            </DialogHeader>
+            <div className="space-y-4">
+              {storePickerLoading ? (
+                <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-6 text-sm text-gray-600 dark:text-gray-300">
+                  Hämtar butikspriser...
+                </div>
+              ) : null}
+              {!storePickerLoading && storePickerProducts.length > 1 ? (
+                <div className="flex flex-wrap gap-2">
+                  {storePickerProducts.map((product) => (
+                    <button
+                      key={product.product_id}
+                      type="button"
+                      onClick={() => setStorePickerActiveProductId(product.product_id)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                        activeStorePickerProduct?.product_id === product.product_id
+                          ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                          : "border-gray-300 text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-200"
+                      }`}
+                    >
+                      {product.title}
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              {!storePickerLoading && activeStorePickerProduct ? (
+                <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+                  <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      {activeStorePickerProduct.title}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      Välj butik för att lägga till komponenten och fortsätta automatiskt till nästa steg.
+                    </p>
+                  </div>
+                  <div className="max-h-[45vh] overflow-y-auto divide-y divide-gray-200 dark:divide-gray-700">
+                    {activeStorePickerProduct.offers.map((offer, index) => (
+                      <div
+                        key={`${offer.store}-${offer.price}-${index}`}
+                        className="px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
+                      >
+                        <div>
+                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{offer.store}</p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            {formatCurrencyPrice(offer.price, offer.currency || "SEK")}
+                            {offer.total_price !== null && offer.total_price !== undefined
+                              ? ` • inkl. frakt: ${formatCurrencyPrice(offer.total_price, offer.currency || "SEK")}`
+                              : ""}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {offer.product_url ? (
+                            <a
+                              href={offer.product_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:border-[#11667b] hover:text-[#11667b]"
+                            >
+                              Öppna butik
+                            </a>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (!storePickerCategory || !storePickerComponent) return;
+                              selectComponentAndAdvance(storePickerCategory, storePickerComponent, offer);
+                            }}
+                            className="rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white transition-colors"
+                          >
+                            Välj
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {storePickerError ? (
+                <p className="text-sm text-amber-600">{storePickerError}</p>
+              ) : null}
+              {!storePickerLoading && !activeStorePickerProduct ? (
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  Vi hittade inga prisjämförelser för denna komponent just nu.
+                </p>
+              ) : null}
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={handleStorePickerClose}
+                  className="rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:border-[#11667b] hover:text-[#11667b]"
+                >
+                  Avbryt
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSelectWithoutStore}
+                  disabled={!storePickerComponent || !storePickerCategory}
+                  className="rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                >
+                  Välj utan butik
+                </button>
+              </div>
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
       <main className="flex-1">
         <section className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white">
           <div className="container mx-auto px-4 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
@@ -1684,7 +1967,7 @@ export default function CustomBuild() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[280px_1fr_320px] items-start">
-              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block`}>
+              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:sticky lg:top-24`}>
                 <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                   <div className="mt-4 space-y-2">
@@ -1697,7 +1980,7 @@ export default function CustomBuild() {
                         <div key={category.key} className="relative">
                           <button
                             type="button"
-                            onClick={() => setActiveCategory(category.key)}
+                            onClick={() => handleCategorySelect(category.key)}
                             className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
                               isActive
                                 ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
@@ -1899,10 +2182,14 @@ export default function CustomBuild() {
                               type="button"
                               onClick={(event) => {
                                 event.stopPropagation();
-                                setSelected((prev) => ({
-                                  ...prev,
-                                  [activeCategory]: isSelected ? null : item,
-                                }));
+                                if (isSelected) {
+                                  setSelected((prev) => ({
+                                    ...prev,
+                                    [activeCategory]: null,
+                                  }));
+                                  return;
+                                }
+                                openStorePickerForComponent(activeCategory, item);
                               }}
                               className={`min-w-[84px] rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:min-w-[96px] sm:px-5 sm:py-2 sm:text-sm ${
                                 isSelected
@@ -1920,7 +2207,7 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="space-y-4">
+              <aside className="space-y-4 lg:sticky lg:top-24">
                 <div
                   id="build-summary"
                   className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
@@ -1938,7 +2225,14 @@ export default function CustomBuild() {
                         className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-gray-900 dark:hover:text-white"
                       >
                         <span className="text-gray-500 dark:text-gray-400">{category.label}</span>
-                        <span className="text-right">{selected[category.key]?.name ?? "Ej vald"}</span>
+                        <span className="text-right">
+                          {selected[category.key]?.name ?? "Ej vald"}
+                          {selected[category.key]?.selectedStore ? (
+                            <span className="block text-[11px] text-gray-500 dark:text-gray-400">
+                              {selected[category.key]?.selectedStore}
+                            </span>
+                          ) : null}
+                        </span>
                       </button>
                     ))}
                   </div>
