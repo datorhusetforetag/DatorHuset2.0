@@ -2633,6 +2633,163 @@ app.post("/api/admin/v2/listings", async (req, res) => {
   }
 });
 
+app.post("/api/admin/v2/listings/:productId/used-variant", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const baseProductId = sanitizeText(req.params?.productId, 80);
+    if (!baseProductId) {
+      return jsonError(res, 400, "VALIDATION_FAILED", "Saknar produkt-ID.");
+    }
+
+    const baseLookup = await loadAdminListings({ productId: baseProductId });
+    const baseListing = baseLookup?.data?.[0] || null;
+    if (!baseListing) {
+      return jsonError(res, 404, "NOT_FOUND", "Produkten hittades inte.");
+    }
+
+    if (baseListing.variant_role === "used") {
+      return jsonError(
+        res,
+        400,
+        "INVALID_SOURCE_VARIANT",
+        "Kan inte skapa begagnad variant från en redan begagnad variant."
+      );
+    }
+
+    const existingUsedVariantId = sanitizeText(baseListing.linked_product_id, 80);
+    if (existingUsedVariantId) {
+      return jsonError(
+        res,
+        409,
+        "USED_VARIANT_ALREADY_EXISTS",
+        "Basvarianten har redan en begagnad variant."
+      );
+    }
+
+    const parsed = updateListingRequestSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      const details = formatZodValidationError(parsed.error);
+      logStructured("warn", "admin.validation_failed", {
+        endpoint: "/api/admin/v2/listings/:productId/used-variant",
+        code: "VALIDATION_FAILED",
+        details,
+      });
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för begagnad variant.", details);
+    }
+
+    const { listing, fps, used_parts: usedParts } = parsed.data;
+    const usedSlug = await ensureUniqueSlug(listing.slug, listing.name);
+    const usedImageUrl = sanitizeImageUrl(listing.image_url) || null;
+    const usedPayload = {
+      name: sanitizeText(listing.name, 120),
+      slug: usedSlug,
+      legacy_id: sanitizeText(listing.legacy_id, 80) || null,
+      description: sanitizeText(listing.description, 1000) || null,
+      image_url: usedImageUrl,
+      price_cents: Math.max(0, Math.round(Number(listing.price_cents || 0))),
+      currency: sanitizeText(listing.currency, 8).toUpperCase() || "SEK",
+      cpu: sanitizeText(listing.cpu, 120),
+      gpu: sanitizeText(listing.gpu, 120),
+      ram: sanitizeText(listing.ram, 120),
+      storage: sanitizeText(listing.storage, 120),
+      storage_type: sanitizeText(listing.storage_type, 40),
+      tier: sanitizeText(listing.tier, 40),
+      motherboard: sanitizeText(listing.motherboard, 120) || null,
+      psu: sanitizeText(listing.psu, 120) || null,
+      case_name: sanitizeText(listing.case_name, 120) || null,
+      cpu_cooler: sanitizeText(listing.cpu_cooler, 120) || null,
+      os: sanitizeText(listing.os, 80) || null,
+      rating: 4.5,
+      reviews_count: 0,
+      updated_at: new Date(),
+    };
+
+    const { data: createdUsed, error: createUsedError } = await supabase
+      .from("products")
+      .insert([usedPayload])
+      .select(LISTING_SELECT_FIELDS)
+      .single();
+    if (createUsedError || !createdUsed) {
+      return jsonError(
+        res,
+        500,
+        "USED_VARIANT_CREATE_FAILED",
+        createUsedError?.message || "Kunde inte skapa begagnad variant."
+      );
+    }
+
+    await persistListingState({
+      req,
+      user,
+      productId: createdUsed.id,
+      listing: {
+        ...listing,
+        used_variant_enabled: true,
+      },
+      fpsInput: fps,
+      usedPartsInput: usedParts,
+      role,
+    });
+
+    const { error: linkError } = await supabase.from("ui_settings").upsert(
+      [
+        {
+          key: `used_variant:${baseProductId}`,
+          value: { enabled: true },
+          updated_at: new Date(),
+        },
+        {
+          key: `used_variant_link:${baseProductId}`,
+          value: { product_id: createdUsed.id },
+          updated_at: new Date(),
+        },
+      ],
+      { onConflict: "key" }
+    );
+    if (linkError) {
+      return jsonError(
+        res,
+        500,
+        "USED_VARIANT_LINK_FAILED",
+        linkError.message || "Kunde inte länka begagnad variant."
+      );
+    }
+
+    await upsertListingGroupSettings({ baseId: baseProductId, usedId: createdUsed.id });
+
+    invalidateProductCaches([baseProductId, createdUsed.id]);
+
+    await logAdminAction(req, user, "listing_used_variant_create_v2", "listing", baseProductId, {
+      role,
+      used_variant_product_id: createdUsed.id,
+    });
+    logStructured("info", "admin.listing_used_variant_created", {
+      actor_id: user?.id || null,
+      base_product_id: baseProductId,
+      used_variant_product_id: createdUsed.id,
+      role,
+    });
+
+    const loadedUsed = await loadAdminListings({ productId: createdUsed.id });
+    return res.status(201).json({
+      ok: true,
+      data: loadedUsed?.data?.[0] || null,
+      base_product_id: baseProductId,
+      used_variant_product_id: createdUsed.id,
+    });
+  } catch (error) {
+    console.error("Admin used variant create error:", error);
+    return jsonError(res, 500, "USED_VARIANT_CREATE_FAILED", "Kunde inte skapa begagnad variant.");
+  }
+});
+
 app.put("/api/admin/v2/listings/:productId", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");

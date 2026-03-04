@@ -356,6 +356,7 @@ export default function AdminProducts() {
   const [uploadingUsedImages, setUploadingUsedImages] = useState(false);
   const [itemImageUrlInputByProduct, setItemImageUrlInputByProduct] = useState<Record<string, string>>({});
   const [uploadingItemImagesByProduct, setUploadingItemImagesByProduct] = useState<Record<string, boolean>>({});
+  const [creatingUsedVariantByProduct, setCreatingUsedVariantByProduct] = useState<Record<string, boolean>>({});
   const [imagesExpandedByProduct, setImagesExpandedByProduct] = useState<Record<string, boolean>>({});
   const [draggedItemImage, setDraggedItemImage] = useState<{ productId: string; index: number } | null>(null);
   const [creating, setCreating] = useState(false);
@@ -1198,6 +1199,103 @@ export default function AdminProducts() {
     return null;
   };
 
+  const createUsedVariantFromExisting = async (item: CatalogItem) => {
+    if (!token || !isAdmin) return;
+    if (!canMutate) {
+      setLocalError("Du har läsbehörighet och kan inte skapa begagnad variant.");
+      return;
+    }
+
+    const linkedVariantId = String(item.linked_product_id || "").trim();
+    if (item.variant_role === "used") {
+      setLocalError("Denna listing är redan en begagnad variant.");
+      return;
+    }
+    if (linkedVariantId) {
+      setLocalError("Denna basvariant har redan en kopplad begagnad variant.");
+      return;
+    }
+
+    const expectedUpdatedAt = toExpectedUpdatedAt(item.updated_at);
+    const fps = normalizeFpsSandboxSettings(
+      fpsByProduct[item.id] || item.fps || { version: 2, entries: [] }
+    );
+    if (hasInvalidFpsEntries(fps.entries)) {
+      setLocalError("Alla FPS-rader måste ha en grafik-text innan begagnad variant kan skapas.");
+      return;
+    }
+
+    const usedParts = sanitizeUsedPartsSettings(usedPartsByProduct[item.id] || item.used_parts);
+    const eta = parseEta(item.eta_input, item.eta_note);
+    const sourceImages = dedupeImageUrls([
+      ...(Array.isArray(item.images) ? item.images : []),
+      toTextValue(item.image_url),
+    ]);
+    const baseName = toTextValue(item.name).trim();
+    const baseSlug = toTextValue(item.slug).trim() || slugify(baseName || item.id);
+    const usedName = `${baseName} - Begagnade`.trim();
+    const usedSlug = `${baseSlug}-begagnade`.replace(/-+/g, "-").replace(/^-+|-+$/g, "");
+    const listing = {
+      name: usedName || "Begagnad variant",
+      slug: usedSlug || "begagnad-variant",
+      legacy_id: "",
+      description: toTextValue(item.description),
+      image_url: sourceImages[0] || "",
+      images: sourceImages,
+      price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
+      currency: "SEK",
+      cpu: toTextValue(item.cpu),
+      gpu: toTextValue(item.gpu),
+      ram: toTextValue(item.ram),
+      storage: toTextValue(item.storage),
+      storage_type: toTextValue(item.storage_type),
+      tier: toTextValue(item.tier),
+      motherboard: toTextValue(item.motherboard),
+      psu: toTextValue(item.psu),
+      case_name: toTextValue(item.case_name),
+      cpu_cooler: toTextValue(item.cpu_cooler),
+      os: toTextValue(item.os),
+      quantity_in_stock: 0,
+      is_preorder: Boolean(item.is_preorder),
+      eta_days: eta.eta_days,
+      eta_note: toTextValue(eta.eta_note),
+      eta_input: toTextValue(item.eta_input),
+      used_variant_enabled: true,
+      listing_group_id: toTextValue(item.listing_group_id || item.id),
+      expected_updated_at: expectedUpdatedAt,
+    };
+    const requestPayload = {
+      listing,
+      fps,
+      used_parts: usedParts,
+      expected_updated_at: expectedUpdatedAt,
+    };
+    const parsedPayload = sharedUpdateListingRequestSchema.safeParse(requestPayload);
+    if (!parsedPayload.success) {
+      setLocalError(getValidationMessage(parsedPayload.error, "Ogiltig payload för begagnad variant."));
+      return;
+    }
+
+    setCreatingUsedVariantByProduct((prev) => ({ ...prev, [item.id]: true }));
+    setLocalError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/listings/${item.id}/used-variant`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify(parsedPayload.data),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(resolveApiErrorMessage(data, "Kunde inte skapa begagnad variant."));
+      }
+      await loadItems();
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Kunde inte skapa begagnad variant.");
+    } finally {
+      setCreatingUsedVariantByProduct((prev) => ({ ...prev, [item.id]: false }));
+    }
+  };
+
   const groupedItems = useMemo(() => {
     const groups: Array<{ id: string; items: CatalogItem[] }> = [];
     const seen = new Set<string>();
@@ -1687,6 +1785,8 @@ export default function AdminProducts() {
                 const variantRole = getItemVariantRole(item);
                 const itemImages = Array.isArray(item.images) ? item.images : [];
                 const isImagePanelOpen = Boolean(imagesExpandedByProduct[item.id]);
+                const linkedVariantId = String(item.linked_product_id || pairedById.get(item.id) || "").trim();
+                const canCreateUsedVariant = variantRole !== "used" && !linkedVariantId;
                 return (
           <section key={item.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 md:p-5 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
@@ -1712,14 +1812,27 @@ export default function AdminProducts() {
                   </p>
                 ) : null}
               </div>
-              <button
-                type="button"
-                onClick={() => void saveItem(item)}
-                disabled={savingId === item.id || !canMutate}
-                className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
-              >
-                <Save className="h-4 w-4" /> {savingId === item.id ? "Sparar..." : "Spara"}
-              </button>
+              <div className="flex flex-wrap items-center justify-end gap-2">
+                {canCreateUsedVariant ? (
+                  <button
+                    type="button"
+                    onClick={() => void createUsedVariantFromExisting(item)}
+                    disabled={Boolean(creatingUsedVariantByProduct[item.id]) || !canMutate}
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-sm font-semibold text-slate-100 hover:border-[#11667b] hover:text-[#22d3ee] disabled:opacity-60"
+                  >
+                    <Plus className="h-4 w-4" />
+                    {creatingUsedVariantByProduct[item.id] ? "Skapar..." : "Skapa begagnad variant"}
+                  </button>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => void saveItem(item)}
+                  disabled={savingId === item.id || !canMutate}
+                  className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
+                >
+                  <Save className="h-4 w-4" /> {savingId === item.id ? "Sparar..." : "Spara"}
+                </button>
+              </div>
             </div>
 
             <div className="grid gap-4 xl:grid-cols-12">
