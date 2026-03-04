@@ -38,39 +38,39 @@ const FPS_SANDBOX_RESOLUTION_OPTION_SET = new Set<string>(FPS_SANDBOX_RESOLUTION
 
 const DEFAULT_FPS_BASE: Record<string, Record<string, Record<string, number>>> = {
   Fortnite: {
-    "1080p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 95 },
-    "1440p": { High: 120, Ultra: 120, "Ultra + Raytracing/Pathtracing": 95 },
-    "4K": { High: 70, Ultra: 70, "Ultra + Raytracing/Pathtracing": 95 },
+    "1080p": { Low: 284, Medium: 230, High: 186, Ultra: 147, "Ultra + Raytracing/Pathtracing": 108 },
+    "1440p": { Low: 207, Medium: 167, High: 135, Ultra: 108, "Ultra + Raytracing/Pathtracing": 77 },
+    "4K": { Low: 126, Medium: 103, High: 82, Ultra: 65, "Ultra + Raytracing/Pathtracing": 48 },
   },
   "Cyberpunk 2077": {
-    "1080p": { High: 90, Ultra: 90, "Ultra + Raytracing/Pathtracing": 65 },
-    "1440p": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 65 },
-    "4K": { High: 35, Ultra: 35, "Ultra + Raytracing/Pathtracing": 65 },
+    "1080p": { Low: 114, Medium: 93, High: 74, Ultra: 59, "Ultra + Raytracing/Pathtracing": 43 },
+    "1440p": { Low: 81, Medium: 66, High: 52, Ultra: 40, "Ultra + Raytracing/Pathtracing": 30 },
+    "4K": { Low: 48, Medium: 39, High: 32, Ultra: 25, "Ultra + Raytracing/Pathtracing": 18 },
   },
   "Ghost of Tsushima": {
-    "1080p": { High: 140, Ultra: 140, "Ultra + Raytracing/Pathtracing": 85 },
-    "1440p": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 65 },
-    "4K": { High: 60, Ultra: 60, "Ultra + Raytracing/Pathtracing": 40 },
+    "1080p": { Low: 143, Medium: 119, High: 97, Ultra: 80, "Ultra + Raytracing/Pathtracing": 58 },
+    "1440p": { Low: 103, Medium: 85, High: 69, Ultra: 57, "Ultra + Raytracing/Pathtracing": 41 },
+    "4K": { Low: 61, Medium: 50, High: 41, Ultra: 33, "Ultra + Raytracing/Pathtracing": 24 },
   },
   "GTA 5": {
-    "1080p": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
-    "1440p": { High: 110, Ultra: 110, "Ultra + Raytracing/Pathtracing": 110 },
-    "4K": { High: 65, Ultra: 65, "Ultra + Raytracing/Pathtracing": 65 },
+    "1080p": { Low: 204, Medium: 176, High: 145, Ultra: 116, "Ultra + Raytracing/Pathtracing": 116 },
+    "1440p": { Low: 144, Medium: 123, High: 103, Ultra: 83, "Ultra + Raytracing/Pathtracing": 83 },
+    "4K": { Low: 92, Medium: 78, High: 65, Ultra: 53, "Ultra + Raytracing/Pathtracing": 53 },
   },
   Minecraft: {
-    "1080p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 80 },
-    "1440p": { High: 170, Ultra: 170, "Ultra + Raytracing/Pathtracing": 80 },
-    "4K": { High: 100, Ultra: 100, "Ultra + Raytracing/Pathtracing": 80 },
+    "1080p": { Low: 306, Medium: 252, High: 203, Ultra: 153, "Ultra + Raytracing/Pathtracing": 68 },
+    "1440p": { Low: 228, Medium: 186, High: 149, Ultra: 116, "Ultra + Raytracing/Pathtracing": 48 },
+    "4K": { Low: 151, Medium: 122, High: 97, Ultra: 75, "Ultra + Raytracing/Pathtracing": 32 },
   },
   CS2: {
-    "1080p": { High: 280, Ultra: 280, "Ultra + Raytracing/Pathtracing": 280 },
-    "1440p": { High: 220, Ultra: 220, "Ultra + Raytracing/Pathtracing": 220 },
-    "4K": { High: 160, Ultra: 160, "Ultra + Raytracing/Pathtracing": 160 },
+    "1080p": { Low: 295, Medium: 254, High: 213, Ultra: 176, "Ultra + Raytracing/Pathtracing": 176 },
+    "1440p": { Low: 211, Medium: 181, High: 151, Ultra: 127, "Ultra + Raytracing/Pathtracing": 127 },
+    "4K": { Low: 137, Medium: 118, High: 99, Ultra: 83, "Ultra + Raytracing/Pathtracing": 83 },
   },
 };
 
 const DEFAULT_FPS_SUPPORTS: Record<string, { dlss: boolean; frameGen: boolean }> = {
-  Fortnite: { dlss: true, frameGen: false },
+  Fortnite: { dlss: true, frameGen: true },
   "Cyberpunk 2077": { dlss: true, frameGen: true },
   "Ghost of Tsushima": { dlss: true, frameGen: true },
   "GTA 5": { dlss: false, frameGen: false },
