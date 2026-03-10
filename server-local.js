@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import path from "path";
+import fs from "fs/promises";
 import { fileURLToPath } from "url";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
@@ -44,14 +45,24 @@ const distPath = path.join(__dirname, "dist");
 const PRODUCT_IMAGE_BUCKET = String(process.env.SUPABASE_PRODUCT_IMAGES_BUCKET || "product-images").trim() || "product-images";
 const MAX_UPLOAD_IMAGE_BYTES = Math.max(200_000, Number(process.env.MAX_UPLOAD_IMAGE_BYTES || 8 * 1024 * 1024));
 const JSON_BODY_LIMIT = process.env.JSON_BODY_LIMIT || "15mb";
-const PRISJAKT_API_BASE_URL = String(process.env.PRISJAKT_API_BASE_URL || "https://api.pj.nu").replace(/\/+$/, "");
-const PRISJAKT_AUTH_URL = String(process.env.PRISJAKT_AUTH_URL || "https://auth.pj.nu/oauth2/token").trim();
-const PRISJAKT_MARKET = String(process.env.PRISJAKT_MARKET || "se").trim().toLowerCase();
-const PRISJAKT_REF = String(process.env.PRISJAKT_REF || "").trim();
-const PRISJAKT_CLIENT_ID = String(process.env.PRISJAKT_CLIENT_ID || "").trim();
-const PRISJAKT_CLIENT_SECRET = String(process.env.PRISJAKT_CLIENT_SECRET || "").trim();
-const PRISJAKT_SCOPE = String(process.env.PRISJAKT_SCOPE || "").trim();
-const PRISJAKT_REQUEST_TIMEOUT_MS = Math.max(2000, Number(process.env.PRISJAKT_REQUEST_TIMEOUT_MS || 12000));
+const CUSTOM_PRICE_REFRESH_INTERVAL_MS = Math.max(
+  60_000,
+  Number(process.env.CUSTOM_PRICE_REFRESH_INTERVAL_MS || 24 * 60 * 60 * 1000)
+);
+const CUSTOM_PRICE_CACHE_TTL_MS = Math.max(
+  60_000,
+  Number(process.env.CUSTOM_PRICE_CACHE_TTL_MS || CUSTOM_PRICE_REFRESH_INTERVAL_MS)
+);
+const CUSTOM_PRICE_REQUEST_TIMEOUT_MS = Math.max(
+  3_000,
+  Number(process.env.CUSTOM_PRICE_REQUEST_TIMEOUT_MS || 12_000)
+);
+const CUSTOM_PRICE_MAX_QUERY_LENGTH = 180;
+const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES || "")
+  .split(",")
+  .map((value) => value.trim())
+  .filter(Boolean);
+const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 
 const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
 const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
@@ -164,10 +175,10 @@ const logStructured = (level, event, payload = {}) => {
 
 const API_CACHE_TTL_MS = Math.max(5_000, Number(process.env.API_CACHE_TTL_MS || 30_000));
 const responseCache = new Map();
-let prisjaktTokenCache = {
-  token: "",
-  expiresAt: 0,
-};
+const customStorePriceCache = new Map();
+const customStorePriceRefreshInFlight = new Map();
+let customStorePriceCacheWriteChain = Promise.resolve();
+let customStorePriceSchedulerStarted = false;
 
 const getCached = (key) => {
   const cached = responseCache.get(key);
@@ -697,9 +708,6 @@ const sanitizeText = (value, maxLength = 120) => {
   return value.trim().slice(0, maxLength);
 };
 
-const hasPrisjaktCredentials = () =>
-  Boolean(PRISJAKT_CLIENT_ID && PRISJAKT_CLIENT_SECRET && PRISJAKT_REF);
-
 const parseMoneyValue = (...candidates) => {
   for (const candidate of candidates) {
     if (typeof candidate === "number" && Number.isFinite(candidate)) return candidate;
@@ -732,79 +740,245 @@ const firstArray = (...candidates) => {
   return [];
 };
 
-const normalizePrisjaktOfferList = (source) => {
-  const rawOffers = firstArray(
-    source?.offers,
-    source?.shopOffers,
-    source?.storeOffers,
-    source?.prices,
-    source?.merchants,
-    source?.retailers
-  );
-  const deduped = new Map();
+const CUSTOM_STORE_SOURCES = [
+  {
+    id: "webhallen",
+    name: "Webhallen",
+    buildSearchUrl: (query) => `https://www.webhallen.com/se/search?searchString=${encodeURIComponent(query)}`,
+  },
+  {
+    id: "inet",
+    name: "Inet",
+    buildSearchUrl: (query) => `https://www.inet.se/sok?q=${encodeURIComponent(query)}`,
+  },
+  {
+    id: "komplett",
+    name: "Komplett",
+    buildSearchUrl: (query) => `https://www.komplett.se/search?q=${encodeURIComponent(query)}`,
+  },
+  {
+    id: "elgiganten",
+    name: "Elgiganten",
+    buildSearchUrl: (query) => `https://www.elgiganten.se/search?SearchParameter=${encodeURIComponent(query)}`,
+  },
+  {
+    id: "amazon-se",
+    name: "Amazon.se",
+    buildSearchUrl: (query) => `https://www.amazon.se/s?k=${encodeURIComponent(query)}`,
+  },
+  {
+    id: "power",
+    name: "Power",
+    buildSearchUrl: (query) => `https://www.power.se/sok/?q=${encodeURIComponent(query)}`,
+  },
+];
 
-  rawOffers.forEach((offer) => {
-    const store = firstText(
-      offer?.store?.name,
-      offer?.shop?.name,
-      offer?.merchant?.name,
-      offer?.retailer?.name,
-      offer?.storeName,
-      offer?.shopName,
-      offer?.seller
-    );
-    const basePrice = parseMoneyValue(
-      offer?.price?.value,
-      offer?.price?.amount,
-      offer?.price?.incVat,
-      offer?.price?.excludingShipping,
-      offer?.price,
-      offer?.amount,
-      offer?.value
-    );
-    if (!store || basePrice === null) return;
-    const shippingPrice = parseMoneyValue(
-      offer?.shipping?.value,
-      offer?.shipping?.amount,
-      offer?.shippingPrice,
-      offer?.freight
-    );
-    const totalPrice = parseMoneyValue(
-      offer?.price?.includingShipping,
-      offer?.price?.incShipping,
-      offer?.priceIncludingShipping
-    );
-    const priceWithShipping =
-      totalPrice !== null ? totalPrice : shippingPrice !== null ? basePrice + shippingPrice : null;
-    const currency = firstText(
-      offer?.price?.currency,
-      offer?.currency,
-      source?.price?.currency
-    ) || "SEK";
-    const productUrl = firstText(
-      offer?.url,
-      offer?.trackingUrl,
-      offer?.offerUrl,
-      offer?.deepLink
-    );
-    const availability = firstText(
-      offer?.availability,
-      offer?.stock?.status,
-      offer?.stockStatus
-    );
-    const key = `${store.toLowerCase()}::${Math.round(basePrice * 100)}::${productUrl.toLowerCase()}`;
-    if (deduped.has(key)) return;
-    deduped.set(key, {
-      store,
-      price: Math.max(0, Math.round(basePrice)),
-      currency,
-      shipping_price: shippingPrice !== null ? Math.max(0, Math.round(shippingPrice)) : null,
-      total_price: priceWithShipping !== null ? Math.max(0, Math.round(priceWithShipping)) : null,
-      product_url: productUrl || null,
-      availability: availability || null,
+const normalizeStorePriceQueryKey = (value) =>
+  sanitizeText(value, CUSTOM_PRICE_MAX_QUERY_LENGTH)
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const normalizeRelativeUrl = (candidate, baseUrl) => {
+  if (!candidate || typeof candidate !== "string") return null;
+  try {
+    const url = new URL(candidate, baseUrl);
+    return url.toString();
+  } catch (error) {
+    return null;
+  }
+};
+
+const parseHtmlPriceCandidates = (html) => {
+  if (!html) return [];
+  const candidates = [];
+  const sekRegex = /(\d{2,3}(?:[ .]\d{3})*(?:[.,]\d{1,2})?)\s*(?:kr|sek)\b/gi;
+  let sekMatch = sekRegex.exec(html);
+  while (sekMatch) {
+    const parsed = parseMoneyValue(sekMatch[1]);
+    if (parsed !== null) {
+      candidates.push(parsed);
+    }
+    sekMatch = sekRegex.exec(html);
+  }
+
+  const priceJsonRegex = /"price"\s*:\s*"?(\d{2,6}(?:[.,]\d{1,2})?)"?/gi;
+  let priceJsonMatch = priceJsonRegex.exec(html);
+  while (priceJsonMatch) {
+    const parsed = parseMoneyValue(priceJsonMatch[1]);
+    if (parsed !== null) {
+      candidates.push(parsed);
+    }
+    priceJsonMatch = priceJsonRegex.exec(html);
+  }
+
+  return candidates
+    .map((value) => Math.round(value))
+    .filter((value) => Number.isFinite(value) && value >= 50 && value <= 400_000);
+};
+
+const normalizeAvailability = (value) => {
+  const text = firstText(value);
+  if (!text) return null;
+  if (text.includes("/")) {
+    const parts = text.split("/");
+    return firstText(parts[parts.length - 1]) || text;
+  }
+  return text;
+};
+
+const extractJsonLdScripts = (html) => {
+  const scripts = [];
+  const scriptRegex = /<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+  let match = scriptRegex.exec(html);
+  while (match) {
+    const rawJson = match[1]?.trim();
+    if (!rawJson) {
+      match = scriptRegex.exec(html);
+      continue;
+    }
+    try {
+      scripts.push(JSON.parse(rawJson));
+    } catch (error) {
+      // Ignore malformed JSON-LD blocks.
+    }
+    match = scriptRegex.exec(html);
+  }
+  return scripts;
+};
+
+const collectProductsFromJsonLd = (node, out = []) => {
+  if (!node) return out;
+  if (Array.isArray(node)) {
+    node.forEach((entry) => collectProductsFromJsonLd(entry, out));
+    return out;
+  }
+  if (typeof node !== "object") return out;
+
+  const typeValue = node["@type"];
+  const typeList = Array.isArray(typeValue) ? typeValue : [typeValue];
+  const normalizedTypes = typeList.map((value) => String(value || "").toLowerCase());
+  if (normalizedTypes.includes("product")) {
+    out.push(node);
+  }
+
+  if (Array.isArray(node["@graph"])) {
+    collectProductsFromJsonLd(node["@graph"], out);
+  }
+  if (Array.isArray(node.itemListElement)) {
+    collectProductsFromJsonLd(node.itemListElement, out);
+  }
+  if (node.item) {
+    collectProductsFromJsonLd(node.item, out);
+  }
+  return out;
+};
+
+const extractStoreOffersFromJsonLd = (html, storeName, baseUrl) => {
+  const scripts = extractJsonLdScripts(html);
+  const products = [];
+  scripts.forEach((script) => collectProductsFromJsonLd(script, products));
+
+  const offers = [];
+  products.forEach((product) => {
+    const productTitle = firstText(product?.name, product?.title);
+    const productUrl = normalizeRelativeUrl(firstText(product?.url), baseUrl);
+    const rawOffers = [];
+    if (Array.isArray(product?.offers)) rawOffers.push(...product.offers);
+    if (product?.offers && typeof product.offers === "object" && !Array.isArray(product.offers)) {
+      rawOffers.push(product.offers);
+    }
+    if (product?.aggregateOffer && typeof product.aggregateOffer === "object") {
+      rawOffers.push(product.aggregateOffer);
+    }
+    if (product?.aggregateOffers && typeof product.aggregateOffers === "object") {
+      rawOffers.push(product.aggregateOffers);
+    }
+
+    rawOffers.forEach((offer) => {
+      const parsedPrice = parseMoneyValue(
+        offer?.price,
+        offer?.priceSpecification?.price,
+        offer?.lowPrice,
+        offer?.highPrice
+      );
+      if (parsedPrice === null) return;
+      const shippingPrice = parseMoneyValue(
+        offer?.shippingPrice,
+        offer?.shippingDetails?.shippingRate?.value,
+        offer?.shippingDetails?.shippingRate?.price
+      );
+      const currency = firstText(offer?.priceCurrency, offer?.priceSpecification?.priceCurrency) || "SEK";
+      const offerStore =
+        firstText(offer?.seller?.name, offer?.offeredBy?.name, offer?.merchant?.name) || storeName;
+      const offerUrl = normalizeRelativeUrl(firstText(offer?.url), baseUrl) || productUrl;
+      const availability = normalizeAvailability(firstText(offer?.availability, offer?.inventoryLevel));
+      offers.push({
+        store: offerStore,
+        title: productTitle || offerStore,
+        price: Math.max(0, Math.round(parsedPrice)),
+        currency,
+        shipping_price:
+          shippingPrice !== null ? Math.max(0, Math.round(shippingPrice)) : null,
+        total_price:
+          shippingPrice !== null
+            ? Math.max(0, Math.round(parsedPrice + shippingPrice))
+            : Math.max(0, Math.round(parsedPrice)),
+        product_url: offerUrl || null,
+        availability,
+      });
     });
   });
+  return offers;
+};
 
+const createFallbackStoreOffer = (storeName, html, searchUrl) => {
+  const prices = parseHtmlPriceCandidates(html);
+  if (prices.length === 0) return null;
+  const minimumPrice = Math.min(...prices);
+  if (!Number.isFinite(minimumPrice)) return null;
+  return {
+    store: storeName,
+    title: storeName,
+    price: Math.max(0, Math.round(minimumPrice)),
+    currency: "SEK",
+    shipping_price: null,
+    total_price: Math.max(0, Math.round(minimumPrice)),
+    product_url: searchUrl,
+    availability: null,
+  };
+};
+
+const normalizeStoreOfferList = (offers) => {
+  const deduped = new Map();
+  offers.forEach((offer) => {
+    if (!offer || typeof offer !== "object") return;
+    const store = firstText(offer.store);
+    const price = parseMoneyValue(offer.price);
+    if (!store || price === null) return;
+    const shippingPrice = parseMoneyValue(offer.shipping_price);
+    const totalPrice = parseMoneyValue(offer.total_price);
+    const normalized = {
+      store,
+      price: Math.max(0, Math.round(price)),
+      currency: firstText(offer.currency).toUpperCase() || "SEK",
+      shipping_price: shippingPrice !== null ? Math.max(0, Math.round(shippingPrice)) : null,
+      total_price:
+        totalPrice !== null
+          ? Math.max(0, Math.round(totalPrice))
+          : shippingPrice !== null
+            ? Math.max(0, Math.round(price + shippingPrice))
+            : null,
+      product_url: normalizeRelativeUrl(firstText(offer.product_url), firstText(offer.product_url)) || null,
+      availability: firstText(offer.availability) || null,
+    };
+    const key = `${normalized.store.toLowerCase()}::${normalized.price}::${normalized.product_url || ""}`;
+    if (!deduped.has(key)) {
+      deduped.set(key, normalized);
+    }
+  });
   return Array.from(deduped.values()).sort((a, b) => {
     const aRank = a.total_price ?? a.price;
     const bRank = b.total_price ?? b.price;
@@ -812,116 +986,228 @@ const normalizePrisjaktOfferList = (source) => {
   });
 };
 
-const normalizePrisjaktSuggestionProducts = (payload) => {
-  const rawList = firstArray(
-    payload?.products,
-    payload?.items,
-    payload?.results,
-    payload?.hits,
-    payload?.data,
-    payload
-  );
-  const deduped = new Map();
-  rawList.forEach((entry) => {
-    const productId = firstText(
-      String(entry?.productId || ""),
-      String(entry?.id || ""),
-      String(entry?.product?.id || "")
-    );
-    if (!productId) return;
-    if (deduped.has(productId)) return;
-    const title = firstText(
-      entry?.name,
-      entry?.title,
-      entry?.productName,
-      entry?.product?.name
-    ) || productId;
-    deduped.set(productId, {
-      product_id: productId,
-      title,
-      offers: normalizePrisjaktOfferList(entry),
-    });
-  });
-  return Array.from(deduped.values());
-};
-
-const getPrisjaktAccessToken = async (forceRefresh = false) => {
-  const now = Date.now();
-  if (!forceRefresh && prisjaktTokenCache.token && prisjaktTokenCache.expiresAt > now + 10_000) {
-    return prisjaktTokenCache.token;
-  }
-  if (!hasPrisjaktCredentials()) {
-    throw new Error("PRISJAKT_NOT_CONFIGURED");
-  }
-
-  const body = new URLSearchParams();
-  body.set("grant_type", "client_credentials");
-  body.set("client_id", PRISJAKT_CLIENT_ID);
-  body.set("client_secret", PRISJAKT_CLIENT_SECRET);
-  if (PRISJAKT_SCOPE) {
-    body.set("scope", PRISJAKT_SCOPE);
-  }
-
-  const response = await fetch(PRISJAKT_AUTH_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: body.toString(),
-    signal: AbortSignal.timeout(PRISJAKT_REQUEST_TIMEOUT_MS),
-  });
-  const raw = await response.text();
-  let payload = {};
-  try {
-    payload = raw ? JSON.parse(raw) : {};
-  } catch (error) {
-    payload = { raw };
-  }
-
-  if (!response.ok) {
-    const message =
-      firstText(payload?.error_description, payload?.error, payload?.message) ||
-      "Kunde inte autentisera mot Prisjakt.";
-    const authError = new Error(message);
-    authError.status = response.status;
-    throw authError;
-  }
-
-  const token = firstText(payload?.access_token);
-  const expiresIn = Number(payload?.expires_in || 3600);
-  if (!token) {
-    throw new Error("PRISJAKT_TOKEN_MISSING");
-  }
-  prisjaktTokenCache = {
-    token,
-    expiresAt: now + Math.max(60, Math.floor(expiresIn)) * 1000,
-  };
-  return token;
-};
-
-const fetchPrisjaktJson = async (url, token) => {
+const fetchStoreSearchPage = async (source, query) => {
+  const url = source.buildSearchUrl(query);
   const response = await fetch(url, {
     headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${token}`,
+      Accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+      "Accept-Language": "sv-SE,sv;q=0.9,en;q=0.8",
+      "User-Agent":
+        process.env.CUSTOM_PRICE_USER_AGENT ||
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
     },
-    signal: AbortSignal.timeout(PRISJAKT_REQUEST_TIMEOUT_MS),
+    signal: AbortSignal.timeout(CUSTOM_PRICE_REQUEST_TIMEOUT_MS),
   });
-  const raw = await response.text();
-  let payload = {};
-  try {
-    payload = raw ? JSON.parse(raw) : {};
-  } catch (error) {
-    payload = { raw };
-  }
   if (!response.ok) {
-    const message =
-      firstText(payload?.message, payload?.error_description, payload?.error) ||
-      `Prisjakt-anrop misslyckades (${response.status}).`;
-    const requestError = new Error(message);
-    requestError.status = response.status;
-    requestError.payload = payload;
-    throw requestError;
+    const error = new Error(`Prisförfrågan misslyckades (${source.name}, ${response.status}).`);
+    error.status = response.status;
+    throw error;
   }
-  return payload;
+  const html = await response.text();
+  return { url, html };
+};
+
+const fetchStoreOfferForQuery = async (source, query) => {
+  try {
+    const { url, html } = await fetchStoreSearchPage(source, query);
+    const parsedOffers = extractStoreOffersFromJsonLd(html, source.name, url);
+    const normalizedFromJsonLd = normalizeStoreOfferList(parsedOffers).filter(
+      (offer) => offer.price >= 50 && offer.price <= 400_000
+    );
+    if (normalizedFromJsonLd.length > 0) {
+      return {
+        ...normalizedFromJsonLd[0],
+        store: source.name,
+      };
+    }
+    const fallback = createFallbackStoreOffer(source.name, html, url);
+    return fallback;
+  } catch (error) {
+    logStructured("warn", "custom_price_store_fetch_failed", {
+      store: source.name,
+      query,
+      message: error instanceof Error ? error.message : "unknown_error",
+    });
+    return null;
+  }
+};
+
+const sanitizeStorePriceResponse = (query, offers, updatedAt) => {
+  const normalizedOffers = normalizeStoreOfferList(offers).slice(0, 30);
+  return {
+    ok: true,
+    query,
+    source: "custom-store-scraper",
+    updated_at: new Date(updatedAt).toISOString(),
+    next_refresh_at: new Date(updatedAt + CUSTOM_PRICE_REFRESH_INTERVAL_MS).toISOString(),
+    products: [
+      {
+        product_id: normalizeStorePriceQueryKey(query).replace(/\s+/g, "-") || "unknown-product",
+        title: query,
+        offers: normalizedOffers,
+      },
+    ],
+  };
+};
+
+const saveCustomStorePriceCacheToDisk = async () => {
+  const serializedEntries = Array.from(customStorePriceCache.entries()).map(([key, value]) => ({
+    key,
+    query: value.query,
+    tracked: Boolean(value.tracked),
+    updatedAt: value.updatedAt,
+    response: value.response,
+  }));
+  const payload = {
+    version: 1,
+    saved_at: new Date().toISOString(),
+    entries: serializedEntries,
+  };
+  await fs.mkdir(path.dirname(CUSTOM_PRICE_CACHE_FILE), { recursive: true });
+  await fs.writeFile(CUSTOM_PRICE_CACHE_FILE, JSON.stringify(payload, null, 2), "utf8");
+};
+
+const queueCustomStorePriceCacheSave = () => {
+  customStorePriceCacheWriteChain = customStorePriceCacheWriteChain
+    .catch(() => null)
+    .then(() => saveCustomStorePriceCacheToDisk())
+    .catch((error) => {
+      logStructured("warn", "custom_price_cache_save_failed", {
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+    });
+  return customStorePriceCacheWriteChain;
+};
+
+const loadCustomStorePriceCacheFromDisk = async () => {
+  try {
+    const raw = await fs.readFile(CUSTOM_PRICE_CACHE_FILE, "utf8");
+    const payload = raw ? JSON.parse(raw) : {};
+    const entries = Array.isArray(payload?.entries) ? payload.entries : [];
+    entries.forEach((entry) => {
+      const key = normalizeStorePriceQueryKey(entry?.key || entry?.query || "");
+      const query = sanitizeText(String(entry?.query || ""), CUSTOM_PRICE_MAX_QUERY_LENGTH);
+      const updatedAt = Number(entry?.updatedAt || Date.now());
+      if (!key || !query || !entry?.response) return;
+      customStorePriceCache.set(key, {
+        query,
+        updatedAt: Number.isFinite(updatedAt) ? updatedAt : Date.now(),
+        tracked: Boolean(entry?.tracked),
+        response: entry.response,
+      });
+    });
+  } catch (error) {
+    const code = error?.code || "";
+    if (code !== "ENOENT") {
+      logStructured("warn", "custom_price_cache_load_failed", {
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+    }
+  }
+};
+
+const refreshStoreOffersForQuery = async (query) => {
+  const offers = (
+    await Promise.all(CUSTOM_STORE_SOURCES.map((source) => fetchStoreOfferForQuery(source, query)))
+  ).filter(Boolean);
+  return offers;
+};
+
+const getOrRefreshStorePriceSnapshot = async (query, options = {}) => {
+  const safeQuery = sanitizeText(query, CUSTOM_PRICE_MAX_QUERY_LENGTH);
+  const queryKey = normalizeStorePriceQueryKey(safeQuery);
+  if (!queryKey || safeQuery.length < 2) {
+    throw new Error("INVALID_QUERY");
+  }
+
+  const now = Date.now();
+  const forceRefresh = Boolean(options?.forceRefresh);
+  const markTracked = options?.markTracked !== false;
+  const cached = customStorePriceCache.get(queryKey);
+  if (
+    cached &&
+    !forceRefresh &&
+    Number.isFinite(cached.updatedAt) &&
+    now - cached.updatedAt <= CUSTOM_PRICE_CACHE_TTL_MS
+  ) {
+    if (markTracked && !cached.tracked) {
+      cached.tracked = true;
+      customStorePriceCache.set(queryKey, cached);
+      queueCustomStorePriceCacheSave();
+    }
+    return cached.response;
+  }
+
+  if (!forceRefresh && customStorePriceRefreshInFlight.has(queryKey)) {
+    return customStorePriceRefreshInFlight.get(queryKey);
+  }
+
+  const refreshPromise = (async () => {
+    const refreshedAt = Date.now();
+    const offers = await refreshStoreOffersForQuery(safeQuery);
+    const response = sanitizeStorePriceResponse(safeQuery, offers, refreshedAt);
+    const nextEntry = {
+      query: safeQuery,
+      updatedAt: refreshedAt,
+      tracked: markTracked || Boolean(cached?.tracked),
+      response,
+    };
+    customStorePriceCache.set(queryKey, nextEntry);
+    queueCustomStorePriceCacheSave();
+    return response;
+  })().finally(() => {
+    customStorePriceRefreshInFlight.delete(queryKey);
+  });
+
+  customStorePriceRefreshInFlight.set(queryKey, refreshPromise);
+  return refreshPromise;
+};
+
+const refreshTrackedStoreQueries = async () => {
+  const trackedQueries = new Set(
+    CUSTOM_PRICE_TRACKED_QUERIES.map((entry) => sanitizeText(entry, CUSTOM_PRICE_MAX_QUERY_LENGTH)).filter(Boolean)
+  );
+  customStorePriceCache.forEach((entry) => {
+    if (entry?.tracked && entry?.query) {
+      trackedQueries.add(sanitizeText(entry.query, CUSTOM_PRICE_MAX_QUERY_LENGTH));
+    }
+  });
+
+  for (const query of trackedQueries) {
+    try {
+      await getOrRefreshStorePriceSnapshot(query, { forceRefresh: true, markTracked: true });
+    } catch (error) {
+      logStructured("warn", "custom_price_refresh_failed", {
+        query,
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+    }
+  }
+};
+
+const startCustomStorePriceScheduler = async () => {
+  if (customStorePriceSchedulerStarted) return;
+  customStorePriceSchedulerStarted = true;
+  await loadCustomStorePriceCacheFromDisk();
+  setTimeout(() => {
+    refreshTrackedStoreQueries().catch((error) => {
+      logStructured("warn", "custom_price_initial_refresh_failed", {
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+    });
+  }, 10_000);
+  const timer = setInterval(() => {
+    refreshTrackedStoreQueries().catch((error) => {
+      logStructured("warn", "custom_price_scheduled_refresh_failed", {
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+    });
+  }, CUSTOM_PRICE_REFRESH_INTERVAL_MS);
+  if (typeof timer?.unref === "function") {
+    timer.unref();
+  }
 };
 
 const LEGACY_IMAGE_PATH_MAP = {
@@ -2021,130 +2307,40 @@ app.post("/api/offer-request", async (req, res) => {
   }
 });
 
-/**
- * GET /api/custom-build/prisjakt-offers
- */
-app.get("/api/custom-build/prisjakt-offers", async (req, res) => {
+const handleStoreOffersRequest = async (req, res) => {
   try {
     if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
       return res.status(403).json({ error: "Origin not allowed" });
     }
 
-    const query = sanitizeText(String(req.query?.query || ""), 180);
-    const limitRaw = Number(req.query?.limit || 3);
-    const limit = Math.min(5, Math.max(1, Number.isFinite(limitRaw) ? Math.round(limitRaw) : 3));
+    const query = sanitizeText(String(req.query?.query || ""), CUSTOM_PRICE_MAX_QUERY_LENGTH);
     if (query.length < 2) {
       return jsonError(res, 400, "INVALID_QUERY", "Sökfrasen måste vara minst 2 tecken.");
     }
-    if (!hasPrisjaktCredentials()) {
-      return jsonError(
-        res,
-        503,
-        "PRISJAKT_NOT_CONFIGURED",
-        "Prisjakt-integration saknar konfiguration i servermiljön."
-      );
-    }
-
-    const cacheKey = `public:prisjakt:${query.toLowerCase()}:${limit}`;
-    const cached = getCached(cacheKey);
-    if (cached) {
-      return res.json(cached);
-    }
-
-    const buildSuggestionsUrl = () => {
-      const url = new URL(`${PRISJAKT_API_BASE_URL}/partner-search/suggestions`);
-      url.searchParams.set("market", PRISJAKT_MARKET);
-      url.searchParams.set("ref", PRISJAKT_REF);
-      url.searchParams.set("product", query);
-      url.searchParams.set("limit", String(limit));
-      return url.toString();
-    };
-
-    const buildProductUrl = (productId) => {
-      const encodedProductId = encodeURIComponent(productId);
-      const url = new URL(`${PRISJAKT_API_BASE_URL}/partner-search/products/${encodedProductId}`);
-      url.searchParams.set("market", PRISJAKT_MARKET);
-      url.searchParams.set("ref", PRISJAKT_REF);
-      return url.toString();
-    };
-
-    let token = await getPrisjaktAccessToken(false);
-    let suggestionsPayload;
-    try {
-      suggestionsPayload = await fetchPrisjaktJson(buildSuggestionsUrl(), token);
-    } catch (error) {
-      if (error?.status === 401) {
-        token = await getPrisjaktAccessToken(true);
-        suggestionsPayload = await fetchPrisjaktJson(buildSuggestionsUrl(), token);
-      } else {
-        throw error;
-      }
-    }
-
-    const suggestedProducts = normalizePrisjaktSuggestionProducts(suggestionsPayload).slice(0, limit);
-    if (suggestedProducts.length === 0) {
-      const response = {
-        ok: true,
-        query,
-        products: [],
-      };
-      setCached(cacheKey, response, 15_000);
-      return res.json(response);
-    }
-
-    const productDetails = await Promise.all(
-      suggestedProducts.map(async (suggestedProduct) => {
-        try {
-          let productPayload;
-          try {
-            productPayload = await fetchPrisjaktJson(buildProductUrl(suggestedProduct.product_id), token);
-          } catch (error) {
-            if (error?.status === 401) {
-              token = await getPrisjaktAccessToken(true);
-              productPayload = await fetchPrisjaktJson(buildProductUrl(suggestedProduct.product_id), token);
-            } else {
-              throw error;
-            }
-          }
-
-          const normalizedProducts = normalizePrisjaktSuggestionProducts(productPayload);
-          const resolvedProduct =
-            normalizedProducts.find((entry) => entry.product_id === suggestedProduct.product_id) ||
-            normalizedProducts[0] ||
-            null;
-          const offers =
-            resolvedProduct?.offers?.length > 0
-              ? resolvedProduct.offers
-              : suggestedProduct.offers || [];
-
-          return {
-            product_id: suggestedProduct.product_id,
-            title: resolvedProduct?.title || suggestedProduct.title,
-            offers: offers.slice(0, 20),
-          };
-        } catch (error) {
-          return {
-            product_id: suggestedProduct.product_id,
-            title: suggestedProduct.title,
-            offers: (suggestedProduct.offers || []).slice(0, 20),
-          };
-        }
-      })
-    );
-
-    const response = {
-      ok: true,
-      query,
-      products: productDetails,
-    };
-    setCached(cacheKey, response, 60_000);
-    return res.json(response);
+    const forceRefresh = String(req.query?.refresh || "").trim() === "1";
+    const trackQuery = String(req.query?.track || "1").trim() !== "0";
+    const snapshot = await getOrRefreshStorePriceSnapshot(query, {
+      forceRefresh,
+      markTracked: trackQuery,
+    });
+    return res.json(snapshot);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Kunde inte hämta prisdata från Prisjakt.";
-    console.error("Prisjakt custom build error:", error);
-    return jsonError(res, 502, "PRISJAKT_FETCH_FAILED", message);
+    const message = error instanceof Error ? error.message : "Kunde inte hämta butikpriser.";
+    console.error("Custom store price error:", error);
+    return jsonError(res, 502, "STORE_PRICE_FETCH_FAILED", message);
   }
-});
+};
+
+/**
+ * GET /api/custom-build/store-offers
+ */
+app.get("/api/custom-build/store-offers", handleStoreOffersRequest);
+
+/**
+ * Backwards compatibility for old frontend endpoint.
+ * GET /api/custom-build/prisjakt-offers
+ */
+app.get("/api/custom-build/prisjakt-offers", handleStoreOffersRequest);
 
 /**
  * GET /api/addresses
@@ -4929,6 +5125,11 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Stripe API Server running on http://localhost:${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
+  startCustomStorePriceScheduler().catch((error) => {
+    logStructured("warn", "custom_price_scheduler_start_failed", {
+      message: error instanceof Error ? error.message : "unknown_error",
+    });
+  });
 });
 
 

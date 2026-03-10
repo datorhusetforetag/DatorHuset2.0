@@ -135,7 +135,7 @@ type ComponentItem = {
   selectedTotalPrice?: number | null;
 };
 
-type PrisjaktStoreOffer = {
+type StoreOffer = {
   store: string;
   price: number;
   currency?: string;
@@ -145,16 +145,16 @@ type PrisjaktStoreOffer = {
   availability?: string | null;
 };
 
-type PrisjaktProductResult = {
+type StoreProductResult = {
   product_id: string;
   title: string;
-  offers: PrisjaktStoreOffer[];
+  offers: StoreOffer[];
 };
 
-type PrisjaktOffersResponse = {
+type StoreOffersResponse = {
   ok: boolean;
   query: string;
-  products: PrisjaktProductResult[];
+  products: StoreProductResult[];
 };
 
 type CategoryConfig = {
@@ -1273,11 +1273,11 @@ export default function CustomBuild() {
   const [storePickerOpen, setStorePickerOpen] = useState(false);
   const [storePickerCategory, setStorePickerCategory] = useState<CategoryKey | null>(null);
   const [storePickerComponent, setStorePickerComponent] = useState<ComponentItem | null>(null);
-  const [storePickerProducts, setStorePickerProducts] = useState<PrisjaktProductResult[]>([]);
+  const [storePickerProducts, setStorePickerProducts] = useState<StoreProductResult[]>([]);
   const [storePickerActiveProductId, setStorePickerActiveProductId] = useState("");
   const [storePickerLoading, setStorePickerLoading] = useState(false);
   const [storePickerError, setStorePickerError] = useState("");
-  const [storePickerCache, setStorePickerCache] = useState<Record<string, PrisjaktOffersResponse>>({});
+  const [storePickerCache, setStorePickerCache] = useState<Record<string, StoreOffersResponse>>({});
 
 
   useEffect(() => {
@@ -1501,24 +1501,24 @@ export default function CustomBuild() {
       setStorePickerActiveProductId(products[0]?.product_id || "");
       setStorePickerLoading(false);
       if (products.length === 0) {
-        setStorePickerError("Inga Prisjakt-träffar hittades för komponenten.");
+        setStorePickerError("Inga butikstraffar hittades for komponenten.");
       }
       return;
     }
 
     try {
-      const endpoint = `${normalizedApiBase}/api/custom-build/prisjakt-offers?query=${encodeURIComponent(
+      const endpoint = `${normalizedApiBase}/api/custom-build/store-offers?query=${encodeURIComponent(
         item.name
       )}&limit=3`;
       const response = await fetch(endpoint);
-      const data = (await response.json().catch(() => ({}))) as PrisjaktOffersResponse & {
+      const data = (await response.json().catch(() => ({}))) as StoreOffersResponse & {
         error?: { message?: string } | string;
       };
       if (!response.ok) {
         const fallbackMessage =
           typeof data?.error === "string"
             ? data.error
-            : data?.error?.message || "Kunde inte hämta butikpriser från Prisjakt.";
+            : data?.error?.message || "Kunde inte hamta butikpriser just nu.";
         throw new Error(fallbackMessage);
       }
       const products = Array.isArray(data?.products) ? data.products : [];
@@ -1526,11 +1526,11 @@ export default function CustomBuild() {
       setStorePickerProducts(products);
       setStorePickerActiveProductId(products[0]?.product_id || "");
       if (products.length === 0) {
-        setStorePickerError("Inga Prisjakt-träffar hittades för komponenten.");
+        setStorePickerError("Inga butikstraffar hittades for komponenten.");
       }
     } catch (error) {
       setStorePickerError(
-        error instanceof Error ? error.message : "Kunde inte hämta butikpriser från Prisjakt."
+        error instanceof Error ? error.message : "Kunde inte hamta butikpriser just nu."
       );
     } finally {
       setStorePickerLoading(false);
@@ -1540,7 +1540,7 @@ export default function CustomBuild() {
   const selectComponentAndAdvance = (
     categoryKey: CategoryKey,
     component: ComponentItem,
-    selectedOffer?: PrisjaktStoreOffer
+    selectedOffer?: StoreOffer
   ) => {
     const normalizedPrice = Math.max(
       0,
@@ -1784,11 +1784,11 @@ export default function CustomBuild() {
         {storePickerOpen ? (
           <DialogContent className="max-w-3xl bg-white dark:bg-[#0f1824]">
             <DialogHeader>
-              <DialogTitle>Välj butik och pris</DialogTitle>
+              <DialogTitle>Valj butik och pris</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
                 {storePickerComponent
-                  ? `Jämför butiker för ${storePickerComponent.name} via Prisjakt.`
-                  : "Jämför butikernas priser via Prisjakt."}
+                  ? `Jamfor butiker for ${storePickerComponent.name}.`
+                  : "Jamfor butikernas priser."}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
