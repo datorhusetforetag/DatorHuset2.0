@@ -15,6 +15,7 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { CUSTOM_BUILD_CATALOG_ITEMS } from "@/data/customBuildCatalog.js";
 import cpu7600Image from "../../images/product images/cpu/7600.png";
 import cpu7600x3dImage from "../../images/product images/cpu/7600x3d.png";
 import cpu7700Image from "../../images/product images/cpu/7700.png";
@@ -129,6 +130,7 @@ type ComponentItem = {
   highlight?: string;
   socket?: "AM4" | "AM5" | "LGA1700" | "LGA1200";
   ramType?: "DDR4" | "DDR5";
+  details?: Record<string, string>;
   selectedStore?: string;
   selectedCurrency?: string;
   selectedProductUrl?: string | null;
@@ -136,13 +138,17 @@ type ComponentItem = {
 };
 
 type StoreOffer = {
+  store_id?: string;
+  status?: string;
   store: string;
-  price: number;
+  price: number | null;
   currency?: string;
   shipping_price?: number | null;
   total_price?: number | null;
   product_url?: string | null;
   availability?: string | null;
+  updated_at?: string | null;
+  error?: string | null;
 };
 
 type StoreProductResult = {
@@ -155,6 +161,24 @@ type StoreOffersResponse = {
   ok: boolean;
   query: string;
   products: StoreProductResult[];
+};
+
+type CatalogItemOffersResponse = {
+  ok: boolean;
+  item_id: string;
+  updated_at?: string;
+  lowest_price?: number | null;
+  offers: StoreOffer[];
+};
+
+type CatalogCategoryPricesResponse = {
+  ok: boolean;
+  category: string;
+  prices: Array<{
+    item_id: string;
+    lowest_price: number | null;
+    updated_at?: string | null;
+  }>;
 };
 
 type CategoryConfig = {
@@ -269,6 +293,78 @@ const CATEGORY_ID_PREFIX: Record<CategoryKey, string> = {
   case: "case",
   psu: "psu",
   cooling: "cool",
+};
+
+const CATALOG_IMAGE_MAP: Record<string, string> = {
+  cpu3600: cpu3600Image,
+  cpu5500: cpu5500Image,
+  cpu5600x: cpu5600xImage,
+  cpu7600: cpu7600Image,
+  cpu7700: cpu7700Image,
+  cpu7800x3d: cpu7800x3dImage,
+  cpu7950x3d: cpu7950x3dImage,
+  cpu12400f: cpu12400fImage,
+  cpu13400f: cpu13400fImage,
+  cpu13600k: cpu13600kImage,
+  cpu13700k: cpu13700kImage,
+  cpu14700k: cpu14700kImage,
+  cpu13900k: cpu13900kImage,
+  cpu14900k: cpu14900kImage,
+  cpu8400f: cpu8400fImage,
+  cpu9600x: cpu9600xImage,
+  cpu9800x3d: cpu9800x3dImage,
+  moboAsusRogB650E: moboAsusRogB650EImage,
+  moboMsiMagB650Tomahawk: moboMsiMagB650TomahawkImage,
+  moboGigabyteB650AorusElite: moboGigabyteB650AorusEliteImage,
+  moboAsrockX670ESteelLegend: moboAsrockX670ESteelLegendImage,
+  moboAsusPrimeB650MA: moboAsusPrimeB650MAImage,
+  moboAsusTufZ790Plus: moboAsusTufZ790PlusImage,
+  moboMsiMpgZ790Edge: moboMsiMpgZ790EdgeImage,
+  moboGigabyteZ790AorusElite: moboGigabyteZ790AorusEliteImage,
+  moboAsrockZ790ProRs: moboAsrockZ790ProRsImage,
+  moboMsiB760MMortar: moboMsiB760MMortarImage,
+};
+
+const catalogItems = CUSTOM_BUILD_CATALOG_ITEMS as Array<{
+  id: string;
+  category: "cpu" | "motherboard";
+  name: string;
+  brand: string;
+  socket: "AM4" | "AM5" | "LGA1700" | "LGA1200";
+  price: number;
+  imageKey?: string;
+  specs: string[];
+  details?: Record<string, string>;
+  highlight?: string | null;
+}>;
+
+const catalogComponentItems: Record<"cpu" | "motherboard", ComponentItem[]> = {
+  cpu: catalogItems
+    .filter((item) => item.category === "cpu")
+    .map((item) => ({
+      id: item.id,
+      name: item.name,
+      brand: item.brand,
+      price: item.price,
+      specs: Array.isArray(item.specs) ? item.specs : [],
+      socket: item.socket,
+      image: item.imageKey ? CATALOG_IMAGE_MAP[item.imageKey] : undefined,
+      details: item.details || {},
+      highlight: item.highlight || undefined,
+    })),
+  motherboard: catalogItems
+    .filter((item) => item.category === "motherboard")
+    .map((item) => ({
+      id: item.id,
+      name: item.name,
+      brand: item.brand,
+      price: item.price,
+      specs: Array.isArray(item.specs) ? item.specs : [],
+      socket: item.socket,
+      image: item.imageKey ? CATALOG_IMAGE_MAP[item.imageKey] : undefined,
+      details: item.details || {},
+      highlight: item.highlight || undefined,
+    })),
 };
 
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
@@ -1195,6 +1291,12 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   ],
 };
 
+const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
+  if (category === "cpu") return catalogComponentItems.cpu;
+  if (category === "motherboard") return catalogComponentItems.motherboard;
+  return COMPONENTS[category];
+};
+
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
 const formatCurrencyPrice = (price: number, currency = "SEK") =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency }).format(price);
@@ -1270,14 +1372,12 @@ export default function CustomBuild() {
     psu: null,
     cooling: null,
   });
-  const [storePickerOpen, setStorePickerOpen] = useState(false);
-  const [storePickerCategory, setStorePickerCategory] = useState<CategoryKey | null>(null);
+  const [expandedItemId, setExpandedItemId] = useState("");
+  const [expandedItemCategory, setExpandedItemCategory] = useState<CategoryKey | null>(null);
   const [storePickerComponent, setStorePickerComponent] = useState<ComponentItem | null>(null);
-  const [storePickerProducts, setStorePickerProducts] = useState<StoreProductResult[]>([]);
-  const [storePickerActiveProductId, setStorePickerActiveProductId] = useState("");
   const [storePickerLoading, setStorePickerLoading] = useState(false);
   const [storePickerError, setStorePickerError] = useState("");
-  const [storePickerCache, setStorePickerCache] = useState<Record<string, StoreOffersResponse>>({});
+  const [storePickerCache, setStorePickerCache] = useState<Record<string, CatalogItemOffersResponse>>({});
   const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
 
@@ -1302,7 +1402,7 @@ export default function CustomBuild() {
       CATEGORY_ORDER.forEach((key) => {
         const id = decodedIds[key];
         if (!id) return;
-        const match = COMPONENTS[key].find((item) => item.id === id);
+        const match = getCategoryItems(key).find((item) => item.id === id);
         if (match) {
           next[key] = match;
           if (!firstKey) {
@@ -1314,7 +1414,7 @@ export default function CustomBuild() {
       (Object.keys(COMPONENTS) as CategoryKey[]).forEach((key) => {
         const id = params.get(key);
         if (!id) return;
-        const match = COMPONENTS[key].find((item) => item.id === id);
+        const match = getCategoryItems(key).find((item) => item.id === id);
         if (match) {
           next[key] = match;
           if (!firstKey) {
@@ -1380,7 +1480,7 @@ export default function CustomBuild() {
   }, [selected.motherboard]);
 
   const activeConfig = CATEGORY_LIST.find((category) => category.key === activeCategory);
-  const items = COMPONENTS[activeCategory];
+  const items = getCategoryItems(activeCategory);
   const getComparablePrice = (item: ComponentItem, category: CategoryKey) => {
     const livePrice = lowestOfferPriceByItemId[item.id];
     if (typeof livePrice === "number" && Number.isFinite(livePrice) && livePrice > 0) {
@@ -1409,46 +1509,41 @@ export default function CustomBuild() {
   }, [priceBounds.min, priceBounds.max]);
 
   useEffect(() => {
-    const targets = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
-    if (targets.length === 0) return;
+    if (activeCategory !== "cpu" && activeCategory !== "motherboard") return;
+    const pendingItems = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
+    if (pendingItems.length === 0) return;
     let isCancelled = false;
 
     const loadLowestPrices = async () => {
-      await Promise.all(
-        targets.map(async (item) => {
-          lowestPriceLookupStartedRef.current.add(item.id);
-          try {
-            const endpoint = `${normalizedApiBase}/api/custom-build/store-offers?query=${encodeURIComponent(
-              item.name
-            )}&reference_price=${encodeURIComponent(String(item.price || 0))}&limit=1&track=0`;
-            const response = await fetch(endpoint);
-            if (!response.ok) return;
-            const data = (await response.json().catch(() => ({}))) as StoreOffersResponse;
-            const offers = data?.products?.[0]?.offers || [];
-            if (!Array.isArray(offers) || offers.length === 0) return;
-            const ranked = offers
-              .map((offer) => {
-                const candidate = offer.total_price ?? offer.price;
-                return Number.isFinite(candidate) ? Math.max(0, Math.round(candidate)) : null;
-              })
-              .filter((value): value is number => value !== null);
-            if (ranked.length === 0) return;
-            const lowest = Math.min(...ranked);
-            if (!Number.isFinite(lowest) || lowest <= 0) return;
-            if (isCancelled) return;
-            setLowestOfferPriceByItemId((prev) => ({ ...prev, [item.id]: lowest }));
-          } catch (error) {
-            // Ignore price lookup failures per item; static component price remains.
-          }
-        })
-      );
+      pendingItems.forEach((item) => lowestPriceLookupStartedRef.current.add(item.id));
+      try {
+        const endpoint = `${normalizedApiBase}/api/custom-build/catalog-prices?category=${encodeURIComponent(
+          activeCategory
+        )}`;
+        const response = await fetch(endpoint);
+        if (!response.ok) return;
+        const data = (await response.json().catch(() => ({}))) as CatalogCategoryPricesResponse;
+        const nextEntries = Array.isArray(data?.prices) ? data.prices : [];
+        if (isCancelled || nextEntries.length === 0) return;
+        setLowestOfferPriceByItemId((prev) => {
+          const nextState = { ...prev };
+          nextEntries.forEach((entry) => {
+            if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
+              nextState[entry.item_id] = Math.max(0, Math.round(Number(entry.lowest_price)));
+            }
+          });
+          return nextState;
+        });
+      } catch (error) {
+        // Keep reference prices if the catalog price endpoint is temporarily unavailable.
+      }
     };
 
     void loadLowestPrices();
     return () => {
       isCancelled = true;
     };
-  }, [items, normalizedApiBase]);
+  }, [items, normalizedApiBase, activeCategory]);
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
@@ -1492,13 +1587,15 @@ export default function CustomBuild() {
   const showNextBubble = Boolean(
     selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
   );
-  const activeStorePickerProduct = useMemo(() => {
-    if (storePickerProducts.length === 0) return null;
-    return (
-      storePickerProducts.find((product) => product.product_id === storePickerActiveProductId) ||
-      storePickerProducts[0]
-    );
-  }, [storePickerProducts, storePickerActiveProductId]);
+  const supportsStoreOffersForCategory = (categoryKey: CategoryKey) =>
+    categoryKey === "cpu" || categoryKey === "motherboard";
+  const getStoreCacheKey = (categoryKey: CategoryKey, itemId: string) => `${categoryKey}:${itemId}`;
+  const expandedStoreCacheKey =
+    expandedItemId && expandedItemCategory ? getStoreCacheKey(expandedItemCategory, expandedItemId) : "";
+  const expandedStoreSnapshot = expandedStoreCacheKey ? storePickerCache[expandedStoreCacheKey] : undefined;
+  const expandedStoreOffers = Array.isArray(expandedStoreSnapshot?.offers)
+    ? expandedStoreSnapshot.offers
+    : [];
 
   const getNextCategoryKey = (currentCategory: CategoryKey) => {
     const currentIndex = CATEGORY_ORDER.indexOf(currentCategory);
@@ -1535,43 +1632,43 @@ export default function CustomBuild() {
   };
 
   const handleStorePickerClose = () => {
-    setStorePickerOpen(false);
-    setStorePickerCategory(null);
+    setExpandedItemId("");
+    setExpandedItemCategory(null);
     setStorePickerComponent(null);
-    setStorePickerProducts([]);
-    setStorePickerActiveProductId("");
     setStorePickerLoading(false);
     setStorePickerError("");
   };
 
   const openStorePickerForComponent = async (categoryKey: CategoryKey, item: ComponentItem) => {
-    const cacheKey = `${categoryKey}:${item.id}`;
-    setStorePickerOpen(true);
-    setStorePickerCategory(categoryKey);
+    const cacheKey = getStoreCacheKey(categoryKey, item.id);
+    const isSameExpanded = expandedItemId === item.id && expandedItemCategory === categoryKey;
+    if (isSameExpanded) {
+      handleStorePickerClose();
+      return;
+    }
+    setExpandedItemId(item.id);
+    setExpandedItemCategory(categoryKey);
     setStorePickerComponent(item);
     setStorePickerError("");
-    setStorePickerLoading(true);
-    setStorePickerProducts([]);
-    setStorePickerActiveProductId("");
-
-    const cachedResult = storePickerCache[cacheKey];
-    const cachedProducts = Array.isArray(cachedResult?.products) ? cachedResult.products : [];
-    const cachedHasOffers = cachedProducts.some(
-      (product) => Array.isArray(product?.offers) && product.offers.length > 0
-    );
-    if (cachedResult && cachedHasOffers) {
-      setStorePickerProducts(cachedProducts);
-      setStorePickerActiveProductId(cachedProducts[0]?.product_id || "");
+    if (!supportsStoreOffersForCategory(categoryKey)) {
       setStorePickerLoading(false);
       return;
     }
 
+    const cachedResult = storePickerCache[cacheKey];
+    const cachedOffers = Array.isArray(cachedResult?.offers) ? cachedResult.offers : [];
+    if (cachedResult && cachedOffers.length > 0) {
+      setStorePickerLoading(false);
+      return;
+    }
+
+    setStorePickerLoading(true);
     try {
-      const endpoint = `${normalizedApiBase}/api/custom-build/store-offers?query=${encodeURIComponent(
-        item.name
-      )}&limit=3&refresh=1&reference_price=${encodeURIComponent(String(getComparablePrice(item, categoryKey) || 0))}`;
+      const endpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
+        item.id
+      )}&refresh=1`;
       const response = await fetch(endpoint);
-      const data = (await response.json().catch(() => ({}))) as StoreOffersResponse & {
+      const data = (await response.json().catch(() => ({}))) as CatalogItemOffersResponse & {
         error?: { message?: string } | string;
       };
       if (!response.ok) {
@@ -1581,19 +1678,11 @@ export default function CustomBuild() {
             : data?.error?.message || "Kunde inte hämta butikpriser just nu.";
         throw new Error(fallbackMessage);
       }
-      const products = Array.isArray(data?.products) ? data.products : [];
-      setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, query: item.name, products } }));
-      const hasOffers = products.some(
-        (product) => Array.isArray(product?.offers) && product.offers.length > 0
-      );
-      if (!hasOffers) {
-        setStorePickerProducts([]);
-        setStorePickerActiveProductId("");
+      const offers = Array.isArray(data?.offers) ? data.offers : [];
+      setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
+      if (offers.length === 0) {
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
-        return;
       }
-      setStorePickerProducts(products);
-      setStorePickerActiveProductId(products[0]?.product_id || "");
     } catch (error) {
       setStorePickerError(
         error instanceof Error ? error.message : "Kunde inte hämta butikpriser just nu."
@@ -1642,15 +1731,29 @@ export default function CustomBuild() {
   };
 
   const handleSelectWithoutStore = () => {
-    if (!storePickerCategory || !storePickerComponent) return;
-    selectComponentAndAdvance(storePickerCategory, storePickerComponent);
+    if (!expandedItemCategory || !storePickerComponent) return;
+    selectComponentAndAdvance(expandedItemCategory, storePickerComponent);
   };
 
   const handleCategorySelect = (key: CategoryKey) => {
+    handleStorePickerClose();
     setActiveCategory(key);
     setMobileSidebarOpen(false);
     scrollToCategoryPicker();
   };
+
+  const getStoreOfferStatusLabel = (offer: StoreOffer) => {
+    if (offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)) {
+      return formatCurrencyPrice(Number(offer.total_price ?? offer.price), offer.currency || "SEK");
+    }
+    if (offer.status === "linked_no_price") return "Pris saknas";
+    if (offer.status === "unavailable") return "Ej tillgänglig";
+    if (offer.status === "error") return "Kunde inte läsa";
+    return "Ingen träff";
+  };
+
+  const canSelectStoreOffer = (offer: StoreOffer) =>
+    offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price);
 
 
   const updateOfferField = (field: keyof typeof initialOfferForm) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -1846,129 +1949,6 @@ export default function CustomBuild() {
                 {offerStatus === "sending" ? "Skickar..." : "Skicka offertförfrågan"}
               </button>
             </form>
-          </DialogContent>
-        ) : null}
-      </Dialog>
-      <Dialog
-        open={storePickerOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            handleStorePickerClose();
-          }
-        }}
-      >
-        {storePickerOpen ? (
-          <DialogContent className="max-w-3xl bg-white dark:bg-[#0f1824]">
-            <DialogHeader>
-              <DialogTitle>Välj butik och pris</DialogTitle>
-              <DialogDescription className="text-gray-600 dark:text-gray-400">
-                {storePickerComponent
-                  ? `Jämför butiker för ${storePickerComponent.name}.`
-                  : "Jämför butikernas priser."}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4">
-              {storePickerLoading ? (
-                <div className="rounded-lg border border-gray-200 dark:border-gray-700 px-4 py-6 text-sm text-gray-600 dark:text-gray-300">
-                  Hämtar butikspriser...
-                </div>
-              ) : null}
-              {!storePickerLoading && storePickerProducts.length > 1 ? (
-                <div className="flex flex-wrap gap-2">
-                  {storePickerProducts.map((product) => (
-                    <button
-                      key={product.product_id}
-                      type="button"
-                      onClick={() => setStorePickerActiveProductId(product.product_id)}
-                      className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                        activeStorePickerProduct?.product_id === product.product_id
-                          ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                          : "border-gray-300 text-gray-700 hover:border-gray-400 dark:border-gray-700 dark:text-gray-200"
-                      }`}
-                    >
-                      {product.title}
-                    </button>
-                  ))}
-                </div>
-              ) : null}
-              {!storePickerLoading && activeStorePickerProduct ? (
-                <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-                  <div className="border-b border-gray-200 dark:border-gray-700 px-4 py-3">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                      {activeStorePickerProduct.title}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                      Välj butik för att lägga till komponenten och fortsätta automatiskt till nästa steg.
-                    </p>
-                  </div>
-                  <div className="max-h-[45vh] overflow-y-auto divide-y divide-gray-200 dark:divide-gray-700">
-                    {activeStorePickerProduct.offers.map((offer, index) => (
-                      <div
-                        key={`${offer.store}-${offer.price}-${index}`}
-                        className="px-4 py-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-                      >
-                        <div>
-                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{offer.store}</p>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            {formatCurrencyPrice(offer.price, offer.currency || "SEK")}
-                            {offer.total_price !== null && offer.total_price !== undefined
-                              ? ` • inkl. frakt: ${formatCurrencyPrice(offer.total_price, offer.currency || "SEK")}`
-                              : ""}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {offer.product_url ? (
-                            <a
-                              href={offer.product_url}
-                              target="_blank"
-                              rel="noreferrer"
-                              className="rounded-lg border border-gray-300 dark:border-gray-700 px-3 py-1.5 text-xs font-semibold text-gray-700 dark:text-gray-200 hover:border-[#11667b] hover:text-[#11667b]"
-                            >
-                              Öppna butik
-                            </a>
-                          ) : null}
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (!storePickerCategory || !storePickerComponent) return;
-                              selectComponentAndAdvance(storePickerCategory, storePickerComponent, offer);
-                            }}
-                            className="rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white transition-colors"
-                          >
-                            Välj
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ) : null}
-              {storePickerError ? (
-                <p className="text-sm text-amber-600">{storePickerError}</p>
-              ) : null}
-              {!storePickerLoading && !activeStorePickerProduct ? (
-                <p className="text-sm text-gray-600 dark:text-gray-300">
-                  Vi hittade inga prisjämförelser för denna komponent just nu.
-                </p>
-              ) : null}
-              <div className="flex flex-wrap items-center justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={handleStorePickerClose}
-                  className="rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:border-[#11667b] hover:text-[#11667b]"
-                >
-                  Avbryt
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSelectWithoutStore}
-                  disabled={!storePickerComponent || !storePickerCategory}
-                  className="rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-                >
-                  Välj utan butik
-                </button>
-              </div>
-            </div>
           </DialogContent>
         ) : null}
       </Dialog>
@@ -2199,10 +2179,14 @@ export default function CustomBuild() {
                 <div className="space-y-4">
                   {filteredItems.map((item) => {
                     const isSelected = selected[activeCategory]?.id === item.id;
+                    const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
                     const imageSrc = item.image ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
                     const imageAlt = item.image ? item.name : (categoryImage?.alt ?? "Komponent");
+                    const detailEntries = Object.entries(item.details || {});
+                    const showStorePanel = supportsStoreOffersForCategory(activeCategory);
+                    const storeOffersForItem = isExpanded ? expandedStoreOffers : [];
 
                     return (
                       <div
@@ -2279,6 +2263,138 @@ export default function CustomBuild() {
                             </button>
                           </div>
                         </div>
+                        {isExpanded ? (
+                          <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-800">
+                            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-[#111926]">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div>
+                                    <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+                                      Produktinfo
+                                    </p>
+                                    <h5 className="mt-2 text-base font-semibold text-gray-900 dark:text-gray-100">
+                                      {item.name}
+                                    </h5>
+                                  </div>
+                                  {item.selectedProductUrl ? (
+                                    <a
+                                      href={item.selectedProductUrl}
+                                      target="_blank"
+                                      rel="noreferrer"
+                                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                    >
+                                      Produktsida
+                                    </a>
+                                  ) : null}
+                                </div>
+                                <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                                  {detailEntries.length > 0 ? (
+                                    detailEntries.map(([label, value]) => (
+                                      <div key={`${item.id}-${label}`}>
+                                        <p className="text-[11px] uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
+                                          {label}
+                                        </p>
+                                        <p className="mt-1 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                          {value}
+                                        </p>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="sm:col-span-2 xl:col-span-3">
+                                      <p className="text-sm text-gray-600 dark:text-gray-300">
+                                        Välj komponenten direkt eller öppna butikslänken om den finns.
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-[#111926]">
+                                <div className="flex items-center justify-between gap-3">
+                                  <div>
+                                    <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
+                                      Butiker
+                                    </p>
+                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                      {showStorePanel
+                                        ? "Valbar butik rangordnad från billigast till dyrast."
+                                        : "Den här komponenten har ingen butiksväljare ännu."}
+                                    </p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={handleStorePickerClose}
+                                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                  >
+                                    Stäng
+                                  </button>
+                                </div>
+                                {storePickerLoading && isExpanded ? (
+                                  <div className="mt-4 rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
+                                    Hämtar butikslänkar och priser...
+                                  </div>
+                                ) : null}
+                                {storePickerError && isExpanded ? (
+                                  <p className="mt-4 text-sm text-amber-600">{storePickerError}</p>
+                                ) : null}
+                                {showStorePanel ? (
+                                  <div className="mt-4 space-y-2">
+                                    {storeOffersForItem.map((offer) => (
+                                      <div
+                                        key={`${item.id}-${offer.store_id || offer.store}`}
+                                        className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 rounded-lg border border-gray-200 px-3 py-3 dark:border-gray-800"
+                                      >
+                                        <div className="min-w-0">
+                                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                            {offer.store}
+                                          </p>
+                                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                                            {getStoreOfferStatusLabel(offer)}
+                                          </p>
+                                        </div>
+                                        {offer.product_url ? (
+                                          <a
+                                            href={offer.product_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                          >
+                                            Till butik
+                                          </a>
+                                        ) : (
+                                          <span className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
+                                            Ingen länk
+                                          </span>
+                                        )}
+                                        <button
+                                          type="button"
+                                          disabled={!canSelectStoreOffer(offer)}
+                                          onClick={() => selectComponentAndAdvance(activeCategory, item, offer)}
+                                          className="rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                        >
+                                          Välj
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <div className="mt-4 rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
+                                    Välj komponenten direkt för att fortsätta till nästa steg.
+                                  </div>
+                                )}
+                                <div className="mt-4 flex justify-end">
+                                  <button
+                                    type="button"
+                                    onClick={handleSelectWithoutStore}
+                                    disabled={!isExpanded}
+                                    className="rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                  >
+                                    Välj utan butik
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ) : null}
                       </div>
                     );
                   })}
