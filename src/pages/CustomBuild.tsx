@@ -1666,7 +1666,7 @@ export default function CustomBuild() {
     try {
       const endpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
         item.id
-      )}&refresh=1`;
+      )}`;
       const response = await fetch(endpoint);
       const data = (await response.json().catch(() => ({}))) as CatalogItemOffersResponse & {
         error?: { message?: string } | string;

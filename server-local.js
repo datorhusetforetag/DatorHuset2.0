@@ -2094,6 +2094,36 @@ const hydrateCatalogStoreOffers = (offers = []) => {
   return sortCatalogStoreOffers(Array.from(normalizedByStoreId.values()));
 };
 
+const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = []) => {
+  const nextByStoreId = new Map(
+    hydrateCatalogStoreOffers(nextOffers).map((offer) => [offer.store_id, offer])
+  );
+  const cachedByStoreId = new Map(
+    hydrateCatalogStoreOffers(cachedOffers).map((offer) => [offer.store_id, offer])
+  );
+
+  CURATED_CUSTOM_BUILD_STORE_SOURCES.forEach((source) => {
+    const nextOffer = nextByStoreId.get(source.id);
+    const cachedOffer = cachedByStoreId.get(source.id);
+    if (!nextOffer || !cachedOffer) {
+      return;
+    }
+
+    const nextHasUsefulData =
+      (nextOffer.status === "available" && Number.isFinite(nextOffer.total_price ?? nextOffer.price)) ||
+      (nextOffer.status === "linked_no_price" && Boolean(nextOffer.product_url));
+    const cachedHasUsefulData =
+      (cachedOffer.status === "available" && Number.isFinite(cachedOffer.total_price ?? cachedOffer.price)) ||
+      (cachedOffer.status === "linked_no_price" && Boolean(cachedOffer.product_url));
+
+    if (!nextHasUsefulData && cachedHasUsefulData) {
+      nextByStoreId.set(source.id, cachedOffer);
+    }
+  });
+
+  return sortCatalogStoreOffers(Array.from(nextByStoreId.values()));
+};
+
 const countCatalogAvailableOffers = (offers = []) =>
   offers.filter((offer) => offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)).length;
 
@@ -2234,7 +2264,8 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
   const refreshPromise = (async () => {
     const refreshedAt = Date.now();
     const offers = await refreshCatalogItemStoreOffers(itemId);
-    const nextResponse = sanitizeCatalogItemResponse(item, offers, refreshedAt);
+    const mergedOffers = mergeCatalogStoreOffersWithCached(offers, cachedOffers);
+    const nextResponse = sanitizeCatalogItemResponse(item, mergedOffers, refreshedAt);
     customBuildProductCache.set(cacheKey, {
       item_id: itemId,
       updatedAt: refreshedAt,
