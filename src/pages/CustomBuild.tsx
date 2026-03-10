@@ -1501,7 +1501,7 @@ export default function CustomBuild() {
       setStorePickerActiveProductId(products[0]?.product_id || "");
       setStorePickerLoading(false);
       if (products.length === 0) {
-        setStorePickerError("Inga butikstraffar hittades for komponenten.");
+        setStorePickerError("Inga butiksträffar hittades för komponenten.");
       }
       return;
     }
@@ -1509,7 +1509,7 @@ export default function CustomBuild() {
     try {
       const endpoint = `${normalizedApiBase}/api/custom-build/store-offers?query=${encodeURIComponent(
         item.name
-      )}&limit=3`;
+      )}&limit=3&reference_price=${encodeURIComponent(String(item.price || 0))}`;
       const response = await fetch(endpoint);
       const data = (await response.json().catch(() => ({}))) as StoreOffersResponse & {
         error?: { message?: string } | string;
@@ -1518,7 +1518,7 @@ export default function CustomBuild() {
         const fallbackMessage =
           typeof data?.error === "string"
             ? data.error
-            : data?.error?.message || "Kunde inte hamta butikpriser just nu.";
+            : data?.error?.message || "Kunde inte hämta butikpriser just nu.";
         throw new Error(fallbackMessage);
       }
       const products = Array.isArray(data?.products) ? data.products : [];
@@ -1526,11 +1526,11 @@ export default function CustomBuild() {
       setStorePickerProducts(products);
       setStorePickerActiveProductId(products[0]?.product_id || "");
       if (products.length === 0) {
-        setStorePickerError("Inga butikstraffar hittades for komponenten.");
+        setStorePickerError("Inga butiksträffar hittades för komponenten.");
       }
     } catch (error) {
       setStorePickerError(
-        error instanceof Error ? error.message : "Kunde inte hamta butikpriser just nu."
+        error instanceof Error ? error.message : "Kunde inte hämta butikpriser just nu."
       );
     } finally {
       setStorePickerLoading(false);
@@ -1784,11 +1784,11 @@ export default function CustomBuild() {
         {storePickerOpen ? (
           <DialogContent className="max-w-3xl bg-white dark:bg-[#0f1824]">
             <DialogHeader>
-              <DialogTitle>Valj butik och pris</DialogTitle>
+              <DialogTitle>Välj butik och pris</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
                 {storePickerComponent
-                  ? `Jamfor butiker for ${storePickerComponent.name}.`
-                  : "Jamfor butikernas priser."}
+                  ? `Jämför butiker för ${storePickerComponent.name}.`
+                  : "Jämför butikernas priser."}
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">

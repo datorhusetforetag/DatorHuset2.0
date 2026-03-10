@@ -58,6 +58,7 @@ const CUSTOM_PRICE_REQUEST_TIMEOUT_MS = Math.max(
   Number(process.env.CUSTOM_PRICE_REQUEST_TIMEOUT_MS || 12_000)
 );
 const CUSTOM_PRICE_MAX_QUERY_LENGTH = 180;
+const CUSTOM_STORE_PRICE_CACHE_VERSION = "v2";
 const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES || "")
   .split(",")
   .map((value) => value.trim())
@@ -781,6 +782,77 @@ const normalizeStorePriceQueryKey = (value) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 
+const buildStorePriceCacheKey = (query) =>
+  `${CUSTOM_STORE_PRICE_CACHE_VERSION}:${normalizeStorePriceQueryKey(query)}`;
+
+const tokenizeForSearchMatch = (value) =>
+  normalizeStorePriceQueryKey(value)
+    .split(/\s+/)
+    .filter((token) => token.length >= 2);
+
+const scoreTitleAgainstQuery = (title, queryTokens) => {
+  const normalizedTitle = normalizeStorePriceQueryKey(title);
+  if (!normalizedTitle || queryTokens.length === 0) return 0;
+  let score = 0;
+  queryTokens.forEach((token) => {
+    if (normalizedTitle.includes(token)) {
+      score += token.length >= 4 ? 2 : 1;
+    }
+  });
+  return score;
+};
+
+const isLikelySearchResultUrl = (url) => {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  return (
+    lower.includes("/search") ||
+    lower.includes("/sok") ||
+    lower.includes("searchparameter=") ||
+    lower.includes("?q=") ||
+    lower.includes("&q=") ||
+    lower.includes("/s?k=") ||
+    lower.includes("/s/?k=")
+  );
+};
+
+const isLikelyProductUrlForStore = (url, sourceId) => {
+  if (!url) return false;
+  const lower = url.toLowerCase();
+  if (isLikelySearchResultUrl(lower)) return false;
+  if (sourceId === "amazon-se") return /\/dp\/[a-z0-9]{8,}/i.test(lower);
+  if (sourceId === "webhallen") return /\/product\/\d+-/i.test(lower);
+  if (sourceId === "inet") return /\/produkt\/\d+/i.test(lower);
+  if (sourceId === "komplett") return /\/product\//i.test(lower);
+  if (sourceId === "elgiganten") return /\/[a-z0-9-]+\/p\/[a-z0-9-]+/i.test(lower) || /\/product\//i.test(lower);
+  if (sourceId === "power") return /\/product\//i.test(lower) || /\/p-\d+/i.test(lower);
+  return true;
+};
+
+const normalizeOfferUrlForStore = (url, sourceId) => {
+  if (!url) return null;
+  try {
+    const normalized = new URL(url);
+    if (sourceId === "amazon-se") {
+      const match = normalized.pathname.match(/\/dp\/[A-Z0-9]{8,}/i);
+      if (!match) return null;
+      return `https://www.amazon.se${match[0]}`;
+    }
+    if (isLikelySearchResultUrl(normalized.toString())) return null;
+    return normalized.toString();
+  } catch (error) {
+    return null;
+  }
+};
+
+const isOfferWithinReferencePrice = (price, referencePrice = null) => {
+  if (!Number.isFinite(price) || price <= 0) return false;
+  if (!Number.isFinite(referencePrice) || referencePrice <= 0) return true;
+  const lowerBound = Math.max(50, Math.round(referencePrice * 0.55));
+  const upperBound = Math.round(referencePrice * 1.8);
+  return price >= lowerBound && price <= upperBound;
+};
+
 const normalizeRelativeUrl = (candidate, baseUrl) => {
   if (!candidate || typeof candidate !== "string") return null;
   try {
@@ -789,34 +861,6 @@ const normalizeRelativeUrl = (candidate, baseUrl) => {
   } catch (error) {
     return null;
   }
-};
-
-const parseHtmlPriceCandidates = (html) => {
-  if (!html) return [];
-  const candidates = [];
-  const sekRegex = /(\d{2,3}(?:[ .]\d{3})*(?:[.,]\d{1,2})?)\s*(?:kr|sek)\b/gi;
-  let sekMatch = sekRegex.exec(html);
-  while (sekMatch) {
-    const parsed = parseMoneyValue(sekMatch[1]);
-    if (parsed !== null) {
-      candidates.push(parsed);
-    }
-    sekMatch = sekRegex.exec(html);
-  }
-
-  const priceJsonRegex = /"price"\s*:\s*"?(\d{2,6}(?:[.,]\d{1,2})?)"?/gi;
-  let priceJsonMatch = priceJsonRegex.exec(html);
-  while (priceJsonMatch) {
-    const parsed = parseMoneyValue(priceJsonMatch[1]);
-    if (parsed !== null) {
-      candidates.push(parsed);
-    }
-    priceJsonMatch = priceJsonRegex.exec(html);
-  }
-
-  return candidates
-    .map((value) => Math.round(value))
-    .filter((value) => Number.isFinite(value) && value >= 50 && value <= 400_000);
 };
 
 const normalizeAvailability = (value) => {
@@ -934,20 +978,85 @@ const extractStoreOffersFromJsonLd = (html, storeName, baseUrl) => {
   return offers;
 };
 
-const createFallbackStoreOffer = (storeName, html, searchUrl) => {
-  const prices = parseHtmlPriceCandidates(html);
-  if (prices.length === 0) return null;
-  const minimumPrice = Math.min(...prices);
-  if (!Number.isFinite(minimumPrice)) return null;
+const decodeBasicHtmlEntities = (value) =>
+  String(value || "")
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, "\"")
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
+
+const extractAmazonOfferFromSearchHtml = (html, query, referencePrice = null) => {
+  const blocks = Array.from(
+    html.matchAll(
+      /<div[^>]*data-component-type=\"s-search-result\"[\s\S]*?(?=<div[^>]*data-component-type=\"s-search-result\"|$)/gi
+    )
+  ).map((match) => match[0]);
+  if (blocks.length === 0) return null;
+
+  const queryTokens = tokenizeForSearchMatch(query);
+  const candidates = [];
+
+  blocks.forEach((block) => {
+    const rawTitle =
+      block.match(/<h2[^>]*>\s*<span[^>]*>([\s\S]*?)<\/span>\s*<\/h2>/i)?.[1] ||
+      block.match(/<h2[^>]*aria-label=\"([^\"]+)\"/i)?.[1] ||
+      "";
+    const title = decodeBasicHtmlEntities(rawTitle.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim());
+    const hrefMatch =
+      block.match(/<a[^>]*class=\"[^\"]*a-link-normal[^\"]*\"[^>]*href=\"([^\"]+)\"/i) ||
+      block.match(/<a[^>]*href=\"([^\"]+)\"[^>]*class=\"[^\"]*a-link-normal[^\"]*\"/i) ||
+      block.match(/<a[^>]*href=\"([^\"]*\/dp\/[A-Z0-9]{8,}[^\"]*)\"/i);
+    const rawHref = hrefMatch?.[1] || "";
+    const href = decodeBasicHtmlEntities(rawHref);
+    const productUrl = normalizeOfferUrlForStore(normalizeRelativeUrl(href, "https://www.amazon.se"), "amazon-se");
+    if (!productUrl) return;
+
+    const offscreenPrice = decodeBasicHtmlEntities(
+      block.match(/<span class=\"a-offscreen\">([^<]+)<\/span>/i)?.[1] || ""
+    );
+    const whole = decodeBasicHtmlEntities(block.match(/a-price-whole\">([^<]+)</i)?.[1] || "");
+    const fraction = decodeBasicHtmlEntities(block.match(/a-price-fraction\">([^<]+)</i)?.[1] || "");
+    const combined = whole ? `${whole}${fraction ? `.${fraction}` : ""}` : "";
+    const parsedPrice = parseMoneyValue(offscreenPrice, combined);
+    if (!Number.isFinite(parsedPrice)) return;
+    const roundedPrice = Math.max(0, Math.round(parsedPrice));
+    if (!isOfferWithinReferencePrice(roundedPrice, referencePrice)) return;
+
+    candidates.push({
+      store: "Amazon.se",
+      title: title || "Amazon.se",
+      price: roundedPrice,
+      currency: "SEK",
+      shipping_price: null,
+      total_price: roundedPrice,
+      product_url: productUrl,
+      availability: null,
+      _score: scoreTitleAgainstQuery(title, queryTokens),
+    });
+  });
+
+  if (candidates.length === 0) return null;
+  candidates.sort((a, b) => {
+    const scoreDiff = b._score - a._score;
+    if (scoreDiff !== 0) return scoreDiff;
+    if (Number.isFinite(referencePrice) && referencePrice > 0) {
+      const aDistance = Math.abs(a.price - referencePrice);
+      const bDistance = Math.abs(b.price - referencePrice);
+      if (aDistance !== bDistance) return aDistance - bDistance;
+    }
+    return a.price - b.price;
+  });
+  const best = candidates[0];
   return {
-    store: storeName,
-    title: storeName,
-    price: Math.max(0, Math.round(minimumPrice)),
-    currency: "SEK",
-    shipping_price: null,
-    total_price: Math.max(0, Math.round(minimumPrice)),
-    product_url: searchUrl,
-    availability: null,
+    store: best.store,
+    title: best.title,
+    price: best.price,
+    currency: best.currency,
+    shipping_price: best.shipping_price,
+    total_price: best.total_price,
+    product_url: best.product_url,
+    availability: best.availability,
   };
 };
 
@@ -1009,21 +1118,31 @@ const fetchStoreSearchPage = async (source, query) => {
   return { url, html };
 };
 
-const fetchStoreOfferForQuery = async (source, query) => {
+const fetchStoreOfferForQuery = async (source, query, referencePrice = null) => {
   try {
     const { url, html } = await fetchStoreSearchPage(source, query);
+    if (source.id === "amazon-se") {
+      const amazonOffer = extractAmazonOfferFromSearchHtml(html, query, referencePrice);
+      if (amazonOffer) {
+        return amazonOffer;
+      }
+    }
     const parsedOffers = extractStoreOffersFromJsonLd(html, source.name, url);
-    const normalizedFromJsonLd = normalizeStoreOfferList(parsedOffers).filter(
-      (offer) => offer.price >= 50 && offer.price <= 400_000
-    );
+    const normalizedFromJsonLd = normalizeStoreOfferList(parsedOffers)
+      .map((offer) => ({
+        ...offer,
+        product_url: normalizeOfferUrlForStore(offer.product_url, source.id),
+      }))
+      .filter((offer) => offer.price >= 50 && offer.price <= 400_000)
+      .filter((offer) => isOfferWithinReferencePrice(offer.price, referencePrice))
+      .filter((offer) => (offer.product_url ? isLikelyProductUrlForStore(offer.product_url, source.id) : false));
     if (normalizedFromJsonLd.length > 0) {
       return {
         ...normalizedFromJsonLd[0],
         store: source.name,
       };
     }
-    const fallback = createFallbackStoreOffer(source.name, html, url);
-    return fallback;
+    return null;
   } catch (error) {
     logStructured("warn", "custom_price_store_fetch_failed", {
       store: source.name,
@@ -1087,7 +1206,10 @@ const loadCustomStorePriceCacheFromDisk = async () => {
     const payload = raw ? JSON.parse(raw) : {};
     const entries = Array.isArray(payload?.entries) ? payload.entries : [];
     entries.forEach((entry) => {
-      const key = normalizeStorePriceQueryKey(entry?.key || entry?.query || "");
+      const rawKey = sanitizeText(String(entry?.key || ""), 240);
+      const key = rawKey.startsWith(`${CUSTOM_STORE_PRICE_CACHE_VERSION}:`)
+        ? rawKey
+        : buildStorePriceCacheKey(entry?.query || "");
       const query = sanitizeText(String(entry?.query || ""), CUSTOM_PRICE_MAX_QUERY_LENGTH);
       const updatedAt = Number(entry?.updatedAt || Date.now());
       if (!key || !query || !entry?.response) return;
@@ -1108,16 +1230,21 @@ const loadCustomStorePriceCacheFromDisk = async () => {
   }
 };
 
-const refreshStoreOffersForQuery = async (query) => {
+const refreshStoreOffersForQuery = async (query, referencePrice = null) => {
   const offers = (
-    await Promise.all(CUSTOM_STORE_SOURCES.map((source) => fetchStoreOfferForQuery(source, query)))
+    await Promise.all(
+      CUSTOM_STORE_SOURCES.map((source) => fetchStoreOfferForQuery(source, query, referencePrice))
+    )
   ).filter(Boolean);
   return offers;
 };
 
 const getOrRefreshStorePriceSnapshot = async (query, options = {}) => {
   const safeQuery = sanitizeText(query, CUSTOM_PRICE_MAX_QUERY_LENGTH);
-  const queryKey = normalizeStorePriceQueryKey(safeQuery);
+  const queryKey = buildStorePriceCacheKey(safeQuery);
+  const referencePrice = Number.isFinite(Number(options?.referencePrice))
+    ? Math.max(0, Number(options.referencePrice))
+    : null;
   if (!queryKey || safeQuery.length < 2) {
     throw new Error("INVALID_QUERY");
   }
@@ -1146,7 +1273,7 @@ const getOrRefreshStorePriceSnapshot = async (query, options = {}) => {
 
   const refreshPromise = (async () => {
     const refreshedAt = Date.now();
-    const offers = await refreshStoreOffersForQuery(safeQuery);
+    const offers = await refreshStoreOffersForQuery(safeQuery, referencePrice);
     const response = sanitizeStorePriceResponse(safeQuery, offers, refreshedAt);
     const nextEntry = {
       query: safeQuery,
@@ -2319,9 +2446,14 @@ const handleStoreOffersRequest = async (req, res) => {
     }
     const forceRefresh = String(req.query?.refresh || "").trim() === "1";
     const trackQuery = String(req.query?.track || "1").trim() !== "0";
+    const referencePriceValue = Number(req.query?.reference_price);
+    const referencePrice = Number.isFinite(referencePriceValue)
+      ? Math.max(0, Math.round(referencePriceValue))
+      : null;
     const snapshot = await getOrRefreshStorePriceSnapshot(query, {
       forceRefresh,
       markTracked: trackQuery,
+      referencePrice,
     });
     return res.json(snapshot);
   } catch (error) {
