@@ -926,7 +926,7 @@ const matchesOfferToQueryModel = (sourceId, queryModelTokens, offerTitle, offerU
 
 const isLikelyPrebuiltOrBundleOffer = (title, url) => {
   const text = `${firstText(title)} ${String(url || "")}`.toLowerCase();
-  return /(config|prebuilt|byggdator|gaming[\s-]?pc|desktop-pc|desktop\s+computer|datorpaket|bundle|komplett\s+pc)/i.test(
+  return /(config|prebuilt|byggdator|gamingdator|stationar-gamingdator|gaming[\s-]?pc|desktop-pc|desktop\s+computer|datorpaket|bundle|komplett\s+pc)/i.test(
     text
   );
 };
@@ -1449,10 +1449,10 @@ const fetchJinaMirrorTextForUrl = async (url) => {
   return response.text();
 };
 
-const buildDuckDuckGoSiteSearchUrl = (source, query) => {
+const buildDuckDuckGoSiteSearchUrl = (source, query, exact = true) => {
   const domain = sanitizeText(String(source?.siteSearchDomain || ""), 120);
   if (!domain || !query) return null;
-  const encodedQuery = encodeURIComponent(`site:${domain} "${query}"`);
+  const encodedQuery = encodeURIComponent(exact ? `site:${domain} "${query}"` : `site:${domain} ${query}`);
   return `https://html.duckduckgo.com/html/?q=${encodedQuery}`;
 };
 
@@ -1464,9 +1464,15 @@ const normalizeDuckDuckGoTargetUrl = (value, sourceId) => {
 };
 
 const fetchDuckDuckGoSiteSearchText = async (source, query) => {
-  const url = buildDuckDuckGoSiteSearchUrl(source, query);
-  if (!url) return null;
-  return fetchJinaMirrorTextForUrl(url);
+  const urls = [
+    buildDuckDuckGoSiteSearchUrl(source, query, true),
+    buildDuckDuckGoSiteSearchUrl(source, query, false),
+  ].filter(Boolean);
+  if (urls.length === 0) return null;
+  const texts = (
+    await Promise.all(urls.map((url) => fetchJinaMirrorTextForUrl(url).catch(() => null)))
+  ).filter((value) => typeof value === "string" && value.trim().length > 0);
+  return texts.length > 0 ? texts.join("\n\n") : null;
 };
 
 const buildCatalogSearchQueries = (item) => {
@@ -1503,6 +1509,7 @@ const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referenc
   const modelTokens = extractModelTokensFromQuery(query);
   const candidates = [];
   const fallbackCandidates = [];
+  const urlOnlyFallbackCandidates = [];
   const redirectRegex = /https?:\/\/duckduckgo\.com\/l\/\?uddg=([^\s)]+)/gi;
   let match = redirectRegex.exec(markdown);
   while (match) {
@@ -1542,6 +1549,9 @@ const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referenc
       _score: titleScore,
       _distance: Number.isFinite(referencePrice) && Number.isFinite(pickedPrice) ? Math.abs(pickedPrice - referencePrice) : 0,
     };
+    if (matchesModelTokens(`${title} ${normalizedUrl}`, modelTokens)) {
+      urlOnlyFallbackCandidates.push(candidate);
+    }
     if (modelMatch && titleScore > 0) {
       candidates.push(candidate);
     } else if (modelMatch || matchesModelTokens(combinedTitle, modelTokens)) {
@@ -1550,7 +1560,12 @@ const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referenc
     match = redirectRegex.exec(markdown);
   }
 
-  const rankedCandidates = candidates.length > 0 ? candidates : fallbackCandidates;
+  const rankedCandidates =
+    candidates.length > 0
+      ? candidates
+      : fallbackCandidates.length > 0
+      ? fallbackCandidates
+      : urlOnlyFallbackCandidates;
   if (rankedCandidates.length === 0) return null;
   rankedCandidates.sort((a, b) => {
     if (b._score !== a._score) return b._score - a._score;
@@ -2207,12 +2222,10 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
     throw new Error("UNKNOWN_CATALOG_ITEM");
   }
   const searchQueries = buildCatalogSearchQueries(item);
-  const storeOffers = [];
-  for (const curatedStore of CURATED_CUSTOM_BUILD_STORE_SOURCES) {
+  const storeOffers = await Promise.all(CURATED_CUSTOM_BUILD_STORE_SOURCES.map(async (curatedStore) => {
     const source = CUSTOM_STORE_SOURCE_BY_ID[curatedStore.id];
     if (!source) {
-      storeOffers.push(createEmptyCatalogStoreOffer(curatedStore));
-      continue;
+      return createEmptyCatalogStoreOffer(curatedStore);
     }
     let discoveredOffer = null;
     for (const searchQuery of searchQueries) {
@@ -2222,18 +2235,16 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
       }
     }
     const directOffer = await fetchDirectProductOffer(item, source, discoveredOffer);
-    storeOffers.push(
-      sanitizeCatalogStoreOffer(
-        {
-          ...directOffer,
-          store_id: source.id,
-          store: source.name,
-          product_url: directOffer?.product_url || discoveredOffer?.product_url || null,
-        },
-        source
-      )
+    return sanitizeCatalogStoreOffer(
+      {
+        ...directOffer,
+        store_id: source.id,
+        store: source.name,
+        product_url: directOffer?.product_url || discoveredOffer?.product_url || null,
+      },
+      source
     );
-  }
+  }));
   return storeOffers;
 };
 
@@ -2244,16 +2255,32 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
   }
   const cacheKey = buildCustomBuildProductCacheKey(itemId);
   const forceRefresh = Boolean(options?.forceRefresh);
+  const allowStale = options?.allowStale !== false;
   const cached = customBuildProductCache.get(cacheKey);
   const cachedOffers = Array.isArray(cached?.response?.offers) ? cached.response.offers : [];
   const cachedOfferCount = countCatalogAvailableOffers(cachedOffers);
   const maxAge = cachedOfferCount > 0 ? CUSTOM_PRICE_CACHE_TTL_MS : CUSTOM_PRICE_EMPTY_CACHE_TTL_MS;
+  const isCachedFresh =
+    cached &&
+    Number.isFinite(cached.updatedAt) &&
+    Date.now() - cached.updatedAt <= maxAge;
   if (
     cached &&
     !forceRefresh &&
-    Number.isFinite(cached.updatedAt) &&
-    Date.now() - cached.updatedAt <= maxAge
+    isCachedFresh
   ) {
+    return cached.response;
+  }
+
+  if (cached && !forceRefresh && allowStale) {
+    if (!customBuildProductRefreshInFlight.has(cacheKey)) {
+      getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh: true, allowStale: false }).catch((error) => {
+        logStructured("warn", "custom_build_product_background_refresh_failed", {
+          item_id: itemId,
+          message: error instanceof Error ? error.message : "unknown_error",
+        });
+      });
+    }
     return cached.response;
   }
 
@@ -2285,10 +2312,13 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
   const items = getCustomBuildCatalogItemsByCategory(category);
   const results = await Promise.all(
     items.map(async (item) => {
-      const response = await getOrRefreshCatalogItemStoreOffers(item.id, { forceRefresh });
+      const response = await getOrRefreshCatalogItemStoreOffers(item.id, {
+        forceRefresh,
+        allowStale: !forceRefresh,
+      });
       return {
         item_id: item.id,
-        lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
+        lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : item.price,
         updated_at: response?.updated_at || null,
       };
     })

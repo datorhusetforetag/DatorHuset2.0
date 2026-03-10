@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type Dispatch, type FormEvent, type SetStateAction } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -364,7 +364,119 @@ const catalogComponentItems: Record<"cpu" | "motherboard", ComponentItem[]> = {
       image: item.imageKey ? CATALOG_IMAGE_MAP[item.imageKey] : undefined,
       details: item.details || {},
       highlight: item.highlight || undefined,
-    })),
+  })),
+};
+
+const STORAGE_METADATA_BY_ID: Record<string, { interface?: string; pcieGen?: string }> = {
+  "sto-1": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-2": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-3": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-4": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-5": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-6": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-7": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-8": { interface: "SATA" },
+  "sto-9": { interface: "SATA" },
+  "sto-10": { interface: "HDD" },
+  "sto-11": { interface: "NVMe", pcieGen: "Gen4" },
+  "sto-13": { interface: "NVMe", pcieGen: "Gen5" },
+  "sto-14": { interface: "NVMe", pcieGen: "Gen5" },
+};
+
+const PSU_METADATA_BY_ID: Record<
+  string,
+  { wattage: number; rating: string; modular: "Modular" | "Ej modular" }
+> = {
+  "psu-1": { wattage: 750, rating: "Gold", modular: "Modular" },
+  "psu-2": { wattage: 850, rating: "Gold", modular: "Modular" },
+  "psu-3": { wattage: 750, rating: "Gold", modular: "Modular" },
+  "psu-4": { wattage: 1000, rating: "Gold", modular: "Modular" },
+  "psu-5": { wattage: 1000, rating: "Platinum", modular: "Modular" },
+  "psu-6": { wattage: 750, rating: "Gold", modular: "Modular" },
+  "psu-7": { wattage: 850, rating: "Gold", modular: "Modular" },
+  "psu-8": { wattage: 850, rating: "Gold", modular: "Modular" },
+  "psu-9": { wattage: 750, rating: "Gold", modular: "Modular" },
+  "psu-10": { wattage: 850, rating: "Gold", modular: "Modular" },
+};
+
+const normalizeFilterToken = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const collectItemSearchText = (item: ComponentItem) => [item.name, ...(item.specs || []), ...Object.values(item.details || {})]
+  .join(" ");
+
+const getItemSocketFilterValue = (item: ComponentItem) => {
+  if (item.socket) return item.socket;
+  const text = collectItemSearchText(item);
+  if (/am5/i.test(text)) return "AM5";
+  if (/am4/i.test(text)) return "AM4";
+  if (/lga\s*1700/i.test(text)) return "LGA1700";
+  if (/lga\s*1200/i.test(text)) return "LGA1200";
+  return "";
+};
+
+const getItemRamTypeFilterValue = (item: ComponentItem) => {
+  if (item.ramType) return item.ramType;
+  const text = collectItemSearchText(item);
+  if (/ddr5/i.test(text)) return "DDR5";
+  if (/ddr4/i.test(text)) return "DDR4";
+  return "";
+};
+
+const getItemFormFactorFilterValue = (item: ComponentItem) => {
+  const detailValue = String(item.details?.formFactor || "").trim();
+  if (detailValue) return detailValue;
+  const text = collectItemSearchText(item);
+  if (/\bmatx\b/i.test(text)) return "mATX";
+  if (/\batx\b/i.test(text)) return "ATX";
+  return "";
+};
+
+const getItemPcieGenerationFilterValue = (item: ComponentItem) => {
+  const detailValue = String(item.details?.pcie || "").trim();
+  const metadataValue = STORAGE_METADATA_BY_ID[item.id]?.pcieGen || "";
+  const text = `${collectItemSearchText(item)} ${detailValue} ${metadataValue}`;
+  if (/pcie\s*5(\.0)?|gen\s*5/i.test(text)) return "Gen5";
+  if (/pcie\s*4(\.0)?|gen\s*4/i.test(text)) return "Gen4";
+  return "";
+};
+
+const getItemStorageTypeFilterValue = (item: ComponentItem) => {
+  const metadataValue = STORAGE_METADATA_BY_ID[item.id]?.interface || "";
+  const text = `${collectItemSearchText(item)} ${metadataValue}`;
+  if (/nvme/i.test(text)) return "NVMe";
+  if (/sata/i.test(text)) return "SATA";
+  if (/\bhdd\b/i.test(text)) return "HDD";
+  return "";
+};
+
+const getItemPsuWattage = (item: ComponentItem) => {
+  const metadataValue = PSU_METADATA_BY_ID[item.id]?.wattage;
+  if (typeof metadataValue === "number") return metadataValue;
+  const text = collectItemSearchText(item);
+  const match = text.match(/(\d{3,4})\s*w/i);
+  return match ? Number(match[1]) : null;
+};
+
+const getItemPsuRating = (item: ComponentItem) => {
+  const metadataValue = PSU_METADATA_BY_ID[item.id]?.rating;
+  if (metadataValue) return metadataValue;
+  const text = collectItemSearchText(item);
+  const match = text.match(/80\+\s*(bronze|silver|gold|platinum|titanium)/i);
+  return match ? `${match[1].charAt(0).toUpperCase()}${match[1].slice(1).toLowerCase()}` : "";
+};
+
+const getItemPsuModularValue = (item: ComponentItem) => {
+  const metadataValue = PSU_METADATA_BY_ID[item.id]?.modular;
+  if (metadataValue) return metadataValue;
+  const text = normalizeFilterToken(collectItemSearchText(item));
+  if (text.includes("modular") || text.includes("modulart")) return "Modular";
+  return "";
 };
 
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
@@ -1361,6 +1473,14 @@ export default function CustomBuild() {
   const [shareStatus, setShareStatus] = useState("");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
+  const [socketFilters, setSocketFilters] = useState<string[]>([]);
+  const [ramTypeFilters, setRamTypeFilters] = useState<string[]>([]);
+  const [formFactorFilters, setFormFactorFilters] = useState<string[]>([]);
+  const [pcieGenerationFilters, setPcieGenerationFilters] = useState<string[]>([]);
+  const [storageTypeFilters, setStorageTypeFilters] = useState<string[]>([]);
+  const [psuRatingFilters, setPsuRatingFilters] = useState<string[]>([]);
+  const [psuModularFilter, setPsuModularFilter] = useState<"Alla" | "Modular">("Alla");
+  const [psuWattageRange, setPsuWattageRange] = useState<[number, number]>([0, 0]);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
@@ -1508,6 +1628,44 @@ export default function CustomBuild() {
     setPriceRange([priceBounds.min, priceBounds.max]);
   }, [priceBounds.min, priceBounds.max]);
 
+  const psuWattageBounds = useMemo(() => {
+    const values = COMPONENTS.psu
+      .map((item) => getItemPsuWattage(item))
+      .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+    const min = values.length > 0 ? Math.min(...values) : 0;
+    const max = values.length > 0 ? Math.max(...values) : 0;
+    return { min, max };
+  }, []);
+
+  useEffect(() => {
+    setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
+  }, [psuWattageBounds.min, psuWattageBounds.max]);
+
+  const socketFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemSocketFilterValue(item)).filter(Boolean))),
+    [items]
+  );
+  const ramTypeFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemRamTypeFilterValue(item)).filter(Boolean))),
+    [items]
+  );
+  const formFactorFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemFormFactorFilterValue(item)).filter(Boolean))),
+    [items]
+  );
+  const pcieGenerationFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemPcieGenerationFilterValue(item)).filter(Boolean))),
+    [items]
+  );
+  const storageTypeFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemStorageTypeFilterValue(item)).filter(Boolean))),
+    [items]
+  );
+  const psuRatingFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemPsuRating(item)).filter(Boolean))),
+    [items]
+  );
+
   useEffect(() => {
     if (activeCategory !== "cpu" && activeCategory !== "motherboard") return;
     const pendingItems = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
@@ -1545,6 +1703,35 @@ export default function CustomBuild() {
     };
   }, [items, normalizedApiBase, activeCategory]);
 
+  const toggleArrayFilter = (
+    value: string,
+    setter: Dispatch<SetStateAction<string[]>>
+  ) => {
+    setter((prev) => (prev.includes(value) ? prev.filter((entry) => entry !== value) : [...prev, value]));
+  };
+
+  const clearAdvancedFilters = () => {
+    setSocketFilters([]);
+    setRamTypeFilters([]);
+    setFormFactorFilters([]);
+    setPcieGenerationFilters([]);
+    setStorageTypeFilters([]);
+    setPsuRatingFilters([]);
+    setPsuModularFilter("Alla");
+    setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
+  };
+
+  const hasActiveAdvancedFilters =
+    socketFilters.length > 0 ||
+    ramTypeFilters.length > 0 ||
+    formFactorFilters.length > 0 ||
+    pcieGenerationFilters.length > 0 ||
+    storageTypeFilters.length > 0 ||
+    psuRatingFilters.length > 0 ||
+    psuModularFilter !== "Alla" ||
+    psuWattageRange[0] !== psuWattageBounds.min ||
+    psuWattageRange[1] !== psuWattageBounds.max;
+
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
       const matchesBrand = activeBrand === "Alla" || item.brand === activeBrand;
@@ -1563,7 +1750,50 @@ export default function CustomBuild() {
       const matchesRamType =
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
       const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
-      return matchesBrand && matchesSearch && matchesSocket && matchesRamType && matchesPrice;
+      const itemSocket = getItemSocketFilterValue(item);
+      const itemRamType = getItemRamTypeFilterValue(item);
+      const itemFormFactor = getItemFormFactorFilterValue(item);
+      const itemPcieGeneration = getItemPcieGenerationFilterValue(item);
+      const itemStorageType = getItemStorageTypeFilterValue(item);
+      const itemPsuRating = getItemPsuRating(item);
+      const itemPsuModular = getItemPsuModularValue(item);
+      const itemPsuWattage = getItemPsuWattage(item);
+
+      const matchesSelectedSocketFilter =
+        socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
+      const matchesSelectedRamTypeFilter =
+        ramTypeFilters.length === 0 || (itemRamType ? ramTypeFilters.includes(itemRamType) : false);
+      const matchesSelectedFormFactorFilter =
+        formFactorFilters.length === 0 || (itemFormFactor ? formFactorFilters.includes(itemFormFactor) : false);
+      const matchesSelectedPcieGenerationFilter =
+        pcieGenerationFilters.length === 0 ||
+        (itemPcieGeneration ? pcieGenerationFilters.includes(itemPcieGeneration) : false);
+      const matchesSelectedStorageTypeFilter =
+        storageTypeFilters.length === 0 || (itemStorageType ? storageTypeFilters.includes(itemStorageType) : false);
+      const matchesSelectedPsuRatingFilter =
+        psuRatingFilters.length === 0 || (itemPsuRating ? psuRatingFilters.includes(itemPsuRating) : false);
+      const matchesSelectedPsuModularFilter =
+        psuModularFilter === "Alla" || itemPsuModular === psuModularFilter;
+      const matchesSelectedPsuWattage =
+        activeCategory !== "psu" ||
+        itemPsuWattage === null ||
+        (itemPsuWattage >= psuWattageRange[0] && itemPsuWattage <= psuWattageRange[1]);
+
+      return (
+        matchesBrand &&
+        matchesSearch &&
+        matchesSocket &&
+        matchesRamType &&
+        matchesPrice &&
+        matchesSelectedSocketFilter &&
+        matchesSelectedRamTypeFilter &&
+        matchesSelectedFormFactorFilter &&
+        matchesSelectedPcieGenerationFilter &&
+        matchesSelectedStorageTypeFilter &&
+        matchesSelectedPsuRatingFilter &&
+        matchesSelectedPsuModularFilter &&
+        matchesSelectedPsuWattage
+      );
     });
   }, [
     items,
@@ -1574,6 +1804,14 @@ export default function CustomBuild() {
     selected.cpu,
     priceRange,
     lowestOfferPriceByItemId,
+    socketFilters,
+    ramTypeFilters,
+    formFactorFilters,
+    pcieGenerationFilters,
+    storageTypeFilters,
+    psuRatingFilters,
+    psuModularFilter,
+    psuWattageRange,
   ]);
 
 
@@ -2022,8 +2260,8 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[280px_1fr_320px] items-start">
-              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:sticky lg:top-24`}>
+            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
+              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1`}>
                 <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                   <div className="mt-4 space-y-2">
@@ -2174,6 +2412,196 @@ export default function CustomBuild() {
                       </button>
                     ))}
                   </div>
+                  <div className="mt-5 border-t border-gray-200 pt-4 dark:border-gray-800">
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Filter</p>
+                      {hasActiveAdvancedFilters ? (
+                        <button
+                          type="button"
+                          onClick={clearAdvancedFilters}
+                          className="text-xs font-semibold text-gray-500 transition-colors hover:text-[#11667b] dark:text-gray-400 dark:hover:text-white"
+                        >
+                          Rensa filter
+                        </button>
+                      ) : null}
+                    </div>
+
+                    {(activeCategory === "cpu" || activeCategory === "motherboard") && socketFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Socket</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {socketFilterOptions.map((socket) => (
+                            <button
+                              key={socket}
+                              type="button"
+                              onClick={() => toggleArrayFilter(socket, setSocketFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                socketFilters.includes(socket)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {socket}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {(activeCategory === "motherboard" || activeCategory === "ram") && ramTypeFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Minne</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {ramTypeFilterOptions.map((ramType) => (
+                            <button
+                              key={ramType}
+                              type="button"
+                              onClick={() => toggleArrayFilter(ramType, setRamTypeFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                ramTypeFilters.includes(ramType)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {ramType}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {(activeCategory === "motherboard" || activeCategory === "case") && formFactorFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Formfaktor</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {formFactorFilterOptions.map((formFactor) => (
+                            <button
+                              key={formFactor}
+                              type="button"
+                              onClick={() => toggleArrayFilter(formFactor, setFormFactorFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                formFactorFilters.includes(formFactor)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {formFactor}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {(activeCategory === "motherboard" || activeCategory === "storage") && pcieGenerationFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">PCIe-generation</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {pcieGenerationFilterOptions.map((pcieGeneration) => (
+                            <button
+                              key={pcieGeneration}
+                              type="button"
+                              onClick={() => toggleArrayFilter(pcieGeneration, setPcieGenerationFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                pcieGenerationFilters.includes(pcieGeneration)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {pcieGeneration}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeCategory === "storage" && storageTypeFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Lagringstyp</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {storageTypeFilterOptions.map((storageType) => (
+                            <button
+                              key={storageType}
+                              type="button"
+                              onClick={() => toggleArrayFilter(storageType, setStorageTypeFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                storageTypeFilters.includes(storageType)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {storageType}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeCategory === "psu" ? (
+                      <div className="mt-4 space-y-4">
+                        <div>
+                          <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Effekt</p>
+                          <div className="mt-2 flex items-center gap-3">
+                            <input
+                              type="range"
+                              min={psuWattageBounds.min}
+                              max={psuWattageBounds.max}
+                              step="50"
+                              value={psuWattageRange[1]}
+                              onChange={(event) =>
+                                setPsuWattageRange([psuWattageBounds.min, Number(event.target.value)])
+                              }
+                              className="h-1 w-full max-w-[260px] accent-yellow-400"
+                            />
+                            <span className="text-xs text-gray-600 dark:text-gray-400">
+                              {psuWattageRange[0]}-{psuWattageRange[1]} W
+                            </span>
+                          </div>
+                        </div>
+
+                        {psuRatingFilterOptions.length > 0 ? (
+                          <div>
+                            <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">80+ rating</p>
+                            <div className="mt-2 flex flex-wrap gap-2">
+                              {psuRatingFilterOptions.map((rating) => (
+                                <button
+                                  key={rating}
+                                  type="button"
+                                  onClick={() => toggleArrayFilter(rating, setPsuRatingFilters)}
+                                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                    psuRatingFilters.includes(rating)
+                                      ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                      : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                                  }`}
+                                >
+                                  {rating}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        ) : null}
+
+                        <div>
+                          <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Kablage</p>
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {["Alla", "Modular"].map((modularOption) => (
+                              <button
+                                key={modularOption}
+                                type="button"
+                                onClick={() => setPsuModularFilter(modularOption as "Alla" | "Modular")}
+                                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                  psuModularFilter === modularOption
+                                    ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                    : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                                }`}
+                              >
+                                {modularOption}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
 
                 <div className="space-y-4">
@@ -2265,7 +2693,7 @@ export default function CustomBuild() {
                         </div>
                         {isExpanded ? (
                           <div className="mt-4 border-t border-gray-200 pt-4 dark:border-gray-800">
-                            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
                               <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-[#111926]">
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
@@ -2314,7 +2742,7 @@ export default function CustomBuild() {
                                     <p className="text-xs uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">
                                       Butiker
                                     </p>
-                                    <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                                    <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
                                       {showStorePanel
                                         ? "Valbar butik rangordnad från billigast till dyrast."
                                         : "Den här komponenten har ingen butiksväljare ännu."}
@@ -2341,27 +2769,29 @@ export default function CustomBuild() {
                                     {storeOffersForItem.map((offer) => (
                                       <div
                                         key={`${item.id}-${offer.store_id || offer.store}`}
-                                        className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 rounded-lg border border-gray-200 px-3 py-3 dark:border-gray-800"
+                                        className="rounded-lg border border-gray-200 px-3 py-2.5 dark:border-gray-800"
                                       >
-                                        <div className="min-w-0">
-                                          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                        <div className="flex items-center justify-between gap-3">
+                                          <div className="min-w-0">
+                                          <p className="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">
                                             {offer.store}
                                           </p>
                                           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                                             {getStoreOfferStatusLabel(offer)}
                                           </p>
                                         </div>
+                                          <div className="flex items-center gap-2">
                                         {offer.product_url ? (
                                           <a
                                             href={offer.product_url}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                           >
                                             Till butik
                                           </a>
                                         ) : (
-                                          <span className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
+                                          <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
                                             Ingen länk
                                           </span>
                                         )}
@@ -2369,10 +2799,12 @@ export default function CustomBuild() {
                                           type="button"
                                           disabled={!canSelectStoreOffer(offer)}
                                           onClick={() => selectComponentAndAdvance(activeCategory, item, offer)}
-                                          className="rounded-lg bg-yellow-400 px-3 py-1.5 text-xs font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                          className="rounded-lg bg-yellow-400 px-2.5 py-1.5 text-xs font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                                         >
                                           Välj
                                         </button>
+                                          </div>
+                                        </div>
                                       </div>
                                     ))}
                                   </div>
@@ -2401,7 +2833,7 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="space-y-4 lg:sticky lg:top-24">
+              <aside className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1">
                 <div
                   id="build-summary"
                   className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
