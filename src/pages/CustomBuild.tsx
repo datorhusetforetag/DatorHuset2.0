@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -1278,6 +1278,8 @@ export default function CustomBuild() {
   const [storePickerLoading, setStorePickerLoading] = useState(false);
   const [storePickerError, setStorePickerError] = useState("");
   const [storePickerCache, setStorePickerCache] = useState<Record<string, StoreOffersResponse>>({});
+  const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>({});
+  const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
 
 
   useEffect(() => {
@@ -1379,6 +1381,13 @@ export default function CustomBuild() {
 
   const activeConfig = CATEGORY_LIST.find((category) => category.key === activeCategory);
   const items = COMPONENTS[activeCategory];
+  const getComparablePrice = (item: ComponentItem, category: CategoryKey) => {
+    const livePrice = lowestOfferPriceByItemId[item.id];
+    if (typeof livePrice === "number" && Number.isFinite(livePrice) && livePrice > 0) {
+      return Math.max(0, Math.round(livePrice));
+    }
+    return getBasePrice(item, category);
+  };
 
   const brandOptions = useMemo(() => {
     const brands = Array.from(new Set(items.map((item) => item.brand)));
@@ -1386,18 +1395,60 @@ export default function CustomBuild() {
   }, [items]);
 
   const priceBounds = useMemo(() => {
-    const prices = items.map((item) => getBasePrice(item, activeCategory));
+    const prices = items.map((item) => getComparablePrice(item, activeCategory));
     const min = Math.min(...prices);
     const max = Math.max(...prices);
     return {
       min: Number.isFinite(min) ? min : 0,
       max: Number.isFinite(max) ? max : 0,
     };
-  }, [items, activeCategory]);
+  }, [items, activeCategory, lowestOfferPriceByItemId]);
 
   useEffect(() => {
     setPriceRange([priceBounds.min, priceBounds.max]);
   }, [priceBounds.min, priceBounds.max]);
+
+  useEffect(() => {
+    const targets = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
+    if (targets.length === 0) return;
+    let isCancelled = false;
+
+    const loadLowestPrices = async () => {
+      await Promise.all(
+        targets.map(async (item) => {
+          lowestPriceLookupStartedRef.current.add(item.id);
+          try {
+            const endpoint = `${normalizedApiBase}/api/custom-build/store-offers?query=${encodeURIComponent(
+              item.name
+            )}&reference_price=${encodeURIComponent(String(item.price || 0))}&limit=1&track=0`;
+            const response = await fetch(endpoint);
+            if (!response.ok) return;
+            const data = (await response.json().catch(() => ({}))) as StoreOffersResponse;
+            const offers = data?.products?.[0]?.offers || [];
+            if (!Array.isArray(offers) || offers.length === 0) return;
+            const ranked = offers
+              .map((offer) => {
+                const candidate = offer.total_price ?? offer.price;
+                return Number.isFinite(candidate) ? Math.max(0, Math.round(candidate)) : null;
+              })
+              .filter((value): value is number => value !== null);
+            if (ranked.length === 0) return;
+            const lowest = Math.min(...ranked);
+            if (!Number.isFinite(lowest) || lowest <= 0) return;
+            if (isCancelled) return;
+            setLowestOfferPriceByItemId((prev) => ({ ...prev, [item.id]: lowest }));
+          } catch (error) {
+            // Ignore price lookup failures per item; static component price remains.
+          }
+        })
+      );
+    };
+
+    void loadLowestPrices();
+    return () => {
+      isCancelled = true;
+    };
+  }, [items, normalizedApiBase]);
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
@@ -1416,10 +1467,19 @@ export default function CustomBuild() {
           : true;
       const matchesRamType =
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
-      const matchesPrice = getBasePrice(item, activeCategory) <= priceRange[1];
+      const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
       return matchesBrand && matchesSearch && matchesSocket && matchesRamType && matchesPrice;
     });
-  }, [items, activeBrand, searchTerm, activeCategory, selected.motherboard, selected.cpu, priceRange]);
+  }, [
+    items,
+    activeBrand,
+    searchTerm,
+    activeCategory,
+    selected.motherboard,
+    selected.cpu,
+    priceRange,
+    lowestOfferPriceByItemId,
+  ]);
 
 
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
@@ -1495,21 +1555,21 @@ export default function CustomBuild() {
     setStorePickerActiveProductId("");
 
     const cachedResult = storePickerCache[cacheKey];
-    if (cachedResult) {
-      const products = Array.isArray(cachedResult.products) ? cachedResult.products : [];
-      setStorePickerProducts(products);
-      setStorePickerActiveProductId(products[0]?.product_id || "");
+    const cachedProducts = Array.isArray(cachedResult?.products) ? cachedResult.products : [];
+    const cachedHasOffers = cachedProducts.some(
+      (product) => Array.isArray(product?.offers) && product.offers.length > 0
+    );
+    if (cachedResult && cachedHasOffers) {
+      setStorePickerProducts(cachedProducts);
+      setStorePickerActiveProductId(cachedProducts[0]?.product_id || "");
       setStorePickerLoading(false);
-      if (products.length === 0) {
-        setStorePickerError("Inga butiksträffar hittades för komponenten.");
-      }
       return;
     }
 
     try {
       const endpoint = `${normalizedApiBase}/api/custom-build/store-offers?query=${encodeURIComponent(
         item.name
-      )}&limit=3&reference_price=${encodeURIComponent(String(item.price || 0))}`;
+      )}&limit=3&refresh=1&reference_price=${encodeURIComponent(String(getComparablePrice(item, categoryKey) || 0))}`;
       const response = await fetch(endpoint);
       const data = (await response.json().catch(() => ({}))) as StoreOffersResponse & {
         error?: { message?: string } | string;
@@ -1523,11 +1583,17 @@ export default function CustomBuild() {
       }
       const products = Array.isArray(data?.products) ? data.products : [];
       setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, query: item.name, products } }));
+      const hasOffers = products.some(
+        (product) => Array.isArray(product?.offers) && product.offers.length > 0
+      );
+      if (!hasOffers) {
+        setStorePickerProducts([]);
+        setStorePickerActiveProductId("");
+        setStorePickerError("Inga butiksträffar hittades för komponenten.");
+        return;
+      }
       setStorePickerProducts(products);
       setStorePickerActiveProductId(products[0]?.product_id || "");
-      if (products.length === 0) {
-        setStorePickerError("Inga butiksträffar hittades för komponenten.");
-      }
     } catch (error) {
       setStorePickerError(
         error instanceof Error ? error.message : "Kunde inte hämta butikpriser just nu."
@@ -1542,9 +1608,16 @@ export default function CustomBuild() {
     component: ComponentItem,
     selectedOffer?: StoreOffer
   ) => {
+    const fallbackLowestPrice = lowestOfferPriceByItemId[component.id];
     const normalizedPrice = Math.max(
       0,
-      Math.round(selectedOffer?.total_price ?? selectedOffer?.price ?? component.price ?? 0)
+      Math.round(
+        selectedOffer?.total_price ??
+          selectedOffer?.price ??
+          (typeof fallbackLowestPrice === "number" && Number.isFinite(fallbackLowestPrice)
+            ? fallbackLowestPrice
+            : component.price ?? 0)
+      )
     );
     const selectedComponent: ComponentItem = {
       ...component,
@@ -1561,6 +1634,9 @@ export default function CustomBuild() {
       ...prev,
       [categoryKey]: selectedComponent,
     }));
+    if (normalizedPrice > 0) {
+      setLowestOfferPriceByItemId((prev) => ({ ...prev, [component.id]: normalizedPrice }));
+    }
     handleStorePickerClose();
     advanceAfterSelection(categoryKey);
   };
@@ -2177,7 +2253,9 @@ export default function CustomBuild() {
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-2">
-                            <p className="text-base font-bold text-gray-900 dark:text-gray-100 sm:text-xl">{formatPrice(item.price)} kr</p>
+                            <p className="text-base font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
+                              {formatPrice(getComparablePrice(item, activeCategory))} kr
+                            </p>
                             <button
                               type="button"
                               onClick={(event) => {

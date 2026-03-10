@@ -1,4 +1,4 @@
-﻿/**
+/**
  * EXPRESS SERVER FOR STRIPE INTEGRATION
  * Deployable to Render/Railway/etc.
  */
@@ -58,7 +58,11 @@ const CUSTOM_PRICE_REQUEST_TIMEOUT_MS = Math.max(
   Number(process.env.CUSTOM_PRICE_REQUEST_TIMEOUT_MS || 12_000)
 );
 const CUSTOM_PRICE_MAX_QUERY_LENGTH = 180;
-const CUSTOM_STORE_PRICE_CACHE_VERSION = "v2";
+const CUSTOM_STORE_PRICE_CACHE_VERSION = "v3";
+const CUSTOM_PRICE_EMPTY_CACHE_TTL_MS = Math.max(
+  60_000,
+  Number(process.env.CUSTOM_PRICE_EMPTY_CACHE_TTL_MS || 15 * 60 * 1000)
+);
 const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES || "")
   .split(",")
   .map((value) => value.trim())
@@ -713,10 +717,28 @@ const parseMoneyValue = (...candidates) => {
   for (const candidate of candidates) {
     if (typeof candidate === "number" && Number.isFinite(candidate)) return candidate;
     if (typeof candidate === "string") {
-      const normalized = candidate
-        .replace(/\s+/g, "")
-        .replace(",", ".")
-        .replace(/[^0-9.-]/g, "");
+      const raw = candidate.replace(/\s+/g, "").replace(/[^0-9,.-]/g, "");
+      if (!raw) continue;
+      const lastComma = raw.lastIndexOf(",");
+      const lastDot = raw.lastIndexOf(".");
+      let normalized = raw;
+      if (lastComma >= 0 && lastDot >= 0) {
+        if (lastComma > lastDot) {
+          normalized = raw.replace(/\./g, "").replace(",", ".");
+        } else {
+          normalized = raw.replace(/,/g, "");
+        }
+      } else if (lastComma >= 0) {
+        const decimals = raw.length - lastComma - 1;
+        normalized =
+          decimals === 1 || decimals === 2
+            ? raw.replace(/\./g, "").replace(",", ".")
+            : raw.replace(/,/g, "");
+      } else if (lastDot >= 0) {
+        const decimals = raw.length - lastDot - 1;
+        normalized = decimals === 1 || decimals === 2 ? raw.replace(/,/g, "") : raw.replace(/\./g, "");
+      }
+      normalized = normalized.replace(/(?!^)-/g, "");
       const parsed = Number(normalized);
       if (Number.isFinite(parsed)) return parsed;
     }
@@ -746,31 +768,37 @@ const CUSTOM_STORE_SOURCES = [
     id: "webhallen",
     name: "Webhallen",
     buildSearchUrl: (query) => `https://www.webhallen.com/se/search?searchString=${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?webhallen\\.com\\/se\\/product\\/\\d+-[^\\s)\\]]+",
   },
   {
     id: "inet",
     name: "Inet",
     buildSearchUrl: (query) => `https://www.inet.se/sok?q=${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?inet\\.se\\/produkt\\/\\d+\\/[^\\s)\\]]+",
   },
   {
     id: "komplett",
     name: "Komplett",
     buildSearchUrl: (query) => `https://www.komplett.se/search?q=${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?komplett\\.se\\/product\\/\\d+\\/[^\\s)\\]]+",
   },
   {
     id: "elgiganten",
     name: "Elgiganten",
     buildSearchUrl: (query) => `https://www.elgiganten.se/search?SearchParameter=${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?elgiganten\\.se\\/product\\/[^\\s)\\]]+",
   },
   {
     id: "amazon-se",
     name: "Amazon.se",
     buildSearchUrl: (query) => `https://www.amazon.se/s?k=${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?amazon\\.se\\/[^\\s)\\]]*\\/dp\\/[A-Z0-9]{8,}[^\\s)\\]]*",
   },
   {
     id: "power",
     name: "Power",
-    buildSearchUrl: (query) => `https://www.power.se/sok/?q=${encodeURIComponent(query)}`,
+    buildSearchUrl: (query) => `https://www.power.se/search/?q=${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?power\\.se\\/[^\\s)\\]]*(?:\\/product\\/|\\/p-\\d+)[^\\s)\\]]*",
   },
 ];
 
@@ -800,6 +828,96 @@ const scoreTitleAgainstQuery = (title, queryTokens) => {
     }
   });
   return score;
+};
+
+const extractModelTokensFromQuery = (query) =>
+  Array.from(
+    new Set(tokenizeForSearchMatch(query).filter((token) => token.length >= 3 && /\d/.test(token)))
+  );
+
+const matchesModelTokens = (text, modelTokens) => {
+  if (!Array.isArray(modelTokens) || modelTokens.length === 0) return true;
+  const normalizedText = normalizeStorePriceQueryKey(text);
+  if (!normalizedText) return false;
+  return modelTokens.some((token) => normalizedText.includes(token));
+};
+
+const buildTitleFromProductUrl = (url) => {
+  if (!url) return "";
+  try {
+    const parsed = new URL(url);
+    const segments = parsed.pathname.split("/").filter(Boolean);
+    if (segments.length === 0) return "";
+    let candidate = segments[segments.length - 1];
+    if (/^\d+$/.test(candidate) && segments.length > 1) {
+      candidate = segments[segments.length - 2];
+    }
+    if (candidate.toLowerCase() === "dp" && segments.length > 2) {
+      candidate = segments[segments.length - 3];
+    }
+    candidate = decodeURIComponent(candidate)
+      .replace(/^[0-9]+-/, "")
+      .replace(/[-_]+/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    return candidate;
+  } catch (error) {
+    return "";
+  }
+};
+
+const matchesOfferToQueryModel = (sourceId, queryModelTokens, offerTitle, offerUrl) => {
+  if (!Array.isArray(queryModelTokens) || queryModelTokens.length === 0) return true;
+  const title = firstText(offerTitle);
+  if (sourceId === "amazon-se") {
+    return matchesModelTokens(title, queryModelTokens);
+  }
+  const urlTitle = buildTitleFromProductUrl(offerUrl || "");
+  const urlModelTokens = extractModelTokensFromQuery(urlTitle).filter((token) => !/^\d{5,}$/.test(token));
+  if (urlModelTokens.length > 0) {
+    return matchesModelTokens(urlTitle, queryModelTokens);
+  }
+  return matchesModelTokens(`${title} ${urlTitle}`, queryModelTokens);
+};
+
+const isLikelyPrebuiltOrBundleOffer = (title, url) => {
+  const text = `${firstText(title)} ${String(url || "")}`.toLowerCase();
+  return /(config|prebuilt|byggdator|gaming[\s-]?pc|desktop-pc|desktop\s+computer|datorpaket|bundle|komplett\s+pc)/i.test(
+    text
+  );
+};
+
+const extractPriceCandidatesFromText = (value) => {
+  if (!value) return [];
+  const regex =
+    /(?:kr\s*(-?\d{1,3}(?:[ .,]\d{3})*(?:[.,][0-9]{1,2})?|-\d{3,6}|\d{3,6})|(-?\d{1,3}(?:[ .,]\d{3})*(?:[.,][0-9]{1,2})?|-\d{3,6}|\d{3,6})\s*(?:kr|\.-))/gi;
+  const prices = [];
+  let match = regex.exec(value);
+  while (match) {
+    const rawValue = firstText(match[1], match[2]);
+    if (!rawValue.startsWith("-")) {
+      const parsed = parseMoneyValue(rawValue);
+      if (Number.isFinite(parsed)) {
+        prices.push(Math.max(0, Math.round(parsed)));
+      }
+    }
+    match = regex.exec(value);
+  }
+  return prices.filter((item) => item >= 80 && item <= 400_000);
+};
+
+const pickBestPriceCandidate = (prices, snippet, referencePrice = null) => {
+  if (!Array.isArray(prices) || prices.length === 0) return null;
+  const filtered = prices.filter((value) => isOfferWithinReferencePrice(value, referencePrice));
+  if (filtered.length === 0) return null;
+  if (/exkl\.?\s*moms/i.test(snippet) && filtered.length > 1) {
+    const maxPrice = Math.max(...filtered);
+    if (Number.isFinite(maxPrice)) return maxPrice;
+  }
+  if (Number.isFinite(referencePrice) && referencePrice > 0) {
+    return filtered.sort((a, b) => Math.abs(a - referencePrice) - Math.abs(b - referencePrice))[0];
+  }
+  return Math.min(...filtered);
 };
 
 const isLikelySearchResultUrl = (url) => {
@@ -833,6 +951,9 @@ const normalizeOfferUrlForStore = (url, sourceId) => {
   if (!url) return null;
   try {
     const normalized = new URL(url);
+    if (normalized.protocol === "http:") {
+      normalized.protocol = "https:";
+    }
     if (sourceId === "amazon-se") {
       const match = normalized.pathname.match(/\/dp\/[A-Z0-9]{8,}/i);
       if (!match) return null;
@@ -845,12 +966,60 @@ const normalizeOfferUrlForStore = (url, sourceId) => {
   }
 };
 
+const collectJinaProductUrlCandidates = (markdown, source, baseUrl) => {
+  if (!markdown || typeof markdown !== "string") return [];
+  const deduped = new Map();
+  const addCandidate = (href, label = "") => {
+    const rawHref = String(href || "").trim().replace(/[>,.;]+$/, "");
+    if (!rawHref) return;
+    const absoluteUrl = normalizeRelativeUrl(rawHref, baseUrl || rawHref) || rawHref;
+    const normalizedUrl = normalizeOfferUrlForStore(absoluteUrl, source.id) || normalizeRelativeUrl(absoluteUrl, absoluteUrl);
+    if (!normalizedUrl) return;
+    if (!isLikelyProductUrlForStore(normalizedUrl, source.id)) return;
+    const key = normalizedUrl.toLowerCase();
+    const normalizedLabel = firstText(label);
+    const existing = deduped.get(key);
+    if (!existing) {
+      deduped.set(key, { rawHref, normalizedUrl, label: normalizedLabel || "" });
+      return;
+    }
+    if (!existing.label && normalizedLabel) {
+      existing.label = normalizedLabel;
+      deduped.set(key, existing);
+    }
+  };
+
+  const markdownLinkRegex = /\[([^\]]{1,220})\]\(([^)\s]+)\)/g;
+  let linkMatch = markdownLinkRegex.exec(markdown);
+  while (linkMatch) {
+    addCandidate(linkMatch[2], linkMatch[1]);
+    linkMatch = markdownLinkRegex.exec(markdown);
+  }
+
+  if (source?.productUrlPattern) {
+    const urlRegex = new RegExp(source.productUrlPattern, "gi");
+    const rawMatches = markdown.match(urlRegex) || [];
+    rawMatches.forEach((rawUrl) => addCandidate(rawUrl));
+  }
+
+  return Array.from(deduped.values());
+};
+
 const isOfferWithinReferencePrice = (price, referencePrice = null) => {
   if (!Number.isFinite(price) || price <= 0) return false;
   if (!Number.isFinite(referencePrice) || referencePrice <= 0) return true;
-  const lowerBound = Math.max(50, Math.round(referencePrice * 0.55));
-  const upperBound = Math.round(referencePrice * 1.8);
+  const lowerBound = Math.max(80, Math.round(referencePrice * 0.25));
+  const upperBound = Math.round(referencePrice * 4);
   return price >= lowerBound && price <= upperBound;
+};
+
+const buildJinaMirrorUrl = (url) => {
+  try {
+    const parsed = new URL(url);
+    return `https://r.jina.ai/http://${parsed.host}${parsed.pathname}${parsed.search}`;
+  } catch (error) {
+    return null;
+  }
 };
 
 const normalizeRelativeUrl = (candidate, baseUrl) => {
@@ -995,6 +1164,7 @@ const extractAmazonOfferFromSearchHtml = (html, query, referencePrice = null) =>
   if (blocks.length === 0) return null;
 
   const queryTokens = tokenizeForSearchMatch(query);
+  const modelTokens = extractModelTokensFromQuery(query);
   const candidates = [];
 
   blocks.forEach((block) => {
@@ -1011,6 +1181,8 @@ const extractAmazonOfferFromSearchHtml = (html, query, referencePrice = null) =>
     const href = decodeBasicHtmlEntities(rawHref);
     const productUrl = normalizeOfferUrlForStore(normalizeRelativeUrl(href, "https://www.amazon.se"), "amazon-se");
     if (!productUrl) return;
+    if (isLikelyPrebuiltOrBundleOffer(title, productUrl)) return;
+    if (!matchesOfferToQueryModel("amazon-se", modelTokens, title, productUrl)) return;
 
     const offscreenPrice = decodeBasicHtmlEntities(
       block.match(/<span class=\"a-offscreen\">([^<]+)<\/span>/i)?.[1] || ""
@@ -1045,6 +1217,77 @@ const extractAmazonOfferFromSearchHtml = (html, query, referencePrice = null) =>
       const bDistance = Math.abs(b.price - referencePrice);
       if (aDistance !== bDistance) return aDistance - bDistance;
     }
+    return a.price - b.price;
+  });
+  const best = candidates[0];
+  return {
+    store: best.store,
+    title: best.title,
+    price: best.price,
+    currency: best.currency,
+    shipping_price: best.shipping_price,
+    total_price: best.total_price,
+    product_url: best.product_url,
+    availability: best.availability,
+  };
+};
+
+const extractStoreOfferFromJinaSearch = (markdown, source, query, referencePrice = null, searchUrl = null) => {
+  if (!markdown || typeof markdown !== "string") return null;
+  const urlCandidates = collectJinaProductUrlCandidates(markdown, source, searchUrl);
+  if (urlCandidates.length === 0) return null;
+  const queryTokens = tokenizeForSearchMatch(query);
+  const modelTokens = extractModelTokensFromQuery(query);
+  const candidates = [];
+
+  urlCandidates.forEach((candidate) => {
+    const normalizedUrl = candidate.normalizedUrl;
+    if (!normalizedUrl) return;
+    if (!isLikelyProductUrlForStore(normalizedUrl, source.id)) return;
+    const searchNeedles = [candidate.rawHref, normalizedUrl, candidate.label, buildTitleFromProductUrl(normalizedUrl)]
+      .map((value) => String(value || "").trim())
+      .filter(Boolean);
+    let snippetIndex = -1;
+    for (const needle of searchNeedles) {
+      snippetIndex = markdown.toLowerCase().indexOf(needle.toLowerCase());
+      if (snippetIndex >= 0) break;
+    }
+    const snippet =
+      snippetIndex >= 0
+        ? markdown.slice(Math.max(0, snippetIndex - 420), Math.min(markdown.length, snippetIndex + 2600))
+        : markdown;
+    const titleFromLabel = firstText(candidate.label);
+    const titleFromUrl = buildTitleFromProductUrl(normalizedUrl);
+    if (isLikelyPrebuiltOrBundleOffer(titleFromLabel || titleFromUrl, normalizedUrl)) return;
+    if (!matchesOfferToQueryModel(source.id, modelTokens, titleFromLabel || titleFromUrl, normalizedUrl)) {
+      return;
+    }
+    const titleScore = scoreTitleAgainstQuery(
+      [titleFromLabel, titleFromUrl, snippet.slice(0, 240)].filter(Boolean).join(" "),
+      queryTokens
+    );
+    if (titleScore <= 0) return;
+    const prices = extractPriceCandidatesFromText(snippet);
+    const pickedPrice = pickBestPriceCandidate(prices, snippet, referencePrice);
+    if (!Number.isFinite(pickedPrice)) return;
+    candidates.push({
+      store: source.name,
+      title: titleFromLabel || titleFromUrl || source.name,
+      price: Math.max(0, Math.round(pickedPrice)),
+      currency: "SEK",
+      shipping_price: null,
+      total_price: Math.max(0, Math.round(pickedPrice)),
+      product_url: normalizedUrl,
+      availability: null,
+      _score: titleScore,
+      _distance: Number.isFinite(referencePrice) ? Math.abs(pickedPrice - referencePrice) : 0,
+    });
+  });
+
+  if (candidates.length === 0) return null;
+  candidates.sort((a, b) => {
+    if (b._score !== a._score) return b._score - a._score;
+    if (a._distance !== b._distance) return a._distance - b._distance;
     return a.price - b.price;
   });
   const best = candidates[0];
@@ -1118,30 +1361,78 @@ const fetchStoreSearchPage = async (source, query) => {
   return { url, html };
 };
 
+const fetchJinaMirrorTextForUrl = async (url) => {
+  const mirrorUrl = buildJinaMirrorUrl(url);
+  if (!mirrorUrl) return null;
+  const response = await fetch(mirrorUrl, {
+    headers: {
+      Accept: "text/plain,text/markdown;q=0.9,*/*;q=0.8",
+      "User-Agent":
+        process.env.CUSTOM_PRICE_USER_AGENT ||
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+    },
+    signal: AbortSignal.timeout(Math.max(CUSTOM_PRICE_REQUEST_TIMEOUT_MS, 18_000)),
+  });
+  if (!response.ok) return null;
+  return response.text();
+};
+
 const fetchStoreOfferForQuery = async (source, query, referencePrice = null) => {
+  const searchUrl = source.buildSearchUrl(query);
+  const modelTokens = extractModelTokensFromQuery(query);
+  let html = "";
   try {
-    const { url, html } = await fetchStoreSearchPage(source, query);
-    if (source.id === "amazon-se") {
+    const fetched = await fetchStoreSearchPage(source, query);
+    html = fetched.html;
+  } catch (error) {
+    logStructured("warn", "custom_price_store_fetch_failed", {
+      store: source.name,
+      query,
+      message: error instanceof Error ? error.message : "unknown_error",
+    });
+  }
+
+  try {
+    if (html && source.id === "amazon-se") {
       const amazonOffer = extractAmazonOfferFromSearchHtml(html, query, referencePrice);
       if (amazonOffer) {
         return amazonOffer;
       }
     }
-    const parsedOffers = extractStoreOffersFromJsonLd(html, source.name, url);
-    const normalizedFromJsonLd = normalizeStoreOfferList(parsedOffers)
-      .map((offer) => ({
-        ...offer,
-        product_url: normalizeOfferUrlForStore(offer.product_url, source.id),
-      }))
-      .filter((offer) => offer.price >= 50 && offer.price <= 400_000)
-      .filter((offer) => isOfferWithinReferencePrice(offer.price, referencePrice))
-      .filter((offer) => (offer.product_url ? isLikelyProductUrlForStore(offer.product_url, source.id) : false));
-    if (normalizedFromJsonLd.length > 0) {
-      return {
-        ...normalizedFromJsonLd[0],
-        store: source.name,
-      };
+    if (html) {
+      const parsedOffers = extractStoreOffersFromJsonLd(html, source.name, searchUrl);
+      const normalizedFromJsonLd = normalizeStoreOfferList(parsedOffers)
+        .map((offer) => ({
+          ...offer,
+          product_url: normalizeOfferUrlForStore(offer.product_url, source.id),
+        }))
+        .filter((offer) => offer.price >= 50 && offer.price <= 400_000)
+        .filter((offer) => isOfferWithinReferencePrice(offer.price, referencePrice))
+        .filter((offer) => !isLikelyPrebuiltOrBundleOffer(offer.title, offer.product_url))
+        .filter((offer) => matchesOfferToQueryModel(source.id, modelTokens, offer.title, offer.product_url))
+        .filter((offer) => (offer.product_url ? isLikelyProductUrlForStore(offer.product_url, source.id) : false));
+      if (normalizedFromJsonLd.length > 0) {
+        return {
+          ...normalizedFromJsonLd[0],
+          store: source.name,
+        };
+      }
     }
+
+    const jinaSearchText = await fetchJinaMirrorTextForUrl(searchUrl);
+    if (jinaSearchText) {
+      const jinaOffer = extractStoreOfferFromJinaSearch(
+        jinaSearchText,
+        source,
+        query,
+        referencePrice,
+        searchUrl
+      );
+      if (jinaOffer) {
+        return jinaOffer;
+      }
+    }
+
     return null;
   } catch (error) {
     logStructured("warn", "custom_price_store_fetch_failed", {
@@ -1169,6 +1460,15 @@ const sanitizeStorePriceResponse = (query, offers, updatedAt) => {
       },
     ],
   };
+};
+
+const countOffersInStoreSnapshot = (snapshot) => {
+  if (!snapshot || typeof snapshot !== "object") return 0;
+  const products = Array.isArray(snapshot.products) ? snapshot.products : [];
+  return products.reduce((sum, product) => {
+    const offers = Array.isArray(product?.offers) ? product.offers : [];
+    return sum + offers.length;
+  }, 0);
 };
 
 const saveCustomStorePriceCacheToDisk = async () => {
@@ -1207,7 +1507,11 @@ const loadCustomStorePriceCacheFromDisk = async () => {
     const entries = Array.isArray(payload?.entries) ? payload.entries : [];
     entries.forEach((entry) => {
       const rawKey = sanitizeText(String(entry?.key || ""), 240);
-      const key = rawKey.startsWith(`${CUSTOM_STORE_PRICE_CACHE_VERSION}:`)
+      const expectedPrefix = `${CUSTOM_STORE_PRICE_CACHE_VERSION}:`;
+      if (rawKey.includes(":") && !rawKey.startsWith(expectedPrefix)) {
+        return;
+      }
+      const key = rawKey.startsWith(expectedPrefix)
         ? rawKey
         : buildStorePriceCacheKey(entry?.query || "");
       const query = sanitizeText(String(entry?.query || ""), CUSTOM_PRICE_MAX_QUERY_LENGTH);
@@ -1253,11 +1557,13 @@ const getOrRefreshStorePriceSnapshot = async (query, options = {}) => {
   const forceRefresh = Boolean(options?.forceRefresh);
   const markTracked = options?.markTracked !== false;
   const cached = customStorePriceCache.get(queryKey);
+  const cachedOfferCount = countOffersInStoreSnapshot(cached?.response);
+  const maxAgeForCache = cachedOfferCount > 0 ? CUSTOM_PRICE_CACHE_TTL_MS : CUSTOM_PRICE_EMPTY_CACHE_TTL_MS;
   if (
     cached &&
     !forceRefresh &&
     Number.isFinite(cached.updatedAt) &&
-    now - cached.updatedAt <= CUSTOM_PRICE_CACHE_TTL_MS
+    now - cached.updatedAt <= maxAgeForCache
   ) {
     if (markTracked && !cached.tracked) {
       cached.tracked = true;
@@ -1274,10 +1580,17 @@ const getOrRefreshStorePriceSnapshot = async (query, options = {}) => {
   const refreshPromise = (async () => {
     const refreshedAt = Date.now();
     const offers = await refreshStoreOffersForQuery(safeQuery, referencePrice);
-    const response = sanitizeStorePriceResponse(safeQuery, offers, refreshedAt);
+    const freshResponse = sanitizeStorePriceResponse(safeQuery, offers, refreshedAt);
+    const freshOfferCount = countOffersInStoreSnapshot(freshResponse);
+    const shouldKeepCachedOffers =
+      freshOfferCount === 0 &&
+      cachedOfferCount > 0 &&
+      Boolean(cached?.response);
+    const response = shouldKeepCachedOffers ? cached.response : freshResponse;
+    const updatedAt = shouldKeepCachedOffers ? cached.updatedAt : refreshedAt;
     const nextEntry = {
       query: safeQuery,
-      updatedAt: refreshedAt,
+      updatedAt,
       tracked: markTracked || Boolean(cached?.tracked),
       response,
     };
