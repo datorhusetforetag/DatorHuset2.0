@@ -146,6 +146,7 @@ type StoreOffer = {
   shipping_price?: number | null;
   total_price?: number | null;
   product_url?: string | null;
+  search_url?: string | null;
   availability?: string | null;
   updated_at?: string | null;
   error?: string | null;
@@ -1986,6 +1987,7 @@ export default function CustomBuild() {
     }
     if (offer.status === "linked_no_price") return "Pris saknas";
     if (offer.status === "unavailable") return "Ej tillgänglig";
+    if (!offer.product_url && offer.search_url) return "Sök hos butik";
     if (offer.status === "error") return "Kunde inte läsa";
     return "Ingen träff";
   };
@@ -2789,6 +2791,15 @@ export default function CustomBuild() {
                                             className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                           >
                                             Till butik
+                                          </a>
+                                        ) : offer.search_url ? (
+                                          <a
+                                            href={offer.search_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                          >
+                                            Sök i butik
                                           </a>
                                         ) : (
                                           <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">

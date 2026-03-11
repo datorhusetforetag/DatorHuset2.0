@@ -2043,7 +2043,16 @@ const startCustomStorePriceScheduler = async () => {
 const buildCustomBuildProductCacheKey = (itemId) =>
   `${CUSTOM_BUILD_PRODUCT_CACHE_VERSION}:${sanitizeText(String(itemId || ""), 120)}`;
 
-const sanitizeCatalogStoreOffer = (offer, source) => {
+const buildCatalogStoreSearchUrl = (item, source) => {
+  if (!item || !source) return null;
+  const resolvedSource = CUSTOM_STORE_SOURCE_BY_ID[source.id] || source;
+  if (typeof resolvedSource.buildSearchUrl !== "function") return null;
+  const [firstSearchQuery] = buildCatalogSearchQueries(item);
+  const query = firstText(firstSearchQuery, item.name);
+  return query ? resolvedSource.buildSearchUrl(query) : null;
+};
+
+const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const normalizedPrice = parseMoneyValue(offer?.price);
   const normalizedTotalPrice = parseMoneyValue(offer?.total_price);
   return {
@@ -2051,6 +2060,7 @@ const sanitizeCatalogStoreOffer = (offer, source) => {
     store: firstText(offer?.store, source?.name) || source?.name || "Unknown",
     status: firstText(offer?.status) || (normalizedTotalPrice !== null || normalizedPrice !== null ? "available" : "linked_no_price"),
     product_url: normalizeOfferUrlForStore(firstText(offer?.product_url), source?.id) || firstText(offer?.product_url) || null,
+    search_url: firstText(offer?.search_url, buildCatalogStoreSearchUrl(item, source)) || null,
     price: normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     total_price: normalizedTotalPrice !== null ? Math.max(0, Math.round(normalizedTotalPrice)) : normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     currency: firstText(offer?.currency).toUpperCase() || "SEK",
@@ -2080,11 +2090,12 @@ const sortCatalogStoreOffers = (offers) => {
   });
 };
 
-const createEmptyCatalogStoreOffer = (source) => ({
+const createEmptyCatalogStoreOffer = (source, item = null) => ({
   store_id: source.id,
   store: source.name,
   status: "not_found",
   product_url: null,
+  search_url: buildCatalogStoreSearchUrl(item, source),
   price: null,
   total_price: null,
   currency: "SEK",
@@ -2094,16 +2105,16 @@ const createEmptyCatalogStoreOffer = (source) => ({
   error: null,
 });
 
-const hydrateCatalogStoreOffers = (offers = []) => {
+const hydrateCatalogStoreOffers = (offers = [], item = null) => {
   const normalizedByStoreId = new Map();
   offers.forEach((offer) => {
     const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
     if (!source) return;
-    normalizedByStoreId.set(source.id, sanitizeCatalogStoreOffer(offer, source));
+    normalizedByStoreId.set(source.id, sanitizeCatalogStoreOffer(offer, source, item));
   });
   CURATED_CUSTOM_BUILD_STORE_SOURCES.forEach((source) => {
     if (!normalizedByStoreId.has(source.id)) {
-      normalizedByStoreId.set(source.id, createEmptyCatalogStoreOffer(source));
+      normalizedByStoreId.set(source.id, createEmptyCatalogStoreOffer(source, item));
     }
   });
   return sortCatalogStoreOffers(Array.from(normalizedByStoreId.values()));
@@ -2196,7 +2207,7 @@ const loadCustomBuildProductCacheFromDisk = async () => {
 };
 
 const sanitizeCatalogItemResponse = (item, offers, updatedAt) => {
-  const hydratedOffers = hydrateCatalogStoreOffers(offers).map((offer) => ({
+  const hydratedOffers = hydrateCatalogStoreOffers(offers, item).map((offer) => ({
     ...offer,
     updated_at: new Date(updatedAt).toISOString(),
   }));
@@ -2241,11 +2252,23 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
         store_id: source.id,
         store: source.name,
         product_url: directOffer?.product_url || discoveredOffer?.product_url || null,
+        search_url: buildCatalogStoreSearchUrl(item, source),
       },
-      source
+      source,
+      item
     );
   }));
   return storeOffers;
+};
+
+const getCachedCatalogItemStoreOffers = (itemId) => {
+  const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
+  if (!item) return null;
+  const cacheKey = buildCustomBuildProductCacheKey(itemId);
+  const cached = customBuildProductCache.get(cacheKey);
+  if (!cached?.response || !Number.isFinite(cached.updatedAt)) return null;
+  const cachedOffers = Array.isArray(cached.response.offers) ? cached.response.offers : [];
+  return sanitizeCatalogItemResponse(item, cachedOffers, cached.updatedAt);
 };
 
 const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
@@ -2269,7 +2292,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
     !forceRefresh &&
     isCachedFresh
   ) {
-    return cached.response;
+    return getCachedCatalogItemStoreOffers(itemId) || cached.response;
   }
 
   if (cached && !forceRefresh && allowStale) {
@@ -2281,7 +2304,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
         });
       });
     }
-    return cached.response;
+    return getCachedCatalogItemStoreOffers(itemId) || cached.response;
   }
 
   if (!forceRefresh && customBuildProductRefreshInFlight.has(cacheKey)) {
@@ -2312,10 +2335,12 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
   const items = getCustomBuildCatalogItemsByCategory(category);
   const results = await Promise.all(
     items.map(async (item) => {
-      const response = await getOrRefreshCatalogItemStoreOffers(item.id, {
-        forceRefresh,
-        allowStale: !forceRefresh,
-      });
+      const response = forceRefresh
+        ? await getOrRefreshCatalogItemStoreOffers(item.id, {
+            forceRefresh: true,
+            allowStale: false,
+          })
+        : getCachedCatalogItemStoreOffers(item.id);
       return {
         item_id: item.id,
         lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : item.price,
