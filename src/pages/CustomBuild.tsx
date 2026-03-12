@@ -16,6 +16,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CUSTOM_BUILD_CATALOG_ITEMS } from "@/data/customBuildCatalog.js";
+import { CUSTOM_BUILD_PRELOADED_PRICE_BY_ID } from "@/data/customBuildPreloadedPrices.js";
 import cpu7600Image from "../../images/product images/cpu/7600.png";
 import cpu7600x3dImage from "../../images/product images/cpu/7600x3d.png";
 import cpu7700Image from "../../images/product images/cpu/7700.png";
@@ -339,6 +340,13 @@ const catalogItems = CUSTOM_BUILD_CATALOG_ITEMS as Array<{
   highlight?: string | null;
 }>;
 
+const getPreloadedPrice = (itemId: string, fallbackPrice: number) => {
+  const preloadedPrice = CUSTOM_BUILD_PRELOADED_PRICE_BY_ID[itemId];
+  return Number.isFinite(preloadedPrice) && preloadedPrice > 0
+    ? Math.max(0, Math.round(preloadedPrice))
+    : fallbackPrice;
+};
+
 const catalogComponentItems: Record<"cpu" | "motherboard", ComponentItem[]> = {
   cpu: catalogItems
     .filter((item) => item.category === "cpu")
@@ -346,7 +354,7 @@ const catalogComponentItems: Record<"cpu" | "motherboard", ComponentItem[]> = {
       id: item.id,
       name: item.name,
       brand: item.brand,
-      price: item.price,
+      price: getPreloadedPrice(item.id, item.price),
       specs: Array.isArray(item.specs) ? item.specs : [],
       socket: item.socket,
       image: item.imageKey ? CATALOG_IMAGE_MAP[item.imageKey] : undefined,
@@ -359,7 +367,7 @@ const catalogComponentItems: Record<"cpu" | "motherboard", ComponentItem[]> = {
       id: item.id,
       name: item.name,
       brand: item.brand,
-      price: item.price,
+      price: getPreloadedPrice(item.id, item.price),
       specs: Array.isArray(item.specs) ? item.specs : [],
       socket: item.socket,
       image: item.imageKey ? CATALOG_IMAGE_MAP[item.imageKey] : undefined,
@@ -1404,10 +1412,22 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   ],
 };
 
+const staticComponentItemsWithPreloadedPrices: Record<
+  Exclude<CategoryKey, "cpu" | "motherboard">,
+  ComponentItem[]
+> = {
+  gpu: COMPONENTS.gpu.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  ram: COMPONENTS.ram.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  storage: COMPONENTS.storage.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  case: COMPONENTS.case.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  psu: COMPONENTS.psu.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  cooling: COMPONENTS.cooling.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+};
+
 const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
   if (category === "cpu") return catalogComponentItems.cpu;
   if (category === "motherboard") return catalogComponentItems.motherboard;
-  return COMPONENTS[category];
+  return staticComponentItemsWithPreloadedPrices[category];
 };
 
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
@@ -1499,7 +1519,9 @@ export default function CustomBuild() {
   const [storePickerLoading, setStorePickerLoading] = useState(false);
   const [storePickerError, setStorePickerError] = useState("");
   const [storePickerCache, setStorePickerCache] = useState<Record<string, CatalogItemOffersResponse>>({});
-  const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>({});
+  const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>(
+    () => ({ ...CUSTOM_BUILD_PRELOADED_PRICE_BY_ID })
+  );
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
 
 
