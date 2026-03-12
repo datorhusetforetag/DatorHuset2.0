@@ -2399,7 +2399,8 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt) => {
     ...offer,
     updated_at: new Date(updatedAt).toISOString(),
   }));
-  const availableOffers = hydratedOffers.filter(
+  const limitedOffers = hydratedOffers.slice(0, 5);
+  const availableOffers = limitedOffers.filter(
     (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
   );
   const lowestPrice = availableOffers.length
@@ -2411,7 +2412,7 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt) => {
     updated_at: new Date(updatedAt).toISOString(),
     next_refresh_at: new Date(updatedAt + CUSTOM_PRICE_REFRESH_INTERVAL_MS).toISOString(),
     lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
-    offers: hydratedOffers,
+    offers: limitedOffers,
   };
 };
 
@@ -6280,12 +6281,44 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+const sendSpaIndex = (res) => {
+  res.set({
+    "Cache-Control": "no-store, no-cache, must-revalidate",
+    Pragma: "no-cache",
+    Expires: "0",
+  });
+  return res.sendFile(path.join(distPath, "index.html"));
+};
+
 // Serve built frontend
-app.use(express.static(distPath));
+app.use(
+  express.static(distPath, {
+    setHeaders: (res, filePath) => {
+      if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+        res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        return;
+      }
+      if (filePath.endsWith(".html")) {
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+        res.setHeader("Pragma", "no-cache");
+        res.setHeader("Expires", "0");
+      }
+    },
+  })
+);
 // Fallback for SPA routes (avoid wildcard path-to-regexp issues in Express 5)
 app.use((req, res, next) => {
   if (req.path.startsWith("/api/")) return next();
-  return res.sendFile(path.join(distPath, "index.html"));
+  const extension = path.extname(req.path || "");
+  if (extension) {
+    if (req.path.startsWith("/assets/") && extension === ".js") {
+      res.setHeader("Content-Type", "application/javascript; charset=utf-8");
+      res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+      return res.status(200).send("window.location.reload(); export {};");
+    }
+    return res.status(404).end();
+  }
+  return sendSpaIndex(res);
 });
 
 /**
