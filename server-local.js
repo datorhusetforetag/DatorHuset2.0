@@ -6,6 +6,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import fsSync from "fs";
 import path from "path";
 import fs from "fs/promises";
 import { fileURLToPath } from "url";
@@ -75,11 +76,22 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
   .filter(Boolean);
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
+const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "prisjakt-v1";
 const CUSTOM_BUILD_DISCOVERY_TTL_MS = Math.max(
   60_000,
   Number(process.env.CUSTOM_BUILD_DISCOVERY_TTL_MS || 7 * 24 * 60 * 60 * 1000)
 );
+const loadPrisjaktProductUrlMap = () => {
+  try {
+    const raw = fsSync.readFileSync(PRISJAKT_PRODUCT_MAP_FILE, "utf8");
+    const parsed = raw ? JSON.parse(raw) : {};
+    return parsed && typeof parsed === "object" ? parsed : {};
+  } catch {
+    return {};
+  }
+};
+const PRISJAKT_PRODUCT_URL_MAP = loadPrisjaktProductUrlMap();
 
 const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
 const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
@@ -1460,6 +1472,30 @@ const fetchJinaMirrorTextForUrl = async (url) => {
   return text;
 };
 
+const fetchTextWithBrowserHeaders = async (url, acceptHeader = "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8") => {
+  if (!url) return null;
+  const response = await fetch(url, {
+    headers: {
+      Accept: acceptHeader,
+      "Accept-Language": "sv-SE,sv;q=0.9,en;q=0.8",
+      "Cache-Control": "no-cache",
+      Pragma: "no-cache",
+      "User-Agent":
+        process.env.CUSTOM_PRICE_USER_AGENT ||
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+    },
+    signal: AbortSignal.timeout(Math.max(CUSTOM_PRICE_REQUEST_TIMEOUT_MS, 18_000)),
+  });
+  const text = await response.text().catch(() => "");
+  if (response.status === 429) {
+    const error = new Error("REMOTE_RATE_LIMIT");
+    error.status = 429;
+    throw error;
+  }
+  if (!response.ok) return null;
+  return text;
+};
+
 const buildDuckDuckGoSiteSearchUrl = (source, query, exact = true) => {
   const domain = sanitizeText(String(source?.siteSearchDomain || ""), 120);
   if (!domain || !query) return null;
@@ -1547,6 +1583,15 @@ const normalizePrisjaktGoToShopUrl = (value) => {
   return PRISJAKT_GO_TO_SHOP_URL_REGEX.test(normalizedUrl) ? normalizedUrl : null;
 };
 
+const decodeHtmlEntities = (value) =>
+  String(value || "")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, "\"")
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">");
+
 const buildPrisjaktDuckDuckGoSearchUrl = (query, exact = true) => {
   const safeQuery = sanitizeText(String(query || ""), 180);
   if (!safeQuery) return null;
@@ -1563,7 +1608,7 @@ const fetchPrisjaktDuckDuckGoSearchText = async (query) => {
   ].filter(Boolean);
   if (urls.length === 0) return null;
   const texts = (
-    await Promise.all(urls.map((url) => fetchJinaMirrorTextForUrl(url).catch(() => null)))
+    await Promise.all(urls.map((url) => fetchTextWithBrowserHeaders(url).catch(() => null)))
   ).filter((value) => typeof value === "string" && value.trim().length > 0);
   return texts.length > 0 ? texts.join("\n\n") : null;
 };
@@ -1589,6 +1634,7 @@ const extractPrisjaktProductUrlsFromDuckDuckGoSearch = (markdown) => {
 const extractPrisjaktProductTitle = (markdown) => {
   const rawTitle =
     String(markdown || "").match(/^Title:\s*(.+)$/m)?.[1] ||
+    decodeHtmlEntities(String(markdown || "").match(/<title[^>]*>([^<]+)<\/title>/i)?.[1] || "") ||
     String(markdown || "").match(/^(.+?),\s*Från\s+[0-9 ]+\s*kr$/m)?.[1] ||
     "";
   return sanitizeText(rawTitle.replace(/,\s*Från\s+[0-9 ]+\s*kr$/i, ""), 240);
@@ -1613,7 +1659,9 @@ const scorePrisjaktProductMarkdownForItem = (markdown, item) => {
 const findBestPrisjaktProductForItem = async (item) => {
   const candidateUrls = [];
   const seenUrls = new Set();
-  const overrideUrl = normalizePrisjaktProductUrl(PRISJAKT_PRODUCT_URL_OVERRIDES[item?.id]);
+  const overrideUrl = normalizePrisjaktProductUrl(
+    PRISJAKT_PRODUCT_URL_MAP[item?.id] || PRISJAKT_PRODUCT_URL_OVERRIDES[item?.id]
+  );
   if (overrideUrl) {
     seenUrls.add(overrideUrl);
     candidateUrls.push(overrideUrl);
@@ -1634,14 +1682,14 @@ const findBestPrisjaktProductForItem = async (item) => {
 
   let bestCandidate = null;
   for (const url of candidateUrls) {
-    const markdown = await fetchJinaMirrorTextForUrl(url);
-    if (!markdown) continue;
-    const score = scorePrisjaktProductMarkdownForItem(markdown, item);
+    const documentText = await fetchTextWithBrowserHeaders(url).catch(() => null);
+    if (!documentText) continue;
+    const score = scorePrisjaktProductMarkdownForItem(documentText, item);
     if (score < 0) continue;
     if (!bestCandidate || score > bestCandidate.score) {
       bestCandidate = {
         url,
-        markdown,
+        markdown: documentText,
         score,
       };
     }
@@ -1650,24 +1698,24 @@ const findBestPrisjaktProductForItem = async (item) => {
   return bestCandidate;
 };
 
-const extractStoreOffersFromPrisjaktProductMarkdown = (markdown) => {
-  if (!markdown || typeof markdown !== "string") return [];
+const extractStoreOffersFromPrisjaktProductHtml = (html) => {
+  if (!html || typeof html !== "string") return [];
   const offersByStoreId = new Map();
   const offerRegex =
-    /\*\s+\[([^\[\]!]+)!\[Image[^\]]+\]\s*\([^)]*\)\s*([\s\S]*?)####\s*([0-9.,\s\u00A0]+)\s*kr(?:\s+Leverans:[^[]+?)?\s*Gå till butik\]\((https?:\/\/www\.prisjakt\.nu\/go-to-shop\/[^\s)]+)\)/g;
-  let match = offerRegex.exec(markdown);
+    /<a href="(https:\/\/www\.prisjakt\.nu\/go-to-shop\/[^"]+)"[\s\S]*?<span class="StoreInfoTitle[^"]*"[^>]*>([^<]+)<\/span>[\s\S]*?<h4[^>]*data-test="PriceLabel"[^>]*>([^<]+)<\/h4>/gi;
+  let match = offerRegex.exec(html);
   while (match) {
-    const storeName = sanitizeText(String(match[1] || ""), 120);
+    const productUrl = normalizePrisjaktGoToShopUrl(match[1]);
+    const storeName = sanitizeText(decodeHtmlEntities(String(match[2] || "")), 120);
     const storeId = PRISJAKT_ALLOWED_STORE_NAME_TO_ID.get(normalizeStorePriceQueryKey(storeName));
-    const price = parseMoneyValue(match[3]);
-    const productUrl = normalizePrisjaktGoToShopUrl(match[4]);
+    const price = parseMoneyValue(decodeHtmlEntities(match[3]));
     if (!storeId || !Number.isFinite(price) || !productUrl) {
-      match = offerRegex.exec(markdown);
+      match = offerRegex.exec(html);
       continue;
     }
     const source = CUSTOM_STORE_SOURCE_BY_ID[storeId];
     if (!source) {
-      match = offerRegex.exec(markdown);
+      match = offerRegex.exec(html);
       continue;
     }
     const nextOffer = {
@@ -1686,7 +1734,7 @@ const extractStoreOffersFromPrisjaktProductMarkdown = (markdown) => {
     if (!currentOffer || (currentOffer.total_price ?? currentOffer.price) > nextOffer.total_price) {
       offersByStoreId.set(storeId, nextOffer);
     }
-    match = offerRegex.exec(markdown);
+    match = offerRegex.exec(html);
   }
   return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
 };
@@ -2425,7 +2473,7 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   if (!prisjaktProduct?.markdown) {
     return [];
   }
-  return extractStoreOffersFromPrisjaktProductMarkdown(prisjaktProduct.markdown);
+  return extractStoreOffersFromPrisjaktProductHtml(prisjaktProduct.markdown);
 };
 
 const getCachedCatalogItemStoreOffers = (itemId) => {
