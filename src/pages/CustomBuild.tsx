@@ -1833,7 +1833,9 @@ export default function CustomBuild() {
     expandedItemId && expandedItemCategory ? getStoreCacheKey(expandedItemCategory, expandedItemId) : "";
   const expandedStoreSnapshot = expandedStoreCacheKey ? storePickerCache[expandedStoreCacheKey] : undefined;
   const expandedStoreOffers = Array.isArray(expandedStoreSnapshot?.offers)
-    ? expandedStoreSnapshot.offers
+    ? expandedStoreSnapshot.offers.filter(
+        (offer) => Boolean(offer.product_url) || Number.isFinite(offer.total_price ?? offer.price)
+      )
     : [];
 
   const getNextCategoryKey = (currentCategory: CategoryKey) => {
@@ -1987,7 +1989,6 @@ export default function CustomBuild() {
     }
     if (offer.status === "linked_no_price") return "Pris saknas";
     if (offer.status === "unavailable") return "Ej tillgänglig";
-    if (!offer.product_url && offer.search_url) return "Sök hos butik";
     if (offer.status === "error") return "Kunde inte läsa";
     return "Ingen träff";
   };
@@ -2791,15 +2792,6 @@ export default function CustomBuild() {
                                             className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                           >
                                             Till butik
-                                          </a>
-                                        ) : offer.search_url ? (
-                                          <a
-                                            href={offer.search_url}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
-                                          >
-                                            Sök i butik
                                           </a>
                                         ) : (
                                           <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">

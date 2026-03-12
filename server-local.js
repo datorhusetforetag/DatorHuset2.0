@@ -75,7 +75,7 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
   .filter(Boolean);
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
-const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "v1";
+const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "prisjakt-v1";
 const CUSTOM_BUILD_DISCOVERY_TTL_MS = Math.max(
   60_000,
   Number(process.env.CUSTOM_BUILD_DISCOVERY_TTL_MS || 7 * 24 * 60 * 60 * 1000)
@@ -1445,8 +1445,19 @@ const fetchJinaMirrorTextForUrl = async (url) => {
     },
     signal: AbortSignal.timeout(Math.max(CUSTOM_PRICE_REQUEST_TIMEOUT_MS, 18_000)),
   });
+  const text = await response.text().catch(() => "");
+  const isRateLimited =
+    response.status === 429 ||
+    /RateLimitTriggeredError/i.test(text) ||
+    /"code"\s*:\s*429/i.test(text) ||
+    /"status"\s*:\s*42903/i.test(text);
+  if (isRateLimited) {
+    const error = new Error("JINA_RATE_LIMIT");
+    error.status = 429;
+    throw error;
+  }
   if (!response.ok) return null;
-  return response.text();
+  return text;
 };
 
 const buildDuckDuckGoSiteSearchUrl = (source, query, exact = true) => {
@@ -1501,6 +1512,183 @@ const buildCatalogSearchQueries = (item) => {
   }
 
   return Array.from(variants).slice(0, 6);
+};
+
+const PRISJAKT_PRODUCT_URL_REGEX = /https?:\/\/www\.prisjakt\.nu\/produkt\.php\?p=\d+/i;
+const PRISJAKT_GO_TO_SHOP_URL_REGEX = /https?:\/\/www\.prisjakt\.nu\/go-to-shop\/\d+\/offer\/[^\s)]+/i;
+const PRISJAKT_PRODUCT_URL_OVERRIDES = {
+  "cpu-lga1700-core-i5-12400f": "https://www.prisjakt.nu/produkt.php?p=5948013",
+  "mb-am4-msi-b550-tomahawk": "https://www.prisjakt.nu/produkt.php?p=5386548",
+  "mb-am5-msi-b650-tomahawk-wifi": "https://www.prisjakt.nu/produkt.php?p=7153870",
+};
+const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
+  [
+    ["amazon se", "amazon-se"],
+    ["amazon.se", "amazon-se"],
+    ["computersalg", "computersalg"],
+    ["elgiganten", "elgiganten"],
+    ["komplett", "komplett"],
+    ["netonnet", "netonnet"],
+    ["proshop", "proshop"],
+    ["webhallen", "webhallen"],
+  ].map(([name, storeId]) => [normalizeStorePriceQueryKey(name), storeId])
+);
+
+const normalizePrisjaktProductUrl = (value) => {
+  const normalizedUrl = normalizeRelativeUrl(String(value || "").trim(), String(value || "").trim());
+  if (!normalizedUrl) return null;
+  const withoutRut = normalizedUrl.replace(/([?&])rut=[^&]+/i, "$1").replace(/[?&]$/g, "");
+  return PRISJAKT_PRODUCT_URL_REGEX.test(withoutRut) ? withoutRut : null;
+};
+
+const normalizePrisjaktGoToShopUrl = (value) => {
+  const normalizedUrl = normalizeRelativeUrl(String(value || "").trim(), String(value || "").trim());
+  if (!normalizedUrl) return null;
+  return PRISJAKT_GO_TO_SHOP_URL_REGEX.test(normalizedUrl) ? normalizedUrl : null;
+};
+
+const buildPrisjaktDuckDuckGoSearchUrl = (query, exact = true) => {
+  const safeQuery = sanitizeText(String(query || ""), 180);
+  if (!safeQuery) return null;
+  const encodedQuery = encodeURIComponent(
+    exact ? `site:prisjakt.nu/produkt.php "${safeQuery}"` : `site:prisjakt.nu ${safeQuery}`
+  );
+  return `https://html.duckduckgo.com/html/?q=${encodedQuery}`;
+};
+
+const fetchPrisjaktDuckDuckGoSearchText = async (query) => {
+  const urls = [
+    buildPrisjaktDuckDuckGoSearchUrl(query, true),
+    buildPrisjaktDuckDuckGoSearchUrl(query, false),
+  ].filter(Boolean);
+  if (urls.length === 0) return null;
+  const texts = (
+    await Promise.all(urls.map((url) => fetchJinaMirrorTextForUrl(url).catch(() => null)))
+  ).filter((value) => typeof value === "string" && value.trim().length > 0);
+  return texts.length > 0 ? texts.join("\n\n") : null;
+};
+
+const extractPrisjaktProductUrlsFromDuckDuckGoSearch = (markdown) => {
+  if (!markdown || typeof markdown !== "string") return [];
+  const urls = [];
+  const seen = new Set();
+  const redirectRegex = /https?:\/\/(?:duckduckgo\.com|html\.duckduckgo\.com)\/l\/\?uddg=([^\s)]+)/gi;
+  let match = redirectRegex.exec(markdown);
+  while (match) {
+    const decodedUrl = decodeURIComponent(String(match[1] || "").trim());
+    const normalizedUrl = normalizePrisjaktProductUrl(decodedUrl);
+    if (normalizedUrl && !seen.has(normalizedUrl)) {
+      seen.add(normalizedUrl);
+      urls.push(normalizedUrl);
+    }
+    match = redirectRegex.exec(markdown);
+  }
+  return urls;
+};
+
+const extractPrisjaktProductTitle = (markdown) => {
+  const rawTitle =
+    String(markdown || "").match(/^Title:\s*(.+)$/m)?.[1] ||
+    String(markdown || "").match(/^(.+?),\s*Från\s+[0-9 ]+\s*kr$/m)?.[1] ||
+    "";
+  return sanitizeText(rawTitle.replace(/,\s*Från\s+[0-9 ]+\s*kr$/i, ""), 240);
+};
+
+const scorePrisjaktProductMarkdownForItem = (markdown, item) => {
+  const title = extractPrisjaktProductTitle(markdown);
+  if (!title) return -1;
+  const queryTokens = tokenizeForSearchMatch(item?.name || "");
+  const modelTokens = extractModelTokensFromQuery(item?.name || "");
+  if (!matchesModelTokens(title, modelTokens)) {
+    return -1;
+  }
+  const normalizedTitle = normalizeStorePriceQueryKey(title);
+  const normalizedName = normalizeStorePriceQueryKey(item?.name || "");
+  let score = scoreTitleAgainstQuery(title, queryTokens);
+  if (normalizedTitle === normalizedName) score += 12;
+  if (normalizedTitle.includes(normalizedName)) score += 6;
+  return score;
+};
+
+const findBestPrisjaktProductForItem = async (item) => {
+  const candidateUrls = [];
+  const seenUrls = new Set();
+  const overrideUrl = normalizePrisjaktProductUrl(PRISJAKT_PRODUCT_URL_OVERRIDES[item?.id]);
+  if (overrideUrl) {
+    seenUrls.add(overrideUrl);
+    candidateUrls.push(overrideUrl);
+  }
+  const searchQueries = buildCatalogSearchQueries(item);
+
+  for (const searchQuery of searchQueries) {
+    const searchText = await fetchPrisjaktDuckDuckGoSearchText(searchQuery);
+    const urls = extractPrisjaktProductUrlsFromDuckDuckGoSearch(searchText);
+    for (const url of urls) {
+      if (seenUrls.has(url)) continue;
+      seenUrls.add(url);
+      candidateUrls.push(url);
+      if (candidateUrls.length >= 6) break;
+    }
+    if (candidateUrls.length >= 6) break;
+  }
+
+  let bestCandidate = null;
+  for (const url of candidateUrls) {
+    const markdown = await fetchJinaMirrorTextForUrl(url);
+    if (!markdown) continue;
+    const score = scorePrisjaktProductMarkdownForItem(markdown, item);
+    if (score < 0) continue;
+    if (!bestCandidate || score > bestCandidate.score) {
+      bestCandidate = {
+        url,
+        markdown,
+        score,
+      };
+    }
+  }
+
+  return bestCandidate;
+};
+
+const extractStoreOffersFromPrisjaktProductMarkdown = (markdown) => {
+  if (!markdown || typeof markdown !== "string") return [];
+  const offersByStoreId = new Map();
+  const offerRegex =
+    /\*\s+\[([^\[\]!]+)!\[Image[^\]]+\]\s*\([^)]*\)\s*([\s\S]*?)####\s*([0-9.,\s\u00A0]+)\s*kr(?:\s+Leverans:[^[]+?)?\s*Gå till butik\]\((https?:\/\/www\.prisjakt\.nu\/go-to-shop\/[^\s)]+)\)/g;
+  let match = offerRegex.exec(markdown);
+  while (match) {
+    const storeName = sanitizeText(String(match[1] || ""), 120);
+    const storeId = PRISJAKT_ALLOWED_STORE_NAME_TO_ID.get(normalizeStorePriceQueryKey(storeName));
+    const price = parseMoneyValue(match[3]);
+    const productUrl = normalizePrisjaktGoToShopUrl(match[4]);
+    if (!storeId || !Number.isFinite(price) || !productUrl) {
+      match = offerRegex.exec(markdown);
+      continue;
+    }
+    const source = CUSTOM_STORE_SOURCE_BY_ID[storeId];
+    if (!source) {
+      match = offerRegex.exec(markdown);
+      continue;
+    }
+    const nextOffer = {
+      store_id: storeId,
+      store: source.name,
+      status: "available",
+      product_url: productUrl,
+      price: Math.max(0, Math.round(price)),
+      total_price: Math.max(0, Math.round(price)),
+      currency: "SEK",
+      shipping_price: null,
+      availability: "in_stock",
+      error: null,
+    };
+    const currentOffer = offersByStoreId.get(storeId);
+    if (!currentOffer || (currentOffer.total_price ?? currentOffer.price) > nextOffer.total_price) {
+      offersByStoreId.set(storeId, nextOffer);
+    }
+    match = offerRegex.exec(markdown);
+  }
+  return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
 };
 
 const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referencePrice = null) => {
@@ -2043,14 +2231,11 @@ const startCustomStorePriceScheduler = async () => {
 const buildCustomBuildProductCacheKey = (itemId) =>
   `${CUSTOM_BUILD_PRODUCT_CACHE_VERSION}:${sanitizeText(String(itemId || ""), 120)}`;
 
-const buildCatalogStoreSearchUrl = (item, source) => {
-  if (!item || !source) return null;
-  const resolvedSource = CUSTOM_STORE_SOURCE_BY_ID[source.id] || source;
-  if (typeof resolvedSource.buildSearchUrl !== "function") return null;
-  const [firstSearchQuery] = buildCatalogSearchQueries(item);
-  const query = firstText(firstSearchQuery, item.name);
-  return query ? resolvedSource.buildSearchUrl(query) : null;
-};
+const normalizeCatalogProductUrl = (value, sourceId) =>
+  normalizePrisjaktGoToShopUrl(value) ||
+  normalizeOfferUrlForStore(firstText(value), sourceId) ||
+  firstText(value) ||
+  null;
 
 const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const normalizedPrice = parseMoneyValue(offer?.price);
@@ -2059,8 +2244,8 @@ const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
     store_id: sanitizeText(String(offer?.store_id || source?.id || ""), 80),
     store: firstText(offer?.store, source?.name) || source?.name || "Unknown",
     status: firstText(offer?.status) || (normalizedTotalPrice !== null || normalizedPrice !== null ? "available" : "linked_no_price"),
-    product_url: normalizeOfferUrlForStore(firstText(offer?.product_url), source?.id) || firstText(offer?.product_url) || null,
-    search_url: firstText(offer?.search_url, buildCatalogStoreSearchUrl(item, source)) || null,
+    product_url: normalizeCatalogProductUrl(offer?.product_url, source?.id),
+    search_url: firstText(offer?.search_url) || null,
     price: normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     total_price: normalizedTotalPrice !== null ? Math.max(0, Math.round(normalizedTotalPrice)) : normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     currency: firstText(offer?.currency).toUpperCase() || "SEK",
@@ -2090,47 +2275,32 @@ const sortCatalogStoreOffers = (offers) => {
   });
 };
 
-const createEmptyCatalogStoreOffer = (source, item = null) => ({
-  store_id: source.id,
-  store: source.name,
-  status: "not_found",
-  product_url: null,
-  search_url: buildCatalogStoreSearchUrl(item, source),
-  price: null,
-  total_price: null,
-  currency: "SEK",
-  shipping_price: null,
-  availability: null,
-  updated_at: null,
-  error: null,
-});
+const isCatalogStoreOfferUseful = (offer) =>
+  Boolean(firstText(offer?.product_url)) ||
+  Number.isFinite(offer?.total_price ?? offer?.price);
 
 const hydrateCatalogStoreOffers = (offers = [], item = null) => {
   const normalizedByStoreId = new Map();
   offers.forEach((offer) => {
     const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
     if (!source) return;
-    normalizedByStoreId.set(source.id, sanitizeCatalogStoreOffer(offer, source, item));
-  });
-  CURATED_CUSTOM_BUILD_STORE_SOURCES.forEach((source) => {
-    if (!normalizedByStoreId.has(source.id)) {
-      normalizedByStoreId.set(source.id, createEmptyCatalogStoreOffer(source, item));
-    }
+    const normalizedOffer = sanitizeCatalogStoreOffer(offer, source, item);
+    if (!isCatalogStoreOfferUseful(normalizedOffer)) return;
+    normalizedByStoreId.set(source.id, normalizedOffer);
   });
   return sortCatalogStoreOffers(Array.from(normalizedByStoreId.values()));
 };
 
-const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = []) => {
+const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], item = null) => {
   const nextByStoreId = new Map(
-    hydrateCatalogStoreOffers(nextOffers).map((offer) => [offer.store_id, offer])
+    hydrateCatalogStoreOffers(nextOffers, item).map((offer) => [offer.store_id, offer])
   );
   const cachedByStoreId = new Map(
-    hydrateCatalogStoreOffers(cachedOffers).map((offer) => [offer.store_id, offer])
+    hydrateCatalogStoreOffers(cachedOffers, item).map((offer) => [offer.store_id, offer])
   );
 
-  CURATED_CUSTOM_BUILD_STORE_SOURCES.forEach((source) => {
-    const nextOffer = nextByStoreId.get(source.id);
-    const cachedOffer = cachedByStoreId.get(source.id);
+  cachedByStoreId.forEach((cachedOffer, storeId) => {
+    const nextOffer = nextByStoreId.get(storeId);
     if (!nextOffer || !cachedOffer) {
       return;
     }
@@ -2143,7 +2313,7 @@ const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = []) =
       (cachedOffer.status === "linked_no_price" && Boolean(cachedOffer.product_url));
 
     if (!nextHasUsefulData && cachedHasUsefulData) {
-      nextByStoreId.set(source.id, cachedOffer);
+      nextByStoreId.set(storeId, cachedOffer);
     }
   });
 
@@ -2184,16 +2354,34 @@ const loadCustomBuildProductCacheFromDisk = async () => {
   try {
     const raw = await fs.readFile(CUSTOM_BUILD_PRODUCT_CACHE_FILE, "utf8");
     const payload = raw ? JSON.parse(raw) : {};
+    const payloadVersion = sanitizeText(String(payload?.version || ""), 40);
+    if (payloadVersion && payloadVersion !== CUSTOM_BUILD_PRODUCT_CACHE_VERSION) {
+      return;
+    }
     const entries = Array.isArray(payload?.entries) ? payload.entries : [];
     entries.forEach((entry) => {
-      const key = buildCustomBuildProductCacheKey(entry?.item_id || "");
+      const rawKey = sanitizeText(String(entry?.key || ""), 240);
+      const expectedPrefix = `${CUSTOM_BUILD_PRODUCT_CACHE_VERSION}:`;
+      if (rawKey.includes(":") && !rawKey.startsWith(expectedPrefix)) {
+        return;
+      }
       const itemId = sanitizeText(String(entry?.item_id || ""), 120);
       const updatedAt = Number(entry?.updatedAt || Date.now());
-      if (!key || !itemId || !entry?.response) return;
+      const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
+      const key = rawKey.startsWith(expectedPrefix)
+        ? rawKey
+        : buildCustomBuildProductCacheKey(itemId);
+      if (!key || !itemId || !item || !entry?.response) return;
+      const cachedOffers = Array.isArray(entry.response.offers) ? entry.response.offers : [];
+      const response = sanitizeCatalogItemResponse(
+        item,
+        cachedOffers,
+        Number.isFinite(updatedAt) ? updatedAt : Date.now()
+      );
       customBuildProductCache.set(key, {
         item_id: itemId,
         updatedAt: Number.isFinite(updatedAt) ? updatedAt : Date.now(),
-        response: entry.response,
+        response,
       });
     });
   } catch (error) {
@@ -2232,33 +2420,11 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   if (!item) {
     throw new Error("UNKNOWN_CATALOG_ITEM");
   }
-  const searchQueries = buildCatalogSearchQueries(item);
-  const storeOffers = await Promise.all(CURATED_CUSTOM_BUILD_STORE_SOURCES.map(async (curatedStore) => {
-    const source = CUSTOM_STORE_SOURCE_BY_ID[curatedStore.id];
-    if (!source) {
-      return createEmptyCatalogStoreOffer(curatedStore);
-    }
-    let discoveredOffer = null;
-    for (const searchQuery of searchQueries) {
-      discoveredOffer = await fetchStoreOfferForQuery(source, searchQuery, item.price);
-      if (discoveredOffer?.product_url) {
-        break;
-      }
-    }
-    const directOffer = await fetchDirectProductOffer(item, source, discoveredOffer);
-    return sanitizeCatalogStoreOffer(
-      {
-        ...directOffer,
-        store_id: source.id,
-        store: source.name,
-        product_url: directOffer?.product_url || discoveredOffer?.product_url || null,
-        search_url: buildCatalogStoreSearchUrl(item, source),
-      },
-      source,
-      item
-    );
-  }));
-  return storeOffers;
+  const prisjaktProduct = await findBestPrisjaktProductForItem(item);
+  if (!prisjaktProduct?.markdown) {
+    return [];
+  }
+  return extractStoreOffersFromPrisjaktProductMarkdown(prisjaktProduct.markdown);
 };
 
 const getCachedCatalogItemStoreOffers = (itemId) => {
@@ -2312,17 +2478,24 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
   }
 
   const refreshPromise = (async () => {
-    const refreshedAt = Date.now();
-    const offers = await refreshCatalogItemStoreOffers(itemId);
-    const mergedOffers = mergeCatalogStoreOffersWithCached(offers, cachedOffers);
-    const nextResponse = sanitizeCatalogItemResponse(item, mergedOffers, refreshedAt);
-    customBuildProductCache.set(cacheKey, {
-      item_id: itemId,
-      updatedAt: refreshedAt,
-      response: nextResponse,
-    });
-    queueCustomBuildProductCacheSave();
-    return nextResponse;
+    try {
+      const refreshedAt = Date.now();
+      const offers = await refreshCatalogItemStoreOffers(itemId);
+      const mergedOffers = mergeCatalogStoreOffersWithCached(offers, cachedOffers, item);
+      const nextResponse = sanitizeCatalogItemResponse(item, mergedOffers, refreshedAt);
+      customBuildProductCache.set(cacheKey, {
+        item_id: itemId,
+        updatedAt: refreshedAt,
+        response: nextResponse,
+      });
+      queueCustomBuildProductCacheSave();
+      return nextResponse;
+    } catch (error) {
+      if (cached?.response) {
+        return getCachedCatalogItemStoreOffers(itemId) || cached.response;
+      }
+      throw error;
+    }
   })().finally(() => {
     customBuildProductRefreshInFlight.delete(cacheKey);
   });
@@ -2361,12 +2534,20 @@ const startCustomBuildProductScheduler = async () => {
   customBuildProductSchedulerStarted = true;
   await loadCustomBuildProductCacheFromDisk();
   const refreshAll = async () => {
-    for (const item of CUSTOM_BUILD_CATALOG_ITEMS) {
+    const cachedItemIds = Array.from(
+      new Set(
+        Array.from(customBuildProductCache.values())
+          .filter((entry) => countCatalogAvailableOffers(entry?.response?.offers) > 0 && entry?.item_id)
+          .map((entry) => entry.item_id)
+      )
+    );
+    for (const itemId of cachedItemIds) {
       try {
-        await getOrRefreshCatalogItemStoreOffers(item.id, { forceRefresh: true });
+        await getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh: true });
+        await new Promise((resolve) => setTimeout(resolve, 5000));
       } catch (error) {
         logStructured("warn", "custom_build_product_refresh_failed", {
-          item_id: item.id,
+          item_id: itemId,
           message: error instanceof Error ? error.message : "unknown_error",
         });
       }
