@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-12T02:54:45.693Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-12T05:27:56.976Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-5-5500": 989,
@@ -50,7 +50,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "mb-am4-gigabyte-x570-aorus-elite": 2399,
   "mb-am4-asrock-x570-steel-legend": 2499,
   "mb-am4-msi-mag-b550m-mortar-wifi": 1899,
-  "mb-am4-asus-rog-crosshair-viii-hero": 3399,
+  "mb-am4-asus-rog-crosshair-viii-hero": 3363,
   "mb-am5-msi-b650-tomahawk-wifi": 1847,
   "mb-am5-gigabyte-b650-aorus-elite-ax": 1817,
   "mb-am5-asus-tuf-b650-plus-wifi": 1599,
@@ -72,7 +72,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "mb-lga1200-asus-rog-strix-z490-f": 1999,
   "mb-lga1200-msi-z490-gaming-edge-wifi": 2099,
   "mb-lga1700-msi-b760m-mortar-wifi": 2090,
-  "mb-lga1700-asus-tuf-b760-plus-wifi": 2399,
+  "mb-lga1700-asus-tuf-b760-plus-wifi": 1504,
   "mb-lga1700-gigabyte-b760-aorus-elite-ax": 2499,
   "mb-lga1700-asrock-b760-pro-rs": 1293,
   "mb-lga1700-msi-z790-tomahawk-wifi": 2463,
@@ -81,84 +81,84 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "mb-lga1700-asrock-z790-pro-rs": 1948,
   "mb-lga1700-msi-z790-edge-wifi": 4351,
   "mb-lga1700-asus-rog-strix-z790-f": 4299,
-  "gpu-1": 3490,
-  "gpu-2": 4290,
-  "gpu-3": 5890,
-  "gpu-4": 6290,
-  "gpu-5": 10990,
-  "gpu-6": 17990,
-  "gpu-7": 2990,
-  "gpu-8": 4390,
+  "gpu-1": 4454,
+  "gpu-2": 5353,
+  "gpu-3": 7519,
+  "gpu-4": 7519,
+  "gpu-5": 15046,
+  "gpu-6": 31840,
+  "gpu-7": 3272,
+  "gpu-8": 5347,
   "gpu-9": 5390,
-  "gpu-10": 2890,
-  "gpu-11": 2200,
-  "gpu-12": 3300,
-  "gpu-13": 4500,
-  "gpu-14": 5000,
-  "gpu-15": 6500,
-  "gpu-16": 6700,
-  "gpu-17": 7500,
-  "gpu-18": 6900,
-  "gpu-19": 11500,
-  "gpu-20": 11800,
+  "gpu-10": 3578,
+  "gpu-11": 1899,
+  "gpu-12": 3322,
+  "gpu-13": 4190,
+  "gpu-14": 5890,
+  "gpu-15": 6490,
+  "gpu-16": 7190,
+  "gpu-17": 7190,
+  "gpu-18": 6999,
+  "gpu-19": 14890,
+  "gpu-20": 13490,
   "ram-1": 1290,
-  "ram-2": 1490,
-  "ram-3": 1190,
+  "ram-2": 7390,
+  "ram-3": 6491,
   "ram-4": 1090,
-  "ram-5": 2690,
-  "ram-6": 990,
+  "ram-5": 14017,
+  "ram-6": 11819,
   "ram-7": 1390,
-  "ram-8": 2190,
+  "ram-8": 18116,
   "ram-9": 1290,
-  "ram-10": 1190,
+  "ram-10": 4249,
   "ram-11": 600,
-  "ram-12": 1200,
+  "ram-12": 8140,
   "ram-13": 900,
-  "ram-14": 799,
-  "ram-15": 1100,
+  "ram-14": 5190,
+  "ram-15": 5190,
   "ram-16": 1400,
-  "sto-1": 1190,
-  "sto-2": 1090,
-  "sto-3": 990,
-  "sto-4": 1890,
-  "sto-5": 1990,
+  "sto-1": 1990,
+  "sto-2": 1699,
+  "sto-3": 1799,
+  "sto-4": 2990,
+  "sto-5": 4730,
   "sto-6": 790,
-  "sto-7": 990,
-  "sto-8": 1590,
+  "sto-7": 2290,
+  "sto-8": 2690,
   "sto-9": 890,
-  "sto-10": 1190,
+  "sto-10": 1572,
   "sto-11": 900,
-  "sto-13": 1200,
-  "sto-14": 1400,
-  "case-1": 1390,
-  "case-2": 1290,
-  "case-3": 1490,
-  "case-4": 1090,
-  "case-5": 1390,
-  "case-6": 1290,
+  "sto-13": 2186,
+  "sto-14": 2499,
+  "case-1": 829,
+  "case-2": 1199,
+  "case-3": 1674,
+  "case-4": 649,
+  "case-5": 1790,
+  "case-6": 1303,
   "case-7": 1190,
-  "case-8": 1090,
-  "case-9": 1690,
-  "case-10": 1690,
-  "psu-1": 1290,
-  "psu-2": 1590,
+  "case-8": 699,
+  "case-9": 1638,
+  "case-10": 1120,
+  "psu-1": 1289,
+  "psu-2": 1528,
   "psu-3": 1390,
   "psu-4": 2490,
-  "psu-5": 2290,
+  "psu-5": 1999,
   "psu-6": 990,
   "psu-7": 1690,
-  "psu-8": 1590,
-  "psu-9": 1190,
-  "psu-10": 1790,
-  "cool-1": 1190,
-  "cool-2": 1090,
+  "psu-8": 1558,
+  "psu-9": 1193,
+  "psu-10": 1694,
+  "cool-1": 1049,
+  "cool-2": 1127,
   "cool-3": 1990,
-  "cool-4": 1990,
-  "cool-5": 1590,
-  "cool-6": 790,
-  "cool-7": 1790,
-  "cool-8": 1490,
-  "cool-9": 590,
+  "cool-4": 575,
+  "cool-5": 575,
+  "cool-6": 701,
+  "cool-7": 832,
+  "cool-8": 575,
+  "cool-9": 417,
   "cool-10": 1490
 };
 
@@ -460,7 +460,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-am4-asus-rog-crosshair-viii-hero": {
     "category": "motherboard",
     "name": "ASUS ROG Crosshair VIII Hero",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "mb-am5-msi-b650-tomahawk-wifi": {
@@ -592,7 +592,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-lga1700-asus-tuf-b760-plus-wifi": {
     "category": "motherboard",
     "name": "ASUS TUF Gaming B760-Plus WiFi",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "mb-lga1700-gigabyte-b760-aorus-elite-ax": {
@@ -646,50 +646,50 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "gpu-1": {
     "category": "gpu",
     "name": "NVIDIA GeForce RTX 4060",
-    "source": "static_legacy_fallback",
-    "note": "Approximerad marknadsnivå för äldre instegsmodell."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-2": {
     "category": "gpu",
     "name": "NVIDIA GeForce RTX 4060 Ti",
-    "source": "static_legacy_fallback",
-    "note": "Approximerad marknadsnivå för äldre mellanklassmodell."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-3": {
     "category": "gpu",
     "name": "NVIDIA GeForce RTX 4070",
-    "source": "static_legacy_fallback",
-    "note": "Lagts strax under RTX 5070 som ungefärlig ersättningsnivå."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-4": {
     "category": "gpu",
     "name": "NVIDIA GeForce RTX 4070 Super",
-    "source": "static_legacy_fallback",
-    "note": "Lagts strax under RTX 5070 som ungefärlig ersättningsnivå."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-5": {
     "category": "gpu",
     "name": "NVIDIA GeForce RTX 4080 Super",
-    "source": "static_legacy_fallback",
-    "note": "Lagts strax under RTX 5080 som ungefärlig ersättningsnivå."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-6": {
     "category": "gpu",
     "name": "NVIDIA GeForce RTX 4090",
-    "source": "static_legacy_fallback",
-    "note": "Statisk high-end-nivå i avsaknad av stabil nybutiksdata."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-7": {
     "category": "gpu",
     "name": "AMD Radeon RX 7600",
-    "source": "static_legacy_fallback",
-    "note": "Approximerad marknadsnivå för äldre 1080p-kort."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-8": {
     "category": "gpu",
     "name": "AMD Radeon RX 7700 XT",
-    "source": "static_legacy_fallback",
-    "note": "Approximerad marknadsnivå för äldre 1440p-kort."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-9": {
     "category": "gpu",
@@ -700,67 +700,67 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "gpu-10": {
     "category": "gpu",
     "name": "Intel Arc A770",
-    "source": "static_legacy_fallback",
-    "note": "Approximerad marknadsnivå för äldre Intel Arc-modell."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "gpu-11": {
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 3050 6GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-12": {
     "category": "gpu",
     "name": "ASUS Dual Radeon RX 7600 EVO OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-13": {
     "category": "gpu",
     "name": "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-14": {
     "category": "gpu",
     "name": "PNY GeForce RTX 5060 Ti Dual Fan OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-15": {
     "category": "gpu",
     "name": "RTX 5070",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-16": {
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-17": {
     "category": "gpu",
     "name": "ASUS PRIME Radeon RX 9070 XT 16GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-18": {
     "category": "gpu",
     "name": "Asus Dual GeForce RTX 5070 OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-19": {
     "category": "gpu",
     "name": "ASUS Prime GeForce RTX 5080 16GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-20": {
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5080 16GB X3 OC White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-1": {
@@ -772,13 +772,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-2": {
     "category": "ram",
     "name": "G.Skill Trident Z5 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-3": {
     "category": "ram",
     "name": "Kingston Fury Beast 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-4": {
@@ -790,13 +790,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-5": {
     "category": "ram",
     "name": "Corsair Dominator 64GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-6": {
     "category": "ram",
     "name": "G.Skill Ripjaws 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-7": {
@@ -808,7 +808,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-8": {
     "category": "ram",
     "name": "Crucial Pro 64GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-9": {
@@ -820,7 +820,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-10": {
     "category": "ram",
     "name": "ADATA XPG Lancer 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-11": {
@@ -832,7 +832,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-12": {
     "category": "ram",
     "name": "Corsair Dominator RGB DDR4 3600MHz 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-13": {
@@ -844,13 +844,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-14": {
     "category": "ram",
     "name": "Dell 32GB DDR5 5600MHz (begagnad)",
-    "source": "static_legacy_fallback",
-    "note": "Begagnad OEM-modul prissatt under motsvarande ny modul."
+    "source": "prisjakt_seed",
+    "note": null
   },
   "ram-15": {
     "category": "ram",
     "name": "Dell 32GB DDR5 5600MHz",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-16": {
@@ -862,31 +862,31 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-1": {
     "category": "storage",
     "name": "Samsung 990 Pro 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-2": {
     "category": "storage",
     "name": "WD Black SN850X 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-3": {
     "category": "storage",
     "name": "Crucial T500 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-4": {
     "category": "storage",
     "name": "Samsung 990 Pro 2TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-5": {
     "category": "storage",
     "name": "Seagate FireCuda 530 2TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-6": {
@@ -898,13 +898,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-7": {
     "category": "storage",
     "name": "Kingston KC3000 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-8": {
     "category": "storage",
     "name": "Samsung 870 Evo 2TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-9": {
@@ -916,7 +916,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-10": {
     "category": "storage",
     "name": "Seagate BarraCuda 4TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-11": {
@@ -928,49 +928,49 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-13": {
     "category": "storage",
     "name": "Lexar Professional NM1090",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-14": {
     "category": "storage",
     "name": "Kingston Fury Renegade G5",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-1": {
     "category": "case",
     "name": "NZXT H7 Flow",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-2": {
     "category": "case",
     "name": "Lian Li Lancool 216",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-3": {
     "category": "case",
     "name": "Fractal Design North",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-4": {
     "category": "case",
     "name": "Corsair 4000D Airflow",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-5": {
     "category": "case",
     "name": "Phanteks Eclipse G500A",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-6": {
     "category": "case",
     "name": "be quiet! Pure Base 500DX",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-7": {
@@ -982,31 +982,31 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "case-8": {
     "category": "case",
     "name": "NZXT H5 Flow",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-9": {
     "category": "case",
     "name": "Lian Li O11 Dynamic",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-10": {
     "category": "case",
     "name": "Fractal Design Meshify 2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-1": {
     "category": "psu",
     "name": "Corsair RM750e",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-2": {
     "category": "psu",
     "name": "Corsair RM850x",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-3": {
@@ -1024,7 +1024,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-5": {
     "category": "psu",
     "name": "be quiet! Straight Power 12",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-6": {
@@ -1042,31 +1042,31 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-8": {
     "category": "psu",
     "name": "MSI MPG A850G",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-9": {
     "category": "psu",
     "name": "NZXT C750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-10": {
     "category": "psu",
     "name": "Thermaltake Toughpower GF3",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-1": {
     "category": "cooling",
     "name": "Noctua NH-D15",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-2": {
     "category": "cooling",
     "name": "be quiet! Dark Rock Pro 5",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-3": {
@@ -1078,37 +1078,37 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-4": {
     "category": "cooling",
     "name": "NZXT Kraken 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-5": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer II 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-6": {
     "category": "cooling",
     "name": "DeepCool AK620",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-7": {
     "category": "cooling",
     "name": "Lian Li Galahad II",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-8": {
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-9": {
     "category": "cooling",
     "name": "Thermalright Peerless Assassin",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-10": {

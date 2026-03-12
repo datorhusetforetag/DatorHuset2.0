@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-12T02:38:00.962Z",
+  "saved_at": "2026-03-12T05:27:43.276Z",
   "entries": [
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-5-5500",
@@ -215,7 +215,7 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-7-5700x3d",
       "item_id": "cpu-am4-ryzen-7-5700x3d",
-      "updatedAt": 1773282971582,
+      "updatedAt": 1773291476962,
       "response": {
         "offers": []
       }
@@ -256,7 +256,7 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-7-5800x3d",
       "item_id": "cpu-am4-ryzen-7-5800x3d",
-      "updatedAt": 1773282974293,
+      "updatedAt": 1773291498576,
       "response": {
         "offers": []
       }
@@ -264,7 +264,7 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-9-5900x",
       "item_id": "cpu-am4-ryzen-9-5900x",
-      "updatedAt": 1773282976382,
+      "updatedAt": 1773291531003,
       "response": {
         "offers": []
       }
@@ -722,7 +722,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i3-10105f",
       "item_id": "cpu-lga1200-core-i3-10105f",
-      "updatedAt": 1773282995136,
+      "updatedAt": 1773291552352,
       "response": {
         "offers": []
       }
@@ -730,7 +730,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-10400f",
       "item_id": "cpu-lga1200-core-i5-10400f",
-      "updatedAt": 1773282995841,
+      "updatedAt": 1773291574007,
       "response": {
         "offers": []
       }
@@ -738,7 +738,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-10600k",
       "item_id": "cpu-lga1200-core-i5-10600k",
-      "updatedAt": 1773282996558,
+      "updatedAt": 1773291595611,
       "response": {
         "offers": []
       }
@@ -746,7 +746,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-10700f",
       "item_id": "cpu-lga1200-core-i7-10700f",
-      "updatedAt": 1773282997272,
+      "updatedAt": 1773291617272,
       "response": {
         "offers": []
       }
@@ -754,7 +754,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-10700k",
       "item_id": "cpu-lga1200-core-i7-10700k",
-      "updatedAt": 1773282997974,
+      "updatedAt": 1773291638942,
       "response": {
         "offers": []
       }
@@ -762,7 +762,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i9-10900k",
       "item_id": "cpu-lga1200-core-i9-10900k",
-      "updatedAt": 1773282998691,
+      "updatedAt": 1773291660667,
       "response": {
         "offers": []
       }
@@ -770,7 +770,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-11400f",
       "item_id": "cpu-lga1200-core-i5-11400f",
-      "updatedAt": 1773282999397,
+      "updatedAt": 1773291682369,
       "response": {
         "offers": []
       }
@@ -778,7 +778,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-11600k",
       "item_id": "cpu-lga1200-core-i5-11600k",
-      "updatedAt": 1773283000110,
+      "updatedAt": 1773291704080,
       "response": {
         "offers": []
       }
@@ -786,7 +786,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-11700k",
       "item_id": "cpu-lga1200-core-i7-11700k",
-      "updatedAt": 1773283000812,
+      "updatedAt": 1773291725790,
       "response": {
         "offers": []
       }
@@ -794,7 +794,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i9-11900k",
       "item_id": "cpu-lga1200-core-i9-11900k",
-      "updatedAt": 1773283001516,
+      "updatedAt": 1773291747496,
       "response": {
         "offers": []
       }
@@ -835,7 +835,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-12600k",
       "item_id": "cpu-lga1700-core-i5-12600k",
-      "updatedAt": 1773283004019,
+      "updatedAt": 1773291769194,
       "response": {
         "offers": []
       }
@@ -843,7 +843,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-12700k",
       "item_id": "cpu-lga1700-core-i7-12700k",
-      "updatedAt": 1773283004734,
+      "updatedAt": 1773291790882,
       "response": {
         "offers": []
       }
@@ -851,7 +851,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i9-12900k",
       "item_id": "cpu-lga1700-core-i9-12900k",
-      "updatedAt": 1773283005436,
+      "updatedAt": 1773291812590,
       "response": {
         "offers": []
       }
@@ -859,7 +859,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-13400f",
       "item_id": "cpu-lga1700-core-i5-13400f",
-      "updatedAt": 1773283006151,
+      "updatedAt": 1773291834256,
       "response": {
         "offers": []
       }
@@ -867,7 +867,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-13600k",
       "item_id": "cpu-lga1700-core-i5-13600k",
-      "updatedAt": 1773283006854,
+      "updatedAt": 1773291855978,
       "response": {
         "offers": []
       }
@@ -875,7 +875,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-13700k",
       "item_id": "cpu-lga1700-core-i7-13700k",
-      "updatedAt": 1773283007563,
+      "updatedAt": 1773291877659,
       "response": {
         "offers": []
       }
@@ -883,7 +883,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-14600k",
       "item_id": "cpu-lga1700-core-i5-14600k",
-      "updatedAt": 1773283008279,
+      "updatedAt": 1773291899382,
       "response": {
         "offers": []
       }
@@ -891,7 +891,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-14700k",
       "item_id": "cpu-lga1700-core-i7-14700k",
-      "updatedAt": 1773283008983,
+      "updatedAt": 1773291921080,
       "response": {
         "offers": []
       }
@@ -899,7 +899,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i9-14900k",
       "item_id": "cpu-lga1700-core-i9-14900k",
-      "updatedAt": 1773283009685,
+      "updatedAt": 1773291942789,
       "response": {
         "offers": []
       }
@@ -1081,7 +1081,7 @@
     {
       "key": "prisjakt-v1:mb-am4-gigabyte-x570-aorus-elite",
       "item_id": "mb-am4-gigabyte-x570-aorus-elite",
-      "updatedAt": 1773283023624,
+      "updatedAt": 1773291975633,
       "response": {
         "offers": []
       }
@@ -1089,7 +1089,7 @@
     {
       "key": "prisjakt-v1:mb-am4-asrock-x570-steel-legend",
       "item_id": "mb-am4-asrock-x570-steel-legend",
-      "updatedAt": 1773283025845,
+      "updatedAt": 1773292005395,
       "response": {
         "offers": []
       }
@@ -1097,7 +1097,7 @@
     {
       "key": "prisjakt-v1:mb-am4-msi-mag-b550m-mortar-wifi",
       "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
-      "updatedAt": 1773283027607,
+      "updatedAt": 1773292033473,
       "response": {
         "offers": []
       }
@@ -1105,9 +1105,22 @@
     {
       "key": "prisjakt-v1:mb-am4-asus-rog-crosshair-viii-hero",
       "item_id": "mb-am4-asus-rog-crosshair-viii-hero",
-      "updatedAt": 1773283029423,
+      "updatedAt": 1773292062909,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B07Y2NMRBP?client_id=1331",
+            "search_url": null,
+            "price": 3363,
+            "total_price": 3363,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
@@ -1419,7 +1432,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-tuf-b560-plus-wifi",
       "item_id": "mb-lga1200-asus-tuf-b560-plus-wifi",
-      "updatedAt": 1773283050699,
+      "updatedAt": 1773292084279,
       "response": {
         "offers": []
       }
@@ -1427,7 +1440,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-b560-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-b560-tomahawk-wifi",
-      "updatedAt": 1773283052580,
+      "updatedAt": 1773292110366,
       "response": {
         "offers": []
       }
@@ -1435,7 +1448,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-b560-aorus-pro-ax",
       "item_id": "mb-lga1200-gigabyte-b560-aorus-pro-ax",
-      "updatedAt": 1773283054257,
+      "updatedAt": 1773292136948,
       "response": {
         "offers": []
       }
@@ -1443,7 +1456,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-b560-pro4",
       "item_id": "mb-lga1200-asrock-b560-pro4",
-      "updatedAt": 1773283054969,
+      "updatedAt": 1773292158346,
       "response": {
         "offers": []
       }
@@ -1451,7 +1464,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-prime-z590-p",
       "item_id": "mb-lga1200-asus-prime-z590-p",
-      "updatedAt": 1773283055675,
+      "updatedAt": 1773292180056,
       "response": {
         "offers": []
       }
@@ -1459,7 +1472,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z590-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-z590-tomahawk-wifi",
-      "updatedAt": 1773283057503,
+      "updatedAt": 1773292206956,
       "response": {
         "offers": []
       }
@@ -1467,7 +1480,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-z590-aorus-elite-ax",
       "item_id": "mb-lga1200-gigabyte-z590-aorus-elite-ax",
-      "updatedAt": 1773283059266,
+      "updatedAt": 1773292233158,
       "response": {
         "offers": []
       }
@@ -1475,7 +1488,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-z590-steel-legend",
       "item_id": "mb-lga1200-asrock-z590-steel-legend",
-      "updatedAt": 1773283061073,
+      "updatedAt": 1773292258254,
       "response": {
         "offers": []
       }
@@ -1483,7 +1496,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-rog-strix-z490-f",
       "item_id": "mb-lga1200-asus-rog-strix-z490-f",
-      "updatedAt": 1773283061775,
+      "updatedAt": 1773292279633,
       "response": {
         "offers": []
       }
@@ -1491,7 +1504,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z490-gaming-edge-wifi",
       "item_id": "mb-lga1200-msi-z490-gaming-edge-wifi",
-      "updatedAt": 1773283062481,
+      "updatedAt": 1773292301341,
       "response": {
         "offers": []
       }
@@ -1499,7 +1512,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-msi-b760m-mortar-wifi",
       "item_id": "mb-lga1700-msi-b760m-mortar-wifi",
-      "updatedAt": 1773283064357,
+      "updatedAt": 1773292331811,
       "response": {
         "offers": []
       }
@@ -1507,15 +1520,64 @@
     {
       "key": "prisjakt-v1:mb-lga1700-asus-tuf-b760-plus-wifi",
       "item_id": "mb-lga1700-asus-tuf-b760-plus-wifi",
-      "updatedAt": 1773283066201,
+      "updatedAt": 1773288635860,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0BVKYWPFT?client_id=1331",
+            "search_url": null,
+            "price": 1504,
+            "total_price": 1504,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/842803?client_id=1331",
+            "search_url": null,
+            "price": 1519,
+            "total_price": 1519,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1031926?client_id=1331",
+            "search_url": null,
+            "price": 1519,
+            "total_price": 1519,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3202164?client_id=1331",
+            "search_url": null,
+            "price": 1524,
+            "total_price": 1524,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:mb-lga1700-gigabyte-b760-aorus-elite-ax",
       "item_id": "mb-lga1700-gigabyte-b760-aorus-elite-ax",
-      "updatedAt": 1773283068263,
+      "updatedAt": 1773292360891,
       "response": {
         "offers": []
       }
@@ -1709,7 +1771,2116 @@
     {
       "key": "prisjakt-v1:mb-lga1700-asus-rog-strix-z790-f",
       "item_id": "mb-lga1700-asus-rog-strix-z790-f",
-      "updatedAt": 1773283080261,
+      "updatedAt": 1773292382266,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-1",
+      "item_id": "gpu-1",
+      "updatedAt": 1773292410762,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CVQLKYSK?client_id=1331",
+            "search_url": null,
+            "price": 4454,
+            "total_price": 4454,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-2",
+      "item_id": "gpu-2",
+      "updatedAt": 1773292435563,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0C5DXCDV2?client_id=1331",
+            "search_url": null,
+            "price": 5353,
+            "total_price": 5353,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-3",
+      "item_id": "gpu-3",
+      "updatedAt": 1773292459577,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CS197RJM?client_id=1331",
+            "search_url": null,
+            "price": 7519,
+            "total_price": 7519,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-4",
+      "item_id": "gpu-4",
+      "updatedAt": 1773292479500,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CS197RJM?client_id=1331",
+            "search_url": null,
+            "price": 7519,
+            "total_price": 7519,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-5",
+      "item_id": "gpu-5",
+      "updatedAt": 1773292505841,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0BVGCZKJ2?client_id=1331",
+            "search_url": null,
+            "price": 15046,
+            "total_price": 15046,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-6",
+      "item_id": "gpu-6",
+      "updatedAt": 1773292532833,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0BQJKQV4G?client_id=1331",
+            "search_url": null,
+            "price": 31840,
+            "total_price": 31840,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-7",
+      "item_id": "gpu-7",
+      "updatedAt": 1773292556376,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0C626FFG2?client_id=1331",
+            "search_url": null,
+            "price": 3272,
+            "total_price": 3272,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3171262?client_id=1331",
+            "search_url": null,
+            "price": 3279,
+            "total_price": 3279,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/371753?client_id=1331",
+            "search_url": null,
+            "price": 3279,
+            "total_price": 3279,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-8",
+      "item_id": "gpu-8",
+      "updatedAt": 1773292590884,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CGRN842P?client_id=1331",
+            "search_url": null,
+            "price": 5347,
+            "total_price": 5347,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-9",
+      "item_id": "gpu-9",
+      "updatedAt": 1773292615492,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-10",
+      "item_id": "gpu-10",
+      "updatedAt": 1773292646477,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CDM3QK7Q?client_id=1331",
+            "search_url": null,
+            "price": 3578,
+            "total_price": 3578,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/365397?client_id=1331",
+            "search_url": null,
+            "price": 3579,
+            "total_price": 3579,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-11",
+      "item_id": "gpu-11",
+      "updatedAt": 1773292668302,
+      "response": {
+        "offers": [
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1033358?client_id=1331",
+            "search_url": null,
+            "price": 1899,
+            "total_price": 1899,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/369000?client_id=1331",
+            "search_url": null,
+            "price": 2590,
+            "total_price": 2590,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-12",
+      "item_id": "gpu-12",
+      "updatedAt": 1773292690257,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3310965?client_id=1331",
+            "search_url": null,
+            "price": 3322,
+            "total_price": 3322,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-13",
+      "item_id": "gpu-13",
+      "updatedAt": 1773292713447,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/933774?client_id=1331",
+            "search_url": null,
+            "price": 4190,
+            "total_price": 4190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3369603?client_id=1331",
+            "search_url": null,
+            "price": 4339,
+            "total_price": 4339,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-14",
+      "item_id": "gpu-14",
+      "updatedAt": 1773292736174,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3365822?client_id=1331",
+            "search_url": null,
+            "price": 5890,
+            "total_price": 5890,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-15",
+      "item_id": "gpu-15",
+      "updatedAt": 1773292759897,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DTGP2WMT?client_id=1331",
+            "search_url": null,
+            "price": 6490,
+            "total_price": 6490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/900452?client_id=1331",
+            "search_url": null,
+            "price": 6490,
+            "total_price": 6490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1054559?client_id=1331",
+            "search_url": null,
+            "price": 6490,
+            "total_price": 6490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/378283?client_id=1331",
+            "search_url": null,
+            "price": 6490,
+            "total_price": 6490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-16",
+      "item_id": "gpu-16",
+      "updatedAt": 1773292786032,
+      "response": {
+        "offers": [
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1056707?client_id=1331",
+            "search_url": null,
+            "price": 7190,
+            "total_price": 7190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/391835?client_id=1331",
+            "search_url": null,
+            "price": 7190,
+            "total_price": 7190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0F3ZW3MKW?client_id=1331",
+            "search_url": null,
+            "price": 7776,
+            "total_price": 7776,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-17",
+      "item_id": "gpu-17",
+      "updatedAt": 1773292807849,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/883870?client_id=1331",
+            "search_url": null,
+            "price": 7190,
+            "total_price": 7190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1039792?client_id=1331",
+            "search_url": null,
+            "price": 7190,
+            "total_price": 7190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/377596?client_id=1331&promotion_id=tWBNJNAc3jxsl0Zs7rF9",
+            "search_url": null,
+            "price": 7190,
+            "total_price": 7190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-18",
+      "item_id": "gpu-18",
+      "updatedAt": 1773292832409,
+      "response": {
+        "offers": [
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1057280?client_id=1331",
+            "search_url": null,
+            "price": 6999,
+            "total_price": 6999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/387371?client_id=1331&promotion_id=tWBNJNAc3jxsl0Zs7rF9",
+            "search_url": null,
+            "price": 6999,
+            "total_price": 6999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3369597?client_id=1331",
+            "search_url": null,
+            "price": 7190,
+            "total_price": 7190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/925535?client_id=1331",
+            "search_url": null,
+            "price": 7327,
+            "total_price": 7327,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-19",
+      "item_id": "gpu-19",
+      "updatedAt": 1773292858304,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/883822?client_id=1331",
+            "search_url": null,
+            "price": 14890,
+            "total_price": 14890,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3326547?client_id=1331",
+            "search_url": null,
+            "price": 16490,
+            "total_price": 16490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:gpu-20",
+      "item_id": "gpu-20",
+      "updatedAt": 1773292887777,
+      "response": {
+        "offers": [
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1061681?client_id=1331",
+            "search_url": null,
+            "price": 13490,
+            "total_price": 13490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/394287?client_id=1331",
+            "search_url": null,
+            "price": 13490,
+            "total_price": 13490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3342600?client_id=1331",
+            "search_url": null,
+            "price": 14290,
+            "total_price": 14290,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-1",
+      "item_id": "ram-1",
+      "updatedAt": 1773292909861,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-2",
+      "item_id": "ram-2",
+      "updatedAt": 1773292934720,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3200180?client_id=1331",
+            "search_url": null,
+            "price": 7390,
+            "total_price": 7390,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-3",
+      "item_id": "ram-3",
+      "updatedAt": 1773292957897,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3288991?client_id=1331",
+            "search_url": null,
+            "price": 6491,
+            "total_price": 6491,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-4",
+      "item_id": "ram-4",
+      "updatedAt": 1773292981426,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-5",
+      "item_id": "ram-5",
+      "updatedAt": 1773293004592,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3193386?client_id=1331",
+            "search_url": null,
+            "price": 14017,
+            "total_price": 14017,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-6",
+      "item_id": "ram-6",
+      "updatedAt": 1773293023275,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3102539?client_id=1331",
+            "search_url": null,
+            "price": 11819,
+            "total_price": 11819,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-7",
+      "item_id": "ram-7",
+      "updatedAt": 1773293048201,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-8",
+      "item_id": "ram-8",
+      "updatedAt": 1773293072486,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DSR5P84D?client_id=1331",
+            "search_url": null,
+            "price": 18116,
+            "total_price": 18116,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-9",
+      "item_id": "ram-9",
+      "updatedAt": 1773293115036,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-10",
+      "item_id": "ram-10",
+      "updatedAt": 1773293140502,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3429265?client_id=1331",
+            "search_url": null,
+            "price": 4249,
+            "total_price": 4249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/395542?client_id=1331",
+            "search_url": null,
+            "price": 4299,
+            "total_price": 4299,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/1018341?client_id=1331",
+            "search_url": null,
+            "price": 4590,
+            "total_price": 4590,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-11",
+      "item_id": "ram-11",
+      "updatedAt": 1773293151114,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-12",
+      "item_id": "ram-12",
+      "updatedAt": 1773293184237,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3198663?client_id=1331",
+            "search_url": null,
+            "price": 8140,
+            "total_price": 8140,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-13",
+      "item_id": "ram-13",
+      "updatedAt": 1773293213233,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-14",
+      "item_id": "ram-14",
+      "updatedAt": 1773293239170,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3136913?client_id=1331",
+            "search_url": null,
+            "price": 5190,
+            "total_price": 5190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/360966?client_id=1331",
+            "search_url": null,
+            "price": 5190,
+            "total_price": 5190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-15",
+      "item_id": "ram-15",
+      "updatedAt": 1773293263276,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3136913?client_id=1331",
+            "search_url": null,
+            "price": 5190,
+            "total_price": 5190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/360966?client_id=1331",
+            "search_url": null,
+            "price": 5190,
+            "total_price": 5190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:ram-16",
+      "item_id": "ram-16",
+      "updatedAt": 1773291190378,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-1",
+      "item_id": "sto-1",
+      "updatedAt": 1773291229216,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0B9C3ZVHR?client_id=1331",
+            "search_url": null,
+            "price": 1990,
+            "total_price": 1990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/570029?client_id=1331",
+            "search_url": null,
+            "price": 1990,
+            "total_price": 1990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/355429?client_id=1331",
+            "search_url": null,
+            "price": 2290,
+            "total_price": 2290,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-2",
+      "item_id": "sto-2",
+      "updatedAt": 1773291258992,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0B7CKVCCV?client_id=1331",
+            "search_url": null,
+            "price": 1699,
+            "total_price": 1699,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/526544?client_id=1331",
+            "search_url": null,
+            "price": 2190,
+            "total_price": 2190,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-3",
+      "item_id": "sto-3",
+      "updatedAt": 1773291287775,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CK39YR9V?client_id=1331",
+            "search_url": null,
+            "price": 1799,
+            "total_price": 1799,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-4",
+      "item_id": "sto-4",
+      "updatedAt": 1773291325127,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0B9C4DKKG?client_id=1331",
+            "search_url": null,
+            "price": 2990,
+            "total_price": 2990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/570028?client_id=1331",
+            "search_url": null,
+            "price": 3790,
+            "total_price": 3790,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3103447?client_id=1331",
+            "search_url": null,
+            "price": 3790,
+            "total_price": 3790,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-5",
+      "item_id": "sto-5",
+      "updatedAt": 1773289215923,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0977K2C74?client_id=1331",
+            "search_url": null,
+            "price": 4730,
+            "total_price": 4730,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-6",
+      "item_id": "sto-6",
+      "updatedAt": 1773289217464,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-7",
+      "item_id": "sto-7",
+      "updatedAt": 1773289219023,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3009841?client_id=1331",
+            "search_url": null,
+            "price": 2290,
+            "total_price": 2290,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-8",
+      "item_id": "sto-8",
+      "updatedAt": 1773289221607,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B08PC5ZYB1?client_id=1331",
+            "search_url": null,
+            "price": 2690,
+            "total_price": 2690,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2914942?client_id=1331",
+            "search_url": null,
+            "price": 3490,
+            "total_price": 3490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/330871?client_id=1331",
+            "search_url": null,
+            "price": 3490,
+            "total_price": 3490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/278814?client_id=1331",
+            "search_url": null,
+            "price": 3590,
+            "total_price": 3590,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-9",
+      "item_id": "sto-9",
+      "updatedAt": 1773289223359,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-10",
+      "item_id": "sto-10",
+      "updatedAt": 1773289229537,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2593109?client_id=1331",
+            "search_url": null,
+            "price": 1572,
+            "total_price": 1572,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/275753?client_id=1331",
+            "search_url": null,
+            "price": 1799,
+            "total_price": 1799,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-11",
+      "item_id": "sto-11",
+      "updatedAt": 1773289230710,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-13",
+      "item_id": "sto-13",
+      "updatedAt": 1773289233487,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DZ6DVLDD?client_id=1331",
+            "search_url": null,
+            "price": 2186,
+            "total_price": 2186,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:sto-14",
+      "item_id": "sto-14",
+      "updatedAt": 1773289239193,
+      "response": {
+        "offers": [
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/385017?client_id=1331",
+            "search_url": null,
+            "price": 2499,
+            "total_price": 2499,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3365865?client_id=1331",
+            "search_url": null,
+            "price": 2990,
+            "total_price": 2990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-1",
+      "item_id": "case-1",
+      "updatedAt": 1773289245344,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CV4RYKLF?client_id=1331",
+            "search_url": null,
+            "price": 829,
+            "total_price": 829,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3235269?client_id=1331",
+            "search_url": null,
+            "price": 853,
+            "total_price": 853,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/857273?client_id=1331",
+            "search_url": null,
+            "price": 1058,
+            "total_price": 1058,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-2",
+      "item_id": "case-2",
+      "updatedAt": 1773289250033,
+      "response": {
+        "offers": [
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/355876?client_id=1331",
+            "search_url": null,
+            "price": 1199,
+            "total_price": 1199,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3122864?client_id=1331",
+            "search_url": null,
+            "price": 1254,
+            "total_price": 1254,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-3",
+      "item_id": "case-3",
+      "updatedAt": 1773289256611,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CJCK95ZC?client_id=1331",
+            "search_url": null,
+            "price": 1674,
+            "total_price": 1674,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/854536?client_id=1331",
+            "search_url": null,
+            "price": 1789,
+            "total_price": 1789,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3226164?client_id=1331",
+            "search_url": null,
+            "price": 1789,
+            "total_price": 1789,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-4",
+      "item_id": "case-4",
+      "updatedAt": 1773289263890,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3318411?client_id=1331",
+            "search_url": null,
+            "price": 649,
+            "total_price": 649,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DFHQG8VH?client_id=1331",
+            "search_url": null,
+            "price": 942,
+            "total_price": 942,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/877184?client_id=1331",
+            "search_url": null,
+            "price": 987,
+            "total_price": 987,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-5",
+      "item_id": "case-5",
+      "updatedAt": 1773289267406,
+      "response": {
+        "offers": [
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/358615?client_id=1331",
+            "search_url": null,
+            "price": 1790,
+            "total_price": 1790,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-6",
+      "item_id": "case-6",
+      "updatedAt": 1773289270553,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2914445?client_id=1331",
+            "search_url": null,
+            "price": 1303,
+            "total_price": 1303,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-7",
+      "item_id": "case-7",
+      "updatedAt": 1773289273216,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-8",
+      "item_id": "case-8",
+      "updatedAt": 1773289279103,
+      "response": {
+        "offers": [
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1035275?client_id=1331",
+            "search_url": null,
+            "price": 699,
+            "total_price": 699,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/853525?client_id=1331",
+            "search_url": null,
+            "price": 890,
+            "total_price": 890,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-9",
+      "item_id": "case-9",
+      "updatedAt": 1773289285985,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/989721?client_id=1331",
+            "search_url": null,
+            "price": 1638,
+            "total_price": 1638,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3308716?client_id=1331",
+            "search_url": null,
+            "price": 1638,
+            "total_price": 1638,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:case-10",
+      "item_id": "case-10",
+      "updatedAt": 1773289293158,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0822W433F?client_id=1331",
+            "search_url": null,
+            "price": 1120,
+            "total_price": 1120,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2933029?client_id=1331",
+            "search_url": null,
+            "price": 1332,
+            "total_price": 1332,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-1",
+      "item_id": "psu-1",
+      "updatedAt": 1773289296909,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DMTMK2Q5?client_id=1331",
+            "search_url": null,
+            "price": 1289,
+            "total_price": 1289,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/884349?client_id=1331",
+            "search_url": null,
+            "price": 1299,
+            "total_price": 1299,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1039955?client_id=1331",
+            "search_url": null,
+            "price": 1299,
+            "total_price": 1299,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-2",
+      "item_id": "psu-2",
+      "updatedAt": 1773289300923,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0D9C1DT62?client_id=1331",
+            "search_url": null,
+            "price": 1528,
+            "total_price": 1528,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/842499?client_id=1331",
+            "search_url": null,
+            "price": 1649,
+            "total_price": 1649,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1035060?client_id=1331",
+            "search_url": null,
+            "price": 1649,
+            "total_price": 1649,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/372644?client_id=1331",
+            "search_url": null,
+            "price": 1649,
+            "total_price": 1649,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-3",
+      "item_id": "psu-3",
+      "updatedAt": 1773289302725,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-4",
+      "item_id": "psu-4",
+      "updatedAt": 1773289304535,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-5",
+      "item_id": "psu-5",
+      "updatedAt": 1773289311574,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0C86FDYK5?client_id=1331",
+            "search_url": null,
+            "price": 1999,
+            "total_price": 1999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-6",
+      "item_id": "psu-6",
+      "updatedAt": 1773289317834,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-7",
+      "item_id": "psu-7",
+      "updatedAt": 1773289326112,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-8",
+      "item_id": "psu-8",
+      "updatedAt": 1773289333504,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3128725?client_id=1331",
+            "search_url": null,
+            "price": 1558,
+            "total_price": 1558,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-9",
+      "item_id": "psu-9",
+      "updatedAt": 1773289336504,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0FQ4WX89P?client_id=1331",
+            "search_url": null,
+            "price": 1193,
+            "total_price": 1193,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3405038?client_id=1331",
+            "search_url": null,
+            "price": 1299,
+            "total_price": 1299,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:psu-10",
+      "item_id": "psu-10",
+      "updatedAt": 1773289339217,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0BS17533M?client_id=1331",
+            "search_url": null,
+            "price": 1694,
+            "total_price": 1694,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-1",
+      "item_id": "cool-1",
+      "updatedAt": 1773289345892,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B00L7UZMAK?client_id=1331",
+            "search_url": null,
+            "price": 1049,
+            "total_price": 1049,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/NHD15?client_id=1331",
+            "search_url": null,
+            "price": 1049,
+            "total_price": 1049,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/197951?client_id=1331",
+            "search_url": null,
+            "price": 1290,
+            "total_price": 1290,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-2",
+      "item_id": "cool-2",
+      "updatedAt": 1773289353398,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CJY3DYQ3?client_id=1331",
+            "search_url": null,
+            "price": 1127,
+            "total_price": 1127,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3205320?client_id=1331",
+            "search_url": null,
+            "price": 1127,
+            "total_price": 1127,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/366008?client_id=1331",
+            "search_url": null,
+            "price": 1129,
+            "total_price": 1129,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-3",
+      "item_id": "cool-3",
+      "updatedAt": 1773289356063,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-4",
+      "item_id": "cool-4",
+      "updatedAt": 1773289363395,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0G39F6MQH?client_id=1331",
+            "search_url": null,
+            "price": 575,
+            "total_price": 575,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3204312?client_id=1331",
+            "search_url": null,
+            "price": 899,
+            "total_price": 899,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-5",
+      "item_id": "cool-5",
+      "updatedAt": 1773289371414,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0G39F6MQH?client_id=1331",
+            "search_url": null,
+            "price": 575,
+            "total_price": 575,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3204312?client_id=1331",
+            "search_url": null,
+            "price": 899,
+            "total_price": 899,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-6",
+      "item_id": "cool-6",
+      "updatedAt": 1773289379551,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3024989?client_id=1331",
+            "search_url": null,
+            "price": 701,
+            "total_price": 701,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-7",
+      "item_id": "cool-7",
+      "updatedAt": 1773289385895,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3208708?client_id=1331",
+            "search_url": null,
+            "price": 832,
+            "total_price": 832,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-8",
+      "item_id": "cool-8",
+      "updatedAt": 1773289392130,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0G39F6MQH?client_id=1331",
+            "search_url": null,
+            "price": 575,
+            "total_price": 575,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3204312?client_id=1331",
+            "search_url": null,
+            "price": 899,
+            "total_price": 899,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-9",
+      "item_id": "cool-9",
+      "updatedAt": 1773289399010,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0B53B1BLS?client_id=1331",
+            "search_url": null,
+            "price": 417,
+            "total_price": 417,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3179162?client_id=1331",
+            "search_url": null,
+            "price": 449,
+            "total_price": 449,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/364205?client_id=1331",
+            "search_url": null,
+            "price": 490,
+            "total_price": 490,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cool-10",
+      "item_id": "cool-10",
+      "updatedAt": 1773289401442,
       "response": {
         "offers": []
       }

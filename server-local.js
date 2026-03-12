@@ -78,6 +78,16 @@ const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "prisjakt-v1";
+const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
+  "cpu",
+  "gpu",
+  "motherboard",
+  "ram",
+  "storage",
+  "case",
+  "psu",
+  "cooling",
+]);
 const CUSTOM_BUILD_DISCOVERY_TTL_MS = Math.max(
   60_000,
   Number(process.env.CUSTOM_BUILD_DISCOVERY_TTL_MS || 7 * 24 * 60 * 60 * 1000)
@@ -1643,17 +1653,30 @@ const extractPrisjaktProductTitle = (markdown) => {
 const scorePrisjaktProductMarkdownForItem = (markdown, item) => {
   const title = extractPrisjaktProductTitle(markdown);
   if (!title) return -1;
-  const queryTokens = tokenizeForSearchMatch(item?.name || "");
-  const modelTokens = extractModelTokensFromQuery(item?.name || "");
+  const combinedQuery = [item?.name || "", ...firstArray(item?.searchTerms)].join(" ");
+  const queryTokens = tokenizeForSearchMatch(combinedQuery);
+  const modelTokens = extractModelTokensFromQuery(combinedQuery);
   if (!matchesModelTokens(title, modelTokens)) {
     return -1;
   }
   const normalizedTitle = normalizeStorePriceQueryKey(title);
-  const normalizedName = normalizeStorePriceQueryKey(item?.name || "");
+  const normalizedName = normalizeStorePriceQueryKey(combinedQuery);
   let score = scoreTitleAgainstQuery(title, queryTokens);
   if (normalizedTitle === normalizedName) score += 12;
   if (normalizedTitle.includes(normalizedName)) score += 6;
   return score;
+};
+
+const scoreCatalogPriceMatch = (expectedPrice, actualPrice) => {
+  if (!Number.isFinite(expectedPrice) || expectedPrice <= 0) return 0;
+  if (!Number.isFinite(actualPrice) || actualPrice <= 0) return 0;
+  const diffRatio = Math.abs(actualPrice - expectedPrice) / expectedPrice;
+  if (diffRatio <= 0.12) return 8;
+  if (diffRatio <= 0.25) return 5;
+  if (diffRatio <= 0.4) return 2;
+  if (diffRatio <= 0.7) return -2;
+  if (diffRatio <= 1.2) return -6;
+  return -12;
 };
 
 const findBestPrisjaktProductForItem = async (item) => {
@@ -1684,8 +1707,14 @@ const findBestPrisjaktProductForItem = async (item) => {
   for (const url of candidateUrls) {
     const documentText = await fetchTextWithBrowserHeaders(url).catch(() => null);
     if (!documentText) continue;
-    const score = scorePrisjaktProductMarkdownForItem(documentText, item);
-    if (score < 0) continue;
+    const titleScore = scorePrisjaktProductMarkdownForItem(documentText, item);
+    if (titleScore < 0) continue;
+    const offers = extractStoreOffersFromPrisjaktProductHtml(documentText);
+    const lowestOfferPrice =
+      offers.length > 0
+        ? Math.min(...offers.map((offer) => offer.total_price ?? offer.price).filter((value) => Number.isFinite(value)))
+        : null;
+    const score = titleScore + scoreCatalogPriceMatch(item?.price, lowestOfferPrice);
     if (!bestCandidate || score > bestCandidate.score) {
       bestCandidate = {
         url,
@@ -3782,7 +3811,7 @@ const handleCatalogCategoryPricesRequest = async (req, res) => {
       return res.status(403).json({ error: "Origin not allowed" });
     }
     const category = sanitizeText(String(req.query?.category || ""), 40);
-    if (!category || !["cpu", "motherboard"].includes(category)) {
+    if (!category || !CUSTOM_BUILD_SUPPORTED_CATEGORIES.has(category)) {
       return jsonError(res, 400, "INVALID_CATEGORY", "Ogiltig kategori.");
     }
     const forceRefresh = String(req.query?.refresh || "").trim() === "1";

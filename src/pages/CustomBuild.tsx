@@ -1689,8 +1689,10 @@ export default function CustomBuild() {
     [items]
   );
 
+  const supportsStoreOffersForCategory = (_categoryKey: CategoryKey) => true;
+
   useEffect(() => {
-    if (activeCategory !== "cpu" && activeCategory !== "motherboard") return;
+    if (!supportsStoreOffersForCategory(activeCategory)) return;
     const pendingItems = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
     if (pendingItems.length === 0) return;
     let isCancelled = false;
@@ -1848,8 +1850,6 @@ export default function CustomBuild() {
   const showNextBubble = Boolean(
     selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
   );
-  const supportsStoreOffersForCategory = (categoryKey: CategoryKey) =>
-    categoryKey === "cpu" || categoryKey === "motherboard";
   const getStoreCacheKey = (categoryKey: CategoryKey, itemId: string) => `${categoryKey}:${itemId}`;
   const expandedStoreCacheKey =
     expandedItemId && expandedItemCategory ? getStoreCacheKey(expandedItemCategory, expandedItemId) : "";

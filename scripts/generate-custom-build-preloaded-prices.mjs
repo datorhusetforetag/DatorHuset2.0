@@ -102,7 +102,7 @@ const main = async () => {
       category: item.category,
       name: item.name,
       basePrice: item.price,
-      cachePrice: null,
+      cachePrice: getCachedLowestPrice(cachedResponseByItemId.get(item.id)),
       source: null,
       note: null,
     })),
@@ -114,13 +114,14 @@ const main = async () => {
   for (const item of allItems) {
     const override = LEGACY_PRICE_OVERRIDES[item.id];
     const effectivePrice =
+      (Number.isFinite(item.cachePrice) && item.cachePrice > 0 ? item.cachePrice : null) ??
       override?.price ??
-      (Number.isFinite(item.cachePrice) && item.cachePrice > 0 ? item.cachePrice : item.basePrice);
+      item.basePrice;
 
-    const source = override
-      ? "static_legacy_fallback"
-      : Number.isFinite(item.cachePrice) && item.cachePrice > 0
+    const source = Number.isFinite(item.cachePrice) && item.cachePrice > 0
       ? "prisjakt_seed"
+      : override
+      ? "static_legacy_fallback"
       : item.category === "cpu" || item.category === "motherboard"
       ? "catalog_fallback"
       : "static_reference";
@@ -130,7 +131,7 @@ const main = async () => {
       category: item.category,
       name: item.name,
       source,
-      note: override?.reason || null,
+      note: source === "static_legacy_fallback" ? override?.reason || null : null,
     };
   }
 

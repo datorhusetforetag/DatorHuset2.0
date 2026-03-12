@@ -1,3 +1,5 @@
+import { STATIC_CUSTOM_BUILD_CATALOG_ITEMS } from "./customBuildStaticCatalog.js";
+
 const cpu = (
   id,
   name,
@@ -808,6 +810,7 @@ export const CUSTOM_BUILD_CATALOG_ITEMS = [
   ...AM5_MOTHERBOARDS,
   ...LGA1200_MOTHERBOARDS,
   ...LGA1700_MOTHERBOARDS,
+  ...STATIC_CUSTOM_BUILD_CATALOG_ITEMS,
 ];
 
 export const CUSTOM_BUILD_CATALOG_BY_ID = Object.fromEntries(
