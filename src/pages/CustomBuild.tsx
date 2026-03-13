@@ -185,6 +185,8 @@ type CatalogCategoryPricesResponse = {
   }>;
 };
 
+type CustomBuildPriceSource = "prisjakt-offer" | "seed" | "fallback" | "no-store";
+
 type CategoryConfig = {
   key: CategoryKey;
   label: string;
@@ -2572,6 +2574,7 @@ export default function CustomBuild() {
   const [shareStatus, setShareStatus] = useState("");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
+  const [customBuildDebugEnabled, setCustomBuildDebugEnabled] = useState(false);
   const [socketFilters, setSocketFilters] = useState<string[]>([]);
   const [chipsetFilters, setChipsetFilters] = useState<string[]>([]);
   const [ramTypeFilters, setRamTypeFilters] = useState<string[]>([]);
@@ -2605,8 +2608,30 @@ export default function CustomBuild() {
   const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>(
     () => ({ ...CUSTOM_BUILD_PRELOADED_PRICE_BY_ID })
   );
+  const [priceSourceByItemId, setPriceSourceByItemId] = useState<Record<string, CustomBuildPriceSource>>(() =>
+    Object.fromEntries(
+      Object.keys(CUSTOM_BUILD_PRELOADED_PRICE_BY_ID).map((itemId) => [itemId, "seed" as CustomBuildPriceSource])
+    )
+  );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const queryValue = params.get("cbdebug");
+      const storedValue = window.localStorage.getItem("custom-build-debug");
+      const enabled = queryValue === "1" || storedValue === "1";
+      setCustomBuildDebugEnabled(enabled);
+      if (queryValue === "1") {
+        window.localStorage.setItem("custom-build-debug", "1");
+      } else if (queryValue === "0") {
+        window.localStorage.removeItem("custom-build-debug");
+      }
+    } catch {
+      setCustomBuildDebugEnabled(false);
+    }
+  }, []);
 
 
   useEffect(() => {
@@ -2723,6 +2748,33 @@ export default function CustomBuild() {
     return `${formatPrice(getComparablePrice(item, category))} kr`;
   };
 
+  const getPriceSource = (item: ComponentItem): CustomBuildPriceSource => {
+    if (itemsWithoutStorePrice[item.id]) {
+      return "no-store";
+    }
+    if (priceSourceByItemId[item.id]) {
+      return priceSourceByItemId[item.id];
+    }
+    if (typeof CUSTOM_BUILD_PRELOADED_PRICE_BY_ID[item.id] === "number") {
+      return "seed";
+    }
+    return "fallback";
+  };
+
+  const getPriceSourceLabel = (item: ComponentItem) => {
+    const source = getPriceSource(item);
+    switch (source) {
+      case "prisjakt-offer":
+        return "Prisjakt-offer";
+      case "seed":
+        return "Seed";
+      case "no-store":
+        return "No-store";
+      default:
+        return "Fallback";
+    }
+  };
+
   const brandOptions = useMemo(() => {
     const brands = Array.from(new Set(items.map((item) => item.brand)));
     return ["Alla", ...brands];
@@ -2826,6 +2878,17 @@ export default function CustomBuild() {
               nextState[entry.item_id] = Math.max(0, Math.round(Number(entry.lowest_price)));
             } else {
               delete nextState[entry.item_id];
+            }
+          });
+          return nextState;
+        });
+        setPriceSourceByItemId((prev) => {
+          const nextState = { ...prev };
+          nextEntries.forEach((entry) => {
+            if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
+              nextState[entry.item_id] = "prisjakt-offer";
+            } else {
+              nextState[entry.item_id] = "no-store";
             }
           });
           return nextState;
@@ -3993,6 +4056,11 @@ export default function CustomBuild() {
                             <p className="text-base font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
                               {getDisplayPriceLabel(item, activeCategory)}
                             </p>
+                            {customBuildDebugEnabled ? (
+                              <span className="rounded-full border border-sky-300 bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300">
+                                {getPriceSourceLabel(item)}
+                              </span>
+                            ) : null}
                             <button
                               type="button"
                               onClick={(event) => {
@@ -4268,6 +4336,14 @@ export default function CustomBuild() {
               </p>
             </div>
           </div>
+        </div>
+      ) : null}
+      {customBuildDebugEnabled ? (
+        <div className="fixed bottom-5 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
+          <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
+          <p className="mt-1 text-xs leading-relaxed">
+            Kallor: <span className="font-semibold">Prisjakt-offer</span>, <span className="font-semibold">Seed</span>, <span className="font-semibold">Fallback</span>, <span className="font-semibold">No-store</span>.
+          </p>
         </div>
       ) : null}
       <Footer />

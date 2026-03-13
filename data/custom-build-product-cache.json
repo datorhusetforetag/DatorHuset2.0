@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-13T19:19:57.768Z",
+  "saved_at": "2026-03-13T20:05:10.179Z",
   "entries": [
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-3-3100",
@@ -1946,7 +1946,7 @@
     {
       "key": "prisjakt-v1:mb-am4-gigabyte-x570-aorus-elite",
       "item_id": "mb-am4-gigabyte-x570-aorus-elite",
-      "updatedAt": 1773423568526,
+      "updatedAt": 1773432065237,
       "response": {
         "offers": []
       }
@@ -1954,7 +1954,7 @@
     {
       "key": "prisjakt-v1:mb-am4-asrock-x570-steel-legend",
       "item_id": "mb-am4-asrock-x570-steel-legend",
-      "updatedAt": 1773423592485,
+      "updatedAt": 1773432069191,
       "response": {
         "offers": []
       }
@@ -1962,7 +1962,7 @@
     {
       "key": "prisjakt-v1:mb-am4-msi-mag-b550m-mortar-wifi",
       "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
-      "updatedAt": 1773423607099,
+      "updatedAt": 1773432073801,
       "response": {
         "offers": []
       }
@@ -2297,7 +2297,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-tuf-b560-plus-wifi",
       "item_id": "mb-lga1200-asus-tuf-b560-plus-wifi",
-      "updatedAt": 1773423628710,
+      "updatedAt": 1773432085148,
       "response": {
         "offers": []
       }
@@ -2305,7 +2305,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-b560-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-b560-tomahawk-wifi",
-      "updatedAt": 1773423651093,
+      "updatedAt": 1773432108555,
       "response": {
         "offers": []
       }
@@ -2313,7 +2313,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-b560-aorus-pro-ax",
       "item_id": "mb-lga1200-gigabyte-b560-aorus-pro-ax",
-      "updatedAt": 1773423674959,
+      "updatedAt": 1773432132363,
       "response": {
         "offers": []
       }
@@ -2321,7 +2321,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-b560-pro4",
       "item_id": "mb-lga1200-asrock-b560-pro4",
-      "updatedAt": 1773423696529,
+      "updatedAt": 1773432154169,
       "response": {
         "offers": []
       }
@@ -2329,7 +2329,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-prime-z590-p",
       "item_id": "mb-lga1200-asus-prime-z590-p",
-      "updatedAt": 1773423718227,
+      "updatedAt": 1773432176163,
       "response": {
         "offers": []
       }
@@ -2337,7 +2337,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z590-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-z590-tomahawk-wifi",
-      "updatedAt": 1773423740716,
+      "updatedAt": 1773432198812,
       "response": {
         "offers": []
       }
@@ -2345,7 +2345,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-z590-aorus-elite-ax",
       "item_id": "mb-lga1200-gigabyte-z590-aorus-elite-ax",
-      "updatedAt": 1773423762941,
+      "updatedAt": 1773432221564,
       "response": {
         "offers": []
       }
@@ -2353,7 +2353,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-z590-steel-legend",
       "item_id": "mb-lga1200-asrock-z590-steel-legend",
-      "updatedAt": 1773423785032,
+      "updatedAt": 1773432244098,
       "response": {
         "offers": []
       }
@@ -2361,7 +2361,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-rog-strix-z490-f",
       "item_id": "mb-lga1200-asus-rog-strix-z490-f",
-      "updatedAt": 1773423806541,
+      "updatedAt": 1773432265946,
       "response": {
         "offers": []
       }
@@ -2369,7 +2369,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z490-gaming-edge-wifi",
       "item_id": "mb-lga1200-msi-z490-gaming-edge-wifi",
-      "updatedAt": 1773423828182,
+      "updatedAt": 1773432287987,
       "response": {
         "offers": []
       }
@@ -2686,7 +2686,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-asus-rog-strix-z790-f",
       "item_id": "mb-lga1700-asus-rog-strix-z790-f",
-      "updatedAt": 1773423849849,
+      "updatedAt": 1773432310022,
       "response": {
         "offers": []
       }
