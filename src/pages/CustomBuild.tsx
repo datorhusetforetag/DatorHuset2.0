@@ -495,6 +495,28 @@ const getItemGpuPerformanceClass = (item: ComponentItem) => item.performanceClas
 const getItemGpuExactModel = (item: ComponentItem) =>
   item.category === undefined || item.id.startsWith("gpu-") ? item.gpuModel || item.name : "";
 
+const getItemCpuChip = (item: ComponentItem) => {
+  const text = normalizeFilterToken(item.name);
+  const chipPatterns = [
+    ["Ryzen 9", /ryzen\s*9/],
+    ["Ryzen 7", /ryzen\s*7/],
+    ["Ryzen 5", /ryzen\s*5/],
+    ["Ryzen 3", /ryzen\s*3/],
+    ["Core i9", /core\s*i9/],
+    ["Core i7", /core\s*i7/],
+    ["Core i5", /core\s*i5/],
+    ["Core i3", /core\s*i3/],
+  ];
+
+  for (const [label, pattern] of chipPatterns) {
+    if (pattern.test(text)) {
+      return label;
+    }
+  }
+
+  return "";
+};
+
 const getItemGpuChip = (item: ComponentItem) => {
   const text = normalizeFilterToken(`${item.gpuModel || ""} ${item.name}`);
   const chipPatterns = [
@@ -2052,6 +2074,7 @@ export default function CustomBuild() {
   const [formFactorFilters, setFormFactorFilters] = useState<string[]>([]);
   const [pcieGenerationFilters, setPcieGenerationFilters] = useState<string[]>([]);
   const [storageTypeFilters, setStorageTypeFilters] = useState<string[]>([]);
+  const [cpuChipFilter, setCpuChipFilter] = useState("Alla");
   const [gpuPerformanceFilters, setGpuPerformanceFilters] = useState<string[]>([]);
   const [gpuChipFilter, setGpuChipFilter] = useState("Alla");
   const [gpuExactModelFilter, setGpuExactModelFilter] = useState("Alla");
@@ -2236,6 +2259,10 @@ export default function CustomBuild() {
     () => Array.from(new Set(items.map((item) => getItemGpuPerformanceClass(item)).filter(Boolean))),
     [items]
   );
+  const cpuChipFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemCpuChip(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
+    [items]
+  );
   const gpuChipFilterOptions = useMemo(
     () => Array.from(new Set(items.map((item) => getItemGpuChip(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
     [items]
@@ -2334,6 +2361,7 @@ export default function CustomBuild() {
 
   const clearAdvancedFilters = () => {
     if (usesSocketFilters) setSocketFilters([]);
+    if (activeCategory === "cpu") setCpuChipFilter("Alla");
     if (usesGpuFilters) {
       setGpuPerformanceFilters([]);
       setGpuChipFilter("Alla");
@@ -2352,6 +2380,7 @@ export default function CustomBuild() {
 
   const hasActiveAdvancedFilters =
     (usesSocketFilters && socketFilters.length > 0) ||
+    (activeCategory === "cpu" && cpuChipFilter !== "Alla") ||
     (usesGpuFilters && (gpuPerformanceFilters.length > 0 || gpuChipFilter !== "Alla" || gpuExactModelFilter !== "Alla")) ||
     (usesRamTypeFilters && ramTypeFilters.length > 0) ||
     (usesFormFactorFilters && formFactorFilters.length > 0) ||
@@ -2382,6 +2411,7 @@ export default function CustomBuild() {
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
       const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
       const itemSocket = getItemSocketFilterValue(item);
+      const itemCpuChip = getItemCpuChip(item);
       const itemGpuPerformanceClass = getItemGpuPerformanceClass(item);
       const itemGpuChip = getItemGpuChip(item);
       const itemGpuExactModel = getItemGpuExactModel(item);
@@ -2395,6 +2425,8 @@ export default function CustomBuild() {
 
       const matchesSelectedSocketFilter =
         !usesSocketFilters || socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
+      const matchesSelectedCpuChipFilter =
+        activeCategory !== "cpu" || cpuChipFilter === "Alla" || itemCpuChip === cpuChipFilter;
       const matchesSelectedGpuPerformanceFilter =
         !usesGpuFilters ||
         gpuPerformanceFilters.length === 0 ||
@@ -2435,6 +2467,7 @@ export default function CustomBuild() {
         matchesRamType &&
         matchesPrice &&
         matchesSelectedSocketFilter &&
+        matchesSelectedCpuChipFilter &&
         matchesSelectedGpuPerformanceFilter &&
         matchesSelectedGpuChipFilter &&
         matchesSelectedGpuExactModelFilter &&
@@ -2457,6 +2490,7 @@ export default function CustomBuild() {
     priceRange,
     lowestOfferPriceByItemId,
     socketFilters,
+    cpuChipFilter,
     gpuPerformanceFilters,
     gpuChipFilter,
     gpuExactModelFilter,
@@ -3114,6 +3148,26 @@ export default function CustomBuild() {
                               {socket}
                             </button>
                           ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeCategory === "cpu" && cpuChipFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">CPU-chip</p>
+                        <div className="mt-2">
+                          <select
+                            value={cpuChipFilter}
+                            onChange={(event) => setCpuChipFilter(event.target.value)}
+                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
+                          >
+                            <option value="Alla">Alla chip</option>
+                            {cpuChipFilterOptions.map((cpuChip) => (
+                              <option key={cpuChip} value={cpuChip}>
+                                {cpuChip}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     ) : null}

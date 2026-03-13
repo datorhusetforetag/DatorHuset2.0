@@ -1576,6 +1576,7 @@ const PRISJAKT_PRODUCT_URL_REGEX = /https?:\/\/www\.prisjakt\.nu\/produkt\.php\?
 const PRISJAKT_GO_TO_SHOP_URL_REGEX = /https?:\/\/www\.prisjakt\.nu\/go-to-shop\/\d+\/offer\/[^\s)]+/i;
 const PRISJAKT_PRODUCT_URL_OVERRIDES = {
   "cpu-lga1700-core-i5-12400f": "https://www.prisjakt.nu/produkt.php?p=5948013",
+  "cpu-lga1700-core-i5-14400f": "https://www.prisjakt.nu/produkt.php?p=13219693",
   "mb-am4-msi-b550-tomahawk": "https://www.prisjakt.nu/produkt.php?p=5386548",
   "mb-am5-msi-b650-tomahawk-wifi": "https://www.prisjakt.nu/produkt.php?p=7153870",
 };
@@ -1585,7 +1586,9 @@ const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
     ["amazon.se", "amazon-se"],
     ["computersalg", "computersalg"],
     ["elgiganten", "elgiganten"],
+    ["inet", "inet"],
     ["komplett", "komplett"],
+    ["komplett.se", "komplett"],
     ["netonnet", "netonnet"],
     ["proshop", "proshop"],
     ["webhallen", "webhallen"],
@@ -1603,6 +1606,15 @@ const normalizePrisjaktGoToShopUrl = (value) => {
   const normalizedUrl = normalizeRelativeUrl(String(value || "").trim(), String(value || "").trim());
   if (!normalizedUrl) return null;
   return PRISJAKT_GO_TO_SHOP_URL_REGEX.test(normalizedUrl) ? normalizedUrl : null;
+};
+
+const decodePrisjaktJsonString = (value) => {
+  if (typeof value !== "string") return "";
+  try {
+    return JSON.parse(`"${value}"`);
+  } catch {
+    return value;
+  }
 };
 
 const decodeHtmlEntities = (value) =>
@@ -1746,14 +1758,20 @@ const findBestPrisjaktProductForItem = async (item) => {
 const extractStoreOffersFromPrisjaktProductHtml = (html) => {
   if (!html || typeof html !== "string") return [];
   const offersByStoreId = new Map();
-  const offerRegex =
-    /<a href="(https:\/\/www\.prisjakt\.nu\/go-to-shop\/[^"]+)"[\s\S]*?<span class="StoreInfoTitle[^"]*"[^>]*>([^<]+)<\/span>[\s\S]*?<h4[^>]*data-test="PriceLabel"[^>]*>([^<]+)<\/h4>/gi;
+  const offerRegex = /<a href="(https:\/\/www\.prisjakt\.nu\/go-to-shop\/[^"]+)"/gi;
   let match = offerRegex.exec(html);
   while (match) {
     const productUrl = normalizePrisjaktGoToShopUrl(match[1]);
-    const storeName = sanitizeText(decodeHtmlEntities(String(match[2] || "")), 120);
+    const segmentEnd = html.indexOf("</li>", match.index);
+    const offerSegment = html.slice(match.index, segmentEnd > match.index ? segmentEnd : match.index + 5000);
+    const storeName = sanitizeText(
+      decodeHtmlEntities(String(offerSegment.match(/StoreInfoTitle[^>]*>([^<]+)</i)?.[1] || "")),
+      120
+    );
     const storeId = PRISJAKT_ALLOWED_STORE_NAME_TO_ID.get(normalizeStorePriceQueryKey(storeName));
-    const price = parseMoneyValue(decodeHtmlEntities(match[3]));
+    const price = parseMoneyValue(
+      decodeHtmlEntities(String(offerSegment.match(/data-test="PriceLabel"[^>]*>([^<]+)</i)?.[1] || ""))
+    );
     if (!storeId || !Number.isFinite(price) || !productUrl) {
       match = offerRegex.exec(html);
       continue;
@@ -1768,6 +1786,7 @@ const extractStoreOffersFromPrisjaktProductHtml = (html) => {
       store: source.name,
       status: "available",
       product_url: productUrl,
+      search_url: null,
       price: Math.max(0, Math.round(price)),
       total_price: Math.max(0, Math.round(price)),
       currency: "SEK",
@@ -1781,6 +1800,47 @@ const extractStoreOffersFromPrisjaktProductHtml = (html) => {
     }
     match = offerRegex.exec(html);
   }
+
+  const priceObjectRegex =
+    /"__typename":"Price","shopOfferId":"[^"]+","name":"((?:\\.|[^"\\])*)","externalUri":"((?:\\.|[^"\\])*)","primaryMarket":[\s\S]*?"price":\{"inclShipping":(null|-?\d+(?:\.\d+)?),"exclShipping":(null|-?\d+(?:\.\d+)?),"originalCurrency":"[^"]*"\}[\s\S]*?"store":\{"id":\d+,"name":"((?:\\.|[^"\\])*)"/gi;
+  match = priceObjectRegex.exec(html);
+  while (match) {
+    const offerName = sanitizeText(decodePrisjaktJsonString(match[1]), 180);
+    const productUrl = normalizePrisjaktGoToShopUrl(decodePrisjaktJsonString(match[2]));
+    const inclShippingPrice = Number(match[3]);
+    const exclShippingPrice = Number(match[4]);
+    const storeName = sanitizeText(decodePrisjaktJsonString(match[5]), 120);
+    const storeId = PRISJAKT_ALLOWED_STORE_NAME_TO_ID.get(normalizeStorePriceQueryKey(storeName));
+    const source = storeId ? CUSTOM_STORE_SOURCE_BY_ID[storeId] : null;
+    const price = Number.isFinite(inclShippingPrice)
+      ? inclShippingPrice
+      : Number.isFinite(exclShippingPrice)
+        ? exclShippingPrice
+        : null;
+    if (!storeId || !source || !Number.isFinite(price)) {
+      match = priceObjectRegex.exec(html);
+      continue;
+    }
+    const nextOffer = {
+      store_id: storeId,
+      store: source.name,
+      status: "available",
+      product_url: productUrl,
+      search_url: productUrl ? null : source.buildSearchUrl(offerName || storeName),
+      price: Math.max(0, Math.round(price)),
+      total_price: Math.max(0, Math.round(price)),
+      currency: "SEK",
+      shipping_price: null,
+      availability: "in_stock",
+      error: null,
+    };
+    const currentOffer = offersByStoreId.get(storeId);
+    if (!currentOffer || (currentOffer.total_price ?? currentOffer.price) > nextOffer.total_price) {
+      offersByStoreId.set(storeId, nextOffer);
+    }
+    match = priceObjectRegex.exec(html);
+  }
+
   return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
 };
 

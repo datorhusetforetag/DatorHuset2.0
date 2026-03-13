@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-13T15:47:14.807Z",
+  "saved_at": "2026-03-13T16:00:09.505Z",
   "entries": [
     {
       "key": "prisjakt-v1:case-1",
@@ -784,9 +784,29 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-3-3100",
       "item_id": "cpu-am4-ryzen-3-3100",
-      "updatedAt": 1773413293693,
+      "updatedAt": 1773417608090,
       "response": {
-        "offers": []
+        "ok": true,
+        "item_id": "cpu-am4-ryzen-3-3100",
+        "updated_at": "2026-03-13T16:00:08.090Z",
+        "next_refresh_at": "2026-03-14T16:00:08.091Z",
+        "lowest_price": 390,
+        "offers": [
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=AMD%20Ryzen%203%203100%203.6GHz%2018MB",
+            "price": 390,
+            "total_price": 390,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=5347547",
+        "source_product_title": "AMD Ryzen 3 3100 3,6GHz Socket AM4 Box, från 390 kr i butiker på Prisjakt"
       }
     },
     {
@@ -1192,9 +1212,29 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-9-5900x",
       "item_id": "cpu-am4-ryzen-9-5900x",
-      "updatedAt": 1773413361509,
+      "updatedAt": 1773417608678,
       "response": {
-        "offers": []
+        "ok": true,
+        "item_id": "cpu-am4-ryzen-9-5900x",
+        "updated_at": "2026-03-13T16:00:08.678Z",
+        "next_refresh_at": "2026-03-14T16:00:08.678Z",
+        "lowest_price": 3249,
+        "offers": [
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=AMD%20Ryzen%209%205900X%203.7%20GHz%2070MB",
+            "price": 3249,
+            "total_price": 3249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=5588367",
+        "source_product_title": "AMD Ryzen 9 5900X 3,7GHz Socket AM4 Box without Cooler - Hitta bästa pris på Prisjakt"
       }
     },
     {
@@ -2339,9 +2379,77 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-14400f",
       "item_id": "cpu-lga1700-core-i5-14400f",
-      "updatedAt": 1773413842410,
+      "updatedAt": 1773417609505,
       "response": {
-        "offers": []
+        "ok": true,
+        "item_id": "cpu-lga1700-core-i5-14400f",
+        "updated_at": "2026-03-13T16:00:09.505Z",
+        "next_refresh_at": "2026-03-14T16:00:09.505Z",
+        "lowest_price": 1590,
+        "offers": [
+          {
+            "store_id": "komplett",
+            "store": "Komplett",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/33/offer/1302579?client_id=1331",
+            "search_url": null,
+            "price": 1590,
+            "total_price": 1590,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1032709?client_id=1331",
+            "search_url": null,
+            "price": 1619,
+            "total_price": 1619,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3218119?client_id=1331",
+            "search_url": null,
+            "price": 1690,
+            "total_price": 1690,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Intel%20Core%20i5%2014400F%202.5%20GHz%2029.5MB",
+            "price": 1749,
+            "total_price": 1749,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CQ3142LB?client_id=1331",
+            "search_url": null,
+            "price": 1798,
+            "total_price": 1798,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=13219693",
+        "source_product_title": "Intel Core i5 14400F 2,5GHz Socket 1700 Box, från 1 690 kr i butiker på Prisjakt"
       }
     },
     {

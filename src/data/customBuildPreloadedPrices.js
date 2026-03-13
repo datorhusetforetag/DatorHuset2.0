@@ -1,7 +1,7 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T15:18:55.760Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T16:00:19.660Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
-  "cpu-am4-ryzen-3-3100": 799,
+  "cpu-am4-ryzen-3-3100": 390,
   "cpu-am4-ryzen-3-3200g": 626,
   "cpu-am4-ryzen-5-3600": 717,
   "cpu-am4-ryzen-5-4500": 769,
@@ -16,7 +16,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-7-5800x": 2158,
   "cpu-am4-ryzen-7-5800xt": 2289,
   "cpu-am4-ryzen-7-5800x3d": 3199,
-  "cpu-am4-ryzen-9-5900x": 3299,
+  "cpu-am4-ryzen-9-5900x": 3249,
   "cpu-am4-ryzen-9-5950x": 3562,
   "cpu-am5-ryzen-5-7500f-tray": 1689,
   "cpu-am5-ryzen-5-7500x3d": 2416,
@@ -65,7 +65,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-lga1700-core-i5-13400f": 2290,
   "cpu-lga1700-core-i3-14100": 1799,
   "cpu-lga1700-core-i3-14100f": 1599,
-  "cpu-lga1700-core-i5-14400f": 2299,
+  "cpu-lga1700-core-i5-14400f": 1590,
   "cpu-lga1700-core-i5-13600k": 3490,
   "cpu-lga1700-core-i7-13700k": 4690,
   "cpu-lga1700-core-i5-14600k": 3799,
@@ -167,23 +167,23 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "gpu-49": 11290,
   "gpu-50": 11490,
   "gpu-51": 11390,
-  "gpu-52": 14490,
-  "gpu-53": 15490,
-  "gpu-54": 14290,
-  "gpu-55": 14590,
-  "gpu-56": 16990,
-  "gpu-57": 17490,
-  "gpu-58": 15990,
-  "gpu-59": 14990,
-  "gpu-60": 14690,
-  "gpu-61": 14890,
-  "gpu-62": 37990,
+  "gpu-52": 14290,
+  "gpu-53": 16990,
+  "gpu-54": 13990,
+  "gpu-55": 14572,
+  "gpu-56": 16795,
+  "gpu-57": 18567,
+  "gpu-58": 16390,
+  "gpu-59": 14890,
+  "gpu-60": 13490,
+  "gpu-61": 13892,
+  "gpu-62": 36990,
   "gpu-63": 36990,
-  "gpu-64": 35990,
+  "gpu-64": 32990,
   "gpu-65": 34990,
-  "gpu-66": 38990,
+  "gpu-66": 39999,
   "gpu-67": 36990,
-  "gpu-68": 41990,
+  "gpu-68": 36999,
   "ram-1": 3869,
   "ram-2": 7390,
   "ram-3": 6491,
@@ -249,7 +249,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cpu-am4-ryzen-3-3100": {
     "category": "cpu",
     "name": "AMD Ryzen 3 3100",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cpu-am4-ryzen-3-3200g": {
@@ -339,7 +339,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cpu-am4-ryzen-9-5900x": {
     "category": "cpu",
     "name": "AMD Ryzen 9 5900X",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cpu-am4-ryzen-9-5950x": {
@@ -633,7 +633,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cpu-lga1700-core-i5-14400f": {
     "category": "cpu",
     "name": "Intel Core i5-14400F",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cpu-lga1700-core-i5-13600k": {
@@ -1245,67 +1245,67 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "gpu-52": {
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-53": {
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-54": {
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-55": {
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-56": {
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-57": {
     "category": "gpu",
     "name": "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-58": {
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-59": {
     "category": "gpu",
     "name": "ASUS Prime GeForce RTX 5080 16GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-60": {
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5080 X3 OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-61": {
     "category": "gpu",
     "name": "Palit GeForce RTX 5080 GamingPro OC 16GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-62": {
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-63": {
@@ -1317,31 +1317,31 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "gpu-64": {
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-65": {
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-66": {
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-67": {
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-68": {
     "category": "gpu",
     "name": "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-1": {
