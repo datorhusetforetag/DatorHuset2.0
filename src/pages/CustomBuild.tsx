@@ -98,6 +98,8 @@ import caseCoolerMasterTd500MeshImage from "../../images/product images/chassi/C
 import caseNzxtH5FlowImage from "../../images/product images/chassi/NZXT H5 Flow.png";
 import caseLianLiO11DynamicImage from "../../images/product images/chassi/Lian Li O11 Dynamic.png";
 import caseFractalDesignMeshify2Image from "../../images/product images/chassi/Fractal Design Meshify 2.png";
+import caseDeepCoolCg530Image from "../../images/product images/NewPCImages/cg530_new.png";
+import caseChieftecVisioImage from "../../images/product images/NewPCImages/ChieftecVisio_new.png";
 import psuCorsairRm750eImage from "../../images/product images/psu/Corsair RM750e.png";
 import psuCorsairRm850xImage from "../../images/product images/psu/Corsair RM850x.png";
 import psuSeasonicFocusGx750Image from "../../images/product images/psu/Seasonic Focus GX-750.png";
@@ -2179,7 +2181,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 4F",
       brand: "DeepCool",
       price: 899,
-      image: caseCoolerMasterTd500MeshImage,
+      image: caseDeepCoolCg530Image,
       specs: ["ATX", "4x fans", "Svart"],
     },
     {
@@ -2187,7 +2189,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 4F Vit",
       brand: "DeepCool",
       price: 949,
-      image: caseCoolerMasterTd500MeshImage,
+      image: caseDeepCoolCg530Image,
       specs: ["ATX", "4x fans", "Vit"],
     },
     {
@@ -2227,7 +2229,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 Svart",
       brand: "DeepCool",
       price: 829,
-      image: caseCoolerMasterTd500MeshImage,
+      image: caseDeepCoolCg530Image,
       specs: ["ATX", "Airflow", "Svart"],
     },
     {
@@ -2283,7 +2285,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Chieftec Visio Svart RGB",
       brand: "Chieftec",
       price: 999,
-      image: caseNzxtH5FlowImage,
+      image: caseChieftecVisioImage,
       specs: ["ATX", "RGB", "Svart"],
     },
     {
@@ -2291,7 +2293,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 Vit",
       brand: "DeepCool",
       price: 849,
-      image: caseCoolerMasterTd500MeshImage,
+      image: caseDeepCoolCg530Image,
       specs: ["ATX", "Airflow", "Vit"],
     },
     {
