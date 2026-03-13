@@ -2,326 +2,1157 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "gpu-1",
     "category": "gpu",
-    "name": "NVIDIA GeForce RTX 4060",
-    "brand": "NVIDIA",
+    "name": "ASUS Dual GeForce RTX 3050 6GB OC",
+    "brand": "ASUS",
     "price": 4454,
     "specs": [
-      "8 GB",
-      "DLSS 3",
+      "6 GB",
+      "RTX 3050",
       "1080p"
     ],
     "searchTerms": [
-      "NVIDIA GeForce RTX 4060",
-      "NVIDIA GeForce RTX 4060 8 GB DLSS 3 1080p",
-      "GeForce RTX 4060"
+      "ASUS Dual GeForce RTX 3050 6GB OC",
+      "ASUS Dual GeForce RTX 3050 6GB OC 6 GB RTX 3050 1080p",
+      "Dual GeForce RTX 3050 6GB OC"
     ]
   },
   {
     "id": "gpu-2",
     "category": "gpu",
-    "name": "NVIDIA GeForce RTX 4060 Ti",
-    "brand": "NVIDIA",
+    "name": "ASUS Dual GeForce RTX 5050 8GB OC",
+    "brand": "ASUS",
     "price": 5353,
     "specs": [
       "8 GB",
-      "DLSS 3",
-      "1440p"
+      "RTX 5050",
+      "1080p"
     ],
     "searchTerms": [
-      "NVIDIA GeForce RTX 4060 Ti",
-      "NVIDIA GeForce RTX 4060 Ti 8 GB DLSS 3 1440p",
-      "GeForce RTX 4060 Ti"
+      "ASUS Dual GeForce RTX 5050 8GB OC",
+      "ASUS Dual GeForce RTX 5050 8GB OC 8 GB RTX 5050 1080p",
+      "Dual GeForce RTX 5050 8GB OC"
     ]
   },
   {
     "id": "gpu-3",
     "category": "gpu",
-    "name": "NVIDIA GeForce RTX 4070",
-    "brand": "NVIDIA",
+    "name": "Intel Arc B580 12GB Limited Edition",
+    "brand": "Intel",
     "price": 7519,
     "specs": [
       "12 GB",
-      "DLSS 3",
-      "1440p"
+      "Arc B580",
+      "1080p+"
     ],
     "searchTerms": [
-      "NVIDIA GeForce RTX 4070",
-      "NVIDIA GeForce RTX 4070 12 GB DLSS 3 1440p",
-      "GeForce RTX 4070"
+      "Intel Arc B580 12GB Limited Edition",
+      "Intel Arc B580 12GB Limited Edition 12 GB Arc B580 1080p+",
+      "Arc B580 12GB Limited Edition"
     ]
   },
   {
     "id": "gpu-4",
     "category": "gpu",
-    "name": "NVIDIA GeForce RTX 4070 Super",
-    "brand": "NVIDIA",
+    "name": "Zotac GeForce RTX 3060 Twin Edge 12GB",
+    "brand": "Zotac",
     "price": 7519,
     "specs": [
       "12 GB",
-      "DLSS 3",
-      "1440p"
+      "RTX 3060",
+      "1080p+"
     ],
     "searchTerms": [
-      "NVIDIA GeForce RTX 4070 Super",
-      "NVIDIA GeForce RTX 4070 Super 12 GB DLSS 3 1440p",
-      "GeForce RTX 4070 Super"
+      "Zotac GeForce RTX 3060 Twin Edge 12GB",
+      "Zotac GeForce RTX 3060 Twin Edge 12GB 12 GB RTX 3060 1080p+",
+      "GeForce RTX 3060 Twin Edge 12GB"
     ]
   },
   {
     "id": "gpu-5",
     "category": "gpu",
-    "name": "NVIDIA GeForce RTX 4080 Super",
-    "brand": "NVIDIA",
+    "name": "ASUS Dual GeForce RTX 5060 8GB OC",
+    "brand": "ASUS",
     "price": 15046,
     "specs": [
-      "16 GB",
-      "DLSS 3",
-      "4K"
+      "8 GB",
+      "RTX 5060",
+      "1080p+"
     ],
     "searchTerms": [
-      "NVIDIA GeForce RTX 4080 Super",
-      "NVIDIA GeForce RTX 4080 Super 16 GB DLSS 3 4K",
-      "GeForce RTX 4080 Super"
+      "ASUS Dual GeForce RTX 5060 8GB OC",
+      "ASUS Dual GeForce RTX 5060 8GB OC 8 GB RTX 5060 1080p+",
+      "Dual GeForce RTX 5060 8GB OC"
     ]
   },
   {
     "id": "gpu-6",
     "category": "gpu",
-    "name": "NVIDIA GeForce RTX 4090",
-    "brand": "NVIDIA",
+    "name": "PNY GeForce RTX 5060 OC Dual Fan",
+    "brand": "PNY",
     "price": 31840,
     "specs": [
-      "24 GB",
-      "DLSS 3",
-      "4K+"
+      "8 GB",
+      "RTX 5060",
+      "1080p+"
     ],
     "searchTerms": [
-      "NVIDIA GeForce RTX 4090",
-      "NVIDIA GeForce RTX 4090 24 GB DLSS 3 4K+",
-      "GeForce RTX 4090"
+      "PNY GeForce RTX 5060 OC Dual Fan",
+      "PNY GeForce RTX 5060 OC Dual Fan 8 GB RTX 5060 1080p+",
+      "GeForce RTX 5060 OC Dual Fan"
     ]
   },
   {
     "id": "gpu-7",
     "category": "gpu",
-    "name": "AMD Radeon RX 7600",
-    "brand": "AMD",
+    "name": "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC",
+    "brand": "Gigabyte",
     "price": 3272,
     "specs": [
       "8 GB",
-      "FSR",
-      "1080p"
+      "RTX 5060",
+      "1080p+"
     ],
     "searchTerms": [
-      "AMD Radeon RX 7600",
-      "AMD Radeon RX 7600 8 GB FSR 1080p",
-      "Radeon RX 7600"
+      "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC",
+      "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC 8 GB RTX 5060 1080p+",
+      "GeForce RTX 5060 WINDFORCE MAX 8GB OC"
     ]
   },
   {
     "id": "gpu-8",
     "category": "gpu",
-    "name": "AMD Radeon RX 7700 XT",
-    "brand": "AMD",
+    "name": "ASUS Radeon RX 9060 XT 8GB Dual",
+    "brand": "ASUS",
     "price": 5347,
     "specs": [
-      "12 GB",
-      "FSR",
-      "1440p"
+      "8 GB",
+      "RX 9060 XT",
+      "1080p+"
     ],
     "searchTerms": [
-      "AMD Radeon RX 7700 XT",
-      "AMD Radeon RX 7700 XT 12 GB FSR 1440p",
-      "Radeon RX 7700 XT"
+      "ASUS Radeon RX 9060 XT 8GB Dual",
+      "ASUS Radeon RX 9060 XT 8GB Dual 8 GB RX 9060 XT 1080p+",
+      "Radeon RX 9060 XT 8GB Dual"
     ]
   },
   {
     "id": "gpu-9",
     "category": "gpu",
-    "name": "AMD Radeon RX 7800 XT",
-    "brand": "AMD",
+    "name": "Gigabyte Radeon RX 9060 XT GAMING 8GB OC",
+    "brand": "Gigabyte",
     "price": 5390,
     "specs": [
-      "16 GB",
-      "FSR",
-      "1440p"
+      "8 GB",
+      "RX 9060 XT",
+      "1080p+"
     ],
     "searchTerms": [
-      "AMD Radeon RX 7800 XT",
-      "AMD Radeon RX 7800 XT 16 GB FSR 1440p",
-      "Radeon RX 7800 XT"
+      "Gigabyte Radeon RX 9060 XT GAMING 8GB OC",
+      "Gigabyte Radeon RX 9060 XT GAMING 8GB OC 8 GB RX 9060 XT 1080p+",
+      "Radeon RX 9060 XT GAMING 8GB OC"
     ]
   },
   {
     "id": "gpu-10",
     "category": "gpu",
-    "name": "Intel Arc A770",
-    "brand": "Intel",
+    "name": "XFX Swift AMD Radeon RX 9060 XT OC Gaming White",
+    "brand": "XFX",
     "price": 3578,
     "specs": [
-      "16 GB",
-      "XeSS",
-      "1080p"
+      "8 GB",
+      "RX 9060 XT",
+      "1080p+"
     ],
     "searchTerms": [
-      "Intel Arc A770",
-      "Intel Arc A770 16 GB XeSS 1080p",
-      "Arc A770"
+      "XFX Swift AMD Radeon RX 9060 XT OC Gaming White",
+      "XFX Swift AMD Radeon RX 9060 XT OC Gaming White 8 GB RX 9060 XT 1080p+",
+      "Swift AMD Radeon RX 9060 XT OC Gaming White"
     ]
   },
   {
     "id": "gpu-11",
     "category": "gpu",
-    "name": "ASUS Dual GeForce RTX 3050 6GB OC",
-    "brand": "ASUS",
+    "name": "Acer Nitro Radeon RX 9060 XT OC 8GB",
+    "brand": "Acer",
     "price": 1899,
     "specs": [
-      "6 GB",
-      "RTX 3050"
+      "8 GB",
+      "RX 9060 XT",
+      "1080p+"
     ],
     "searchTerms": [
-      "ASUS Dual GeForce RTX 3050 6GB OC",
-      "ASUS Dual GeForce RTX 3050 6GB OC 6 GB RTX 3050",
-      "Dual GeForce RTX 3050 6GB OC"
+      "Acer Nitro Radeon RX 9060 XT OC 8GB",
+      "Acer Nitro Radeon RX 9060 XT OC 8GB 8 GB RX 9060 XT 1080p+",
+      "Nitro Radeon RX 9060 XT OC 8GB"
     ]
   },
   {
     "id": "gpu-12",
     "category": "gpu",
-    "name": "ASUS Dual Radeon RX 7600 EVO OC",
-    "brand": "ASUS",
+    "name": "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS",
+    "brand": "MSI",
     "price": 3322,
     "specs": [
-      "RX 7600"
+      "8 GB",
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "ASUS Dual Radeon RX 7600 EVO OC",
-      "ASUS Dual Radeon RX 7600 EVO OC RX 7600",
-      "Dual Radeon RX 7600 EVO OC"
+      "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS",
+      "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS 8 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS"
     ]
   },
   {
     "id": "gpu-13",
     "category": "gpu",
-    "name": "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
-    "brand": "ASUS",
+    "name": "Gainward GeForce RTX 5060 Ti Ghost 8GB",
+    "brand": "Gainward",
     "price": 4190,
     "specs": [
       "8 GB",
-      "RX 9060 XT"
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
-      "ASUS Prime Radeon RX 9060 XT OC Edition 8GB 8 GB RX 9060 XT",
-      "Prime Radeon RX 9060 XT OC Edition 8GB"
+      "Gainward GeForce RTX 5060 Ti Ghost 8GB",
+      "Gainward GeForce RTX 5060 Ti Ghost 8GB 8 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti Ghost 8GB"
     ]
   },
   {
     "id": "gpu-14",
     "category": "gpu",
-    "name": "PNY GeForce RTX 5060 Ti Dual Fan OC",
-    "brand": "PNY",
+    "name": "Gigabyte GeForce RTX 5060 Ti AERO OC",
+    "brand": "Gigabyte",
     "price": 5890,
     "specs": [
-      "RTX 5060 Ti"
+      "8 GB",
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "PNY GeForce RTX 5060 Ti Dual Fan OC",
-      "PNY GeForce RTX 5060 Ti Dual Fan OC RTX 5060 Ti",
-      "GeForce RTX 5060 Ti Dual Fan OC"
+      "Gigabyte GeForce RTX 5060 Ti AERO OC",
+      "Gigabyte GeForce RTX 5060 Ti AERO OC 8 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti AERO OC"
     ]
   },
   {
     "id": "gpu-15",
     "category": "gpu",
-    "name": "RTX 5070",
-    "brand": "NVIDIA",
+    "name": "Gigabyte GeForce RTX 5060 Ti WINDFORCE",
+    "brand": "Gigabyte",
     "price": 6490,
     "specs": [
-      "RTX 5070"
+      "8 GB",
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "RTX 5070",
-      "RTX 5070 RTX 5070"
+      "Gigabyte GeForce RTX 5060 Ti WINDFORCE",
+      "Gigabyte GeForce RTX 5060 Ti WINDFORCE 8 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti WINDFORCE"
     ]
   },
   {
     "id": "gpu-16",
     "category": "gpu",
-    "name": "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
-    "brand": "Gigabyte",
+    "name": "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS",
+    "brand": "MSI",
     "price": 7190,
     "specs": [
-      "12 GB",
-      "RTX 5070"
+      "16 GB",
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
-      "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB 12 GB RTX 5070",
-      "GeForce RTX 5070 WINDFORCE SFF 12GB"
+      "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS",
+      "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS 16 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS"
     ]
   },
   {
     "id": "gpu-17",
     "category": "gpu",
-    "name": "ASUS PRIME Radeon RX 9070 XT 16GB OC",
-    "brand": "ASUS",
+    "name": "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC",
+    "brand": "Gigabyte",
     "price": 7190,
     "specs": [
       "16 GB",
-      "RX 9070 XT"
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "ASUS PRIME Radeon RX 9070 XT 16GB OC",
-      "ASUS PRIME Radeon RX 9070 XT 16GB OC 16 GB RX 9070 XT",
-      "PRIME Radeon RX 9070 XT 16GB OC"
+      "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC",
+      "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC 16 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti WINDFORCE 16GB OC"
     ]
   },
   {
     "id": "gpu-18",
     "category": "gpu",
-    "name": "Asus Dual GeForce RTX 5070 OC",
+    "name": "ASUS GeForce RTX 5060 Ti Dual 16GB OC",
     "brand": "ASUS",
     "price": 6999,
     "specs": [
-      "RTX 5070"
+      "16 GB",
+      "RTX 5060 Ti",
+      "1440p"
     ],
     "searchTerms": [
-      "Asus Dual GeForce RTX 5070 OC",
-      "Asus Dual GeForce RTX 5070 OC RTX 5070",
-      "Dual GeForce RTX 5070 OC"
+      "ASUS GeForce RTX 5060 Ti Dual 16GB OC",
+      "ASUS GeForce RTX 5060 Ti Dual 16GB OC 16 GB RTX 5060 Ti 1440p",
+      "GeForce RTX 5060 Ti Dual 16GB OC"
     ]
   },
   {
     "id": "gpu-19",
     "category": "gpu",
-    "name": "ASUS Prime GeForce RTX 5080 16GB OC",
-    "brand": "ASUS",
+    "name": "Gigabyte Radeon RX 9060 XT GAMING 16GB OC",
+    "brand": "Gigabyte",
     "price": 14890,
     "specs": [
       "16 GB",
-      "RTX 5080"
+      "RX 9060 XT",
+      "1440p"
     ],
     "searchTerms": [
-      "ASUS Prime GeForce RTX 5080 16GB OC",
-      "ASUS Prime GeForce RTX 5080 16GB OC 16 GB RTX 5080",
-      "Prime GeForce RTX 5080 16GB OC"
+      "Gigabyte Radeon RX 9060 XT GAMING 16GB OC",
+      "Gigabyte Radeon RX 9060 XT GAMING 16GB OC 16 GB RX 9060 XT 1440p",
+      "Radeon RX 9060 XT GAMING 16GB OC"
     ]
   },
   {
     "id": "gpu-20",
     "category": "gpu",
-    "name": "INNO3D GeForce RTX 5080 16GB X3 OC White",
-    "brand": "INNO3D",
+    "name": "Sapphire PULSE RX 9060 XT GAMING OC 16GB",
+    "brand": "Sapphire",
     "price": 13490,
     "specs": [
       "16 GB",
-      "RTX 5080"
+      "RX 9060 XT",
+      "1440p"
     ],
     "searchTerms": [
-      "INNO3D GeForce RTX 5080 16GB X3 OC White",
-      "INNO3D GeForce RTX 5080 16GB X3 OC White 16 GB RTX 5080",
-      "GeForce RTX 5080 16GB X3 OC White"
+      "Sapphire PULSE RX 9060 XT GAMING OC 16GB",
+      "Sapphire PULSE RX 9060 XT GAMING OC 16GB 16 GB RX 9060 XT 1440p",
+      "PULSE RX 9060 XT GAMING OC 16GB"
+    ]
+  },
+  {
+    "id": "gpu-21",
+    "category": "gpu",
+    "name": "PowerColor Reaper AMD Radeon RX 9060 XT",
+    "brand": "PowerColor",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9060 XT",
+      "1440p"
+    ],
+    "searchTerms": [
+      "PowerColor Reaper AMD Radeon RX 9060 XT",
+      "PowerColor Reaper AMD Radeon RX 9060 XT 16 GB RX 9060 XT 1440p",
+      "Reaper AMD Radeon RX 9060 XT"
+    ]
+  },
+  {
+    "id": "gpu-22",
+    "category": "gpu",
+    "name": "ASUS Prime Radeon RX 9060 XT 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9060 XT",
+      "1440p"
+    ],
+    "searchTerms": [
+      "ASUS Prime Radeon RX 9060 XT 16GB OC",
+      "ASUS Prime Radeon RX 9060 XT 16GB OC 16 GB RX 9060 XT 1440p",
+      "Prime Radeon RX 9060 XT 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-23",
+    "category": "gpu",
+    "name": "PowerColor Reaper AMD Radeon RX 9070",
+    "brand": "PowerColor",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "PowerColor Reaper AMD Radeon RX 9070",
+      "PowerColor Reaper AMD Radeon RX 9070 16 GB RX 9070 1440p Ultra",
+      "Reaper AMD Radeon RX 9070"
+    ]
+  },
+  {
+    "id": "gpu-24",
+    "category": "gpu",
+    "name": "ASUS PRIME Radeon RX 9070 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "ASUS PRIME Radeon RX 9070 16GB OC",
+      "ASUS PRIME Radeon RX 9070 16GB OC 16 GB RX 9070 1440p Ultra",
+      "PRIME Radeon RX 9070 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-25",
+    "category": "gpu",
+    "name": "Sapphire PULSE RX 9070 GAMING 16 GB",
+    "brand": "Sapphire",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "Sapphire PULSE RX 9070 GAMING 16 GB",
+      "Sapphire PULSE RX 9070 GAMING 16 GB 16 GB RX 9070 1440p Ultra",
+      "PULSE RX 9070 GAMING 16 GB"
+    ]
+  },
+  {
+    "id": "gpu-26",
+    "category": "gpu",
+    "name": "XFX Radeon RX 9070 Swift Triple 90mm Fan Black",
+    "brand": "XFX",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "XFX Radeon RX 9070 Swift Triple 90mm Fan Black",
+      "XFX Radeon RX 9070 Swift Triple 90mm Fan Black 16 GB RX 9070 1440p Ultra",
+      "Radeon RX 9070 Swift Triple 90mm Fan Black"
+    ]
+  },
+  {
+    "id": "gpu-27",
+    "category": "gpu",
+    "name": "XFX Radeon RX 9070 Swift Triple 90mm Fan White",
+    "brand": "XFX",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "XFX Radeon RX 9070 Swift Triple 90mm Fan White",
+      "XFX Radeon RX 9070 Swift Triple 90mm Fan White 16 GB RX 9070 1440p Ultra",
+      "Radeon RX 9070 Swift Triple 90mm Fan White"
+    ]
+  },
+  {
+    "id": "gpu-28",
+    "category": "gpu",
+    "name": "Sapphire PURE RX 9070 GAMING 16 GB",
+    "brand": "Sapphire",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "Sapphire PURE RX 9070 GAMING 16 GB",
+      "Sapphire PURE RX 9070 GAMING 16 GB 16 GB RX 9070 1440p Ultra",
+      "PURE RX 9070 GAMING 16 GB"
+    ]
+  },
+  {
+    "id": "gpu-29",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "12 GB",
+      "RTX 5070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC",
+      "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC 12 GB RTX 5070 1440p Ultra",
+      "GeForce RTX 5070 WINDFORCE 12GB OC"
+    ]
+  },
+  {
+    "id": "gpu-30",
+    "category": "gpu",
+    "name": "MSI GeForce RTX 5070 12G VENTUS 2X OC",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "12 GB",
+      "RTX 5070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "MSI GeForce RTX 5070 12G VENTUS 2X OC",
+      "MSI GeForce RTX 5070 12G VENTUS 2X OC 12 GB RTX 5070 1440p Ultra",
+      "GeForce RTX 5070 12G VENTUS 2X OC"
+    ]
+  },
+  {
+    "id": "gpu-31",
+    "category": "gpu",
+    "name": "ASUS PRIME GeForce RTX 5070 12GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "12 GB",
+      "RTX 5070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "ASUS PRIME GeForce RTX 5070 12GB OC",
+      "ASUS PRIME GeForce RTX 5070 12GB OC 12 GB RTX 5070 1440p Ultra",
+      "PRIME GeForce RTX 5070 12GB OC"
+    ]
+  },
+  {
+    "id": "gpu-32",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5070 EAGLE OC ICE",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "12 GB",
+      "RTX 5070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5070 EAGLE OC ICE",
+      "Gigabyte GeForce RTX 5070 EAGLE OC ICE 12 GB RTX 5070 1440p Ultra",
+      "GeForce RTX 5070 EAGLE OC ICE"
+    ]
+  },
+  {
+    "id": "gpu-33",
+    "category": "gpu",
+    "name": "ASUS GeForce RTX 5070 Dual 12GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "12 GB",
+      "RTX 5070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "ASUS GeForce RTX 5070 Dual 12GB OC",
+      "ASUS GeForce RTX 5070 Dual 12GB OC 12 GB RTX 5070 1440p Ultra",
+      "GeForce RTX 5070 Dual 12GB OC"
+    ]
+  },
+  {
+    "id": "gpu-34",
+    "category": "gpu",
+    "name": "Zotac Gaming GeForce RTX 5070 Twin Edge",
+    "brand": "Zotac",
+    "price": 0,
+    "specs": [
+      "12 GB",
+      "RTX 5070",
+      "1440p Ultra"
+    ],
+    "searchTerms": [
+      "Zotac Gaming GeForce RTX 5070 Twin Edge",
+      "Zotac Gaming GeForce RTX 5070 Twin Edge 12 GB RTX 5070 1440p Ultra",
+      "Gaming GeForce RTX 5070 Twin Edge"
+    ]
+  },
+  {
+    "id": "gpu-35",
+    "category": "gpu",
+    "name": "PowerColor Reaper AMD Radeon RX 9070 XT",
+    "brand": "PowerColor",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "PowerColor Reaper AMD Radeon RX 9070 XT",
+      "PowerColor Reaper AMD Radeon RX 9070 XT 16 GB RX 9070 XT 1440p/4K",
+      "Reaper AMD Radeon RX 9070 XT"
+    ]
+  },
+  {
+    "id": "gpu-36",
+    "category": "gpu",
+    "name": "Sapphire NITRO+ RX 9070 XT GAMING 16 GB",
+    "brand": "Sapphire",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "Sapphire NITRO+ RX 9070 XT GAMING 16 GB",
+      "Sapphire NITRO+ RX 9070 XT GAMING 16 GB 16 GB RX 9070 XT 1440p/4K",
+      "NITRO+ RX 9070 XT GAMING 16 GB"
+    ]
+  },
+  {
+    "id": "gpu-37",
+    "category": "gpu",
+    "name": "Sapphire PULSE RX 9070 XT GAMING 16 GB",
+    "brand": "Sapphire",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "Sapphire PULSE RX 9070 XT GAMING 16 GB",
+      "Sapphire PULSE RX 9070 XT GAMING 16 GB 16 GB RX 9070 XT 1440p/4K",
+      "PULSE RX 9070 XT GAMING 16 GB"
+    ]
+  },
+  {
+    "id": "gpu-38",
+    "category": "gpu",
+    "name": "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC",
+      "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC 16 GB RX 9070 XT 1440p/4K",
+      "TUF Gaming Radeon RX 9070 XT 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-39",
+    "category": "gpu",
+    "name": "ASUS Prime Radeon RX 9070 XT OC White",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "ASUS Prime Radeon RX 9070 XT OC White",
+      "ASUS Prime Radeon RX 9070 XT OC White 16 GB RX 9070 XT 1440p/4K",
+      "Prime Radeon RX 9070 XT OC White"
+    ]
+  },
+  {
+    "id": "gpu-40",
+    "category": "gpu",
+    "name": "ASRock Radeon RX 9070 XT Steel Legend 16GB",
+    "brand": "ASRock",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "ASRock Radeon RX 9070 XT Steel Legend 16GB",
+      "ASRock Radeon RX 9070 XT Steel Legend 16GB 16 GB RX 9070 XT 1440p/4K",
+      "Radeon RX 9070 XT Steel Legend 16GB"
+    ]
+  },
+  {
+    "id": "gpu-41",
+    "category": "gpu",
+    "name": "ASUS PRIME Radeon RX 9070 XT 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RX 9070 XT",
+      "1440p/4K"
+    ],
+    "searchTerms": [
+      "ASUS PRIME Radeon RX 9070 XT 16GB OC",
+      "ASUS PRIME Radeon RX 9070 XT 16GB OC 16 GB RX 9070 XT 1440p/4K",
+      "PRIME Radeon RX 9070 XT 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-42",
+    "category": "gpu",
+    "name": "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB",
+      "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB 16 GB RTX 5070 Ti 4K-ready",
+      "RTX 5070 Ti 16G GAMING TRIO OC White 16GB"
+    ]
+  },
+  {
+    "id": "gpu-43",
+    "category": "gpu",
+    "name": "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC",
+      "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti VENTUS 3X 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-44",
+    "category": "gpu",
+    "name": "ASUS PRIME GeForce RTX 5070 Ti 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "ASUS PRIME GeForce RTX 5070 Ti 16GB OC",
+      "ASUS PRIME GeForce RTX 5070 Ti 16GB OC 16 GB RTX 5070 Ti 4K-ready",
+      "PRIME GeForce RTX 5070 Ti 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-45",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC",
+      "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-46",
+    "category": "gpu",
+    "name": "Inno3D GeForce RTX 5070 Ti X3 OC White",
+    "brand": "Inno3D",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "Inno3D GeForce RTX 5070 Ti X3 OC White",
+      "Inno3D GeForce RTX 5070 Ti X3 OC White 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti X3 OC White"
+    ]
+  },
+  {
+    "id": "gpu-47",
+    "category": "gpu",
+    "name": "PNY GeForce RTX 5070 Ti OC",
+    "brand": "PNY",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "PNY GeForce RTX 5070 Ti OC",
+      "PNY GeForce RTX 5070 Ti OC 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti OC"
+    ]
+  },
+  {
+    "id": "gpu-48",
+    "category": "gpu",
+    "name": "INNO3D GeForce RTX 5070 Ti X3 OC",
+    "brand": "INNO3D",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "INNO3D GeForce RTX 5070 Ti X3 OC",
+      "INNO3D GeForce RTX 5070 Ti X3 OC 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti X3 OC"
+    ]
+  },
+  {
+    "id": "gpu-49",
+    "category": "gpu",
+    "name": "ZOTAC GeForce RTX 5070 Ti Solid Core OC White",
+    "brand": "ZOTAC",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "ZOTAC GeForce RTX 5070 Ti Solid Core OC White",
+      "ZOTAC GeForce RTX 5070 Ti Solid Core OC White 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti Solid Core OC White"
+    ]
+  },
+  {
+    "id": "gpu-50",
+    "category": "gpu",
+    "name": "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC",
+      "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC 16 GB RTX 5070 Ti 4K-ready",
+      "TUF Gaming GeForce RTX 5070 Ti 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-51",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5070 Ti",
+      "4K-ready"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC",
+      "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC 16 GB RTX 5070 Ti 4K-ready",
+      "GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-52",
+    "category": "gpu",
+    "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
+      "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 16G VENTUS 3X OC WHITE"
+    ]
+  },
+  {
+    "id": "gpu-53",
+    "category": "gpu",
+    "name": "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
+      "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 16G GAMING TRIO OC WHITE"
+    ]
+  },
+  {
+    "id": "gpu-54",
+    "category": "gpu",
+    "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "MSI GeForce RTX 5080 16G VENTUS 3X OC",
+      "MSI GeForce RTX 5080 16G VENTUS 3X OC 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 16G VENTUS 3X OC"
+    ]
+  },
+  {
+    "id": "gpu-55",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
+      "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 WINDFORCE OC SFF 16GB"
+    ]
+  },
+  {
+    "id": "gpu-56",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
+      "Gigabyte GeForce RTX 5080 Aorus Master 16GB 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 Aorus Master 16GB"
+    ]
+  },
+  {
+    "id": "gpu-57",
+    "category": "gpu",
+    "name": "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
+      "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC 16 GB RTX 5080 4K",
+      "ROG ASTRAL GeForce RTX 5080 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-58",
+    "category": "gpu",
+    "name": "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
+      "ASUS TUF Gaming GeForce RTX 5080 16GB OC 16 GB RTX 5080 4K",
+      "TUF Gaming GeForce RTX 5080 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-59",
+    "category": "gpu",
+    "name": "ASUS Prime GeForce RTX 5080 16GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "ASUS Prime GeForce RTX 5080 16GB OC",
+      "ASUS Prime GeForce RTX 5080 16GB OC 16 GB RTX 5080 4K",
+      "Prime GeForce RTX 5080 16GB OC"
+    ]
+  },
+  {
+    "id": "gpu-60",
+    "category": "gpu",
+    "name": "INNO3D GeForce RTX 5080 X3 OC",
+    "brand": "INNO3D",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "INNO3D GeForce RTX 5080 X3 OC",
+      "INNO3D GeForce RTX 5080 X3 OC 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 X3 OC"
+    ]
+  },
+  {
+    "id": "gpu-61",
+    "category": "gpu",
+    "name": "Palit GeForce RTX 5080 GamingPro OC 16GB",
+    "brand": "Palit",
+    "price": 0,
+    "specs": [
+      "16 GB",
+      "RTX 5080",
+      "4K"
+    ],
+    "searchTerms": [
+      "Palit GeForce RTX 5080 GamingPro OC 16GB",
+      "Palit GeForce RTX 5080 GamingPro OC 16GB 16 GB RTX 5080 4K",
+      "GeForce RTX 5080 GamingPro OC 16GB"
+    ]
+  },
+  {
+    "id": "gpu-62",
+    "category": "gpu",
+    "name": "ASUS ROG Astral GeForce RTX 5090 32GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "ASUS ROG Astral GeForce RTX 5090 32GB OC",
+      "ASUS ROG Astral GeForce RTX 5090 32GB OC 32 GB RTX 5090 4K+",
+      "ROG Astral GeForce RTX 5090 32GB OC"
+    ]
+  },
+  {
+    "id": "gpu-63",
+    "category": "gpu",
+    "name": "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite",
+    "brand": "INNO3D",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite",
+      "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite 32 GB RTX 5090 4K+",
+      "GeForce RTX 5090 32GB iCHILL Frostbite"
+    ]
+  },
+  {
+    "id": "gpu-64",
+    "category": "gpu",
+    "name": "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
+      "ASUS TUF Gaming GeForce RTX 5090 32GB OC 32 GB RTX 5090 4K+",
+      "TUF Gaming GeForce RTX 5090 32GB OC"
+    ]
+  },
+  {
+    "id": "gpu-65",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
+      "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC 32 GB RTX 5090 4K+",
+      "GeForce RTX 5090 WINDFORCE 32GB OC"
+    ]
+  },
+  {
+    "id": "gpu-66",
+    "category": "gpu",
+    "name": "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
+    "brand": "Gigabyte",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
+      "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice 32 GB RTX 5090 4K+",
+      "GeForce RTX 5090 32GB Aorus Stealth Ice"
+    ]
+  },
+  {
+    "id": "gpu-67",
+    "category": "gpu",
+    "name": "ASUS ROG Astral GeForce RTX 5090 32GB",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "ASUS ROG Astral GeForce RTX 5090 32GB",
+      "ASUS ROG Astral GeForce RTX 5090 32GB 32 GB RTX 5090 4K+",
+      "ROG Astral GeForce RTX 5090 32GB"
+    ]
+  },
+  {
+    "id": "gpu-68",
+    "category": "gpu",
+    "name": "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "32 GB",
+      "RTX 5090",
+      "4K+"
+    ],
+    "searchTerms": [
+      "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
+      "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC 32 GB RTX 5090 4K+",
+      "ROG Astral LC GeForce RTX 5090 GAMING 32G OC"
     ]
   },
   {
@@ -1421,6 +2252,198 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
   },
   "gpu-20": {
     "source": "prisjakt_seed",
+    "note": null
+  },
+  "gpu-21": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-22": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-23": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-24": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-25": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-26": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-27": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-28": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-29": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-30": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-31": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-32": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-33": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-34": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-35": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-36": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-37": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-38": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-39": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-40": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-41": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-42": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-43": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-44": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-45": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-46": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-47": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-48": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-49": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-50": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-51": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-52": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-53": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-54": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-55": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-56": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-57": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-58": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-59": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-60": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-61": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-62": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-63": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-64": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-65": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-66": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-67": {
+    "source": "static_reference",
+    "note": null
+  },
+  "gpu-68": {
+    "source": "static_reference",
     "note": null
   },
   "ram-1": {

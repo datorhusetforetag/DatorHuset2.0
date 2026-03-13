@@ -131,6 +131,8 @@ type ComponentItem = {
   highlight?: string;
   socket?: "AM4" | "AM5" | "LGA1700" | "LGA1200";
   ramType?: "DDR4" | "DDR5";
+  gpuModel?: string;
+  performanceClass?: "Budget" | "Entry" | "Performance" | "Sweet-Spot" | "Extreme" | "Overkill";
   details?: Record<string, string>;
   selectedStore?: string;
   selectedCurrency?: string;
@@ -488,6 +490,11 @@ const getItemPsuModularValue = (item: ComponentItem) => {
   return "";
 };
 
+const getItemGpuPerformanceClass = (item: ComponentItem) => item.performanceClass || "";
+
+const getItemGpuExactModel = (item: ComponentItem) =>
+  item.category === undefined || item.id.startsWith("gpu-") ? item.gpuModel || item.name : "";
+
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   cpu: [
     {
@@ -658,165 +665,684 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   gpu: [
     {
       id: "gpu-1",
-      name: "NVIDIA GeForce RTX 4060",
-      brand: "NVIDIA",
-      price: 3790,
-      image: gpu4060Image,
-      specs: ["8 GB", "DLSS 3", "1080p"],
+      name: "ASUS Dual GeForce RTX 3050 6GB OC",
+      brand: "ASUS",
+      price: 2199,
+      image: gpu3050Image,
+      specs: ["6 GB", "RTX 3050", "1080p"],
+      performanceClass: "Budget",
+      gpuModel: "ASUS Dual GeForce RTX 3050 6GB OC",
     },
     {
       id: "gpu-2",
-      name: "NVIDIA GeForce RTX 4060 Ti",
-      brand: "NVIDIA",
-      price: 4690,
-      image: gpu4060TiImage,
-      specs: ["8 GB", "DLSS 3", "1440p"],
+      name: "ASUS Dual GeForce RTX 5050 8GB OC",
+      brand: "ASUS",
+      price: 2899,
+      image: gpu4060Image,
+      specs: ["8 GB", "RTX 5050", "1080p"],
+      performanceClass: "Budget",
+      gpuModel: "ASUS Dual GeForce RTX 5050 8GB OC",
     },
     {
       id: "gpu-3",
-      name: "NVIDIA GeForce RTX 4070",
-      brand: "NVIDIA",
-      price: 6990,
-      image: gpu4070Image,
-      specs: ["12 GB", "DLSS 3", "1440p"],
+      name: "Intel Arc B580 12GB Limited Edition",
+      brand: "Intel",
+      price: 3499,
+      image: gpuA770Image,
+      specs: ["12 GB", "Arc B580", "1080p+"],
+      performanceClass: "Entry",
+      gpuModel: "Intel Arc B580 12GB Limited Edition",
     },
     {
       id: "gpu-4",
-      name: "NVIDIA GeForce RTX 4070 Super",
-      brand: "NVIDIA",
-      price: 7990,
-      image: gpu4070SuperImage,
-      specs: ["12 GB", "DLSS 3", "1440p"],
-      highlight: "Bästa värde",
+      name: "Zotac GeForce RTX 3060 Twin Edge 12GB",
+      brand: "Zotac",
+      price: 3299,
+      image: gpu4060Image,
+      specs: ["12 GB", "RTX 3060", "1080p+"],
+      performanceClass: "Entry",
+      gpuModel: "Zotac GeForce RTX 3060 Twin Edge 12GB",
     },
     {
       id: "gpu-5",
-      name: "NVIDIA GeForce RTX 4080 Super",
-      brand: "NVIDIA",
-      price: 12990,
-      image: gpu4080SuperImage,
-      specs: ["16 GB", "DLSS 3", "4K"],
+      name: "ASUS Dual GeForce RTX 5060 8GB OC",
+      brand: "ASUS",
+      price: 3899,
+      image: gpu4060Image,
+      specs: ["8 GB", "RTX 5060", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "ASUS Dual GeForce RTX 5060 8GB OC",
     },
     {
       id: "gpu-6",
-      name: "NVIDIA GeForce RTX 4090",
-      brand: "NVIDIA",
-      price: 21990,
-      image: gpu4090Image,
-      specs: ["24 GB", "DLSS 3", "4K+"],
-      highlight: "Toppklass",
+      name: "PNY GeForce RTX 5060 OC Dual Fan",
+      brand: "PNY",
+      price: 3999,
+      image: gpu4060Image,
+      specs: ["8 GB", "RTX 5060", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "PNY GeForce RTX 5060 OC Dual Fan",
     },
     {
       id: "gpu-7",
-      name: "AMD Radeon RX 7600",
-      brand: "AMD",
-      price: 3190,
-      image: gpu7600Image,
-      specs: ["8 GB", "FSR", "1080p"],
+      name: "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC",
+      brand: "Gigabyte",
+      price: 4099,
+      image: gpu4060Image,
+      specs: ["8 GB", "RTX 5060", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC",
     },
     {
       id: "gpu-8",
-      name: "AMD Radeon RX 7700 XT",
-      brand: "AMD",
-      price: 4990,
-      image: gpu7700xtImage,
-      specs: ["12 GB", "FSR", "1440p"],
+      name: "ASUS Radeon RX 9060 XT 8GB Dual",
+      brand: "ASUS",
+      price: 4190,
+      image: gpu9060xtImage,
+      specs: ["8 GB", "RX 9060 XT", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "ASUS Radeon RX 9060 XT 8GB Dual",
     },
     {
       id: "gpu-9",
-      name: "AMD Radeon RX 7800 XT",
-      brand: "AMD",
-      price: 5990,
-      image: gpu7800xtImage,
-      specs: ["16 GB", "FSR", "1440p"],
+      name: "Gigabyte Radeon RX 9060 XT GAMING 8GB OC",
+      brand: "Gigabyte",
+      price: 4290,
+      image: gpu9060xtImage,
+      specs: ["8 GB", "RX 9060 XT", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "Gigabyte Radeon RX 9060 XT GAMING 8GB OC",
     },
     {
       id: "gpu-10",
-      name: "Intel Arc A770",
-      brand: "Intel",
-      price: 3290,
-      image: gpuA770Image,
-      specs: ["16 GB", "XeSS", "1080p"],
+      name: "XFX Swift AMD Radeon RX 9060 XT OC Gaming White",
+      brand: "XFX",
+      price: 4390,
+      image: gpu9060xtImage,
+      specs: ["8 GB", "RX 9060 XT", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "XFX Swift AMD Radeon RX 9060 XT OC Gaming White",
     },
     {
       id: "gpu-11",
-      name: "ASUS Dual GeForce RTX 3050 6GB OC",
-      brand: "ASUS",
-      price: 2200,
-      image: gpu3050Image,
-      specs: ["6 GB", "RTX 3050"],
+      name: "Acer Nitro Radeon RX 9060 XT OC 8GB",
+      brand: "Acer",
+      price: 4090,
+      image: gpu9060xtImage,
+      specs: ["8 GB", "RX 9060 XT", "1080p+"],
+      performanceClass: "Performance",
+      gpuModel: "Acer Nitro Radeon RX 9060 XT OC 8GB",
     },
     {
       id: "gpu-12",
-      name: "ASUS Dual Radeon RX 7600 EVO OC",
-      brand: "ASUS",
-      price: 3300,
-      image: gpuRx7600Image,
-      specs: ["RX 7600"],
+      name: "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS",
+      brand: "MSI",
+      price: 4990,
+      image: gpu5060TiImage,
+      specs: ["8 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS",
     },
     {
       id: "gpu-13",
-      name: "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
-      brand: "ASUS",
-      price: 4500,
-      image: gpu9060xtImage,
-      specs: ["8 GB", "RX 9060 XT"],
+      name: "Gainward GeForce RTX 5060 Ti Ghost 8GB",
+      brand: "Gainward",
+      price: 5090,
+      image: gpu5060TiImage,
+      specs: ["8 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "Gainward GeForce RTX 5060 Ti Ghost 8GB",
     },
     {
       id: "gpu-14",
-      name: "PNY GeForce RTX 5060 Ti Dual Fan OC",
-      brand: "PNY",
-      price: 5000,
+      name: "Gigabyte GeForce RTX 5060 Ti AERO OC",
+      brand: "Gigabyte",
+      price: 5290,
       image: gpu5060TiImage,
-      specs: ["RTX 5060 Ti"],
+      specs: ["8 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "Gigabyte GeForce RTX 5060 Ti AERO OC",
     },
     {
       id: "gpu-15",
-      name: "RTX 5070",
-      brand: "NVIDIA",
-      price: 6500,
-      image: gpu5070Image,
-      specs: ["RTX 5070"],
+      name: "Gigabyte GeForce RTX 5060 Ti WINDFORCE",
+      brand: "Gigabyte",
+      price: 4890,
+      image: gpu5060TiImage,
+      specs: ["8 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "Gigabyte GeForce RTX 5060 Ti WINDFORCE",
     },
     {
       id: "gpu-16",
-      name: "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
-      brand: "Gigabyte",
-      price: 6700,
-      image: gpu5070Image,
-      specs: ["12 GB", "RTX 5070"],
+      name: "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS",
+      brand: "MSI",
+      price: 5790,
+      image: gpu5060TiImage,
+      specs: ["16 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS",
     },
     {
       id: "gpu-17",
-      name: "ASUS PRIME Radeon RX 9070 XT 16GB OC",
-      brand: "ASUS",
-      price: 7500,
-      image: gpu9070xtImage,
-      specs: ["16 GB", "RX 9070 XT"],
+      name: "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC",
+      brand: "Gigabyte",
+      price: 5890,
+      image: gpu5060TiImage,
+      specs: ["16 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC",
     },
     {
       id: "gpu-18",
-      name: "Asus Dual GeForce RTX 5070 OC",
+      name: "ASUS GeForce RTX 5060 Ti Dual 16GB OC",
       brand: "ASUS",
-      price: 6900,
-      image: gpu5070Image,
-      specs: ["RTX 5070"],
+      price: 6090,
+      image: gpu5060TiImage,
+      specs: ["16 GB", "RTX 5060 Ti", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "ASUS GeForce RTX 5060 Ti Dual 16GB OC",
     },
     {
       id: "gpu-19",
-      name: "ASUS Prime GeForce RTX 5080 16GB OC",
-      brand: "ASUS",
-      price: 11500,
-      image: gpu5080Image,
-      specs: ["16 GB", "RTX 5080"],
+      name: "Gigabyte Radeon RX 9060 XT GAMING 16GB OC",
+      brand: "Gigabyte",
+      price: 5390,
+      image: gpu9060xtImage,
+      specs: ["16 GB", "RX 9060 XT", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "Gigabyte Radeon RX 9060 XT GAMING 16GB OC",
     },
     {
       id: "gpu-20",
-      name: "INNO3D GeForce RTX 5080 16GB X3 OC White",
+      name: "Sapphire PULSE RX 9060 XT GAMING OC 16GB",
+      brand: "Sapphire",
+      price: 5490,
+      image: gpu9060xtImage,
+      specs: ["16 GB", "RX 9060 XT", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "Sapphire PULSE RX 9060 XT GAMING OC 16GB",
+    },
+    {
+      id: "gpu-21",
+      name: "PowerColor Reaper AMD Radeon RX 9060 XT",
+      brand: "PowerColor",
+      price: 5590,
+      image: gpu9060xtImage,
+      specs: ["16 GB", "RX 9060 XT", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "PowerColor Reaper AMD Radeon RX 9060 XT",
+    },
+    {
+      id: "gpu-22",
+      name: "ASUS Prime Radeon RX 9060 XT 16GB OC",
+      brand: "ASUS",
+      price: 5790,
+      image: gpu9060xtImage,
+      specs: ["16 GB", "RX 9060 XT", "1440p"],
+      performanceClass: "Sweet-Spot",
+      gpuModel: "ASUS Prime Radeon RX 9060 XT 16GB OC",
+    },
+    {
+      id: "gpu-23",
+      name: "PowerColor Reaper AMD Radeon RX 9070",
+      brand: "PowerColor",
+      price: 7290,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "PowerColor Reaper AMD Radeon RX 9070",
+    },
+    {
+      id: "gpu-24",
+      name: "ASUS PRIME Radeon RX 9070 16GB OC",
+      brand: "ASUS",
+      price: 7490,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS PRIME Radeon RX 9070 16GB OC",
+    },
+    {
+      id: "gpu-25",
+      name: "Sapphire PULSE RX 9070 GAMING 16 GB",
+      brand: "Sapphire",
+      price: 7590,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "Sapphire PULSE RX 9070 GAMING 16 GB",
+    },
+    {
+      id: "gpu-26",
+      name: "XFX Radeon RX 9070 Swift Triple 90mm Fan Black",
+      brand: "XFX",
+      price: 7690,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "XFX Radeon RX 9070 Swift Triple 90mm Fan Black",
+    },
+    {
+      id: "gpu-27",
+      name: "XFX Radeon RX 9070 Swift Triple 90mm Fan White",
+      brand: "XFX",
+      price: 7790,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "XFX Radeon RX 9070 Swift Triple 90mm Fan White",
+    },
+    {
+      id: "gpu-28",
+      name: "Sapphire PURE RX 9070 GAMING 16 GB",
+      brand: "Sapphire",
+      price: 7890,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "Sapphire PURE RX 9070 GAMING 16 GB",
+    },
+    {
+      id: "gpu-29",
+      name: "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC",
+      brand: "Gigabyte",
+      price: 6790,
+      image: gpu5070Image,
+      specs: ["12 GB", "RTX 5070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC",
+    },
+    {
+      id: "gpu-30",
+      name: "MSI GeForce RTX 5070 12G VENTUS 2X OC",
+      brand: "MSI",
+      price: 6990,
+      image: gpu5070Image,
+      specs: ["12 GB", "RTX 5070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "MSI GeForce RTX 5070 12G VENTUS 2X OC",
+    },
+    {
+      id: "gpu-31",
+      name: "ASUS PRIME GeForce RTX 5070 12GB OC",
+      brand: "ASUS",
+      price: 7090,
+      image: gpu5070Image,
+      specs: ["12 GB", "RTX 5070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS PRIME GeForce RTX 5070 12GB OC",
+    },
+    {
+      id: "gpu-32",
+      name: "Gigabyte GeForce RTX 5070 EAGLE OC ICE",
+      brand: "Gigabyte",
+      price: 7190,
+      image: gpu5070Image,
+      specs: ["12 GB", "RTX 5070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "Gigabyte GeForce RTX 5070 EAGLE OC ICE",
+    },
+    {
+      id: "gpu-33",
+      name: "ASUS GeForce RTX 5070 Dual 12GB OC",
+      brand: "ASUS",
+      price: 7290,
+      image: gpu5070Image,
+      specs: ["12 GB", "RTX 5070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS GeForce RTX 5070 Dual 12GB OC",
+    },
+    {
+      id: "gpu-34",
+      name: "Zotac Gaming GeForce RTX 5070 Twin Edge",
+      brand: "Zotac",
+      price: 7190,
+      image: gpu5070Image,
+      specs: ["12 GB", "RTX 5070", "1440p Ultra"],
+      performanceClass: "Extreme",
+      gpuModel: "Zotac Gaming GeForce RTX 5070 Twin Edge",
+    },
+    {
+      id: "gpu-35",
+      name: "PowerColor Reaper AMD Radeon RX 9070 XT",
+      brand: "PowerColor",
+      price: 8290,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "PowerColor Reaper AMD Radeon RX 9070 XT",
+    },
+    {
+      id: "gpu-36",
+      name: "Sapphire NITRO+ RX 9070 XT GAMING 16 GB",
+      brand: "Sapphire",
+      price: 9190,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "Sapphire NITRO+ RX 9070 XT GAMING 16 GB",
+    },
+    {
+      id: "gpu-37",
+      name: "Sapphire PULSE RX 9070 XT GAMING 16 GB",
+      brand: "Sapphire",
+      price: 8690,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "Sapphire PULSE RX 9070 XT GAMING 16 GB",
+    },
+    {
+      id: "gpu-38",
+      name: "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC",
+      brand: "ASUS",
+      price: 9390,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC",
+    },
+    {
+      id: "gpu-39",
+      name: "ASUS Prime Radeon RX 9070 XT OC White",
+      brand: "ASUS",
+      price: 8990,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS Prime Radeon RX 9070 XT OC White",
+    },
+    {
+      id: "gpu-40",
+      name: "ASRock Radeon RX 9070 XT Steel Legend 16GB",
+      brand: "ASRock",
+      price: 9490,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "ASRock Radeon RX 9070 XT Steel Legend 16GB",
+    },
+    {
+      id: "gpu-41",
+      name: "ASUS PRIME Radeon RX 9070 XT 16GB OC",
+      brand: "ASUS",
+      price: 8890,
+      image: gpu9070xtImage,
+      specs: ["16 GB", "RX 9070 XT", "1440p/4K"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS PRIME Radeon RX 9070 XT 16GB OC",
+    },
+    {
+      id: "gpu-42",
+      name: "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB",
+      brand: "MSI",
+      price: 10490,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB",
+    },
+    {
+      id: "gpu-43",
+      name: "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC",
+      brand: "MSI",
+      price: 10690,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC",
+    },
+    {
+      id: "gpu-44",
+      name: "ASUS PRIME GeForce RTX 5070 Ti 16GB OC",
+      brand: "ASUS",
+      price: 10790,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS PRIME GeForce RTX 5070 Ti 16GB OC",
+    },
+    {
+      id: "gpu-45",
+      name: "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC",
+      brand: "Gigabyte",
+      price: 10890,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC",
+    },
+    {
+      id: "gpu-46",
+      name: "Inno3D GeForce RTX 5070 Ti X3 OC White",
+      brand: "Inno3D",
+      price: 10990,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "Inno3D GeForce RTX 5070 Ti X3 OC White",
+    },
+    {
+      id: "gpu-47",
+      name: "PNY GeForce RTX 5070 Ti OC",
+      brand: "PNY",
+      price: 10990,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "PNY GeForce RTX 5070 Ti OC",
+    },
+    {
+      id: "gpu-48",
+      name: "INNO3D GeForce RTX 5070 Ti X3 OC",
       brand: "INNO3D",
-      price: 11800,
+      price: 10890,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "INNO3D GeForce RTX 5070 Ti X3 OC",
+    },
+    {
+      id: "gpu-49",
+      name: "ZOTAC GeForce RTX 5070 Ti Solid Core OC White",
+      brand: "ZOTAC",
+      price: 11290,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "ZOTAC GeForce RTX 5070 Ti Solid Core OC White",
+    },
+    {
+      id: "gpu-50",
+      name: "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC",
+      brand: "ASUS",
+      price: 11490,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC",
+    },
+    {
+      id: "gpu-51",
+      name: "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC",
+      brand: "Gigabyte",
+      price: 11390,
+      image: gpu5070Image,
+      specs: ["16 GB", "RTX 5070 Ti", "4K-ready"],
+      performanceClass: "Extreme",
+      gpuModel: "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC",
+    },
+    {
+      id: "gpu-52",
+      name: "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
+      brand: "MSI",
+      price: 14490,
       image: gpu5080Image,
-      specs: ["16 GB", "RTX 5080"],
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
+    },
+    {
+      id: "gpu-53",
+      name: "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
+      brand: "MSI",
+      price: 15490,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
+    },
+    {
+      id: "gpu-54",
+      name: "MSI GeForce RTX 5080 16G VENTUS 3X OC",
+      brand: "MSI",
+      price: 14290,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "MSI GeForce RTX 5080 16G VENTUS 3X OC",
+    },
+    {
+      id: "gpu-55",
+      name: "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
+      brand: "Gigabyte",
+      price: 14590,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
+    },
+    {
+      id: "gpu-56",
+      name: "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
+      brand: "Gigabyte",
+      price: 16990,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
+    },
+    {
+      id: "gpu-57",
+      name: "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
+      brand: "ASUS",
+      price: 17490,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
+    },
+    {
+      id: "gpu-58",
+      name: "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
+      brand: "ASUS",
+      price: 15990,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
+    },
+    {
+      id: "gpu-59",
+      name: "ASUS Prime GeForce RTX 5080 16GB OC",
+      brand: "ASUS",
+      price: 14990,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS Prime GeForce RTX 5080 16GB OC",
+    },
+    {
+      id: "gpu-60",
+      name: "INNO3D GeForce RTX 5080 X3 OC",
+      brand: "INNO3D",
+      price: 14690,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "INNO3D GeForce RTX 5080 X3 OC",
+    },
+    {
+      id: "gpu-61",
+      name: "Palit GeForce RTX 5080 GamingPro OC 16GB",
+      brand: "Palit",
+      price: 14890,
+      image: gpu5080Image,
+      specs: ["16 GB", "RTX 5080", "4K"],
+      performanceClass: "Overkill",
+      gpuModel: "Palit GeForce RTX 5080 GamingPro OC 16GB",
+    },
+    {
+      id: "gpu-62",
+      name: "ASUS ROG Astral GeForce RTX 5090 32GB OC",
+      brand: "ASUS",
+      price: 37990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS ROG Astral GeForce RTX 5090 32GB OC",
+    },
+    {
+      id: "gpu-63",
+      name: "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite",
+      brand: "INNO3D",
+      price: 36990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite",
+    },
+    {
+      id: "gpu-64",
+      name: "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
+      brand: "ASUS",
+      price: 35990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
+    },
+    {
+      id: "gpu-65",
+      name: "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
+      brand: "Gigabyte",
+      price: 34990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
+    },
+    {
+      id: "gpu-66",
+      name: "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
+      brand: "Gigabyte",
+      price: 38990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
+    },
+    {
+      id: "gpu-67",
+      name: "ASUS ROG Astral GeForce RTX 5090 32GB",
+      brand: "ASUS",
+      price: 36990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS ROG Astral GeForce RTX 5090 32GB",
+    },
+    {
+      id: "gpu-68",
+      name: "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
+      brand: "ASUS",
+      price: 41990,
+      image: gpu4090Image,
+      specs: ["32 GB", "RTX 5090", "4K+"],
+      performanceClass: "Overkill",
+      gpuModel: "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
+      highlight: "Toppklass",
     },
   ],
   motherboard: [
@@ -1499,6 +2025,8 @@ export default function CustomBuild() {
   const [formFactorFilters, setFormFactorFilters] = useState<string[]>([]);
   const [pcieGenerationFilters, setPcieGenerationFilters] = useState<string[]>([]);
   const [storageTypeFilters, setStorageTypeFilters] = useState<string[]>([]);
+  const [gpuPerformanceFilters, setGpuPerformanceFilters] = useState<string[]>([]);
+  const [gpuExactModelFilter, setGpuExactModelFilter] = useState("Alla");
   const [psuRatingFilters, setPsuRatingFilters] = useState<string[]>([]);
   const [psuModularFilter, setPsuModularFilter] = useState<"Alla" | "Modular">("Alla");
   const [psuWattageRange, setPsuWattageRange] = useState<[number, number]>([0, 0]);
@@ -1676,6 +2204,14 @@ export default function CustomBuild() {
     () => Array.from(new Set(items.map((item) => getItemSocketFilterValue(item)).filter(Boolean))),
     [items]
   );
+  const gpuPerformanceFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemGpuPerformanceClass(item)).filter(Boolean))),
+    [items]
+  );
+  const gpuExactModelFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemGpuExactModel(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
+    [items]
+  );
   const ramTypeFilterOptions = useMemo(
     () => Array.from(new Set(items.map((item) => getItemRamTypeFilterValue(item)).filter(Boolean))),
     [items]
@@ -1757,6 +2293,7 @@ export default function CustomBuild() {
   };
 
   const usesSocketFilters = activeCategory === "cpu" || activeCategory === "motherboard";
+  const usesGpuFilters = activeCategory === "gpu";
   const usesRamTypeFilters = activeCategory === "motherboard" || activeCategory === "ram";
   const usesFormFactorFilters = activeCategory === "motherboard" || activeCategory === "case";
   const usesPcieGenerationFilters = activeCategory === "motherboard" || activeCategory === "storage";
@@ -1765,6 +2302,10 @@ export default function CustomBuild() {
 
   const clearAdvancedFilters = () => {
     if (usesSocketFilters) setSocketFilters([]);
+    if (usesGpuFilters) {
+      setGpuPerformanceFilters([]);
+      setGpuExactModelFilter("Alla");
+    }
     if (usesRamTypeFilters) setRamTypeFilters([]);
     if (usesFormFactorFilters) setFormFactorFilters([]);
     if (usesPcieGenerationFilters) setPcieGenerationFilters([]);
@@ -1778,6 +2319,7 @@ export default function CustomBuild() {
 
   const hasActiveAdvancedFilters =
     (usesSocketFilters && socketFilters.length > 0) ||
+    (usesGpuFilters && (gpuPerformanceFilters.length > 0 || gpuExactModelFilter !== "Alla")) ||
     (usesRamTypeFilters && ramTypeFilters.length > 0) ||
     (usesFormFactorFilters && formFactorFilters.length > 0) ||
     (usesPcieGenerationFilters && pcieGenerationFilters.length > 0) ||
@@ -1807,6 +2349,8 @@ export default function CustomBuild() {
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
       const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
       const itemSocket = getItemSocketFilterValue(item);
+      const itemGpuPerformanceClass = getItemGpuPerformanceClass(item);
+      const itemGpuExactModel = getItemGpuExactModel(item);
       const itemRamType = getItemRamTypeFilterValue(item);
       const itemFormFactor = getItemFormFactorFilterValue(item);
       const itemPcieGeneration = getItemPcieGenerationFilterValue(item);
@@ -1817,6 +2361,12 @@ export default function CustomBuild() {
 
       const matchesSelectedSocketFilter =
         !usesSocketFilters || socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
+      const matchesSelectedGpuPerformanceFilter =
+        !usesGpuFilters ||
+        gpuPerformanceFilters.length === 0 ||
+        (itemGpuPerformanceClass ? gpuPerformanceFilters.includes(itemGpuPerformanceClass) : false);
+      const matchesSelectedGpuExactModelFilter =
+        !usesGpuFilters || gpuExactModelFilter === "Alla" || itemGpuExactModel === gpuExactModelFilter;
       const matchesSelectedRamTypeFilter =
         !usesRamTypeFilters || ramTypeFilters.length === 0 || (itemRamType ? ramTypeFilters.includes(itemRamType) : false);
       const matchesSelectedFormFactorFilter =
@@ -1849,6 +2399,8 @@ export default function CustomBuild() {
         matchesRamType &&
         matchesPrice &&
         matchesSelectedSocketFilter &&
+        matchesSelectedGpuPerformanceFilter &&
+        matchesSelectedGpuExactModelFilter &&
         matchesSelectedRamTypeFilter &&
         matchesSelectedFormFactorFilter &&
         matchesSelectedPcieGenerationFilter &&
@@ -1868,6 +2420,8 @@ export default function CustomBuild() {
     priceRange,
     lowestOfferPriceByItemId,
     socketFilters,
+    gpuPerformanceFilters,
+    gpuExactModelFilter,
     ramTypeFilters,
     formFactorFilters,
     pcieGenerationFilters,
@@ -1876,6 +2430,7 @@ export default function CustomBuild() {
     psuModularFilter,
     psuWattageRange,
     usesSocketFilters,
+    usesGpuFilters,
     usesRamTypeFilters,
     usesFormFactorFilters,
     usesPcieGenerationFilters,
@@ -2521,6 +3076,48 @@ export default function CustomBuild() {
                               {socket}
                             </button>
                           ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeCategory === "gpu" && gpuPerformanceFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Prestandaklass</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {gpuPerformanceFilterOptions.map((performanceClass) => (
+                            <button
+                              key={performanceClass}
+                              type="button"
+                              onClick={() => toggleArrayFilter(performanceClass, setGpuPerformanceFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                gpuPerformanceFilters.includes(performanceClass)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {performanceClass}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeCategory === "gpu" && gpuExactModelFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Exakt modell</p>
+                        <div className="mt-2">
+                          <select
+                            value={gpuExactModelFilter}
+                            onChange={(event) => setGpuExactModelFilter(event.target.value)}
+                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
+                          >
+                            <option value="Alla">Alla modeller</option>
+                            {gpuExactModelFilterOptions.map((gpuModel) => (
+                              <option key={gpuModel} value={gpuModel}>
+                                {gpuModel}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     ) : null}
