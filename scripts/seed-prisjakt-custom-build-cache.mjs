@@ -103,6 +103,19 @@ function extractModelTokens(value) {
   return Array.from(new Set(tokenize(value).filter((token) => token.length >= 3 && /\d/.test(token))));
 }
 
+function extractAlphaTokens(value) {
+  return Array.from(
+    new Set(
+      tokenize(value).filter(
+        (token) =>
+          token.length >= 4 &&
+          !/\d/.test(token) &&
+          !["argb", "rgb", "wifi", "gold", "black", "white"].includes(token)
+      )
+    )
+  );
+}
+
 function matchesModelTokens(text, modelTokens) {
   if (!modelTokens.length) return true;
   const haystack = normalizeKey(text);
@@ -263,9 +276,13 @@ function scorePrisjaktProductHtmlForItem(html, item) {
   if (!title) return -1;
   const combinedQuery = [item?.name || "", ...(Array.isArray(item?.searchTerms) ? item.searchTerms : [])].join(" ");
   const modelTokens = extractModelTokens(combinedQuery);
+  const alphaTokens = extractAlphaTokens(item?.name || "");
   if (!matchesModelTokens(title, modelTokens)) return -1;
   const normalizedTitle = normalizeKey(title);
   const normalizedName = normalizeKey(combinedQuery);
+  if (alphaTokens.length > 0 && !alphaTokens.some((token) => normalizedTitle.includes(token))) {
+    return -1;
+  }
   let score = scoreTitleAgainstQuery(title, combinedQuery);
   if (normalizedTitle === normalizedName) score += 12;
   if (normalizedTitle.includes(normalizedName)) score += 6;

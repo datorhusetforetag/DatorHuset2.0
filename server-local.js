@@ -901,6 +901,18 @@ const extractModelTokensFromQuery = (query) =>
     new Set(tokenizeForSearchMatch(query).filter((token) => token.length >= 3 && /\d/.test(token)))
   );
 
+const extractAlphaTokensFromQuery = (query) =>
+  Array.from(
+    new Set(
+      tokenizeForSearchMatch(query).filter(
+        (token) =>
+          token.length >= 4 &&
+          !/\d/.test(token) &&
+          !["argb", "rgb", "wifi", "gold", "black", "white"].includes(token)
+      )
+    )
+  );
+
 const matchesModelTokens = (text, modelTokens) => {
   if (!Array.isArray(modelTokens) || modelTokens.length === 0) return true;
   const normalizedText = normalizeStorePriceQueryKey(text);
@@ -1656,11 +1668,15 @@ const scorePrisjaktProductMarkdownForItem = (markdown, item) => {
   const combinedQuery = [item?.name || "", ...firstArray(item?.searchTerms)].join(" ");
   const queryTokens = tokenizeForSearchMatch(combinedQuery);
   const modelTokens = extractModelTokensFromQuery(combinedQuery);
+  const alphaTokens = extractAlphaTokensFromQuery(item?.name || "");
   if (!matchesModelTokens(title, modelTokens)) {
     return -1;
   }
   const normalizedTitle = normalizeStorePriceQueryKey(title);
   const normalizedName = normalizeStorePriceQueryKey(combinedQuery);
+  if (alphaTokens.length > 0 && !alphaTokens.some((token) => normalizedTitle.includes(token))) {
+    return -1;
+  }
   let score = scoreTitleAgainstQuery(title, queryTokens);
   if (normalizedTitle === normalizedName) score += 12;
   if (normalizedTitle.includes(normalizedName)) score += 6;

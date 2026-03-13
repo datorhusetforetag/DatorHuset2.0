@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T12:50:57.935Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T13:48:20.775Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-5-5500": 989,
@@ -153,11 +153,11 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cool-1": 1049,
   "cool-2": 1127,
   "cool-3": 899,
-  "cool-4": 575,
-  "cool-5": 575,
+  "cool-4": 3116,
+  "cool-5": 885,
   "cool-6": 701,
-  "cool-7": 832,
-  "cool-8": 575,
+  "cool-7": 2142,
+  "cool-8": 1471,
   "cool-9": 417,
   "cool-10": 799
 };
@@ -1071,19 +1071,19 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   },
   "cool-3": {
     "category": "cooling",
-    "name": "Corsair iCUE H150i",
+    "name": "Corsair Nautilus 360",
     "source": "prisjakt_seed",
     "note": null
   },
   "cool-4": {
     "category": "cooling",
-    "name": "NZXT Kraken 360",
+    "name": "NZXT Kraken Elite V2 360",
     "source": "prisjakt_seed",
     "note": null
   },
   "cool-5": {
     "category": "cooling",
-    "name": "Arctic Liquid Freezer II 360",
+    "name": "Arctic Liquid Freezer III Pro 360",
     "source": "prisjakt_seed",
     "note": null
   },
@@ -1095,13 +1095,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   },
   "cool-7": {
     "category": "cooling",
-    "name": "Lian Li Galahad II",
+    "name": "Lian Li Galahad II Trinity SL-INF 360",
     "source": "prisjakt_seed",
     "note": null
   },
   "cool-8": {
     "category": "cooling",
-    "name": "Cooler Master MasterLiquid 360",
+    "name": "Cooler Master Liquid 360 ATMOS II VRM",
     "source": "prisjakt_seed",
     "note": null
   },
@@ -1113,7 +1113,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   },
   "cool-10": {
     "category": "cooling",
-    "name": "Corsair iCUE H100i",
+    "name": "Corsair Nautilus 240",
     "source": "prisjakt_seed",
     "note": null
   }

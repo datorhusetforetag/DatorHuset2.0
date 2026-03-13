@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-13T12:50:51.007Z",
+  "saved_at": "2026-03-13T13:48:13.472Z",
   "entries": [
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-5-5500",
@@ -4106,12 +4106,12 @@
     {
       "key": "prisjakt-v1:cool-3",
       "item_id": "cool-3",
-      "updatedAt": 1773406250445,
+      "updatedAt": 1773409690748,
       "response": {
         "ok": true,
         "item_id": "cool-3",
-        "updated_at": "2026-03-13T12:50:50.445Z",
-        "next_refresh_at": "2026-03-14T12:50:50.445Z",
+        "updated_at": "2026-03-13T13:48:10.748Z",
+        "next_refresh_at": "2026-03-14T13:48:10.748Z",
         "lowest_price": 899,
         "offers": [
           {
@@ -4126,7 +4126,7 @@
             "shipping_price": null,
             "availability": "in_stock",
             "error": null,
-            "updated_at": "2026-03-13T12:50:50.445Z"
+            "updated_at": "2026-03-13T13:48:10.748Z"
           },
           {
             "store_id": "netonnet",
@@ -4140,75 +4140,127 @@
             "shipping_price": null,
             "availability": "in_stock",
             "error": null,
-            "updated_at": "2026-03-13T12:50:50.445Z"
+            "updated_at": "2026-03-13T13:48:10.748Z"
           }
-        ]
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=13974798",
+        "source_product_title": "Corsair Nautilus 360 (3x120mm)"
       }
     },
     {
       "key": "prisjakt-v1:cool-4",
       "item_id": "cool-4",
-      "updatedAt": 1773289363395,
+      "updatedAt": 1773409691241,
       "response": {
+        "ok": true,
+        "item_id": "cool-4",
+        "updated_at": "2026-03-13T13:48:11.241Z",
+        "next_refresh_at": "2026-03-14T13:48:11.241Z",
+        "lowest_price": 3116,
         "offers": [
-          {
-            "store_id": "amazon-se",
-            "store": "Amazon.se",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0G39F6MQH?client_id=1331",
-            "search_url": null,
-            "price": 575,
-            "total_price": 575,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          },
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3204312?client_id=1331",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3301175?client_id=1331",
             "search_url": null,
-            "price": 899,
-            "total_price": 899,
+            "price": 3116,
+            "total_price": 3116,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "in_stock"
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:11.241Z"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/857299?client_id=1331",
+            "search_url": null,
+            "price": 3117,
+            "total_price": 3117,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:11.241Z"
           }
-        ]
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=13952117",
+        "source_product_title": "NZXT Kraken Elite V2 360mm (3x120mm)"
       }
     },
     {
       "key": "prisjakt-v1:cool-5",
       "item_id": "cool-5",
-      "updatedAt": 1773289371414,
+      "updatedAt": 1773409691755,
       "response": {
+        "ok": true,
+        "item_id": "cool-5",
+        "updated_at": "2026-03-13T13:48:11.755Z",
+        "next_refresh_at": "2026-03-14T13:48:11.755Z",
+        "lowest_price": 885,
         "offers": [
-          {
-            "store_id": "amazon-se",
-            "store": "Amazon.se",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0G39F6MQH?client_id=1331",
-            "search_url": null,
-            "price": 575,
-            "total_price": 575,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          },
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3204312?client_id=1331",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3358405?client_id=1331",
             "search_url": null,
-            "price": 899,
-            "total_price": 899,
+            "price": 885,
+            "total_price": 885,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "in_stock"
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:11.755Z"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/966781?client_id=1331",
+            "search_url": null,
+            "price": 897,
+            "total_price": 897,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:11.755Z"
+          },
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DLWGG85P?client_id=1331",
+            "search_url": null,
+            "price": 928,
+            "total_price": 928,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:11.755Z"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1054960?client_id=1331",
+            "search_url": null,
+            "price": 969,
+            "total_price": 969,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:11.755Z"
           }
-        ]
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=14578271",
+        "source_product_title": "Arctic Liquid Freezer III Pro 360 (3x120mm)"
       }
     },
     {
@@ -4235,55 +4287,75 @@
     {
       "key": "prisjakt-v1:cool-7",
       "item_id": "cool-7",
-      "updatedAt": 1773289385895,
+      "updatedAt": 1773409692439,
       "response": {
+        "ok": true,
+        "item_id": "cool-7",
+        "updated_at": "2026-03-13T13:48:12.439Z",
+        "next_refresh_at": "2026-03-14T13:48:12.439Z",
+        "lowest_price": 2142,
         "offers": [
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3208708?client_id=1331",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3190107?client_id=1331",
             "search_url": null,
-            "price": 832,
-            "total_price": 832,
+            "price": 2142,
+            "total_price": 2142,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "in_stock"
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:12.439Z"
           }
-        ]
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=12568292",
+        "source_product_title": "Lian Li Galahad II Trinity SL-INF 360"
       }
     },
     {
       "key": "prisjakt-v1:cool-8",
       "item_id": "cool-8",
-      "updatedAt": 1773289392130,
+      "updatedAt": 1773409692935,
       "response": {
+        "ok": true,
+        "item_id": "cool-8",
+        "updated_at": "2026-03-13T13:48:12.935Z",
+        "next_refresh_at": "2026-03-14T13:48:12.935Z",
+        "lowest_price": 1471,
         "offers": [
-          {
-            "store_id": "amazon-se",
-            "store": "Amazon.se",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0G39F6MQH?client_id=1331",
-            "search_url": null,
-            "price": 575,
-            "total_price": 575,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          },
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3204312?client_id=1331",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3419087?client_id=1331",
             "search_url": null,
-            "price": 899,
-            "total_price": 899,
+            "price": 1471,
+            "total_price": 1471,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "in_stock"
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:12.935Z"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/390920?client_id=1331",
+            "search_url": null,
+            "price": 1699,
+            "total_price": 1699,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "error": null,
+            "updated_at": "2026-03-13T13:48:12.935Z"
           }
-        ]
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=15371098",
+        "source_product_title": "Cooler Master Liquid 360 ATMOS II VRM (3x120mm)"
       }
     },
     {
@@ -4334,12 +4406,12 @@
     {
       "key": "prisjakt-v1:cool-10",
       "item_id": "cool-10",
-      "updatedAt": 1773406251007,
+      "updatedAt": 1773409693472,
       "response": {
         "ok": true,
         "item_id": "cool-10",
-        "updated_at": "2026-03-13T12:50:51.007Z",
-        "next_refresh_at": "2026-03-14T12:50:51.007Z",
+        "updated_at": "2026-03-13T13:48:13.472Z",
+        "next_refresh_at": "2026-03-14T13:48:13.472Z",
         "lowest_price": 799,
         "offers": [
           {
@@ -4354,7 +4426,7 @@
             "shipping_price": null,
             "availability": "in_stock",
             "error": null,
-            "updated_at": "2026-03-13T12:50:51.007Z"
+            "updated_at": "2026-03-13T13:48:13.472Z"
           },
           {
             "store_id": "netonnet",
@@ -4368,13 +4440,13 @@
             "shipping_price": null,
             "availability": "in_stock",
             "error": null,
-            "updated_at": "2026-03-13T12:50:51.007Z"
+            "updated_at": "2026-03-13T13:48:13.472Z"
           },
           {
             "store_id": "webhallen",
             "store": "Webhallen",
             "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/388883?client_id=1331&amp;promotion_id=tWBNJNAc3jxsl0Zs7rF9",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/388883?client_id=1331&promotion_id=tWBNJNAc3jxsl0Zs7rF9",
             "search_url": null,
             "price": 899,
             "total_price": 899,
@@ -4382,7 +4454,7 @@
             "shipping_price": null,
             "availability": "in_stock",
             "error": null,
-            "updated_at": "2026-03-13T12:50:51.007Z"
+            "updated_at": "2026-03-13T13:48:13.472Z"
           },
           {
             "store_id": "proshop",
@@ -4396,9 +4468,11 @@
             "shipping_price": null,
             "availability": "in_stock",
             "error": null,
-            "updated_at": "2026-03-13T12:50:51.007Z"
+            "updated_at": "2026-03-13T13:48:13.472Z"
           }
-        ]
+        ],
+        "source_product_url": "https://www.prisjakt.nu/produkt.php?p=13974807",
+        "source_product_title": "Corsair Nautilus 240 (2x120mm)"
       }
     }
   ]
