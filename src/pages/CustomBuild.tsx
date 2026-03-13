@@ -1735,27 +1735,37 @@ export default function CustomBuild() {
     setter((prev) => (prev.includes(value) ? prev.filter((entry) => entry !== value) : [...prev, value]));
   };
 
+  const usesSocketFilters = activeCategory === "cpu" || activeCategory === "motherboard";
+  const usesRamTypeFilters = activeCategory === "motherboard" || activeCategory === "ram";
+  const usesFormFactorFilters = activeCategory === "motherboard" || activeCategory === "case";
+  const usesPcieGenerationFilters = activeCategory === "motherboard" || activeCategory === "storage";
+  const usesStorageTypeFilters = activeCategory === "storage";
+  const usesPsuFilters = activeCategory === "psu";
+
   const clearAdvancedFilters = () => {
-    setSocketFilters([]);
-    setRamTypeFilters([]);
-    setFormFactorFilters([]);
-    setPcieGenerationFilters([]);
-    setStorageTypeFilters([]);
-    setPsuRatingFilters([]);
-    setPsuModularFilter("Alla");
-    setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
+    if (usesSocketFilters) setSocketFilters([]);
+    if (usesRamTypeFilters) setRamTypeFilters([]);
+    if (usesFormFactorFilters) setFormFactorFilters([]);
+    if (usesPcieGenerationFilters) setPcieGenerationFilters([]);
+    if (usesStorageTypeFilters) setStorageTypeFilters([]);
+    if (usesPsuFilters) {
+      setPsuRatingFilters([]);
+      setPsuModularFilter("Alla");
+      setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
+    }
   };
 
   const hasActiveAdvancedFilters =
-    socketFilters.length > 0 ||
-    ramTypeFilters.length > 0 ||
-    formFactorFilters.length > 0 ||
-    pcieGenerationFilters.length > 0 ||
-    storageTypeFilters.length > 0 ||
-    psuRatingFilters.length > 0 ||
-    psuModularFilter !== "Alla" ||
-    psuWattageRange[0] !== psuWattageBounds.min ||
-    psuWattageRange[1] !== psuWattageBounds.max;
+    (usesSocketFilters && socketFilters.length > 0) ||
+    (usesRamTypeFilters && ramTypeFilters.length > 0) ||
+    (usesFormFactorFilters && formFactorFilters.length > 0) ||
+    (usesPcieGenerationFilters && pcieGenerationFilters.length > 0) ||
+    (usesStorageTypeFilters && storageTypeFilters.length > 0) ||
+    (usesPsuFilters &&
+      (psuRatingFilters.length > 0 ||
+        psuModularFilter !== "Alla" ||
+        psuWattageRange[0] !== psuWattageBounds.min ||
+        psuWattageRange[1] !== psuWattageBounds.max));
 
   const filteredItems = useMemo(() => {
     return items.filter((item) => {
@@ -1785,22 +1795,29 @@ export default function CustomBuild() {
       const itemPsuWattage = getItemPsuWattage(item);
 
       const matchesSelectedSocketFilter =
-        socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
+        !usesSocketFilters || socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
       const matchesSelectedRamTypeFilter =
-        ramTypeFilters.length === 0 || (itemRamType ? ramTypeFilters.includes(itemRamType) : false);
+        !usesRamTypeFilters || ramTypeFilters.length === 0 || (itemRamType ? ramTypeFilters.includes(itemRamType) : false);
       const matchesSelectedFormFactorFilter =
-        formFactorFilters.length === 0 || (itemFormFactor ? formFactorFilters.includes(itemFormFactor) : false);
+        !usesFormFactorFilters ||
+        formFactorFilters.length === 0 ||
+        (itemFormFactor ? formFactorFilters.includes(itemFormFactor) : false);
       const matchesSelectedPcieGenerationFilter =
+        !usesPcieGenerationFilters ||
         pcieGenerationFilters.length === 0 ||
         (itemPcieGeneration ? pcieGenerationFilters.includes(itemPcieGeneration) : false);
       const matchesSelectedStorageTypeFilter =
-        storageTypeFilters.length === 0 || (itemStorageType ? storageTypeFilters.includes(itemStorageType) : false);
+        !usesStorageTypeFilters ||
+        storageTypeFilters.length === 0 ||
+        (itemStorageType ? storageTypeFilters.includes(itemStorageType) : false);
       const matchesSelectedPsuRatingFilter =
-        psuRatingFilters.length === 0 || (itemPsuRating ? psuRatingFilters.includes(itemPsuRating) : false);
+        !usesPsuFilters ||
+        psuRatingFilters.length === 0 ||
+        (itemPsuRating ? psuRatingFilters.includes(itemPsuRating) : false);
       const matchesSelectedPsuModularFilter =
-        psuModularFilter === "Alla" || itemPsuModular === psuModularFilter;
+        !usesPsuFilters || psuModularFilter === "Alla" || itemPsuModular === psuModularFilter;
       const matchesSelectedPsuWattage =
-        activeCategory !== "psu" ||
+        !usesPsuFilters ||
         itemPsuWattage === null ||
         (itemPsuWattage >= psuWattageRange[0] && itemPsuWattage <= psuWattageRange[1]);
 
@@ -1837,6 +1854,12 @@ export default function CustomBuild() {
     psuRatingFilters,
     psuModularFilter,
     psuWattageRange,
+    usesSocketFilters,
+    usesRamTypeFilters,
+    usesFormFactorFilters,
+    usesPcieGenerationFilters,
+    usesStorageTypeFilters,
+    usesPsuFilters,
   ]);
 
 
