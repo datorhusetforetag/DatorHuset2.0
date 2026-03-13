@@ -4140,6 +4140,11 @@ export default function CustomBuild() {
                                         ? "Valbar butik rangordnad från billigast till dyrast."
                                         : "Den här komponenten har ingen butiksväljare ännu."}
                                     </p>
+                                    {customBuildDebugEnabled ? (
+                                      <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
+                                        Debug: Prisjakt-offer = live butik, Seed = preloadad prisfil, Fallback = katalogpris, No-store = inga butikstraffar.
+                                      </p>
+                                    ) : null}
                                   </div>
                                   <button
                                     type="button"
