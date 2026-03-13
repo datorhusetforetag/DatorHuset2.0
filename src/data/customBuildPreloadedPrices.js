@@ -1,25 +1,47 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T13:48:20.775Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T14:03:46.894Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
+  "cpu-am4-ryzen-3-3100": 799,
+  "cpu-am4-ryzen-3-3200g": 626,
+  "cpu-am4-ryzen-5-3600": 717,
+  "cpu-am4-ryzen-5-4500": 769,
   "cpu-am4-ryzen-5-5500": 989,
   "cpu-am4-ryzen-5-5600": 2211,
   "cpu-am4-ryzen-5-5600x": 1483,
   "cpu-am4-ryzen-5-5600gt": 1579,
   "cpu-am4-ryzen-7-5700g": 1859,
   "cpu-am4-ryzen-7-5700x": 1839,
+  "cpu-am4-ryzen-7-5700": 1700,
   "cpu-am4-ryzen-7-5700x3d": 2699,
   "cpu-am4-ryzen-7-5800x": 2158,
+  "cpu-am4-ryzen-7-5800xt": 2289,
   "cpu-am4-ryzen-7-5800x3d": 3199,
   "cpu-am4-ryzen-9-5900x": 3299,
+  "cpu-am4-ryzen-9-5950x": 3562,
+  "cpu-am5-ryzen-5-7500f-tray": 1689,
+  "cpu-am5-ryzen-5-7500x3d": 2416,
   "cpu-am5-ryzen-5-7600": 2089,
+  "cpu-am5-ryzen-5-7600-tray": 1888,
   "cpu-am5-ryzen-5-7600x": 1999,
+  "cpu-am5-ryzen-5-8600g": 1886,
+  "cpu-am5-ryzen-7-8700f": 2489,
+  "cpu-am5-ryzen-7-8700f-tray": 2489,
+  "cpu-am5-ryzen-7-8700g": 2849,
+  "cpu-am5-ryzen-5-9600": 2055,
+  "cpu-am5-ryzen-5-9600x": 2249,
   "cpu-am5-ryzen-7-7700": 2920,
   "cpu-am5-ryzen-7-7700x": 2486,
   "cpu-am5-ryzen-7-7800x3d": 3918,
   "cpu-am5-ryzen-9-7900": 3179,
   "cpu-am5-ryzen-9-7900x": 3429,
   "cpu-am5-ryzen-7-9700x": 3189,
+  "cpu-am5-ryzen-7-9700x-tray": 3172,
   "cpu-am5-ryzen-7-9800x3d": 4589,
+  "cpu-am5-ryzen-9-9900x": 3949,
+  "cpu-am5-ryzen-9-9900x-tray": 4145,
+  "cpu-am5-ryzen-9-7950x": 7146,
+  "cpu-am5-ryzen-9-7950x3d": 8489,
+  "cpu-am5-ryzen-9-9950x": 5579,
   "cpu-am5-ryzen-9-9950x3d": 7189,
   "cpu-lga1200-core-i3-10105f": 899,
   "cpu-lga1200-core-i5-10400f": 1099,
@@ -163,6 +185,30 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
 };
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
+  "cpu-am4-ryzen-3-3100": {
+    "category": "cpu",
+    "name": "AMD Ryzen 3 3100",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-am4-ryzen-3-3200g": {
+    "category": "cpu",
+    "name": "AMD Ryzen 3 3200G",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am4-ryzen-5-3600": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 3600",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am4-ryzen-5-4500": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 4500",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "cpu-am4-ryzen-5-5500": {
     "category": "cpu",
     "name": "AMD Ryzen 5 5500",
@@ -199,6 +245,12 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "cpu-am4-ryzen-7-5700": {
+    "category": "cpu",
+    "name": "AMD Ryzen 7 5700",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "cpu-am4-ryzen-7-5700x3d": {
     "category": "cpu",
     "name": "AMD Ryzen 7 5700X3D",
@@ -208,6 +260,12 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cpu-am4-ryzen-7-5800x": {
     "category": "cpu",
     "name": "AMD Ryzen 7 5800X",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am4-ryzen-7-5800xt": {
+    "category": "cpu",
+    "name": "AMD Ryzen 7 5800XT",
     "source": "prisjakt_seed",
     "note": null
   },
@@ -223,15 +281,75 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "catalog_fallback",
     "note": null
   },
+  "cpu-am4-ryzen-9-5950x": {
+    "category": "cpu",
+    "name": "AMD Ryzen 9 5950X",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-5-7500f-tray": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 7500F Tray",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-5-7500x3d": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 7500X3D",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "cpu-am5-ryzen-5-7600": {
     "category": "cpu",
     "name": "AMD Ryzen 5 7600",
     "source": "prisjakt_seed",
     "note": null
   },
+  "cpu-am5-ryzen-5-7600-tray": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 7600 Tray",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "cpu-am5-ryzen-5-7600x": {
     "category": "cpu",
     "name": "AMD Ryzen 5 7600X",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-5-8600g": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 8600G",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-7-8700f": {
+    "category": "cpu",
+    "name": "AMD Ryzen 7 8700F",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-7-8700f-tray": {
+    "category": "cpu",
+    "name": "AMD Ryzen 7 8700F Tray",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-7-8700g": {
+    "category": "cpu",
+    "name": "AMD Ryzen 7 8700G",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-5-9600": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 9600",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-5-9600x": {
+    "category": "cpu",
+    "name": "AMD Ryzen 5 9600X",
     "source": "prisjakt_seed",
     "note": null
   },
@@ -271,9 +389,45 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "cpu-am5-ryzen-7-9700x-tray": {
+    "category": "cpu",
+    "name": "AMD Ryzen 7 9700X Tray",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "cpu-am5-ryzen-7-9800x3d": {
     "category": "cpu",
     "name": "AMD Ryzen 7 9800X3D",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-9-9900x": {
+    "category": "cpu",
+    "name": "AMD Ryzen 9 9900X",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-9-9900x-tray": {
+    "category": "cpu",
+    "name": "AMD Ryzen 9 9900X Tray",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-9-7950x": {
+    "category": "cpu",
+    "name": "AMD Ryzen 9 7950X",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-9-7950x3d": {
+    "category": "cpu",
+    "name": "AMD Ryzen 9 7950X3D",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "cpu-am5-ryzen-9-9950x": {
+    "category": "cpu",
+    "name": "AMD Ryzen 9 9950X",
     "source": "prisjakt_seed",
     "note": null
   },

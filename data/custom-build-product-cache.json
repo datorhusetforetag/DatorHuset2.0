@@ -1,7 +1,102 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-13T13:48:13.472Z",
+  "saved_at": "2026-03-13T14:03:35.405Z",
   "entries": [
+    {
+      "key": "prisjakt-v1:cpu-am4-ryzen-3-3100",
+      "item_id": "cpu-am4-ryzen-3-3100",
+      "updatedAt": 1773410336026,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am4-ryzen-3-3200g",
+      "item_id": "cpu-am4-ryzen-3-3200g",
+      "updatedAt": 1773410337844,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2776910?client_id=1331",
+            "search_url": null,
+            "price": 626,
+            "total_price": 626,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am4-ryzen-5-3600",
+      "item_id": "cpu-am4-ryzen-5-3600",
+      "updatedAt": 1773410342598,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2913205?client_id=1331",
+            "search_url": null,
+            "price": 717,
+            "total_price": 717,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am4-ryzen-5-4500",
+      "item_id": "cpu-am4-ryzen-5-4500",
+      "updatedAt": 1773410346843,
+      "response": {
+        "offers": [
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/347871?client_id=1331",
+            "search_url": null,
+            "price": 769,
+            "total_price": 769,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3056698?client_id=1331",
+            "search_url": null,
+            "price": 798,
+            "total_price": 798,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B09VCJN7HZ?client_id=1331",
+            "search_url": null,
+            "price": 801,
+            "total_price": 801,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-5-5500",
       "item_id": "cpu-am4-ryzen-5-5500",
@@ -213,9 +308,30 @@
       }
     },
     {
+      "key": "prisjakt-v1:cpu-am4-ryzen-7-5700",
+      "item_id": "cpu-am4-ryzen-7-5700",
+      "updatedAt": 1773410352190,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3398507?client_id=1331",
+            "search_url": null,
+            "price": 1700,
+            "total_price": 1700,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
       "key": "prisjakt-v1:cpu-am4-ryzen-7-5700x3d",
       "item_id": "cpu-am4-ryzen-7-5700x3d",
-      "updatedAt": 1773291476962,
+      "updatedAt": 1773410352972,
       "response": {
         "offers": []
       }
@@ -254,9 +370,42 @@
       }
     },
     {
+      "key": "prisjakt-v1:cpu-am4-ryzen-7-5800xt",
+      "item_id": "cpu-am4-ryzen-7-5800xt",
+      "updatedAt": 1773410354392,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3273275?client_id=1331",
+            "search_url": null,
+            "price": 2289,
+            "total_price": 2289,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/372791?client_id=1331",
+            "search_url": null,
+            "price": 2289,
+            "total_price": 2289,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
       "key": "prisjakt-v1:cpu-am4-ryzen-7-5800x3d",
       "item_id": "cpu-am4-ryzen-7-5800x3d",
-      "updatedAt": 1773291498576,
+      "updatedAt": 1773410355051,
       "response": {
         "offers": []
       }
@@ -264,9 +413,84 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-9-5900x",
       "item_id": "cpu-am4-ryzen-9-5900x",
-      "updatedAt": 1773291531003,
+      "updatedAt": 1773410358462,
       "response": {
         "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am4-ryzen-9-5950x",
+      "item_id": "cpu-am4-ryzen-9-5950x",
+      "updatedAt": 1773410360645,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/2884175?client_id=1331",
+            "search_url": null,
+            "price": 3562,
+            "total_price": 3562,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-5-7500f-tray",
+      "item_id": "cpu-am5-ryzen-5-7500f-tray",
+      "updatedAt": 1773410363279,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3195178?client_id=1331",
+            "search_url": null,
+            "price": 1689,
+            "total_price": 1689,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-5-7500x3d",
+      "item_id": "cpu-am5-ryzen-5-7500x3d",
+      "updatedAt": 1773410364968,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3409342?client_id=1331",
+            "search_url": null,
+            "price": 2416,
+            "total_price": 2416,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/390509?client_id=1331",
+            "search_url": null,
+            "price": 2589,
+            "total_price": 2589,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
@@ -303,6 +527,27 @@
       }
     },
     {
+      "key": "prisjakt-v1:cpu-am5-ryzen-5-7600-tray",
+      "item_id": "cpu-am5-ryzen-5-7600-tray",
+      "updatedAt": 1773410370115,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3219028?client_id=1331",
+            "search_url": null,
+            "price": 1888,
+            "total_price": 1888,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
       "key": "prisjakt-v1:cpu-am5-ryzen-5-7600x",
       "item_id": "cpu-am5-ryzen-5-7600x",
       "updatedAt": 1773282980015,
@@ -328,6 +573,216 @@
             "search_url": null,
             "price": 2079,
             "total_price": 2079,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-5-8600g",
+      "item_id": "cpu-am5-ryzen-5-8600g",
+      "updatedAt": 1773410374131,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3380367?client_id=1331",
+            "search_url": null,
+            "price": 1886,
+            "total_price": 1886,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/367848?client_id=1331",
+            "search_url": null,
+            "price": 1886,
+            "total_price": 1886,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/856801?client_id=1331",
+            "search_url": null,
+            "price": 1887,
+            "total_price": 1887,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-7-8700f",
+      "item_id": "cpu-am5-ryzen-7-8700f",
+      "updatedAt": 1773410377460,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3255647?client_id=1331",
+            "search_url": null,
+            "price": 2489,
+            "total_price": 2489,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/371040?client_id=1331",
+            "search_url": null,
+            "price": 2749,
+            "total_price": 2749,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-7-8700f-tray",
+      "item_id": "cpu-am5-ryzen-7-8700f-tray",
+      "updatedAt": 1773410381135,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3255647?client_id=1331",
+            "search_url": null,
+            "price": 2489,
+            "total_price": 2489,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/371040?client_id=1331",
+            "search_url": null,
+            "price": 2749,
+            "total_price": 2749,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-7-8700g",
+      "item_id": "cpu-am5-ryzen-7-8700g",
+      "updatedAt": 1773410384433,
+      "response": {
+        "offers": [
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/367847?client_id=1331",
+            "search_url": null,
+            "price": 2849,
+            "total_price": 2849,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3398506?client_id=1331",
+            "search_url": null,
+            "price": 2990,
+            "total_price": 2990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-5-9600",
+      "item_id": "cpu-am5-ryzen-5-9600",
+      "updatedAt": 1773410389833,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/900747?client_id=1331",
+            "search_url": null,
+            "price": 2055,
+            "total_price": 2055,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3332692?client_id=1331",
+            "search_url": null,
+            "price": 2055,
+            "total_price": 2055,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-5-9600x",
+      "item_id": "cpu-am5-ryzen-5-9600x",
+      "updatedAt": 1773410393578,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3273286?client_id=1331",
+            "search_url": null,
+            "price": 2249,
+            "total_price": 2249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/372789?client_id=1331",
+            "search_url": null,
+            "price": 2349,
+            "total_price": 2349,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock"
@@ -618,6 +1073,39 @@
       }
     },
     {
+      "key": "prisjakt-v1:cpu-am5-ryzen-7-9700x-tray",
+      "item_id": "cpu-am5-ryzen-7-9700x-tray",
+      "updatedAt": 1773410397816,
+      "response": {
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DPXP86KX?client_id=1331",
+            "search_url": null,
+            "price": 3172,
+            "total_price": 3172,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3273288?client_id=1331",
+            "search_url": null,
+            "price": 3189,
+            "total_price": 3189,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
       "key": "prisjakt-v1:cpu-am5-ryzen-7-9800x3d",
       "item_id": "cpu-am5-ryzen-7-9800x3d",
       "updatedAt": 1773282992655,
@@ -675,6 +1163,171 @@
       }
     },
     {
+      "key": "prisjakt-v1:cpu-am5-ryzen-9-9900x",
+      "item_id": "cpu-am5-ryzen-9-9900x",
+      "updatedAt": 1773410402895,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/856798?client_id=1331",
+            "search_url": null,
+            "price": 3949,
+            "total_price": 3949,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1035034?client_id=1331",
+            "search_url": null,
+            "price": 3949,
+            "total_price": 3949,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/372787?client_id=1331",
+            "search_url": null,
+            "price": 3949,
+            "total_price": 3949,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-9-9900x-tray",
+      "item_id": "cpu-am5-ryzen-9-9900x-tray",
+      "updatedAt": 1773410407927,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3273290?client_id=1331",
+            "search_url": null,
+            "price": 4145,
+            "total_price": 4145,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-9-7950x",
+      "item_id": "cpu-am5-ryzen-9-7950x",
+      "updatedAt": 1773410411970,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3210331?client_id=1331",
+            "search_url": null,
+            "price": 7146,
+            "total_price": 7146,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-9-7950x3d",
+      "item_id": "cpu-am5-ryzen-9-7950x3d",
+      "updatedAt": 1773410414424,
+      "response": {
+        "offers": [
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/358200?client_id=1331",
+            "search_url": null,
+            "price": 8489,
+            "total_price": 8489,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-am5-ryzen-9-9950x",
+      "item_id": "cpu-am5-ryzen-9-9950x",
+      "updatedAt": 1773410419009,
+      "response": {
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/856803?client_id=1331",
+            "search_url": null,
+            "price": 5579,
+            "total_price": 5579,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/372786?client_id=1331",
+            "search_url": null,
+            "price": 5579,
+            "total_price": 5579,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1035038?client_id=1331",
+            "search_url": null,
+            "price": 5769,
+            "total_price": 5769,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3273293?client_id=1331",
+            "search_url": null,
+            "price": 5789,
+            "total_price": 5789,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
       "key": "prisjakt-v1:cpu-am5-ryzen-9-9950x3d",
       "item_id": "cpu-am5-ryzen-9-9950x3d",
       "updatedAt": 1773282994434,
@@ -722,7 +1375,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i3-10105f",
       "item_id": "cpu-lga1200-core-i3-10105f",
-      "updatedAt": 1773291552352,
+      "updatedAt": 1773410420625,
       "response": {
         "offers": []
       }
@@ -730,7 +1383,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-10400f",
       "item_id": "cpu-lga1200-core-i5-10400f",
-      "updatedAt": 1773291574007,
+      "updatedAt": 1773410422327,
       "response": {
         "offers": []
       }
@@ -738,7 +1391,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-10600k",
       "item_id": "cpu-lga1200-core-i5-10600k",
-      "updatedAt": 1773291595611,
+      "updatedAt": 1773410423974,
       "response": {
         "offers": []
       }
@@ -746,7 +1399,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-10700f",
       "item_id": "cpu-lga1200-core-i7-10700f",
-      "updatedAt": 1773291617272,
+      "updatedAt": 1773410425601,
       "response": {
         "offers": []
       }
@@ -754,7 +1407,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-10700k",
       "item_id": "cpu-lga1200-core-i7-10700k",
-      "updatedAt": 1773291638942,
+      "updatedAt": 1773410427201,
       "response": {
         "offers": []
       }
@@ -762,7 +1415,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i9-10900k",
       "item_id": "cpu-lga1200-core-i9-10900k",
-      "updatedAt": 1773291660667,
+      "updatedAt": 1773410428817,
       "response": {
         "offers": []
       }
@@ -770,7 +1423,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-11400f",
       "item_id": "cpu-lga1200-core-i5-11400f",
-      "updatedAt": 1773291682369,
+      "updatedAt": 1773410430423,
       "response": {
         "offers": []
       }
@@ -778,7 +1431,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-11600k",
       "item_id": "cpu-lga1200-core-i5-11600k",
-      "updatedAt": 1773291704080,
+      "updatedAt": 1773410432032,
       "response": {
         "offers": []
       }
@@ -786,7 +1439,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-11700k",
       "item_id": "cpu-lga1200-core-i7-11700k",
-      "updatedAt": 1773291725790,
+      "updatedAt": 1773410433646,
       "response": {
         "offers": []
       }
@@ -794,7 +1447,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i9-11900k",
       "item_id": "cpu-lga1200-core-i9-11900k",
-      "updatedAt": 1773291747496,
+      "updatedAt": 1773410435301,
       "response": {
         "offers": []
       }
@@ -835,7 +1488,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-12600k",
       "item_id": "cpu-lga1700-core-i5-12600k",
-      "updatedAt": 1773291769194,
+      "updatedAt": 1773410436920,
       "response": {
         "offers": []
       }
@@ -843,7 +1496,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-12700k",
       "item_id": "cpu-lga1700-core-i7-12700k",
-      "updatedAt": 1773291790882,
+      "updatedAt": 1773410438558,
       "response": {
         "offers": []
       }
@@ -851,7 +1504,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i9-12900k",
       "item_id": "cpu-lga1700-core-i9-12900k",
-      "updatedAt": 1773291812590,
+      "updatedAt": 1773410440181,
       "response": {
         "offers": []
       }
@@ -859,7 +1512,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-13400f",
       "item_id": "cpu-lga1700-core-i5-13400f",
-      "updatedAt": 1773291834256,
+      "updatedAt": 1773410441782,
       "response": {
         "offers": []
       }
@@ -867,7 +1520,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-13600k",
       "item_id": "cpu-lga1700-core-i5-13600k",
-      "updatedAt": 1773291855978,
+      "updatedAt": 1773410443410,
       "response": {
         "offers": []
       }
@@ -875,7 +1528,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-13700k",
       "item_id": "cpu-lga1700-core-i7-13700k",
-      "updatedAt": 1773291877659,
+      "updatedAt": 1773410445067,
       "response": {
         "offers": []
       }
@@ -883,7 +1536,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-14600k",
       "item_id": "cpu-lga1700-core-i5-14600k",
-      "updatedAt": 1773291899382,
+      "updatedAt": 1773410446715,
       "response": {
         "offers": []
       }
@@ -891,7 +1544,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-14700k",
       "item_id": "cpu-lga1700-core-i7-14700k",
-      "updatedAt": 1773291921080,
+      "updatedAt": 1773410448356,
       "response": {
         "offers": []
       }
@@ -899,7 +1552,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i9-14900k",
       "item_id": "cpu-lga1700-core-i9-14900k",
-      "updatedAt": 1773291942789,
+      "updatedAt": 1773410449975,
       "response": {
         "offers": []
       }
@@ -1081,7 +1734,7 @@
     {
       "key": "prisjakt-v1:mb-am4-gigabyte-x570-aorus-elite",
       "item_id": "mb-am4-gigabyte-x570-aorus-elite",
-      "updatedAt": 1773291975633,
+      "updatedAt": 1773410453692,
       "response": {
         "offers": []
       }
@@ -1089,7 +1742,7 @@
     {
       "key": "prisjakt-v1:mb-am4-asrock-x570-steel-legend",
       "item_id": "mb-am4-asrock-x570-steel-legend",
-      "updatedAt": 1773292005395,
+      "updatedAt": 1773410457817,
       "response": {
         "offers": []
       }
@@ -1097,7 +1750,7 @@
     {
       "key": "prisjakt-v1:mb-am4-msi-mag-b550m-mortar-wifi",
       "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
-      "updatedAt": 1773292033473,
+      "updatedAt": 1773410464089,
       "response": {
         "offers": []
       }
@@ -1432,7 +2085,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-tuf-b560-plus-wifi",
       "item_id": "mb-lga1200-asus-tuf-b560-plus-wifi",
-      "updatedAt": 1773292084279,
+      "updatedAt": 1773410465815,
       "response": {
         "offers": []
       }
@@ -1440,7 +2093,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-b560-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-b560-tomahawk-wifi",
-      "updatedAt": 1773292110366,
+      "updatedAt": 1773410469309,
       "response": {
         "offers": []
       }
@@ -1448,7 +2101,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-b560-aorus-pro-ax",
       "item_id": "mb-lga1200-gigabyte-b560-aorus-pro-ax",
-      "updatedAt": 1773292136948,
+      "updatedAt": 1773410472221,
       "response": {
         "offers": []
       }
@@ -1456,7 +2109,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-b560-pro4",
       "item_id": "mb-lga1200-asrock-b560-pro4",
-      "updatedAt": 1773292158346,
+      "updatedAt": 1773410473837,
       "response": {
         "offers": []
       }
@@ -1464,7 +2117,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-prime-z590-p",
       "item_id": "mb-lga1200-asus-prime-z590-p",
-      "updatedAt": 1773292180056,
+      "updatedAt": 1773410475430,
       "response": {
         "offers": []
       }
@@ -1472,7 +2125,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z590-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-z590-tomahawk-wifi",
-      "updatedAt": 1773292206956,
+      "updatedAt": 1773410477747,
       "response": {
         "offers": []
       }
@@ -1480,7 +2133,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-z590-aorus-elite-ax",
       "item_id": "mb-lga1200-gigabyte-z590-aorus-elite-ax",
-      "updatedAt": 1773292233158,
+      "updatedAt": 1773410479905,
       "response": {
         "offers": []
       }
@@ -1488,7 +2141,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-z590-steel-legend",
       "item_id": "mb-lga1200-asrock-z590-steel-legend",
-      "updatedAt": 1773292258254,
+      "updatedAt": 1773410482211,
       "response": {
         "offers": []
       }
@@ -1496,7 +2149,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-rog-strix-z490-f",
       "item_id": "mb-lga1200-asus-rog-strix-z490-f",
-      "updatedAt": 1773292279633,
+      "updatedAt": 1773410483812,
       "response": {
         "offers": []
       }
@@ -1504,7 +2157,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z490-gaming-edge-wifi",
       "item_id": "mb-lga1200-msi-z490-gaming-edge-wifi",
-      "updatedAt": 1773292301341,
+      "updatedAt": 1773410495420,
       "response": {
         "offers": []
       }
@@ -1512,7 +2165,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-msi-b760m-mortar-wifi",
       "item_id": "mb-lga1700-msi-b760m-mortar-wifi",
-      "updatedAt": 1773292331811,
+      "updatedAt": 1773410510936,
       "response": {
         "offers": []
       }
@@ -1577,7 +2230,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-gigabyte-b760-aorus-elite-ax",
       "item_id": "mb-lga1700-gigabyte-b760-aorus-elite-ax",
-      "updatedAt": 1773292360891,
+      "updatedAt": 1773410527350,
       "response": {
         "offers": []
       }
@@ -1771,7 +2424,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-asus-rog-strix-z790-f",
       "item_id": "mb-lga1700-asus-rog-strix-z790-f",
-      "updatedAt": 1773292382266,
+      "updatedAt": 1773410548786,
       "response": {
         "offers": []
       }
@@ -1971,7 +2624,7 @@
     {
       "key": "prisjakt-v1:gpu-9",
       "item_id": "gpu-9",
-      "updatedAt": 1773292615492,
+      "updatedAt": 1773410582085,
       "response": {
         "offers": []
       }
@@ -3529,7 +4182,7 @@
     {
       "key": "prisjakt-v1:case-7",
       "item_id": "case-7",
-      "updatedAt": 1773289273216,
+      "updatedAt": 1773410615245,
       "response": {
         "offers": []
       }
