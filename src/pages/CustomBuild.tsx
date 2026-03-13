@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ChangeEvent, type Dispatch, type FormEvent, type SetStateAction } from "react";
+﻿import { useEffect, useMemo, useRef, useState, type ChangeEvent, type Dispatch, type FormEvent, type SetStateAction } from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -201,7 +201,7 @@ const CATEGORY_LIST: CategoryConfig[] = [
   {
     key: "cpu",
     label: "CPU",
-    description: "Hjärnan i datorn",
+    description: "HjÃ¤rnan i datorn",
     icon: Cpu,
   },
   {
@@ -236,14 +236,14 @@ const CATEGORY_LIST: CategoryConfig[] = [
   },
   {
     key: "psu",
-    label: "Nätaggregat",
-    description: "Stabil ström",
+    label: "NÃ¤taggregat",
+    description: "Stabil strÃ¶m",
     icon: Power,
   },
   {
     key: "cooling",
     label: "Kylning",
-    description: "Tysta lösningar",
+    description: "Tysta lÃ¶sningar",
     icon: Fan,
   },
 ];
@@ -280,7 +280,7 @@ const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
   ram: { src: "https://placehold.co/360x240?text=RAM", alt: "RAM-minne" },
   storage: { src: "https://placehold.co/360x240?text=SSD", alt: "Lagring" },
   case: { src: "https://placehold.co/360x240?text=Chassi", alt: "Chassi" },
-  psu: { src: "https://placehold.co/360x240?text=PSU", alt: "Nätaggregat" },
+  psu: { src: "https://placehold.co/360x240?text=PSU", alt: "NÃ¤taggregat" },
   cooling: { src: "https://placehold.co/360x240?text=Kylning", alt: "Kylning" },
 };
 const CATEGORY_ORDER: CategoryKey[] = [
@@ -566,7 +566,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 2599,
       socket: "AM5",
       image: cpu7600Image,
-      specs: ["6 kärnor", "12 trådar", "5.1 GHz", "AM5"],
+      specs: ["6 kÃ¤rnor", "12 trÃ¥dar", "5.1 GHz", "AM5"],
     },
     {
       id: "cpu-2",
@@ -575,7 +575,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 4990,
       socket: "AM5",
       image: cpu7800x3dImage,
-      specs: ["8 kärnor", "3D V-Cache", "5.0 GHz", "AM5"],
+      specs: ["8 kÃ¤rnor", "3D V-Cache", "5.0 GHz", "AM5"],
       highlight: "Gaming-favorit",
     },
     {
@@ -585,7 +585,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 7990,
       socket: "AM5",
       image: cpu7950x3dImage,
-      specs: ["16 kärnor", "3D V-Cache", "5.7 GHz", "AM5"],
+      specs: ["16 kÃ¤rnor", "3D V-Cache", "5.7 GHz", "AM5"],
     },
     {
       id: "cpu-4",
@@ -594,7 +594,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 2290,
       socket: "LGA1700",
       image: cpu13400fImage,
-      specs: ["10 kärnor", "4.6 GHz", "LGA1700"],
+      specs: ["10 kÃ¤rnor", "4.6 GHz", "LGA1700"],
     },
     {
       id: "cpu-5",
@@ -603,7 +603,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 3490,
       socket: "LGA1700",
       image: cpu13600kImage,
-      specs: ["14 kärnor", "5.1 GHz", "LGA1700"],
+      specs: ["14 kÃ¤rnor", "5.1 GHz", "LGA1700"],
     },
     {
       id: "cpu-6",
@@ -612,7 +612,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 4690,
       socket: "LGA1700",
       image: cpu13700kImage,
-      specs: ["16 kärnor", "5.4 GHz", "LGA1700"],
+      specs: ["16 kÃ¤rnor", "5.4 GHz", "LGA1700"],
     },
     {
       id: "cpu-7",
@@ -621,7 +621,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 5290,
       socket: "LGA1700",
       image: cpu14700kImage,
-      specs: ["20 kärnor", "5.6 GHz", "LGA1700"],
+      specs: ["20 kÃ¤rnor", "5.6 GHz", "LGA1700"],
       highlight: "Nyhet",
     },
     {
@@ -631,7 +631,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 6490,
       socket: "LGA1700",
       image: cpu13900kImage,
-      specs: ["24 kärnor", "5.8 GHz", "LGA1700"],
+      specs: ["24 kÃ¤rnor", "5.8 GHz", "LGA1700"],
     },
     {
       id: "cpu-9",
@@ -640,7 +640,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 7190,
       socket: "LGA1700",
       image: cpu14900kImage,
-      specs: ["24 kärnor", "6.0 GHz", "LGA1700"],
+      specs: ["24 kÃ¤rnor", "6.0 GHz", "LGA1700"],
     },
     {
       id: "cpu-10",
@@ -649,7 +649,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 3290,
       socket: "AM5",
       image: cpu7700Image,
-      specs: ["8 kärnor", "5.3 GHz", "AM5"],
+      specs: ["8 kÃ¤rnor", "5.3 GHz", "AM5"],
     },
     {
       id: "cpu-11",
@@ -2117,7 +2117,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Fractal",
       price: 1490,
       image: caseFractalDesignNorthImage,
-      specs: ["ATX", "Träpanel", "Airflow"],
+      specs: ["ATX", "TrÃ¤panel", "Airflow"],
       highlight: "Designfavorit",
     },
     {
@@ -2174,7 +2174,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Fractal",
       price: 1690,
       image: caseFractalDesignMeshify2Image,
-      specs: ["ATX", "Mesh", "Modulär"],
+      specs: ["ATX", "Mesh", "ModulÃ¤r"],
     },
     {
       id: "case-11",
@@ -2336,7 +2336,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Corsair",
       price: 1290,
       image: psuCorsairRm750eImage,
-      specs: ["750W", "80+ Gold", "Modulärt"],
+      specs: ["750W", "80+ Gold", "ModulÃ¤rt"],
     },
     {
       id: "psu-2",
@@ -2344,7 +2344,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Corsair",
       price: 1590,
       image: psuCorsairRm850xImage,
-      specs: ["850W", "80+ Gold", "Modulärt"],
+      specs: ["850W", "80+ Gold", "ModulÃ¤rt"],
     },
     {
       id: "psu-3",
@@ -2376,7 +2376,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Cooler Master",
       price: 990,
       image: psuCoolerMasterMwe750Image,
-      specs: ["750W", "80+ Gold", "Modulärt"],
+      specs: ["750W", "80+ Gold", "ModulÃ¤rt"],
     },
     {
       id: "psu-7",
@@ -2400,7 +2400,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "NZXT",
       price: 1190,
       image: psuNzxtC750Image,
-      specs: ["750W", "80+ Gold", "Modulärt"],
+      specs: ["750W", "80+ Gold", "ModulÃ¤rt"],
     },
     {
       id: "psu-10",
@@ -2426,7 +2426,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "be quiet!",
       price: 1090,
       image: coolingBeQuietDarkRockPro5Image,
-      specs: ["Luftkylare", "Tyst", "Hög TDP"],
+      specs: ["Luftkylare", "Tyst", "HÃ¶g TDP"],
     },
     {
       id: "cool-3",
@@ -2450,7 +2450,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Arctic",
       price: 1590,
       image: coolingArcticLiquidFreezerII360Image,
-      specs: ["360mm AIO", "Tyst", "Prisvärd"],
+      specs: ["360mm AIO", "Tyst", "PrisvÃ¤rd"],
     },
     {
       id: "cool-6",
@@ -2458,7 +2458,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "DeepCool",
       price: 790,
       image: coolingDeepCoolAk620Image,
-      specs: ["Luftkylare", "Hög TDP", "Prisvärd"],
+      specs: ["Luftkylare", "HÃ¶g TDP", "PrisvÃ¤rd"],
     },
     {
       id: "cool-7",
@@ -2482,7 +2482,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       brand: "Thermalright",
       price: 590,
       image: coolingThermalrightPeerlessAssassinImage,
-      specs: ["Luftkylare", "Prisvärd", "Tyst"],
+      specs: ["Luftkylare", "PrisvÃ¤rd", "Tyst"],
     },
     {
       id: "cool-10",
@@ -2786,13 +2786,13 @@ export default function CustomBuild() {
       case "prisjakt-offer":
         return "Prisjakt-offer";
       case "seed":
-        return "Seed";
+        return "FÃ¶rladdat";
       case "search":
-        return "Search-link";
+        return "SÃ¶klÃ¤nk";
       case "no-store":
-        return "No-store";
+        return "Ingen butik";
       default:
-        return "Fallback";
+        return "Reservpris";
     }
   };
 
@@ -3214,7 +3214,7 @@ export default function CustomBuild() {
         const fallbackMessage =
           typeof data?.error === "string"
             ? data.error
-            : data?.error?.message || "Kunde inte hämta butikpriser just nu.";
+            : data?.error?.message || "Kunde inte hÃ¤mta butikpriser just nu.";
         throw new Error(fallbackMessage);
       }
       const offers = Array.isArray(data?.offers) ? data.offers : [];
@@ -3250,7 +3250,7 @@ export default function CustomBuild() {
       }
     } catch (error) {
       setStorePickerError(
-        error instanceof Error ? error.message : "Kunde inte hämta butikpriser just nu."
+        error instanceof Error ? error.message : "Kunde inte hÃ¤mta butikpriser just nu."
       );
     } finally {
       setStorePickerLoading(false);
@@ -3314,8 +3314,8 @@ export default function CustomBuild() {
     if (offer.status === "linked_no_price") return "Pris saknas";
     if (offer.status === "search_only") return "Sok i butik";
     if (offer.status === "unavailable") return "Ej tillg?nglig";
-    if (offer.status === "error") return "Kunde inte läsa";
-    return "Ingen träff";
+    if (offer.status === "error") return "Kunde inte lÃ¤sa";
+    return "Ingen trÃ¤ff";
   };
 
   const canSelectStoreOffer = (offer: StoreOffer) =>
@@ -3333,7 +3333,7 @@ export default function CustomBuild() {
 
     if (!allComponentsSelected) {
       setOfferStatus("error");
-      setOfferError("Välj en komponent i varje kategori innan du skickar offertförfrågan.");
+      setOfferError("VÃ¤lj en komponent i varje kategori innan du skickar offertfÃ¶rfrÃ¥gan.");
       return;
     }
 
@@ -3343,7 +3343,7 @@ export default function CustomBuild() {
 
     if (!trimmedName) {
       setOfferStatus("error");
-      setOfferError("Ange ditt namn så att vi kan återkomma.");
+      setOfferError("Ange ditt namn sÃ¥ att vi kan Ã¥terkomma.");
       return;
     }
 
@@ -3393,7 +3393,7 @@ export default function CustomBuild() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || "Kunde inte skicka offertförfrågan.");
+        throw new Error(data?.error || "Kunde inte skicka offertfÃ¶rfrÃ¥gan.");
       }
 
       setOfferStatus("sent");
@@ -3408,10 +3408,10 @@ export default function CustomBuild() {
       setOfferStatus("error");
       const message =
         error instanceof Error && error.name === "AbortError"
-          ? "Förfrågan tog för lång tid. Försök igen om en stund."
+          ? "FÃ¶rfrÃ¥gan tog fÃ¶r lÃ¥ng tid. FÃ¶rsÃ¶k igen om en stund."
           : error instanceof Error
             ? error.message
-            : "Kunde inte skicka offertförfrågan.";
+            : "Kunde inte skicka offertfÃ¶rfrÃ¥gan.";
       setOfferError(message);
     }
   };
@@ -3449,9 +3449,9 @@ export default function CustomBuild() {
         {offerOpen ? (
           <DialogContent className="max-w-lg bg-white dark:bg-[#0f1824]">
             <DialogHeader>
-              <DialogTitle>Offertförfrågan</DialogTitle>
+              <DialogTitle>OffertfÃ¶rfrÃ¥gan</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
-                Fyll i dina uppgifter så återkommer vi med offert och leveranstid.
+                Fyll i dina uppgifter sÃ¥ Ã¥terkommer vi med offert och leveranstid.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleOfferSubmit} className="space-y-4">
@@ -3494,25 +3494,25 @@ export default function CustomBuild() {
                   id="offer-notes"
                   value={offerForm.notes}
                   onChange={updateOfferField("notes")}
-                  placeholder="Beskriv önskemål eller annat"
+                  placeholder="Beskriv Ã¶nskemÃ¥l eller annat"
                   className="min-h-[120px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                 />
               </div>
               {!allComponentsSelected ? (
                 <p className="text-sm text-amber-600">
-                  Välj en komponent i varje kategori innan du kan skicka offertförfrågan.
+                  VÃ¤lj en komponent i varje kategori innan du kan skicka offertfÃ¶rfrÃ¥gan.
                 </p>
               ) : null}
               {offerError ? <p className="text-sm text-red-600">{offerError}</p> : null}
               {offerStatus === "sent" ? (
-                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertförfrågan.</p>
+                <p className="text-sm text-emerald-600">Tack! Vi har tagit emot din offertfÃ¶rfrÃ¥gan.</p>
               ) : null}
               <button
                 type="submit"
                 disabled={offerStatus === "sending" || !allComponentsSelected}
                 className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
-                {offerStatus === "sending" ? "Skickar..." : "Skicka offertförfrågan"}
+                {offerStatus === "sending" ? "Skickar..." : "Skicka offertfÃ¶rfrÃ¥gan"}
               </button>
             </form>
           </DialogContent>
@@ -3524,23 +3524,23 @@ export default function CustomBuild() {
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
               <div>
                 <p className="text-xs uppercase tracking-[0.4em] text-yellow-300">Custom bygg</p>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4">Bygg din drömdator, din väg</h1>
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4">Bygg din drÃ¶mdator, din vÃ¤g</h1>
                 <p className="text-gray-300 mt-4 max-w-xl">
-                  Välj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar
-                  ett färdigt bygge.
+                  VÃ¤lj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar
+                  ett fÃ¤rdigt bygge.
                 </p>
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link
                     to="/custom-bygg#bygg"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
                   >
-                    Börja bygga
+                    BÃ¶rja bygga
                   </Link>
                   <Link
                     to="/products"
                     className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
                   >
-                    Se färdiga datorer
+                    Se fÃ¤rdiga datorer
                   </Link>
                 </div>
               </div>
@@ -3553,7 +3553,7 @@ export default function CustomBuild() {
                   decoding="async"
                 />
                 <div className="absolute -bottom-5 left-6 bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-                  Komplett montering & test ingår
+                  Komplett montering & test ingÃ¥r
                 </div>
               </div>
             </div>
@@ -3564,14 +3564,14 @@ export default function CustomBuild() {
           <div className="container mx-auto px-4 py-10 sm:py-12 lg:py-16">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
               <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">Välj komponenter</p>
-                <h2 className="text-2xl sm:text-3xl font-bold mt-3">Bygg ditt system steg för steg</h2>
+                <p className="text-xs uppercase tracking-[0.4em] text-gray-500 dark:text-gray-400">VÃ¤lj komponenter</p>
+                <h2 className="text-2xl sm:text-3xl font-bold mt-3">Bygg ditt system steg fÃ¶r steg</h2>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                  Klicka på en kategori till vänster för att se rekommenderade komponenter och filtrera efter märke.
+                  Klicka pÃ¥ en kategori till vÃ¤nster fÃ¶r att se rekommenderade komponenter och filtrera efter mÃ¤rke.
                 </p>
               </div>
               <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm dark:border-gray-800 dark:bg-gray-900/70 dark:text-gray-300">
-                {selectedCount} av {CATEGORY_LIST.length} komponenter valda · Totalt {formatPrice(totalPrice)} kr
+                {selectedCount} av {CATEGORY_LIST.length} komponenter valda Â· Totalt {formatPrice(totalPrice)} kr
               </div>
             </div>
 
@@ -3583,7 +3583,7 @@ export default function CustomBuild() {
               >
                 Komponenter
                 <span className="text-xs text-gray-500 dark:text-gray-400">
-                  {mobileSidebarOpen ? "Dölj" : "Visa"}
+                  {mobileSidebarOpen ? "DÃ¶lj" : "Visa"}
                 </span>
               </button>
             </div>
@@ -3683,7 +3683,7 @@ export default function CustomBuild() {
                     <div className="flex flex-col sm:flex-row gap-3">
                       <input
                         type="search"
-                        placeholder="Sök komponent..."
+                        placeholder="SÃ¶k komponent..."
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
                         className="w-full sm:w-60 rounded-lg bg-white border border-gray-300 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none dark:bg-[#0f1824] dark:border-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
@@ -4128,7 +4128,7 @@ export default function CustomBuild() {
                                   : "border border-yellow-400 text-yellow-700 dark:text-yellow-300 hover:bg-[#11667b] hover:text-white hover:border-[#11667b]"
                               }`}
                             >
-                              {isSelected ? "Vald" : "Välj"}
+                              {isSelected ? "Vald" : "VÃ¤lj"}
                             </button>
                           </div>
                         </div>
@@ -4171,7 +4171,7 @@ export default function CustomBuild() {
                                   ) : (
                                     <div className="sm:col-span-2 xl:col-span-3">
                                       <p className="text-sm text-gray-600 dark:text-gray-300">
-                                        Välj komponenten direkt eller öppna butikslänken om den finns.
+                                        VÃ¤lj komponenten direkt eller Ã¶ppna butikslÃ¤nken om den finns.
                                       </p>
                                     </div>
                                   )}
@@ -4185,12 +4185,12 @@ export default function CustomBuild() {
                                     </p>
                                     <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
                                       {showStorePanel
-                                        ? "Valbar butik rangordnad från billigast till dyrast."
-                                        : "Den här komponenten har ingen butiksväljare ännu."}
+                                        ? "Valbar butik rangordnad frÃ¥n billigast till dyrast."
+                                        : "Den hÃ¤r komponenten har ingen butiksvÃ¤ljare Ã¤nnu."}
                                     </p>
                                     {customBuildDebugEnabled ? (
                                       <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
-                                        Debug: Prisjakt-offer = live butik, Seed = preloadad prisfil, Fallback = katalogpris, Search-link = butikssokning, No-store = inga butikstraffar.
+                                        {"Debug: Prisjakt-offer = live butik, F\u00f6rladdat = preloadad prisfil, Reservpris = katalogpris, S\u00f6kl\u00e4nk = butikss\u00f6kning, Ingen butik = inga butikstr\u00e4ffar."}
                                       </p>
                                     ) : null}
                                   </div>
@@ -4199,12 +4199,12 @@ export default function CustomBuild() {
                                     onClick={handleStorePickerClose}
                                     className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                   >
-                                    Stäng
+                                    StÃ¤ng
                                   </button>
                                 </div>
                                 {storePickerLoading && isExpanded ? (
                                   <div className="mt-4 rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
-                                    Hämtar butikslänkar och priser...
+                                    HÃ¤mtar butikslÃ¤nkar och priser...
                                   </div>
                                 ) : null}
                                 {storePickerError && isExpanded ? (
@@ -4238,7 +4238,7 @@ export default function CustomBuild() {
                                           </a>
                                         ) : (
                                           <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
-                                            Ingen länk
+                                            Ingen lÃ¤nk
                                           </span>
                                         )}
                                         <button
@@ -4247,7 +4247,7 @@ export default function CustomBuild() {
                                           onClick={() => selectComponentAndAdvance(activeCategory, item, offer)}
                                           className="rounded-lg bg-yellow-400 px-2.5 py-1.5 text-xs font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                                         >
-                                          Välj
+                                          VÃ¤lj
                                         </button>
                                           </div>
                                         </div>
@@ -4256,7 +4256,7 @@ export default function CustomBuild() {
                                   </div>
                                 ) : (
                                   <div className="mt-4 rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-600 dark:border-gray-700 dark:text-gray-300">
-                                    Välj komponenten direkt för att fortsätta till nästa steg.
+                                    VÃ¤lj komponenten direkt fÃ¶r att fortsÃ¤tta till nÃ¤sta steg.
                                   </div>
                                 )}
                                 <div className="mt-4 flex justify-end">
@@ -4266,7 +4266,7 @@ export default function CustomBuild() {
                                     disabled={!isExpanded}
                                     className="rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                                   >
-                                    Välj utan butik
+                                    VÃ¤lj utan butik
                                   </button>
                                 </div>
                               </div>
@@ -4320,10 +4320,10 @@ export default function CustomBuild() {
                     disabled={!allComponentsSelected}
                     className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                   >
-                    Skicka offertförfrågan
+                    Skicka offertfÃ¶rfrÃ¥gan
                   </button>
                   {!allComponentsSelected ? (
-                    <p className="mt-2 text-xs text-amber-600">Välj alla komponenter innan du skickar offertförfrågan.</p>
+                    <p className="mt-2 text-xs text-amber-600">VÃ¤lj alla komponenter innan du skickar offertfÃ¶rfrÃ¥gan.</p>
                   ) : null}
                   <button
                     type="button"
@@ -4389,7 +4389,7 @@ export default function CustomBuild() {
             : "border-gray-300 bg-white/95 text-gray-700 hover:border-sky-400 hover:text-sky-700 dark:border-gray-700 dark:bg-[#101926]/95 dark:text-gray-200 dark:hover:border-sky-700 dark:hover:text-sky-300"
         }`}
       >
-        {customBuildDebugEnabled ? "Debug pa" : "Debug av"}
+        {customBuildDebugEnabled ? "Debug på" : "Debug av"}
       </button>
       {activeCategory === "ram" ? (
         <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-yellow-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-yellow-500/30 dark:bg-[#101926]/95 dark:text-gray-200">
@@ -4400,7 +4400,7 @@ export default function CustomBuild() {
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100">RAM-marknaden</p>
               <p className="mt-1 leading-relaxed">
-                {"Priserna på RAM har gått upp med cirka 600% på grund av efterfrågan från AI-datacenter, vilket har skapat brist på chip."}
+                {"Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 600% p\u00e5 grund av efterfr\u00e5gan fr\u00e5n AI-datacenter, vilket har skapat brist p\u00e5 chip."}
               </p>
             </div>
           </div>
@@ -4410,7 +4410,7 @@ export default function CustomBuild() {
         <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
           <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
-            Kallor: <span className="font-semibold">Prisjakt-offer</span>, <span className="font-semibold">Seed</span>, <span className="font-semibold">Fallback</span>, <span className="font-semibold">Search-link</span>, <span className="font-semibold">No-store</span>.
+            {"K\u00e4llor: "}<span className="font-semibold">Prisjakt-offer</span>{", "}<span className="font-semibold">Förladdat</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Söklänk</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
           </p>
         </div>
       ) : null}
@@ -4418,4 +4418,5 @@ export default function CustomBuild() {
     </div>
   );
 }
+
 
