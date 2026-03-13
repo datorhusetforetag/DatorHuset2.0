@@ -47,6 +47,12 @@ const forceReseedCategories =
   process.env.CUSTOM_BUILD_FORCE_RESEED_STATIC === "true"
     ? new Set(["gpu", "ram", "storage", "case", "psu", "cooling"])
     : new Set();
+const categoryFilter = new Set(
+  String(process.env.CUSTOM_BUILD_SEED_CATEGORIES || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean)
+);
 
 function normalizeKey(value) {
   return String(value || "")
@@ -528,15 +534,20 @@ const existingCacheEntries = await loadExistingCacheEntries();
 const entriesByItemId = new Map(existingCacheEntries);
 const nextProductUrlMap = { ...existingProductMap };
 
-for (let index = 0; index < CUSTOM_BUILD_CATALOG_ITEMS.length; index += 1) {
-  const item = CUSTOM_BUILD_CATALOG_ITEMS[index];
+const itemsToSeed =
+  categoryFilter.size > 0
+    ? CUSTOM_BUILD_CATALOG_ITEMS.filter((item) => categoryFilter.has(item.category))
+    : CUSTOM_BUILD_CATALOG_ITEMS;
+
+for (let index = 0; index < itemsToSeed.length; index += 1) {
+  const item = itemsToSeed[index];
   const cachedEntry = entriesByItemId.get(item.id);
   if (!forceReseedCategories.has(item.category) && hasUsefulOffers(cachedEntry)) {
-    console.log(`[${index + 1}/${CUSTOM_BUILD_CATALOG_ITEMS.length}] reuse ${item.category} ${item.id} ${item.name}`);
+    console.log(`[${index + 1}/${itemsToSeed.length}] reuse ${item.category} ${item.id} ${item.name}`);
     continue;
   }
 
-  console.log(`[${index + 1}/${CUSTOM_BUILD_CATALOG_ITEMS.length}] fetch ${item.category} ${item.id} ${item.name}`);
+  console.log(`[${index + 1}/${itemsToSeed.length}] fetch ${item.category} ${item.id} ${item.name}`);
   const entry = await buildSeedEntry(item, nextProductUrlMap);
   entriesByItemId.set(item.id, {
     key: entry.key,

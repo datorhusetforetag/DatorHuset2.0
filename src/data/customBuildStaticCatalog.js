@@ -871,7 +871,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
     "brand": "MSI",
-    "price": 14490,
+    "price": 14290,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -888,7 +888,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
     "brand": "MSI",
-    "price": 15490,
+    "price": 16990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -905,7 +905,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC",
     "brand": "MSI",
-    "price": 14290,
+    "price": 13990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -922,7 +922,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
     "brand": "Gigabyte",
-    "price": 14590,
+    "price": 14572,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -939,7 +939,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
     "brand": "Gigabyte",
-    "price": 16990,
+    "price": 16795,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -956,7 +956,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 17490,
+    "price": 18567,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -973,7 +973,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 15990,
+    "price": 16390,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -990,7 +990,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Prime GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 14990,
+    "price": 14890,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1007,7 +1007,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5080 X3 OC",
     "brand": "INNO3D",
-    "price": 14690,
+    "price": 13490,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1024,7 +1024,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Palit GeForce RTX 5080 GamingPro OC 16GB",
     "brand": "Palit",
-    "price": 14890,
+    "price": 13892,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1041,7 +1041,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB OC",
     "brand": "ASUS",
-    "price": 37990,
+    "price": 36990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1075,7 +1075,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
     "brand": "ASUS",
-    "price": 35990,
+    "price": 32990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1109,7 +1109,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
     "brand": "Gigabyte",
-    "price": 38990,
+    "price": 39999,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1143,7 +1143,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
     "brand": "ASUS",
-    "price": 41990,
+    "price": 36999,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1435,6 +1435,292 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
+    "id": "ram-17",
+    "category": "ram",
+    "name": "Corsair Vengeance 16GB (2x8GB)",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "16GB",
+      "5600 MHz"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance 16GB (2x8GB)",
+      "Corsair Vengeance 16GB (2x8GB) DDR5 16GB 5600 MHz",
+      "Corsair Vengeance 16GB",
+      "Corsair Vengeance 16GB DDR5 16GB 5600 MHz",
+      "Vengeance 16GB (2x8GB)"
+    ]
+  },
+  {
+    "id": "ram-18",
+    "category": "ram",
+    "name": "Kingston FURY Beast 6000MHz DDR5 16GB (svart)",
+    "brand": "Kingston",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "16GB",
+      "6000 MHz",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Kingston FURY Beast 6000MHz DDR5 16GB (svart)",
+      "Kingston FURY Beast 6000MHz DDR5 16GB (svart) DDR5 16GB 6000 MHz Svart",
+      "Kingston FURY Beast 6000MHz DDR5 16GB",
+      "Kingston FURY Beast 6000MHz DDR5 16GB DDR5 16GB 6000 MHz Svart",
+      "FURY Beast 6000MHz DDR5 16GB (svart)"
+    ]
+  },
+  {
+    "id": "ram-19",
+    "category": "ram",
+    "name": "Kingston Fury Beast 16GB (2x8GB)",
+    "brand": "Kingston",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "16GB",
+      "5600 MHz"
+    ],
+    "searchTerms": [
+      "Kingston Fury Beast 16GB (2x8GB)",
+      "Kingston Fury Beast 16GB (2x8GB) DDR5 16GB 5600 MHz",
+      "Kingston Fury Beast 16GB",
+      "Kingston Fury Beast 16GB DDR5 16GB 5600 MHz",
+      "Fury Beast 16GB (2x8GB)"
+    ]
+  },
+  {
+    "id": "ram-20",
+    "category": "ram",
+    "name": "Corsair Vengeance RGB 16GB (2x8GB)",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "16GB",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance RGB 16GB (2x8GB)",
+      "Corsair Vengeance RGB 16GB (2x8GB) DDR5 16GB RGB",
+      "Corsair Vengeance RGB 16GB",
+      "Corsair Vengeance RGB 16GB DDR5 16GB RGB",
+      "Vengeance RGB 16GB (2x8GB)"
+    ]
+  },
+  {
+    "id": "ram-21",
+    "category": "ram",
+    "name": "Corsair Vengeance RGB 32GB (2x16GB)",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "32GB",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance RGB 32GB (2x16GB)",
+      "Corsair Vengeance RGB 32GB (2x16GB) DDR5 32GB RGB",
+      "Corsair Vengeance RGB 32GB",
+      "Corsair Vengeance RGB 32GB DDR5 32GB RGB",
+      "Vengeance RGB 32GB (2x16GB)"
+    ]
+  },
+  {
+    "id": "ram-22",
+    "category": "ram",
+    "name": "Corsair Vengeance 32GB (2x16GB)",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "32GB",
+      "6000 MHz"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance 32GB (2x16GB)",
+      "Corsair Vengeance 32GB (2x16GB) DDR5 32GB 6000 MHz",
+      "Corsair Vengeance 32GB",
+      "Corsair Vengeance 32GB DDR5 32GB 6000 MHz",
+      "Vengeance 32GB (2x16GB)"
+    ]
+  },
+  {
+    "id": "ram-23",
+    "category": "ram",
+    "name": "Corsair Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "32GB",
+      "6000 MT/s",
+      "CL36"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36",
+      "Corsair Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36 DDR5 32GB 6000 MT/s CL36",
+      "Corsair Vengeance DDR5 RAM 32GB 6000 MT/s CL36",
+      "Corsair Vengeance DDR5 RAM 32GB 6000 MT/s CL36 DDR5 32GB 6000 MT/s CL36",
+      "Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36"
+    ]
+  },
+  {
+    "id": "ram-24",
+    "category": "ram",
+    "name": "Corsair 32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "32GB",
+      "6000 MHz",
+      "CL36",
+      "Vit"
+    ],
+    "searchTerms": [
+      "Corsair 32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit",
+      "Corsair 32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit DDR5 32GB 6000 MHz CL36 Vit",
+      "Corsair 32GB DDR5 6000MHz CL36 Vengeance RGB Vit",
+      "Corsair 32GB DDR5 6000MHz CL36 Vengeance RGB Vit DDR5 32GB 6000 MHz CL36 Vit",
+      "32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit"
+    ]
+  },
+  {
+    "id": "ram-25",
+    "category": "ram",
+    "name": "Kingston Fury Beast RGB 32GB (2x16GB)",
+    "brand": "Kingston",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "32GB",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Kingston Fury Beast RGB 32GB (2x16GB)",
+      "Kingston Fury Beast RGB 32GB (2x16GB) DDR5 32GB RGB",
+      "Kingston Fury Beast RGB 32GB",
+      "Kingston Fury Beast RGB 32GB DDR5 32GB RGB",
+      "Fury Beast RGB 32GB (2x16GB)"
+    ]
+  },
+  {
+    "id": "ram-26",
+    "category": "ram",
+    "name": "Corsair Dominator Platinum RGB 64GB (2x32GB)",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "64GB",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Corsair Dominator Platinum RGB 64GB (2x32GB)",
+      "Corsair Dominator Platinum RGB 64GB (2x32GB) DDR5 64GB RGB",
+      "Corsair Dominator Platinum RGB 64GB",
+      "Corsair Dominator Platinum RGB 64GB DDR5 64GB RGB",
+      "Dominator Platinum RGB 64GB (2x32GB)"
+    ]
+  },
+  {
+    "id": "ram-27",
+    "category": "ram",
+    "name": "Kingston Fury Beast Black 64GB (2x32GB)",
+    "brand": "Kingston",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "64GB",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Kingston Fury Beast Black 64GB (2x32GB)",
+      "Kingston Fury Beast Black 64GB (2x32GB) DDR5 64GB Svart",
+      "Kingston Fury Beast Black 64GB",
+      "Kingston Fury Beast Black 64GB DDR5 64GB Svart",
+      "Fury Beast Black 64GB (2x32GB)"
+    ]
+  },
+  {
+    "id": "ram-28",
+    "category": "ram",
+    "name": "Corsair Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "64GB",
+      "5200 MHz"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz",
+      "Corsair Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz DDR5 64GB 5200 MHz",
+      "Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz"
+    ]
+  },
+  {
+    "id": "ram-29",
+    "category": "ram",
+    "name": "Kingston Fury Beast RGB 64GB (2x32GB)",
+    "brand": "Kingston",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "64GB",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Kingston Fury Beast RGB 64GB (2x32GB)",
+      "Kingston Fury Beast RGB 64GB (2x32GB) DDR5 64GB RGB",
+      "Kingston Fury Beast RGB 64GB",
+      "Kingston Fury Beast RGB 64GB DDR5 64GB RGB",
+      "Fury Beast RGB 64GB (2x32GB)"
+    ]
+  },
+  {
+    "id": "ram-30",
+    "category": "ram",
+    "name": "Corsair Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "64GB",
+      "6000 MT/s",
+      "CL40",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40",
+      "Corsair Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40 DDR5 64GB 6000 MT/s CL40 RGB",
+      "Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40"
+    ]
+  },
+  {
+    "id": "ram-31",
+    "category": "ram",
+    "name": "Corsair Vengeance 64GB DDR5 RAM 6000 MT/s CL40",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "DDR5",
+      "64GB",
+      "6000 MT/s",
+      "CL40"
+    ],
+    "searchTerms": [
+      "Corsair Vengeance 64GB DDR5 RAM 6000 MT/s CL40",
+      "Corsair Vengeance 64GB DDR5 RAM 6000 MT/s CL40 DDR5 64GB 6000 MT/s CL40",
+      "Vengeance 64GB DDR5 RAM 6000 MT/s CL40"
+    ]
+  },
+  {
     "id": "sto-1",
     "category": "storage",
     "name": "Samsung 990 Pro 1TB",
@@ -1649,6 +1935,460 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
+    "id": "sto-15",
+    "category": "storage",
+    "name": "Crucial E100 M.2 Gen 4 (480GB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "480GB"
+    ],
+    "searchTerms": [
+      "Crucial E100 M.2 Gen 4 (480GB)",
+      "Crucial E100 M.2 Gen 4 (480GB) NVMe PCIe 4.0 480GB",
+      "Crucial E100 M.2 Gen 4",
+      "Crucial E100 M.2 Gen 4 NVMe PCIe 4.0 480GB",
+      "E100 M.2 Gen 4 (480GB)"
+    ]
+  },
+  {
+    "id": "sto-16",
+    "category": "storage",
+    "name": "A-Data XPG GAMMIX S55",
+    "brand": "ADATA",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0"
+    ],
+    "searchTerms": [
+      "A-Data XPG GAMMIX S55",
+      "A-Data XPG GAMMIX S55 NVMe PCIe 4.0"
+    ]
+  },
+  {
+    "id": "sto-17",
+    "category": "storage",
+    "name": "Crucial P310 M.2 2230 NVMe 1TB",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "2230",
+      "1TB"
+    ],
+    "searchTerms": [
+      "Crucial P310 M.2 2230 NVMe 1TB",
+      "Crucial P310 M.2 2230 NVMe 1TB NVMe 2230 1TB",
+      "P310 M.2 2230 NVMe 1TB"
+    ]
+  },
+  {
+    "id": "sto-18",
+    "category": "storage",
+    "name": "Intenso Premium M.2",
+    "brand": "Intenso",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "M.2"
+    ],
+    "searchTerms": [
+      "Intenso Premium M.2",
+      "Intenso Premium M.2 NVMe M.2",
+      "Premium M.2"
+    ]
+  },
+  {
+    "id": "sto-19",
+    "category": "storage",
+    "name": "Crucial P510 1TB",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "1TB"
+    ],
+    "searchTerms": [
+      "Crucial P510 1TB",
+      "Crucial P510 1TB NVMe PCIe 5.0 1TB",
+      "P510 1TB"
+    ]
+  },
+  {
+    "id": "sto-20",
+    "category": "storage",
+    "name": "Crucial E100 M.2 Gen 4 (1TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "1TB"
+    ],
+    "searchTerms": [
+      "Crucial E100 M.2 Gen 4 (1TB)",
+      "Crucial E100 M.2 Gen 4 (1TB) NVMe PCIe 4.0 1TB",
+      "Crucial E100 M.2 Gen 4",
+      "Crucial E100 M.2 Gen 4 NVMe PCIe 4.0 1TB",
+      "E100 M.2 Gen 4 (1TB)"
+    ]
+  },
+  {
+    "id": "sto-21",
+    "category": "storage",
+    "name": "Intenso Premium M.2 250GB",
+    "brand": "Intenso",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "250GB"
+    ],
+    "searchTerms": [
+      "Intenso Premium M.2 250GB",
+      "Intenso Premium M.2 250GB NVMe 250GB",
+      "Premium M.2 250GB"
+    ]
+  },
+  {
+    "id": "sto-22",
+    "category": "storage",
+    "name": "Team Group MP33 256GB",
+    "brand": "TeamGroup",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "256GB"
+    ],
+    "searchTerms": [
+      "Team Group MP33 256GB",
+      "Team Group MP33 256GB NVMe 256GB"
+    ]
+  },
+  {
+    "id": "sto-23",
+    "category": "storage",
+    "name": "Corsair MP700 ELITE",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0"
+    ],
+    "searchTerms": [
+      "Corsair MP700 ELITE",
+      "Corsair MP700 ELITE NVMe PCIe 5.0",
+      "MP700 ELITE"
+    ]
+  },
+  {
+    "id": "sto-24",
+    "category": "storage",
+    "name": "Kingston NV3 M.2 1TB",
+    "brand": "Kingston",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "1TB"
+    ],
+    "searchTerms": [
+      "Kingston NV3 M.2 1TB",
+      "Kingston NV3 M.2 1TB NVMe 1TB",
+      "NV3 M.2 1TB"
+    ]
+  },
+  {
+    "id": "sto-25",
+    "category": "storage",
+    "name": "Crucial T710 (1TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "1TB"
+    ],
+    "searchTerms": [
+      "Crucial T710 (1TB)",
+      "Crucial T710 (1TB) NVMe PCIe 5.0 1TB",
+      "Crucial T710",
+      "Crucial T710 NVMe PCIe 5.0 1TB",
+      "T710 (1TB)"
+    ]
+  },
+  {
+    "id": "sto-26",
+    "category": "storage",
+    "name": "Crucial P510 (2TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "2TB"
+    ],
+    "searchTerms": [
+      "Crucial P510 (2TB)",
+      "Crucial P510 (2TB) NVMe PCIe 5.0 2TB",
+      "Crucial P510",
+      "Crucial P510 NVMe PCIe 5.0 2TB",
+      "P510 (2TB)"
+    ]
+  },
+  {
+    "id": "sto-27",
+    "category": "storage",
+    "name": "Crucial E100 M.2 Gen 4 (2TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "2TB"
+    ],
+    "searchTerms": [
+      "Crucial E100 M.2 Gen 4 (2TB)",
+      "Crucial E100 M.2 Gen 4 (2TB) NVMe PCIe 4.0 2TB",
+      "Crucial E100 M.2 Gen 4",
+      "Crucial E100 M.2 Gen 4 NVMe PCIe 4.0 2TB",
+      "E100 M.2 Gen 4 (2TB)"
+    ]
+  },
+  {
+    "id": "sto-28",
+    "category": "storage",
+    "name": "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "2TB"
+    ],
+    "searchTerms": [
+      "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
+      "Corsair MP600 CORE XT NVMe PCIe M.2 2TB NVMe PCIe 4.0 2TB",
+      "MP600 CORE XT NVMe PCIe M.2 2TB"
+    ]
+  },
+  {
+    "id": "sto-29",
+    "category": "storage",
+    "name": "Crucial P510 med kylflansar (2TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "2TB",
+      "Heatsink"
+    ],
+    "searchTerms": [
+      "Crucial P510 med kylflansar (2TB)",
+      "Crucial P510 med kylflansar (2TB) NVMe PCIe 5.0 2TB Heatsink",
+      "Crucial P510 med kylflansar",
+      "Crucial P510 med kylflansar NVMe PCIe 5.0 2TB Heatsink",
+      "P510 med kylflansar (2TB)"
+    ]
+  },
+  {
+    "id": "sto-30",
+    "category": "storage",
+    "name": "Crucial P310 (2TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "2TB"
+    ],
+    "searchTerms": [
+      "Crucial P310 (2TB)",
+      "Crucial P310 (2TB) NVMe PCIe 4.0 2TB",
+      "Crucial P310",
+      "Crucial P310 NVMe PCIe 4.0 2TB",
+      "P310 (2TB)"
+    ]
+  },
+  {
+    "id": "sto-31",
+    "category": "storage",
+    "name": "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "4TB",
+      "Heatsink"
+    ],
+    "searchTerms": [
+      "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
+      "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB NVMe PCIe 4.0 4TB Heatsink",
+      "P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB"
+    ]
+  },
+  {
+    "id": "sto-32",
+    "category": "storage",
+    "name": "Crucial P310 (4TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "4TB"
+    ],
+    "searchTerms": [
+      "Crucial P310 (4TB)",
+      "Crucial P310 (4TB) NVMe PCIe 4.0 4TB",
+      "Crucial P310",
+      "Crucial P310 NVMe PCIe 4.0 4TB",
+      "P310 (4TB)"
+    ]
+  },
+  {
+    "id": "sto-33",
+    "category": "storage",
+    "name": "WD Black SN7100 4TB Gen 4",
+    "brand": "WD",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "4TB"
+    ],
+    "searchTerms": [
+      "WD Black SN7100 4TB Gen 4",
+      "WD Black SN7100 4TB Gen 4 NVMe PCIe 4.0 4TB",
+      "Black SN7100 4TB Gen 4"
+    ]
+  },
+  {
+    "id": "sto-34",
+    "category": "storage",
+    "name": "Samsung 990 EVO Plus 4TB",
+    "brand": "Samsung",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "4TB"
+    ],
+    "searchTerms": [
+      "Samsung 990 EVO Plus 4TB",
+      "Samsung 990 EVO Plus 4TB NVMe PCIe 4.0 4TB",
+      "990 EVO Plus 4TB"
+    ]
+  },
+  {
+    "id": "sto-35",
+    "category": "storage",
+    "name": "Crucial T710 (4TB)",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "4TB"
+    ],
+    "searchTerms": [
+      "Crucial T710 (4TB)",
+      "Crucial T710 (4TB) NVMe PCIe 5.0 4TB",
+      "Crucial T710",
+      "Crucial T710 NVMe PCIe 5.0 4TB",
+      "T710 (4TB)"
+    ]
+  },
+  {
+    "id": "sto-36",
+    "category": "storage",
+    "name": "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 4.0",
+      "4TB",
+      "Heatsink"
+    ],
+    "searchTerms": [
+      "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
+      "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS NVMe PCIe 4.0 4TB Heatsink",
+      "T500 4TB M.2 NVMe PCIe Gen 4 HS"
+    ]
+  },
+  {
+    "id": "sto-37",
+    "category": "storage",
+    "name": "Lexar NM990",
+    "brand": "Lexar",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0"
+    ],
+    "searchTerms": [
+      "Lexar NM990",
+      "Lexar NM990 NVMe PCIe 5.0",
+      "NM990"
+    ]
+  },
+  {
+    "id": "sto-38",
+    "category": "storage",
+    "name": "Patriot Viper Gaming PV593",
+    "brand": "Patriot",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0"
+    ],
+    "searchTerms": [
+      "Patriot Viper Gaming PV593",
+      "Patriot Viper Gaming PV593 NVMe PCIe 5.0",
+      "Viper Gaming PV593"
+    ]
+  },
+  {
+    "id": "sto-39",
+    "category": "storage",
+    "name": "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
+    "brand": "Crucial",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "4TB",
+      "Heatsink"
+    ],
+    "searchTerms": [
+      "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
+      "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare NVMe PCIe 5.0 4TB Heatsink",
+      "T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare"
+    ]
+  },
+  {
+    "id": "sto-40",
+    "category": "storage",
+    "name": "Sandisk WD_Black SN8100 NVMe 1TB",
+    "brand": "Sandisk",
+    "price": 0,
+    "specs": [
+      "NVMe",
+      "PCIe 5.0",
+      "1TB"
+    ],
+    "searchTerms": [
+      "Sandisk WD_Black SN8100 NVMe 1TB",
+      "Sandisk WD_Black SN8100 NVMe 1TB NVMe PCIe 5.0 1TB",
+      "WD_Black SN8100 NVMe 1TB"
+    ]
+  },
+  {
     "id": "case-1",
     "category": "case",
     "name": "NZXT H7 Flow",
@@ -1816,6 +2556,335 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "Fractal Design Meshify 2",
       "Fractal Design Meshify 2 ATX Mesh Modulär",
       "Design Meshify 2"
+    ]
+  },
+  {
+    "id": "case-11",
+    "category": "case",
+    "name": "DeepCool CG530 4F",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "4x fans",
+      "Svart"
+    ],
+    "searchTerms": [
+      "DeepCool CG530 4F",
+      "DeepCool CG530 4F ATX 4x fans Svart",
+      "CG530 4F"
+    ]
+  },
+  {
+    "id": "case-12",
+    "category": "case",
+    "name": "DeepCool CG530 4F Vit",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "4x fans",
+      "Vit"
+    ],
+    "searchTerms": [
+      "DeepCool CG530 4F Vit",
+      "DeepCool CG530 4F Vit ATX 4x fans Vit",
+      "CG530 4F Vit"
+    ]
+  },
+  {
+    "id": "case-13",
+    "category": "case",
+    "name": "Phanteks XT Pro Ultra",
+    "brand": "Phanteks",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Airflow",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Phanteks XT Pro Ultra",
+      "Phanteks XT Pro Ultra ATX Airflow RGB",
+      "XT Pro Ultra"
+    ]
+  },
+  {
+    "id": "case-14",
+    "category": "case",
+    "name": "Lian Li Vector V100 PC-chassi (svart)",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Showcase",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Lian Li Vector V100 PC-chassi (svart)",
+      "Lian Li Vector V100 PC-chassi (svart) ATX Showcase Svart",
+      "Lian Li Vector V100 PC-chassi",
+      "Lian Li Vector V100 PC-chassi ATX Showcase Svart",
+      "Vector V100 PC-chassi (svart)"
+    ]
+  },
+  {
+    "id": "case-15",
+    "category": "case",
+    "name": "Lian Li A3",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "mATX",
+      "Compact",
+      "Mesh"
+    ],
+    "searchTerms": [
+      "Lian Li A3",
+      "Lian Li A3 mATX Compact Mesh"
+    ]
+  },
+  {
+    "id": "case-16",
+    "category": "case",
+    "name": "NZXT H6 Flow Case Dual Chamber RGB",
+    "brand": "NZXT",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Dual chamber",
+      "RGB"
+    ],
+    "searchTerms": [
+      "NZXT H6 Flow Case Dual Chamber RGB",
+      "NZXT H6 Flow Case Dual Chamber RGB ATX Dual chamber RGB",
+      "H6 Flow Case Dual Chamber RGB"
+    ]
+  },
+  {
+    "id": "case-17",
+    "category": "case",
+    "name": "DeepCool CG530 Svart",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Airflow",
+      "Svart"
+    ],
+    "searchTerms": [
+      "DeepCool CG530 Svart",
+      "DeepCool CG530 Svart ATX Airflow Svart",
+      "CG530 Svart"
+    ]
+  },
+  {
+    "id": "case-18",
+    "category": "case",
+    "name": "Fractal Design North XL",
+    "brand": "Fractal",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "XL",
+      "Trapanel"
+    ],
+    "searchTerms": [
+      "Fractal Design North XL",
+      "Fractal Design North XL ATX XL Trapanel",
+      "Design North XL"
+    ]
+  },
+  {
+    "id": "case-19",
+    "category": "case",
+    "name": "O11 Vision Compact PC-chassi (svart)",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Compact",
+      "Svart"
+    ],
+    "searchTerms": [
+      "O11 Vision Compact PC-chassi (svart)",
+      "O11 Vision Compact PC-chassi (svart) ATX Compact Svart",
+      "O11 Vision Compact PC-chassi",
+      "O11 Vision Compact PC-chassi ATX Compact Svart"
+    ]
+  },
+  {
+    "id": "case-20",
+    "category": "case",
+    "name": "Lian Li O11 Vision Compact (Vit/Transparent)",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Compact",
+      "Vit"
+    ],
+    "searchTerms": [
+      "Lian Li O11 Vision Compact (Vit/Transparent)",
+      "Lian Li O11 Vision Compact (Vit/Transparent) ATX Compact Vit",
+      "Lian Li O11 Vision Compact",
+      "Lian Li O11 Vision Compact ATX Compact Vit",
+      "O11 Vision Compact (Vit/Transparent)"
+    ]
+  },
+  {
+    "id": "case-21",
+    "category": "case",
+    "name": "Corsair 3500X",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Showcase",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Corsair 3500X",
+      "Corsair 3500X ATX Showcase RGB",
+      "3500X"
+    ]
+  },
+  {
+    "id": "case-22",
+    "category": "case",
+    "name": "Lian Li O11D Mini V2 White",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Mini",
+      "Vit"
+    ],
+    "searchTerms": [
+      "Lian Li O11D Mini V2 White",
+      "Lian Li O11D Mini V2 White ATX Mini Vit",
+      "O11D Mini V2 White"
+    ]
+  },
+  {
+    "id": "case-23",
+    "category": "case",
+    "name": "Phanteks XT View",
+    "brand": "Phanteks",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Glass",
+      "Showcase"
+    ],
+    "searchTerms": [
+      "Phanteks XT View",
+      "Phanteks XT View ATX Glass Showcase",
+      "XT View"
+    ]
+  },
+  {
+    "id": "case-24",
+    "category": "case",
+    "name": "Chieftec Visio Svart RGB",
+    "brand": "Chieftec",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "RGB",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Chieftec Visio Svart RGB",
+      "Chieftec Visio Svart RGB ATX RGB Svart",
+      "Visio Svart RGB"
+    ]
+  },
+  {
+    "id": "case-25",
+    "category": "case",
+    "name": "DeepCool CG530 Vit",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Airflow",
+      "Vit"
+    ],
+    "searchTerms": [
+      "DeepCool CG530 Vit",
+      "DeepCool CG530 Vit ATX Airflow Vit",
+      "CG530 Vit"
+    ]
+  },
+  {
+    "id": "case-26",
+    "category": "case",
+    "name": "Cooler Master Elite 301 Mini Tower (svart)",
+    "brand": "Cooler Master",
+    "price": 0,
+    "specs": [
+      "mATX",
+      "Mini tower",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Cooler Master Elite 301 Mini Tower (svart)",
+      "Cooler Master Elite 301 Mini Tower (svart) mATX Mini tower Svart",
+      "Cooler Master Elite 301 Mini Tower",
+      "Cooler Master Elite 301 Mini Tower mATX Mini tower Svart",
+      "Elite 301 Mini Tower (svart)"
+    ]
+  },
+  {
+    "id": "case-27",
+    "category": "case",
+    "name": "Thermaltake View 170 TG ARGB",
+    "brand": "Thermaltake",
+    "price": 0,
+    "specs": [
+      "mATX",
+      "ARGB",
+      "Glass"
+    ],
+    "searchTerms": [
+      "Thermaltake View 170 TG ARGB",
+      "Thermaltake View 170 TG ARGB mATX ARGB Glass",
+      "View 170 TG ARGB"
+    ]
+  },
+  {
+    "id": "case-28",
+    "category": "case",
+    "name": "Kolink Observatory HF",
+    "brand": "Kolink",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Mesh",
+      "RGB"
+    ],
+    "searchTerms": [
+      "Kolink Observatory HF",
+      "Kolink Observatory HF ATX Mesh RGB",
+      "Observatory HF"
+    ]
+  },
+  {
+    "id": "case-29",
+    "category": "case",
+    "name": "Kolink Observatory HF Glass Vit",
+    "brand": "Kolink",
+    "price": 0,
+    "specs": [
+      "ATX",
+      "Glass",
+      "Vit"
+    ],
+    "searchTerms": [
+      "Kolink Observatory HF Glass Vit",
+      "Kolink Observatory HF Glass Vit ATX Glass Vit",
+      "Observatory HF Glass Vit"
     ]
   },
   {
@@ -2379,47 +3448,47 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-52": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-53": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-54": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-55": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-56": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-57": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-58": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-59": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-60": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-61": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-62": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-63": {
@@ -2427,23 +3496,23 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-64": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-65": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-66": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-67": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-68": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-1": {
@@ -2510,6 +3579,66 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "ram-17": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-18": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-19": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-20": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-21": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-22": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-23": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-24": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-25": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-26": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-27": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-28": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-29": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-30": {
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-31": {
+    "source": "static_reference",
+    "note": null
+  },
   "sto-1": {
     "source": "prisjakt_seed",
     "note": null
@@ -2562,6 +3691,110 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "sto-15": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-16": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-17": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-18": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-19": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-20": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-21": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-22": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-23": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-24": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-25": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-26": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-27": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-28": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-29": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-30": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-31": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-32": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-33": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-34": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-35": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-36": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-37": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-38": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-39": {
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-40": {
+    "source": "static_reference",
+    "note": null
+  },
   "case-1": {
     "source": "prisjakt_seed",
     "note": null
@@ -2600,6 +3833,82 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
   },
   "case-10": {
     "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-11": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-12": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-13": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-14": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-15": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-16": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-17": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-18": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-19": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-20": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-21": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-22": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-23": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-24": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-25": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-26": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-27": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-28": {
+    "source": "static_reference",
+    "note": null
+  },
+  "case-29": {
+    "source": "static_reference",
     "note": null
   },
   "psu-1": {

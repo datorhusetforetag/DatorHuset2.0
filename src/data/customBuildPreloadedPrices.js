@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T16:00:19.660Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T18:09:54.517Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
@@ -106,9 +106,9 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "mb-lga1200-asrock-z590-steel-legend": 1999,
   "mb-lga1200-asus-rog-strix-z490-f": 1999,
   "mb-lga1200-msi-z490-gaming-edge-wifi": 2099,
-  "mb-lga1700-msi-b760m-mortar-wifi": 2090,
+  "mb-lga1700-msi-b760m-mortar-wifi": 2990,
   "mb-lga1700-asus-tuf-b760-plus-wifi": 1504,
-  "mb-lga1700-gigabyte-b760-aorus-elite-ax": 2499,
+  "mb-lga1700-gigabyte-b760-aorus-elite-ax": 2317,
   "mb-lga1700-asrock-b760-pro-rs": 1293,
   "mb-lga1700-msi-z790-tomahawk-wifi": 2463,
   "mb-lga1700-asus-tuf-z790-plus-wifi": 2409,
@@ -200,6 +200,21 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "ram-14": 5190,
   "ram-15": 5190,
   "ram-16": 5779,
+  "ram-17": 699,
+  "ram-18": 2990,
+  "ram-19": 729,
+  "ram-20": 829,
+  "ram-21": 1299,
+  "ram-22": 1190,
+  "ram-23": 1249,
+  "ram-24": 1349,
+  "ram-25": 1290,
+  "ram-26": 14017,
+  "ram-27": 2290,
+  "ram-28": 2190,
+  "ram-29": 2490,
+  "ram-30": 2590,
+  "ram-31": 2390,
   "sto-1": 1990,
   "sto-2": 1699,
   "sto-3": 1799,
@@ -213,16 +228,61 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "sto-11": 1823,
   "sto-13": 2186,
   "sto-14": 2499,
+  "sto-15": 499,
+  "sto-16": 699,
+  "sto-17": 1499,
+  "sto-18": 666,
+  "sto-19": 999,
+  "sto-20": 699,
+  "sto-21": 666,
+  "sto-22": 360,
+  "sto-23": 2508,
+  "sto-24": 1691,
+  "sto-25": 1790,
+  "sto-26": 1590,
+  "sto-27": 1190,
+  "sto-28": 2199,
+  "sto-29": 1690,
+  "sto-30": 2599,
+  "sto-31": 2990,
+  "sto-32": 2790,
+  "sto-33": 2990,
+  "sto-34": 6990,
+  "sto-35": 3990,
+  "sto-36": 3290,
+  "sto-37": 1990,
+  "sto-38": 1890,
+  "sto-39": 4290,
+  "sto-40": 1490,
   "case-1": 829,
   "case-2": 1199,
   "case-3": 1674,
   "case-4": 649,
   "case-5": 1790,
   "case-6": 1303,
-  "case-7": 1190,
+  "case-7": 2999,
   "case-8": 699,
   "case-9": 1638,
   "case-10": 1120,
+  "case-11": 519,
+  "case-12": 679,
+  "case-13": 799,
+  "case-14": 854,
+  "case-15": 949,
+  "case-16": 1490,
+  "case-17": 829,
+  "case-18": 1990,
+  "case-19": 1490,
+  "case-20": 1590,
+  "case-21": 1490,
+  "case-22": 1390,
+  "case-23": 999,
+  "case-24": 999,
+  "case-25": 849,
+  "case-26": 699,
+  "case-27": 799,
+  "case-28": 749,
+  "case-29": 799,
   "psu-1": 1289,
   "psu-2": 1528,
   "psu-3": 1263,
@@ -879,7 +939,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-lga1700-msi-b760m-mortar-wifi": {
     "category": "motherboard",
     "name": "MSI MAG B760M Mortar WiFi",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "mb-lga1700-asus-tuf-b760-plus-wifi": {
@@ -891,7 +951,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-lga1700-gigabyte-b760-aorus-elite-ax": {
     "category": "motherboard",
     "name": "Gigabyte B760 Aorus Elite AX",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "mb-lga1700-asrock-b760-pro-rs": {
@@ -1440,6 +1500,96 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "ram-17": {
+    "category": "ram",
+    "name": "Corsair Vengeance 16GB (2x8GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-18": {
+    "category": "ram",
+    "name": "Kingston FURY Beast 6000MHz DDR5 16GB (svart)",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "ram-19": {
+    "category": "ram",
+    "name": "Kingston Fury Beast 16GB (2x8GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-20": {
+    "category": "ram",
+    "name": "Corsair Vengeance RGB 16GB (2x8GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-21": {
+    "category": "ram",
+    "name": "Corsair Vengeance RGB 32GB (2x16GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-22": {
+    "category": "ram",
+    "name": "Corsair Vengeance 32GB (2x16GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-23": {
+    "category": "ram",
+    "name": "Corsair Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-24": {
+    "category": "ram",
+    "name": "Corsair 32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-25": {
+    "category": "ram",
+    "name": "Kingston Fury Beast RGB 32GB (2x16GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-26": {
+    "category": "ram",
+    "name": "Corsair Dominator Platinum RGB 64GB (2x32GB)",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "ram-27": {
+    "category": "ram",
+    "name": "Kingston Fury Beast Black 64GB (2x32GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-28": {
+    "category": "ram",
+    "name": "Corsair Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-29": {
+    "category": "ram",
+    "name": "Kingston Fury Beast RGB 64GB (2x32GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-30": {
+    "category": "ram",
+    "name": "Corsair Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40",
+    "source": "static_reference",
+    "note": null
+  },
+  "ram-31": {
+    "category": "ram",
+    "name": "Corsair Vengeance 64GB DDR5 RAM 6000 MT/s CL40",
+    "source": "static_reference",
+    "note": null
+  },
   "sto-1": {
     "category": "storage",
     "name": "Samsung 990 Pro 1TB",
@@ -1518,6 +1668,162 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "sto-15": {
+    "category": "storage",
+    "name": "Crucial E100 M.2 Gen 4 (480GB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-16": {
+    "category": "storage",
+    "name": "A-Data XPG GAMMIX S55",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-17": {
+    "category": "storage",
+    "name": "Crucial P310 M.2 2230 NVMe 1TB",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-18": {
+    "category": "storage",
+    "name": "Intenso Premium M.2",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-19": {
+    "category": "storage",
+    "name": "Crucial P510 1TB",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-20": {
+    "category": "storage",
+    "name": "Crucial E100 M.2 Gen 4 (1TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-21": {
+    "category": "storage",
+    "name": "Intenso Premium M.2 250GB",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-22": {
+    "category": "storage",
+    "name": "Team Group MP33 256GB",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-23": {
+    "category": "storage",
+    "name": "Corsair MP700 ELITE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-24": {
+    "category": "storage",
+    "name": "Kingston NV3 M.2 1TB",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-25": {
+    "category": "storage",
+    "name": "Crucial T710 (1TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-26": {
+    "category": "storage",
+    "name": "Crucial P510 (2TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-27": {
+    "category": "storage",
+    "name": "Crucial E100 M.2 Gen 4 (2TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-28": {
+    "category": "storage",
+    "name": "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-29": {
+    "category": "storage",
+    "name": "Crucial P510 med kylflansar (2TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-30": {
+    "category": "storage",
+    "name": "Crucial P310 (2TB)",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-31": {
+    "category": "storage",
+    "name": "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-32": {
+    "category": "storage",
+    "name": "Crucial P310 (4TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-33": {
+    "category": "storage",
+    "name": "WD Black SN7100 4TB Gen 4",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-34": {
+    "category": "storage",
+    "name": "Samsung 990 EVO Plus 4TB",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "sto-35": {
+    "category": "storage",
+    "name": "Crucial T710 (4TB)",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-36": {
+    "category": "storage",
+    "name": "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-37": {
+    "category": "storage",
+    "name": "Lexar NM990",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-38": {
+    "category": "storage",
+    "name": "Patriot Viper Gaming PV593",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-39": {
+    "category": "storage",
+    "name": "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
+    "source": "static_reference",
+    "note": null
+  },
+  "sto-40": {
+    "category": "storage",
+    "name": "Sandisk WD_Black SN8100 NVMe 1TB",
+    "source": "static_reference",
+    "note": null
+  },
   "case-1": {
     "category": "case",
     "name": "NZXT H7 Flow",
@@ -1557,7 +1863,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "case-7": {
     "category": "case",
     "name": "Cooler Master TD500 Mesh",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-8": {
@@ -1576,6 +1882,120 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "category": "case",
     "name": "Fractal Design Meshify 2",
     "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-11": {
+    "category": "case",
+    "name": "DeepCool CG530 4F",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-12": {
+    "category": "case",
+    "name": "DeepCool CG530 4F Vit",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-13": {
+    "category": "case",
+    "name": "Phanteks XT Pro Ultra",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-14": {
+    "category": "case",
+    "name": "Lian Li Vector V100 PC-chassi (svart)",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-15": {
+    "category": "case",
+    "name": "Lian Li A3",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "case-16": {
+    "category": "case",
+    "name": "NZXT H6 Flow Case Dual Chamber RGB",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-17": {
+    "category": "case",
+    "name": "DeepCool CG530 Svart",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-18": {
+    "category": "case",
+    "name": "Fractal Design North XL",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-19": {
+    "category": "case",
+    "name": "O11 Vision Compact PC-chassi (svart)",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-20": {
+    "category": "case",
+    "name": "Lian Li O11 Vision Compact (Vit/Transparent)",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-21": {
+    "category": "case",
+    "name": "Corsair 3500X",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-22": {
+    "category": "case",
+    "name": "Lian Li O11D Mini V2 White",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-23": {
+    "category": "case",
+    "name": "Phanteks XT View",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-24": {
+    "category": "case",
+    "name": "Chieftec Visio Svart RGB",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-25": {
+    "category": "case",
+    "name": "DeepCool CG530 Vit",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-26": {
+    "category": "case",
+    "name": "Cooler Master Elite 301 Mini Tower (svart)",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-27": {
+    "category": "case",
+    "name": "Thermaltake View 170 TG ARGB",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-28": {
+    "category": "case",
+    "name": "Kolink Observatory HF",
+    "source": "static_reference",
+    "note": null
+  },
+  "case-29": {
+    "category": "case",
+    "name": "Kolink Observatory HF Glass Vit",
+    "source": "static_reference",
     "note": null
   },
   "psu-1": {

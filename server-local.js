@@ -1579,6 +1579,18 @@ const PRISJAKT_PRODUCT_URL_OVERRIDES = {
   "cpu-lga1700-core-i5-14400f": "https://www.prisjakt.nu/produkt.php?p=13219693",
   "mb-am4-msi-b550-tomahawk": "https://www.prisjakt.nu/produkt.php?p=5386548",
   "mb-am5-msi-b650-tomahawk-wifi": "https://www.prisjakt.nu/produkt.php?p=7153870",
+  "mb-am4-gigabyte-x570-aorus-elite": "https://www.prisjakt.nu/produkt.php?p=5150976",
+};
+const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
+  "cpu-am4-ryzen-3-3100": {
+    inet: "https://www.inet.se/produkt/5303157/amd-ryzen-3-3100-3-6ghz-18mb",
+  },
+  "cpu-am4-ryzen-9-5900x": {
+    inet: "https://www.inet.se/produkt/5303476/amd-ryzen-9-5900x-3-7-ghz-70mb",
+  },
+  "cpu-lga1700-core-i5-14400f": {
+    inet: "https://www.inet.se/produkt/5306606/intel-core-i5-14400f-2-5-ghz-29-5mb",
+  },
 };
 const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
   [
@@ -2393,12 +2405,18 @@ const normalizeCatalogProductUrl = (value, sourceId) =>
 const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const normalizedPrice = parseMoneyValue(offer?.price);
   const normalizedTotalPrice = parseMoneyValue(offer?.total_price);
+  const storeProductUrlOverride = firstText(
+    CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item?.id]?.[source?.id]
+  );
+  const productUrl =
+    normalizeCatalogProductUrl(storeProductUrlOverride, source?.id) ||
+    normalizeCatalogProductUrl(offer?.product_url, source?.id);
   return {
     store_id: sanitizeText(String(offer?.store_id || source?.id || ""), 80),
     store: firstText(offer?.store, source?.name) || source?.name || "Unknown",
     status: firstText(offer?.status) || (normalizedTotalPrice !== null || normalizedPrice !== null ? "available" : "linked_no_price"),
-    product_url: normalizeCatalogProductUrl(offer?.product_url, source?.id),
-    search_url: firstText(offer?.search_url) || null,
+    product_url: productUrl,
+    search_url: productUrl ? null : firstText(offer?.search_url) || null,
     price: normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     total_price: normalizedTotalPrice !== null ? Math.max(0, Math.round(normalizedTotalPrice)) : normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     currency: firstText(offer?.currency).toUpperCase() || "SEK",

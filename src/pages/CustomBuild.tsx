@@ -457,6 +457,14 @@ const getItemPcieGenerationFilterValue = (item: ComponentItem) => {
   return "";
 };
 
+const getItemChipsetFilterValue = (item: ComponentItem) => {
+  const detailValue = String(item.details?.chipset || "").trim();
+  if (detailValue) return detailValue;
+  const text = collectItemSearchText(item);
+  const match = text.match(/\b(B\d{3,4}[A-Z]?|X\d{3,4}[A-Z]?|Z\d{3,4}|H\d{3,4}|A\d{3,4}|Q\d{3,4})\b/i);
+  return match ? match[1].toUpperCase() : "";
+};
+
 const getItemStorageTypeFilterValue = (item: ComponentItem) => {
   const metadataValue = STORAGE_METADATA_BY_ID[item.id]?.interface || "";
   const text = `${collectItemSearchText(item)} ${metadataValue}`;
@@ -1631,6 +1639,141 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       image: ramKingston32GbDdr5Image,
       specs: ["DDR5", "32GB", "6400 MHz", "CL32"],
     },
+    {
+      id: "ram-17",
+      name: "Corsair Vengeance 16GB (2x8GB)",
+      brand: "Corsair",
+      price: 699,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "16GB", "5600 MHz"],
+    },
+    {
+      id: "ram-18",
+      name: "Kingston FURY Beast 6000MHz DDR5 16GB (svart)",
+      brand: "Kingston",
+      price: 749,
+      ramType: "DDR5",
+      image: ramKingstonFuryBeastImage,
+      specs: ["DDR5", "16GB", "6000 MHz", "Svart"],
+    },
+    {
+      id: "ram-19",
+      name: "Kingston Fury Beast 16GB (2x8GB)",
+      brand: "Kingston",
+      price: 729,
+      ramType: "DDR5",
+      image: ramKingstonFuryBeastImage,
+      specs: ["DDR5", "16GB", "5600 MHz"],
+    },
+    {
+      id: "ram-20",
+      name: "Corsair Vengeance RGB 16GB (2x8GB)",
+      brand: "Corsair",
+      price: 829,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "16GB", "RGB"],
+    },
+    {
+      id: "ram-21",
+      name: "Corsair Vengeance RGB 32GB (2x16GB)",
+      brand: "Corsair",
+      price: 1299,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "32GB", "RGB"],
+    },
+    {
+      id: "ram-22",
+      name: "Corsair Vengeance 32GB (2x16GB)",
+      brand: "Corsair",
+      price: 1190,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "32GB", "6000 MHz"],
+    },
+    {
+      id: "ram-23",
+      name: "Corsair Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36",
+      brand: "Corsair",
+      price: 1249,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "32GB", "6000 MT/s", "CL36"],
+    },
+    {
+      id: "ram-24",
+      name: "Corsair 32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit",
+      brand: "Corsair",
+      price: 1349,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "32GB", "6000 MHz", "CL36", "Vit"],
+    },
+    {
+      id: "ram-25",
+      name: "Kingston Fury Beast RGB 32GB (2x16GB)",
+      brand: "Kingston",
+      price: 1290,
+      ramType: "DDR5",
+      image: ramKingstonFuryBeastImage,
+      specs: ["DDR5", "32GB", "RGB"],
+    },
+    {
+      id: "ram-26",
+      name: "Corsair Dominator Platinum RGB 64GB (2x32GB)",
+      brand: "Corsair",
+      price: 2790,
+      ramType: "DDR5",
+      image: ramCorsairDominatorImage,
+      specs: ["DDR5", "64GB", "RGB"],
+    },
+    {
+      id: "ram-27",
+      name: "Kingston Fury Beast Black 64GB (2x32GB)",
+      brand: "Kingston",
+      price: 2290,
+      ramType: "DDR5",
+      image: ramKingstonFuryBeastImage,
+      specs: ["DDR5", "64GB", "Svart"],
+    },
+    {
+      id: "ram-28",
+      name: "Corsair Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz",
+      brand: "Corsair",
+      price: 2190,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "64GB", "5200 MHz"],
+    },
+    {
+      id: "ram-29",
+      name: "Kingston Fury Beast RGB 64GB (2x32GB)",
+      brand: "Kingston",
+      price: 2490,
+      ramType: "DDR5",
+      image: ramKingstonFuryBeastImage,
+      specs: ["DDR5", "64GB", "RGB"],
+    },
+    {
+      id: "ram-30",
+      name: "Corsair Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40",
+      brand: "Corsair",
+      price: 2590,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "64GB", "6000 MT/s", "CL40", "RGB"],
+    },
+    {
+      id: "ram-31",
+      name: "Corsair Vengeance 64GB DDR5 RAM 6000 MT/s CL40",
+      brand: "Corsair",
+      price: 2390,
+      ramType: "DDR5",
+      image: ramCorsairVengeanceImage,
+      specs: ["DDR5", "64GB", "6000 MT/s", "CL40"],
+    },
   ],
   storage: [
     {
@@ -1737,6 +1880,214 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       image: storageKingstonFuryRenegadeG5Image,
       specs: ["NVMe"],
     },
+    {
+      id: "sto-15",
+      name: "Crucial E100 M.2 Gen 4 (480GB)",
+      brand: "Crucial",
+      price: 499,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "480GB"],
+    },
+    {
+      id: "sto-16",
+      name: "A-Data XPG GAMMIX S55",
+      brand: "ADATA",
+      price: 699,
+      image: storageTeamGroupG50Image,
+      specs: ["NVMe", "PCIe 4.0"],
+    },
+    {
+      id: "sto-17",
+      name: "Crucial P310 M.2 2230 NVMe 1TB",
+      brand: "Crucial",
+      price: 949,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "2230", "1TB"],
+    },
+    {
+      id: "sto-18",
+      name: "Intenso Premium M.2",
+      brand: "Intenso",
+      price: 499,
+      image: storageSamsung870EvoImage,
+      specs: ["NVMe", "M.2"],
+    },
+    {
+      id: "sto-19",
+      name: "Crucial P510 1TB",
+      brand: "Crucial",
+      price: 999,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 5.0", "1TB"],
+    },
+    {
+      id: "sto-20",
+      name: "Crucial E100 M.2 Gen 4 (1TB)",
+      brand: "Crucial",
+      price: 699,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "1TB"],
+    },
+    {
+      id: "sto-21",
+      name: "Intenso Premium M.2 250GB",
+      brand: "Intenso",
+      price: 349,
+      image: storageSamsung870EvoImage,
+      specs: ["NVMe", "250GB"],
+    },
+    {
+      id: "sto-22",
+      name: "Team Group MP33 256GB",
+      brand: "TeamGroup",
+      price: 399,
+      image: storageTeamGroupG50Image,
+      specs: ["NVMe", "256GB"],
+    },
+    {
+      id: "sto-23",
+      name: "Corsair MP700 ELITE",
+      brand: "Corsair",
+      price: 1890,
+      image: storageKingstonFuryRenegadeG5Image,
+      specs: ["NVMe", "PCIe 5.0"],
+    },
+    {
+      id: "sto-24",
+      name: "Kingston NV3 M.2 1TB",
+      brand: "Kingston",
+      price: 699,
+      image: storageKingstonKc3000Image,
+      specs: ["NVMe", "1TB"],
+    },
+    {
+      id: "sto-25",
+      name: "Crucial T710 (1TB)",
+      brand: "Crucial",
+      price: 1790,
+      image: storageKingstonFuryRenegadeG5Image,
+      specs: ["NVMe", "PCIe 5.0", "1TB"],
+    },
+    {
+      id: "sto-26",
+      name: "Crucial P510 (2TB)",
+      brand: "Crucial",
+      price: 1590,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 5.0", "2TB"],
+    },
+    {
+      id: "sto-27",
+      name: "Crucial E100 M.2 Gen 4 (2TB)",
+      brand: "Crucial",
+      price: 1190,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "2TB"],
+    },
+    {
+      id: "sto-28",
+      name: "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
+      brand: "Corsair",
+      price: 1290,
+      image: storageTeamGroupG50Image,
+      specs: ["NVMe", "PCIe 4.0", "2TB"],
+    },
+    {
+      id: "sto-29",
+      name: "Crucial P510 med kylflansar (2TB)",
+      brand: "Crucial",
+      price: 1690,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 5.0", "2TB", "Heatsink"],
+    },
+    {
+      id: "sto-30",
+      name: "Crucial P310 (2TB)",
+      brand: "Crucial",
+      price: 1490,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "2TB"],
+    },
+    {
+      id: "sto-31",
+      name: "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
+      brand: "Crucial",
+      price: 2990,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "4TB", "Heatsink"],
+    },
+    {
+      id: "sto-32",
+      name: "Crucial P310 (4TB)",
+      brand: "Crucial",
+      price: 2790,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "4TB"],
+    },
+    {
+      id: "sto-33",
+      name: "WD Black SN7100 4TB Gen 4",
+      brand: "WD",
+      price: 2990,
+      image: storageWdBlackSn850xImage,
+      specs: ["NVMe", "PCIe 4.0", "4TB"],
+    },
+    {
+      id: "sto-34",
+      name: "Samsung 990 EVO Plus 4TB",
+      brand: "Samsung",
+      price: 2990,
+      image: storageSamsung990Pro2tbImage,
+      specs: ["NVMe", "PCIe 4.0", "4TB"],
+    },
+    {
+      id: "sto-35",
+      name: "Crucial T710 (4TB)",
+      brand: "Crucial",
+      price: 3990,
+      image: storageKingstonFuryRenegadeG5Image,
+      specs: ["NVMe", "PCIe 5.0", "4TB"],
+    },
+    {
+      id: "sto-36",
+      name: "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
+      brand: "Crucial",
+      price: 3290,
+      image: storageCrucialT500Image,
+      specs: ["NVMe", "PCIe 4.0", "4TB", "Heatsink"],
+    },
+    {
+      id: "sto-37",
+      name: "Lexar NM990",
+      brand: "Lexar",
+      price: 1990,
+      image: storageLexarNm1090Image,
+      specs: ["NVMe", "PCIe 5.0"],
+    },
+    {
+      id: "sto-38",
+      name: "Patriot Viper Gaming PV593",
+      brand: "Patriot",
+      price: 1890,
+      image: storageTeamGroupG50Image,
+      specs: ["NVMe", "PCIe 5.0"],
+    },
+    {
+      id: "sto-39",
+      name: "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
+      brand: "Crucial",
+      price: 4290,
+      image: storageKingstonFuryRenegadeG5Image,
+      specs: ["NVMe", "PCIe 5.0", "4TB", "Heatsink"],
+    },
+    {
+      id: "sto-40",
+      name: "Sandisk WD_Black SN8100 NVMe 1TB",
+      brand: "Sandisk",
+      price: 1490,
+      image: storageWdBlackSn850xImage,
+      specs: ["NVMe", "PCIe 5.0", "1TB"],
+    },
   ],
   case: [
     {
@@ -1819,6 +2170,158 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       price: 1690,
       image: caseFractalDesignMeshify2Image,
       specs: ["ATX", "Mesh", "Modulär"],
+    },
+    {
+      id: "case-11",
+      name: "DeepCool CG530 4F",
+      brand: "DeepCool",
+      price: 899,
+      image: caseCoolerMasterTd500MeshImage,
+      specs: ["ATX", "4x fans", "Svart"],
+    },
+    {
+      id: "case-12",
+      name: "DeepCool CG530 4F Vit",
+      brand: "DeepCool",
+      price: 949,
+      image: caseCoolerMasterTd500MeshImage,
+      specs: ["ATX", "4x fans", "Vit"],
+    },
+    {
+      id: "case-13",
+      name: "Phanteks XT Pro Ultra",
+      brand: "Phanteks",
+      price: 999,
+      image: casePhanteksEclipseG500aImage,
+      specs: ["ATX", "Airflow", "RGB"],
+    },
+    {
+      id: "case-14",
+      name: "Lian Li Vector V100 PC-chassi (svart)",
+      brand: "Lian Li",
+      price: 1290,
+      image: caseLianLiO11DynamicImage,
+      specs: ["ATX", "Showcase", "Svart"],
+    },
+    {
+      id: "case-15",
+      name: "Lian Li A3",
+      brand: "Lian Li",
+      price: 899,
+      image: caseLianLiLancool216Image,
+      specs: ["mATX", "Compact", "Mesh"],
+    },
+    {
+      id: "case-16",
+      name: "NZXT H6 Flow Case Dual Chamber RGB",
+      brand: "NZXT",
+      price: 1490,
+      image: caseNzxtH7FlowImage,
+      specs: ["ATX", "Dual chamber", "RGB"],
+    },
+    {
+      id: "case-17",
+      name: "DeepCool CG530 Svart",
+      brand: "DeepCool",
+      price: 829,
+      image: caseCoolerMasterTd500MeshImage,
+      specs: ["ATX", "Airflow", "Svart"],
+    },
+    {
+      id: "case-18",
+      name: "Fractal Design North XL",
+      brand: "Fractal",
+      price: 1990,
+      image: caseFractalDesignNorthImage,
+      specs: ["ATX", "XL", "Trapanel"],
+    },
+    {
+      id: "case-19",
+      name: "O11 Vision Compact PC-chassi (svart)",
+      brand: "Lian Li",
+      price: 1490,
+      image: caseLianLiO11DynamicImage,
+      specs: ["ATX", "Compact", "Svart"],
+    },
+    {
+      id: "case-20",
+      name: "Lian Li O11 Vision Compact (Vit/Transparent)",
+      brand: "Lian Li",
+      price: 1590,
+      image: caseLianLiO11DynamicImage,
+      specs: ["ATX", "Compact", "Vit"],
+    },
+    {
+      id: "case-21",
+      name: "Corsair 3500X",
+      brand: "Corsair",
+      price: 1490,
+      image: caseCorsair4000dAirflowImage,
+      specs: ["ATX", "Showcase", "RGB"],
+    },
+    {
+      id: "case-22",
+      name: "Lian Li O11D Mini V2 White",
+      brand: "Lian Li",
+      price: 1390,
+      image: caseLianLiO11DynamicImage,
+      specs: ["ATX", "Mini", "Vit"],
+    },
+    {
+      id: "case-23",
+      name: "Phanteks XT View",
+      brand: "Phanteks",
+      price: 999,
+      image: casePhanteksEclipseG500aImage,
+      specs: ["ATX", "Glass", "Showcase"],
+    },
+    {
+      id: "case-24",
+      name: "Chieftec Visio Svart RGB",
+      brand: "Chieftec",
+      price: 999,
+      image: caseNzxtH5FlowImage,
+      specs: ["ATX", "RGB", "Svart"],
+    },
+    {
+      id: "case-25",
+      name: "DeepCool CG530 Vit",
+      brand: "DeepCool",
+      price: 849,
+      image: caseCoolerMasterTd500MeshImage,
+      specs: ["ATX", "Airflow", "Vit"],
+    },
+    {
+      id: "case-26",
+      name: "Cooler Master Elite 301 Mini Tower (svart)",
+      brand: "Cooler Master",
+      price: 699,
+      image: caseCoolerMasterTd500MeshImage,
+      specs: ["mATX", "Mini tower", "Svart"],
+    },
+    {
+      id: "case-27",
+      name: "Thermaltake View 170 TG ARGB",
+      brand: "Thermaltake",
+      price: 799,
+      image: caseNzxtH5FlowImage,
+      specs: ["mATX", "ARGB", "Glass"],
+    },
+    {
+      id: "case-28",
+      name: "Kolink Observatory HF",
+      brand: "Kolink",
+      price: 749,
+      image: caseNzxtH5FlowImage,
+      specs: ["ATX", "Mesh", "RGB"],
+    },
+    {
+      id: "case-29",
+      name: "Kolink Observatory HF Glass Vit",
+      brand: "Kolink",
+      price: 799,
+      image: caseNzxtH5FlowImage,
+      specs: ["ATX", "Glass", "Vit"],
     },
   ],
   psu: [
@@ -2070,6 +2573,7 @@ export default function CustomBuild() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [socketFilters, setSocketFilters] = useState<string[]>([]);
+  const [chipsetFilters, setChipsetFilters] = useState<string[]>([]);
   const [ramTypeFilters, setRamTypeFilters] = useState<string[]>([]);
   const [formFactorFilters, setFormFactorFilters] = useState<string[]>([]);
   const [pcieGenerationFilters, setPcieGenerationFilters] = useState<string[]>([]);
@@ -2255,6 +2759,10 @@ export default function CustomBuild() {
     () => Array.from(new Set(items.map((item) => getItemSocketFilterValue(item)).filter(Boolean))),
     [items]
   );
+  const chipsetFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemChipsetFilterValue(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
+    [items]
+  );
   const gpuPerformanceFilterOptions = useMemo(
     () => Array.from(new Set(items.map((item) => getItemGpuPerformanceClass(item)).filter(Boolean))),
     [items]
@@ -2352,6 +2860,7 @@ export default function CustomBuild() {
   };
 
   const usesSocketFilters = activeCategory === "cpu" || activeCategory === "motherboard";
+  const usesChipsetFilters = activeCategory === "motherboard";
   const usesGpuFilters = activeCategory === "gpu";
   const usesRamTypeFilters = activeCategory === "motherboard" || activeCategory === "ram";
   const usesFormFactorFilters = activeCategory === "motherboard" || activeCategory === "case";
@@ -2361,6 +2870,7 @@ export default function CustomBuild() {
 
   const clearAdvancedFilters = () => {
     if (usesSocketFilters) setSocketFilters([]);
+    if (usesChipsetFilters) setChipsetFilters([]);
     if (activeCategory === "cpu") setCpuChipFilter("Alla");
     if (usesGpuFilters) {
       setGpuPerformanceFilters([]);
@@ -2380,6 +2890,7 @@ export default function CustomBuild() {
 
   const hasActiveAdvancedFilters =
     (usesSocketFilters && socketFilters.length > 0) ||
+    (usesChipsetFilters && chipsetFilters.length > 0) ||
     (activeCategory === "cpu" && cpuChipFilter !== "Alla") ||
     (usesGpuFilters && (gpuPerformanceFilters.length > 0 || gpuChipFilter !== "Alla" || gpuExactModelFilter !== "Alla")) ||
     (usesRamTypeFilters && ramTypeFilters.length > 0) ||
@@ -2411,6 +2922,7 @@ export default function CustomBuild() {
         activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
       const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
       const itemSocket = getItemSocketFilterValue(item);
+      const itemChipset = getItemChipsetFilterValue(item);
       const itemCpuChip = getItemCpuChip(item);
       const itemGpuPerformanceClass = getItemGpuPerformanceClass(item);
       const itemGpuChip = getItemGpuChip(item);
@@ -2425,6 +2937,8 @@ export default function CustomBuild() {
 
       const matchesSelectedSocketFilter =
         !usesSocketFilters || socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
+      const matchesSelectedChipsetFilter =
+        !usesChipsetFilters || chipsetFilters.length === 0 || (itemChipset ? chipsetFilters.includes(itemChipset) : false);
       const matchesSelectedCpuChipFilter =
         activeCategory !== "cpu" || cpuChipFilter === "Alla" || itemCpuChip === cpuChipFilter;
       const matchesSelectedGpuPerformanceFilter =
@@ -2467,6 +2981,7 @@ export default function CustomBuild() {
         matchesRamType &&
         matchesPrice &&
         matchesSelectedSocketFilter &&
+        matchesSelectedChipsetFilter &&
         matchesSelectedCpuChipFilter &&
         matchesSelectedGpuPerformanceFilter &&
         matchesSelectedGpuChipFilter &&
@@ -2490,6 +3005,7 @@ export default function CustomBuild() {
     priceRange,
     lowestOfferPriceByItemId,
     socketFilters,
+    chipsetFilters,
     cpuChipFilter,
     gpuPerformanceFilters,
     gpuChipFilter,
@@ -2502,6 +3018,7 @@ export default function CustomBuild() {
     psuModularFilter,
     psuWattageRange,
     usesSocketFilters,
+    usesChipsetFilters,
     usesGpuFilters,
     usesRamTypeFilters,
     usesFormFactorFilters,
@@ -3152,6 +3669,28 @@ export default function CustomBuild() {
                       </div>
                     ) : null}
 
+                    {activeCategory === "motherboard" && chipsetFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Chipset</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {chipsetFilterOptions.map((chipset) => (
+                            <button
+                              key={chipset}
+                              type="button"
+                              onClick={() => toggleArrayFilter(chipset, setChipsetFilters)}
+                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                                chipsetFilters.includes(chipset)
+                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
+                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
+                              }`}
+                            >
+                              {chipset}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+
                     {activeCategory === "cpu" && cpuChipFilterOptions.length > 0 ? (
                       <div className="mt-4">
                         <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">CPU-chip</p>
@@ -3715,6 +4254,21 @@ export default function CustomBuild() {
           <span>{"N\u00e4sta"}</span>
           <ChevronRight className="w-4 h-4" />
         </button>
+      ) : null}
+      {activeCategory === "ram" ? (
+        <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-yellow-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-yellow-500/30 dark:bg-[#101926]/95 dark:text-gray-200">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-gray-900">
+              <MemoryStick className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900 dark:text-gray-100">RAM-marknaden</p>
+              <p className="mt-1 leading-relaxed">
+                {"Priserna pa RAM har gatt upp med cirka 600% pga efterfragan fran AI-datacenter vilket skapat brist pa chip."}
+              </p>
+            </div>
+          </div>
+        </div>
       ) : null}
       <Footer />
     </div>
