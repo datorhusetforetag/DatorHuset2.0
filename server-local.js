@@ -20,7 +20,7 @@ import { z } from "zod";
 import {
   CUSTOM_BUILD_CATALOG_BY_ID,
   CUSTOM_BUILD_CATALOG_ITEMS,
-  CUSTOM_BUILD_STORE_SOURCES as CURATED_CUSTOM_BUILD_STORE_SOURCES,
+  CUSTOM_BUILD_STORE_SOURCES as CUSTOM_BUILD_ALLOWED_STORE_SOURCES,
   getCustomBuildCatalogItemsByCategory,
 } from "./src/data/customBuildCatalog.js";
 import {
@@ -867,6 +867,9 @@ const CUSTOM_STORE_SOURCES = [
   },
 ];
 const CUSTOM_STORE_SOURCE_BY_ID = Object.fromEntries(CUSTOM_STORE_SOURCES.map((source) => [source.id, source]));
+const CURATED_CUSTOM_BUILD_STORE_SOURCES = CUSTOM_BUILD_ALLOWED_STORE_SOURCES
+  .map((source) => CUSTOM_STORE_SOURCE_BY_ID[source.id])
+  .filter(Boolean);
 
 const normalizeStorePriceQueryKey = (value) =>
   sanitizeText(value, CUSTOM_PRICE_MAX_QUERY_LENGTH)
