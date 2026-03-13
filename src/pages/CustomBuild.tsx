@@ -2633,6 +2633,22 @@ export default function CustomBuild() {
     }
   }, []);
 
+  const toggleCustomBuildDebug = () => {
+    setCustomBuildDebugEnabled((prev) => {
+      const next = !prev;
+      try {
+        if (next) {
+          window.localStorage.setItem("custom-build-debug", "1");
+        } else {
+          window.localStorage.removeItem("custom-build-debug");
+        }
+      } catch {
+        // Ignore localStorage failures.
+      }
+      return next;
+    });
+  };
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -4328,6 +4344,17 @@ export default function CustomBuild() {
           <ChevronRight className="w-4 h-4" />
         </button>
       ) : null}
+      <button
+        type="button"
+        onClick={toggleCustomBuildDebug}
+        className={`fixed bottom-5 left-5 z-40 rounded-full border px-4 py-2 text-xs font-semibold shadow-lg shadow-black/15 transition-colors ${
+          customBuildDebugEnabled
+            ? "border-sky-500 bg-sky-500 text-white hover:bg-sky-600"
+            : "border-gray-300 bg-white/95 text-gray-700 hover:border-sky-400 hover:text-sky-700 dark:border-gray-700 dark:bg-[#101926]/95 dark:text-gray-200 dark:hover:border-sky-700 dark:hover:text-sky-300"
+        }`}
+      >
+        {customBuildDebugEnabled ? "Debug pa" : "Debug av"}
+      </button>
       {activeCategory === "ram" ? (
         <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-yellow-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-yellow-500/30 dark:bg-[#101926]/95 dark:text-gray-200">
           <div className="flex items-start gap-3">
@@ -4344,7 +4371,7 @@ export default function CustomBuild() {
         </div>
       ) : null}
       {customBuildDebugEnabled ? (
-        <div className="fixed bottom-5 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
+        <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
           <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
             Kallor: <span className="font-semibold">Prisjakt-offer</span>, <span className="font-semibold">Seed</span>, <span className="font-semibold">Fallback</span>, <span className="font-semibold">No-store</span>.
