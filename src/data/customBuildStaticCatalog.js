@@ -4,7 +4,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 3050 6GB OC",
     "brand": "ASUS",
-    "price": 4454,
+    "price": 2199,
     "specs": [
       "6 GB",
       "RTX 3050",
@@ -21,7 +21,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 5050 8GB OC",
     "brand": "ASUS",
-    "price": 5353,
+    "price": 2899,
     "specs": [
       "8 GB",
       "RTX 5050",
@@ -38,7 +38,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Intel Arc B580 12GB Limited Edition",
     "brand": "Intel",
-    "price": 7519,
+    "price": 3499,
     "specs": [
       "12 GB",
       "Arc B580",
@@ -55,7 +55,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Zotac GeForce RTX 3060 Twin Edge 12GB",
     "brand": "Zotac",
-    "price": 7519,
+    "price": 3299,
     "specs": [
       "12 GB",
       "RTX 3060",
@@ -72,7 +72,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 5060 8GB OC",
     "brand": "ASUS",
-    "price": 15046,
+    "price": 3899,
     "specs": [
       "8 GB",
       "RTX 5060",
@@ -89,7 +89,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PNY GeForce RTX 5060 OC Dual Fan",
     "brand": "PNY",
-    "price": 31840,
+    "price": 3999,
     "specs": [
       "8 GB",
       "RTX 5060",
@@ -106,7 +106,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC",
     "brand": "Gigabyte",
-    "price": 3272,
+    "price": 4099,
     "specs": [
       "8 GB",
       "RTX 5060",
@@ -123,7 +123,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Radeon RX 9060 XT 8GB Dual",
     "brand": "ASUS",
-    "price": 5347,
+    "price": 4190,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -140,7 +140,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte Radeon RX 9060 XT GAMING 8GB OC",
     "brand": "Gigabyte",
-    "price": 5390,
+    "price": 4290,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -157,7 +157,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "XFX Swift AMD Radeon RX 9060 XT OC Gaming White",
     "brand": "XFX",
-    "price": 3578,
+    "price": 4390,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -174,7 +174,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Acer Nitro Radeon RX 9060 XT OC 8GB",
     "brand": "Acer",
-    "price": 1899,
+    "price": 4090,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -191,7 +191,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS",
     "brand": "MSI",
-    "price": 3322,
+    "price": 4990,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -208,7 +208,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gainward GeForce RTX 5060 Ti Ghost 8GB",
     "brand": "Gainward",
-    "price": 4190,
+    "price": 5090,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -225,7 +225,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 Ti AERO OC",
     "brand": "Gigabyte",
-    "price": 5890,
+    "price": 5290,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -242,7 +242,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 Ti WINDFORCE",
     "brand": "Gigabyte",
-    "price": 6490,
+    "price": 4890,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -259,7 +259,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS",
     "brand": "MSI",
-    "price": 7190,
+    "price": 5790,
     "specs": [
       "16 GB",
       "RTX 5060 Ti",
@@ -276,7 +276,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC",
     "brand": "Gigabyte",
-    "price": 7190,
+    "price": 5890,
     "specs": [
       "16 GB",
       "RTX 5060 Ti",
@@ -293,7 +293,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS GeForce RTX 5060 Ti Dual 16GB OC",
     "brand": "ASUS",
-    "price": 6999,
+    "price": 6090,
     "specs": [
       "16 GB",
       "RTX 5060 Ti",
@@ -310,7 +310,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte Radeon RX 9060 XT GAMING 16GB OC",
     "brand": "Gigabyte",
-    "price": 14890,
+    "price": 5390,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -327,7 +327,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PULSE RX 9060 XT GAMING OC 16GB",
     "brand": "Sapphire",
-    "price": 13490,
+    "price": 5490,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -1109,7 +1109,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
     "brand": "Gigabyte",
-    "price": 39999,
+    "price": 38990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1160,7 +1160,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance 32GB",
     "brand": "Corsair",
-    "price": 3869,
+    "price": 1290,
     "specs": [
       "DDR5",
       "6000 MHz",
@@ -1177,7 +1177,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "G.Skill Trident Z5 32GB",
     "brand": "G.Skill",
-    "price": 7390,
+    "price": 1490,
     "specs": [
       "DDR5",
       "6400 MHz",
@@ -1194,7 +1194,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Beast 32GB",
     "brand": "Kingston",
-    "price": 6491,
+    "price": 1190,
     "specs": [
       "DDR5",
       "6000 MHz",
@@ -1211,7 +1211,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Crucial Pro 32GB",
     "brand": "Crucial",
-    "price": 4799,
+    "price": 1090,
     "specs": [
       "DDR5",
       "5600 MHz",
@@ -1228,7 +1228,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Dominator 64GB",
     "brand": "Corsair",
-    "price": 14017,
+    "price": 2690,
     "specs": [
       "DDR5",
       "6000 MHz",
@@ -1245,7 +1245,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "G.Skill Ripjaws 32GB",
     "brand": "G.Skill",
-    "price": 11819,
+    "price": 990,
     "specs": [
       "DDR4",
       "3600 MHz",
@@ -1262,7 +1262,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Renegade 32GB",
     "brand": "Kingston",
-    "price": 7348,
+    "price": 1390,
     "specs": [
       "DDR5",
       "6400 MHz",
@@ -1279,7 +1279,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Crucial Pro 64GB",
     "brand": "Crucial",
-    "price": 18116,
+    "price": 2190,
     "specs": [
       "DDR5",
       "5600 MHz",
@@ -1296,7 +1296,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "TeamGroup T-Force Delta 32GB",
     "brand": "TeamGroup",
-    "price": 4799,
+    "price": 1290,
     "specs": [
       "DDR5",
       "6000 MHz",
@@ -1313,7 +1313,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "ADATA XPG Lancer 32GB",
     "brand": "ADATA",
-    "price": 4249,
+    "price": 1190,
     "specs": [
       "DDR5",
       "6000 MHz",
@@ -1330,7 +1330,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "A-Data XPG SPECTRIX D35G 16GB (2x8GB) DDR4 3600MHz CL18",
     "brand": "ADATA",
-    "price": 1890,
+    "price": 600,
     "specs": [
       "DDR4",
       "16GB",
@@ -1349,7 +1349,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Dominator RGB DDR4 3600MHz 32GB",
     "brand": "Corsair",
-    "price": 8140,
+    "price": 1200,
     "specs": [
       "DDR4",
       "32GB",
@@ -1367,7 +1367,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "32GB DDR4",
     "brand": "Generic",
-    "price": 3290,
+    "price": 900,
     "specs": [
       "DDR4",
       "32GB"
@@ -1382,7 +1382,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Dell 32GB DDR5 5600MHz (begagnad)",
     "brand": "Dell",
-    "price": 5190,
+    "price": 799,
     "specs": [
       "DDR5",
       "32GB",
@@ -1402,7 +1402,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Dell 32GB DDR5 5600MHz",
     "brand": "Dell",
-    "price": 5190,
+    "price": 1100,
     "specs": [
       "DDR5",
       "32GB",
@@ -1419,7 +1419,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
     "brand": "Kingston",
-    "price": 5779,
+    "price": 1400,
     "specs": [
       "DDR5",
       "32GB",
@@ -1439,7 +1439,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance 16GB (2x8GB)",
     "brand": "Corsair",
-    "price": 0,
+    "price": 699,
     "specs": [
       "DDR5",
       "16GB",
@@ -1458,7 +1458,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston FURY Beast 6000MHz DDR5 16GB (svart)",
     "brand": "Kingston",
-    "price": 0,
+    "price": 749,
     "specs": [
       "DDR5",
       "16GB",
@@ -1478,7 +1478,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Beast 16GB (2x8GB)",
     "brand": "Kingston",
-    "price": 0,
+    "price": 729,
     "specs": [
       "DDR5",
       "16GB",
@@ -1497,7 +1497,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance RGB 16GB (2x8GB)",
     "brand": "Corsair",
-    "price": 0,
+    "price": 829,
     "specs": [
       "DDR5",
       "16GB",
@@ -1516,7 +1516,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance RGB 32GB (2x16GB)",
     "brand": "Corsair",
-    "price": 0,
+    "price": 1299,
     "specs": [
       "DDR5",
       "32GB",
@@ -1535,7 +1535,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance 32GB (2x16GB)",
     "brand": "Corsair",
-    "price": 0,
+    "price": 1190,
     "specs": [
       "DDR5",
       "32GB",
@@ -1554,7 +1554,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance DDR5 RAM 32GB (16GB x2) 6000 MT/s CL36",
     "brand": "Corsair",
-    "price": 0,
+    "price": 1249,
     "specs": [
       "DDR5",
       "32GB",
@@ -1574,7 +1574,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair 32GB (2x16GB) DDR5 6000MHz CL36 Vengeance RGB Vit",
     "brand": "Corsair",
-    "price": 0,
+    "price": 1349,
     "specs": [
       "DDR5",
       "32GB",
@@ -1595,7 +1595,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Beast RGB 32GB (2x16GB)",
     "brand": "Kingston",
-    "price": 0,
+    "price": 1290,
     "specs": [
       "DDR5",
       "32GB",
@@ -1614,7 +1614,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Dominator Platinum RGB 64GB (2x32GB)",
     "brand": "Corsair",
-    "price": 0,
+    "price": 2790,
     "specs": [
       "DDR5",
       "64GB",
@@ -1633,7 +1633,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Beast Black 64GB (2x32GB)",
     "brand": "Kingston",
-    "price": 0,
+    "price": 2290,
     "specs": [
       "DDR5",
       "64GB",
@@ -1652,7 +1652,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance CMK64GX5M2B5200C40W RAM-minnen 64 GB 2 x 32 GB DDR5 5200 MHz",
     "brand": "Corsair",
-    "price": 0,
+    "price": 2190,
     "specs": [
       "DDR5",
       "64GB",
@@ -1669,7 +1669,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Beast RGB 64GB (2x32GB)",
     "brand": "Kingston",
-    "price": 0,
+    "price": 2490,
     "specs": [
       "DDR5",
       "64GB",
@@ -1688,7 +1688,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance RGB 64GB DDR5 RAM 6000 MT/s CL40",
     "brand": "Corsair",
-    "price": 0,
+    "price": 2590,
     "specs": [
       "DDR5",
       "64GB",
@@ -1707,7 +1707,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance 64GB DDR5 RAM 6000 MT/s CL40",
     "brand": "Corsair",
-    "price": 0,
+    "price": 2390,
     "specs": [
       "DDR5",
       "64GB",
@@ -1793,7 +1793,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Seagate FireCuda 530 2TB",
     "brand": "Seagate",
-    "price": 4730,
+    "price": 1990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1810,7 +1810,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "WD Blue SN580 1TB",
     "brand": "WD",
-    "price": 2090,
+    "price": 790,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1827,7 +1827,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Kingston KC3000 1TB",
     "brand": "Kingston",
-    "price": 2290,
+    "price": 990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1861,7 +1861,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial MX500 1TB",
     "brand": "Crucial",
-    "price": 996,
+    "price": 890,
     "specs": [
       "SATA",
       "560 MB/s",
@@ -1895,7 +1895,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Team Group T-Force G50",
     "brand": "TeamGroup",
-    "price": 1823,
+    "price": 900,
     "specs": [
       "SSD"
     ],
@@ -1939,7 +1939,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial E100 M.2 Gen 4 (480GB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 499,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1958,7 +1958,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "A-Data XPG GAMMIX S55",
     "brand": "ADATA",
-    "price": 0,
+    "price": 699,
     "specs": [
       "NVMe",
       "PCIe 4.0"
@@ -1973,7 +1973,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 M.2 2230 NVMe 1TB",
     "brand": "Crucial",
-    "price": 0,
+    "price": 1499,
     "specs": [
       "NVMe",
       "2230",
@@ -1990,7 +1990,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Intenso Premium M.2",
     "brand": "Intenso",
-    "price": 0,
+    "price": 666,
     "specs": [
       "NVMe",
       "M.2"
@@ -2006,7 +2006,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P510 1TB",
     "brand": "Crucial",
-    "price": 0,
+    "price": 999,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2023,7 +2023,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial E100 M.2 Gen 4 (1TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 699,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2042,7 +2042,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Intenso Premium M.2 250GB",
     "brand": "Intenso",
-    "price": 0,
+    "price": 349,
     "specs": [
       "NVMe",
       "250GB"
@@ -2058,7 +2058,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Team Group MP33 256GB",
     "brand": "TeamGroup",
-    "price": 0,
+    "price": 360,
     "specs": [
       "NVMe",
       "256GB"
@@ -2073,7 +2073,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Corsair MP700 ELITE",
     "brand": "Corsair",
-    "price": 0,
+    "price": 2508,
     "specs": [
       "NVMe",
       "PCIe 5.0"
@@ -2089,7 +2089,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Kingston NV3 M.2 1TB",
     "brand": "Kingston",
-    "price": 0,
+    "price": 699,
     "specs": [
       "NVMe",
       "1TB"
@@ -2105,7 +2105,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T710 (1TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 1790,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2124,7 +2124,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P510 (2TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 1590,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2143,7 +2143,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial E100 M.2 Gen 4 (2TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 1190,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2162,7 +2162,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
     "brand": "Corsair",
-    "price": 0,
+    "price": 2199,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2179,7 +2179,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P510 med kylflansar (2TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 1690,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2199,7 +2199,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 (2TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 2599,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2218,7 +2218,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
     "brand": "Crucial",
-    "price": 0,
+    "price": 2990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2236,7 +2236,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 (4TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 2790,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2255,7 +2255,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "WD Black SN7100 4TB Gen 4",
     "brand": "WD",
-    "price": 0,
+    "price": 2990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2272,7 +2272,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Samsung 990 EVO Plus 4TB",
     "brand": "Samsung",
-    "price": 0,
+    "price": 2990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2289,7 +2289,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T710 (4TB)",
     "brand": "Crucial",
-    "price": 0,
+    "price": 3990,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2308,7 +2308,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
     "brand": "Crucial",
-    "price": 0,
+    "price": 3290,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2326,7 +2326,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Lexar NM990",
     "brand": "Lexar",
-    "price": 0,
+    "price": 1990,
     "specs": [
       "NVMe",
       "PCIe 5.0"
@@ -2342,7 +2342,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Patriot Viper Gaming PV593",
     "brand": "Patriot",
-    "price": 0,
+    "price": 1890,
     "specs": [
       "NVMe",
       "PCIe 5.0"
@@ -2358,7 +2358,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
     "brand": "Crucial",
-    "price": 0,
+    "price": 4290,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2376,7 +2376,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Sandisk WD_Black SN8100 NVMe 1TB",
     "brand": "Sandisk",
-    "price": 0,
+    "price": 1490,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2430,12 +2430,12 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "price": 1674,
     "specs": [
       "ATX",
-      "Träpanel",
+      "TrÃ¤panel",
       "Airflow"
     ],
     "searchTerms": [
       "Fractal Design North",
-      "Fractal Design North ATX Träpanel Airflow",
+      "Fractal Design North ATX TrÃ¤panel Airflow",
       "Design North"
     ]
   },
@@ -2529,7 +2529,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li O11 Dynamic",
     "brand": "Lian Li",
-    "price": 1638,
+    "price": 1690,
     "specs": [
       "ATX",
       "Glas",
@@ -2550,11 +2550,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "ATX",
       "Mesh",
-      "Modulär"
+      "ModulÃ¤r"
     ],
     "searchTerms": [
       "Fractal Design Meshify 2",
-      "Fractal Design Meshify 2 ATX Mesh Modulär",
+      "Fractal Design Meshify 2 ATX Mesh ModulÃ¤r",
       "Design Meshify 2"
     ]
   },
@@ -2563,7 +2563,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 4F",
     "brand": "DeepCool",
-    "price": 0,
+    "price": 899,
     "specs": [
       "ATX",
       "4x fans",
@@ -2580,7 +2580,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 4F Vit",
     "brand": "DeepCool",
-    "price": 0,
+    "price": 949,
     "specs": [
       "ATX",
       "4x fans",
@@ -2597,7 +2597,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Phanteks XT Pro Ultra",
     "brand": "Phanteks",
-    "price": 0,
+    "price": 799,
     "specs": [
       "ATX",
       "Airflow",
@@ -2614,7 +2614,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li Vector V100 PC-chassi (svart)",
     "brand": "Lian Li",
-    "price": 0,
+    "price": 1290,
     "specs": [
       "ATX",
       "Showcase",
@@ -2633,7 +2633,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li A3",
     "brand": "Lian Li",
-    "price": 0,
+    "price": 949,
     "specs": [
       "mATX",
       "Compact",
@@ -2649,7 +2649,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "NZXT H6 Flow Case Dual Chamber RGB",
     "brand": "NZXT",
-    "price": 0,
+    "price": 1099,
     "specs": [
       "ATX",
       "Dual chamber",
@@ -2666,7 +2666,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 Svart",
     "brand": "DeepCool",
-    "price": 0,
+    "price": 519,
     "specs": [
       "ATX",
       "Airflow",
@@ -2683,7 +2683,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Fractal Design North XL",
     "brand": "Fractal",
-    "price": 0,
+    "price": 1568,
     "specs": [
       "ATX",
       "XL",
@@ -2700,7 +2700,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "O11 Vision Compact PC-chassi (svart)",
     "brand": "Lian Li",
-    "price": 0,
+    "price": 1636,
     "specs": [
       "ATX",
       "Compact",
@@ -2718,7 +2718,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li O11 Vision Compact (Vit/Transparent)",
     "brand": "Lian Li",
-    "price": 0,
+    "price": 1634,
     "specs": [
       "ATX",
       "Compact",
@@ -2737,7 +2737,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Corsair 3500X",
     "brand": "Corsair",
-    "price": 0,
+    "price": 999,
     "specs": [
       "ATX",
       "Showcase",
@@ -2754,7 +2754,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li O11D Mini V2 White",
     "brand": "Lian Li",
-    "price": 0,
+    "price": 1179,
     "specs": [
       "ATX",
       "Mini",
@@ -2771,7 +2771,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Phanteks XT View",
     "brand": "Phanteks",
-    "price": 0,
+    "price": 953,
     "specs": [
       "ATX",
       "Glass",
@@ -2788,7 +2788,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Chieftec Visio Svart RGB",
     "brand": "Chieftec",
-    "price": 0,
+    "price": 999,
     "specs": [
       "ATX",
       "RGB",
@@ -2805,7 +2805,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 Vit",
     "brand": "DeepCool",
-    "price": 0,
+    "price": 679,
     "specs": [
       "ATX",
       "Airflow",
@@ -2822,7 +2822,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Cooler Master Elite 301 Mini Tower (svart)",
     "brand": "Cooler Master",
-    "price": 0,
+    "price": 699,
     "specs": [
       "mATX",
       "Mini tower",
@@ -2841,7 +2841,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Thermaltake View 170 TG ARGB",
     "brand": "Thermaltake",
-    "price": 0,
+    "price": 570,
     "specs": [
       "mATX",
       "ARGB",
@@ -2858,7 +2858,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Kolink Observatory HF",
     "brand": "Kolink",
-    "price": 0,
+    "price": 617,
     "specs": [
       "ATX",
       "Mesh",
@@ -2875,7 +2875,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Kolink Observatory HF Glass Vit",
     "brand": "Kolink",
-    "price": 0,
+    "price": 799,
     "specs": [
       "ATX",
       "Glass",
@@ -2896,11 +2896,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "750W",
       "80+ Gold",
-      "Modulärt"
+      "ModulÃ¤rt"
     ],
     "searchTerms": [
       "Corsair RM750e",
-      "Corsair RM750e 750W 80+ Gold Modulärt",
+      "Corsair RM750e 750W 80+ Gold ModulÃ¤rt",
       "RM750e"
     ]
   },
@@ -2913,11 +2913,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "850W",
       "80+ Gold",
-      "Modulärt"
+      "ModulÃ¤rt"
     ],
     "searchTerms": [
       "Corsair RM850x",
-      "Corsair RM850x 850W 80+ Gold Modulärt",
+      "Corsair RM850x 850W 80+ Gold ModulÃ¤rt",
       "RM850x"
     ]
   },
@@ -2943,7 +2943,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic Vertex GX-1000",
     "brand": "Seasonic",
-    "price": 2029,
+    "price": 2490,
     "specs": [
       "1000W",
       "80+ Gold",
@@ -2981,11 +2981,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "750W",
       "80+ Gold",
-      "Modulärt"
+      "ModulÃ¤rt"
     ],
     "searchTerms": [
       "Cooler Master MWE 750",
-      "Cooler Master MWE 750 750W 80+ Gold Modulärt",
+      "Cooler Master MWE 750 750W 80+ Gold ModulÃ¤rt",
       "MWE 750"
     ]
   },
@@ -3032,11 +3032,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "750W",
       "80+ Gold",
-      "Modulärt"
+      "ModulÃ¤rt"
     ],
     "searchTerms": [
       "NZXT C750",
-      "NZXT C750 750W 80+ Gold Modulärt",
+      "NZXT C750 750W 80+ Gold ModulÃ¤rt",
       "C750"
     ]
   },
@@ -3083,11 +3083,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "Luftkylare",
       "Tyst",
-      "Hög TDP"
+      "HÃ¶g TDP"
     ],
     "searchTerms": [
       "be quiet! Dark Rock Pro 5",
-      "be quiet! Dark Rock Pro 5 Luftkylare Tyst Hög TDP",
+      "be quiet! Dark Rock Pro 5 Luftkylare Tyst HÃ¶g TDP",
       "Dark Rock Pro 5"
     ]
   },
@@ -3134,11 +3134,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "360mm AIO",
       "Tyst",
-      "Prisvärd"
+      "PrisvÃ¤rd"
     ],
     "searchTerms": [
       "Arctic Liquid Freezer III Pro 360",
-      "Arctic Liquid Freezer III Pro 360 360mm AIO Tyst Prisvärd",
+      "Arctic Liquid Freezer III Pro 360 360mm AIO Tyst PrisvÃ¤rd",
       "Liquid Freezer III Pro 360"
     ]
   },
@@ -3150,12 +3150,12 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "price": 701,
     "specs": [
       "Luftkylare",
-      "Hög TDP",
-      "Prisvärd"
+      "HÃ¶g TDP",
+      "PrisvÃ¤rd"
     ],
     "searchTerms": [
       "DeepCool AK620",
-      "DeepCool AK620 Luftkylare Hög TDP Prisvärd",
+      "DeepCool AK620 Luftkylare HÃ¶g TDP PrisvÃ¤rd",
       "AK620"
     ]
   },
@@ -3201,12 +3201,12 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "price": 417,
     "specs": [
       "Luftkylare",
-      "Prisvärd",
+      "PrisvÃ¤rd",
       "Tyst"
     ],
     "searchTerms": [
       "Thermalright Peerless Assassin",
-      "Thermalright Peerless Assassin Luftkylare Prisvärd Tyst",
+      "Thermalright Peerless Assassin Luftkylare PrisvÃ¤rd Tyst",
       "Peerless Assassin"
     ]
   },
@@ -3244,83 +3244,83 @@ export const STATIC_CUSTOM_BUILD_CATEGORY_KEYS = [
 
 export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
   "gpu-1": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-2": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-3": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-4": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-5": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-6": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-7": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-8": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-9": {
-    "source": "static_legacy_fallback",
-    "note": "Lagts under RX 9070 XT som ungefärlig ersättningsnivå."
+    "source": "static_reference",
+    "note": null
   },
   "gpu-10": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-11": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-12": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-13": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-14": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-15": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-16": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-17": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-18": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-19": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-20": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-21": {
@@ -3504,7 +3504,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-66": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-67": {
@@ -3516,67 +3516,67 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "ram-1": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-2": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-3": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-4": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-5": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-6": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-7": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-8": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-9": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-10": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-11": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-12": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-13": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-14": {
-    "source": "prisjakt_seed",
-    "note": null
+    "source": "static_legacy_fallback",
+    "note": "Begagnad OEM-modul prissatt under motsvarande ny modul."
   },
   "ram-15": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-16": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-17": {
@@ -3656,15 +3656,15 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-5": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "sto-6": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "sto-7": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "sto-8": {
@@ -3672,7 +3672,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-9": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "sto-10": {
@@ -3680,7 +3680,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-11": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "sto-13": {
@@ -3700,11 +3700,11 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-19": {
@@ -3720,11 +3720,11 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-22": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-24": {
@@ -3744,7 +3744,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-29": {
@@ -3752,7 +3752,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-30": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-31": {
@@ -3828,7 +3828,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-9": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "case-10": {
@@ -3844,7 +3844,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-13": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-14": {
@@ -3852,39 +3852,39 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-15": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-16": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-19": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-20": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-21": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-22": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-24": {
@@ -3892,7 +3892,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-25": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-26": {
@@ -3900,11 +3900,11 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-27": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-29": {
@@ -3924,7 +3924,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-4": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-5": {

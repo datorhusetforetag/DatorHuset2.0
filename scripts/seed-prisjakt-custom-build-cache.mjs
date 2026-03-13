@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..");
 const cacheFile = path.join(repoRoot, "data", "custom-build-product-cache.json");
 const productMapFile = path.join(repoRoot, "data", "prisjakt-product-map.json");
-const cacheVersion = "prisjakt-v1";
+const cacheVersion = "prisjakt-v2";
 
 const allowedStores = new Map(
   [

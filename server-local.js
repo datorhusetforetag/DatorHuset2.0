@@ -77,7 +77,7 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
-const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "prisjakt-v1";
+const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "prisjakt-v2";
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -881,6 +881,201 @@ const normalizeStorePriceQueryKey = (value) =>
 
 const buildStorePriceCacheKey = (query) =>
   `${CUSTOM_STORE_PRICE_CACHE_VERSION}:${normalizeStorePriceQueryKey(query)}`;
+
+const CATALOG_TITLE_GENERIC_TOKENS = new Set([
+  "amd",
+  "intel",
+  "ryzen",
+  "core",
+  "rtx",
+  "gtx",
+  "rx",
+  "arc",
+  "geforce",
+  "radeon",
+  "gaming",
+  "edition",
+  "limited",
+  "processor",
+  "socket",
+  "ram",
+  "memory",
+  "cooler",
+  "case",
+  "pc",
+  "chassi",
+  "nvme",
+  "pcie",
+  "gen",
+  "with",
+  "without",
+  "dual",
+  "chamber",
+]);
+
+const buildCatalogTitleReferenceValues = (item) => {
+  const values = new Set();
+  const name = sanitizeText(String(item?.name || ""), 180);
+  if (name) {
+    values.add(name);
+    const withoutParens = name.replace(/\s*\([^)]*\)\s*/g, " ").replace(/\s+/g, " ").trim();
+    if (withoutParens) {
+      values.add(withoutParens);
+    }
+    const brand = sanitizeText(String(item?.brand || ""), 80);
+    if (brand) {
+      const withoutBrand = name
+        .replace(new RegExp(`^${brand.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s+`, "i"), "")
+        .trim();
+      if (withoutBrand) {
+        values.add(withoutBrand);
+      }
+    }
+  }
+  return Array.from(values);
+};
+
+const expandCatalogStrongTokenVariants = (token) => {
+  const normalizedToken = sanitizeText(String(token || ""), 40).toLowerCase();
+  if (!normalizedToken) return [];
+  if (/^\d+g$/.test(normalizedToken) && normalizedToken.length <= 3) {
+    return [normalizedToken, `${normalizedToken}b`];
+  }
+  return [normalizedToken];
+};
+
+const getCustomBuildCategoryForItem = (item) => {
+  const itemId = sanitizeText(String(item?.id || ""), 120).toLowerCase();
+  if (itemId.startsWith("cpu-")) return "cpu";
+  if (itemId.startsWith("mb-")) return "motherboard";
+  if (itemId.startsWith("gpu-")) return "gpu";
+  if (itemId.startsWith("ram-")) return "ram";
+  if (itemId.startsWith("sto-")) return "storage";
+  if (itemId.startsWith("case-")) return "case";
+  if (itemId.startsWith("psu-")) return "psu";
+  if (itemId.startsWith("cool-")) return "cooling";
+  return "";
+};
+
+const extractCatalogStrongTokens = (value) =>
+  Array.from(
+    new Set(
+      tokenizeForSearchMatch(value)
+        .filter(
+          (token) =>
+            /\d/.test(token) &&
+            token.length >= 2 &&
+            !/^\d+(mhz|w|mm)$/.test(token) &&
+            !/^\d+pin$/.test(token) &&
+            !/^(1080p|1440p|2160p|4k|4kready)$/i.test(token)
+        )
+        .flatMap((token) => expandCatalogStrongTokenVariants(token))
+    )
+  );
+
+const extractCatalogAlphaTokens = (value) =>
+  Array.from(
+    new Set(
+      tokenizeForSearchMatch(value).filter(
+        (token) =>
+          token.length >= 3 &&
+          !/\d/.test(token) &&
+          !CATALOG_TITLE_GENERIC_TOKENS.has(token)
+      )
+    )
+  );
+
+const getCatalogStrongTokensForItem = (item) =>
+  Array.from(
+    new Set(
+      buildCatalogTitleReferenceValues(item)
+        .flatMap((value) => extractCatalogStrongTokens(value))
+        .filter(Boolean)
+    )
+  ).slice(0, 12);
+
+const getCatalogAlphaTokensForItem = (item) =>
+  Array.from(
+    new Set(
+      buildCatalogTitleReferenceValues(item)
+        .flatMap((value) => extractCatalogAlphaTokens(value))
+        .filter(Boolean)
+    )
+  ).slice(0, 12);
+
+const doesCatalogTitleContainEquivalentStrongToken = (normalizedTitle, token) => {
+  if (normalizedTitle.includes(token)) return true;
+  const capacityMatch = token.match(/^(\d+)(gb|tb)$/i);
+  if (!capacityMatch) return false;
+  const totalCapacity = Number(capacityMatch[1] || 0);
+  const unit = String(capacityMatch[2] || "").toLowerCase();
+  if (!Number.isFinite(totalCapacity) || totalCapacity <= 0 || !unit) return false;
+  const kitRegex = new RegExp(`(\\d+)x(\\d+)${unit}`, "gi");
+  for (const match of normalizedTitle.matchAll(kitRegex)) {
+    const count = Number(match[1] || 0);
+    const perStickCapacity = Number(match[2] || 0);
+    if (Number.isFinite(count) && Number.isFinite(perStickCapacity) && count * perStickCapacity === totalCapacity) {
+      return true;
+    }
+  }
+  return false;
+};
+
+const doesCatalogTitleMatchItem = (title, item) => {
+  const normalizedTitle = normalizeStorePriceQueryKey(title);
+  if (!normalizedTitle) return false;
+
+  const strongTokens = getCatalogStrongTokensForItem(item);
+  if (strongTokens.length > 0) {
+    const missingStrongTokens = strongTokens.filter(
+      (token) => !doesCatalogTitleContainEquivalentStrongToken(normalizedTitle, token)
+    );
+    if (missingStrongTokens.length > 0) {
+      return false;
+    }
+  }
+
+  const alphaTokens = getCatalogAlphaTokensForItem(item);
+  if (alphaTokens.length > 0) {
+    const missingAlphaTokens = alphaTokens.filter((token) => !normalizedTitle.includes(token));
+    if (missingAlphaTokens.length > 0) {
+      return false;
+    }
+  }
+
+  return true;
+};
+
+const isCatalogOfferWithinExpectedPriceRange = (item, price) => {
+  if (!Number.isFinite(price) || price <= 0) return false;
+  const referencePrice = Number(item?.price || 0);
+  if (!Number.isFinite(referencePrice) || referencePrice <= 0) return true;
+
+  const category = getCustomBuildCategoryForItem(item);
+  let lowerMultiplier = 0.35;
+  let upperMultiplier = 3;
+
+  if (category === "gpu") {
+    lowerMultiplier = 0.55;
+    upperMultiplier = 1.9;
+  } else if (category === "cpu") {
+    lowerMultiplier = 0.45;
+    upperMultiplier = 2.25;
+  } else if (category === "motherboard") {
+    lowerMultiplier = 0.45;
+    upperMultiplier = 2.5;
+  } else if (category === "psu" || category === "cooling") {
+    lowerMultiplier = 0.4;
+    upperMultiplier = 2.4;
+  } else if (category === "ram" || category === "storage") {
+    lowerMultiplier = 0.35;
+    upperMultiplier = 2.6;
+  }
+
+  const lowerBound = Math.max(80, Math.round(referencePrice * lowerMultiplier));
+  const upperBound = Math.max(lowerBound, Math.round(referencePrice * upperMultiplier));
+  return price >= lowerBound && price <= upperBound;
+};
 
 const tokenizeForSearchMatch = (value) =>
   normalizeStorePriceQueryKey(value)
@@ -1692,6 +1887,9 @@ const extractPrisjaktProductTitle = (markdown) => {
 const scorePrisjaktProductMarkdownForItem = (markdown, item) => {
   const title = extractPrisjaktProductTitle(markdown);
   if (!title) return -1;
+  if (!doesCatalogTitleMatchItem(title, item)) {
+    return -1;
+  }
   const combinedQuery = [item?.name || "", ...firstArray(item?.searchTerms)].join(" ");
   const queryTokens = tokenizeForSearchMatch(combinedQuery);
   const modelTokens = extractModelTokensFromQuery(combinedQuery);
@@ -2451,22 +2649,39 @@ const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
 const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const normalizedPrice = parseMoneyValue(offer?.price);
   const normalizedTotalPrice = parseMoneyValue(offer?.total_price);
+  const effectivePrice =
+    normalizedTotalPrice !== null ? normalizedTotalPrice : normalizedPrice !== null ? normalizedPrice : null;
   const storeProductUrlOverride = firstText(
     CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item?.id]?.[source?.id]
   );
   const productUrl =
     normalizeCatalogProductUrl(storeProductUrlOverride, source?.id) ||
     normalizeCatalogProductUrl(offer?.product_url, source?.id);
+  const searchUrl = productUrl ? null : firstText(offer?.search_url) || null;
+  const hasReasonablePrice =
+    effectivePrice === null || !item || isCatalogOfferWithinExpectedPriceRange(item, effectivePrice);
+  const fallbackStatus = productUrl ? "linked_no_price" : searchUrl ? "search_only" : "not_found";
   return {
     store_id: sanitizeText(String(offer?.store_id || source?.id || ""), 80),
     store: firstText(offer?.store, source?.name) || source?.name || "Unknown",
-    status: firstText(offer?.status) || (normalizedTotalPrice !== null || normalizedPrice !== null ? "available" : "linked_no_price"),
+    status:
+      firstText(offer?.status) && hasReasonablePrice
+        ? firstText(offer?.status)
+        : hasReasonablePrice && (normalizedTotalPrice !== null || normalizedPrice !== null)
+          ? "available"
+          : fallbackStatus,
     product_url: productUrl,
-    search_url: productUrl ? null : firstText(offer?.search_url) || null,
-    price: normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
-    total_price: normalizedTotalPrice !== null ? Math.max(0, Math.round(normalizedTotalPrice)) : normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
+    search_url: searchUrl,
+    price:
+      hasReasonablePrice && normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
+    total_price:
+      hasReasonablePrice && normalizedTotalPrice !== null
+        ? Math.max(0, Math.round(normalizedTotalPrice))
+        : hasReasonablePrice && normalizedPrice !== null
+          ? Math.max(0, Math.round(normalizedPrice))
+          : null,
     currency: firstText(offer?.currency).toUpperCase() || "SEK",
-    shipping_price: parseMoneyValue(offer?.shipping_price),
+    shipping_price: hasReasonablePrice ? parseMoneyValue(offer?.shipping_price) : null,
     availability: firstText(offer?.availability) || null,
     updated_at: firstText(offer?.updated_at) || null,
     error: firstText(offer?.error) || null,

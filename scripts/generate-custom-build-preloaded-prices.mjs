@@ -15,16 +15,6 @@ const OUTPUT_FILE = path.join(repoRoot, "src", "data", "customBuildPreloadedPric
 const STATIC_CATEGORIES = ["gpu", "ram", "storage", "case", "psu", "cooling"];
 
 const LEGACY_PRICE_OVERRIDES = {
-  "gpu-1": { price: 3490, reason: "Approximerad marknadsnivå för äldre instegsmodell." },
-  "gpu-2": { price: 4290, reason: "Approximerad marknadsnivå för äldre mellanklassmodell." },
-  "gpu-3": { price: 5890, reason: "Lagts strax under RTX 5070 som ungefärlig ersättningsnivå." },
-  "gpu-4": { price: 6290, reason: "Lagts strax under RTX 5070 som ungefärlig ersättningsnivå." },
-  "gpu-5": { price: 10990, reason: "Lagts strax under RTX 5080 som ungefärlig ersättningsnivå." },
-  "gpu-6": { price: 17990, reason: "Statisk high-end-nivå i avsaknad av stabil nybutiksdata." },
-  "gpu-7": { price: 2990, reason: "Approximerad marknadsnivå för äldre 1080p-kort." },
-  "gpu-8": { price: 4390, reason: "Approximerad marknadsnivå för äldre 1440p-kort." },
-  "gpu-9": { price: 5390, reason: "Lagts under RX 9070 XT som ungefärlig ersättningsnivå." },
-  "gpu-10": { price: 2890, reason: "Approximerad marknadsnivå för äldre Intel Arc-modell." },
   "ram-14": { price: 799, reason: "Begagnad OEM-modul prissatt under motsvarande ny modul." },
 };
 
@@ -43,6 +33,39 @@ const getCachedLowestPrice = (response) => {
 
   if (prices.length === 0) return null;
   return Math.min(...prices);
+};
+
+const isReasonablePreloadedPrice = (item, price) => {
+  if (!Number.isFinite(price) || price <= 0) return false;
+  const basePrice = Number(item?.basePrice || 0);
+  if (!Number.isFinite(basePrice) || basePrice <= 0) return true;
+
+  let lowerMultiplier = 0.35;
+  let upperMultiplier = 2.5;
+
+  if (item.category === "gpu") {
+    lowerMultiplier = 0.55;
+    upperMultiplier = 1.6;
+  } else if (item.category === "cpu") {
+    lowerMultiplier = 0.45;
+    upperMultiplier = 2.1;
+  } else if (item.category === "motherboard") {
+    lowerMultiplier = 0.45;
+    upperMultiplier = 2.3;
+  } else if (item.category === "ram" || item.category === "storage") {
+    lowerMultiplier = 0.4;
+    upperMultiplier = 1.9;
+  } else if (item.category === "psu" || item.category === "cooling") {
+    lowerMultiplier = 0.4;
+    upperMultiplier = 2.2;
+  } else if (item.category === "case") {
+    lowerMultiplier = 0.4;
+    upperMultiplier = 2;
+  }
+
+  const lowerBound = Math.max(50, Math.round(basePrice * lowerMultiplier));
+  const upperBound = Math.max(lowerBound, Math.round(basePrice * upperMultiplier));
+  return price >= lowerBound && price <= upperBound;
 };
 
 const parseStaticItemsFromCustomBuildPage = (sourceText) => {
@@ -113,12 +136,13 @@ const main = async () => {
 
   for (const item of allItems) {
     const override = LEGACY_PRICE_OVERRIDES[item.id];
-    const effectivePrice =
-      (Number.isFinite(item.cachePrice) && item.cachePrice > 0 ? item.cachePrice : null) ??
-      override?.price ??
-      item.basePrice;
+    const acceptedCachePrice =
+      Number.isFinite(item.cachePrice) && item.cachePrice > 0 && isReasonablePreloadedPrice(item, item.cachePrice)
+        ? item.cachePrice
+        : null;
+    const effectivePrice = acceptedCachePrice ?? override?.price ?? item.basePrice;
 
-    const source = Number.isFinite(item.cachePrice) && item.cachePrice > 0
+    const source = acceptedCachePrice
       ? "prisjakt_seed"
       : override
       ? "static_legacy_fallback"
