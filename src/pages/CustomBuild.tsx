@@ -88,18 +88,6 @@ import storageSeagateFireCuda530Image from "../../images/product images/ssd/Seag
 import storageTeamGroupG50Image from "../../images/product images/ssd/Team Group T-Force G50.png";
 import storageWdBlackSn850xImage from "../../images/product images/ssd/WD Black SN850X 1TB.png";
 import storageWdBlueSn580Image from "../../images/product images/ssd/WD Blue SN580 1TBWD Blue SN580 1TB.png";
-import caseNzxtH7FlowImage from "../../images/product images/chassi/NZXT H7 Flow.png";
-import caseLianLiLancool216Image from "../../images/product images/chassi/Lian Li Lancool 216.png";
-import caseFractalDesignNorthImage from "../../images/product images/chassi/Fractal Design North.png";
-import caseCorsair4000dAirflowImage from "../../images/product images/chassi/Corsair 4000D Airflow.png";
-import casePhanteksEclipseG500aImage from "../../images/product images/chassi/Phanteks Eclipse G500A.png";
-import caseBeQuietPureBase500DxImage from "../../images/product images/chassi/be quiet! Pure Base 500DX.png";
-import caseCoolerMasterTd500MeshImage from "../../images/product images/chassi/Cooler Master TD500 Mesh.png";
-import caseNzxtH5FlowImage from "../../images/product images/chassi/NZXT H5 Flow.png";
-import caseLianLiO11DynamicImage from "../../images/product images/chassi/Lian Li O11 Dynamic.png";
-import caseFractalDesignMeshify2Image from "../../images/product images/chassi/Fractal Design Meshify 2.png";
-import caseDeepCoolCg530Image from "../../images/product images/NewPCImages/cg530_new.png";
-import caseChieftecVisioImage from "../../images/product images/NewPCImages/ChieftecVisio_new.png";
 import psuCorsairRm750eImage from "../../images/product images/psu/Corsair RM750e.png";
 import psuCorsairRm850xImage from "../../images/product images/psu/Corsair RM850x.png";
 import psuSeasonicFocusGx750Image from "../../images/product images/psu/Seasonic Focus GX-750.png";
@@ -249,6 +237,43 @@ const CATEGORY_LIST: CategoryConfig[] = [
 ];
 
 const FALLBACK_COMPONENT_IMAGE = "https://placehold.co/360x240?text=Komponent";
+const buildPricespyProductImageUrl = (productId: number | string) =>
+  `https://pricespy-75b8.kxcdn.com/product/standard/800/${productId}.jpg`;
+
+// Cases must use external product images, not our local placeholder/reused case assets.
+const CASE_REMOTE_IMAGE_BY_ID: Record<string, string> = {
+  "case-1": buildPricespyProductImageUrl(13621253),
+  "case-2": buildPricespyProductImageUrl(7386085),
+  "case-3": buildPricespyProductImageUrl(13464862),
+  "case-4": buildPricespyProductImageUrl(14366586),
+  "case-5": buildPricespyProductImageUrl(10250470),
+  "case-6": buildPricespyProductImageUrl(5339161),
+  "case-7": "https://a.storyblok.com/f/281110/0784b7eca1/td500-mesh-black-gallery-1.png",
+  "case-8": buildPricespyProductImageUrl(13900663),
+  "case-9": "https://lian-li.com/wp-content/uploads/2020/11/O11D-black-side.jpg",
+  "case-10": buildPricespyProductImageUrl(5641231),
+  "case-11": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cases/CG530_4F/Gallery/800X800/01.jpg",
+  "case-12": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cases/CG530_WH_4F/Gallery/800X800/01.jpg",
+  "case-13": buildPricespyProductImageUrl(13331232),
+  "case-14": "https://lian-li.com/wp-content/uploads/2025/06/V100_013.jpg",
+  "case-15": buildPricespyProductImageUrl(14434812),
+  "case-16": buildPricespyProductImageUrl(12651584),
+  "case-17": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cases/CG530/Gallery/800X800/01.jpg",
+  "case-18": buildPricespyProductImageUrl(13464862),
+  "case-19": buildPricespyProductImageUrl(13947588),
+  "case-20": buildPricespyProductImageUrl(13947603),
+  "case-21": buildPricespyProductImageUrl(13646857),
+  "case-22": buildPricespyProductImageUrl(15110071),
+  "case-23": buildPricespyProductImageUrl(13331233),
+  "case-24": "https://www.chieftec.eu/upload/pic/o-product_pic1240919143837_7617.jpg",
+  "case-25": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cases/CG530_WH/Gallery/800X800/01.jpg",
+  "case-26": "https://a.storyblok.com/f/281110/3637x4350/63e693d3ef/elite-301b_07.png",
+  "case-27": buildPricespyProductImageUrl(13777347),
+  "case-28":
+    "https://impro.usercontent.one/appid/oneComWsb/domain/kolink.eu/media/kolink.eu/onewebmedia/Cases/OBSERVATORY%20HF%20Glass%20Black/GEKL_129_01.jpg?etag=%22248c3-64e5c359%22&sourceContentType=image%2Fjpeg&quality=85",
+  "case-29":
+    "https://impro.usercontent.one/appid/oneComWsb/domain/kolink.eu/media/kolink.eu/onewebmedia/Cases/OBSERVATORY%20HF%20Glass%20White/GEKL_131_01.jpg?etag=%222247d-64e5c3ef%22&sourceContentType=image%2Fjpeg&quality=85",
+};
 const TrashIcon = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 24 24"
@@ -2100,7 +2125,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT H7 Flow",
       brand: "NZXT",
       price: 1390,
-      image: caseNzxtH7FlowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-1"],
       specs: ["ATX", "Mesh", "Svart"],
     },
     {
@@ -2108,7 +2133,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li Lancool 216",
       brand: "Lian Li",
       price: 1290,
-      image: caseLianLiLancool216Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-2"],
       specs: ["ATX", "Airflow", "RGB"],
     },
     {
@@ -2116,7 +2141,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Fractal Design North",
       brand: "Fractal",
       price: 1490,
-      image: caseFractalDesignNorthImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-3"],
       specs: ["ATX", "TrÃ¤panel", "Airflow"],
       highlight: "Designfavorit",
     },
@@ -2125,7 +2150,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair 4000D Airflow",
       brand: "Corsair",
       price: 1090,
-      image: caseCorsair4000dAirflowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-4"],
       specs: ["ATX", "Mesh", "Tyst"],
     },
     {
@@ -2133,7 +2158,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Phanteks Eclipse G500A",
       brand: "Phanteks",
       price: 1390,
-      image: casePhanteksEclipseG500aImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-5"],
       specs: ["ATX", "RGB", "Airflow"],
     },
     {
@@ -2141,7 +2166,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "be quiet! Pure Base 500DX",
       brand: "be quiet!",
       price: 1290,
-      image: caseBeQuietPureBase500DxImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-6"],
       specs: ["ATX", "Tyst", "RGB"],
     },
     {
@@ -2149,7 +2174,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Cooler Master TD500 Mesh",
       brand: "Cooler Master",
       price: 1190,
-      image: caseCoolerMasterTd500MeshImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-7"],
       specs: ["ATX", "Mesh", "ARGB"],
     },
     {
@@ -2157,7 +2182,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT H5 Flow",
       brand: "NZXT",
       price: 1090,
-      image: caseNzxtH5FlowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-8"],
       specs: ["ATX", "Kompakt", "Svart"],
     },
     {
@@ -2165,7 +2190,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li O11 Dynamic",
       brand: "Lian Li",
       price: 1690,
-      image: caseLianLiO11DynamicImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-9"],
       specs: ["ATX", "Glas", "Showcase"],
     },
     {
@@ -2173,7 +2198,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Fractal Design Meshify 2",
       brand: "Fractal",
       price: 1690,
-      image: caseFractalDesignMeshify2Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-10"],
       specs: ["ATX", "Mesh", "ModulÃ¤r"],
     },
     {
@@ -2181,7 +2206,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 4F",
       brand: "DeepCool",
       price: 899,
-      image: caseDeepCoolCg530Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-11"],
       specs: ["ATX", "4x fans", "Svart"],
     },
     {
@@ -2189,7 +2214,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 4F Vit",
       brand: "DeepCool",
       price: 949,
-      image: caseDeepCoolCg530Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-12"],
       specs: ["ATX", "4x fans", "Vit"],
     },
     {
@@ -2197,7 +2222,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Phanteks XT Pro Ultra",
       brand: "Phanteks",
       price: 999,
-      image: casePhanteksEclipseG500aImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-13"],
       specs: ["ATX", "Airflow", "RGB"],
     },
     {
@@ -2205,7 +2230,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li Vector V100 PC-chassi (svart)",
       brand: "Lian Li",
       price: 1290,
-      image: caseLianLiO11DynamicImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-14"],
       specs: ["ATX", "Showcase", "Svart"],
     },
     {
@@ -2213,7 +2238,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li A3",
       brand: "Lian Li",
       price: 899,
-      image: caseLianLiLancool216Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-15"],
       specs: ["mATX", "Compact", "Mesh"],
     },
     {
@@ -2221,7 +2246,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "NZXT H6 Flow Case Dual Chamber RGB",
       brand: "NZXT",
       price: 1490,
-      image: caseNzxtH7FlowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-16"],
       specs: ["ATX", "Dual chamber", "RGB"],
     },
     {
@@ -2229,7 +2254,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 Svart",
       brand: "DeepCool",
       price: 829,
-      image: caseDeepCoolCg530Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-17"],
       specs: ["ATX", "Airflow", "Svart"],
     },
     {
@@ -2237,7 +2262,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Fractal Design North XL",
       brand: "Fractal",
       price: 1990,
-      image: caseFractalDesignNorthImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-18"],
       specs: ["ATX", "XL", "Trapanel"],
     },
     {
@@ -2245,7 +2270,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "O11 Vision Compact PC-chassi (svart)",
       brand: "Lian Li",
       price: 1490,
-      image: caseLianLiO11DynamicImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-19"],
       specs: ["ATX", "Compact", "Svart"],
     },
     {
@@ -2253,7 +2278,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li O11 Vision Compact (Vit/Transparent)",
       brand: "Lian Li",
       price: 1590,
-      image: caseLianLiO11DynamicImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-20"],
       specs: ["ATX", "Compact", "Vit"],
     },
     {
@@ -2261,7 +2286,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Corsair 3500X",
       brand: "Corsair",
       price: 1490,
-      image: caseCorsair4000dAirflowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-21"],
       specs: ["ATX", "Showcase", "RGB"],
     },
     {
@@ -2269,7 +2294,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Lian Li O11D Mini V2 White",
       brand: "Lian Li",
       price: 1390,
-      image: caseLianLiO11DynamicImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-22"],
       specs: ["ATX", "Mini", "Vit"],
     },
     {
@@ -2277,7 +2302,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Phanteks XT View",
       brand: "Phanteks",
       price: 999,
-      image: casePhanteksEclipseG500aImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-23"],
       specs: ["ATX", "Glass", "Showcase"],
     },
     {
@@ -2285,7 +2310,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Chieftec Visio Svart RGB",
       brand: "Chieftec",
       price: 999,
-      image: caseChieftecVisioImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-24"],
       specs: ["ATX", "RGB", "Svart"],
     },
     {
@@ -2293,7 +2318,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool CG530 Vit",
       brand: "DeepCool",
       price: 849,
-      image: caseDeepCoolCg530Image,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-25"],
       specs: ["ATX", "Airflow", "Vit"],
     },
     {
@@ -2301,7 +2326,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Cooler Master Elite 301 Mini Tower (svart)",
       brand: "Cooler Master",
       price: 699,
-      image: caseCoolerMasterTd500MeshImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-26"],
       specs: ["mATX", "Mini tower", "Svart"],
     },
     {
@@ -2309,7 +2334,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Thermaltake View 170 TG ARGB",
       brand: "Thermaltake",
       price: 799,
-      image: caseNzxtH5FlowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-27"],
       specs: ["mATX", "ARGB", "Glass"],
     },
     {
@@ -2317,7 +2342,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Kolink Observatory HF",
       brand: "Kolink",
       price: 749,
-      image: caseNzxtH5FlowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-28"],
       specs: ["ATX", "Mesh", "RGB"],
     },
     {
@@ -2325,7 +2350,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Kolink Observatory HF Glass Vit",
       brand: "Kolink",
       price: 799,
-      image: caseNzxtH5FlowImage,
+      image: CASE_REMOTE_IMAGE_BY_ID["case-29"],
       specs: ["ATX", "Glass", "Vit"],
     },
   ],
@@ -3588,72 +3613,71 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-stretch lg:block`}>
+            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] lg:items-start">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:self-start`}>
                 <div className="space-y-4">
-                  <div className="lg:sticky lg:top-24">
+                  <div className="lg:sticky lg:top-24 lg:z-10">
                     <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
-                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
-                    <div className="mt-4 space-y-2">
-                      {CATEGORY_LIST.map((category) => {
-                        const Icon = category.icon;
-                        const isActive = category.key === activeCategory;
-                        const selectedItem = selected[category.key];
+                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
+                      <div className="mt-4 space-y-2">
+                        {CATEGORY_LIST.map((category) => {
+                          const Icon = category.icon;
+                          const isActive = category.key === activeCategory;
+                          const selectedItem = selected[category.key];
 
-                        return (
-                          <div key={category.key} className="relative">
-                            <button
-                              type="button"
-                              onClick={() => handleCategorySelect(category.key)}
-                              className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
-                                isActive
-                                  ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
-                                  : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
-                              }`}
-                            >
-                              <div className="flex items-start gap-3">
-                                <span
-                                  className={`mt-1 rounded-lg p-2 ${
-                                    isActive
-                                      ? "bg-yellow-400 text-gray-900"
-                                      : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                  }`}
-                                >
-                                  <Icon className="w-5 h-5" />
-                                </span>
-                                <div>
-                                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400">{category.description}</p>
-                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                    {selectedItem ? selectedItem.name : "Ej valt"}
-                                  </p>
+                          return (
+                            <div key={category.key} className="relative">
+                              <button
+                                type="button"
+                                onClick={() => handleCategorySelect(category.key)}
+                                className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
+                                  isActive
+                                    ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
+                                    : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
+                                }`}
+                              >
+                                <div className="flex items-start gap-3">
+                                  <span
+                                    className={`mt-1 rounded-lg p-2 ${
+                                      isActive
+                                        ? "bg-yellow-400 text-gray-900"
+                                        : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                    }`}
+                                  >
+                                    <Icon className="w-5 h-5" />
+                                  </span>
+                                  <div>
+                                    <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">{category.description}</p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                      {selectedItem ? selectedItem.name : "Ej valt"}
+                                    </p>
+                                  </div>
                                 </div>
-                              </div>
-                            </button>
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                if (!selectedItem) return;
-                                setSelected((prev) => ({ ...prev, [category.key]: null }));
-                              }}
-                              className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
-                                selectedItem
-                                  ? "hover:bg-slate-800 dark:hover:bg-slate-600"
-                                  : "opacity-40 cursor-default"
-                              }`}
-                              aria-label={`Ta bort ${category.label}`}
-                              aria-disabled={!selectedItem}
-                            >
-                              <TrashIcon className="h-4 w-4" />
-                            </button>
-                          </div>
-                        );
-                      })}
-                    </div>
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  if (!selectedItem) return;
+                                  setSelected((prev) => ({ ...prev, [category.key]: null }));
+                                }}
+                                className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
+                                  selectedItem
+                                    ? "hover:bg-slate-800 dark:hover:bg-slate-600"
+                                    : "opacity-40 cursor-default"
+                                }`}
+                                aria-label={`Ta bort ${category.label}`}
+                                aria-disabled={!selectedItem}
+                              >
+                                <TrashIcon className="h-4 w-4" />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
-
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                     <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Tips</p>
                     <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
@@ -4046,8 +4070,10 @@ export default function CustomBuild() {
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
-                    const imageSrc = item.image ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
-                    const imageAlt = item.image ? item.name : (categoryImage?.alt ?? "Komponent");
+                    const remoteImageOverride =
+                      activeCategory === "case" ? CASE_REMOTE_IMAGE_BY_ID[item.id] : undefined;
+                    const imageSrc = remoteImageOverride ?? item.image ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
+                    const imageAlt = remoteImageOverride || item.image ? item.name : (categoryImage?.alt ?? "Komponent");
                     const detailEntries = Object.entries(item.details || {});
                     const showStorePanel = supportsStoreOffersForCategory(activeCategory);
                     const storeOffersForItem = isExpanded ? expandedStoreOffers : [];
@@ -4279,66 +4305,65 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="self-stretch">
+              <aside className="lg:self-start">
                 <div className="space-y-4">
-                  <div className="lg:sticky lg:top-24">
+                  <div className="lg:sticky lg:top-24 lg:z-10">
                     <div
                       id="build-summary"
                       className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
                     >
-                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Din build</p>
-                  <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
-                  <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
-                    {CATEGORY_LIST.map((category) => (
-                      <button
-                        key={category.key}
-                        type="button"
-                        onClick={() => {
-                          handleCategorySelect(category.key);
-                        }}
-                        className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-gray-900 dark:hover:text-white"
-                      >
-                        <span className="text-gray-500 dark:text-gray-400">{category.label}</span>
-                        <span className="text-right">
-                          {selected[category.key]?.name ?? "Ej vald"}
-                          {selected[category.key]?.selectedStore ? (
-                            <span className="block text-[11px] text-gray-500 dark:text-gray-400">
-                              {selected[category.key]?.selectedStore}
-                            </span>
-                          ) : null}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                  <div className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4 flex items-center justify-between">
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Total</span>
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{formatPrice(totalPrice)} kr</span>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setOfferOpen(true)}
-                    disabled={!allComponentsSelected}
-                    className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Skicka offertfÃ¶rfrÃ¥gan
-                  </button>
-                  {!allComponentsSelected ? (
-                    <p className="mt-2 text-xs text-amber-600">VÃ¤lj alla komponenter innan du skickar offertfÃ¶rfrÃ¥gan.</p>
-                  ) : null}
-                  <button
-                    type="button"
-                    onClick={handleShareBuild}
-                    className="mt-3 w-full border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
-                  >
-                    Spara build
-                  </button>
-                  {shareStatus ? (
-                    <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{shareStatus}</p>
-                  ) : null}
+                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Din build</p>
+                    <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
+                    <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
+                      {CATEGORY_LIST.map((category) => (
+                        <button
+                          key={category.key}
+                          type="button"
+                          onClick={() => {
+                            handleCategorySelect(category.key);
+                          }}
+                          className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-gray-900 dark:hover:text-white"
+                        >
+                          <span className="text-gray-500 dark:text-gray-400">{category.label}</span>
+                          <span className="text-right">
+                            {selected[category.key]?.name ?? "Ej vald"}
+                            {selected[category.key]?.selectedStore ? (
+                              <span className="block text-[11px] text-gray-500 dark:text-gray-400">
+                                {selected[category.key]?.selectedStore}
+                              </span>
+                            ) : null}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                    <div className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4 flex items-center justify-between">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Total</span>
+                      <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{formatPrice(totalPrice)} kr</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setOfferOpen(true)}
+                      disabled={!allComponentsSelected}
+                      className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Skicka offertfÃ¶rfrÃ¥gan
+                    </button>
+                    {!allComponentsSelected ? (
+                      <p className="mt-2 text-xs text-amber-600">VÃ¤lj alla komponenter innan du skickar offertfÃ¶rfrÃ¥gan.</p>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={handleShareBuild}
+                      className="mt-3 w-full border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
+                    >
+                      Spara build
+                    </button>
+                    {shareStatus ? (
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{shareStatus}</p>
+                    ) : null}
 
                     </div>
                   </div>
-
                   <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">
                     <p className="font-semibold text-gray-900 dark:text-gray-100">{"Vad h\u00e4nder sen?"}</p>
                     <ul className="mt-3 space-y-2">
