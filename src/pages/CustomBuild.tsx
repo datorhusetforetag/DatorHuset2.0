@@ -3577,7 +3577,7 @@ export default function CustomBuild() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
-              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1`}>
+              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:sticky lg:top-24 lg:self-start`}>
                 <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                   <div className="mt-4 space-y-2">
