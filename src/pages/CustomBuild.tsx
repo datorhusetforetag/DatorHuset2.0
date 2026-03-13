@@ -185,7 +185,7 @@ type CatalogCategoryPricesResponse = {
   }>;
 };
 
-type CustomBuildPriceSource = "prisjakt-offer" | "seed" | "fallback" | "no-store";
+type CustomBuildPriceSource = "prisjakt-offer" | "seed" | "fallback" | "search" | "no-store";
 
 type CategoryConfig = {
   key: CategoryKey;
@@ -2765,11 +2765,11 @@ export default function CustomBuild() {
   };
 
   const getPriceSource = (item: ComponentItem): CustomBuildPriceSource => {
-    if (itemsWithoutStorePrice[item.id]) {
-      return "no-store";
-    }
     if (priceSourceByItemId[item.id]) {
       return priceSourceByItemId[item.id];
+    }
+    if (itemsWithoutStorePrice[item.id]) {
+      return "no-store";
     }
     if (typeof CUSTOM_BUILD_PRELOADED_PRICE_BY_ID[item.id] === "number") {
       return "seed";
@@ -2784,6 +2784,8 @@ export default function CustomBuild() {
         return "Prisjakt-offer";
       case "seed":
         return "Seed";
+      case "search":
+        return "Search-link";
       case "no-store":
         return "No-store";
       default:
@@ -3123,7 +3125,7 @@ export default function CustomBuild() {
   const expandedStoreSnapshot = expandedStoreCacheKey ? storePickerCache[expandedStoreCacheKey] : undefined;
   const expandedStoreOffers = Array.isArray(expandedStoreSnapshot?.offers)
     ? expandedStoreSnapshot.offers.filter(
-        (offer) => Boolean(offer.product_url) || Number.isFinite(offer.total_price ?? offer.price)
+        (offer) => Boolean(offer.product_url) || Boolean(offer.search_url) || Number.isFinite(offer.total_price ?? offer.price)
       )
     : [];
 
@@ -3209,17 +3211,30 @@ export default function CustomBuild() {
         throw new Error(fallbackMessage);
       }
       const offers = Array.isArray(data?.offers) ? data.offers : [];
+      const hasPricedOffer = offers.some(
+        (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
+      );
+      const hasLinkedOffer = offers.some((offer) => Boolean(offer.product_url) || Boolean(offer.search_url));
       setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
       if (offers.length === 0) {
         setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
-        setStorePickerError("Inga butiksträffar hittades för komponenten.");
+        setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
+        setStorePickerError("Inga butikstr?ffar hittades f?r komponenten.");
       } else {
-        setItemsWithoutStorePrice((prev) => {
-          if (!prev[item.id]) return prev;
-          const nextState = { ...prev };
-          delete nextState[item.id];
-          return nextState;
-        });
+        setPriceSourceByItemId((prev) => ({
+          ...prev,
+          [item.id]: hasPricedOffer ? "prisjakt-offer" : hasLinkedOffer ? "search" : "no-store",
+        }));
+        if (hasPricedOffer) {
+          setItemsWithoutStorePrice((prev) => {
+            if (!prev[item.id]) return prev;
+            const nextState = { ...prev };
+            delete nextState[item.id];
+            return nextState;
+          });
+        } else {
+          setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
+        }
       }
     } catch (error) {
       setStorePickerError(
@@ -3285,7 +3300,8 @@ export default function CustomBuild() {
       return formatCurrencyPrice(Number(offer.total_price ?? offer.price), offer.currency || "SEK");
     }
     if (offer.status === "linked_no_price") return "Pris saknas";
-    if (offer.status === "unavailable") return "Ej tillgänglig";
+    if (offer.status === "search_only") return "Sok i butik";
+    if (offer.status === "unavailable") return "Ej tillg?nglig";
     if (offer.status === "error") return "Kunde inte läsa";
     return "Ingen träff";
   };
@@ -4158,7 +4174,7 @@ export default function CustomBuild() {
                                     </p>
                                     {customBuildDebugEnabled ? (
                                       <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
-                                        Debug: Prisjakt-offer = live butik, Seed = preloadad prisfil, Fallback = katalogpris, No-store = inga butikstraffar.
+                                        Debug: Prisjakt-offer = live butik, Seed = preloadad prisfil, Fallback = katalogpris, Search-link = butikssokning, No-store = inga butikstraffar.
                                       </p>
                                     ) : null}
                                   </div>
@@ -4195,14 +4211,14 @@ export default function CustomBuild() {
                                           </p>
                                         </div>
                                           <div className="flex items-center gap-2">
-                                        {offer.product_url ? (
+                                        {offer.product_url || offer.search_url ? (
                                           <a
-                                            href={offer.product_url}
+                                            href={offer.product_url || offer.search_url || "#"}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                           >
-                                            Till butik
+                                            {offer.product_url ? "Till butik" : "Sok i butik"}
                                           </a>
                                         ) : (
                                           <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
@@ -4374,7 +4390,7 @@ export default function CustomBuild() {
         <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
           <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
-            Kallor: <span className="font-semibold">Prisjakt-offer</span>, <span className="font-semibold">Seed</span>, <span className="font-semibold">Fallback</span>, <span className="font-semibold">No-store</span>.
+            Kallor: <span className="font-semibold">Prisjakt-offer</span>, <span className="font-semibold">Seed</span>, <span className="font-semibold">Fallback</span>, <span className="font-semibold">Search-link</span>, <span className="font-semibold">No-store</span>.
           </p>
         </div>
       ) : null}

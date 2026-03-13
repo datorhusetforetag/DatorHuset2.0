@@ -2402,6 +2402,49 @@ const normalizeCatalogProductUrl = (value, sourceId) =>
   firstText(value) ||
   null;
 
+const buildCatalogSearchQuery = (item) => {
+  const searchTerms = Array.isArray(item?.searchTerms)
+    ? item.searchTerms.map((value) => sanitizeText(String(value || ""), 180)).filter(Boolean)
+    : [];
+  return searchTerms[0] || sanitizeText(String(item?.name || ""), 180) || sanitizeText(String(item?.id || ""), 120);
+};
+
+const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
+  if (!item) return [];
+  const directLinkStoreIds = Object.keys(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id] || {});
+  const orderedStoreIds = Array.from(
+    new Set([
+      ...directLinkStoreIds,
+      ...CURATED_CUSTOM_BUILD_STORE_SOURCES.map((source) => source.id),
+    ])
+  ).slice(0, 5);
+  const query = buildCatalogSearchQuery(item);
+  const updatedAtIso = new Date(updatedAt).toISOString();
+
+  return orderedStoreIds
+    .map((storeId) => CURATED_CUSTOM_BUILD_STORE_SOURCES.find((source) => source.id === storeId))
+    .filter(Boolean)
+    .map((source) => {
+      const directProductUrl = normalizeCatalogProductUrl(
+        firstText(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id]?.[source.id]),
+        source.id
+      );
+      return sanitizeCatalogStoreOffer(
+        {
+          store_id: source.id,
+          store: source.name,
+          status: directProductUrl ? "linked_no_price" : "search_only",
+          product_url: directProductUrl,
+          search_url: directProductUrl ? null : source.buildSearchUrl(query),
+          updated_at: updatedAtIso,
+        },
+        source,
+        item
+      );
+    })
+    .filter((offer) => Boolean(offer?.product_url || offer?.search_url));
+};
+
 const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const normalizedPrice = parseMoneyValue(offer?.price);
   const normalizedTotalPrice = parseMoneyValue(offer?.total_price);
@@ -2431,9 +2474,10 @@ const sortCatalogStoreOffers = (offers) => {
   const rankForStatus = (status, price) => {
     if (status === "available" && Number.isFinite(price)) return 0;
     if (status === "linked_no_price") return 1;
-    if (status === "unavailable") return 2;
-    if (status === "not_found") return 3;
-    return 4;
+    if (status === "search_only") return 2;
+    if (status === "unavailable") return 3;
+    if (status === "not_found") return 4;
+    return 5;
   };
   return [...offers].sort((a, b) => {
     const aRank = rankForStatus(a.status, a.total_price ?? a.price);
@@ -2448,6 +2492,7 @@ const sortCatalogStoreOffers = (offers) => {
 
 const isCatalogStoreOfferUseful = (offer) =>
   Boolean(firstText(offer?.product_url)) ||
+  Boolean(firstText(offer?.search_url)) ||
   Number.isFinite(offer?.total_price ?? offer?.price);
 
 const hydrateCatalogStoreOffers = (offers = [], item = null) => {
@@ -2570,7 +2615,10 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt) => {
     ...offer,
     updated_at: new Date(updatedAt).toISOString(),
   }));
-  const limitedOffers = hydratedOffers.slice(0, 5);
+  const effectiveOffers = hydratedOffers.length > 0
+    ? hydratedOffers
+    : buildCatalogFallbackStoreOffers(item, updatedAt);
+  const limitedOffers = effectiveOffers.slice(0, 5);
   const availableOffers = limitedOffers.filter(
     (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
   );
