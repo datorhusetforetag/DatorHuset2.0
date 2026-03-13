@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T18:09:54.517Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T19:20:08.678Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
@@ -269,20 +269,20 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "case-13": 799,
   "case-14": 854,
   "case-15": 949,
-  "case-16": 1490,
-  "case-17": 829,
-  "case-18": 1990,
-  "case-19": 1490,
-  "case-20": 1590,
-  "case-21": 1490,
-  "case-22": 1390,
-  "case-23": 999,
-  "case-24": 999,
-  "case-25": 849,
+  "case-16": 1099,
+  "case-17": 519,
+  "case-18": 1568,
+  "case-19": 1636,
+  "case-20": 1634,
+  "case-21": 999,
+  "case-22": 1179,
+  "case-23": 953,
+  "case-24": 750,
+  "case-25": 679,
   "case-26": 699,
-  "case-27": 799,
-  "case-28": 749,
-  "case-29": 799,
+  "case-27": 570,
+  "case-28": 617,
+  "case-29": 567,
   "psu-1": 1289,
   "psu-2": 1528,
   "psu-3": 1263,
@@ -1917,61 +1917,61 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "case-16": {
     "category": "case",
     "name": "NZXT H6 Flow Case Dual Chamber RGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-17": {
     "category": "case",
     "name": "DeepCool CG530 Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-18": {
     "category": "case",
     "name": "Fractal Design North XL",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-19": {
     "category": "case",
     "name": "O11 Vision Compact PC-chassi (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-20": {
     "category": "case",
     "name": "Lian Li O11 Vision Compact (Vit/Transparent)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-21": {
     "category": "case",
     "name": "Corsair 3500X",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-22": {
     "category": "case",
     "name": "Lian Li O11D Mini V2 White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-23": {
     "category": "case",
     "name": "Phanteks XT View",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-24": {
     "category": "case",
     "name": "Chieftec Visio Svart RGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-25": {
     "category": "case",
     "name": "DeepCool CG530 Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-26": {
@@ -1983,19 +1983,19 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "case-27": {
     "category": "case",
     "name": "Thermaltake View 170 TG ARGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-28": {
     "category": "case",
     "name": "Kolink Observatory HF",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-29": {
     "category": "case",
     "name": "Kolink Observatory HF Glass Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-1": {

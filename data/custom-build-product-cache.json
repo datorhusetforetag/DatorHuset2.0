@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-13T18:08:44.202Z",
+  "saved_at": "2026-03-13T19:19:57.768Z",
   "entries": [
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-3-3100",
@@ -4638,7 +4638,7 @@
     {
       "key": "prisjakt-v1:ram-17",
       "item_id": "ram-17",
-      "updatedAt": 1773423912269,
+      "updatedAt": 1773429495646,
       "response": {
         "offers": []
       }
@@ -4679,7 +4679,7 @@
     {
       "key": "prisjakt-v1:ram-19",
       "item_id": "ram-19",
-      "updatedAt": 1773423960411,
+      "updatedAt": 1773429497997,
       "response": {
         "offers": []
       }
@@ -4687,7 +4687,7 @@
     {
       "key": "prisjakt-v1:ram-20",
       "item_id": "ram-20",
-      "updatedAt": 1773423992874,
+      "updatedAt": 1773429500357,
       "response": {
         "offers": []
       }
@@ -4695,7 +4695,7 @@
     {
       "key": "prisjakt-v1:ram-21",
       "item_id": "ram-21",
-      "updatedAt": 1773424026456,
+      "updatedAt": 1773429504140,
       "response": {
         "offers": []
       }
@@ -4703,7 +4703,7 @@
     {
       "key": "prisjakt-v1:ram-22",
       "item_id": "ram-22",
-      "updatedAt": 1773424060153,
+      "updatedAt": 1773429507704,
       "response": {
         "offers": []
       }
@@ -4711,7 +4711,7 @@
     {
       "key": "prisjakt-v1:ram-23",
       "item_id": "ram-23",
-      "updatedAt": 1773424092689,
+      "updatedAt": 1773429510137,
       "response": {
         "offers": []
       }
@@ -4719,7 +4719,7 @@
     {
       "key": "prisjakt-v1:ram-24",
       "item_id": "ram-24",
-      "updatedAt": 1773424125278,
+      "updatedAt": 1773429512479,
       "response": {
         "offers": []
       }
@@ -4727,7 +4727,7 @@
     {
       "key": "prisjakt-v1:ram-25",
       "item_id": "ram-25",
-      "updatedAt": 1773424158940,
+      "updatedAt": 1773429516263,
       "response": {
         "offers": []
       }
@@ -4756,7 +4756,7 @@
     {
       "key": "prisjakt-v1:ram-27",
       "item_id": "ram-27",
-      "updatedAt": 1773424226342,
+      "updatedAt": 1773429519894,
       "response": {
         "offers": []
       }
@@ -4764,7 +4764,7 @@
     {
       "key": "prisjakt-v1:ram-28",
       "item_id": "ram-28",
-      "updatedAt": 1773424258743,
+      "updatedAt": 1773429522283,
       "response": {
         "offers": []
       }
@@ -4772,7 +4772,7 @@
     {
       "key": "prisjakt-v1:ram-29",
       "item_id": "ram-29",
-      "updatedAt": 1773424292525,
+      "updatedAt": 1773429525891,
       "response": {
         "offers": []
       }
@@ -4780,7 +4780,7 @@
     {
       "key": "prisjakt-v1:ram-30",
       "item_id": "ram-30",
-      "updatedAt": 1773424324896,
+      "updatedAt": 1773429528273,
       "response": {
         "offers": []
       }
@@ -4788,7 +4788,7 @@
     {
       "key": "prisjakt-v1:ram-31",
       "item_id": "ram-31",
-      "updatedAt": 1773424357483,
+      "updatedAt": 1773429530640,
       "response": {
         "offers": []
       }
@@ -5224,7 +5224,7 @@
     {
       "key": "prisjakt-v1:sto-15",
       "item_id": "sto-15",
-      "updatedAt": 1773424390083,
+      "updatedAt": 1773429560763,
       "response": {
         "offers": []
       }
@@ -5232,7 +5232,7 @@
     {
       "key": "prisjakt-v1:sto-16",
       "item_id": "sto-16",
-      "updatedAt": 1773424411878,
+      "updatedAt": 1773429562375,
       "response": {
         "offers": []
       }
@@ -5294,7 +5294,7 @@
     {
       "key": "prisjakt-v1:sto-19",
       "item_id": "sto-19",
-      "updatedAt": 1773424493029,
+      "updatedAt": 1773429564762,
       "response": {
         "offers": []
       }
@@ -5302,7 +5302,7 @@
     {
       "key": "prisjakt-v1:sto-20",
       "item_id": "sto-20",
-      "updatedAt": 1773424525561,
+      "updatedAt": 1773429567105,
       "response": {
         "offers": []
       }
@@ -5478,7 +5478,7 @@
     {
       "key": "prisjakt-v1:sto-25",
       "item_id": "sto-25",
-      "updatedAt": 1773424666132,
+      "updatedAt": 1773429569449,
       "response": {
         "offers": []
       }
@@ -5486,7 +5486,7 @@
     {
       "key": "prisjakt-v1:sto-26",
       "item_id": "sto-26",
-      "updatedAt": 1773424698714,
+      "updatedAt": 1773429571788,
       "response": {
         "offers": []
       }
@@ -5494,7 +5494,7 @@
     {
       "key": "prisjakt-v1:sto-27",
       "item_id": "sto-27",
-      "updatedAt": 1773424731268,
+      "updatedAt": 1773429574130,
       "response": {
         "offers": []
       }
@@ -5559,7 +5559,7 @@
     {
       "key": "prisjakt-v1:sto-29",
       "item_id": "sto-29",
-      "updatedAt": 1773424797294,
+      "updatedAt": 1773429576468,
       "response": {
         "offers": []
       }
@@ -5600,7 +5600,7 @@
     {
       "key": "prisjakt-v1:sto-31",
       "item_id": "sto-31",
-      "updatedAt": 1773424862704,
+      "updatedAt": 1773429578808,
       "response": {
         "offers": []
       }
@@ -5608,7 +5608,7 @@
     {
       "key": "prisjakt-v1:sto-32",
       "item_id": "sto-32",
-      "updatedAt": 1773424895137,
+      "updatedAt": 1773429581151,
       "response": {
         "offers": []
       }
@@ -5616,7 +5616,7 @@
     {
       "key": "prisjakt-v1:sto-33",
       "item_id": "sto-33",
-      "updatedAt": 1773424927601,
+      "updatedAt": 1773429583509,
       "response": {
         "offers": []
       }
@@ -5693,7 +5693,7 @@
     {
       "key": "prisjakt-v1:sto-35",
       "item_id": "sto-35",
-      "updatedAt": 1773424993882,
+      "updatedAt": 1773429585854,
       "response": {
         "offers": []
       }
@@ -5701,7 +5701,7 @@
     {
       "key": "prisjakt-v1:sto-36",
       "item_id": "sto-36",
-      "updatedAt": 1773425026521,
+      "updatedAt": 1773429588195,
       "response": {
         "offers": []
       }
@@ -5709,7 +5709,7 @@
     {
       "key": "prisjakt-v1:sto-37",
       "item_id": "sto-37",
-      "updatedAt": 1773425059030,
+      "updatedAt": 1773429590553,
       "response": {
         "offers": []
       }
@@ -5717,7 +5717,7 @@
     {
       "key": "prisjakt-v1:sto-38",
       "item_id": "sto-38",
-      "updatedAt": 1773425091540,
+      "updatedAt": 1773429592901,
       "response": {
         "offers": []
       }
@@ -5725,7 +5725,7 @@
     {
       "key": "prisjakt-v1:sto-39",
       "item_id": "sto-39",
-      "updatedAt": 1773425124063,
+      "updatedAt": 1773429595261,
       "response": {
         "offers": []
       }
@@ -5733,7 +5733,7 @@
     {
       "key": "prisjakt-v1:sto-40",
       "item_id": "sto-40",
-      "updatedAt": 1773425156612,
+      "updatedAt": 1773429597608,
       "response": {
         "offers": []
       }
@@ -6320,87 +6320,493 @@
     {
       "key": "prisjakt-v1:case-16",
       "item_id": "case-16",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429397156,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/853502?client_id=1331",
+            "search_url": null,
+            "price": 1099,
+            "total_price": 1099,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "netonnet",
+            "store": "NetOnNet",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1035082?client_id=1331",
+            "search_url": null,
+            "price": 1099,
+            "total_price": 1099,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0C89F1V5S?client_id=1331",
+            "search_url": null,
+            "price": 1226,
+            "total_price": 1226,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/391175?client_id=1331",
+            "search_url": null,
+            "price": 1239,
+            "total_price": 1239,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=NZXT%20H6%20Flow%20RGB%20Svart",
+            "price": 1499,
+            "total_price": 1499,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-17",
       "item_id": "case-17",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429400551,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3338774?client_id=1331",
+            "search_url": null,
+            "price": 519,
+            "total_price": 519,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=DeepCool%20CG530%20Svart",
+            "price": 699,
+            "total_price": 699,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-18",
       "item_id": "case-18",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429406881,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0CJCK95ZC?client_id=1331",
+            "search_url": null,
+            "price": 1568,
+            "total_price": 1568,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3226164?client_id=1331",
+            "search_url": null,
+            "price": 1785,
+            "total_price": 1785,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/854536?client_id=1331",
+            "search_url": null,
+            "price": 1787,
+            "total_price": 1787,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Fractal%20Design%20North%20XL%20Svart",
+            "price": 1990,
+            "total_price": 1990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "komplett",
+            "store": "Komplett",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/33/offer/1303240?client_id=1331",
+            "search_url": null,
+            "price": 1990,
+            "total_price": 1990,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-19",
       "item_id": "case-19",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429412744,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3308716?client_id=1331",
+            "search_url": null,
+            "price": 1636,
+            "total_price": 1636,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/989721?client_id=1331",
+            "search_url": null,
+            "price": 1637,
+            "total_price": 1637,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Lian%20Li%20O11%20Vision%20Compact%20Svart",
+            "price": 1690,
+            "total_price": 1690,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-20",
       "item_id": "case-20",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429419101,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/989722?client_id=1331",
+            "search_url": null,
+            "price": 1634,
+            "total_price": 1634,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3308722?client_id=1331",
+            "search_url": null,
+            "price": 1634,
+            "total_price": 1634,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Lian%20Li%20O11%20Vision%20Compact%20Vit",
+            "price": 1690,
+            "total_price": 1690,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-21",
       "item_id": "case-21",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429426412,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Corsair%203500X%20RS%20A-RGB%20TG%20Svart",
+            "price": 999,
+            "total_price": 999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/841468?client_id=1331",
+            "search_url": null,
+            "price": 1399,
+            "total_price": 1399,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3255009?client_id=1331",
+            "search_url": null,
+            "price": 1649,
+            "total_price": 1649,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-22",
       "item_id": "case-22",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429432380,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/989724?client_id=1331",
+            "search_url": null,
+            "price": 1179,
+            "total_price": 1179,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3395283?client_id=1331",
+            "search_url": null,
+            "price": 1179,
+            "total_price": 1179,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Lian%20Li%20O11D%20Mini%20V2%20Vit",
+            "price": 1229,
+            "total_price": 1229,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-23",
       "item_id": "case-23",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429437765,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3270280?client_id=1331",
+            "search_url": null,
+            "price": 953,
+            "total_price": 953,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "komplett",
+            "store": "Komplett",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/33/offer/1302451?client_id=1331",
+            "search_url": null,
+            "price": 999,
+            "total_price": 999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/376752?client_id=1331",
+            "search_url": null,
+            "price": 999,
+            "total_price": 999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Phanteks%20XT%20View%20Svart",
+            "price": 1049,
+            "total_price": 1049,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/909422?client_id=1331",
+            "search_url": null,
+            "price": 1099,
+            "total_price": 1099,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-24",
       "item_id": "case-24",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429442624,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3340578?client_id=1331",
+            "search_url": null,
+            "price": 750,
+            "total_price": 750,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Chieftec%20Visio%20Svart",
+            "price": 769,
+            "total_price": 769,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-25",
       "item_id": "case-25",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429445242,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3338812?client_id=1331",
+            "search_url": null,
+            "price": 679,
+            "total_price": 679,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=DeepCool%20CG530%20Vit",
+            "price": 699,
+            "total_price": 699,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-26",
       "item_id": "case-26",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429447675,
       "response": {
         "offers": []
       }
@@ -6408,25 +6814,124 @@
     {
       "key": "prisjakt-v1:case-27",
       "item_id": "case-27",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429453281,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0FP4RL43D?client_id=1331",
+            "search_url": null,
+            "price": 570,
+            "total_price": 570,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3285047?client_id=1331",
+            "search_url": null,
+            "price": 730,
+            "total_price": 730,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-28",
       "item_id": "case-28",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429464559,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3199949?client_id=1331",
+            "search_url": null,
+            "price": 617,
+            "total_price": 617,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/366225?client_id=1331",
+            "search_url": null,
+            "price": 629,
+            "total_price": 629,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Kolink%20Observatory%20HF%20Mesh%20Svart",
+            "price": 649,
+            "total_price": 649,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
       "key": "prisjakt-v1:case-29",
       "item_id": "case-29",
-      "updatedAt": 1773421091122,
+      "updatedAt": 1773429468994,
       "response": {
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3199799?client_id=1331",
+            "search_url": null,
+            "price": 567,
+            "total_price": 567,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "webhallen",
+            "store": "Webhallen",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/364053?client_id=1331",
+            "search_url": null,
+            "price": 579,
+            "total_price": 579,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "product_url": null,
+            "search_url": "https://www.inet.se/sok?q=Kolink%20Observatory%20HF%20Glass%20Svart",
+            "price": 599,
+            "total_price": 599,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
       }
     },
     {
