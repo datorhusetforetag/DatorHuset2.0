@@ -3588,10 +3588,11 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-start lg:block`}>
-                <div className="sticky top-24 max-h-[calc(100vh-7rem)] space-y-4 overflow-y-auto overscroll-contain no-scrollbar">
-                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-stretch lg:block`}>
+                <div className="space-y-4">
+                  <div className="lg:sticky lg:top-24">
+                    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                     <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                     <div className="mt-4 space-y-2">
                       {CATEGORY_LIST.map((category) => {
@@ -3650,6 +3651,7 @@ export default function CustomBuild() {
                         );
                       })}
                     </div>
+                    </div>
                   </div>
 
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
@@ -3667,7 +3669,7 @@ export default function CustomBuild() {
                 </div>
               </aside>
 
-              <div className="space-y-6">
+              <div className="space-y-6 self-start">
                 <div
                   id="component-picker"
                   className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80"
@@ -4277,12 +4279,13 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="self-start">
-                <div className="sticky top-24 max-h-[calc(100vh-7rem)] space-y-4 overflow-y-auto overscroll-contain no-scrollbar">
-                  <div
-                    id="build-summary"
-                    className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
-                  >
+              <aside className="self-stretch">
+                <div className="space-y-4">
+                  <div className="lg:sticky lg:top-24">
+                    <div
+                      id="build-summary"
+                      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
+                    >
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Din build</p>
                   <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
                   <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
@@ -4333,7 +4336,8 @@ export default function CustomBuild() {
                     <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{shareStatus}</p>
                   ) : null}
 
-                </div>
+                    </div>
+                  </div>
 
                   <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">
                     <p className="font-semibold text-gray-900 dark:text-gray-100">{"Vad h\u00e4nder sen?"}</p>
