@@ -3589,7 +3589,8 @@ export default function CustomBuild() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
-              <aside className={`space-y-4 ${mobileSidebarOpen ? "block" : "hidden"} sticky top-24 self-start lg:block`}>
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-start lg:block`}>
+                <div className="sticky top-24 space-y-4">
                 <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                   <div className="mt-4 space-y-2">
@@ -3662,6 +3663,7 @@ export default function CustomBuild() {
                   >
                     Få rådgivning
                   </Link>
+                </div>
                 </div>
               </aside>
 
@@ -4275,7 +4277,8 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="space-y-4 sticky top-24 self-start">
+              <aside className="self-start">
+                <div className="sticky top-24 space-y-4">
                 <div
                   id="build-summary"
                   className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
@@ -4339,6 +4342,7 @@ export default function CustomBuild() {
                     <li>Du får en offert med bygg- och leveranstid.</li>
                     <li>När du godkänt startar vi bygget.</li>
                   </ul>
+                </div>
                 </div>
               </aside>
             </div>
