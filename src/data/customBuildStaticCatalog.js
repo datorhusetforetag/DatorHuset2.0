@@ -344,7 +344,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PowerColor Reaper AMD Radeon RX 9060 XT",
     "brand": "PowerColor",
-    "price": 0,
+    "price": 5590,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -361,7 +361,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Prime Radeon RX 9060 XT 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 5790,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -378,7 +378,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PowerColor Reaper AMD Radeon RX 9070",
     "brand": "PowerColor",
-    "price": 0,
+    "price": 7290,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -395,7 +395,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME Radeon RX 9070 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 7490,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -412,7 +412,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PULSE RX 9070 GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 0,
+    "price": 7590,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -429,7 +429,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "XFX Radeon RX 9070 Swift Triple 90mm Fan Black",
     "brand": "XFX",
-    "price": 0,
+    "price": 7690,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -446,7 +446,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "XFX Radeon RX 9070 Swift Triple 90mm Fan White",
     "brand": "XFX",
-    "price": 0,
+    "price": 7790,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -463,7 +463,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PURE RX 9070 GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 0,
+    "price": 7890,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -480,7 +480,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 6790,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -497,7 +497,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5070 12G VENTUS 2X OC",
     "brand": "MSI",
-    "price": 0,
+    "price": 6990,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -514,7 +514,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME GeForce RTX 5070 12GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 7090,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -531,7 +531,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 EAGLE OC ICE",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 7190,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -548,7 +548,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS GeForce RTX 5070 Dual 12GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 7290,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -565,7 +565,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Zotac Gaming GeForce RTX 5070 Twin Edge",
     "brand": "Zotac",
-    "price": 0,
+    "price": 7190,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -582,7 +582,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PowerColor Reaper AMD Radeon RX 9070 XT",
     "brand": "PowerColor",
-    "price": 0,
+    "price": 8290,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -599,7 +599,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire NITRO+ RX 9070 XT GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 0,
+    "price": 9190,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -616,7 +616,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PULSE RX 9070 XT GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 0,
+    "price": 8690,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -633,7 +633,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 9390,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -650,7 +650,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Prime Radeon RX 9070 XT OC White",
     "brand": "ASUS",
-    "price": 0,
+    "price": 8990,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -667,7 +667,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASRock Radeon RX 9070 XT Steel Legend 16GB",
     "brand": "ASRock",
-    "price": 0,
+    "price": 9490,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -684,7 +684,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME Radeon RX 9070 XT 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 8890,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -701,7 +701,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB",
     "brand": "MSI",
-    "price": 0,
+    "price": 10490,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -718,7 +718,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC",
     "brand": "MSI",
-    "price": 0,
+    "price": 10690,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -735,7 +735,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME GeForce RTX 5070 Ti 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 10790,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -752,7 +752,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 10890,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -769,7 +769,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Inno3D GeForce RTX 5070 Ti X3 OC White",
     "brand": "Inno3D",
-    "price": 0,
+    "price": 10990,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -786,7 +786,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PNY GeForce RTX 5070 Ti OC",
     "brand": "PNY",
-    "price": 0,
+    "price": 10990,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -803,7 +803,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5070 Ti X3 OC",
     "brand": "INNO3D",
-    "price": 0,
+    "price": 10890,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -820,7 +820,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ZOTAC GeForce RTX 5070 Ti Solid Core OC White",
     "brand": "ZOTAC",
-    "price": 0,
+    "price": 11290,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -837,7 +837,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 11490,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -854,7 +854,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 11390,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -871,7 +871,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC WHITE",
     "brand": "MSI",
-    "price": 0,
+    "price": 14490,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -888,7 +888,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
     "brand": "MSI",
-    "price": 0,
+    "price": 15490,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -905,7 +905,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC",
     "brand": "MSI",
-    "price": 0,
+    "price": 14290,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -922,7 +922,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 14590,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -939,7 +939,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 16990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -956,7 +956,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 17490,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -973,7 +973,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 15990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -990,7 +990,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Prime GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 14990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1007,7 +1007,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5080 X3 OC",
     "brand": "INNO3D",
-    "price": 0,
+    "price": 14690,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1024,7 +1024,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Palit GeForce RTX 5080 GamingPro OC 16GB",
     "brand": "Palit",
-    "price": 0,
+    "price": 14890,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1041,7 +1041,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 37990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1058,7 +1058,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite",
     "brand": "INNO3D",
-    "price": 0,
+    "price": 36990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1075,7 +1075,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 35990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1092,7 +1092,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 34990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1109,7 +1109,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
     "brand": "Gigabyte",
-    "price": 0,
+    "price": 38990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1126,7 +1126,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB",
     "brand": "ASUS",
-    "price": 0,
+    "price": 36990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1143,7 +1143,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
     "brand": "ASUS",
-    "price": 0,
+    "price": 41990,
     "specs": [
       "32 GB",
       "RTX 5090",

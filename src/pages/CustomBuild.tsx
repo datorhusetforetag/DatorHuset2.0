@@ -495,6 +495,33 @@ const getItemGpuPerformanceClass = (item: ComponentItem) => item.performanceClas
 const getItemGpuExactModel = (item: ComponentItem) =>
   item.category === undefined || item.id.startsWith("gpu-") ? item.gpuModel || item.name : "";
 
+const getItemGpuChip = (item: ComponentItem) => {
+  const text = normalizeFilterToken(`${item.gpuModel || ""} ${item.name}`);
+  const chipPatterns = [
+    ["RTX 5070 Ti", /rtx\s*5070\s*ti/],
+    ["RTX 5060 Ti", /rtx\s*5060\s*ti/],
+    ["RTX 5090", /rtx\s*5090/],
+    ["RTX 5080", /rtx\s*5080/],
+    ["RTX 5070", /rtx\s*5070/],
+    ["RTX 5060", /rtx\s*5060/],
+    ["RTX 5050", /rtx\s*5050/],
+    ["RTX 3060", /rtx\s*3060/],
+    ["RTX 3050", /rtx\s*3050/],
+    ["RX 9070 XT", /rx\s*9070\s*xt/],
+    ["RX 9070", /rx\s*9070(?!\s*xt)/],
+    ["RX 9060 XT", /rx\s*9060\s*xt/],
+    ["Arc B580", /arc\s*b580/],
+  ];
+
+  for (const [label, pattern] of chipPatterns) {
+    if (pattern.test(text)) {
+      return label;
+    }
+  }
+
+  return "";
+};
+
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   cpu: [
     {
@@ -2026,6 +2053,7 @@ export default function CustomBuild() {
   const [pcieGenerationFilters, setPcieGenerationFilters] = useState<string[]>([]);
   const [storageTypeFilters, setStorageTypeFilters] = useState<string[]>([]);
   const [gpuPerformanceFilters, setGpuPerformanceFilters] = useState<string[]>([]);
+  const [gpuChipFilter, setGpuChipFilter] = useState("Alla");
   const [gpuExactModelFilter, setGpuExactModelFilter] = useState("Alla");
   const [psuRatingFilters, setPsuRatingFilters] = useState<string[]>([]);
   const [psuModularFilter, setPsuModularFilter] = useState<"Alla" | "Modular">("Alla");
@@ -2208,6 +2236,10 @@ export default function CustomBuild() {
     () => Array.from(new Set(items.map((item) => getItemGpuPerformanceClass(item)).filter(Boolean))),
     [items]
   );
+  const gpuChipFilterOptions = useMemo(
+    () => Array.from(new Set(items.map((item) => getItemGpuChip(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
+    [items]
+  );
   const gpuExactModelFilterOptions = useMemo(
     () => Array.from(new Set(items.map((item) => getItemGpuExactModel(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
     [items]
@@ -2304,6 +2336,7 @@ export default function CustomBuild() {
     if (usesSocketFilters) setSocketFilters([]);
     if (usesGpuFilters) {
       setGpuPerformanceFilters([]);
+      setGpuChipFilter("Alla");
       setGpuExactModelFilter("Alla");
     }
     if (usesRamTypeFilters) setRamTypeFilters([]);
@@ -2319,7 +2352,7 @@ export default function CustomBuild() {
 
   const hasActiveAdvancedFilters =
     (usesSocketFilters && socketFilters.length > 0) ||
-    (usesGpuFilters && (gpuPerformanceFilters.length > 0 || gpuExactModelFilter !== "Alla")) ||
+    (usesGpuFilters && (gpuPerformanceFilters.length > 0 || gpuChipFilter !== "Alla" || gpuExactModelFilter !== "Alla")) ||
     (usesRamTypeFilters && ramTypeFilters.length > 0) ||
     (usesFormFactorFilters && formFactorFilters.length > 0) ||
     (usesPcieGenerationFilters && pcieGenerationFilters.length > 0) ||
@@ -2350,6 +2383,7 @@ export default function CustomBuild() {
       const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
       const itemSocket = getItemSocketFilterValue(item);
       const itemGpuPerformanceClass = getItemGpuPerformanceClass(item);
+      const itemGpuChip = getItemGpuChip(item);
       const itemGpuExactModel = getItemGpuExactModel(item);
       const itemRamType = getItemRamTypeFilterValue(item);
       const itemFormFactor = getItemFormFactorFilterValue(item);
@@ -2365,6 +2399,8 @@ export default function CustomBuild() {
         !usesGpuFilters ||
         gpuPerformanceFilters.length === 0 ||
         (itemGpuPerformanceClass ? gpuPerformanceFilters.includes(itemGpuPerformanceClass) : false);
+      const matchesSelectedGpuChipFilter =
+        !usesGpuFilters || gpuChipFilter === "Alla" || itemGpuChip === gpuChipFilter;
       const matchesSelectedGpuExactModelFilter =
         !usesGpuFilters || gpuExactModelFilter === "Alla" || itemGpuExactModel === gpuExactModelFilter;
       const matchesSelectedRamTypeFilter =
@@ -2400,6 +2436,7 @@ export default function CustomBuild() {
         matchesPrice &&
         matchesSelectedSocketFilter &&
         matchesSelectedGpuPerformanceFilter &&
+        matchesSelectedGpuChipFilter &&
         matchesSelectedGpuExactModelFilter &&
         matchesSelectedRamTypeFilter &&
         matchesSelectedFormFactorFilter &&
@@ -2421,6 +2458,7 @@ export default function CustomBuild() {
     lowestOfferPriceByItemId,
     socketFilters,
     gpuPerformanceFilters,
+    gpuChipFilter,
     gpuExactModelFilter,
     ramTypeFilters,
     formFactorFilters,
@@ -3098,6 +3136,26 @@ export default function CustomBuild() {
                               {performanceClass}
                             </button>
                           ))}
+                        </div>
+                      </div>
+                    ) : null}
+
+                    {activeCategory === "gpu" && gpuChipFilterOptions.length > 0 ? (
+                      <div className="mt-4">
+                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">GPU-chip</p>
+                        <div className="mt-2">
+                          <select
+                            value={gpuChipFilter}
+                            onChange={(event) => setGpuChipFilter(event.target.value)}
+                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
+                          >
+                            <option value="Alla">Alla chip</option>
+                            {gpuChipFilterOptions.map((gpuChip) => (
+                              <option key={gpuChip} value={gpuChip}>
+                                {gpuChip}
+                              </option>
+                            ))}
+                          </select>
                         </div>
                       </div>
                     ) : null}
