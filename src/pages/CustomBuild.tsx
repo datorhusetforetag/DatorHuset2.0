@@ -182,6 +182,7 @@ type CatalogCategoryPricesResponse = {
     item_id: string;
     lowest_price: number | null;
     updated_at?: string | null;
+    price_source?: "prisjakt-offer" | "search" | "no-store" | null;
   }>;
 };
 
@@ -2905,7 +2906,9 @@ export default function CustomBuild() {
           nextEntries.forEach((entry) => {
             if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
               nextState[entry.item_id] = "prisjakt-offer";
-            } else {
+            } else if (entry?.price_source === "search") {
+              nextState[entry.item_id] = "search";
+            } else if (entry?.price_source === "no-store") {
               nextState[entry.item_id] = "no-store";
             }
           });
@@ -2916,8 +2919,10 @@ export default function CustomBuild() {
           nextEntries.forEach((entry) => {
             if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
               delete nextState[entry.item_id];
-            } else {
+            } else if (entry?.price_source === "no-store") {
               nextState[entry.item_id] = true;
+            } else {
+              delete nextState[entry.item_id];
             }
           });
           return nextState;
@@ -3233,7 +3238,12 @@ export default function CustomBuild() {
             return nextState;
           });
         } else {
-          setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
+          setItemsWithoutStorePrice((prev) => {
+            if (!prev[item.id]) return prev;
+            const nextState = { ...prev };
+            delete nextState[item.id];
+            return nextState;
+          });
         }
       }
     } catch (error) {
@@ -4380,7 +4390,7 @@ export default function CustomBuild() {
             <div>
               <p className="font-semibold text-gray-900 dark:text-gray-100">RAM-marknaden</p>
               <p className="mt-1 leading-relaxed">
-                {"Priserna pa RAM har gatt upp med cirka 600% pga efterfragan fran AI-datacenter vilket skapat brist pa chip."}
+                {"Priserna på RAM har gått upp med cirka 600% på grund av efterfrågan från AI-datacenter, vilket har skapat brist på chip."}
               </p>
             </div>
           </div>
