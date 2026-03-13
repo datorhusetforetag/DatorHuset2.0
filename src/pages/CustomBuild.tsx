@@ -3590,78 +3590,80 @@ export default function CustomBuild() {
 
             <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] items-start">
               <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-start lg:block`}>
-                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm lg:sticky lg:top-24 dark:border-gray-800 dark:bg-gray-900/80">
-                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
-                  <div className="mt-4 space-y-2">
-                    {CATEGORY_LIST.map((category) => {
-                      const Icon = category.icon;
-                      const isActive = category.key === activeCategory;
-                      const selectedItem = selected[category.key];
+                <div className="sticky top-24 max-h-[calc(100vh-7rem)] space-y-4 overflow-y-auto overscroll-contain no-scrollbar">
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
+                    <div className="mt-4 space-y-2">
+                      {CATEGORY_LIST.map((category) => {
+                        const Icon = category.icon;
+                        const isActive = category.key === activeCategory;
+                        const selectedItem = selected[category.key];
 
-                      return (
-                        <div key={category.key} className="relative">
-                          <button
-                            type="button"
-                            onClick={() => handleCategorySelect(category.key)}
-                            className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
-                              isActive
-                                ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
-                                : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <span
-                                className={`mt-1 rounded-lg p-2 ${
-                                  isActive
-                                    ? "bg-yellow-400 text-gray-900"
-                                    : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
-                                }`}
-                              >
-                                <Icon className="w-5 h-5" />
-                              </span>
-                              <div>
-                                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">{category.description}</p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                                  {selectedItem ? selectedItem.name : "Ej valt"}
-                                </p>
+                        return (
+                          <div key={category.key} className="relative">
+                            <button
+                              type="button"
+                              onClick={() => handleCategorySelect(category.key)}
+                              className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
+                                isActive
+                                  ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
+                                  : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <span
+                                  className={`mt-1 rounded-lg p-2 ${
+                                    isActive
+                                      ? "bg-yellow-400 text-gray-900"
+                                      : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                  }`}
+                                >
+                                  <Icon className="w-5 h-5" />
+                                </span>
+                                <div>
+                                  <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">{category.description}</p>
+                                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                                    {selectedItem ? selectedItem.name : "Ej valt"}
+                                  </p>
+                                </div>
                               </div>
-                            </div>
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              if (!selectedItem) return;
-                              setSelected((prev) => ({ ...prev, [category.key]: null }));
-                            }}
-                            className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
-                              selectedItem
-                                ? "hover:bg-slate-800 dark:hover:bg-slate-600"
-                                : "opacity-40 cursor-default"
-                            }`}
-                            aria-label={`Ta bort ${category.label}`}
-                            aria-disabled={!selectedItem}
-                          >
-                            <TrashIcon className="h-4 w-4" />
-                          </button>
-                        </div>
-                      );
-                    })}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                if (!selectedItem) return;
+                                setSelected((prev) => ({ ...prev, [category.key]: null }));
+                              }}
+                              className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
+                                selectedItem
+                                  ? "hover:bg-slate-800 dark:hover:bg-slate-600"
+                                  : "opacity-40 cursor-default"
+                              }`}
+                              aria-label={`Ta bort ${category.label}`}
+                              aria-disabled={!selectedItem}
+                            >
+                              <TrashIcon className="h-4 w-4" />
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
-                  <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Tips</p>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
-                    Är du osäker? Välj en budgetnivå i början och uppgradera stegvis. Vi hjälper dig hitta rätt balans.
-                  </p>
-                  <Link
-                    to="/kundservice"
-                    className="mt-4 inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
-                  >
-                    Få rådgivning
-                  </Link>
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                    <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Tips</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
+                      {"\u00c4r du os\u00e4ker? V\u00e4lj en budgetniv\u00e5 i b\u00f6rjan och uppgradera stegvis. Vi hj\u00e4lper dig hitta r\u00e4tt balans."}
+                    </p>
+                    <Link
+                      to="/kundservice"
+                      className="mt-4 inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                    >
+                      {"F\u00e5 r\u00e5dgivning"}
+                    </Link>
+                  </div>
                 </div>
               </aside>
 
@@ -4276,10 +4278,11 @@ export default function CustomBuild() {
               </div>
 
               <aside className="self-start">
-                <div
-                  id="build-summary"
-                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm lg:sticky lg:top-24 dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
-                >
+                <div className="sticky top-24 max-h-[calc(100vh-7rem)] space-y-4 overflow-y-auto overscroll-contain no-scrollbar">
+                  <div
+                    id="build-summary"
+                    className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
+                  >
                   <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Din build</p>
                   <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
                   <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
@@ -4332,13 +4335,14 @@ export default function CustomBuild() {
 
                 </div>
 
-                <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">
-                  <p className="font-semibold text-gray-900 dark:text-gray-100">Vad händer sen?</p>
-                  <ul className="mt-3 space-y-2">
-                    <li>Vi granskar dina val och säkerställer kompatibilitet.</li>
-                    <li>Du får en offert med bygg- och leveranstid.</li>
-                    <li>När du godkänt startar vi bygget.</li>
-                  </ul>
+                  <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">
+                    <p className="font-semibold text-gray-900 dark:text-gray-100">{"Vad h\u00e4nder sen?"}</p>
+                    <ul className="mt-3 space-y-2">
+                      <li>{"Vi granskar dina val och s\u00e4kerst\u00e4ller kompatibilitet."}</li>
+                      <li>{"Du f\u00e5r en offert med bygg- och leveranstid."}</li>
+                      <li>{"N\u00e4r du godk\u00e4nt startar vi bygget."}</li>
+                    </ul>
+                  </div>
                 </div>
               </aside>
             </div>
