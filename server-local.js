@@ -2610,7 +2610,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
         : getCachedCatalogItemStoreOffers(item.id);
       return {
         item_id: item.id,
-        lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : item.price,
+        lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
         updated_at: response?.updated_at || null,
       };
     })

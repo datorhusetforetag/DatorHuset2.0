@@ -1522,6 +1522,7 @@ export default function CustomBuild() {
   const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>(
     () => ({ ...CUSTOM_BUILD_PRELOADED_PRICE_BY_ID })
   );
+  const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
 
 
@@ -1632,6 +1633,13 @@ export default function CustomBuild() {
     return getBasePrice(item, category);
   };
 
+  const getDisplayPriceLabel = (item: ComponentItem, category: CategoryKey) => {
+    if (itemsWithoutStorePrice[item.id]) {
+      return "N/A";
+    }
+    return `${formatPrice(getComparablePrice(item, category))} kr`;
+  };
+
   const brandOptions = useMemo(() => {
     const brands = Array.from(new Set(items.map((item) => item.brand)));
     return ["Alla", ...brands];
@@ -1713,6 +1721,19 @@ export default function CustomBuild() {
           nextEntries.forEach((entry) => {
             if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
               nextState[entry.item_id] = Math.max(0, Math.round(Number(entry.lowest_price)));
+            } else {
+              delete nextState[entry.item_id];
+            }
+          });
+          return nextState;
+        });
+        setItemsWithoutStorePrice((prev) => {
+          const nextState = { ...prev };
+          nextEntries.forEach((entry) => {
+            if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
+              delete nextState[entry.item_id];
+            } else {
+              nextState[entry.item_id] = true;
             }
           });
           return nextState;
@@ -1967,7 +1988,15 @@ export default function CustomBuild() {
       const offers = Array.isArray(data?.offers) ? data.offers : [];
       setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
       if (offers.length === 0) {
+        setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
+      } else {
+        setItemsWithoutStorePrice((prev) => {
+          if (!prev[item.id]) return prev;
+          const nextState = { ...prev };
+          delete nextState[item.id];
+          return nextState;
+        });
       }
     } catch (error) {
       setStorePickerError(
@@ -2714,7 +2743,7 @@ export default function CustomBuild() {
                           </div>
                           <div className="flex flex-col items-end gap-2">
                             <p className="text-base font-bold text-gray-900 dark:text-gray-100 sm:text-xl">
-                              {formatPrice(getComparablePrice(item, activeCategory))} kr
+                              {getDisplayPriceLabel(item, activeCategory)}
                             </p>
                             <button
                               type="button"
