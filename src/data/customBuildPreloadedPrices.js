@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-12T05:27:56.976Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T12:50:57.935Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-5-5500": 989,
@@ -101,33 +101,33 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "gpu-18": 6999,
   "gpu-19": 14890,
   "gpu-20": 13490,
-  "ram-1": 1290,
+  "ram-1": 3869,
   "ram-2": 7390,
   "ram-3": 6491,
-  "ram-4": 1090,
+  "ram-4": 4799,
   "ram-5": 14017,
   "ram-6": 11819,
-  "ram-7": 1390,
+  "ram-7": 7348,
   "ram-8": 18116,
-  "ram-9": 1290,
+  "ram-9": 4799,
   "ram-10": 4249,
-  "ram-11": 600,
+  "ram-11": 1890,
   "ram-12": 8140,
-  "ram-13": 900,
+  "ram-13": 3290,
   "ram-14": 5190,
   "ram-15": 5190,
-  "ram-16": 1400,
+  "ram-16": 5779,
   "sto-1": 1990,
   "sto-2": 1699,
   "sto-3": 1799,
   "sto-4": 2990,
   "sto-5": 4730,
-  "sto-6": 790,
+  "sto-6": 2090,
   "sto-7": 2290,
   "sto-8": 2690,
-  "sto-9": 890,
+  "sto-9": 996,
   "sto-10": 1572,
-  "sto-11": 900,
+  "sto-11": 1823,
   "sto-13": 2186,
   "sto-14": 2499,
   "case-1": 829,
@@ -142,24 +142,24 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "case-10": 1120,
   "psu-1": 1289,
   "psu-2": 1528,
-  "psu-3": 1390,
-  "psu-4": 2490,
+  "psu-3": 1263,
+  "psu-4": 2029,
   "psu-5": 1999,
-  "psu-6": 990,
-  "psu-7": 1690,
+  "psu-6": 899,
+  "psu-7": 1099,
   "psu-8": 1558,
   "psu-9": 1193,
   "psu-10": 1694,
   "cool-1": 1049,
   "cool-2": 1127,
-  "cool-3": 1990,
+  "cool-3": 899,
   "cool-4": 575,
   "cool-5": 575,
   "cool-6": 701,
   "cool-7": 832,
   "cool-8": 575,
   "cool-9": 417,
-  "cool-10": 1490
+  "cool-10": 799
 };
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
@@ -766,7 +766,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-1": {
     "category": "ram",
     "name": "Corsair Vengeance 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-2": {
@@ -784,7 +784,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-4": {
     "category": "ram",
     "name": "Crucial Pro 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-5": {
@@ -802,7 +802,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-7": {
     "category": "ram",
     "name": "Kingston Fury Renegade 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-8": {
@@ -814,7 +814,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-9": {
     "category": "ram",
     "name": "TeamGroup T-Force Delta 32GB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-10": {
@@ -826,7 +826,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-11": {
     "category": "ram",
     "name": "A-Data XPG SPECTRIX D35G 16GB (2x8GB) DDR4 3600MHz CL18",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-12": {
@@ -838,7 +838,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-13": {
     "category": "ram",
     "name": "32GB DDR4",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-14": {
@@ -856,7 +856,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-16": {
     "category": "ram",
     "name": "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-1": {
@@ -892,7 +892,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-6": {
     "category": "storage",
     "name": "WD Blue SN580 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-7": {
@@ -910,7 +910,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-9": {
     "category": "storage",
     "name": "Crucial MX500 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-10": {
@@ -922,7 +922,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-11": {
     "category": "storage",
     "name": "Team Group T-Force G50",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-13": {
@@ -1012,13 +1012,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-3": {
     "category": "psu",
     "name": "Seasonic Focus GX-750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-4": {
     "category": "psu",
     "name": "Seasonic Vertex GX-1000",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-5": {
@@ -1030,13 +1030,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-6": {
     "category": "psu",
     "name": "Cooler Master MWE 750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-7": {
     "category": "psu",
     "name": "ASUS TUF Gaming 850G",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-8": {
@@ -1072,7 +1072,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-3": {
     "category": "cooling",
     "name": "Corsair iCUE H150i",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-4": {
@@ -1114,7 +1114,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-10": {
     "category": "cooling",
     "name": "Corsair iCUE H100i",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   }
 };

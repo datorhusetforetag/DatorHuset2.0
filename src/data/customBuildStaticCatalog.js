@@ -12,6 +12,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NVIDIA GeForce RTX 4060",
+      "NVIDIA GeForce RTX 4060 8 GB DLSS 3 1080p",
       "GeForce RTX 4060"
     ]
   },
@@ -28,6 +29,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NVIDIA GeForce RTX 4060 Ti",
+      "NVIDIA GeForce RTX 4060 Ti 8 GB DLSS 3 1440p",
       "GeForce RTX 4060 Ti"
     ]
   },
@@ -44,6 +46,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NVIDIA GeForce RTX 4070",
+      "NVIDIA GeForce RTX 4070 12 GB DLSS 3 1440p",
       "GeForce RTX 4070"
     ]
   },
@@ -60,6 +63,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NVIDIA GeForce RTX 4070 Super",
+      "NVIDIA GeForce RTX 4070 Super 12 GB DLSS 3 1440p",
       "GeForce RTX 4070 Super"
     ]
   },
@@ -76,6 +80,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NVIDIA GeForce RTX 4080 Super",
+      "NVIDIA GeForce RTX 4080 Super 16 GB DLSS 3 4K",
       "GeForce RTX 4080 Super"
     ]
   },
@@ -92,6 +97,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NVIDIA GeForce RTX 4090",
+      "NVIDIA GeForce RTX 4090 24 GB DLSS 3 4K+",
       "GeForce RTX 4090"
     ]
   },
@@ -108,6 +114,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "AMD Radeon RX 7600",
+      "AMD Radeon RX 7600 8 GB FSR 1080p",
       "Radeon RX 7600"
     ]
   },
@@ -124,6 +131,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "AMD Radeon RX 7700 XT",
+      "AMD Radeon RX 7700 XT 12 GB FSR 1440p",
       "Radeon RX 7700 XT"
     ]
   },
@@ -140,6 +148,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "AMD Radeon RX 7800 XT",
+      "AMD Radeon RX 7800 XT 16 GB FSR 1440p",
       "Radeon RX 7800 XT"
     ]
   },
@@ -156,6 +165,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Intel Arc A770",
+      "Intel Arc A770 16 GB XeSS 1080p",
       "Arc A770"
     ]
   },
@@ -171,6 +181,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ASUS Dual GeForce RTX 3050 6GB OC",
+      "ASUS Dual GeForce RTX 3050 6GB OC 6 GB RTX 3050",
       "Dual GeForce RTX 3050 6GB OC"
     ]
   },
@@ -185,6 +196,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ASUS Dual Radeon RX 7600 EVO OC",
+      "ASUS Dual Radeon RX 7600 EVO OC RX 7600",
       "Dual Radeon RX 7600 EVO OC"
     ]
   },
@@ -200,6 +212,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ASUS Prime Radeon RX 9060 XT OC Edition 8GB",
+      "ASUS Prime Radeon RX 9060 XT OC Edition 8GB 8 GB RX 9060 XT",
       "Prime Radeon RX 9060 XT OC Edition 8GB"
     ]
   },
@@ -214,6 +227,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "PNY GeForce RTX 5060 Ti Dual Fan OC",
+      "PNY GeForce RTX 5060 Ti Dual Fan OC RTX 5060 Ti",
       "GeForce RTX 5060 Ti Dual Fan OC"
     ]
   },
@@ -227,7 +241,8 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "RTX 5070"
     ],
     "searchTerms": [
-      "RTX 5070"
+      "RTX 5070",
+      "RTX 5070 RTX 5070"
     ]
   },
   {
@@ -242,6 +257,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB",
+      "Gigabyte GeForce RTX 5070 WINDFORCE SFF 12GB 12 GB RTX 5070",
       "GeForce RTX 5070 WINDFORCE SFF 12GB"
     ]
   },
@@ -257,6 +273,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ASUS PRIME Radeon RX 9070 XT 16GB OC",
+      "ASUS PRIME Radeon RX 9070 XT 16GB OC 16 GB RX 9070 XT",
       "PRIME Radeon RX 9070 XT 16GB OC"
     ]
   },
@@ -271,6 +288,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Asus Dual GeForce RTX 5070 OC",
+      "Asus Dual GeForce RTX 5070 OC RTX 5070",
       "Dual GeForce RTX 5070 OC"
     ]
   },
@@ -286,6 +304,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ASUS Prime GeForce RTX 5080 16GB OC",
+      "ASUS Prime GeForce RTX 5080 16GB OC 16 GB RTX 5080",
       "Prime GeForce RTX 5080 16GB OC"
     ]
   },
@@ -301,6 +320,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "INNO3D GeForce RTX 5080 16GB X3 OC White",
+      "INNO3D GeForce RTX 5080 16GB X3 OC White 16 GB RTX 5080",
       "GeForce RTX 5080 16GB X3 OC White"
     ]
   },
@@ -317,6 +337,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair Vengeance 32GB",
+      "Corsair Vengeance 32GB DDR5 6000 MHz CL36",
       "Vengeance 32GB"
     ]
   },
@@ -333,6 +354,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "G.Skill Trident Z5 32GB",
+      "G.Skill Trident Z5 32GB DDR5 6400 MHz CL32",
       "Trident Z5 32GB"
     ]
   },
@@ -349,6 +371,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Kingston Fury Beast 32GB",
+      "Kingston Fury Beast 32GB DDR5 6000 MHz CL40",
       "Fury Beast 32GB"
     ]
   },
@@ -365,6 +388,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Crucial Pro 32GB",
+      "Crucial Pro 32GB DDR5 5600 MHz CL46",
       "Pro 32GB"
     ]
   },
@@ -381,6 +405,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair Dominator 64GB",
+      "Corsair Dominator 64GB DDR5 6000 MHz CL30",
       "Dominator 64GB"
     ]
   },
@@ -397,6 +422,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "G.Skill Ripjaws 32GB",
+      "G.Skill Ripjaws 32GB DDR4 3600 MHz CL16",
       "Ripjaws 32GB"
     ]
   },
@@ -413,6 +439,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Kingston Fury Renegade 32GB",
+      "Kingston Fury Renegade 32GB DDR5 6400 MHz CL32",
       "Fury Renegade 32GB"
     ]
   },
@@ -429,6 +456,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Crucial Pro 64GB",
+      "Crucial Pro 64GB DDR5 5600 MHz CL46",
       "Pro 64GB"
     ]
   },
@@ -445,6 +473,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "TeamGroup T-Force Delta 32GB",
+      "TeamGroup T-Force Delta 32GB DDR5 6000 MHz RGB",
       "T-Force Delta 32GB"
     ]
   },
@@ -461,6 +490,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ADATA XPG Lancer 32GB",
+      "ADATA XPG Lancer 32GB DDR5 6000 MHz RGB",
       "XPG Lancer 32GB"
     ]
   },
@@ -478,7 +508,9 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "A-Data XPG SPECTRIX D35G 16GB (2x8GB) DDR4 3600MHz CL18",
-      "A-Data XPG SPECTRIX D35G 16GB DDR4 3600MHz CL18"
+      "A-Data XPG SPECTRIX D35G 16GB (2x8GB) DDR4 3600MHz CL18 DDR4 16GB 3600 MHz CL18",
+      "A-Data XPG SPECTRIX D35G 16GB DDR4 3600MHz CL18",
+      "A-Data XPG SPECTRIX D35G 16GB DDR4 3600MHz CL18 DDR4 16GB 3600 MHz CL18"
     ]
   },
   {
@@ -495,6 +527,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair Dominator RGB DDR4 3600MHz 32GB",
+      "Corsair Dominator RGB DDR4 3600MHz 32GB DDR4 32GB 3600 MHz RGB",
       "Dominator RGB DDR4 3600MHz 32GB"
     ]
   },
@@ -509,7 +542,8 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "32GB"
     ],
     "searchTerms": [
-      "32GB DDR4"
+      "32GB DDR4",
+      "32GB DDR4 DDR4 32GB"
     ]
   },
   {
@@ -526,7 +560,9 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Dell 32GB DDR5 5600MHz (begagnad)",
+      "Dell 32GB DDR5 5600MHz (begagnad) DDR5 32GB 5600 MHz Begagnad",
       "Dell 32GB DDR5 5600MHz",
+      "Dell 32GB DDR5 5600MHz DDR5 32GB 5600 MHz Begagnad",
       "32GB DDR5 5600MHz (begagnad)"
     ]
   },
@@ -543,6 +579,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Dell 32GB DDR5 5600MHz",
+      "Dell 32GB DDR5 5600MHz DDR5 32GB 5600 MHz",
       "32GB DDR5 5600MHz"
     ]
   },
@@ -560,7 +597,9 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
+      "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0 DDR5 32GB 6400 MHz CL32",
       "Kingston 32GB DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
+      "Kingston 32GB DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0 DDR5 32GB 6400 MHz CL32",
       "32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0"
     ]
   },
@@ -577,6 +616,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Samsung 990 Pro 1TB",
+      "Samsung 990 Pro 1TB NVMe PCIe 4.0 7450 MB/s",
       "990 Pro 1TB"
     ]
   },
@@ -593,6 +633,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "WD Black SN850X 1TB",
+      "WD Black SN850X 1TB NVMe PCIe 4.0 7300 MB/s",
       "Black SN850X 1TB"
     ]
   },
@@ -609,6 +650,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Crucial T500 1TB",
+      "Crucial T500 1TB NVMe PCIe 4.0 7400 MB/s",
       "T500 1TB"
     ]
   },
@@ -625,6 +667,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Samsung 990 Pro 2TB",
+      "Samsung 990 Pro 2TB NVMe PCIe 4.0 7450 MB/s",
       "990 Pro 2TB"
     ]
   },
@@ -641,6 +684,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Seagate FireCuda 530 2TB",
+      "Seagate FireCuda 530 2TB NVMe PCIe 4.0 7300 MB/s",
       "FireCuda 530 2TB"
     ]
   },
@@ -657,6 +701,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "WD Blue SN580 1TB",
+      "WD Blue SN580 1TB NVMe PCIe 4.0 4150 MB/s",
       "Blue SN580 1TB"
     ]
   },
@@ -673,6 +718,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Kingston KC3000 1TB",
+      "Kingston KC3000 1TB NVMe PCIe 4.0 7000 MB/s",
       "KC3000 1TB"
     ]
   },
@@ -689,6 +735,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Samsung 870 Evo 2TB",
+      "Samsung 870 Evo 2TB SATA 560 MB/s 2.5-inch",
       "870 Evo 2TB"
     ]
   },
@@ -705,6 +752,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Crucial MX500 1TB",
+      "Crucial MX500 1TB SATA 560 MB/s 2.5-inch",
       "MX500 1TB"
     ]
   },
@@ -721,6 +769,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Seagate BarraCuda 4TB",
+      "Seagate BarraCuda 4TB HDD 5400 RPM 3.5-inch",
       "BarraCuda 4TB"
     ]
   },
@@ -734,7 +783,8 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "SSD"
     ],
     "searchTerms": [
-      "Team Group T-Force G50"
+      "Team Group T-Force G50",
+      "Team Group T-Force G50 SSD"
     ]
   },
   {
@@ -748,6 +798,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Lexar Professional NM1090",
+      "Lexar Professional NM1090 NVMe",
       "Professional NM1090"
     ]
   },
@@ -762,6 +813,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Kingston Fury Renegade G5",
+      "Kingston Fury Renegade G5 NVMe",
       "Fury Renegade G5"
     ]
   },
@@ -778,6 +830,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NZXT H7 Flow",
+      "NZXT H7 Flow ATX Mesh Svart",
       "H7 Flow"
     ]
   },
@@ -794,6 +847,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Lian Li Lancool 216",
+      "Lian Li Lancool 216 ATX Airflow RGB",
       "Lancool 216"
     ]
   },
@@ -810,6 +864,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Fractal Design North",
+      "Fractal Design North ATX Träpanel Airflow",
       "Design North"
     ]
   },
@@ -826,6 +881,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair 4000D Airflow",
+      "Corsair 4000D Airflow ATX Mesh Tyst",
       "4000D Airflow"
     ]
   },
@@ -842,6 +898,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Phanteks Eclipse G500A",
+      "Phanteks Eclipse G500A ATX RGB Airflow",
       "Eclipse G500A"
     ]
   },
@@ -858,6 +915,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "be quiet! Pure Base 500DX",
+      "be quiet! Pure Base 500DX ATX Tyst RGB",
       "Pure Base 500DX"
     ]
   },
@@ -874,6 +932,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Cooler Master TD500 Mesh",
+      "Cooler Master TD500 Mesh ATX Mesh ARGB",
       "TD500 Mesh"
     ]
   },
@@ -890,6 +949,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NZXT H5 Flow",
+      "NZXT H5 Flow ATX Kompakt Svart",
       "H5 Flow"
     ]
   },
@@ -906,6 +966,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Lian Li O11 Dynamic",
+      "Lian Li O11 Dynamic ATX Glas Showcase",
       "O11 Dynamic"
     ]
   },
@@ -922,6 +983,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Fractal Design Meshify 2",
+      "Fractal Design Meshify 2 ATX Mesh Modulär",
       "Design Meshify 2"
     ]
   },
@@ -938,6 +1000,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair RM750e",
+      "Corsair RM750e 750W 80+ Gold Modulärt",
       "RM750e"
     ]
   },
@@ -954,6 +1017,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair RM850x",
+      "Corsair RM850x 850W 80+ Gold Modulärt",
       "RM850x"
     ]
   },
@@ -970,6 +1034,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Seasonic Focus GX-750",
+      "Seasonic Focus GX-750 750W 80+ Gold Tyst",
       "Focus GX-750"
     ]
   },
@@ -986,6 +1051,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Seasonic Vertex GX-1000",
+      "Seasonic Vertex GX-1000 1000W 80+ Gold ATX 3.0",
       "Vertex GX-1000"
     ]
   },
@@ -1002,6 +1068,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "be quiet! Straight Power 12",
+      "be quiet! Straight Power 12 1000W 80+ Platinum ATX 3.0",
       "Straight Power 12"
     ]
   },
@@ -1018,6 +1085,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Cooler Master MWE 750",
+      "Cooler Master MWE 750 750W 80+ Gold Modulärt",
       "MWE 750"
     ]
   },
@@ -1034,6 +1102,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "ASUS TUF Gaming 850G",
+      "ASUS TUF Gaming 850G 850W 80+ Gold Tuff byggd",
       "TUF Gaming 850G"
     ]
   },
@@ -1050,6 +1119,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "MSI MPG A850G",
+      "MSI MPG A850G 850W 80+ Gold ATX 3.0",
       "MPG A850G"
     ]
   },
@@ -1066,6 +1136,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NZXT C750",
+      "NZXT C750 750W 80+ Gold Modulärt",
       "C750"
     ]
   },
@@ -1082,6 +1153,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Thermaltake Toughpower GF3",
+      "Thermaltake Toughpower GF3 850W 80+ Gold ATX 3.0",
       "Toughpower GF3"
     ]
   },
@@ -1098,6 +1170,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Noctua NH-D15",
+      "Noctua NH-D15 Luftkylare Tyst Topplista",
       "NH-D15"
     ]
   },
@@ -1114,6 +1187,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "be quiet! Dark Rock Pro 5",
+      "be quiet! Dark Rock Pro 5 Luftkylare Tyst Hög TDP",
       "Dark Rock Pro 5"
     ]
   },
@@ -1130,6 +1204,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair iCUE H150i",
+      "Corsair iCUE H150i 360mm AIO RGB LCD",
       "iCUE H150i"
     ]
   },
@@ -1146,6 +1221,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "NZXT Kraken 360",
+      "NZXT Kraken 360 360mm AIO RGB LCD",
       "Kraken 360"
     ]
   },
@@ -1162,6 +1238,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Arctic Liquid Freezer II 360",
+      "Arctic Liquid Freezer II 360 360mm AIO Tyst Prisvärd",
       "Liquid Freezer II 360"
     ]
   },
@@ -1178,6 +1255,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "DeepCool AK620",
+      "DeepCool AK620 Luftkylare Hög TDP Prisvärd",
       "AK620"
     ]
   },
@@ -1194,6 +1272,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Lian Li Galahad II",
+      "Lian Li Galahad II 360mm AIO RGB Prestanda",
       "Galahad II"
     ]
   },
@@ -1210,6 +1289,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Cooler Master MasterLiquid 360",
+      "Cooler Master MasterLiquid 360 360mm AIO ARGB Tyst",
       "MasterLiquid 360"
     ]
   },
@@ -1226,6 +1306,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Thermalright Peerless Assassin",
+      "Thermalright Peerless Assassin Luftkylare Prisvärd Tyst",
       "Peerless Assassin"
     ]
   },
@@ -1242,6 +1323,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ],
     "searchTerms": [
       "Corsair iCUE H100i",
+      "Corsair iCUE H100i 240mm AIO RGB Kompakt",
       "iCUE H100i"
     ]
   }

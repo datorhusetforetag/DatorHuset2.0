@@ -70,7 +70,7 @@ const parseStaticItemsFromCustomBuildPage = (sourceText) => {
         brand,
         price: Number.isFinite(preloadedPrice) ? Math.round(preloadedPrice) : 0,
         specs,
-        searchTerms: buildSearchTerms({ id, category, name, brand }),
+        searchTerms: buildSearchTerms({ id, category, name, brand, specs }),
       });
     }
   }
