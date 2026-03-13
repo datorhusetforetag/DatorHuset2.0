@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T14:03:46.894Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T14:35:28.910Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 799,
@@ -53,16 +53,29 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-lga1200-core-i5-11600k": 1799,
   "cpu-lga1200-core-i7-11700k": 2599,
   "cpu-lga1200-core-i9-11900k": 2999,
+  "cpu-lga1700-core-i3-12100f": 1199,
+  "cpu-lga1700-core-i5-12400-tray": 1699,
   "cpu-lga1700-core-i5-12400f": 1499,
   "cpu-lga1700-core-i5-12600k": 2499,
+  "cpu-lga1700-core-i5-12600kf": 2299,
+  "cpu-lga1700-core-i7-12700kf": 3199,
   "cpu-lga1700-core-i7-12700k": 3299,
   "cpu-lga1700-core-i9-12900k": 4299,
+  "cpu-lga1700-core-i3-13100f": 1299,
   "cpu-lga1700-core-i5-13400f": 2290,
+  "cpu-lga1700-core-i3-14100": 1799,
+  "cpu-lga1700-core-i3-14100f": 1599,
+  "cpu-lga1700-core-i5-14400f": 2299,
   "cpu-lga1700-core-i5-13600k": 3490,
   "cpu-lga1700-core-i7-13700k": 4690,
   "cpu-lga1700-core-i5-14600k": 3799,
+  "cpu-lga1700-core-i5-14600kf": 3599,
   "cpu-lga1700-core-i7-14700k": 5290,
+  "cpu-lga1700-core-i7-14700kf": 4999,
+  "cpu-lga1700-core-i9-13900ks": 6999,
   "cpu-lga1700-core-i9-14900k": 7190,
+  "cpu-lga1700-core-i9-14900kf": 6899,
+  "cpu-lga1700-core-i9-14900ks": 7999,
   "mb-am4-msi-b550-tomahawk": 1729,
   "mb-am4-asus-tuf-b550-plus-wifi-ii": 1458,
   "mb-am4-gigabyte-b550-aorus-elite-v2": 1456,
@@ -497,6 +510,18 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "catalog_fallback",
     "note": null
   },
+  "cpu-lga1700-core-i3-12100f": {
+    "category": "cpu",
+    "name": "Intel Core i3-12100F",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i5-12400-tray": {
+    "category": "cpu",
+    "name": "Intel Core i5-12400 Tray",
+    "source": "catalog_fallback",
+    "note": null
+  },
   "cpu-lga1700-core-i5-12400f": {
     "category": "cpu",
     "name": "Intel Core i5-12400F",
@@ -506,6 +531,18 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cpu-lga1700-core-i5-12600k": {
     "category": "cpu",
     "name": "Intel Core i5-12600K",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i5-12600kf": {
+    "category": "cpu",
+    "name": "Intel Core i5-12600KF",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i7-12700kf": {
+    "category": "cpu",
+    "name": "Intel Core i7-12700KF",
     "source": "catalog_fallback",
     "note": null
   },
@@ -521,9 +558,33 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "catalog_fallback",
     "note": null
   },
+  "cpu-lga1700-core-i3-13100f": {
+    "category": "cpu",
+    "name": "Intel Core i3-13100F",
+    "source": "catalog_fallback",
+    "note": null
+  },
   "cpu-lga1700-core-i5-13400f": {
     "category": "cpu",
     "name": "Intel Core i5-13400F",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i3-14100": {
+    "category": "cpu",
+    "name": "Intel Core i3-14100",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i3-14100f": {
+    "category": "cpu",
+    "name": "Intel Core i3-14100F",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i5-14400f": {
+    "category": "cpu",
+    "name": "Intel Core i5-14400F",
     "source": "catalog_fallback",
     "note": null
   },
@@ -545,15 +606,45 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "catalog_fallback",
     "note": null
   },
+  "cpu-lga1700-core-i5-14600kf": {
+    "category": "cpu",
+    "name": "Intel Core i5-14600KF",
+    "source": "catalog_fallback",
+    "note": null
+  },
   "cpu-lga1700-core-i7-14700k": {
     "category": "cpu",
     "name": "Intel Core i7-14700K",
     "source": "catalog_fallback",
     "note": null
   },
+  "cpu-lga1700-core-i7-14700kf": {
+    "category": "cpu",
+    "name": "Intel Core i7-14700KF",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i9-13900ks": {
+    "category": "cpu",
+    "name": "Intel Core i9-13900KS",
+    "source": "catalog_fallback",
+    "note": null
+  },
   "cpu-lga1700-core-i9-14900k": {
     "category": "cpu",
     "name": "Intel Core i9-14900K",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i9-14900kf": {
+    "category": "cpu",
+    "name": "Intel Core i9-14900KF",
+    "source": "catalog_fallback",
+    "note": null
+  },
+  "cpu-lga1700-core-i9-14900ks": {
+    "category": "cpu",
+    "name": "Intel Core i9-14900KS",
     "source": "catalog_fallback",
     "note": null
   },

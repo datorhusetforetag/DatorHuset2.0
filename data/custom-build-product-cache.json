@@ -1,11 +1,11 @@
 {
   "version": "prisjakt-v1",
-  "saved_at": "2026-03-13T14:03:35.405Z",
+  "saved_at": "2026-03-13T14:35:10.952Z",
   "entries": [
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-3-3100",
       "item_id": "cpu-am4-ryzen-3-3100",
-      "updatedAt": 1773410336026,
+      "updatedAt": 1773411334601,
       "response": {
         "offers": []
       }
@@ -331,7 +331,7 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-7-5700x3d",
       "item_id": "cpu-am4-ryzen-7-5700x3d",
-      "updatedAt": 1773410352972,
+      "updatedAt": 1773411356281,
       "response": {
         "offers": []
       }
@@ -405,7 +405,7 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-7-5800x3d",
       "item_id": "cpu-am4-ryzen-7-5800x3d",
-      "updatedAt": 1773410355051,
+      "updatedAt": 1773411378162,
       "response": {
         "offers": []
       }
@@ -413,7 +413,7 @@
     {
       "key": "prisjakt-v1:cpu-am4-ryzen-9-5900x",
       "item_id": "cpu-am4-ryzen-9-5900x",
-      "updatedAt": 1773410358462,
+      "updatedAt": 1773411401999,
       "response": {
         "offers": []
       }
@@ -1375,7 +1375,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i3-10105f",
       "item_id": "cpu-lga1200-core-i3-10105f",
-      "updatedAt": 1773410420625,
+      "updatedAt": 1773411423461,
       "response": {
         "offers": []
       }
@@ -1383,7 +1383,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-10400f",
       "item_id": "cpu-lga1200-core-i5-10400f",
-      "updatedAt": 1773410422327,
+      "updatedAt": 1773411445205,
       "response": {
         "offers": []
       }
@@ -1391,7 +1391,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-10600k",
       "item_id": "cpu-lga1200-core-i5-10600k",
-      "updatedAt": 1773410423974,
+      "updatedAt": 1773411466956,
       "response": {
         "offers": []
       }
@@ -1399,7 +1399,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-10700f",
       "item_id": "cpu-lga1200-core-i7-10700f",
-      "updatedAt": 1773410425601,
+      "updatedAt": 1773411488660,
       "response": {
         "offers": []
       }
@@ -1407,7 +1407,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-10700k",
       "item_id": "cpu-lga1200-core-i7-10700k",
-      "updatedAt": 1773410427201,
+      "updatedAt": 1773411510344,
       "response": {
         "offers": []
       }
@@ -1415,7 +1415,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i9-10900k",
       "item_id": "cpu-lga1200-core-i9-10900k",
-      "updatedAt": 1773410428817,
+      "updatedAt": 1773411532127,
       "response": {
         "offers": []
       }
@@ -1423,7 +1423,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-11400f",
       "item_id": "cpu-lga1200-core-i5-11400f",
-      "updatedAt": 1773410430423,
+      "updatedAt": 1773411554002,
       "response": {
         "offers": []
       }
@@ -1431,7 +1431,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i5-11600k",
       "item_id": "cpu-lga1200-core-i5-11600k",
-      "updatedAt": 1773410432032,
+      "updatedAt": 1773411575848,
       "response": {
         "offers": []
       }
@@ -1439,7 +1439,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i7-11700k",
       "item_id": "cpu-lga1200-core-i7-11700k",
-      "updatedAt": 1773410433646,
+      "updatedAt": 1773411597675,
       "response": {
         "offers": []
       }
@@ -1447,7 +1447,23 @@
     {
       "key": "prisjakt-v1:cpu-lga1200-core-i9-11900k",
       "item_id": "cpu-lga1200-core-i9-11900k",
-      "updatedAt": 1773410435301,
+      "updatedAt": 1773411619571,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i3-12100f",
+      "item_id": "cpu-lga1700-core-i3-12100f",
+      "updatedAt": 1773411641412,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i5-12400-tray",
+      "item_id": "cpu-lga1700-core-i5-12400-tray",
+      "updatedAt": 1773411663277,
       "response": {
         "offers": []
       }
@@ -1488,7 +1504,23 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-12600k",
       "item_id": "cpu-lga1700-core-i5-12600k",
-      "updatedAt": 1773410436920,
+      "updatedAt": 1773411685154,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i5-12600kf",
+      "item_id": "cpu-lga1700-core-i5-12600kf",
+      "updatedAt": 1773411707049,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i7-12700kf",
+      "item_id": "cpu-lga1700-core-i7-12700kf",
+      "updatedAt": 1773411728889,
       "response": {
         "offers": []
       }
@@ -1496,7 +1528,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-12700k",
       "item_id": "cpu-lga1700-core-i7-12700k",
-      "updatedAt": 1773410438558,
+      "updatedAt": 1773411750705,
       "response": {
         "offers": []
       }
@@ -1504,7 +1536,15 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i9-12900k",
       "item_id": "cpu-lga1700-core-i9-12900k",
-      "updatedAt": 1773410440181,
+      "updatedAt": 1773411772485,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i3-13100f",
+      "item_id": "cpu-lga1700-core-i3-13100f",
+      "updatedAt": 1773411794344,
       "response": {
         "offers": []
       }
@@ -1512,7 +1552,31 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-13400f",
       "item_id": "cpu-lga1700-core-i5-13400f",
-      "updatedAt": 1773410441782,
+      "updatedAt": 1773411816262,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i3-14100",
+      "item_id": "cpu-lga1700-core-i3-14100",
+      "updatedAt": 1773411838193,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i3-14100f",
+      "item_id": "cpu-lga1700-core-i3-14100f",
+      "updatedAt": 1773411860117,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i5-14400f",
+      "item_id": "cpu-lga1700-core-i5-14400f",
+      "updatedAt": 1773411883541,
       "response": {
         "offers": []
       }
@@ -1520,7 +1584,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-13600k",
       "item_id": "cpu-lga1700-core-i5-13600k",
-      "updatedAt": 1773410443410,
+      "updatedAt": 1773411905148,
       "response": {
         "offers": []
       }
@@ -1528,7 +1592,7 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-13700k",
       "item_id": "cpu-lga1700-core-i7-13700k",
-      "updatedAt": 1773410445067,
+      "updatedAt": 1773411927020,
       "response": {
         "offers": []
       }
@@ -1536,7 +1600,15 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i5-14600k",
       "item_id": "cpu-lga1700-core-i5-14600k",
-      "updatedAt": 1773410446715,
+      "updatedAt": 1773411948719,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i5-14600kf",
+      "item_id": "cpu-lga1700-core-i5-14600kf",
+      "updatedAt": 1773411970463,
       "response": {
         "offers": []
       }
@@ -1544,7 +1616,23 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i7-14700k",
       "item_id": "cpu-lga1700-core-i7-14700k",
-      "updatedAt": 1773410448356,
+      "updatedAt": 1773411992250,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i7-14700kf",
+      "item_id": "cpu-lga1700-core-i7-14700kf",
+      "updatedAt": 1773412014090,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i9-13900ks",
+      "item_id": "cpu-lga1700-core-i9-13900ks",
+      "updatedAt": 1773412035950,
       "response": {
         "offers": []
       }
@@ -1552,7 +1640,23 @@
     {
       "key": "prisjakt-v1:cpu-lga1700-core-i9-14900k",
       "item_id": "cpu-lga1700-core-i9-14900k",
-      "updatedAt": 1773410449975,
+      "updatedAt": 1773412057839,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i9-14900kf",
+      "item_id": "cpu-lga1700-core-i9-14900kf",
+      "updatedAt": 1773412079700,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v1:cpu-lga1700-core-i9-14900ks",
+      "item_id": "cpu-lga1700-core-i9-14900ks",
+      "updatedAt": 1773412101521,
       "response": {
         "offers": []
       }
@@ -1734,7 +1838,7 @@
     {
       "key": "prisjakt-v1:mb-am4-gigabyte-x570-aorus-elite",
       "item_id": "mb-am4-gigabyte-x570-aorus-elite",
-      "updatedAt": 1773410453692,
+      "updatedAt": 1773412125404,
       "response": {
         "offers": []
       }
@@ -1742,7 +1846,7 @@
     {
       "key": "prisjakt-v1:mb-am4-asrock-x570-steel-legend",
       "item_id": "mb-am4-asrock-x570-steel-legend",
-      "updatedAt": 1773410457817,
+      "updatedAt": 1773412150246,
       "response": {
         "offers": []
       }
@@ -1750,7 +1854,7 @@
     {
       "key": "prisjakt-v1:mb-am4-msi-mag-b550m-mortar-wifi",
       "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
-      "updatedAt": 1773410464089,
+      "updatedAt": 1773412165870,
       "response": {
         "offers": []
       }
@@ -2085,7 +2189,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-tuf-b560-plus-wifi",
       "item_id": "mb-lga1200-asus-tuf-b560-plus-wifi",
-      "updatedAt": 1773410465815,
+      "updatedAt": 1773412187565,
       "response": {
         "offers": []
       }
@@ -2093,7 +2197,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-b560-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-b560-tomahawk-wifi",
-      "updatedAt": 1773410469309,
+      "updatedAt": 1773412210697,
       "response": {
         "offers": []
       }
@@ -2101,7 +2205,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-b560-aorus-pro-ax",
       "item_id": "mb-lga1200-gigabyte-b560-aorus-pro-ax",
-      "updatedAt": 1773410472221,
+      "updatedAt": 1773412233754,
       "response": {
         "offers": []
       }
@@ -2109,7 +2213,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-b560-pro4",
       "item_id": "mb-lga1200-asrock-b560-pro4",
-      "updatedAt": 1773410473837,
+      "updatedAt": 1773412255483,
       "response": {
         "offers": []
       }
@@ -2117,7 +2221,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-prime-z590-p",
       "item_id": "mb-lga1200-asus-prime-z590-p",
-      "updatedAt": 1773410475430,
+      "updatedAt": 1773412277398,
       "response": {
         "offers": []
       }
@@ -2125,7 +2229,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z590-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-z590-tomahawk-wifi",
-      "updatedAt": 1773410477747,
+      "updatedAt": 1773412299815,
       "response": {
         "offers": []
       }
@@ -2133,7 +2237,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-gigabyte-z590-aorus-elite-ax",
       "item_id": "mb-lga1200-gigabyte-z590-aorus-elite-ax",
-      "updatedAt": 1773410479905,
+      "updatedAt": 1773412323104,
       "response": {
         "offers": []
       }
@@ -2141,7 +2245,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asrock-z590-steel-legend",
       "item_id": "mb-lga1200-asrock-z590-steel-legend",
-      "updatedAt": 1773410482211,
+      "updatedAt": 1773412345332,
       "response": {
         "offers": []
       }
@@ -2149,7 +2253,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-asus-rog-strix-z490-f",
       "item_id": "mb-lga1200-asus-rog-strix-z490-f",
-      "updatedAt": 1773410483812,
+      "updatedAt": 1773412366962,
       "response": {
         "offers": []
       }
@@ -2157,7 +2261,7 @@
     {
       "key": "prisjakt-v1:mb-lga1200-msi-z490-gaming-edge-wifi",
       "item_id": "mb-lga1200-msi-z490-gaming-edge-wifi",
-      "updatedAt": 1773410495420,
+      "updatedAt": 1773412388798,
       "response": {
         "offers": []
       }
@@ -2165,7 +2269,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-msi-b760m-mortar-wifi",
       "item_id": "mb-lga1700-msi-b760m-mortar-wifi",
-      "updatedAt": 1773410510936,
+      "updatedAt": 1773412404639,
       "response": {
         "offers": []
       }
@@ -2230,7 +2334,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-gigabyte-b760-aorus-elite-ax",
       "item_id": "mb-lga1700-gigabyte-b760-aorus-elite-ax",
-      "updatedAt": 1773410527350,
+      "updatedAt": 1773412421767,
       "response": {
         "offers": []
       }
@@ -2424,7 +2528,7 @@
     {
       "key": "prisjakt-v1:mb-lga1700-asus-rog-strix-z790-f",
       "item_id": "mb-lga1700-asus-rog-strix-z790-f",
-      "updatedAt": 1773410548786,
+      "updatedAt": 1773412443304,
       "response": {
         "offers": []
       }
@@ -2624,7 +2728,7 @@
     {
       "key": "prisjakt-v1:gpu-9",
       "item_id": "gpu-9",
-      "updatedAt": 1773410582085,
+      "updatedAt": 1773412477481,
       "response": {
         "offers": []
       }
@@ -4182,7 +4286,7 @@
     {
       "key": "prisjakt-v1:case-7",
       "item_id": "case-7",
-      "updatedAt": 1773410615245,
+      "updatedAt": 1773412510794,
       "response": {
         "offers": []
       }
