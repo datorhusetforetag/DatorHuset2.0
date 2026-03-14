@@ -2626,6 +2626,11 @@ export default function CustomBuild() {
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
+  const buildGridRef = useRef<HTMLDivElement | null>(null);
+  const leftSidebarRef = useRef<HTMLElement | null>(null);
+  const leftSidebarStackRef = useRef<HTMLDivElement | null>(null);
+  const rightSidebarRef = useRef<HTMLElement | null>(null);
+  const rightSidebarStackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     try {
@@ -2732,6 +2737,80 @@ export default function CustomBuild() {
     observer.observe(summary);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    const topOffset = 96;
+
+    const resetSidebar = (aside: HTMLElement | null, stack: HTMLDivElement | null) => {
+      if (aside) {
+        aside.style.position = "";
+        aside.style.height = "";
+      }
+      if (stack) {
+        stack.style.position = "";
+        stack.style.top = "";
+        stack.style.left = "";
+        stack.style.right = "";
+      }
+    };
+
+    const updateSidebars = () => {
+      const grid = buildGridRef.current;
+      if (!grid || window.innerWidth < 1024) {
+        resetSidebar(leftSidebarRef.current, leftSidebarStackRef.current);
+        resetSidebar(rightSidebarRef.current, rightSidebarStackRef.current);
+        return;
+      }
+
+      const gridRect = grid.getBoundingClientRect();
+      const gridTop = gridRect.top + window.scrollY;
+      const gridHeight = grid.offsetHeight;
+
+      const applySidebar = (aside: HTMLElement | null, stack: HTMLDivElement | null) => {
+        if (!aside || !stack) return;
+
+        const stackHeight = stack.offsetHeight;
+        const maxOffset = Math.max(0, gridHeight - stackHeight);
+        const rawOffset = window.scrollY + topOffset - gridTop;
+        const clampedOffset = Math.max(0, Math.min(rawOffset, maxOffset));
+
+        aside.style.position = "relative";
+        aside.style.height = `${gridHeight}px`;
+        stack.style.position = "absolute";
+        stack.style.top = `${clampedOffset}px`;
+        stack.style.left = "0";
+        stack.style.right = "0";
+      };
+
+      applySidebar(leftSidebarRef.current, leftSidebarStackRef.current);
+      applySidebar(rightSidebarRef.current, rightSidebarStackRef.current);
+    };
+
+    updateSidebars();
+    window.addEventListener("scroll", updateSidebars, { passive: true });
+    window.addEventListener("resize", updateSidebars);
+
+    const resizeObserver =
+      typeof ResizeObserver !== "undefined"
+        ? new ResizeObserver(() => {
+            updateSidebars();
+          })
+        : null;
+
+    if (resizeObserver) {
+      if (buildGridRef.current) resizeObserver.observe(buildGridRef.current);
+      if (leftSidebarStackRef.current) resizeObserver.observe(leftSidebarStackRef.current);
+      if (rightSidebarStackRef.current) resizeObserver.observe(rightSidebarStackRef.current);
+    }
+
+    return () => {
+      window.removeEventListener("scroll", updateSidebars);
+      window.removeEventListener("resize", updateSidebars);
+      resizeObserver?.disconnect();
+      resetSidebar(leftSidebarRef.current, leftSidebarStackRef.current);
+      resetSidebar(rightSidebarRef.current, rightSidebarStackRef.current);
+    };
+  }, [mobileSidebarOpen, expandedItemId, activeCategory, selected]);
 
 
   useEffect(() => {
@@ -3596,9 +3675,12 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-start lg:block`}>
-                <div className="space-y-4 lg:sticky lg:top-24">
+            <div ref={buildGridRef} className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+              <aside
+                ref={leftSidebarRef}
+                className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block`}
+              >
+                <div ref={leftSidebarStackRef} className="space-y-4">
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                       <div className="mt-4 space-y-2">
@@ -4286,8 +4368,8 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="self-start">
-                <div className="space-y-4 lg:sticky lg:top-24">
+              <aside ref={rightSidebarRef}>
+                <div ref={rightSidebarStackRef} className="space-y-4">
                   <div
                     id="build-summary"
                     className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
