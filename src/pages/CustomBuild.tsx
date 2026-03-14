@@ -1556,93 +1556,93 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   ram: [
     {
       id: "ram-1",
-      name: "Corsair Vengeance 32GB",
+      name: "Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz CL36",
       brand: "Corsair",
       price: 1290,
       ramType: "DDR5",
       image: ramCorsairVengeanceImage,
-      specs: ["DDR5", "6000 MHz", "CL36"],
+      specs: ["DDR5", "32GB", "6000 MHz", "CL36"],
     },
     {
       id: "ram-2",
-      name: "G.Skill Trident Z5 32GB",
+      name: "G.Skill Trident Z5 Neo RGB 32GB (2x16GB) DDR5 6400MHz CL32",
       brand: "G.Skill",
       price: 1490,
       ramType: "DDR5",
       image: ramGSkillTridentZ5Image,
-      specs: ["DDR5", "6400 MHz", "CL32"],
+      specs: ["DDR5", "32GB", "6400 MHz", "CL32", "RGB"],
     },
     {
       id: "ram-3",
-      name: "Kingston Fury Beast 32GB",
+      name: "Kingston Fury Beast 32GB (2x16GB) DDR5 6000MHz CL40",
       brand: "Kingston",
       price: 1190,
       ramType: "DDR5",
       image: ramKingstonFuryBeastImage,
-      specs: ["DDR5", "6000 MHz", "CL40"],
+      specs: ["DDR5", "32GB", "6000 MHz", "CL40"],
     },
     {
       id: "ram-4",
-      name: "Crucial Pro 32GB",
+      name: "Crucial Pro 32GB (2x16GB) DDR5 5600MHz CL46",
       brand: "Crucial",
       price: 1090,
       ramType: "DDR5",
       image: ramCrucialProImage,
-      specs: ["DDR5", "5600 MHz", "CL46"],
+      specs: ["DDR5", "32GB", "5600 MHz", "CL46"],
     },
     {
       id: "ram-5",
-      name: "Corsair Dominator 64GB",
+      name: "Corsair Dominator Platinum RGB 64GB (2x32GB) DDR5 6000MHz CL30",
       brand: "Corsair",
       price: 2690,
       ramType: "DDR5",
       image: ramCorsairDominatorImage,
-      specs: ["DDR5", "6000 MHz", "CL30"],
+      specs: ["DDR5", "64GB", "6000 MHz", "CL30", "RGB"],
     },
     {
       id: "ram-6",
-      name: "G.Skill Ripjaws 32GB",
+      name: "G.Skill Ripjaws V 32GB (2x16GB) DDR4 3600MHz CL16",
       brand: "G.Skill",
       price: 990,
       ramType: "DDR4",
       image: ramGSkillRipjawsImage,
-      specs: ["DDR4", "3600 MHz", "CL16"],
+      specs: ["DDR4", "32GB", "3600 MHz", "CL16"],
     },
     {
       id: "ram-7",
-      name: "Kingston Fury Renegade 32GB",
+      name: "Kingston Fury Renegade 32GB (2x16GB) DDR5 6400MHz CL32",
       brand: "Kingston",
       price: 1390,
       ramType: "DDR5",
       image: ramKingstonFuryRenegadeImage,
-      specs: ["DDR5", "6400 MHz", "CL32"],
+      specs: ["DDR5", "32GB", "6400 MHz", "CL32"],
     },
     {
       id: "ram-8",
-      name: "Crucial Pro 64GB",
+      name: "Crucial Pro 64GB (2x32GB) DDR5 5600MHz CL46",
       brand: "Crucial",
       price: 2190,
       ramType: "DDR5",
       image: ramCrucialProImage,
-      specs: ["DDR5", "5600 MHz", "CL46"],
+      specs: ["DDR5", "64GB", "5600 MHz", "CL46"],
     },
     {
       id: "ram-9",
-      name: "TeamGroup T-Force Delta 32GB",
+      name: "TeamGroup T-Force Delta RGB 32GB (2x16GB) DDR5 6000MHz",
       brand: "TeamGroup",
       price: 1290,
       ramType: "DDR5",
       image: ramTeamGroupTForceDeltaImage,
-      specs: ["DDR5", "6000 MHz", "RGB"],
+      specs: ["DDR5", "32GB", "6000 MHz", "RGB"],
     },
     {
       id: "ram-10",
-      name: "ADATA XPG Lancer 32GB",
+      name: "ADATA XPG Lancer RGB 32GB (2x16GB) DDR5 6000MHz",
       brand: "ADATA",
       price: 1190,
       ramType: "DDR5",
       image: ramAdataXpgLancerImage,
-      specs: ["DDR5", "6000 MHz", "RGB"],
+      specs: ["DDR5", "32GB", "6000 MHz", "RGB"],
     },
     {
       id: "ram-11",
@@ -1655,7 +1655,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "ram-12",
-      name: "Corsair Dominator RGB DDR4 3600MHz 32GB",
+      name: "Corsair Dominator Platinum RGB 32GB (2x16GB) DDR4 3600MHz",
       brand: "Corsair",
       price: 1200,
       ramType: "DDR4",
@@ -1673,12 +1673,12 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "ram-17",
-      name: "Corsair Vengeance 16GB (2x8GB)",
+      name: "Corsair Vengeance 16GB (2x8GB) DDR5 5600MHz CL36",
       brand: "Corsair",
       price: 699,
       ramType: "DDR5",
       image: ramCorsairVengeanceImage,
-      specs: ["DDR5", "16GB", "5600 MHz"],
+      specs: ["DDR5", "16GB", "5600 MHz", "CL36"],
     },
     {
       id: "ram-18",
@@ -1691,39 +1691,39 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "ram-19",
-      name: "Kingston Fury Beast 16GB (2x8GB)",
+      name: "Kingston Fury Beast 16GB (2x8GB) DDR5 5600MHz CL36",
       brand: "Kingston",
       price: 729,
       ramType: "DDR5",
       image: ramKingstonFuryBeastImage,
-      specs: ["DDR5", "16GB", "5600 MHz"],
+      specs: ["DDR5", "16GB", "5600 MHz", "CL36"],
     },
     {
       id: "ram-20",
-      name: "Corsair Vengeance RGB 16GB (2x8GB)",
+      name: "Corsair Vengeance RGB 16GB (2x8GB) DDR5 6000MHz CL36",
       brand: "Corsair",
       price: 829,
       ramType: "DDR5",
       image: ramCorsairVengeanceImage,
-      specs: ["DDR5", "16GB", "RGB"],
+      specs: ["DDR5", "16GB", "6000 MHz", "CL36", "RGB"],
     },
     {
       id: "ram-21",
-      name: "Corsair Vengeance RGB 32GB (2x16GB)",
+      name: "Corsair Vengeance RGB 32GB (2x16GB) DDR5 6000MHz CL36",
       brand: "Corsair",
       price: 1299,
       ramType: "DDR5",
       image: ramCorsairVengeanceImage,
-      specs: ["DDR5", "32GB", "RGB"],
+      specs: ["DDR5", "32GB", "6000 MHz", "CL36", "RGB"],
     },
     {
       id: "ram-22",
-      name: "Corsair Vengeance 32GB (2x16GB)",
+      name: "Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz CL36",
       brand: "Corsair",
       price: 1190,
       ramType: "DDR5",
       image: ramCorsairVengeanceImage,
-      specs: ["DDR5", "32GB", "6000 MHz"],
+      specs: ["DDR5", "32GB", "6000 MHz", "CL36"],
     },
     {
       id: "ram-23",
@@ -1745,30 +1745,30 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "ram-25",
-      name: "Kingston Fury Beast RGB 32GB (2x16GB)",
+      name: "Kingston Fury Beast RGB 32GB (2x16GB) DDR5 6000MHz CL36",
       brand: "Kingston",
       price: 1290,
       ramType: "DDR5",
       image: ramKingstonFuryBeastImage,
-      specs: ["DDR5", "32GB", "RGB"],
+      specs: ["DDR5", "32GB", "6000 MHz", "CL36", "RGB"],
     },
     {
       id: "ram-26",
-      name: "Corsair Dominator Platinum RGB 64GB (2x32GB)",
+      name: "Corsair Dominator Platinum RGB 64GB (2x32GB) DDR5 6000MHz CL40",
       brand: "Corsair",
       price: 2790,
       ramType: "DDR5",
       image: ramCorsairDominatorImage,
-      specs: ["DDR5", "64GB", "RGB"],
+      specs: ["DDR5", "64GB", "6000 MHz", "CL40", "RGB"],
     },
     {
       id: "ram-27",
-      name: "Kingston Fury Beast Black 64GB (2x32GB)",
+      name: "Kingston Fury Beast Black 64GB (2x32GB) DDR5 6000MHz CL40",
       brand: "Kingston",
       price: 2290,
       ramType: "DDR5",
       image: ramKingstonFuryBeastImage,
-      specs: ["DDR5", "64GB", "Svart"],
+      specs: ["DDR5", "64GB", "6000 MHz", "CL40", "Svart"],
     },
     {
       id: "ram-28",
@@ -1781,12 +1781,12 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "ram-29",
-      name: "Kingston Fury Beast RGB 64GB (2x32GB)",
+      name: "Kingston Fury Beast RGB 64GB (2x32GB) DDR5 6000MHz CL40",
       brand: "Kingston",
       price: 2490,
       ramType: "DDR5",
       image: ramKingstonFuryBeastImage,
-      specs: ["DDR5", "64GB", "RGB"],
+      specs: ["DDR5", "64GB", "6000 MHz", "CL40", "RGB"],
     },
     {
       id: "ram-30",
@@ -3261,11 +3261,6 @@ export default function CustomBuild() {
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
-  const buildGridRef = useRef<HTMLDivElement | null>(null);
-  const leftSidebarRef = useRef<HTMLElement | null>(null);
-  const leftSidebarStackRef = useRef<HTMLDivElement | null>(null);
-  const rightSidebarRef = useRef<HTMLElement | null>(null);
-  const rightSidebarStackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     try {
@@ -3372,81 +3367,6 @@ export default function CustomBuild() {
     observer.observe(summary);
     return () => observer.disconnect();
   }, []);
-
-  useEffect(() => {
-    const topOffset = 96;
-
-    const resetSidebar = (aside: HTMLElement | null, stack: HTMLDivElement | null) => {
-      if (aside) {
-        aside.style.position = "";
-        aside.style.height = "";
-      }
-      if (stack) {
-        stack.style.position = "";
-        stack.style.top = "";
-        stack.style.left = "";
-        stack.style.right = "";
-      }
-    };
-
-    const updateSidebars = () => {
-      const grid = buildGridRef.current;
-      if (!grid || window.innerWidth < 1024) {
-        resetSidebar(leftSidebarRef.current, leftSidebarStackRef.current);
-        resetSidebar(rightSidebarRef.current, rightSidebarStackRef.current);
-        return;
-      }
-
-      const gridRect = grid.getBoundingClientRect();
-      const gridTop = gridRect.top + window.scrollY;
-      const gridHeight = grid.offsetHeight;
-
-      const applySidebar = (aside: HTMLElement | null, stack: HTMLDivElement | null) => {
-        if (!aside || !stack) return;
-
-        const stackHeight = stack.offsetHeight;
-        const maxOffset = Math.max(0, gridHeight - stackHeight);
-        const rawOffset = window.scrollY + topOffset - gridTop;
-        const clampedOffset = Math.max(0, Math.min(rawOffset, maxOffset));
-
-        aside.style.position = "relative";
-        aside.style.height = `${gridHeight}px`;
-        stack.style.position = "absolute";
-        stack.style.top = `${clampedOffset}px`;
-        stack.style.left = "0";
-        stack.style.right = "0";
-      };
-
-      applySidebar(leftSidebarRef.current, leftSidebarStackRef.current);
-      applySidebar(rightSidebarRef.current, rightSidebarStackRef.current);
-    };
-
-    updateSidebars();
-    window.addEventListener("scroll", updateSidebars, { passive: true });
-    window.addEventListener("resize", updateSidebars);
-
-    const resizeObserver =
-      typeof ResizeObserver !== "undefined"
-        ? new ResizeObserver(() => {
-            updateSidebars();
-          })
-        : null;
-
-    if (resizeObserver) {
-      if (buildGridRef.current) resizeObserver.observe(buildGridRef.current);
-      if (leftSidebarStackRef.current) resizeObserver.observe(leftSidebarStackRef.current);
-      if (rightSidebarStackRef.current) resizeObserver.observe(rightSidebarStackRef.current);
-    }
-
-    return () => {
-      window.removeEventListener("scroll", updateSidebars);
-      window.removeEventListener("resize", updateSidebars);
-      resizeObserver?.disconnect();
-      resetSidebar(leftSidebarRef.current, leftSidebarStackRef.current);
-      resetSidebar(rightSidebarRef.current, rightSidebarStackRef.current);
-    };
-  }, [mobileSidebarOpen, expandedItemId, activeCategory, selected]);
-
 
   useEffect(() => {
     const socket = selected.motherboard?.socket;
@@ -4310,12 +4230,9 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div ref={buildGridRef} className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
-              <aside
-                ref={leftSidebarRef}
-                className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block`}
-              >
-                <div ref={leftSidebarStackRef} className="space-y-4">
+            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:self-start`}>
+                <div className="space-y-4 lg:sticky lg:top-24">
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                       <div className="mt-4 space-y-2">
@@ -5003,8 +4920,8 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside ref={rightSidebarRef}>
-                <div ref={rightSidebarStackRef} className="space-y-4">
+              <aside className="hidden lg:block lg:self-start">
+                <div className="space-y-4 lg:sticky lg:top-24">
                   <div
                     id="build-summary"
                     className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"

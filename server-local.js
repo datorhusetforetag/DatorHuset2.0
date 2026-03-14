@@ -1069,9 +1069,12 @@ const isCatalogOfferWithinExpectedPriceRange = (item, price) => {
   } else if (category === "psu" || category === "cooling") {
     lowerMultiplier = 0.4;
     upperMultiplier = 4;
-  } else if (category === "ram" || category === "storage") {
-    lowerMultiplier = 0.25;
-    upperMultiplier = 8;
+  } else if (category === "ram") {
+    lowerMultiplier = 0.55;
+    upperMultiplier = 1.75;
+  } else if (category === "storage") {
+    lowerMultiplier = 0.35;
+    upperMultiplier = 4.5;
   }
 
   const lowerBound = Math.max(80, Math.round(referencePrice * lowerMultiplier));
@@ -1120,6 +1123,47 @@ const matchesModelTokens = (text, modelTokens) => {
   return modelTokens.some((token) => normalizedText.includes(token));
 };
 
+const countMatchingModelTokens = (text, modelTokens) => {
+  if (!Array.isArray(modelTokens) || modelTokens.length === 0) return 0;
+  const normalizedText = normalizeStorePriceQueryKey(text);
+  if (!normalizedText) return 0;
+  return modelTokens.filter((token) => normalizedText.includes(token)).length;
+};
+
+const getOfferModelTokensForItem = (item) =>
+  Array.from(
+    new Set(
+      [
+        item?.name || "",
+        ...firstArray(item?.searchTerms),
+        ...firstArray(item?.specs).map((spec) => `${item?.brand || ""} ${item?.name || ""} ${spec}`),
+      ]
+        .flatMap((value) => extractModelTokensFromQuery(value))
+        .filter((token) => !/^\d{5,}$/.test(token))
+    )
+  );
+
+const getRequiredModelTokenMatchesForItem = (item, modelTokens) => {
+  const category = getCustomBuildCategoryForItem(item);
+  if (!Array.isArray(modelTokens) || modelTokens.length === 0) return 0;
+  if (category === "ram") {
+    const capacityOrSpeedTokens = modelTokens.filter(
+      (token) =>
+        /(gb|tb)$/i.test(token) ||
+        /^\d{4,5}$/.test(token) ||
+        /^cl\d+$/i.test(token) ||
+        /^\d+x\d+(gb|tb)$/i.test(token)
+    );
+    if (capacityOrSpeedTokens.length >= 3) return 3;
+    if (capacityOrSpeedTokens.length >= 2) return 2;
+    return 1;
+  }
+  if (category === "storage") {
+    return modelTokens.length >= 3 ? 2 : 1;
+  }
+  return 1;
+};
+
 const buildTitleFromProductUrl = (url) => {
   if (!url) return "";
   try {
@@ -1144,18 +1188,25 @@ const buildTitleFromProductUrl = (url) => {
   }
 };
 
-const matchesOfferToQueryModel = (sourceId, queryModelTokens, offerTitle, offerUrl) => {
+const matchesOfferToQueryModel = (sourceId, queryModelTokens, offerTitle, offerUrl, minRequiredMatches = 1) => {
   if (!Array.isArray(queryModelTokens) || queryModelTokens.length === 0) return true;
   const title = firstText(offerTitle);
+  const requiredMatches = Math.max(1, Number(minRequiredMatches) || 1);
   if (sourceId === "amazon-se") {
-    return matchesModelTokens(title, queryModelTokens);
+    return countMatchingModelTokens(title, queryModelTokens) >= requiredMatches;
   }
   const urlTitle = buildTitleFromProductUrl(offerUrl || "");
   const urlModelTokens = extractModelTokensFromQuery(urlTitle).filter((token) => !/^\d{5,}$/.test(token));
   if (urlModelTokens.length > 0) {
-    return matchesModelTokens(urlTitle, queryModelTokens);
+    return countMatchingModelTokens(urlTitle, queryModelTokens) >= requiredMatches;
   }
-  return matchesModelTokens(`${title} ${urlTitle}`, queryModelTokens);
+  return countMatchingModelTokens(`${title} ${urlTitle}`, queryModelTokens) >= requiredMatches;
+};
+
+const matchesOfferToItemModel = (sourceId, item, offerTitle, offerUrl) => {
+  const modelTokens = getOfferModelTokensForItem(item);
+  const requiredMatches = getRequiredModelTokenMatchesForItem(item, modelTokens);
+  return matchesOfferToQueryModel(sourceId, modelTokens, offerTitle, offerUrl, requiredMatches);
 };
 
 const isLikelyPrebuiltOrBundleOffer = (title, url) => {
@@ -2521,7 +2572,7 @@ const extractDirectProductOfferFromHtml = (html, source, productUrl, item) => {
     }))
     .filter((offer) => offer.product_url && isLikelyProductUrlForStore(offer.product_url, source.id))
     .filter((offer) => !isLikelyPrebuiltOrBundleOffer(offer.title, offer.product_url))
-    .filter((offer) => matchesOfferToQueryModel(source.id, extractModelTokensFromQuery(item.name), offer.title, offer.product_url))
+    .filter((offer) => matchesOfferToItemModel(source.id, item, offer.title, offer.product_url))
     .filter((offer) => isOfferWithinReferencePrice(offer.total_price ?? offer.price, item.price));
   if (parsedOffers.length > 0) {
     return {
@@ -2538,7 +2589,7 @@ const extractDirectProductOfferFromMarkdown = (markdown, source, productUrl, ite
   if (!markdown || !source || !productUrl || !item) return null;
   if (isLikelyPrebuiltOrBundleOffer(item.name, productUrl)) return null;
   const title = buildTitleFromProductUrl(productUrl);
-  if (!matchesOfferToQueryModel(source.id, extractModelTokensFromQuery(item.name), title || item.name, productUrl)) {
+  if (!matchesOfferToItemModel(source.id, item, title || item.name, productUrl)) {
     return null;
   }
   const prices = extractPriceCandidatesFromText(markdown);
@@ -3143,6 +3194,10 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
     Number.isFinite(rawReferenceLowestPrice) && rawReferenceLowestPrice > 0
       ? Math.max(0, Math.round(rawReferenceLowestPrice))
       : null;
+  const validatedReferenceLowestPrice =
+    Number.isFinite(referenceLowestPrice) && isCatalogOfferWithinExpectedPriceRange(item, referenceLowestPrice)
+      ? referenceLowestPrice
+      : null;
   const effectiveOffers = hydratedOffers.length > 0
     ? hydratedOffers
     : buildCatalogFallbackStoreOffers(item, updatedAt);
@@ -3152,15 +3207,15 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
   );
   const lowestPrice = availableOffers.length
     ? Math.min(...availableOffers.map((offer) => offer.total_price ?? offer.price))
-    : referenceLowestPrice;
+    : validatedReferenceLowestPrice;
   return {
     ok: true,
     item_id: item.id,
     updated_at: new Date(updatedAt).toISOString(),
     next_refresh_at: new Date(updatedAt + CUSTOM_PRICE_REFRESH_INTERVAL_MS).toISOString(),
     lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
-    reference_lowest_price: referenceLowestPrice,
-    reference_source: firstText(options?.referenceSource) || null,
+    reference_lowest_price: validatedReferenceLowestPrice,
+    reference_source: validatedReferenceLowestPrice ? firstText(options?.referenceSource) || null : null,
     offers: limitedOffers,
   };
 };
@@ -3200,13 +3255,14 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   const komponentkollProduct = await findBestKomponentkollProductForItem(item).catch(() => null);
   if (komponentkollProduct?.product_url) {
     const komponentkollHtml = await fetchTextWithBrowserHeaders(komponentkollProduct.product_url).catch(() => null);
+    if (Number.isFinite(komponentkollProduct.lowest_price)) {
+      referenceLowestPrice = komponentkollProduct.lowest_price;
+      referenceSource = "komponentkoll";
+    }
     if (komponentkollHtml) {
       const offers = extractStoreOffersFromKomponentkollProductHtml(komponentkollHtml, item);
       if (offers.length > 0) {
         offerLists.push(offers);
-      } else if (Number.isFinite(komponentkollProduct.lowest_price)) {
-        referenceLowestPrice = komponentkollProduct.lowest_price;
-        referenceSource = "komponentkoll";
       }
     }
   }
