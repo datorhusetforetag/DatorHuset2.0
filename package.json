@@ -13,6 +13,7 @@
     "build:admin": "VITE_APP_MODE=admin vite build",
     "start": "node server-local.js",
     "serve:dev": "node server-local.js",
+    "refresh:custom-build-cache": "node scripts/refresh-custom-build-cache.mjs",
     "test:admin-api-smoke": "node tests/admin-v2.smoke.mjs",
     "test:admin-api-integration": "node tests/admin-v2.integration.mjs",
     "lint": "eslint .",
