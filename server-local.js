@@ -220,6 +220,7 @@ const customStorePriceRefreshInFlight = new Map();
 const customBuildProductCache = new Map();
 const customBuildProductRefreshInFlight = new Map();
 const komponentkollCategoryCache = new Map();
+const komponentkollProductSearchCache = new Map();
 const priceRunnerSearchCache = new Map();
 let customStorePriceCacheWriteChain = Promise.resolve();
 let customBuildProductCacheWriteChain = Promise.resolve();
@@ -1856,6 +1857,46 @@ const fetchDuckDuckGoSiteSearchText = async (source, query) => {
   return texts.length > 0 ? texts.join("\n\n") : null;
 };
 
+const fetchKomponentkollProductUrlCandidates = async (item) => {
+  const cacheKey = sanitizeText(String(item?.id || ""), 120);
+  const cached = komponentkollProductSearchCache.get(cacheKey);
+  if (
+    cached &&
+    Number.isFinite(cached.updatedAt) &&
+    Date.now() - cached.updatedAt <= CUSTOM_PRICE_CACHE_TTL_MS &&
+    Array.isArray(cached.urls)
+  ) {
+    return cached.urls;
+  }
+
+  const queries = buildCatalogSearchQueries(item).slice(0, 3);
+  const urls = [];
+  const seen = new Set();
+  for (const query of queries) {
+    const ddgUrl = `https://html.duckduckgo.com/html/?q=${encodeURIComponent(`site:komponentkoll.se/produkt "${query}"`)}`;
+    const html = await fetchTextWithBrowserHeaders(ddgUrl).catch(() => null);
+    if (!html) continue;
+    const matches = html.matchAll(/uddg=([^"&\s>]+)/gi);
+    for (const match of matches) {
+      const candidateUrl = normalizeRelativeUrl(decodeURIComponent(match[1] || ""), "https://komponentkoll.se");
+      if (
+        candidateUrl &&
+        /^https:\/\/komponentkoll\.se\/produkt\//i.test(candidateUrl) &&
+        !seen.has(candidateUrl)
+      ) {
+        seen.add(candidateUrl);
+        urls.push(candidateUrl);
+      }
+    }
+  }
+
+  komponentkollProductSearchCache.set(cacheKey, {
+    updatedAt: Date.now(),
+    urls,
+  });
+  return urls;
+};
+
 const buildCatalogSearchQueries = (item) => {
   const variants = new Set();
   const addVariant = (value) => {
@@ -1892,6 +1933,16 @@ const PRISJAKT_PRODUCT_URL_OVERRIDES = {
   "mb-am4-msi-b550-tomahawk": "https://www.prisjakt.nu/produkt.php?p=5386548",
   "mb-am5-msi-b650-tomahawk-wifi": "https://www.prisjakt.nu/produkt.php?p=7153870",
   "mb-am4-gigabyte-x570-aorus-elite": "https://www.prisjakt.nu/produkt.php?p=5150976",
+};
+const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
+  "ram-1": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
+  "ram-12": "https://komponentkoll.se/produkt/119068-corsair-dominator-platinum-rgb",
+  "ram-20": "https://komponentkoll.se/produkt/1461803-corsair-vengeance-rgb-ddr5-6000mhz-2x8gb-cl36-xmp-expo-cmh16gx5m2e6000z36",
+  "ram-21": "https://komponentkoll.se/produkt/1373530-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-svart",
+  "ram-22": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
+  "ram-24": "https://komponentkoll.se/produkt/1382458-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-vit",
+  "mb-am4-gigabyte-x570-aorus-elite": "https://komponentkoll.se/produkt/105944-gigabyte-x570-aorus-elite-socket-am4",
+  "mb-am4-msi-mag-b550m-mortar-wifi": "https://komponentkoll.se/produkt/119236-msi-mag-b550m-mortar-wifi",
 };
 const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
   "cpu-am4-ryzen-3-3100": {
@@ -2308,12 +2359,23 @@ const normalizeKomponentkollStoreId = (value) => {
 };
 
 const findBestKomponentkollProductForItem = async (item) => {
+  const overrideUrl = normalizeRelativeUrl(
+    firstText(CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES[item?.id]),
+    "https://komponentkoll.se"
+  );
+  if (overrideUrl) {
+    return {
+      title: sanitizeText(String(item?.name || ""), 240),
+      lowest_price: null,
+      product_url: overrideUrl,
+      score: Number.MAX_SAFE_INTEGER,
+    };
+  }
+
   const category = getCustomBuildCategoryForItem(item);
   const products = await getKomponentkollCategoryProducts(category);
-  if (!Array.isArray(products) || products.length === 0) return null;
-
   let bestCandidate = null;
-  for (const product of products) {
+  for (const product of Array.isArray(products) ? products : []) {
     const title = sanitizeText(String(product?.name || ""), 240);
     const uriTitle = sanitizeText(String(product?.uri || "").replace(/[-_]+/g, " "), 280);
     const lowestPrice = parseMoneyValue(product?.price, product?.lowestPrice?.amount);
@@ -2342,10 +2404,11 @@ const findBestKomponentkollProductForItem = async (item) => {
   return bestCandidate;
 };
 
-const extractStoreOffersFromKomponentkollProductHtml = (html, item) => {
+const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = "") => {
   const nextData = extractNextDataScriptJson(html);
   const product = nextData?.props?.initialProps?.pageProps?.product;
-  if (!product || !doesCatalogTitleMatchItem(firstText(product?.name), item)) {
+  const productTitleForMatch = `${firstText(product?.name)} ${buildTitleFromProductUrl(sourceUrl)}`.trim();
+  if (!product || !doesCatalogTitleMatchItem(productTitleForMatch, item)) {
     return [];
   }
 
@@ -2454,6 +2517,28 @@ const findBestPriceRunnerProductForItem = async (item) => {
       ) {
         bestCandidate = candidate;
       }
+    }
+  }
+
+  if (bestCandidate) {
+    return bestCandidate;
+  }
+
+  const siteSearchCandidates = await fetchKomponentkollProductUrlCandidates(item).catch(() => []);
+  for (const candidateUrl of siteSearchCandidates) {
+    const html = await fetchTextWithBrowserHeaders(candidateUrl).catch(() => null);
+    const product = extractNextDataScriptJson(html)?.props?.initialProps?.pageProps?.product;
+    const title = sanitizeText(String(product?.name || ""), 240);
+    const score = scoreCatalogSourceProductForItem(`${title} ${candidateUrl}`.trim(), item);
+    if (score < 0) continue;
+    const candidate = {
+      title,
+      lowest_price: parseMoneyValue(product?.lowestPrice?.amount, product?.lowestprice, product?.price),
+      product_url: candidateUrl,
+      score,
+    };
+    if (!bestCandidate || candidate.score > bestCandidate.score) {
+      bestCandidate = candidate;
     }
   }
 
@@ -3324,7 +3409,11 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   if (komponentkollProduct?.product_url) {
     const komponentkollHtml = await fetchTextWithBrowserHeaders(komponentkollProduct.product_url).catch(() => null);
     if (komponentkollHtml) {
-      const offers = extractStoreOffersFromKomponentkollProductHtml(komponentkollHtml, item);
+      const offers = extractStoreOffersFromKomponentkollProductHtml(
+        komponentkollHtml,
+        item,
+        komponentkollProduct.product_url
+      );
       if (offers.length > 0) {
         offerLists.push(offers);
         const komponentkollOfferPrices = offers

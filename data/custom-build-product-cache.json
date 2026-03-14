@@ -1,16 +1,16 @@
 {
   "version": "multi-source-v2",
-  "saved_at": "2026-03-14T19:56:29.329Z",
+  "saved_at": "2026-03-14T21:10:06.049Z",
   "entries": [
     {
       "key": "multi-source-v2:cpu-am4-ryzen-3-3200g",
       "item_id": "cpu-am4-ryzen-3-3200g",
-      "updatedAt": 1773517754643,
+      "updatedAt": 1773522468719,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-3-3200g",
-        "updated_at": "2026-03-14T19:49:14.643Z",
-        "next_refresh_at": "2026-03-15T19:49:14.643Z",
+        "updated_at": "2026-03-14T21:07:48.719Z",
+        "next_refresh_at": "2026-03-15T21:07:48.719Z",
         "lowest_price": 626,
         "reference_lowest_price": 626,
         "reference_source": "komponentkoll",
@@ -27,7 +27,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:49:14.643Z",
+            "updated_at": "2026-03-14T21:07:48.719Z",
             "error": null
           }
         ]
@@ -36,12 +36,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-3-3100",
       "item_id": "cpu-am4-ryzen-3-3100",
-      "updatedAt": 1773517729030,
+      "updatedAt": 1773522444412,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-3-3100",
-        "updated_at": "2026-03-14T19:48:49.030Z",
-        "next_refresh_at": "2026-03-15T19:48:49.030Z",
+        "updated_at": "2026-03-14T21:07:24.412Z",
+        "next_refresh_at": "2026-03-15T21:07:24.412Z",
         "lowest_price": 390,
         "reference_lowest_price": 390,
         "reference_source": "komponentkoll",
@@ -58,7 +58,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:48:49.030Z",
+            "updated_at": "2026-03-14T21:07:24.412Z",
             "error": null
           },
           {
@@ -73,7 +73,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:48:49.030Z",
+            "updated_at": "2026-03-14T21:07:24.412Z",
             "error": null
           }
         ]
@@ -82,12 +82,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-5-3600",
       "item_id": "cpu-am4-ryzen-5-3600",
-      "updatedAt": 1773517779888,
+      "updatedAt": 1773522492076,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-5-3600",
-        "updated_at": "2026-03-14T19:49:39.888Z",
-        "next_refresh_at": "2026-03-15T19:49:39.888Z",
+        "updated_at": "2026-03-14T21:08:12.076Z",
+        "next_refresh_at": "2026-03-15T21:08:12.076Z",
         "lowest_price": 815,
         "reference_lowest_price": 815,
         "reference_source": "komponentkoll",
@@ -104,7 +104,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:49:39.888Z",
+            "updated_at": "2026-03-14T21:08:12.076Z",
             "error": null
           }
         ]
@@ -113,12 +113,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-5-4500",
       "item_id": "cpu-am4-ryzen-5-4500",
-      "updatedAt": 1773517805498,
+      "updatedAt": 1773522515727,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-5-4500",
-        "updated_at": "2026-03-14T19:50:05.498Z",
-        "next_refresh_at": "2026-03-15T19:50:05.498Z",
+        "updated_at": "2026-03-14T21:08:35.727Z",
+        "next_refresh_at": "2026-03-15T21:08:35.727Z",
         "lowest_price": 759,
         "reference_lowest_price": 769,
         "reference_source": "komponentkoll",
@@ -135,7 +135,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:05.498Z",
+            "updated_at": "2026-03-14T21:08:35.727Z",
             "error": null
           },
           {
@@ -150,7 +150,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:05.498Z",
+            "updated_at": "2026-03-14T21:08:35.727Z",
             "error": null
           },
           {
@@ -165,7 +165,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:05.498Z",
+            "updated_at": "2026-03-14T21:08:35.727Z",
             "error": null
           },
           {
@@ -180,7 +180,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:05.498Z",
+            "updated_at": "2026-03-14T21:08:35.727Z",
             "error": null
           },
           {
@@ -195,7 +195,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:05.498Z",
+            "updated_at": "2026-03-14T21:08:35.727Z",
             "error": null
           }
         ]
@@ -204,12 +204,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-5-5500",
       "item_id": "cpu-am4-ryzen-5-5500",
-      "updatedAt": 1773517830603,
+      "updatedAt": 1773522539660,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-5-5500",
-        "updated_at": "2026-03-14T19:50:30.603Z",
-        "next_refresh_at": "2026-03-15T19:50:30.603Z",
+        "updated_at": "2026-03-14T21:08:59.660Z",
+        "next_refresh_at": "2026-03-15T21:08:59.660Z",
         "lowest_price": 989,
         "reference_lowest_price": 989,
         "reference_source": "komponentkoll",
@@ -226,7 +226,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:30.603Z",
+            "updated_at": "2026-03-14T21:08:59.660Z",
             "error": null
           },
           {
@@ -241,22 +241,22 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:30.603Z",
+            "updated_at": "2026-03-14T21:08:59.660Z",
             "error": null
           },
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "trusted_source": "komponentkoll",
-            "product_url": "https://www.proshop.se/CPU/AMD-Ryzen-5-5500-Wraith-Stealth-CPU-6-kaernor-36-GHz-AMD-AM4-AMD-Boxed-med-kylare/3056701",
+            "trusted_source": null,
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3056701?client_id=1331",
             "search_url": null,
             "price": 989,
             "total_price": 989,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:30.603Z",
+            "updated_at": "2026-03-14T21:08:59.660Z",
             "error": null
           },
           {
@@ -271,22 +271,22 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:30.603Z",
+            "updated_at": "2026-03-14T21:08:59.660Z",
             "error": null
           },
           {
             "store_id": "inet",
             "store": "Inet",
-            "status": "search_only",
-            "trusted_source": null,
-            "product_url": null,
-            "search_url": "https://www.inet.se/sok?q=AMD%20Ryzen%205%205500%203.6%20GHz%2019MB",
-            "price": null,
-            "total_price": null,
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/5304698/amd-ryzen-5-5500-3-6-ghz-19mb",
+            "search_url": null,
+            "price": 1089,
+            "total_price": 1089,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:30.603Z",
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:59.660Z",
             "error": null
           }
         ]
@@ -295,12 +295,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-5-5600",
       "item_id": "cpu-am4-ryzen-5-5600",
-      "updatedAt": 1773517855042,
+      "updatedAt": 1773522573440,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-5-5600",
-        "updated_at": "2026-03-14T19:50:55.042Z",
-        "next_refresh_at": "2026-03-15T19:50:55.042Z",
+        "updated_at": "2026-03-14T21:09:33.440Z",
+        "next_refresh_at": "2026-03-15T21:09:33.440Z",
         "lowest_price": 1579,
         "reference_lowest_price": 1579,
         "reference_source": "komponentkoll",
@@ -317,7 +317,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:55.042Z",
+            "updated_at": "2026-03-14T21:09:33.440Z",
             "error": null
           },
           {
@@ -332,7 +332,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:55.042Z",
+            "updated_at": "2026-03-14T21:09:33.440Z",
             "error": null
           },
           {
@@ -347,7 +347,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:55.042Z",
+            "updated_at": "2026-03-14T21:09:33.440Z",
             "error": null
           },
           {
@@ -362,22 +362,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:55.042Z",
-            "error": null
-          },
-          {
-            "store_id": "amazon-se",
-            "store": "Amazon.se",
-            "status": "available",
-            "trusted_source": null,
-            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B09XN7CYLN?client_id=1331",
-            "search_url": null,
-            "price": 2211,
-            "total_price": 2211,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:55.042Z",
+            "updated_at": "2026-03-14T21:09:33.440Z",
             "error": null
           }
         ]
@@ -386,12 +371,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-5-5600x",
       "item_id": "cpu-am4-ryzen-5-5600x",
-      "updatedAt": 1773517880237,
+      "updatedAt": 1773521738917,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-5-5600x",
-        "updated_at": "2026-03-14T19:51:20.237Z",
-        "next_refresh_at": "2026-03-15T19:51:20.237Z",
+        "updated_at": "2026-03-14T20:55:38.917Z",
+        "next_refresh_at": "2026-03-15T20:55:38.917Z",
         "lowest_price": 1422,
         "reference_lowest_price": 1619,
         "reference_source": "komponentkoll",
@@ -408,7 +393,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:20.237Z",
+            "updated_at": "2026-03-14T20:55:38.917Z",
             "error": null
           },
           {
@@ -423,7 +408,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:20.237Z",
+            "updated_at": "2026-03-14T20:55:38.917Z",
             "error": null
           },
           {
@@ -438,7 +423,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:20.237Z",
+            "updated_at": "2026-03-14T20:55:38.917Z",
             "error": null
           },
           {
@@ -453,7 +438,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:51:20.237Z",
+            "updated_at": "2026-03-14T20:55:38.917Z",
             "error": null
           },
           {
@@ -468,7 +453,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:51:20.237Z",
+            "updated_at": "2026-03-14T20:55:38.917Z",
             "error": null
           }
         ]
@@ -477,12 +462,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-5-5600gt",
       "item_id": "cpu-am4-ryzen-5-5600gt",
-      "updatedAt": 1773517904447,
+      "updatedAt": 1773521742392,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-5-5600gt",
-        "updated_at": "2026-03-14T19:51:44.447Z",
-        "next_refresh_at": "2026-03-15T19:51:44.447Z",
+        "updated_at": "2026-03-14T20:55:42.392Z",
+        "next_refresh_at": "2026-03-15T20:55:42.392Z",
         "lowest_price": 1579,
         "reference_lowest_price": 1579,
         "reference_source": "komponentkoll",
@@ -499,7 +484,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:44.447Z",
+            "updated_at": "2026-03-14T20:55:42.392Z",
             "error": null
           },
           {
@@ -514,7 +499,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:44.447Z",
+            "updated_at": "2026-03-14T20:55:42.392Z",
             "error": null
           },
           {
@@ -529,7 +514,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:44.447Z",
+            "updated_at": "2026-03-14T20:55:42.392Z",
             "error": null
           },
           {
@@ -544,7 +529,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:44.447Z",
+            "updated_at": "2026-03-14T20:55:42.392Z",
             "error": null
           }
         ]
@@ -553,12 +538,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5700x",
       "item_id": "cpu-am4-ryzen-7-5700x",
-      "updatedAt": 1773517954288,
+      "updatedAt": 1773521748873,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5700x",
-        "updated_at": "2026-03-14T19:52:34.288Z",
-        "next_refresh_at": "2026-03-15T19:52:34.288Z",
+        "updated_at": "2026-03-14T20:55:48.873Z",
+        "next_refresh_at": "2026-03-15T20:55:48.873Z",
         "lowest_price": 1563,
         "reference_lowest_price": 1839,
         "reference_source": "komponentkoll",
@@ -575,7 +560,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:34.288Z",
+            "updated_at": "2026-03-14T20:55:48.873Z",
             "error": null
           },
           {
@@ -590,7 +575,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:34.288Z",
+            "updated_at": "2026-03-14T20:55:48.873Z",
             "error": null
           },
           {
@@ -605,7 +590,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:34.288Z",
+            "updated_at": "2026-03-14T20:55:48.873Z",
             "error": null
           },
           {
@@ -620,7 +605,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:34.288Z",
+            "updated_at": "2026-03-14T20:55:48.873Z",
             "error": null
           },
           {
@@ -635,7 +620,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:34.288Z",
+            "updated_at": "2026-03-14T20:55:48.873Z",
             "error": null
           }
         ]
@@ -644,12 +629,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5700g",
       "item_id": "cpu-am4-ryzen-7-5700g",
-      "updatedAt": 1773517928873,
+      "updatedAt": 1773521745663,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5700g",
-        "updated_at": "2026-03-14T19:52:08.873Z",
-        "next_refresh_at": "2026-03-15T19:52:08.873Z",
+        "updated_at": "2026-03-14T20:55:45.663Z",
+        "next_refresh_at": "2026-03-15T20:55:45.663Z",
         "lowest_price": 2089,
         "reference_lowest_price": 2089,
         "reference_source": "komponentkoll",
@@ -666,7 +651,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:08.873Z",
+            "updated_at": "2026-03-14T20:55:45.663Z",
             "error": null
           },
           {
@@ -681,7 +666,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:08.873Z",
+            "updated_at": "2026-03-14T20:55:45.663Z",
             "error": null
           },
           {
@@ -696,7 +681,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:08.873Z",
+            "updated_at": "2026-03-14T20:55:45.663Z",
             "error": null
           },
           {
@@ -711,7 +696,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:08.873Z",
+            "updated_at": "2026-03-14T20:55:45.663Z",
             "error": null
           },
           {
@@ -726,7 +711,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:08.873Z",
+            "updated_at": "2026-03-14T20:55:45.663Z",
             "error": null
           }
         ]
@@ -735,12 +720,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5700",
       "item_id": "cpu-am4-ryzen-7-5700",
-      "updatedAt": 1773517980123,
+      "updatedAt": 1773521772213,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5700",
-        "updated_at": "2026-03-14T19:53:00.123Z",
-        "next_refresh_at": "2026-03-15T19:53:00.123Z",
+        "updated_at": "2026-03-14T20:56:12.213Z",
+        "next_refresh_at": "2026-03-15T20:56:12.213Z",
         "lowest_price": 1700,
         "reference_lowest_price": 1700,
         "reference_source": "komponentkoll",
@@ -757,7 +742,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:00.123Z",
+            "updated_at": "2026-03-14T20:56:12.213Z",
             "error": null
           },
           {
@@ -772,7 +757,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:00.123Z",
+            "updated_at": "2026-03-14T20:56:12.213Z",
             "error": null
           }
         ]
@@ -781,12 +766,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5700x3d",
       "item_id": "cpu-am4-ryzen-7-5700x3d",
-      "updatedAt": 1773518004845,
+      "updatedAt": 1773521795927,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5700x3d",
-        "updated_at": "2026-03-14T19:53:24.845Z",
-        "next_refresh_at": "2026-03-15T19:53:24.845Z",
+        "updated_at": "2026-03-14T20:56:35.927Z",
+        "next_refresh_at": "2026-03-15T20:56:35.927Z",
         "lowest_price": 2996,
         "reference_lowest_price": 2996,
         "reference_source": "komponentkoll",
@@ -803,7 +788,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:53:24.845Z",
+            "updated_at": "2026-03-14T20:56:35.927Z",
             "error": null
           }
         ]
@@ -812,12 +797,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5800x",
       "item_id": "cpu-am4-ryzen-7-5800x",
-      "updatedAt": 1773518027150,
+      "updatedAt": 1773521818614,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5800x",
-        "updated_at": "2026-03-14T19:53:47.150Z",
-        "next_refresh_at": "2026-03-15T19:53:47.150Z",
+        "updated_at": "2026-03-14T20:56:58.614Z",
+        "next_refresh_at": "2026-03-15T20:56:58.614Z",
         "lowest_price": 2177,
         "reference_lowest_price": 2190,
         "reference_source": "komponentkoll",
@@ -834,7 +819,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:47.150Z",
+            "updated_at": "2026-03-14T20:56:58.614Z",
             "error": null
           },
           {
@@ -849,7 +834,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:47.150Z",
+            "updated_at": "2026-03-14T20:56:58.614Z",
             "error": null
           },
           {
@@ -864,7 +849,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:47.150Z",
+            "updated_at": "2026-03-14T20:56:58.614Z",
             "error": null
           }
         ]
@@ -873,12 +858,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5800xt",
       "item_id": "cpu-am4-ryzen-7-5800xt",
-      "updatedAt": 1773518052864,
+      "updatedAt": 1773521842002,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5800xt",
-        "updated_at": "2026-03-14T19:54:12.864Z",
-        "next_refresh_at": "2026-03-15T19:54:12.864Z",
+        "updated_at": "2026-03-14T20:57:22.002Z",
+        "next_refresh_at": "2026-03-15T20:57:22.002Z",
         "lowest_price": 2289,
         "reference_lowest_price": 2289,
         "reference_source": "komponentkoll",
@@ -895,7 +880,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:54:12.864Z",
+            "updated_at": "2026-03-14T20:57:22.002Z",
             "error": null
           },
           {
@@ -910,7 +895,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:54:12.864Z",
+            "updated_at": "2026-03-14T20:57:22.002Z",
             "error": null
           },
           {
@@ -925,7 +910,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:54:12.864Z",
+            "updated_at": "2026-03-14T20:57:22.002Z",
             "error": null
           }
         ]
@@ -934,12 +919,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-7-5800x3d",
       "item_id": "cpu-am4-ryzen-7-5800x3d",
-      "updatedAt": 1773518076891,
+      "updatedAt": 1773521865574,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-7-5800x3d",
-        "updated_at": "2026-03-14T19:54:36.891Z",
-        "next_refresh_at": "2026-03-15T19:54:36.891Z",
+        "updated_at": "2026-03-14T20:57:45.574Z",
+        "next_refresh_at": "2026-03-15T20:57:45.574Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -949,12 +934,12 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-9-5900x",
       "item_id": "cpu-am4-ryzen-9-5900x",
-      "updatedAt": 1773518101483,
+      "updatedAt": 1773521910915,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-9-5900x",
-        "updated_at": "2026-03-14T19:55:01.483Z",
-        "next_refresh_at": "2026-03-15T19:55:01.483Z",
+        "updated_at": "2026-03-14T20:58:30.915Z",
+        "next_refresh_at": "2026-03-15T20:58:30.915Z",
         "lowest_price": 3249,
         "reference_lowest_price": 4048,
         "reference_source": "komponentkoll",
@@ -971,7 +956,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:01.483Z",
+            "updated_at": "2026-03-14T20:58:30.915Z",
             "error": null
           },
           {
@@ -986,7 +971,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:01.483Z",
+            "updated_at": "2026-03-14T20:58:30.915Z",
             "error": null
           },
           {
@@ -1001,7 +986,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:55:01.483Z",
+            "updated_at": "2026-03-14T20:58:30.915Z",
             "error": null
           }
         ]
@@ -1010,31 +995,16 @@
     {
       "key": "multi-source-v2:cpu-am4-ryzen-9-5950x",
       "item_id": "cpu-am4-ryzen-9-5950x",
-      "updatedAt": 1773518126973,
+      "updatedAt": 1773521934079,
       "response": {
         "ok": true,
         "item_id": "cpu-am4-ryzen-9-5950x",
-        "updated_at": "2026-03-14T19:55:26.973Z",
-        "next_refresh_at": "2026-03-15T19:55:26.973Z",
-        "lowest_price": 3562,
-        "reference_lowest_price": 3562,
+        "updated_at": "2026-03-14T20:58:54.079Z",
+        "next_refresh_at": "2026-03-15T20:58:54.079Z",
+        "lowest_price": 3631,
+        "reference_lowest_price": 3631,
         "reference_source": "komponentkoll",
         "offers": [
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "trusted_source": "komponentkoll",
-            "product_url": "https://www.proshop.se/CPU/AMD-Ryzen-9-5950X-CPU-16-kaernor-34-GHz-AMD-AM4-AMD-Boxed-utan-kylare/2884175",
-            "search_url": null,
-            "price": 3562,
-            "total_price": 3562,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:26.973Z",
-            "error": null
-          },
           {
             "store_id": "computersalg",
             "store": "Computersalg",
@@ -1047,7 +1017,22 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:26.973Z",
+            "updated_at": "2026-03-14T20:58:54.079Z",
+            "error": null
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/CPU/AMD-Ryzen-9-5950X-CPU-16-kaernor-34-GHz-AMD-AM4-AMD-Boxed-utan-kylare/2884175",
+            "search_url": null,
+            "price": 3631,
+            "total_price": 3631,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-14T20:58:54.079Z",
             "error": null
           }
         ]
@@ -1056,12 +1041,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-7500f-tray",
       "item_id": "cpu-am5-ryzen-5-7500f-tray",
-      "updatedAt": 1773518151896,
+      "updatedAt": 1773521957763,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-7500f-tray",
-        "updated_at": "2026-03-14T19:55:51.896Z",
-        "next_refresh_at": "2026-03-15T19:55:51.896Z",
+        "updated_at": "2026-03-14T20:59:17.763Z",
+        "next_refresh_at": "2026-03-15T20:59:17.763Z",
         "lowest_price": 1689,
         "reference_lowest_price": 1689,
         "reference_source": "komponentkoll",
@@ -1078,7 +1063,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:51.896Z",
+            "updated_at": "2026-03-14T20:59:17.763Z",
             "error": null
           },
           {
@@ -1093,7 +1078,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:51.896Z",
+            "updated_at": "2026-03-14T20:59:17.763Z",
             "error": null
           }
         ]
@@ -1102,12 +1087,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-7500x3d",
       "item_id": "cpu-am5-ryzen-5-7500x3d",
-      "updatedAt": 1773517020339,
+      "updatedAt": 1773521981894,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-7500x3d",
-        "updated_at": "2026-03-14T19:37:00.339Z",
-        "next_refresh_at": "2026-03-15T19:37:00.339Z",
+        "updated_at": "2026-03-14T20:59:41.894Z",
+        "next_refresh_at": "2026-03-15T20:59:41.894Z",
         "lowest_price": 2429,
         "reference_lowest_price": 2589,
         "reference_source": "komponentkoll",
@@ -1124,7 +1109,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:00.339Z",
+            "updated_at": "2026-03-14T20:59:41.894Z",
             "error": null
           },
           {
@@ -1139,7 +1124,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:00.339Z",
+            "updated_at": "2026-03-14T20:59:41.894Z",
             "error": null
           },
           {
@@ -1154,7 +1139,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:00.339Z",
+            "updated_at": "2026-03-14T20:59:41.894Z",
             "error": null
           },
           {
@@ -1169,7 +1154,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:00.339Z",
+            "updated_at": "2026-03-14T20:59:41.894Z",
             "error": null
           },
           {
@@ -1184,7 +1169,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:00.339Z",
+            "updated_at": "2026-03-14T20:59:41.894Z",
             "error": null
           }
         ]
@@ -1193,14 +1178,14 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-7600",
       "item_id": "cpu-am5-ryzen-5-7600",
-      "updatedAt": 1773517046625,
+      "updatedAt": 1773522005375,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-7600",
-        "updated_at": "2026-03-14T19:37:26.625Z",
-        "next_refresh_at": "2026-03-15T19:37:26.625Z",
-        "lowest_price": 1948,
-        "reference_lowest_price": 1948,
+        "updated_at": "2026-03-14T21:00:05.375Z",
+        "next_refresh_at": "2026-03-15T21:00:05.375Z",
+        "lowest_price": 1989,
+        "reference_lowest_price": 1989,
         "reference_source": "komponentkoll",
         "offers": [
           {
@@ -1210,12 +1195,12 @@
             "trusted_source": "komponentkoll",
             "product_url": "https://www.proshop.se/CPU/AMD-Ryzen-5-7600X-Tray-CPU-6-kaernor-47-GHz-AMD-AM5-Bulk-utan-kylare/3210504",
             "search_url": null,
-            "price": 1948,
-            "total_price": 1948,
+            "price": 1989,
+            "total_price": 1989,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:26.625Z",
+            "updated_at": "2026-03-14T21:00:05.375Z",
             "error": null
           },
           {
@@ -1230,7 +1215,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:26.625Z",
+            "updated_at": "2026-03-14T21:00:05.375Z",
             "error": null
           },
           {
@@ -1245,7 +1230,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:26.625Z",
+            "updated_at": "2026-03-14T21:00:05.375Z",
             "error": null
           },
           {
@@ -1260,7 +1245,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:26.625Z",
+            "updated_at": "2026-03-14T21:00:05.375Z",
             "error": null
           },
           {
@@ -1275,7 +1260,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:26.625Z",
+            "updated_at": "2026-03-14T21:00:05.375Z",
             "error": null
           }
         ]
@@ -1284,12 +1269,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-7600-tray",
       "item_id": "cpu-am5-ryzen-5-7600-tray",
-      "updatedAt": 1773517071876,
+      "updatedAt": 1773522029198,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-7600-tray",
-        "updated_at": "2026-03-14T19:37:51.876Z",
-        "next_refresh_at": "2026-03-15T19:37:51.876Z",
+        "updated_at": "2026-03-14T21:00:29.198Z",
+        "next_refresh_at": "2026-03-15T21:00:29.198Z",
         "lowest_price": 1949,
         "reference_lowest_price": 1949,
         "reference_source": "komponentkoll",
@@ -1306,7 +1291,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:37:51.876Z",
+            "updated_at": "2026-03-14T21:00:29.198Z",
             "error": null
           }
         ]
@@ -1315,14 +1300,14 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-7600x",
       "item_id": "cpu-am5-ryzen-5-7600x",
-      "updatedAt": 1773517098070,
+      "updatedAt": 1773522052803,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-7600x",
-        "updated_at": "2026-03-14T19:38:18.070Z",
-        "next_refresh_at": "2026-03-15T19:38:18.070Z",
-        "lowest_price": 1948,
-        "reference_lowest_price": 1948,
+        "updated_at": "2026-03-14T21:00:52.803Z",
+        "next_refresh_at": "2026-03-15T21:00:52.803Z",
+        "lowest_price": 1989,
+        "reference_lowest_price": 1989,
         "reference_source": "komponentkoll",
         "offers": [
           {
@@ -1332,12 +1317,12 @@
             "trusted_source": "komponentkoll",
             "product_url": "https://www.proshop.se/CPU/AMD-Ryzen-5-7600X-Tray-CPU-6-kaernor-47-GHz-AMD-AM5-Bulk-utan-kylare/3210504",
             "search_url": null,
-            "price": 1948,
-            "total_price": 1948,
+            "price": 1989,
+            "total_price": 1989,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:18.070Z",
+            "updated_at": "2026-03-14T21:00:52.803Z",
             "error": null
           },
           {
@@ -1352,7 +1337,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:18.070Z",
+            "updated_at": "2026-03-14T21:00:52.803Z",
             "error": null
           },
           {
@@ -1367,7 +1352,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:18.070Z",
+            "updated_at": "2026-03-14T21:00:52.803Z",
             "error": null
           },
           {
@@ -1382,7 +1367,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:18.070Z",
+            "updated_at": "2026-03-14T21:00:52.803Z",
             "error": null
           },
           {
@@ -1397,7 +1382,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:18.070Z",
+            "updated_at": "2026-03-14T21:00:52.803Z",
             "error": null
           }
         ]
@@ -1406,12 +1391,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-8600g",
       "item_id": "cpu-am5-ryzen-5-8600g",
-      "updatedAt": 1773517121879,
+      "updatedAt": 1773522075940,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-8600g",
-        "updated_at": "2026-03-14T19:38:41.879Z",
-        "next_refresh_at": "2026-03-15T19:38:41.879Z",
+        "updated_at": "2026-03-14T21:01:15.940Z",
+        "next_refresh_at": "2026-03-15T21:01:15.940Z",
         "lowest_price": 1886,
         "reference_lowest_price": 1886,
         "reference_source": "komponentkoll",
@@ -1428,7 +1413,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:41.879Z",
+            "updated_at": "2026-03-14T21:01:15.940Z",
             "error": null
           },
           {
@@ -1443,7 +1428,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:41.879Z",
+            "updated_at": "2026-03-14T21:01:15.940Z",
             "error": null
           },
           {
@@ -1458,7 +1443,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:41.879Z",
+            "updated_at": "2026-03-14T21:01:15.940Z",
             "error": null
           },
           {
@@ -1473,7 +1458,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:41.879Z",
+            "updated_at": "2026-03-14T21:01:15.940Z",
             "error": null
           },
           {
@@ -1488,7 +1473,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:38:41.879Z",
+            "updated_at": "2026-03-14T21:01:15.940Z",
             "error": null
           }
         ]
@@ -1497,12 +1482,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-8700f",
       "item_id": "cpu-am5-ryzen-7-8700f",
-      "updatedAt": 1773517146118,
+      "updatedAt": 1773522099811,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-8700f",
-        "updated_at": "2026-03-14T19:39:06.118Z",
-        "next_refresh_at": "2026-03-15T19:39:06.118Z",
+        "updated_at": "2026-03-14T21:01:39.811Z",
+        "next_refresh_at": "2026-03-15T21:01:39.811Z",
         "lowest_price": 2289,
         "reference_lowest_price": 2289,
         "reference_source": "komponentkoll",
@@ -1519,7 +1504,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:39:06.118Z",
+            "updated_at": "2026-03-14T21:01:39.811Z",
             "error": null
           },
           {
@@ -1534,7 +1519,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:39:06.118Z",
+            "updated_at": "2026-03-14T21:01:39.811Z",
             "error": null
           },
           {
@@ -1549,7 +1534,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:39:06.118Z",
+            "updated_at": "2026-03-14T21:01:39.811Z",
             "error": null
           },
           {
@@ -1564,7 +1549,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:39:06.118Z",
+            "updated_at": "2026-03-14T21:01:39.811Z",
             "error": null
           }
         ]
@@ -1573,12 +1558,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-8700f-tray",
       "item_id": "cpu-am5-ryzen-7-8700f-tray",
-      "updatedAt": 1773517170821,
+      "updatedAt": 1773522123093,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-8700f-tray",
-        "updated_at": "2026-03-14T19:39:30.821Z",
-        "next_refresh_at": "2026-03-15T19:39:30.821Z",
+        "updated_at": "2026-03-14T21:02:03.093Z",
+        "next_refresh_at": "2026-03-15T21:02:03.093Z",
         "lowest_price": 2289,
         "reference_lowest_price": 2289,
         "reference_source": "prisjakt",
@@ -1595,7 +1580,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:39:30.821Z",
+            "updated_at": "2026-03-14T21:02:03.093Z",
             "error": null
           }
         ]
@@ -1604,12 +1589,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-8700g",
       "item_id": "cpu-am5-ryzen-7-8700g",
-      "updatedAt": 1773517202421,
+      "updatedAt": 1773522146322,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-8700g",
-        "updated_at": "2026-03-14T19:40:02.421Z",
-        "next_refresh_at": "2026-03-15T19:40:02.421Z",
+        "updated_at": "2026-03-14T21:02:26.322Z",
+        "next_refresh_at": "2026-03-15T21:02:26.322Z",
         "lowest_price": 2849,
         "reference_lowest_price": 2849,
         "reference_source": "prisjakt",
@@ -1626,7 +1611,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:02.421Z",
+            "updated_at": "2026-03-14T21:02:26.322Z",
             "error": null
           },
           {
@@ -1636,12 +1621,12 @@
             "trusted_source": null,
             "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3398506?client_id=1331",
             "search_url": null,
-            "price": 2886,
-            "total_price": 2886,
+            "price": 2990,
+            "total_price": 2990,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:02.421Z",
+            "updated_at": "2026-03-14T21:02:26.322Z",
             "error": null
           },
           {
@@ -1656,7 +1641,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:02.421Z",
+            "updated_at": "2026-03-14T21:02:26.322Z",
             "error": null
           },
           {
@@ -1671,7 +1656,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:02.421Z",
+            "updated_at": "2026-03-14T21:02:26.322Z",
             "error": null
           }
         ]
@@ -1680,12 +1665,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-9600",
       "item_id": "cpu-am5-ryzen-5-9600",
-      "updatedAt": 1773517227471,
+      "updatedAt": 1773522169753,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-9600",
-        "updated_at": "2026-03-14T19:40:27.471Z",
-        "next_refresh_at": "2026-03-15T19:40:27.471Z",
+        "updated_at": "2026-03-14T21:02:49.753Z",
+        "next_refresh_at": "2026-03-15T21:02:49.753Z",
         "lowest_price": 1988,
         "reference_lowest_price": 1988,
         "reference_source": "komponentkoll",
@@ -1702,7 +1687,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:27.471Z",
+            "updated_at": "2026-03-14T21:02:49.753Z",
             "error": null
           },
           {
@@ -1717,7 +1702,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:27.471Z",
+            "updated_at": "2026-03-14T21:02:49.753Z",
             "error": null
           },
           {
@@ -1732,7 +1717,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:27.471Z",
+            "updated_at": "2026-03-14T21:02:49.753Z",
             "error": null
           },
           {
@@ -1747,7 +1732,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:27.471Z",
+            "updated_at": "2026-03-14T21:02:49.753Z",
             "error": null
           },
           {
@@ -1762,7 +1747,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:27.471Z",
+            "updated_at": "2026-03-14T21:02:49.753Z",
             "error": null
           }
         ]
@@ -1771,29 +1756,29 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-5-9600x",
       "item_id": "cpu-am5-ryzen-5-9600x",
-      "updatedAt": 1773517250949,
+      "updatedAt": 1773522193447,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-5-9600x",
-        "updated_at": "2026-03-14T19:40:50.949Z",
-        "next_refresh_at": "2026-03-15T19:40:50.949Z",
+        "updated_at": "2026-03-14T21:03:13.447Z",
+        "next_refresh_at": "2026-03-15T21:03:13.447Z",
         "lowest_price": 2174,
-        "reference_lowest_price": 2211,
+        "reference_lowest_price": 2174,
         "reference_source": "komponentkoll",
         "offers": [
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "trusted_source": null,
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3273286?client_id=1331",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/CPU/AMD-Ryzen-5-9600X-CPU-6-kaernor-39-GHz-AMD-AM5-AMD-Boxed-utan-kylare/3273286",
             "search_url": null,
             "price": 2174,
             "total_price": 2174,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:50.949Z",
+            "updated_at": "2026-03-14T21:03:13.447Z",
             "error": null
           },
           {
@@ -1808,7 +1793,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:50.949Z",
+            "updated_at": "2026-03-14T21:03:13.447Z",
             "error": null
           },
           {
@@ -1823,7 +1808,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:50.949Z",
+            "updated_at": "2026-03-14T21:03:13.447Z",
             "error": null
           },
           {
@@ -1838,7 +1823,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:50.949Z",
+            "updated_at": "2026-03-14T21:03:13.447Z",
             "error": null
           },
           {
@@ -1853,7 +1838,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:40:50.949Z",
+            "updated_at": "2026-03-14T21:03:13.447Z",
             "error": null
           }
         ]
@@ -1862,12 +1847,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-7700x",
       "item_id": "cpu-am5-ryzen-7-7700x",
-      "updatedAt": 1773517300962,
+      "updatedAt": 1773522244532,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-7700x",
-        "updated_at": "2026-03-14T19:41:40.962Z",
-        "next_refresh_at": "2026-03-15T19:41:40.962Z",
+        "updated_at": "2026-03-14T21:04:04.532Z",
+        "next_refresh_at": "2026-03-15T21:04:04.532Z",
         "lowest_price": 2589,
         "reference_lowest_price": 2589,
         "reference_source": "komponentkoll",
@@ -1884,7 +1869,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:40.962Z",
+            "updated_at": "2026-03-14T21:04:04.532Z",
             "error": null
           },
           {
@@ -1899,7 +1884,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:40.962Z",
+            "updated_at": "2026-03-14T21:04:04.532Z",
             "error": null
           },
           {
@@ -1914,7 +1899,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:40.962Z",
+            "updated_at": "2026-03-14T21:04:04.532Z",
             "error": null
           },
           {
@@ -1929,7 +1914,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:40.962Z",
+            "updated_at": "2026-03-14T21:04:04.532Z",
             "error": null
           },
           {
@@ -1944,7 +1929,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:40.962Z",
+            "updated_at": "2026-03-14T21:04:04.532Z",
             "error": null
           }
         ]
@@ -1953,12 +1938,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-7700",
       "item_id": "cpu-am5-ryzen-7-7700",
-      "updatedAt": 1773517275965,
+      "updatedAt": 1773522219744,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-7700",
-        "updated_at": "2026-03-14T19:41:15.965Z",
-        "next_refresh_at": "2026-03-15T19:41:15.965Z",
+        "updated_at": "2026-03-14T21:03:39.744Z",
+        "next_refresh_at": "2026-03-15T21:03:39.744Z",
         "lowest_price": 2589,
         "reference_lowest_price": 2589,
         "reference_source": "komponentkoll",
@@ -1975,7 +1960,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:15.965Z",
+            "updated_at": "2026-03-14T21:03:39.744Z",
             "error": null
           },
           {
@@ -1990,7 +1975,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:15.965Z",
+            "updated_at": "2026-03-14T21:03:39.744Z",
             "error": null
           },
           {
@@ -2005,7 +1990,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:15.965Z",
+            "updated_at": "2026-03-14T21:03:39.744Z",
             "error": null
           },
           {
@@ -2020,7 +2005,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:15.965Z",
+            "updated_at": "2026-03-14T21:03:39.744Z",
             "error": null
           },
           {
@@ -2035,7 +2020,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:41:15.965Z",
+            "updated_at": "2026-03-14T21:03:39.744Z",
             "error": null
           }
         ]
@@ -2044,12 +2029,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-7800x3d",
       "item_id": "cpu-am5-ryzen-7-7800x3d",
-      "updatedAt": 1773517326057,
+      "updatedAt": 1773522271254,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-7800x3d",
-        "updated_at": "2026-03-14T19:42:06.057Z",
-        "next_refresh_at": "2026-03-15T19:42:06.057Z",
+        "updated_at": "2026-03-14T21:04:31.254Z",
+        "next_refresh_at": "2026-03-15T21:04:31.254Z",
         "lowest_price": 3789,
         "reference_lowest_price": 3789,
         "reference_source": "komponentkoll",
@@ -2066,7 +2051,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:06.057Z",
+            "updated_at": "2026-03-14T21:04:31.254Z",
             "error": null
           },
           {
@@ -2081,7 +2066,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:06.057Z",
+            "updated_at": "2026-03-14T21:04:31.254Z",
             "error": null
           },
           {
@@ -2096,7 +2081,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:06.057Z",
+            "updated_at": "2026-03-14T21:04:31.254Z",
             "error": null
           },
           {
@@ -2111,7 +2096,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:06.057Z",
+            "updated_at": "2026-03-14T21:04:31.254Z",
             "error": null
           },
           {
@@ -2126,7 +2111,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:06.057Z",
+            "updated_at": "2026-03-14T21:04:31.254Z",
             "error": null
           }
         ]
@@ -2135,12 +2120,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-9-7900",
       "item_id": "cpu-am5-ryzen-9-7900",
-      "updatedAt": 1773517350253,
+      "updatedAt": 1773522294671,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-9-7900",
-        "updated_at": "2026-03-14T19:42:30.253Z",
-        "next_refresh_at": "2026-03-15T19:42:30.253Z",
+        "updated_at": "2026-03-14T21:04:54.671Z",
+        "next_refresh_at": "2026-03-15T21:04:54.671Z",
         "lowest_price": 3179,
         "reference_lowest_price": 3179,
         "reference_source": "komponentkoll",
@@ -2157,7 +2142,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:30.253Z",
+            "updated_at": "2026-03-14T21:04:54.671Z",
             "error": null
           },
           {
@@ -2172,7 +2157,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:30.253Z",
+            "updated_at": "2026-03-14T21:04:54.671Z",
             "error": null
           },
           {
@@ -2187,7 +2172,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:30.253Z",
+            "updated_at": "2026-03-14T21:04:54.671Z",
             "error": null
           },
           {
@@ -2202,7 +2187,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:30.253Z",
+            "updated_at": "2026-03-14T21:04:54.671Z",
             "error": null
           },
           {
@@ -2217,7 +2202,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:30.253Z",
+            "updated_at": "2026-03-14T21:04:54.671Z",
             "error": null
           }
         ]
@@ -2226,12 +2211,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-9700x",
       "item_id": "cpu-am5-ryzen-7-9700x",
-      "updatedAt": 1773517402195,
+      "updatedAt": 1773522344107,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-9700x",
-        "updated_at": "2026-03-14T19:43:22.195Z",
-        "next_refresh_at": "2026-03-15T19:43:22.195Z",
+        "updated_at": "2026-03-14T21:05:44.107Z",
+        "next_refresh_at": "2026-03-15T21:05:44.107Z",
         "lowest_price": 3189,
         "reference_lowest_price": 3189,
         "reference_source": "komponentkoll",
@@ -2248,7 +2233,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:22.195Z",
+            "updated_at": "2026-03-14T21:05:44.107Z",
             "error": null
           },
           {
@@ -2263,7 +2248,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:22.195Z",
+            "updated_at": "2026-03-14T21:05:44.107Z",
             "error": null
           },
           {
@@ -2278,7 +2263,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:22.195Z",
+            "updated_at": "2026-03-14T21:05:44.107Z",
             "error": null
           },
           {
@@ -2293,7 +2278,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:22.195Z",
+            "updated_at": "2026-03-14T21:05:44.107Z",
             "error": null
           },
           {
@@ -2308,7 +2293,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:22.195Z",
+            "updated_at": "2026-03-14T21:05:44.107Z",
             "error": null
           }
         ]
@@ -2317,12 +2302,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-9-7900x",
       "item_id": "cpu-am5-ryzen-9-7900x",
-      "updatedAt": 1773517376219,
+      "updatedAt": 1773522319428,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-9-7900x",
-        "updated_at": "2026-03-14T19:42:56.219Z",
-        "next_refresh_at": "2026-03-15T19:42:56.219Z",
+        "updated_at": "2026-03-14T21:05:19.428Z",
+        "next_refresh_at": "2026-03-15T21:05:19.428Z",
         "lowest_price": 3429,
         "reference_lowest_price": 3429,
         "reference_source": "komponentkoll",
@@ -2339,7 +2324,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:56.219Z",
+            "updated_at": "2026-03-14T21:05:19.428Z",
             "error": null
           },
           {
@@ -2354,7 +2339,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:56.219Z",
+            "updated_at": "2026-03-14T21:05:19.428Z",
             "error": null
           },
           {
@@ -2369,7 +2354,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:56.219Z",
+            "updated_at": "2026-03-14T21:05:19.428Z",
             "error": null
           },
           {
@@ -2384,7 +2369,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:56.219Z",
+            "updated_at": "2026-03-14T21:05:19.428Z",
             "error": null
           },
           {
@@ -2399,7 +2384,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:42:56.219Z",
+            "updated_at": "2026-03-14T21:05:19.428Z",
             "error": null
           }
         ]
@@ -2408,12 +2393,12 @@
     {
       "key": "multi-source-v2:cpu-am5-ryzen-7-9700x-tray",
       "item_id": "cpu-am5-ryzen-7-9700x-tray",
-      "updatedAt": 1773517426972,
+      "updatedAt": 1773522367446,
       "response": {
         "ok": true,
         "item_id": "cpu-am5-ryzen-7-9700x-tray",
-        "updated_at": "2026-03-14T19:43:46.972Z",
-        "next_refresh_at": "2026-03-15T19:43:46.972Z",
+        "updated_at": "2026-03-14T21:06:07.446Z",
+        "next_refresh_at": "2026-03-15T21:06:07.446Z",
         "lowest_price": 3172,
         "reference_lowest_price": 3189,
         "reference_source": "komponentkoll",
@@ -2430,7 +2415,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:46.972Z",
+            "updated_at": "2026-03-14T21:06:07.446Z",
             "error": null
           },
           {
@@ -2445,7 +2430,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:43:46.972Z",
+            "updated_at": "2026-03-14T21:06:07.446Z",
             "error": null
           }
         ]
@@ -4728,12 +4713,12 @@
     {
       "key": "multi-source-v2:mb-am4-msi-b550-tomahawk",
       "item_id": "mb-am4-msi-b550-tomahawk",
-      "updatedAt": 1773513376761,
+      "updatedAt": 1773521699923,
       "response": {
         "ok": true,
         "item_id": "mb-am4-msi-b550-tomahawk",
-        "updated_at": "2026-03-14T18:36:16.761Z",
-        "next_refresh_at": "2026-03-15T18:36:16.761Z",
+        "updated_at": "2026-03-14T20:54:59.923Z",
+        "next_refresh_at": "2026-03-15T20:54:59.923Z",
         "lowest_price": 1729,
         "reference_lowest_price": 1729,
         "reference_source": "komponentkoll",
@@ -4750,7 +4735,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:16.761Z",
+            "updated_at": "2026-03-14T20:54:59.923Z",
             "error": null
           }
         ]
@@ -4759,12 +4744,12 @@
     {
       "key": "multi-source-v2:mb-am4-asus-tuf-b550-plus-wifi-ii",
       "item_id": "mb-am4-asus-tuf-b550-plus-wifi-ii",
-      "updatedAt": 1773513376771,
+      "updatedAt": 1773521699938,
       "response": {
         "ok": true,
         "item_id": "mb-am4-asus-tuf-b550-plus-wifi-ii",
-        "updated_at": "2026-03-14T18:36:16.771Z",
-        "next_refresh_at": "2026-03-15T18:36:16.771Z",
+        "updated_at": "2026-03-14T20:54:59.938Z",
+        "next_refresh_at": "2026-03-15T20:54:59.938Z",
         "lowest_price": 1429,
         "reference_lowest_price": 1469,
         "reference_source": "komponentkoll",
@@ -4781,7 +4766,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:16.771Z",
+            "updated_at": "2026-03-14T20:54:59.938Z",
             "error": null
           },
           {
@@ -4796,7 +4781,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:16.771Z",
+            "updated_at": "2026-03-14T20:54:59.938Z",
             "error": null
           },
           {
@@ -4811,7 +4796,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:16.771Z",
+            "updated_at": "2026-03-14T20:54:59.938Z",
             "error": null
           },
           {
@@ -4826,7 +4811,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:16.771Z",
+            "updated_at": "2026-03-14T20:54:59.938Z",
             "error": null
           },
           {
@@ -4841,7 +4826,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:16.771Z",
+            "updated_at": "2026-03-14T20:54:59.938Z",
             "error": null
           }
         ]
@@ -4850,13 +4835,13 @@
     {
       "key": "multi-source-v2:mb-am4-gigabyte-b550-aorus-elite-v2",
       "item_id": "mb-am4-gigabyte-b550-aorus-elite-v2",
-      "updatedAt": 1773513399840,
+      "updatedAt": 1773521701462,
       "response": {
         "ok": true,
         "item_id": "mb-am4-gigabyte-b550-aorus-elite-v2",
-        "updated_at": "2026-03-14T18:36:39.840Z",
-        "next_refresh_at": "2026-03-15T18:36:39.840Z",
-        "lowest_price": 1460,
+        "updated_at": "2026-03-14T20:55:01.462Z",
+        "next_refresh_at": "2026-03-15T20:55:01.462Z",
+        "lowest_price": 1477,
         "reference_lowest_price": 1477,
         "reference_source": "komponentkoll",
         "offers": [
@@ -4867,12 +4852,12 @@
             "trusted_source": null,
             "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B08K16FGC8?client_id=1331",
             "search_url": null,
-            "price": 1460,
-            "total_price": 1460,
+            "price": 1477,
+            "total_price": 1477,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:39.840Z",
+            "updated_at": "2026-03-14T20:55:01.462Z",
             "error": null
           },
           {
@@ -4887,7 +4872,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:39.840Z",
+            "updated_at": "2026-03-14T20:55:01.462Z",
             "error": null
           },
           {
@@ -4902,7 +4887,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:36:39.840Z",
+            "updated_at": "2026-03-14T20:55:01.462Z",
             "error": null
           }
         ]
@@ -4911,12 +4896,12 @@
     {
       "key": "multi-source-v2:mb-am4-asrock-b550m-pro4",
       "item_id": "mb-am4-asrock-b550m-pro4",
-      "updatedAt": 1773513399872,
+      "updatedAt": 1773521701475,
       "response": {
         "ok": true,
         "item_id": "mb-am4-asrock-b550m-pro4",
-        "updated_at": "2026-03-14T18:36:39.872Z",
-        "next_refresh_at": "2026-03-15T18:36:39.872Z",
+        "updated_at": "2026-03-14T20:55:01.475Z",
+        "next_refresh_at": "2026-03-15T20:55:01.475Z",
         "lowest_price": 1158,
         "reference_lowest_price": 1158,
         "reference_source": "komponentkoll",
@@ -4933,7 +4918,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:39.872Z",
+            "updated_at": "2026-03-14T20:55:01.475Z",
             "error": null
           },
           {
@@ -4948,7 +4933,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:36:39.872Z",
+            "updated_at": "2026-03-14T20:55:01.475Z",
             "error": null
           }
         ]
@@ -4957,12 +4942,12 @@
     {
       "key": "multi-source-v2:mb-am4-msi-mpg-b550-gaming-plus",
       "item_id": "mb-am4-msi-mpg-b550-gaming-plus",
-      "updatedAt": 1773513422269,
+      "updatedAt": 1773521702583,
       "response": {
         "ok": true,
         "item_id": "mb-am4-msi-mpg-b550-gaming-plus",
-        "updated_at": "2026-03-14T18:37:02.269Z",
-        "next_refresh_at": "2026-03-15T18:37:02.269Z",
+        "updated_at": "2026-03-14T20:55:02.583Z",
+        "next_refresh_at": "2026-03-15T20:55:02.583Z",
         "lowest_price": 1243,
         "reference_lowest_price": 1349,
         "reference_source": "komponentkoll",
@@ -4979,7 +4964,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:02.269Z",
+            "updated_at": "2026-03-14T20:55:02.583Z",
             "error": null
           },
           {
@@ -4994,7 +4979,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:02.269Z",
+            "updated_at": "2026-03-14T20:55:02.583Z",
             "error": null
           },
           {
@@ -5009,7 +4994,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:02.269Z",
+            "updated_at": "2026-03-14T20:55:02.583Z",
             "error": null
           },
           {
@@ -5024,7 +5009,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:02.269Z",
+            "updated_at": "2026-03-14T20:55:02.583Z",
             "error": null
           }
         ]
@@ -5033,12 +5018,12 @@
     {
       "key": "multi-source-v2:mb-am4-asus-rog-strix-b550-f-gaming-wifi-ii",
       "item_id": "mb-am4-asus-rog-strix-b550-f-gaming-wifi-ii",
-      "updatedAt": 1773513424283,
+      "updatedAt": 1773521702770,
       "response": {
         "ok": true,
         "item_id": "mb-am4-asus-rog-strix-b550-f-gaming-wifi-ii",
-        "updated_at": "2026-03-14T18:37:04.283Z",
-        "next_refresh_at": "2026-03-15T18:37:04.283Z",
+        "updated_at": "2026-03-14T20:55:02.770Z",
+        "next_refresh_at": "2026-03-15T20:55:02.770Z",
         "lowest_price": 1747,
         "reference_lowest_price": 1890,
         "reference_source": "komponentkoll",
@@ -5055,7 +5040,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:04.283Z",
+            "updated_at": "2026-03-14T20:55:02.770Z",
             "error": null
           },
           {
@@ -5070,22 +5055,22 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:04.283Z",
+            "updated_at": "2026-03-14T20:55:02.770Z",
             "error": null
           },
           {
             "store_id": "proshop",
             "store": "Proshop",
             "status": "available",
-            "trusted_source": null,
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3034178?client_id=1331",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/Moderkort/ASUS-ROG-STRIX-B550-F-GAMING-WIFI-II-Moderkort-AMD-B550-AMD-AM4-socket-DDR4-RAM-ATX/3034178",
             "search_url": null,
             "price": 1999,
             "total_price": 1999,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:04.283Z",
+            "updated_at": "2026-03-14T20:55:02.770Z",
             "error": null
           },
           {
@@ -5100,7 +5085,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:37:04.283Z",
+            "updated_at": "2026-03-14T20:55:02.770Z",
             "error": null
           },
           {
@@ -5115,7 +5100,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:37:04.283Z",
+            "updated_at": "2026-03-14T20:55:02.770Z",
             "error": null
           }
         ]
@@ -5124,12 +5109,12 @@
     {
       "key": "multi-source-v2:mb-am4-gigabyte-x570-aorus-elite",
       "item_id": "mb-am4-gigabyte-x570-aorus-elite",
-      "updatedAt": 1773513444797,
+      "updatedAt": 1773522425065,
       "response": {
         "ok": true,
         "item_id": "mb-am4-gigabyte-x570-aorus-elite",
-        "updated_at": "2026-03-14T18:37:24.797Z",
-        "next_refresh_at": "2026-03-15T18:37:24.797Z",
+        "updated_at": "2026-03-14T21:07:05.065Z",
+        "next_refresh_at": "2026-03-15T21:07:05.065Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5139,12 +5124,12 @@
     {
       "key": "multi-source-v2:mb-am4-asrock-x570-steel-legend",
       "item_id": "mb-am4-asrock-x570-steel-legend",
-      "updatedAt": 1773513447027,
+      "updatedAt": 1773521703799,
       "response": {
         "ok": true,
         "item_id": "mb-am4-asrock-x570-steel-legend",
-        "updated_at": "2026-03-14T18:37:27.027Z",
-        "next_refresh_at": "2026-03-15T18:37:27.027Z",
+        "updated_at": "2026-03-14T20:55:03.799Z",
+        "next_refresh_at": "2026-03-15T20:55:03.799Z",
         "lowest_price": 3534,
         "reference_lowest_price": 3534,
         "reference_source": "komponentkoll",
@@ -5154,12 +5139,12 @@
     {
       "key": "multi-source-v2:mb-am4-msi-mag-b550m-mortar-wifi",
       "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
-      "updatedAt": 1773513468321,
+      "updatedAt": 1773522425080,
       "response": {
         "ok": true,
         "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
-        "updated_at": "2026-03-14T18:37:48.321Z",
-        "next_refresh_at": "2026-03-15T18:37:48.321Z",
+        "updated_at": "2026-03-14T21:07:05.080Z",
+        "next_refresh_at": "2026-03-15T21:07:05.080Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5169,12 +5154,12 @@
     {
       "key": "multi-source-v2:mb-am4-asus-rog-crosshair-viii-hero",
       "item_id": "mb-am4-asus-rog-crosshair-viii-hero",
-      "updatedAt": 1773513469077,
+      "updatedAt": 1773521706775,
       "response": {
         "ok": true,
         "item_id": "mb-am4-asus-rog-crosshair-viii-hero",
-        "updated_at": "2026-03-14T18:37:49.077Z",
-        "next_refresh_at": "2026-03-15T18:37:49.077Z",
+        "updated_at": "2026-03-14T20:55:06.775Z",
+        "next_refresh_at": "2026-03-15T20:55:06.775Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5184,12 +5169,12 @@
     {
       "key": "multi-source-v2:mb-am5-msi-b650-tomahawk-wifi",
       "item_id": "mb-am5-msi-b650-tomahawk-wifi",
-      "updatedAt": 1773513491214,
+      "updatedAt": 1773521707040,
       "response": {
         "ok": true,
         "item_id": "mb-am5-msi-b650-tomahawk-wifi",
-        "updated_at": "2026-03-14T18:38:11.214Z",
-        "next_refresh_at": "2026-03-15T18:38:11.214Z",
+        "updated_at": "2026-03-14T20:55:07.040Z",
+        "next_refresh_at": "2026-03-15T20:55:07.040Z",
         "lowest_price": 1865,
         "reference_lowest_price": 1992,
         "reference_source": "komponentkoll",
@@ -5206,7 +5191,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.214Z",
+            "updated_at": "2026-03-14T20:55:07.040Z",
             "error": null
           },
           {
@@ -5221,7 +5206,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.214Z",
+            "updated_at": "2026-03-14T20:55:07.040Z",
             "error": null
           },
           {
@@ -5236,7 +5221,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.214Z",
+            "updated_at": "2026-03-14T20:55:07.040Z",
             "error": null
           },
           {
@@ -5251,7 +5236,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:38:11.214Z",
+            "updated_at": "2026-03-14T20:55:07.040Z",
             "error": null
           }
         ]
@@ -5260,12 +5245,12 @@
     {
       "key": "multi-source-v2:mb-am5-gigabyte-b650-aorus-elite-ax",
       "item_id": "mb-am5-gigabyte-b650-aorus-elite-ax",
-      "updatedAt": 1773513491876,
+      "updatedAt": 1773521707990,
       "response": {
         "ok": true,
         "item_id": "mb-am5-gigabyte-b650-aorus-elite-ax",
-        "updated_at": "2026-03-14T18:38:11.876Z",
-        "next_refresh_at": "2026-03-15T18:38:11.876Z",
+        "updated_at": "2026-03-14T20:55:07.990Z",
+        "next_refresh_at": "2026-03-15T20:55:07.990Z",
         "lowest_price": 1866,
         "reference_lowest_price": 1866,
         "reference_source": "komponentkoll",
@@ -5282,7 +5267,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.876Z",
+            "updated_at": "2026-03-14T20:55:07.990Z",
             "error": null
           },
           {
@@ -5297,7 +5282,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.876Z",
+            "updated_at": "2026-03-14T20:55:07.990Z",
             "error": null
           },
           {
@@ -5312,7 +5297,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.876Z",
+            "updated_at": "2026-03-14T20:55:07.990Z",
             "error": null
           },
           {
@@ -5327,7 +5312,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:11.876Z",
+            "updated_at": "2026-03-14T20:55:07.990Z",
             "error": null
           },
           {
@@ -5342,7 +5327,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:38:11.876Z",
+            "updated_at": "2026-03-14T20:55:07.990Z",
             "error": null
           }
         ]
@@ -5351,12 +5336,12 @@
     {
       "key": "multi-source-v2:mb-am5-asus-tuf-b650-plus-wifi",
       "item_id": "mb-am5-asus-tuf-b650-plus-wifi",
-      "updatedAt": 1773513513952,
+      "updatedAt": 1773521708988,
       "response": {
         "ok": true,
         "item_id": "mb-am5-asus-tuf-b650-plus-wifi",
-        "updated_at": "2026-03-14T18:38:33.952Z",
-        "next_refresh_at": "2026-03-15T18:38:33.952Z",
+        "updated_at": "2026-03-14T20:55:08.988Z",
+        "next_refresh_at": "2026-03-15T20:55:08.988Z",
         "lowest_price": 1599,
         "reference_lowest_price": 1599,
         "reference_source": "komponentkoll",
@@ -5373,7 +5358,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:33.952Z",
+            "updated_at": "2026-03-14T20:55:08.988Z",
             "error": null
           },
           {
@@ -5388,7 +5373,22 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:33.952Z",
+            "updated_at": "2026-03-14T20:55:08.988Z",
+            "error": null
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/1903883/asus-tuf-gaming-b650-plus-wifi",
+            "search_url": null,
+            "price": 1599,
+            "total_price": 1599,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-14T20:55:08.988Z",
             "error": null
           },
           {
@@ -5403,7 +5403,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:33.952Z",
+            "updated_at": "2026-03-14T20:55:08.988Z",
             "error": null
           },
           {
@@ -5418,22 +5418,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:33.952Z",
-            "error": null
-          },
-          {
-            "store_id": "komplett",
-            "store": "Komplett",
-            "status": "available",
-            "trusted_source": "komponentkoll",
-            "product_url": "https://www.komplett.se/product/1219268/datorutrustning/datorkomponenter/moderkort/amd-socket/asus-tuf-gaming-b650-plus-wifi-moderkort?channable=02f53f69640031323139323638cb",
-            "search_url": null,
-            "price": 1881,
-            "total_price": 1881,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:33.952Z",
+            "updated_at": "2026-03-14T20:55:08.988Z",
             "error": null
           }
         ]
@@ -5442,12 +5427,12 @@
     {
       "key": "multi-source-v2:mb-am5-asrock-b650m-pro-rs-wifi",
       "item_id": "mb-am5-asrock-b650m-pro-rs-wifi",
-      "updatedAt": 1773513514296,
+      "updatedAt": 1773521709377,
       "response": {
         "ok": true,
         "item_id": "mb-am5-asrock-b650m-pro-rs-wifi",
-        "updated_at": "2026-03-14T18:38:34.296Z",
-        "next_refresh_at": "2026-03-15T18:38:34.296Z",
+        "updated_at": "2026-03-14T20:55:09.377Z",
+        "next_refresh_at": "2026-03-15T20:55:09.377Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5457,12 +5442,12 @@
     {
       "key": "multi-source-v2:mb-am5-msi-b650m-mortar-wifi",
       "item_id": "mb-am5-msi-b650m-mortar-wifi",
-      "updatedAt": 1773513536515,
+      "updatedAt": 1773521710951,
       "response": {
         "ok": true,
         "item_id": "mb-am5-msi-b650m-mortar-wifi",
-        "updated_at": "2026-03-14T18:38:56.515Z",
-        "next_refresh_at": "2026-03-15T18:38:56.515Z",
+        "updated_at": "2026-03-14T20:55:10.951Z",
+        "next_refresh_at": "2026-03-15T20:55:10.951Z",
         "lowest_price": 2555,
         "reference_lowest_price": 2555,
         "reference_source": "prisjakt",
@@ -5479,7 +5464,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:56.515Z",
+            "updated_at": "2026-03-14T20:55:10.951Z",
             "error": null
           }
         ]
@@ -5488,12 +5473,12 @@
     {
       "key": "multi-source-v2:mb-am5-asus-rog-strix-b650e-f",
       "item_id": "mb-am5-asus-rog-strix-b650e-f",
-      "updatedAt": 1773513536907,
+      "updatedAt": 1773521712852,
       "response": {
         "ok": true,
         "item_id": "mb-am5-asus-rog-strix-b650e-f",
-        "updated_at": "2026-03-14T18:38:56.907Z",
-        "next_refresh_at": "2026-03-15T18:38:56.907Z",
+        "updated_at": "2026-03-14T20:55:12.852Z",
+        "next_refresh_at": "2026-03-15T20:55:12.852Z",
         "lowest_price": 2110,
         "reference_lowest_price": 2346,
         "reference_source": "komponentkoll",
@@ -5510,7 +5495,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:56.907Z",
+            "updated_at": "2026-03-14T20:55:12.852Z",
             "error": null
           },
           {
@@ -5525,7 +5510,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:56.907Z",
+            "updated_at": "2026-03-14T20:55:12.852Z",
             "error": null
           },
           {
@@ -5540,7 +5525,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:56.907Z",
+            "updated_at": "2026-03-14T20:55:12.852Z",
             "error": null
           },
           {
@@ -5555,7 +5540,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:56.907Z",
+            "updated_at": "2026-03-14T20:55:12.852Z",
             "error": null
           },
           {
@@ -5570,7 +5555,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:38:56.907Z",
+            "updated_at": "2026-03-14T20:55:12.852Z",
             "error": null
           }
         ]
@@ -5579,12 +5564,12 @@
     {
       "key": "multi-source-v2:mb-am5-gigabyte-x670-aorus-elite-ax",
       "item_id": "mb-am5-gigabyte-x670-aorus-elite-ax",
-      "updatedAt": 1773513558554,
+      "updatedAt": 1773521713101,
       "response": {
         "ok": true,
         "item_id": "mb-am5-gigabyte-x670-aorus-elite-ax",
-        "updated_at": "2026-03-14T18:39:18.554Z",
-        "next_refresh_at": "2026-03-15T18:39:18.554Z",
+        "updated_at": "2026-03-14T20:55:13.101Z",
+        "next_refresh_at": "2026-03-15T20:55:13.101Z",
         "lowest_price": 2971,
         "reference_lowest_price": 2971,
         "reference_source": "komponentkoll",
@@ -5601,7 +5586,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:18.554Z",
+            "updated_at": "2026-03-14T20:55:13.101Z",
             "error": null
           }
         ]
@@ -5610,12 +5595,12 @@
     {
       "key": "multi-source-v2:mb-am5-msi-x670e-carbon-wifi",
       "item_id": "mb-am5-msi-x670e-carbon-wifi",
-      "updatedAt": 1773513580504,
+      "updatedAt": 1773521715438,
       "response": {
         "ok": true,
         "item_id": "mb-am5-msi-x670e-carbon-wifi",
-        "updated_at": "2026-03-14T18:39:40.504Z",
-        "next_refresh_at": "2026-03-15T18:39:40.504Z",
+        "updated_at": "2026-03-14T20:55:15.438Z",
+        "next_refresh_at": "2026-03-15T20:55:15.438Z",
         "lowest_price": 4199,
         "reference_lowest_price": 4199,
         "reference_source": "komponentkoll",
@@ -5632,7 +5617,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.504Z",
+            "updated_at": "2026-03-14T20:55:15.438Z",
             "error": null
           },
           {
@@ -5647,7 +5632,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.504Z",
+            "updated_at": "2026-03-14T20:55:15.438Z",
             "error": null
           },
           {
@@ -5662,7 +5647,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.504Z",
+            "updated_at": "2026-03-14T20:55:15.438Z",
             "error": null
           },
           {
@@ -5677,7 +5662,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:39:40.504Z",
+            "updated_at": "2026-03-14T20:55:15.438Z",
             "error": null
           }
         ]
@@ -5686,12 +5671,12 @@
     {
       "key": "multi-source-v2:mb-am5-asrock-x670e-steel-legend",
       "item_id": "mb-am5-asrock-x670e-steel-legend",
-      "updatedAt": 1773513558791,
+      "updatedAt": 1773521714846,
       "response": {
         "ok": true,
         "item_id": "mb-am5-asrock-x670e-steel-legend",
-        "updated_at": "2026-03-14T18:39:18.791Z",
-        "next_refresh_at": "2026-03-15T18:39:18.791Z",
+        "updated_at": "2026-03-14T20:55:14.846Z",
+        "next_refresh_at": "2026-03-15T20:55:14.846Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5701,12 +5686,12 @@
     {
       "key": "multi-source-v2:mb-am5-asus-x870-a-gaming-wifi",
       "item_id": "mb-am5-asus-x870-a-gaming-wifi",
-      "updatedAt": 1773513580679,
+      "updatedAt": 1773521717526,
       "response": {
         "ok": true,
         "item_id": "mb-am5-asus-x870-a-gaming-wifi",
-        "updated_at": "2026-03-14T18:39:40.679Z",
-        "next_refresh_at": "2026-03-15T18:39:40.679Z",
+        "updated_at": "2026-03-14T20:55:17.526Z",
+        "next_refresh_at": "2026-03-15T20:55:17.526Z",
         "lowest_price": 3390,
         "reference_lowest_price": 3390,
         "reference_source": "komponentkoll",
@@ -5723,7 +5708,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.679Z",
+            "updated_at": "2026-03-14T20:55:17.526Z",
             "error": null
           },
           {
@@ -5738,7 +5723,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.679Z",
+            "updated_at": "2026-03-14T20:55:17.526Z",
             "error": null
           },
           {
@@ -5753,7 +5738,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.679Z",
+            "updated_at": "2026-03-14T20:55:17.526Z",
             "error": null
           },
           {
@@ -5768,7 +5753,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.679Z",
+            "updated_at": "2026-03-14T20:55:17.526Z",
             "error": null
           },
           {
@@ -5783,7 +5768,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:39:40.679Z",
+            "updated_at": "2026-03-14T20:55:17.526Z",
             "error": null
           }
         ]
@@ -5792,12 +5777,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-asus-tuf-b560-plus-wifi",
       "item_id": "mb-lga1200-asus-tuf-b560-plus-wifi",
-      "updatedAt": 1773513602686,
+      "updatedAt": 1773521717759,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-asus-tuf-b560-plus-wifi",
-        "updated_at": "2026-03-14T18:40:02.686Z",
-        "next_refresh_at": "2026-03-15T18:40:02.686Z",
+        "updated_at": "2026-03-14T20:55:17.759Z",
+        "next_refresh_at": "2026-03-15T20:55:17.759Z",
         "lowest_price": 5109,
         "reference_lowest_price": 5109,
         "reference_source": "komponentkoll",
@@ -5807,12 +5792,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-msi-b560-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-b560-tomahawk-wifi",
-      "updatedAt": 1773513602894,
+      "updatedAt": 1773521719177,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-msi-b560-tomahawk-wifi",
-        "updated_at": "2026-03-14T18:40:02.894Z",
-        "next_refresh_at": "2026-03-15T18:40:02.894Z",
+        "updated_at": "2026-03-14T20:55:19.177Z",
+        "next_refresh_at": "2026-03-15T20:55:19.177Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5822,12 +5807,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-gigabyte-b560-aorus-pro-ax",
       "item_id": "mb-lga1200-gigabyte-b560-aorus-pro-ax",
-      "updatedAt": 1773513624578,
+      "updatedAt": 1773521719489,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-gigabyte-b560-aorus-pro-ax",
-        "updated_at": "2026-03-14T18:40:24.578Z",
-        "next_refresh_at": "2026-03-15T18:40:24.578Z",
+        "updated_at": "2026-03-14T20:55:19.489Z",
+        "next_refresh_at": "2026-03-15T20:55:19.489Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5837,12 +5822,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-asrock-b560-pro4",
       "item_id": "mb-lga1200-asrock-b560-pro4",
-      "updatedAt": 1773513625404,
+      "updatedAt": 1773521722527,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-asrock-b560-pro4",
-        "updated_at": "2026-03-14T18:40:25.404Z",
-        "next_refresh_at": "2026-03-15T18:40:25.404Z",
+        "updated_at": "2026-03-14T20:55:22.527Z",
+        "next_refresh_at": "2026-03-15T20:55:22.527Z",
         "lowest_price": 3075,
         "reference_lowest_price": 3075,
         "reference_source": "komponentkoll",
@@ -5852,12 +5837,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-asus-prime-z590-p",
       "item_id": "mb-lga1200-asus-prime-z590-p",
-      "updatedAt": 1773513646914,
+      "updatedAt": 1773521723914,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-asus-prime-z590-p",
-        "updated_at": "2026-03-14T18:40:46.914Z",
-        "next_refresh_at": "2026-03-15T18:40:46.914Z",
+        "updated_at": "2026-03-14T20:55:23.914Z",
+        "next_refresh_at": "2026-03-15T20:55:23.914Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5867,12 +5852,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-msi-z590-tomahawk-wifi",
       "item_id": "mb-lga1200-msi-z590-tomahawk-wifi",
-      "updatedAt": 1773513648024,
+      "updatedAt": 1773521724038,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-msi-z590-tomahawk-wifi",
-        "updated_at": "2026-03-14T18:40:48.024Z",
-        "next_refresh_at": "2026-03-15T18:40:48.024Z",
+        "updated_at": "2026-03-14T20:55:24.038Z",
+        "next_refresh_at": "2026-03-15T20:55:24.038Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5882,12 +5867,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-gigabyte-z590-aorus-elite-ax",
       "item_id": "mb-lga1200-gigabyte-z590-aorus-elite-ax",
-      "updatedAt": 1773513669830,
+      "updatedAt": 1773521727388,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-gigabyte-z590-aorus-elite-ax",
-        "updated_at": "2026-03-14T18:41:09.830Z",
-        "next_refresh_at": "2026-03-15T18:41:09.830Z",
+        "updated_at": "2026-03-14T20:55:27.388Z",
+        "next_refresh_at": "2026-03-15T20:55:27.388Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5897,12 +5882,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-asrock-z590-steel-legend",
       "item_id": "mb-lga1200-asrock-z590-steel-legend",
-      "updatedAt": 1773513670414,
+      "updatedAt": 1773521728572,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-asrock-z590-steel-legend",
-        "updated_at": "2026-03-14T18:41:10.414Z",
-        "next_refresh_at": "2026-03-15T18:41:10.414Z",
+        "updated_at": "2026-03-14T20:55:28.572Z",
+        "next_refresh_at": "2026-03-15T20:55:28.572Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5912,12 +5897,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-asus-rog-strix-z490-f",
       "item_id": "mb-lga1200-asus-rog-strix-z490-f",
-      "updatedAt": 1773513692590,
+      "updatedAt": 1773521731127,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-asus-rog-strix-z490-f",
-        "updated_at": "2026-03-14T18:41:32.590Z",
-        "next_refresh_at": "2026-03-15T18:41:32.590Z",
+        "updated_at": "2026-03-14T20:55:31.127Z",
+        "next_refresh_at": "2026-03-15T20:55:31.127Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5927,12 +5912,12 @@
     {
       "key": "multi-source-v2:mb-lga1200-msi-z490-gaming-edge-wifi",
       "item_id": "mb-lga1200-msi-z490-gaming-edge-wifi",
-      "updatedAt": 1773513692795,
+      "updatedAt": 1773521732436,
       "response": {
         "ok": true,
         "item_id": "mb-lga1200-msi-z490-gaming-edge-wifi",
-        "updated_at": "2026-03-14T18:41:32.795Z",
-        "next_refresh_at": "2026-03-15T18:41:32.795Z",
+        "updated_at": "2026-03-14T20:55:32.436Z",
+        "next_refresh_at": "2026-03-15T20:55:32.436Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -5942,15 +5927,15 @@
     {
       "key": "multi-source-v2:mb-lga1700-msi-b760m-mortar-wifi",
       "item_id": "mb-lga1700-msi-b760m-mortar-wifi",
-      "updatedAt": 1773513715204,
+      "updatedAt": 1773521734898,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-msi-b760m-mortar-wifi",
-        "updated_at": "2026-03-14T18:41:55.204Z",
-        "next_refresh_at": "2026-03-15T18:41:55.204Z",
+        "updated_at": "2026-03-14T20:55:34.898Z",
+        "next_refresh_at": "2026-03-15T20:55:34.898Z",
         "lowest_price": 2990,
-        "reference_lowest_price": 2990,
-        "reference_source": "prisjakt",
+        "reference_lowest_price": 2898,
+        "reference_source": "komponentkoll",
         "offers": [
           {
             "store_id": "komplett",
@@ -5964,7 +5949,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.204Z",
+            "updated_at": "2026-03-14T20:55:34.898Z",
             "error": null
           },
           {
@@ -5979,7 +5964,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.204Z",
+            "updated_at": "2026-03-14T20:55:34.898Z",
             "error": null
           }
         ]
@@ -5988,12 +5973,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-asus-tuf-b760-plus-wifi",
       "item_id": "mb-lga1700-asus-tuf-b760-plus-wifi",
-      "updatedAt": 1773513715679,
+      "updatedAt": 1773521736550,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-asus-tuf-b760-plus-wifi",
-        "updated_at": "2026-03-14T18:41:55.679Z",
-        "next_refresh_at": "2026-03-15T18:41:55.679Z",
+        "updated_at": "2026-03-14T20:55:36.550Z",
+        "next_refresh_at": "2026-03-15T20:55:36.550Z",
         "lowest_price": 1469,
         "reference_lowest_price": 1519,
         "reference_source": "komponentkoll",
@@ -6010,7 +5995,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.679Z",
+            "updated_at": "2026-03-14T20:55:36.550Z",
             "error": null
           },
           {
@@ -6025,7 +6010,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.679Z",
+            "updated_at": "2026-03-14T20:55:36.550Z",
             "error": null
           },
           {
@@ -6040,7 +6025,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.679Z",
+            "updated_at": "2026-03-14T20:55:36.550Z",
             "error": null
           },
           {
@@ -6055,7 +6040,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.679Z",
+            "updated_at": "2026-03-14T20:55:36.550Z",
             "error": null
           },
           {
@@ -6070,7 +6055,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:41:55.679Z",
+            "updated_at": "2026-03-14T20:55:36.550Z",
             "error": null
           }
         ]
@@ -6079,12 +6064,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-gigabyte-b760-aorus-elite-ax",
       "item_id": "mb-lga1700-gigabyte-b760-aorus-elite-ax",
-      "updatedAt": 1773513738112,
+      "updatedAt": 1773521737032,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-gigabyte-b760-aorus-elite-ax",
-        "updated_at": "2026-03-14T18:42:18.112Z",
-        "next_refresh_at": "2026-03-15T18:42:18.112Z",
+        "updated_at": "2026-03-14T20:55:37.032Z",
+        "next_refresh_at": "2026-03-15T20:55:37.032Z",
         "lowest_price": 2317,
         "reference_lowest_price": 2690,
         "reference_source": "komponentkoll",
@@ -6101,7 +6086,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:18.112Z",
+            "updated_at": "2026-03-14T20:55:37.032Z",
             "error": null
           },
           {
@@ -6116,7 +6101,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:18.112Z",
+            "updated_at": "2026-03-14T20:55:37.032Z",
             "error": null
           }
         ]
@@ -6125,12 +6110,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-asrock-b760-pro-rs",
       "item_id": "mb-lga1700-asrock-b760-pro-rs",
-      "updatedAt": 1773513739111,
+      "updatedAt": 1773521738497,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-asrock-b760-pro-rs",
-        "updated_at": "2026-03-14T18:42:19.111Z",
-        "next_refresh_at": "2026-03-15T18:42:19.111Z",
+        "updated_at": "2026-03-14T20:55:38.497Z",
+        "next_refresh_at": "2026-03-15T20:55:38.497Z",
         "lowest_price": 1213,
         "reference_lowest_price": 1407,
         "reference_source": "komponentkoll",
@@ -6147,7 +6132,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:19.111Z",
+            "updated_at": "2026-03-14T20:55:38.497Z",
             "error": null
           },
           {
@@ -6162,7 +6147,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:19.111Z",
+            "updated_at": "2026-03-14T20:55:38.497Z",
             "error": null
           }
         ]
@@ -6171,12 +6156,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-msi-z790-tomahawk-wifi",
       "item_id": "mb-lga1700-msi-z790-tomahawk-wifi",
-      "updatedAt": 1773513760410,
+      "updatedAt": 1773521739401,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-msi-z790-tomahawk-wifi",
-        "updated_at": "2026-03-14T18:42:40.410Z",
-        "next_refresh_at": "2026-03-15T18:42:40.410Z",
+        "updated_at": "2026-03-14T20:55:39.401Z",
+        "next_refresh_at": "2026-03-15T20:55:39.401Z",
         "lowest_price": 2496,
         "reference_lowest_price": 2496,
         "reference_source": "komponentkoll",
@@ -6193,7 +6178,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:40.410Z",
+            "updated_at": "2026-03-14T20:55:39.401Z",
             "error": null
           },
           {
@@ -6208,7 +6193,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:40.410Z",
+            "updated_at": "2026-03-14T20:55:39.401Z",
             "error": null
           }
         ]
@@ -6217,27 +6202,73 @@
     {
       "key": "multi-source-v2:ram-1",
       "item_id": "ram-1",
-      "updatedAt": 1773517709701,
+      "updatedAt": 1773522469796,
       "response": {
         "ok": true,
         "item_id": "ram-1",
-        "updated_at": "2026-03-14T19:48:29.701Z",
-        "next_refresh_at": "2026-03-15T19:48:29.701Z",
-        "lowest_price": 3869,
-        "reference_lowest_price": 3869,
+        "updated_at": "2026-03-14T21:07:49.796Z",
+        "next_refresh_at": "2026-03-15T21:07:49.796Z",
+        "lowest_price": 4249,
+        "reference_lowest_price": 3999,
         "reference_source": "komponentkoll",
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/RAM/Corsair-Vengeance-DDR5-6000-32GB-CL36-Dual-Channel-2-pcs-AMD-EXPO-Intel-XMP-Graa/3201677",
+            "search_url": null,
+            "price": 4249,
+            "total_price": 4249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-14T21:07:49.796Z",
+            "error": null
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/5306420/corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo-xmp-3-0",
+            "search_url": null,
+            "price": 3999,
+            "total_price": 3999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:07:49.796Z",
+            "error": null
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.elgiganten.se/product/gaming/datorkomponenter/ram-minne/corsair-vengeance-ddr5-ram-32gb-6000mts-cl36/877222?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+            "search_url": null,
+            "price": 4249,
+            "total_price": 4249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:07:49.796Z",
+            "error": null
+          }
+        ]
       }
     },
     {
       "key": "multi-source-v2:ram-2",
       "item_id": "ram-2",
-      "updatedAt": 1773517709712,
+      "updatedAt": 1773521746022,
       "response": {
         "ok": true,
         "item_id": "ram-2",
-        "updated_at": "2026-03-14T19:48:29.712Z",
-        "next_refresh_at": "2026-03-15T19:48:29.712Z",
+        "updated_at": "2026-03-14T20:55:46.022Z",
+        "next_refresh_at": "2026-03-15T20:55:46.022Z",
         "lowest_price": 6238,
         "reference_lowest_price": 6238,
         "reference_source": "komponentkoll",
@@ -6247,12 +6278,12 @@
     {
       "key": "multi-source-v2:ram-4",
       "item_id": "ram-4",
-      "updatedAt": 1773517742705,
+      "updatedAt": 1773521780564,
       "response": {
         "ok": true,
         "item_id": "ram-4",
-        "updated_at": "2026-03-14T19:49:02.705Z",
-        "next_refresh_at": "2026-03-15T19:49:02.705Z",
+        "updated_at": "2026-03-14T20:56:20.564Z",
+        "next_refresh_at": "2026-03-15T20:56:20.564Z",
         "lowest_price": 5338,
         "reference_lowest_price": 5338,
         "reference_source": "komponentkoll",
@@ -6269,7 +6300,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:49:02.705Z",
+            "updated_at": "2026-03-14T20:56:20.564Z",
             "error": null
           }
         ]
@@ -6278,12 +6309,12 @@
     {
       "key": "multi-source-v2:ram-3",
       "item_id": "ram-3",
-      "updatedAt": 1773517742739,
+      "updatedAt": 1773521758083,
       "response": {
         "ok": true,
         "item_id": "ram-3",
-        "updated_at": "2026-03-14T19:49:02.739Z",
-        "next_refresh_at": "2026-03-15T19:49:02.739Z",
+        "updated_at": "2026-03-14T20:55:58.083Z",
+        "next_refresh_at": "2026-03-15T20:55:58.083Z",
         "lowest_price": 4989,
         "reference_lowest_price": 4989,
         "reference_source": "komponentkoll",
@@ -6293,12 +6324,12 @@
     {
       "key": "multi-source-v2:ram-6",
       "item_id": "ram-6",
-      "updatedAt": 1773517776688,
+      "updatedAt": 1773521812880,
       "response": {
         "ok": true,
         "item_id": "ram-6",
-        "updated_at": "2026-03-14T19:49:36.688Z",
-        "next_refresh_at": "2026-03-15T19:49:36.688Z",
+        "updated_at": "2026-03-14T20:56:52.880Z",
+        "next_refresh_at": "2026-03-15T20:56:52.880Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6308,12 +6339,12 @@
     {
       "key": "multi-source-v2:ram-5",
       "item_id": "ram-5",
-      "updatedAt": 1773517775151,
+      "updatedAt": 1773521790303,
       "response": {
         "ok": true,
         "item_id": "ram-5",
-        "updated_at": "2026-03-14T19:49:35.151Z",
-        "next_refresh_at": "2026-03-15T19:49:35.151Z",
+        "updated_at": "2026-03-14T20:56:30.303Z",
+        "next_refresh_at": "2026-03-15T20:56:30.303Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6323,12 +6354,12 @@
     {
       "key": "multi-source-v2:ram-8",
       "item_id": "ram-8",
-      "updatedAt": 1773517815184,
+      "updatedAt": 1773521879536,
       "response": {
         "ok": true,
         "item_id": "ram-8",
-        "updated_at": "2026-03-14T19:50:15.184Z",
-        "next_refresh_at": "2026-03-15T19:50:15.184Z",
+        "updated_at": "2026-03-14T20:57:59.536Z",
+        "next_refresh_at": "2026-03-15T20:57:59.536Z",
         "lowest_price": 8990,
         "reference_lowest_price": 8990,
         "reference_source": "komponentkoll",
@@ -6345,7 +6376,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:15.184Z",
+            "updated_at": "2026-03-14T20:57:59.536Z",
             "error": null
           },
           {
@@ -6360,7 +6391,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:50:15.184Z",
+            "updated_at": "2026-03-14T20:57:59.536Z",
             "error": null
           }
         ]
@@ -6369,12 +6400,12 @@
     {
       "key": "multi-source-v2:ram-7",
       "item_id": "ram-7",
-      "updatedAt": 1773517813922,
+      "updatedAt": 1773521857460,
       "response": {
         "ok": true,
         "item_id": "ram-7",
-        "updated_at": "2026-03-14T19:50:13.922Z",
-        "next_refresh_at": "2026-03-15T19:50:13.922Z",
+        "updated_at": "2026-03-14T20:57:37.460Z",
+        "next_refresh_at": "2026-03-15T20:57:37.460Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6384,12 +6415,12 @@
     {
       "key": "multi-source-v2:ram-10",
       "item_id": "ram-10",
-      "updatedAt": 1773517849422,
+      "updatedAt": 1773521923097,
       "response": {
         "ok": true,
         "item_id": "ram-10",
-        "updated_at": "2026-03-14T19:50:49.422Z",
-        "next_refresh_at": "2026-03-15T19:50:49.422Z",
+        "updated_at": "2026-03-14T20:58:43.097Z",
+        "next_refresh_at": "2026-03-15T20:58:43.097Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6399,12 +6430,12 @@
     {
       "key": "multi-source-v2:ram-9",
       "item_id": "ram-9",
-      "updatedAt": 1773517848364,
+      "updatedAt": 1773521911866,
       "response": {
         "ok": true,
         "item_id": "ram-9",
-        "updated_at": "2026-03-14T19:50:48.364Z",
-        "next_refresh_at": "2026-03-15T19:50:48.364Z",
+        "updated_at": "2026-03-14T20:58:31.866Z",
+        "next_refresh_at": "2026-03-15T20:58:31.866Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6414,12 +6445,12 @@
     {
       "key": "multi-source-v2:ram-11",
       "item_id": "ram-11",
-      "updatedAt": 1773517886080,
+      "updatedAt": 1773521979433,
       "response": {
         "ok": true,
         "item_id": "ram-11",
-        "updated_at": "2026-03-14T19:51:26.080Z",
-        "next_refresh_at": "2026-03-15T19:51:26.080Z",
+        "updated_at": "2026-03-14T20:59:39.433Z",
+        "next_refresh_at": "2026-03-15T20:59:39.433Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6429,12 +6460,12 @@
     {
       "key": "multi-source-v2:ram-16",
       "item_id": "ram-16",
-      "updatedAt": 1773517910427,
+      "updatedAt": 1773522023979,
       "response": {
         "ok": true,
         "item_id": "ram-16",
-        "updated_at": "2026-03-14T19:51:50.427Z",
-        "next_refresh_at": "2026-03-15T19:51:50.427Z",
+        "updated_at": "2026-03-14T21:00:23.979Z",
+        "next_refresh_at": "2026-03-15T21:00:23.979Z",
         "lowest_price": 5990,
         "reference_lowest_price": 5544,
         "reference_source": "komponentkoll",
@@ -6451,7 +6482,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:51:50.427Z",
+            "updated_at": "2026-03-14T21:00:23.979Z",
             "error": null
           },
           {
@@ -6466,7 +6497,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:51:50.427Z",
+            "updated_at": "2026-03-14T21:00:23.979Z",
             "error": null
           }
         ]
@@ -6475,12 +6506,12 @@
     {
       "key": "multi-source-v2:ram-17",
       "item_id": "ram-17",
-      "updatedAt": 1773517922778,
+      "updatedAt": 1773522056231,
       "response": {
         "ok": true,
         "item_id": "ram-17",
-        "updated_at": "2026-03-14T19:52:02.778Z",
-        "next_refresh_at": "2026-03-15T19:52:02.778Z",
+        "updated_at": "2026-03-14T21:00:56.231Z",
+        "next_refresh_at": "2026-03-15T21:00:56.231Z",
         "lowest_price": 2649,
         "reference_lowest_price": 2649,
         "reference_source": "komponentkoll",
@@ -6490,12 +6521,12 @@
     {
       "key": "multi-source-v2:ram-18",
       "item_id": "ram-18",
-      "updatedAt": 1773517943006,
+      "updatedAt": 1773522058287,
       "response": {
         "ok": true,
         "item_id": "ram-18",
-        "updated_at": "2026-03-14T19:52:23.006Z",
-        "next_refresh_at": "2026-03-15T19:52:23.006Z",
+        "updated_at": "2026-03-14T21:00:58.287Z",
+        "next_refresh_at": "2026-03-15T21:00:58.287Z",
         "lowest_price": 2533,
         "reference_lowest_price": 2533,
         "reference_source": "komponentkoll",
@@ -6512,7 +6543,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:23.006Z",
+            "updated_at": "2026-03-14T21:00:58.287Z",
             "error": null
           },
           {
@@ -6527,7 +6558,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:52:23.006Z",
+            "updated_at": "2026-03-14T21:00:58.287Z",
             "error": null
           },
           {
@@ -6542,7 +6573,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:52:23.006Z",
+            "updated_at": "2026-03-14T21:00:58.287Z",
             "error": null
           }
         ]
@@ -6551,27 +6582,27 @@
     {
       "key": "multi-source-v2:ram-12",
       "item_id": "ram-12",
-      "updatedAt": 1773517886905,
+      "updatedAt": 1773522471338,
       "response": {
         "ok": true,
         "item_id": "ram-12",
-        "updated_at": "2026-03-14T19:51:26.905Z",
-        "next_refresh_at": "2026-03-15T19:51:26.905Z",
-        "lowest_price": 1940,
-        "reference_lowest_price": 1940,
-        "reference_source": "komponentkoll",
+        "updated_at": "2026-03-14T21:07:51.338Z",
+        "next_refresh_at": "2026-03-15T21:07:51.338Z",
+        "lowest_price": null,
+        "reference_lowest_price": null,
+        "reference_source": null,
         "offers": []
       }
     },
     {
       "key": "multi-source-v2:ram-19",
       "item_id": "ram-19",
-      "updatedAt": 1773517955225,
+      "updatedAt": 1773522088406,
       "response": {
         "ok": true,
         "item_id": "ram-19",
-        "updated_at": "2026-03-14T19:52:35.225Z",
-        "next_refresh_at": "2026-03-15T19:52:35.225Z",
+        "updated_at": "2026-03-14T21:01:28.406Z",
+        "next_refresh_at": "2026-03-15T21:01:28.406Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6581,57 +6612,195 @@
     {
       "key": "multi-source-v2:ram-20",
       "item_id": "ram-20",
-      "updatedAt": 1773517977963,
+      "updatedAt": 1773522502095,
       "response": {
         "ok": true,
         "item_id": "ram-20",
-        "updated_at": "2026-03-14T19:52:57.963Z",
-        "next_refresh_at": "2026-03-15T19:52:57.963Z",
+        "updated_at": "2026-03-14T21:08:22.095Z",
+        "next_refresh_at": "2026-03-15T21:08:22.095Z",
         "lowest_price": 2690,
         "reference_lowest_price": 2690,
         "reference_source": "komponentkoll",
-        "offers": []
+        "offers": [
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/5307608/corsair-16gb-2x8gb-ddr5-6000mhz-cl36-vengeance-rgb-amd-expo-intel-xmp-3-0",
+            "search_url": null,
+            "price": 2690,
+            "total_price": 2690,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-14T21:08:22.095Z",
+            "error": null
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.elgiganten.se/product/gaming/datorkomponenter/ram-minne/corsair-vengeance-ddr5-rgb-ram-16gb-8gb-x2-6000-mts-cl36/1042035?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+            "search_url": null,
+            "price": 2690,
+            "total_price": 2690,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:22.095Z",
+            "error": null
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/RAM/Corsair-Vengeance-RGB-DDR5-6000-16GB-CL36-Dual-Channel-2-pcs-AMD-EXPO-Intel-XMP-Graa-med-RGB/3439461",
+            "search_url": null,
+            "price": 3323,
+            "total_price": 3323,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:22.095Z",
+            "error": null
+          }
+        ]
       }
     },
     {
       "key": "multi-source-v2:ram-21",
       "item_id": "ram-21",
-      "updatedAt": 1773517991344,
+      "updatedAt": 1773522534364,
       "response": {
         "ok": true,
         "item_id": "ram-21",
-        "updated_at": "2026-03-14T19:53:11.344Z",
-        "next_refresh_at": "2026-03-15T19:53:11.344Z",
-        "lowest_price": 5390,
-        "reference_lowest_price": 5390,
+        "updated_at": "2026-03-14T21:08:54.364Z",
+        "next_refresh_at": "2026-03-15T21:08:54.364Z",
+        "lowest_price": 6198,
+        "reference_lowest_price": 3449,
         "reference_source": "komponentkoll",
-        "offers": []
+        "offers": [
+          {
+            "store_id": "computersalg",
+            "store": "Computersalg",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.csmegastore.se/i/10128573/corsair-vengeance-rgb-ddr5-sats-32-gb-2-x-16-gb-dimm-288-pin-6000-mt-s-pc5-48000-cl36-svart",
+            "search_url": null,
+            "price": 6198,
+            "total_price": 6198,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-14T21:08:54.364Z",
+            "error": null
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/5306225/corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-svart",
+            "search_url": null,
+            "price": 3449,
+            "total_price": 3449,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:54.364Z",
+            "error": null
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/RAM/Corsair-Vengeance-RGB-DDR5-6000-32GB-CL36-Dual-Channel-2-pcs-Intel-XMP-Svart-med-RGB/3154494",
+            "search_url": null,
+            "price": 5526,
+            "total_price": 5526,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:54.364Z",
+            "error": null
+          }
+        ]
       }
     },
     {
       "key": "multi-source-v2:ram-22",
       "item_id": "ram-22",
-      "updatedAt": 1773518011421,
+      "updatedAt": 1773522538477,
       "response": {
         "ok": true,
         "item_id": "ram-22",
-        "updated_at": "2026-03-14T19:53:31.421Z",
-        "next_refresh_at": "2026-03-15T19:53:31.421Z",
-        "lowest_price": 3869,
-        "reference_lowest_price": 3869,
+        "updated_at": "2026-03-14T21:08:58.477Z",
+        "next_refresh_at": "2026-03-15T21:08:58.477Z",
+        "lowest_price": 4249,
+        "reference_lowest_price": 3999,
         "reference_source": "komponentkoll",
-        "offers": []
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/RAM/Corsair-Vengeance-DDR5-6000-32GB-CL36-Dual-Channel-2-pcs-AMD-EXPO-Intel-XMP-Graa/3201677",
+            "search_url": null,
+            "price": 4249,
+            "total_price": 4249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-14T21:08:58.477Z",
+            "error": null
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/5306420/corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo-xmp-3-0",
+            "search_url": null,
+            "price": 3999,
+            "total_price": 3999,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:58.477Z",
+            "error": null
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "status": "unavailable",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.elgiganten.se/product/gaming/datorkomponenter/ram-minne/corsair-vengeance-ddr5-ram-32gb-6000mts-cl36/877222?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+            "search_url": null,
+            "price": 4249,
+            "total_price": 4249,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "unavailable",
+            "updated_at": "2026-03-14T21:08:58.477Z",
+            "error": null
+          }
+        ]
       }
     },
     {
       "key": "multi-source-v2:ram-23",
       "item_id": "ram-23",
-      "updatedAt": 1773518024534,
+      "updatedAt": 1773522221116,
       "response": {
         "ok": true,
         "item_id": "ram-23",
-        "updated_at": "2026-03-14T19:53:44.534Z",
-        "next_refresh_at": "2026-03-15T19:53:44.534Z",
+        "updated_at": "2026-03-14T21:03:41.116Z",
+        "next_refresh_at": "2026-03-15T21:03:41.116Z",
         "lowest_price": 4249,
         "reference_lowest_price": 4249,
         "reference_source": "komponentkoll",
@@ -6648,7 +6817,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:44.534Z",
+            "updated_at": "2026-03-14T21:03:41.116Z",
             "error": null
           },
           {
@@ -6658,12 +6827,12 @@
             "trusted_source": "komponentkoll",
             "product_url": "https://www.proshop.se/RAM/Corsair-Vengeance-DDR5-6000-32GB-CL36-Dual-Channel-2-pcs-AMD-EXPO-Intel-XMP-Vit/3325850",
             "search_url": null,
-            "price": 4249,
-            "total_price": 4249,
+            "price": 4989,
+            "total_price": 4989,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:44.534Z",
+            "updated_at": "2026-03-14T21:03:41.116Z",
             "error": null
           },
           {
@@ -6678,7 +6847,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:53:44.534Z",
+            "updated_at": "2026-03-14T21:03:41.116Z",
             "error": null
           }
         ]
@@ -6687,12 +6856,12 @@
     {
       "key": "multi-source-v2:ram-24",
       "item_id": "ram-24",
-      "updatedAt": 1773518044266,
+      "updatedAt": 1773522566679,
       "response": {
         "ok": true,
         "item_id": "ram-24",
-        "updated_at": "2026-03-14T19:54:04.266Z",
-        "next_refresh_at": "2026-03-15T19:54:04.266Z",
+        "updated_at": "2026-03-14T21:09:26.679Z",
+        "next_refresh_at": "2026-03-15T21:09:26.679Z",
         "lowest_price": 4390,
         "reference_lowest_price": 4390,
         "reference_source": "komponentkoll",
@@ -6709,7 +6878,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:54:04.266Z",
+            "updated_at": "2026-03-14T21:09:26.679Z",
             "error": null
           },
           {
@@ -6724,7 +6893,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:54:04.266Z",
+            "updated_at": "2026-03-14T21:09:26.679Z",
             "error": null
           }
         ]
@@ -6733,12 +6902,12 @@
     {
       "key": "multi-source-v2:ram-25",
       "item_id": "ram-25",
-      "updatedAt": 1773518057909,
+      "updatedAt": 1773522253398,
       "response": {
         "ok": true,
         "item_id": "ram-25",
-        "updated_at": "2026-03-14T19:54:17.909Z",
-        "next_refresh_at": "2026-03-15T19:54:17.909Z",
+        "updated_at": "2026-03-14T21:04:13.398Z",
+        "next_refresh_at": "2026-03-15T21:04:13.398Z",
         "lowest_price": 5434,
         "reference_lowest_price": 5434,
         "reference_source": "komponentkoll",
@@ -6748,12 +6917,12 @@
     {
       "key": "multi-source-v2:ram-26",
       "item_id": "ram-26",
-      "updatedAt": 1773518077581,
+      "updatedAt": 1773522257496,
       "response": {
         "ok": true,
         "item_id": "ram-26",
-        "updated_at": "2026-03-14T19:54:37.581Z",
-        "next_refresh_at": "2026-03-15T19:54:37.581Z",
+        "updated_at": "2026-03-14T21:04:17.496Z",
+        "next_refresh_at": "2026-03-15T21:04:17.496Z",
         "lowest_price": 10264,
         "reference_lowest_price": 10264,
         "reference_source": "komponentkoll",
@@ -6763,12 +6932,12 @@
     {
       "key": "multi-source-v2:ram-27",
       "item_id": "ram-27",
-      "updatedAt": 1773518091166,
+      "updatedAt": 1773522286258,
       "response": {
         "ok": true,
         "item_id": "ram-27",
-        "updated_at": "2026-03-14T19:54:51.166Z",
-        "next_refresh_at": "2026-03-15T19:54:51.166Z",
+        "updated_at": "2026-03-14T21:04:46.258Z",
+        "next_refresh_at": "2026-03-15T21:04:46.258Z",
         "lowest_price": 9390,
         "reference_lowest_price": 9390,
         "reference_source": "komponentkoll",
@@ -6778,12 +6947,12 @@
     {
       "key": "multi-source-v2:ram-28",
       "item_id": "ram-28",
-      "updatedAt": 1773518111756,
+      "updatedAt": 1773522291197,
       "response": {
         "ok": true,
         "item_id": "ram-28",
-        "updated_at": "2026-03-14T19:55:11.756Z",
-        "next_refresh_at": "2026-03-15T19:55:11.756Z",
+        "updated_at": "2026-03-14T21:04:51.197Z",
+        "next_refresh_at": "2026-03-15T21:04:51.197Z",
         "lowest_price": 9299,
         "reference_lowest_price": 9299,
         "reference_source": "komponentkoll",
@@ -6800,7 +6969,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:11.756Z",
+            "updated_at": "2026-03-14T21:04:51.197Z",
             "error": null
           },
           {
@@ -6815,7 +6984,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T19:55:11.756Z",
+            "updated_at": "2026-03-14T21:04:51.197Z",
             "error": null
           }
         ]
@@ -6824,12 +6993,12 @@
     {
       "key": "multi-source-v2:ram-29",
       "item_id": "ram-29",
-      "updatedAt": 1773518123617,
+      "updatedAt": 1773522319506,
       "response": {
         "ok": true,
         "item_id": "ram-29",
-        "updated_at": "2026-03-14T19:55:23.617Z",
-        "next_refresh_at": "2026-03-15T19:55:23.617Z",
+        "updated_at": "2026-03-14T21:05:19.506Z",
+        "next_refresh_at": "2026-03-15T21:05:19.506Z",
         "lowest_price": 2130,
         "reference_lowest_price": 2130,
         "reference_source": "komponentkoll",
@@ -6839,12 +7008,12 @@
     {
       "key": "multi-source-v2:ram-31",
       "item_id": "ram-31",
-      "updatedAt": 1773518157036,
+      "updatedAt": 1773522351788,
       "response": {
         "ok": true,
         "item_id": "ram-31",
-        "updated_at": "2026-03-14T19:55:57.036Z",
-        "next_refresh_at": "2026-03-15T19:55:57.036Z",
+        "updated_at": "2026-03-14T21:05:51.788Z",
+        "next_refresh_at": "2026-03-15T21:05:51.788Z",
         "lowest_price": 8890,
         "reference_lowest_price": 8890,
         "reference_source": "komponentkoll",
@@ -6861,7 +7030,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:57.036Z",
+            "updated_at": "2026-03-14T21:05:51.788Z",
             "error": null
           },
           {
@@ -6876,7 +7045,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T19:55:57.036Z",
+            "updated_at": "2026-03-14T21:05:51.788Z",
             "error": null
           }
         ]
@@ -6885,12 +7054,12 @@
     {
       "key": "multi-source-v2:ram-30",
       "item_id": "ram-30",
-      "updatedAt": 1773518144871,
+      "updatedAt": 1773522324119,
       "response": {
         "ok": true,
         "item_id": "ram-30",
-        "updated_at": "2026-03-14T19:55:44.871Z",
-        "next_refresh_at": "2026-03-15T19:55:44.871Z",
+        "updated_at": "2026-03-14T21:05:24.119Z",
+        "next_refresh_at": "2026-03-15T21:05:24.119Z",
         "lowest_price": null,
         "reference_lowest_price": null,
         "reference_source": null,
@@ -6900,12 +7069,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-asus-tuf-z790-plus-wifi",
       "item_id": "mb-lga1700-asus-tuf-z790-plus-wifi",
-      "updatedAt": 1773513761103,
+      "updatedAt": 1773521740538,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-asus-tuf-z790-plus-wifi",
-        "updated_at": "2026-03-14T18:42:41.103Z",
-        "next_refresh_at": "2026-03-15T18:42:41.103Z",
+        "updated_at": "2026-03-14T20:55:40.538Z",
+        "next_refresh_at": "2026-03-15T20:55:40.538Z",
         "lowest_price": 2409,
         "reference_lowest_price": 2409,
         "reference_source": "komponentkoll",
@@ -6922,7 +7091,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:41.103Z",
+            "updated_at": "2026-03-14T20:55:40.538Z",
             "error": null
           },
           {
@@ -6937,7 +7106,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:41.103Z",
+            "updated_at": "2026-03-14T20:55:40.538Z",
             "error": null
           },
           {
@@ -6952,7 +7121,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:41.103Z",
+            "updated_at": "2026-03-14T20:55:40.538Z",
             "error": null
           },
           {
@@ -6967,7 +7136,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:42:41.103Z",
+            "updated_at": "2026-03-14T20:55:40.538Z",
             "error": null
           },
           {
@@ -6982,7 +7151,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:42:41.103Z",
+            "updated_at": "2026-03-14T20:55:40.538Z",
             "error": null
           }
         ]
@@ -6991,12 +7160,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-gigabyte-z790-aorus-elite-ax",
       "item_id": "mb-lga1700-gigabyte-z790-aorus-elite-ax",
-      "updatedAt": 1773513782613,
+      "updatedAt": 1773521741660,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-gigabyte-z790-aorus-elite-ax",
-        "updated_at": "2026-03-14T18:43:02.613Z",
-        "next_refresh_at": "2026-03-15T18:43:02.613Z",
+        "updated_at": "2026-03-14T20:55:41.660Z",
+        "next_refresh_at": "2026-03-15T20:55:41.660Z",
         "lowest_price": 2439,
         "reference_lowest_price": 2510,
         "reference_source": "komponentkoll",
@@ -7013,7 +7182,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:02.613Z",
+            "updated_at": "2026-03-14T20:55:41.660Z",
             "error": null
           },
           {
@@ -7028,7 +7197,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:02.613Z",
+            "updated_at": "2026-03-14T20:55:41.660Z",
             "error": null
           },
           {
@@ -7043,7 +7212,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:02.613Z",
+            "updated_at": "2026-03-14T20:55:41.660Z",
             "error": null
           },
           {
@@ -7058,7 +7227,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:02.613Z",
+            "updated_at": "2026-03-14T20:55:41.660Z",
             "error": null
           },
           {
@@ -7073,7 +7242,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:43:02.613Z",
+            "updated_at": "2026-03-14T20:55:41.660Z",
             "error": null
           }
         ]
@@ -7082,12 +7251,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-asrock-z790-pro-rs",
       "item_id": "mb-lga1700-asrock-z790-pro-rs",
-      "updatedAt": 1773513783409,
+      "updatedAt": 1773521742626,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-asrock-z790-pro-rs",
-        "updated_at": "2026-03-14T18:43:03.409Z",
-        "next_refresh_at": "2026-03-15T18:43:03.409Z",
+        "updated_at": "2026-03-14T20:55:42.626Z",
+        "next_refresh_at": "2026-03-15T20:55:42.626Z",
         "lowest_price": 1839,
         "reference_lowest_price": 2009,
         "reference_source": "komponentkoll",
@@ -7104,7 +7273,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:03.409Z",
+            "updated_at": "2026-03-14T20:55:42.626Z",
             "error": null
           },
           {
@@ -7119,7 +7288,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:03.409Z",
+            "updated_at": "2026-03-14T20:55:42.626Z",
             "error": null
           },
           {
@@ -7134,7 +7303,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "unavailable",
-            "updated_at": "2026-03-14T18:43:03.409Z",
+            "updated_at": "2026-03-14T20:55:42.626Z",
             "error": null
           }
         ]
@@ -7143,12 +7312,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-asus-rog-strix-z790-f",
       "item_id": "mb-lga1700-asus-rog-strix-z790-f",
-      "updatedAt": 1773513805468,
+      "updatedAt": 1773521744589,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-asus-rog-strix-z790-f",
-        "updated_at": "2026-03-14T18:43:25.468Z",
-        "next_refresh_at": "2026-03-15T18:43:25.468Z",
+        "updated_at": "2026-03-14T20:55:44.589Z",
+        "next_refresh_at": "2026-03-15T20:55:44.589Z",
         "lowest_price": 3219,
         "reference_lowest_price": 3219,
         "reference_source": "komponentkoll",
@@ -7158,12 +7327,12 @@
     {
       "key": "multi-source-v2:mb-lga1700-msi-z790-edge-wifi",
       "item_id": "mb-lga1700-msi-z790-edge-wifi",
-      "updatedAt": 1773513804784,
+      "updatedAt": 1773521743779,
       "response": {
         "ok": true,
         "item_id": "mb-lga1700-msi-z790-edge-wifi",
-        "updated_at": "2026-03-14T18:43:24.784Z",
-        "next_refresh_at": "2026-03-15T18:43:24.784Z",
+        "updated_at": "2026-03-14T20:55:43.779Z",
+        "next_refresh_at": "2026-03-15T20:55:43.779Z",
         "lowest_price": 4351,
         "reference_lowest_price": 3873,
         "reference_source": "komponentkoll",
@@ -7180,7 +7349,7 @@
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock",
-            "updated_at": "2026-03-14T18:43:24.784Z",
+            "updated_at": "2026-03-14T20:55:43.779Z",
             "error": null
           }
         ]
