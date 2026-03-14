@@ -1151,6 +1151,42 @@ const LGA1700_MOTHERBOARDS = [
   }, "Premium"),
 ];
 
+export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
+  "cpu-am4-ryzen-7-5800x3d",
+  "cpu-lga1700-core-i7-13700k",
+  "mb-am4-gigabyte-x570-aorus-elite",
+  "mb-am4-msi-mag-b550m-mortar-wifi",
+  "mb-am4-asus-rog-crosshair-viii-hero",
+  "mb-am5-asrock-b650m-pro-rs-wifi",
+  "mb-am5-asrock-x670e-steel-legend",
+  "mb-lga1200-msi-b560-tomahawk-wifi",
+  "mb-lga1200-gigabyte-b560-aorus-pro-ax",
+  "mb-lga1200-asus-prime-z590-p",
+  "mb-lga1200-msi-z590-tomahawk-wifi",
+  "mb-lga1200-gigabyte-z590-aorus-elite-ax",
+  "mb-lga1200-asrock-z590-steel-legend",
+  "mb-lga1200-asus-rog-strix-z490-f",
+  "mb-lga1200-msi-z490-gaming-edge-wifi",
+  "ram-5",
+  "ram-6",
+  "ram-7",
+  "ram-9",
+  "ram-10",
+  "ram-11",
+  "ram-12",
+  "ram-19",
+  "ram-30",
+  "gpu-10",
+  "gpu-30",
+  "gpu-39",
+  "sto-6",
+  "sto-22",
+  "sto-27",
+  "sto-29",
+  "psu-7",
+  "cool-38",
+]);
+
 export const CUSTOM_BUILD_CATALOG_ITEMS = [
   ...AM4_CPUS,
   ...AM5_CPUS,
@@ -1161,7 +1197,7 @@ export const CUSTOM_BUILD_CATALOG_ITEMS = [
   ...LGA1200_MOTHERBOARDS,
   ...LGA1700_MOTHERBOARDS,
   ...STATIC_CUSTOM_BUILD_CATALOG_ITEMS,
-];
+].filter((item) => !REMOVED_CUSTOM_BUILD_ITEM_IDS.has(item.id));
 
 export const CUSTOM_BUILD_CATALOG_BY_ID = Object.fromEntries(
   CUSTOM_BUILD_CATALOG_ITEMS.map((item) => [item.id, item])
