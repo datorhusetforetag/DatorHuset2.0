@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v2",
-  "saved_at": "2026-03-13T23:51:57.819Z",
+  "saved_at": "2026-03-14T01:51:01.253Z",
   "entries": [
     {
       "key": "prisjakt-v2:cpu-am4-ryzen-3-3100",
@@ -351,7 +351,7 @@
     {
       "key": "prisjakt-v2:cpu-am4-ryzen-7-5700x3d",
       "item_id": "cpu-am4-ryzen-7-5700x3d",
-      "updatedAt": 1773445873953,
+      "updatedAt": 1773453021723,
       "response": {
         "offers": []
       }
@@ -425,7 +425,7 @@
     {
       "key": "prisjakt-v2:cpu-am4-ryzen-7-5800x3d",
       "item_id": "cpu-am4-ryzen-7-5800x3d",
-      "updatedAt": 1773445874575,
+      "updatedAt": 1773453022388,
       "response": {
         "offers": []
       }
@@ -1403,7 +1403,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i3-10105f",
       "item_id": "cpu-lga1200-core-i3-10105f",
-      "updatedAt": 1773445877569,
+      "updatedAt": 1773453023005,
       "response": {
         "offers": []
       }
@@ -1411,7 +1411,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-10400f",
       "item_id": "cpu-lga1200-core-i5-10400f",
-      "updatedAt": 1773445878234,
+      "updatedAt": 1773453023624,
       "response": {
         "offers": []
       }
@@ -1419,7 +1419,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-10600k",
       "item_id": "cpu-lga1200-core-i5-10600k",
-      "updatedAt": 1773445878851,
+      "updatedAt": 1773453024228,
       "response": {
         "offers": []
       }
@@ -1427,7 +1427,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i7-10700f",
       "item_id": "cpu-lga1200-core-i7-10700f",
-      "updatedAt": 1773445879521,
+      "updatedAt": 1773453024880,
       "response": {
         "offers": []
       }
@@ -1435,7 +1435,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i7-10700k",
       "item_id": "cpu-lga1200-core-i7-10700k",
-      "updatedAt": 1773445880141,
+      "updatedAt": 1773453025560,
       "response": {
         "offers": []
       }
@@ -1443,7 +1443,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i9-10900k",
       "item_id": "cpu-lga1200-core-i9-10900k",
-      "updatedAt": 1773445880795,
+      "updatedAt": 1773453026184,
       "response": {
         "offers": []
       }
@@ -1451,7 +1451,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-11400f",
       "item_id": "cpu-lga1200-core-i5-11400f",
-      "updatedAt": 1773445881443,
+      "updatedAt": 1773453026798,
       "response": {
         "offers": []
       }
@@ -1459,7 +1459,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-11600k",
       "item_id": "cpu-lga1200-core-i5-11600k",
-      "updatedAt": 1773445882125,
+      "updatedAt": 1773453027475,
       "response": {
         "offers": []
       }
@@ -1467,7 +1467,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i7-11700k",
       "item_id": "cpu-lga1200-core-i7-11700k",
-      "updatedAt": 1773445882760,
+      "updatedAt": 1773453028098,
       "response": {
         "offers": []
       }
@@ -1475,7 +1475,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i9-11900k",
       "item_id": "cpu-lga1200-core-i9-11900k",
-      "updatedAt": 1773445883379,
+      "updatedAt": 1773453028753,
       "response": {
         "offers": []
       }
@@ -1483,7 +1483,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-12100f",
       "item_id": "cpu-lga1700-core-i3-12100f",
-      "updatedAt": 1773445885006,
+      "updatedAt": 1773453029380,
       "response": {
         "offers": []
       }
@@ -1491,7 +1491,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-12400-tray",
       "item_id": "cpu-lga1700-core-i5-12400-tray",
-      "updatedAt": 1773445886617,
+      "updatedAt": 1773453030481,
       "response": {
         "offers": []
       }
@@ -1532,7 +1532,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-12600k",
       "item_id": "cpu-lga1700-core-i5-12600k",
-      "updatedAt": 1773445888263,
+      "updatedAt": 1773453032067,
       "response": {
         "offers": []
       }
@@ -1540,7 +1540,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-12600kf",
       "item_id": "cpu-lga1700-core-i5-12600kf",
-      "updatedAt": 1773445889880,
+      "updatedAt": 1773453033672,
       "response": {
         "offers": []
       }
@@ -1548,7 +1548,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-12700kf",
       "item_id": "cpu-lga1700-core-i7-12700kf",
-      "updatedAt": 1773445891498,
+      "updatedAt": 1773453035267,
       "response": {
         "offers": []
       }
@@ -1556,7 +1556,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-12700k",
       "item_id": "cpu-lga1700-core-i7-12700k",
-      "updatedAt": 1773445893145,
+      "updatedAt": 1773453036917,
       "response": {
         "offers": []
       }
@@ -1564,7 +1564,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-12900k",
       "item_id": "cpu-lga1700-core-i9-12900k",
-      "updatedAt": 1773445894742,
+      "updatedAt": 1773453038564,
       "response": {
         "offers": []
       }
@@ -1572,7 +1572,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-13100f",
       "item_id": "cpu-lga1700-core-i3-13100f",
-      "updatedAt": 1773445896378,
+      "updatedAt": 1773453040175,
       "response": {
         "offers": []
       }
@@ -1580,7 +1580,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-13400f",
       "item_id": "cpu-lga1700-core-i5-13400f",
-      "updatedAt": 1773445898030,
+      "updatedAt": 1773453041772,
       "response": {
         "offers": []
       }
@@ -1588,7 +1588,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-14100",
       "item_id": "cpu-lga1700-core-i3-14100",
-      "updatedAt": 1773445899649,
+      "updatedAt": 1773453043427,
       "response": {
         "offers": []
       }
@@ -1596,7 +1596,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-14100f",
       "item_id": "cpu-lga1700-core-i3-14100f",
-      "updatedAt": 1773445901295,
+      "updatedAt": 1773453045037,
       "response": {
         "offers": []
       }
@@ -1680,7 +1680,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-13600k",
       "item_id": "cpu-lga1700-core-i5-13600k",
-      "updatedAt": 1773445902891,
+      "updatedAt": 1773453046646,
       "response": {
         "offers": []
       }
@@ -1688,7 +1688,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-13700k",
       "item_id": "cpu-lga1700-core-i7-13700k",
-      "updatedAt": 1773445904511,
+      "updatedAt": 1773453048236,
       "response": {
         "offers": []
       }
@@ -1696,7 +1696,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-14600k",
       "item_id": "cpu-lga1700-core-i5-14600k",
-      "updatedAt": 1773445906219,
+      "updatedAt": 1773453049833,
       "response": {
         "offers": []
       }
@@ -1704,7 +1704,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-14600kf",
       "item_id": "cpu-lga1700-core-i5-14600kf",
-      "updatedAt": 1773445907852,
+      "updatedAt": 1773453051439,
       "response": {
         "offers": []
       }
@@ -1712,7 +1712,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-14700k",
       "item_id": "cpu-lga1700-core-i7-14700k",
-      "updatedAt": 1773445909539,
+      "updatedAt": 1773453053035,
       "response": {
         "offers": []
       }
@@ -1720,7 +1720,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-14700kf",
       "item_id": "cpu-lga1700-core-i7-14700kf",
-      "updatedAt": 1773445911197,
+      "updatedAt": 1773453054642,
       "response": {
         "offers": []
       }
@@ -1728,7 +1728,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-13900ks",
       "item_id": "cpu-lga1700-core-i9-13900ks",
-      "updatedAt": 1773445912833,
+      "updatedAt": 1773453056279,
       "response": {
         "offers": []
       }
@@ -1736,7 +1736,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-14900k",
       "item_id": "cpu-lga1700-core-i9-14900k",
-      "updatedAt": 1773445914438,
+      "updatedAt": 1773453057879,
       "response": {
         "offers": []
       }
@@ -1744,7 +1744,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-14900kf",
       "item_id": "cpu-lga1700-core-i9-14900kf",
-      "updatedAt": 1773445916050,
+      "updatedAt": 1773453059477,
       "response": {
         "offers": []
       }
@@ -1752,7 +1752,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-14900ks",
       "item_id": "cpu-lga1700-core-i9-14900ks",
-      "updatedAt": 1773445917661,
+      "updatedAt": 1773453061097,
       "response": {
         "offers": []
       }
@@ -3598,141 +3598,33 @@
     {
       "key": "prisjakt-v2:ram-1",
       "item_id": "ram-1",
-      "updatedAt": 1773406241590,
+      "updatedAt": 1773453061252,
       "response": {
-        "ok": true,
-        "item_id": "ram-1",
-        "updated_at": "2026-03-13T12:50:41.590Z",
-        "next_refresh_at": "2026-03-14T12:50:41.590Z",
-        "lowest_price": 3869,
-        "offers": [
-          {
-            "store_id": "netonnet",
-            "store": "NetOnNet",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/2/offer/1047009?client_id=1331",
-            "search_url": null,
-            "price": 3869,
-            "total_price": 3869,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "error": null,
-            "updated_at": "2026-03-13T12:50:41.590Z"
-          },
-          {
-            "store_id": "webhallen",
-            "store": "Webhallen",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/113/offer/368149?client_id=1331&amp;promotion_id=tWBNJNAc3jxsl0Zs7rF9",
-            "search_url": null,
-            "price": 3999,
-            "total_price": 3999,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "error": null,
-            "updated_at": "2026-03-13T12:50:41.590Z"
-          },
-          {
-            "store_id": "elgiganten",
-            "store": "Elgiganten",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/877222?client_id=1331",
-            "search_url": null,
-            "price": 4249,
-            "total_price": 4249,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "error": null,
-            "updated_at": "2026-03-13T12:50:41.590Z"
-          },
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3201677?client_id=1331",
-            "search_url": null,
-            "price": 4249,
-            "total_price": 4249,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "error": null,
-            "updated_at": "2026-03-13T12:50:41.590Z"
-          }
-        ]
+        "offers": []
       }
     },
     {
       "key": "prisjakt-v2:ram-2",
       "item_id": "ram-2",
-      "updatedAt": 1773292934720,
+      "updatedAt": 1773453061252,
       "response": {
-        "offers": [
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3200180?client_id=1331",
-            "search_url": null,
-            "price": 7390,
-            "total_price": 7390,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          }
-        ]
+        "offers": []
       }
     },
     {
       "key": "prisjakt-v2:ram-3",
       "item_id": "ram-3",
-      "updatedAt": 1773292957897,
+      "updatedAt": 1773453061252,
       "response": {
-        "offers": [
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3288991?client_id=1331",
-            "search_url": null,
-            "price": 6491,
-            "total_price": 6491,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          }
-        ]
+        "offers": []
       }
     },
     {
       "key": "prisjakt-v2:ram-4",
       "item_id": "ram-4",
-      "updatedAt": 1773406242123,
+      "updatedAt": 1773453061252,
       "response": {
-        "ok": true,
-        "item_id": "ram-4",
-        "updated_at": "2026-03-13T12:50:42.123Z",
-        "next_refresh_at": "2026-03-14T12:50:42.123Z",
-        "lowest_price": 4799,
-        "offers": [
-          {
-            "store_id": "elgiganten",
-            "store": "Elgiganten",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/54/offer/991835?client_id=1331",
-            "search_url": null,
-            "price": 4799,
-            "total_price": 4799,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "error": null,
-            "updated_at": "2026-03-13T12:50:42.123Z"
-          }
-        ]
+        "offers": []
       }
     },
     {
@@ -3746,71 +3638,25 @@
     {
       "key": "prisjakt-v2:ram-6",
       "item_id": "ram-6",
-      "updatedAt": 1773293023275,
+      "updatedAt": 1773453061252,
       "response": {
-        "offers": [
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3102539?client_id=1331",
-            "search_url": null,
-            "price": 11819,
-            "total_price": 11819,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          }
-        ]
+        "offers": []
       }
     },
     {
       "key": "prisjakt-v2:ram-7",
       "item_id": "ram-7",
-      "updatedAt": 1773406242709,
+      "updatedAt": 1773453061252,
       "response": {
-        "ok": true,
-        "item_id": "ram-7",
-        "updated_at": "2026-03-13T12:50:42.709Z",
-        "next_refresh_at": "2026-03-14T12:50:42.709Z",
-        "lowest_price": 7348,
-        "offers": [
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3094714?client_id=1331",
-            "search_url": null,
-            "price": 7348,
-            "total_price": 7348,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock",
-            "error": null,
-            "updated_at": "2026-03-13T12:50:42.709Z"
-          }
-        ]
+        "offers": []
       }
     },
     {
       "key": "prisjakt-v2:ram-8",
       "item_id": "ram-8",
-      "updatedAt": 1773293072486,
+      "updatedAt": 1773453061252,
       "response": {
-        "offers": [
-          {
-            "store_id": "amazon-se",
-            "store": "Amazon.se",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/38513/offer/B0DSR5P84D?client_id=1331",
-            "search_url": null,
-            "price": 18116,
-            "total_price": 18116,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          }
-        ]
+        "offers": []
       }
     },
     {
@@ -3846,30 +3692,6 @@
       }
     },
     {
-      "key": "prisjakt-v2:ram-13",
-      "item_id": "ram-13",
-      "updatedAt": 1773445917819,
-      "response": {
-        "offers": []
-      }
-    },
-    {
-      "key": "prisjakt-v2:ram-14",
-      "item_id": "ram-14",
-      "updatedAt": 1773445917819,
-      "response": {
-        "offers": []
-      }
-    },
-    {
-      "key": "prisjakt-v2:ram-15",
-      "item_id": "ram-15",
-      "updatedAt": 1773445917819,
-      "response": {
-        "offers": []
-      }
-    },
-    {
       "key": "prisjakt-v2:ram-16",
       "item_id": "ram-16",
       "updatedAt": 1773445917819,
@@ -3888,34 +3710,9 @@
     {
       "key": "prisjakt-v2:ram-18",
       "item_id": "ram-18",
-      "updatedAt": 1773423928168,
+      "updatedAt": 1773453061252,
       "response": {
-        "offers": [
-          {
-            "store_id": "komplett",
-            "store": "Komplett",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/33/offer/1335258?client_id=1331",
-            "search_url": null,
-            "price": 2990,
-            "total_price": 2990,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          },
-          {
-            "store_id": "proshop",
-            "store": "Proshop",
-            "status": "available",
-            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3288955?client_id=1331",
-            "search_url": null,
-            "price": 2990,
-            "total_price": 2990,
-            "currency": "SEK",
-            "shipping_price": null,
-            "availability": "in_stock"
-          }
-        ]
+        "offers": []
       }
     },
     {

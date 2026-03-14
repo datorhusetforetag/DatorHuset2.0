@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T23:58:32.841Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-14T01:51:16.394Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
@@ -196,9 +196,6 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "ram-10": 1190,
   "ram-11": 600,
   "ram-12": 1200,
-  "ram-13": 900,
-  "ram-14": 799,
-  "ram-15": 1100,
   "ram-16": 1400,
   "ram-17": 699,
   "ram-18": 749,
@@ -1473,24 +1470,6 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-12": {
     "category": "ram",
     "name": "Corsair Dominator RGB DDR4 3600MHz 32GB",
-    "source": "static_reference",
-    "note": null
-  },
-  "ram-13": {
-    "category": "ram",
-    "name": "32GB DDR4",
-    "source": "static_reference",
-    "note": null
-  },
-  "ram-14": {
-    "category": "ram",
-    "name": "Dell 32GB DDR5 5600MHz (begagnad)",
-    "source": "static_legacy_fallback",
-    "note": "Begagnad OEM-modul prissatt under motsvarande ny modul."
-  },
-  "ram-15": {
-    "category": "ram",
-    "name": "Dell 32GB DDR5 5600MHz",
     "source": "static_reference",
     "note": null
   },

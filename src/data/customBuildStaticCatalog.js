@@ -1363,58 +1363,6 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
-    "id": "ram-13",
-    "category": "ram",
-    "name": "32GB DDR4",
-    "brand": "Generic",
-    "price": 900,
-    "specs": [
-      "DDR4",
-      "32GB"
-    ],
-    "searchTerms": [
-      "32GB DDR4",
-      "32GB DDR4 DDR4 32GB"
-    ]
-  },
-  {
-    "id": "ram-14",
-    "category": "ram",
-    "name": "Dell 32GB DDR5 5600MHz (begagnad)",
-    "brand": "Dell",
-    "price": 799,
-    "specs": [
-      "DDR5",
-      "32GB",
-      "5600 MHz",
-      "Begagnad"
-    ],
-    "searchTerms": [
-      "Dell 32GB DDR5 5600MHz (begagnad)",
-      "Dell 32GB DDR5 5600MHz (begagnad) DDR5 32GB 5600 MHz Begagnad",
-      "Dell 32GB DDR5 5600MHz",
-      "Dell 32GB DDR5 5600MHz DDR5 32GB 5600 MHz Begagnad",
-      "32GB DDR5 5600MHz (begagnad)"
-    ]
-  },
-  {
-    "id": "ram-15",
-    "category": "ram",
-    "name": "Dell 32GB DDR5 5600MHz",
-    "brand": "Dell",
-    "price": 1100,
-    "specs": [
-      "DDR5",
-      "32GB",
-      "5600 MHz"
-    ],
-    "searchTerms": [
-      "Dell 32GB DDR5 5600MHz",
-      "Dell 32GB DDR5 5600MHz DDR5 32GB 5600 MHz",
-      "32GB DDR5 5600MHz"
-    ]
-  },
-  {
     "id": "ram-16",
     "category": "ram",
     "name": "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
@@ -2430,12 +2378,12 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "price": 1674,
     "specs": [
       "ATX",
-      "TrÃ¤panel",
+      "Träpanel",
       "Airflow"
     ],
     "searchTerms": [
       "Fractal Design North",
-      "Fractal Design North ATX TrÃ¤panel Airflow",
+      "Fractal Design North ATX Träpanel Airflow",
       "Design North"
     ]
   },
@@ -2550,11 +2498,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "ATX",
       "Mesh",
-      "ModulÃ¤r"
+      "Modulär"
     ],
     "searchTerms": [
       "Fractal Design Meshify 2",
-      "Fractal Design Meshify 2 ATX Mesh ModulÃ¤r",
+      "Fractal Design Meshify 2 ATX Mesh Modulär",
       "Design Meshify 2"
     ]
   },
@@ -2896,11 +2844,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "750W",
       "80+ Gold",
-      "ModulÃ¤rt"
+      "Modulärt"
     ],
     "searchTerms": [
       "Corsair RM750e",
-      "Corsair RM750e 750W 80+ Gold ModulÃ¤rt",
+      "Corsair RM750e 750W 80+ Gold Modulärt",
       "RM750e"
     ]
   },
@@ -2913,11 +2861,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "850W",
       "80+ Gold",
-      "ModulÃ¤rt"
+      "Modulärt"
     ],
     "searchTerms": [
       "Corsair RM850x",
-      "Corsair RM850x 850W 80+ Gold ModulÃ¤rt",
+      "Corsair RM850x 850W 80+ Gold Modulärt",
       "RM850x"
     ]
   },
@@ -2981,11 +2929,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "750W",
       "80+ Gold",
-      "ModulÃ¤rt"
+      "Modulärt"
     ],
     "searchTerms": [
       "Cooler Master MWE 750",
-      "Cooler Master MWE 750 750W 80+ Gold ModulÃ¤rt",
+      "Cooler Master MWE 750 750W 80+ Gold Modulärt",
       "MWE 750"
     ]
   },
@@ -3032,11 +2980,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "750W",
       "80+ Gold",
-      "ModulÃ¤rt"
+      "Modulärt"
     ],
     "searchTerms": [
       "NZXT C750",
-      "NZXT C750 750W 80+ Gold ModulÃ¤rt",
+      "NZXT C750 750W 80+ Gold Modulärt",
       "C750"
     ]
   },
@@ -3083,11 +3031,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "Luftkylare",
       "Tyst",
-      "HÃ¶g TDP"
+      "Hög TDP"
     ],
     "searchTerms": [
       "be quiet! Dark Rock Pro 5",
-      "be quiet! Dark Rock Pro 5 Luftkylare Tyst HÃ¶g TDP",
+      "be quiet! Dark Rock Pro 5 Luftkylare Tyst Hög TDP",
       "Dark Rock Pro 5"
     ]
   },
@@ -3134,11 +3082,11 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "specs": [
       "360mm AIO",
       "Tyst",
-      "PrisvÃ¤rd"
+      "Prisvärd"
     ],
     "searchTerms": [
       "Arctic Liquid Freezer III Pro 360",
-      "Arctic Liquid Freezer III Pro 360 360mm AIO Tyst PrisvÃ¤rd",
+      "Arctic Liquid Freezer III Pro 360 360mm AIO Tyst Prisvärd",
       "Liquid Freezer III Pro 360"
     ]
   },
@@ -3150,12 +3098,12 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "price": 701,
     "specs": [
       "Luftkylare",
-      "HÃ¶g TDP",
-      "PrisvÃ¤rd"
+      "Hög TDP",
+      "Prisvärd"
     ],
     "searchTerms": [
       "DeepCool AK620",
-      "DeepCool AK620 Luftkylare HÃ¶g TDP PrisvÃ¤rd",
+      "DeepCool AK620 Luftkylare Hög TDP Prisvärd",
       "AK620"
     ]
   },
@@ -3201,12 +3149,12 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "price": 417,
     "specs": [
       "Luftkylare",
-      "PrisvÃ¤rd",
+      "Prisvärd",
       "Tyst"
     ],
     "searchTerms": [
       "Thermalright Peerless Assassin",
-      "Thermalright Peerless Assassin Luftkylare PrisvÃ¤rd Tyst",
+      "Thermalright Peerless Assassin Luftkylare Prisvärd Tyst",
       "Peerless Assassin"
     ]
   },
@@ -3560,18 +3508,6 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "ram-12": {
-    "source": "static_reference",
-    "note": null
-  },
-  "ram-13": {
-    "source": "static_reference",
-    "note": null
-  },
-  "ram-14": {
-    "source": "static_legacy_fallback",
-    "note": "Begagnad OEM-modul prissatt under motsvarande ny modul."
-  },
-  "ram-15": {
     "source": "static_reference",
     "note": null
   },

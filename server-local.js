@@ -2939,8 +2939,9 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
             allowStale: false,
           })
         : getCachedCatalogItemStoreOffers(item.id);
-      const offers = Array.isArray(response?.offers) ? response.offers : [];
-      const hasSearchLinks = offers.some((offer) => Boolean(offer?.search_url));
+      const offers = Array.isArray(response?.offers)
+        ? response.offers.filter((offer) => Boolean(offer?.product_url))
+        : [];
       const hasPricedOffer = offers.some((offer) =>
         offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)
       );
@@ -2948,7 +2949,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
         item_id: item.id,
         lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
         updated_at: response?.updated_at || null,
-        price_source: hasPricedOffer ? "prisjakt-offer" : hasSearchLinks ? "search" : response?.updated_at ? "no-store" : null,
+        price_source: hasPricedOffer ? "prisjakt-offer" : response?.updated_at ? "no-store" : null,
       };
     })
   );

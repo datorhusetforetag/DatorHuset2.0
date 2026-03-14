@@ -3,7 +3,6 @@
   useMemo,
   useRef,
   useState,
-  type CSSProperties,
   type ChangeEvent,
   type Dispatch,
   type FormEvent,
@@ -188,14 +187,6 @@ type CatalogCategoryPricesResponse = {
 
 type CustomBuildPriceSource = "prisjakt-offer" | "seed" | "fallback" | "search" | "no-store";
 
-type StickyCardMode = "static" | "fixed" | "bottom";
-
-type StickyCardState = {
-  mode: StickyCardMode;
-  minHeight: number;
-  width: number;
-  left: number;
-};
 
 type CategoryConfig = {
   key: CategoryKey;
@@ -346,42 +337,6 @@ const CATEGORY_ID_PREFIX: Record<CategoryKey, string> = {
   case: "case",
   psu: "psu",
   cooling: "cool",
-};
-
-const DEFAULT_STICKY_CARD_STATE: StickyCardState = {
-  mode: "static",
-  minHeight: 0,
-  width: 0,
-  left: 0,
-};
-
-const CUSTOM_BUILD_STICKY_TOP_OFFSET = 96;
-
-const buildStickyCardStyle = (state: StickyCardState): CSSProperties => {
-  if (state.mode === "fixed") {
-    return {
-      position: "fixed",
-      top: `${CUSTOM_BUILD_STICKY_TOP_OFFSET}px`,
-      left: `${state.left}px`,
-      width: `${state.width}px`,
-      zIndex: 30,
-    };
-  }
-
-  if (state.mode === "bottom") {
-    return {
-      position: "absolute",
-      bottom: 0,
-      left: 0,
-      width: "100%",
-      zIndex: 10,
-    };
-  }
-
-  return {
-    position: "relative",
-    width: "100%",
-  };
 };
 
 const CATALOG_IMAGE_MAP: Record<string, string> = {
@@ -1689,33 +1644,6 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       specs: ["DDR4", "32GB", "3600 MHz", "RGB"],
     },
     {
-      id: "ram-13",
-      name: "32GB DDR4",
-      brand: "Generic",
-      price: 900,
-      ramType: "DDR4",
-      image: ramKingston32GbDdr5Image,
-      specs: ["DDR4", "32GB"],
-    },
-    {
-      id: "ram-14",
-      name: "Dell 32GB DDR5 5600MHz (begagnad)",
-      brand: "Dell",
-      price: 900,
-      ramType: "DDR5",
-      image: ramDellGenericImage,
-      specs: ["DDR5", "32GB", "5600 MHz", "Begagnad"],
-    },
-    {
-      id: "ram-15",
-      name: "Dell 32GB DDR5 5600MHz",
-      brand: "Dell",
-      price: 1100,
-      ramType: "DDR5",
-      image: ramDellGenericImage,
-      specs: ["DDR5", "32GB", "5600 MHz"],
-    },
-    {
       id: "ram-16",
       name: "Kingston 32GB (2x16GB) DDR5 6400MHz CL32 FURY Beast Vit AMD EXPO/Intel XMP 3.0",
       brand: "Kingston",
@@ -2698,13 +2626,6 @@ export default function CustomBuild() {
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
-  const layoutGridRef = useRef<HTMLDivElement | null>(null);
-  const leftColumnRef = useRef<HTMLElement | null>(null);
-  const leftStickyCardRef = useRef<HTMLDivElement | null>(null);
-  const rightColumnRef = useRef<HTMLElement | null>(null);
-  const rightStickyCardRef = useRef<HTMLDivElement | null>(null);
-  const [leftStickyState, setLeftStickyState] = useState<StickyCardState>(DEFAULT_STICKY_CARD_STATE);
-  const [rightStickyState, setRightStickyState] = useState<StickyCardState>(DEFAULT_STICKY_CARD_STATE);
 
   useEffect(() => {
     try {
@@ -2812,96 +2733,6 @@ export default function CustomBuild() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    let animationFrame = 0;
-
-    const updateStickyCards = () => {
-      animationFrame = 0;
-
-      const computeState = (
-        columnElement: HTMLElement | null,
-        cardElement: HTMLDivElement | null
-      ): StickyCardState => {
-        if (!columnElement || !cardElement || window.innerWidth < 1024) {
-          return DEFAULT_STICKY_CARD_STATE;
-        }
-
-        const layoutElement = layoutGridRef.current;
-        if (!layoutElement) {
-          return DEFAULT_STICKY_CARD_STATE;
-        }
-
-        const layoutRect = layoutElement.getBoundingClientRect();
-        const columnRect = columnElement.getBoundingClientRect();
-        const cardHeight = cardElement.offsetHeight;
-        const columnHeight = columnElement.offsetHeight;
-
-        if (!cardHeight || columnHeight <= cardHeight + CUSTOM_BUILD_STICKY_TOP_OFFSET) {
-          return {
-            ...DEFAULT_STICKY_CARD_STATE,
-            minHeight: cardHeight,
-          };
-        }
-
-        const reachedTop = layoutRect.top <= CUSTOM_BUILD_STICKY_TOP_OFFSET;
-        const reachedBottom = layoutRect.bottom <= cardHeight + CUSTOM_BUILD_STICKY_TOP_OFFSET;
-
-        if (!reachedTop) {
-          return {
-            ...DEFAULT_STICKY_CARD_STATE,
-            minHeight: cardHeight,
-          };
-        }
-
-        if (reachedBottom) {
-          return {
-            mode: "bottom",
-            minHeight: cardHeight,
-            width: columnRect.width,
-            left: 0,
-          };
-        }
-
-        return {
-          mode: "fixed",
-          minHeight: cardHeight,
-          width: columnRect.width,
-          left: columnRect.left,
-        };
-      };
-
-      setLeftStickyState(computeState(leftColumnRef.current, leftStickyCardRef.current));
-      setRightStickyState(computeState(rightColumnRef.current, rightStickyCardRef.current));
-    };
-
-    const queueUpdate = () => {
-      if (animationFrame) return;
-      animationFrame = window.requestAnimationFrame(updateStickyCards);
-    };
-
-    queueUpdate();
-    window.addEventListener("scroll", queueUpdate, { passive: true });
-    window.addEventListener("resize", queueUpdate);
-
-    let resizeObserver: ResizeObserver | null = null;
-    if (typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(() => queueUpdate());
-      [layoutGridRef.current, leftColumnRef.current, leftStickyCardRef.current, rightColumnRef.current, rightStickyCardRef.current]
-        .filter(Boolean)
-        .forEach((element) => resizeObserver?.observe(element as Element));
-    }
-
-    return () => {
-      window.removeEventListener("scroll", queueUpdate);
-      window.removeEventListener("resize", queueUpdate);
-      resizeObserver?.disconnect();
-      if (animationFrame) {
-        window.cancelAnimationFrame(animationFrame);
-      }
-    };
-  }, [activeCategory, expandedItemId, mobileSidebarOpen, selected, storePickerComponent, storePickerLoading]);
 
   useEffect(() => {
     const socket = selected.motherboard?.socket;
@@ -2966,7 +2797,7 @@ export default function CustomBuild() {
       case "seed":
         return "Förladdat";
       case "search":
-        return "Söklänk";
+        return "Ingen butik";
       case "no-store":
         return "Ingen butik";
       default:
@@ -3395,12 +3226,12 @@ export default function CustomBuild() {
             : data?.error?.message || "Kunde inte hämta butikpriser just nu.";
         throw new Error(fallbackMessage);
       }
-      const offers = Array.isArray(data?.offers) ? data.offers : [];
+      const offers = Array.isArray(data?.offers)
+        ? data.offers.filter((offer) => Boolean(offer.product_url))
+        : [];
       const hasPricedOffer = offers.some(
         (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
       );
-      const hasSearchOffer = offers.some((offer) => Boolean(offer.search_url));
-      const hasDirectProductOffer = offers.some((offer) => Boolean(offer.product_url));
       setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
       if (offers.length === 0) {
         setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
@@ -3409,23 +3240,17 @@ export default function CustomBuild() {
       } else {
         setPriceSourceByItemId((prev) => ({
           ...prev,
-          [item.id]: hasPricedOffer ? "prisjakt-offer" : hasSearchOffer ? "search" : hasDirectProductOffer ? "fallback" : "no-store",
+          [item.id]: hasPricedOffer ? "prisjakt-offer" : "fallback",
         }));
-        if (hasPricedOffer) {
-          setItemsWithoutStorePrice((prev) => {
+        setItemsWithoutStorePrice((prev) => {
+          if (hasPricedOffer) {
             if (!prev[item.id]) return prev;
             const nextState = { ...prev };
             delete nextState[item.id];
             return nextState;
-          });
-        } else {
-          setItemsWithoutStorePrice((prev) => {
-            if (!prev[item.id]) return prev;
-            const nextState = { ...prev };
-            delete nextState[item.id];
-            return nextState;
-          });
-        }
+          }
+          return { ...prev, [item.id]: true };
+        });
       }
     } catch (error) {
       setStorePickerError(
@@ -3767,21 +3592,10 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div
-              ref={layoutGridRef}
-              className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]"
-            >
-              <aside
-                ref={leftColumnRef}
-                className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:relative lg:self-stretch`}
-              >
-                <div className="space-y-4">
-                  <div style={leftStickyState.minHeight > 0 ? { minHeight: `${leftStickyState.minHeight}px` } : undefined}>
-                    <div
-                      ref={leftStickyCardRef}
-                      style={buildStickyCardStyle(leftStickyState)}
-                      className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80"
-                    >
+            <div className="grid items-start gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} self-start lg:block`}>
+                <div className="space-y-4 lg:sticky lg:top-24">
+                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                       <div className="mt-4 space-y-2">
                         {CATEGORY_LIST.map((category) => {
@@ -3840,7 +3654,6 @@ export default function CustomBuild() {
                           );
                         })}
                       </div>
-                    </div>
                   </div>
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                     <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Tips</p>
@@ -4380,7 +4193,7 @@ export default function CustomBuild() {
                                     </p>
                                     {customBuildDebugEnabled ? (
                                       <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
-                                        {"Debug: Prisjakt-offer = live butik, F\u00f6rladdat = preloadad prisfil, Reservpris = katalogpris, S\u00f6kl\u00e4nk = butikss\u00f6kning, Ingen butik = inga butikstr\u00e4ffar."}
+                                        {"Debug: Prisjakt-offer = live butik, F\u00f6rladdat = preloadad prisfil, Reservpris = katalogpris, Ingen butik = inga butikstr\u00e4ffar."}
                                       </p>
                                     ) : null}
                                   </div>
@@ -4417,14 +4230,14 @@ export default function CustomBuild() {
                                           </p>
                                         </div>
                                           <div className="flex items-center gap-2">
-                                        {offer.product_url || offer.search_url ? (
+                                        {offer.product_url ? (
                                           <a
-                                            href={offer.product_url || offer.search_url || "#"}
+                                            href={offer.product_url || "#"}
                                             target="_blank"
                                             rel="noreferrer"
                                             className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                           >
-                                            {offer.product_url ? "Till butik" : "Sök i butik"}
+                                            Till butik
                                           </a>
                                         ) : (
                                           <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
@@ -4469,18 +4282,12 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside
-                ref={rightColumnRef}
-                className="lg:relative lg:self-stretch"
-              >
-                <div className="space-y-4">
-                  <div style={rightStickyState.minHeight > 0 ? { minHeight: `${rightStickyState.minHeight}px` } : undefined}>
-                    <div
-                      ref={rightStickyCardRef}
-                      style={buildStickyCardStyle(rightStickyState)}
-                      id="build-summary"
-                      className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
-                    >
+              <aside className="self-start">
+                <div className="space-y-4 lg:sticky lg:top-24">
+                  <div
+                    id="build-summary"
+                    className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
+                  >
                     <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Din build</p>
                     <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
                     <div className="mt-4 space-y-3 text-sm text-gray-700 dark:text-gray-300">
@@ -4530,7 +4337,6 @@ export default function CustomBuild() {
                     {shareStatus ? (
                       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{shareStatus}</p>
                     ) : null}
-                    </div>
                   </div>
                   <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">
                     <p className="font-semibold text-gray-900 dark:text-gray-100">{"Vad h\u00e4nder sen?"}</p>
@@ -4603,7 +4409,7 @@ export default function CustomBuild() {
         <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
           <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
-            {"K\u00e4llor: "}<span className="font-semibold">Prisjakt-offer</span>{", "}<span className="font-semibold">Förladdat</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Söklänk</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
+            {"K\u00e4llor: "}<span className="font-semibold">Prisjakt-offer</span>{", "}<span className="font-semibold">Förladdat</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
           </p>
         </div>
       ) : null}
