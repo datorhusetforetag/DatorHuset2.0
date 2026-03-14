@@ -3006,6 +3006,329 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
+    "id": "psu-11",
+    "category": "psu",
+    "name": "GIGABYTE P650G PG5",
+    "brand": "GIGABYTE",
+    "price": 0,
+    "specs": [
+      "650W",
+      "80+ Gold",
+      "ATX 3.0"
+    ],
+    "searchTerms": [
+      "GIGABYTE P650G PG5",
+      "GIGABYTE P650G PG5 650W 80+ Gold ATX 3.0",
+      "P650G PG5"
+    ]
+  },
+  {
+    "id": "psu-12",
+    "category": "psu",
+    "name": "DeepCool PL650-D White",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "650W",
+      "80+ Bronze",
+      "Vit"
+    ],
+    "searchTerms": [
+      "DeepCool PL650-D White",
+      "DeepCool PL650-D White 650W 80+ Bronze Vit",
+      "PL650-D White"
+    ]
+  },
+  {
+    "id": "psu-13",
+    "category": "psu",
+    "name": "DeepCool PL650D 650W ATX 3.1",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "650W",
+      "80+ Bronze",
+      "ATX 3.1"
+    ],
+    "searchTerms": [
+      "DeepCool PL650D 650W ATX 3.1",
+      "DeepCool PL650D 650W ATX 3.1 650W 80+ Bronze ATX 3.1",
+      "PL650D 650W ATX 3.1"
+    ]
+  },
+  {
+    "id": "psu-14",
+    "category": "psu",
+    "name": "MSI MAG A650BN",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "650W",
+      "80+ Bronze",
+      "Prisvärd"
+    ],
+    "searchTerms": [
+      "MSI MAG A650BN",
+      "MSI MAG A650BN 650W 80+ Bronze Prisvärd",
+      "MAG A650BN"
+    ]
+  },
+  {
+    "id": "psu-15",
+    "category": "psu",
+    "name": "Cooler Master MWE 750W Bronze V3 ATX 3.1",
+    "brand": "Cooler Master",
+    "price": 0,
+    "specs": [
+      "750W",
+      "80+ Bronze",
+      "ATX 3.1"
+    ],
+    "searchTerms": [
+      "Cooler Master MWE 750W Bronze V3 ATX 3.1",
+      "Cooler Master MWE 750W Bronze V3 ATX 3.1 750W 80+ Bronze ATX 3.1",
+      "MWE 750W Bronze V3 ATX 3.1"
+    ]
+  },
+  {
+    "id": "psu-16",
+    "category": "psu",
+    "name": "Corsair CX Series CX650 650 Watt",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "650W",
+      "80+ Bronze",
+      "ATX"
+    ],
+    "searchTerms": [
+      "Corsair CX Series CX650 650 Watt",
+      "Corsair CX Series CX650 650 Watt 650W 80+ Bronze ATX",
+      "CX Series CX650 650 Watt"
+    ]
+  },
+  {
+    "id": "psu-17",
+    "category": "psu",
+    "name": "Corsair CX750",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "750W",
+      "80+ Bronze",
+      "ATX"
+    ],
+    "searchTerms": [
+      "Corsair CX750",
+      "Corsair CX750 750W 80+ Bronze ATX",
+      "CX750"
+    ]
+  },
+  {
+    "id": "psu-18",
+    "category": "psu",
+    "name": "Asus Prime 750W Bronze",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "750W",
+      "80+ Bronze",
+      "ATX"
+    ],
+    "searchTerms": [
+      "Asus Prime 750W Bronze",
+      "Asus Prime 750W Bronze 750W 80+ Bronze ATX",
+      "Prime 750W Bronze"
+    ]
+  },
+  {
+    "id": "psu-19",
+    "category": "psu",
+    "name": "ASUS TUF Gaming 750B",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "750W",
+      "80+ Bronze",
+      "TUF"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming 750B",
+      "ASUS TUF Gaming 750B 750W 80+ Bronze TUF",
+      "TUF Gaming 750B"
+    ]
+  },
+  {
+    "id": "psu-20",
+    "category": "psu",
+    "name": "Seasonic Core BC 750W ATX3.1",
+    "brand": "Seasonic",
+    "price": 0,
+    "specs": [
+      "750W",
+      "80+ Bronze",
+      "ATX 3.1"
+    ],
+    "searchTerms": [
+      "Seasonic Core BC 750W ATX3.1",
+      "Seasonic Core BC 750W ATX3.1 750W 80+ Bronze ATX 3.1",
+      "Core BC 750W ATX3.1"
+    ]
+  },
+  {
+    "id": "psu-21",
+    "category": "psu",
+    "name": "GIGABYTE UD750GM PG5 V2 ICE",
+    "brand": "GIGABYTE",
+    "price": 0,
+    "specs": [
+      "750W",
+      "80+ Gold",
+      "Modulärt"
+    ],
+    "searchTerms": [
+      "GIGABYTE UD750GM PG5 V2 ICE",
+      "GIGABYTE UD750GM PG5 V2 ICE 750W 80+ Gold Modulärt",
+      "UD750GM PG5 V2 ICE"
+    ]
+  },
+  {
+    "id": "psu-22",
+    "category": "psu",
+    "name": "Cooler Master MWE Gold 850W",
+    "brand": "Cooler Master",
+    "price": 0,
+    "specs": [
+      "850W",
+      "80+ Gold",
+      "Modulärt"
+    ],
+    "searchTerms": [
+      "Cooler Master MWE Gold 850W",
+      "Cooler Master MWE Gold 850W 850W 80+ Gold Modulärt",
+      "MWE Gold 850W"
+    ]
+  },
+  {
+    "id": "psu-23",
+    "category": "psu",
+    "name": "Gigabyte UD850GM PG5 V2 850W",
+    "brand": "GIGABYTE",
+    "price": 0,
+    "specs": [
+      "850W",
+      "80+ Gold",
+      "Modulärt"
+    ],
+    "searchTerms": [
+      "Gigabyte UD850GM PG5 V2 850W",
+      "Gigabyte UD850GM PG5 V2 850W 850W 80+ Gold Modulärt",
+      "UD850GM PG5 V2 850W"
+    ]
+  },
+  {
+    "id": "psu-24",
+    "category": "psu",
+    "name": "Seasonic Core BC 850W ATX3.1",
+    "brand": "Seasonic",
+    "price": 0,
+    "specs": [
+      "850W",
+      "80+ Bronze",
+      "ATX 3.1"
+    ],
+    "searchTerms": [
+      "Seasonic Core BC 850W ATX3.1",
+      "Seasonic Core BC 850W ATX3.1 850W 80+ Bronze ATX 3.1",
+      "Core BC 850W ATX3.1"
+    ]
+  },
+  {
+    "id": "psu-25",
+    "category": "psu",
+    "name": "Seasonic G12 GM-850 850W",
+    "brand": "Seasonic",
+    "price": 0,
+    "specs": [
+      "850W",
+      "80+ Gold",
+      "Modulärt"
+    ],
+    "searchTerms": [
+      "Seasonic G12 GM-850 850W",
+      "Seasonic G12 GM-850 850W 850W 80+ Gold Modulärt",
+      "G12 GM-850 850W"
+    ]
+  },
+  {
+    "id": "psu-26",
+    "category": "psu",
+    "name": "ASUS TUF Gaming 850W Gold ATX 3.1",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "850W",
+      "80+ Gold",
+      "ATX 3.1"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming 850W Gold ATX 3.1",
+      "ASUS TUF Gaming 850W Gold ATX 3.1 850W 80+ Gold ATX 3.1",
+      "TUF Gaming 850W Gold ATX 3.1"
+    ]
+  },
+  {
+    "id": "psu-27",
+    "category": "psu",
+    "name": "ASUS Prime 850W Gold",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "850W",
+      "80+ Gold",
+      "Modulärt"
+    ],
+    "searchTerms": [
+      "ASUS Prime 850W Gold",
+      "ASUS Prime 850W Gold 850W 80+ Gold Modulärt",
+      "Prime 850W Gold"
+    ]
+  },
+  {
+    "id": "psu-28",
+    "category": "psu",
+    "name": "GIGABYTE UD1000GM PG5 V2 ICE",
+    "brand": "GIGABYTE",
+    "price": 0,
+    "specs": [
+      "1000W",
+      "80+ Gold",
+      "Modulärt"
+    ],
+    "searchTerms": [
+      "GIGABYTE UD1000GM PG5 V2 ICE",
+      "GIGABYTE UD1000GM PG5 V2 ICE 1000W 80+ Gold Modulärt",
+      "UD1000GM PG5 V2 ICE"
+    ]
+  },
+  {
+    "id": "psu-29",
+    "category": "psu",
+    "name": "ASUS TUF Gaming 1000W Gold ATX 3.1",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "1000W",
+      "80+ Gold",
+      "ATX 3.1"
+    ],
+    "searchTerms": [
+      "ASUS TUF Gaming 1000W Gold ATX 3.1",
+      "ASUS TUF Gaming 1000W Gold ATX 3.1 1000W 80+ Gold ATX 3.1",
+      "TUF Gaming 1000W Gold ATX 3.1"
+    ]
+  },
+  {
     "id": "cool-1",
     "category": "cooling",
     "name": "Noctua NH-D15",
@@ -3173,6 +3496,1022 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "Corsair Nautilus 240",
       "Corsair Nautilus 240 240mm AIO RGB Aktuell modell",
       "Nautilus 240"
+    ]
+  },
+  {
+    "id": "cool-11",
+    "category": "cooling",
+    "name": "DeepCool LE240 V2 Svart",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "DeepCool LE240 V2 Svart",
+      "DeepCool LE240 V2 Svart 240mm AIO Svart ARGB",
+      "LE240 V2 Svart"
+    ]
+  },
+  {
+    "id": "cool-12",
+    "category": "cooling",
+    "name": "GIGABYTE Gaming 240 vattenkylare (is)",
+    "brand": "GIGABYTE",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Vit",
+      "RGB"
+    ],
+    "searchTerms": [
+      "GIGABYTE Gaming 240 vattenkylare (is)",
+      "GIGABYTE Gaming 240 vattenkylare (is) 240mm AIO Vit RGB",
+      "GIGABYTE Gaming 240 vattenkylare",
+      "GIGABYTE Gaming 240 vattenkylare 240mm AIO Vit RGB",
+      "Gaming 240 vattenkylare (is)"
+    ]
+  },
+  {
+    "id": "cool-13",
+    "category": "cooling",
+    "name": "Gigabyte Gaming 240 ARGB kylare (svart)",
+    "brand": "GIGABYTE",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Gigabyte Gaming 240 ARGB kylare (svart)",
+      "Gigabyte Gaming 240 ARGB kylare (svart) 240mm AIO Svart ARGB",
+      "Gigabyte Gaming 240 ARGB kylare",
+      "Gigabyte Gaming 240 ARGB kylare 240mm AIO Svart ARGB",
+      "Gaming 240 ARGB kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-14",
+    "category": "cooling",
+    "name": "Cooler Master MasterLiquid 240 Core II ARGB",
+    "brand": "Cooler Master",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "ARGB",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Cooler Master MasterLiquid 240 Core II ARGB",
+      "Cooler Master MasterLiquid 240 Core II ARGB 240mm AIO ARGB Svart",
+      "MasterLiquid 240 Core II ARGB"
+    ]
+  },
+  {
+    "id": "cool-15",
+    "category": "cooling",
+    "name": "MSI MAG Coreliquid A13 240 Kylare (vit)",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "MSI MAG Coreliquid A13 240 Kylare (vit)",
+      "MSI MAG Coreliquid A13 240 Kylare (vit) 240mm AIO Vit ARGB",
+      "MSI MAG Coreliquid A13 240 Kylare",
+      "MSI MAG Coreliquid A13 240 Kylare 240mm AIO Vit ARGB",
+      "MAG Coreliquid A13 240 Kylare (vit)"
+    ]
+  },
+  {
+    "id": "cool-16",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III 280 A-RGB Vit",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "280mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III 280 A-RGB Vit",
+      "Arctic Liquid Freezer III 280 A-RGB Vit 280mm AIO Vit ARGB",
+      "Liquid Freezer III 280 A-RGB Vit"
+    ]
+  },
+  {
+    "id": "cool-17",
+    "category": "cooling",
+    "name": "DeepCool LE240 V2 Vit",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "DeepCool LE240 V2 Vit",
+      "DeepCool LE240 V2 Vit 240mm AIO Vit ARGB",
+      "LE240 V2 Vit"
+    ]
+  },
+  {
+    "id": "cool-18",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 240 Kylare (svart)",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Svart",
+      "Pro"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 240 Kylare (svart)",
+      "Arctic Liquid Freezer III Pro 240 Kylare (svart) 240mm AIO Svart Pro",
+      "Arctic Liquid Freezer III Pro 240 Kylare",
+      "Arctic Liquid Freezer III Pro 240 Kylare 240mm AIO Svart Pro",
+      "Liquid Freezer III Pro 240 Kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-19",
+    "category": "cooling",
+    "name": "DeepCool LM240",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "ARGB",
+      "Prisvärd"
+    ],
+    "searchTerms": [
+      "DeepCool LM240",
+      "DeepCool LM240 240mm AIO ARGB Prisvärd",
+      "LM240"
+    ]
+  },
+  {
+    "id": "cool-20",
+    "category": "cooling",
+    "name": "DeepCool LE360 V2 Svart",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "DeepCool LE360 V2 Svart",
+      "DeepCool LE360 V2 Svart 360mm AIO Svart ARGB",
+      "LE360 V2 Svart"
+    ]
+  },
+  {
+    "id": "cool-21",
+    "category": "cooling",
+    "name": "Cooler Master MasterLiquid 360 Core II ARGB Kylare (vit)",
+    "brand": "Cooler Master",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Cooler Master MasterLiquid 360 Core II ARGB Kylare (vit)",
+      "Cooler Master MasterLiquid 360 Core II ARGB Kylare (vit) 360mm AIO Vit ARGB",
+      "Cooler Master MasterLiquid 360 Core II ARGB Kylare",
+      "Cooler Master MasterLiquid 360 Core II ARGB Kylare 360mm AIO Vit ARGB",
+      "MasterLiquid 360 Core II ARGB Kylare (vit)"
+    ]
+  },
+  {
+    "id": "cool-22",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III 240 A-RGB Vit",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III 240 A-RGB Vit",
+      "Arctic Liquid Freezer III 240 A-RGB Vit 240mm AIO Vit ARGB",
+      "Liquid Freezer III 240 A-RGB Vit"
+    ]
+  },
+  {
+    "id": "cool-23",
+    "category": "cooling",
+    "name": "MSI MAG Coreliquid A13 240 Kylare (svart)",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "MSI MAG Coreliquid A13 240 Kylare (svart)",
+      "MSI MAG Coreliquid A13 240 Kylare (svart) 240mm AIO Svart ARGB",
+      "MSI MAG Coreliquid A13 240 Kylare",
+      "MSI MAG Coreliquid A13 240 Kylare 240mm AIO Svart ARGB",
+      "MAG Coreliquid A13 240 Kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-24",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 240 A-RGB Kylare (svart)",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "240mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 240 A-RGB Kylare (svart)",
+      "Arctic Liquid Freezer III Pro 240 A-RGB Kylare (svart) 240mm AIO Svart ARGB",
+      "Arctic Liquid Freezer III Pro 240 A-RGB Kylare",
+      "Arctic Liquid Freezer III Pro 240 A-RGB Kylare 240mm AIO Svart ARGB",
+      "Liquid Freezer III Pro 240 A-RGB Kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-25",
+    "category": "cooling",
+    "name": "DeepCool LE360 V2 Vit",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "DeepCool LE360 V2 Vit",
+      "DeepCool LE360 V2 Vit 360mm AIO Vit ARGB",
+      "LE360 V2 Vit"
+    ]
+  },
+  {
+    "id": "cool-26",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 280 Svart",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "280mm AIO",
+      "Svart",
+      "Pro"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 280 Svart",
+      "Arctic Liquid Freezer III Pro 280 Svart 280mm AIO Svart Pro",
+      "Liquid Freezer III Pro 280 Svart"
+    ]
+  },
+  {
+    "id": "cool-27",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 360 Kylare (svart)",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Svart",
+      "Pro"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 360 Kylare (svart)",
+      "Arctic Liquid Freezer III Pro 360 Kylare (svart) 360mm AIO Svart Pro",
+      "Arctic Liquid Freezer III Pro 360 Kylare",
+      "Arctic Liquid Freezer III Pro 360 Kylare 360mm AIO Svart Pro",
+      "Liquid Freezer III Pro 360 Kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-28",
+    "category": "cooling",
+    "name": "Thermalright Aqua Elite 360 V3 vit",
+    "brand": "Thermalright",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Thermalright Aqua Elite 360 V3 vit",
+      "Thermalright Aqua Elite 360 V3 vit 360mm AIO Vit ARGB",
+      "Aqua Elite 360 V3 vit"
+    ]
+  },
+  {
+    "id": "cool-29",
+    "category": "cooling",
+    "name": "MSI MAG Coreliquid A13 360 Kylare (vit)",
+    "brand": "MSI",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "MSI MAG Coreliquid A13 360 Kylare (vit)",
+      "MSI MAG Coreliquid A13 360 Kylare (vit) 360mm AIO Vit ARGB",
+      "MSI MAG Coreliquid A13 360 Kylare",
+      "MSI MAG Coreliquid A13 360 Kylare 360mm AIO Vit ARGB",
+      "MAG Coreliquid A13 360 Kylare (vit)"
+    ]
+  },
+  {
+    "id": "cool-30",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro A-RGB White",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro A-RGB White",
+      "Arctic Liquid Freezer III Pro A-RGB White 360mm AIO Vit ARGB",
+      "Liquid Freezer III Pro A-RGB White"
+    ]
+  },
+  {
+    "id": "cool-31",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 360 A-RGB Kylare (svart)",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 360 A-RGB Kylare (svart)",
+      "Arctic Liquid Freezer III Pro 360 A-RGB Kylare (svart) 360mm AIO Svart ARGB",
+      "Arctic Liquid Freezer III Pro 360 A-RGB Kylare",
+      "Arctic Liquid Freezer III Pro 360 A-RGB Kylare 360mm AIO Svart ARGB",
+      "Liquid Freezer III Pro 360 A-RGB Kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-32",
+    "category": "cooling",
+    "name": "Phanteks Glacier One 360 M25 G2 Kylare (vit)",
+    "brand": "Phanteks",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Phanteks Glacier One 360 M25 G2 Kylare (vit)",
+      "Phanteks Glacier One 360 M25 G2 Kylare (vit) 360mm AIO Vit ARGB",
+      "Phanteks Glacier One 360 M25 G2 Kylare",
+      "Phanteks Glacier One 360 M25 G2 Kylare 360mm AIO Vit ARGB",
+      "Glacier One 360 M25 G2 Kylare (vit)"
+    ]
+  },
+  {
+    "id": "cool-33",
+    "category": "cooling",
+    "name": "Phanteks Glacier One 360 M25 G2",
+    "brand": "Phanteks",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Phanteks Glacier One 360 M25 G2",
+      "Phanteks Glacier One 360 M25 G2 360mm AIO Svart ARGB",
+      "Glacier One 360 M25 G2"
+    ]
+  },
+  {
+    "id": "cool-34",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 420 Svart",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "420mm AIO",
+      "Svart",
+      "Pro"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 420 Svart",
+      "Arctic Liquid Freezer III Pro 420 Svart 420mm AIO Svart Pro",
+      "Liquid Freezer III Pro 420 Svart"
+    ]
+  },
+  {
+    "id": "cool-35",
+    "category": "cooling",
+    "name": "Arctic Liquid Freezer III Pro 420 A-RGB Svart",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "420mm AIO",
+      "Svart",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Arctic Liquid Freezer III Pro 420 A-RGB Svart",
+      "Arctic Liquid Freezer III Pro 420 A-RGB Svart 420mm AIO Svart ARGB",
+      "Liquid Freezer III Pro 420 A-RGB Svart"
+    ]
+  },
+  {
+    "id": "cool-36",
+    "category": "cooling",
+    "name": "Corsair Nautilus 360 RS ARGB",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "ARGB",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Corsair Nautilus 360 RS ARGB",
+      "Corsair Nautilus 360 RS ARGB 360mm AIO ARGB Svart",
+      "Nautilus 360 RS ARGB"
+    ]
+  },
+  {
+    "id": "cool-37",
+    "category": "cooling",
+    "name": "Corsair Nautilus 360 (svart)",
+    "brand": "Corsair",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Svart",
+      "Aktuell modell"
+    ],
+    "searchTerms": [
+      "Corsair Nautilus 360 (svart)",
+      "Corsair Nautilus 360 (svart) 360mm AIO Svart Aktuell modell",
+      "Corsair Nautilus 360",
+      "Corsair Nautilus 360 360mm AIO Svart Aktuell modell",
+      "Nautilus 360 (svart)"
+    ]
+  },
+  {
+    "id": "cool-38",
+    "category": "cooling",
+    "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart)",
+    "brand": "NZXT",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "LCD",
+      "Svart"
+    ],
+    "searchTerms": [
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart)",
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart) 360mm AIO LCD Svart",
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare",
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare 360mm AIO LCD Svart",
+      "Kraken 360 Elite V2 2024 RGB Kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-39",
+    "category": "cooling",
+    "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (vit)",
+    "brand": "NZXT",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "LCD",
+      "Vit"
+    ],
+    "searchTerms": [
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare (vit)",
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare (vit) 360mm AIO LCD Vit",
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare",
+      "NZXT Kraken 360 Elite V2 2024 RGB Kylare 360mm AIO LCD Vit",
+      "Kraken 360 Elite V2 2024 RGB Kylare (vit)"
+    ]
+  },
+  {
+    "id": "cool-40",
+    "category": "cooling",
+    "name": "Lian Li Hydroshift II LCD-S 360TL Wireless Svart",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "LCD",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Lian Li Hydroshift II LCD-S 360TL Wireless Svart",
+      "Lian Li Hydroshift II LCD-S 360TL Wireless Svart 360mm AIO LCD Svart",
+      "Hydroshift II LCD-S 360TL Wireless Svart"
+    ]
+  },
+  {
+    "id": "cool-41",
+    "category": "cooling",
+    "name": "Asus ROG Ryuo IV SLC 360 ARGB Kylare",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "ARGB",
+      "Premium"
+    ],
+    "searchTerms": [
+      "Asus ROG Ryuo IV SLC 360 ARGB Kylare",
+      "Asus ROG Ryuo IV SLC 360 ARGB Kylare 360mm AIO ARGB Premium",
+      "ROG Ryuo IV SLC 360 ARGB Kylare"
+    ]
+  },
+  {
+    "id": "cool-42",
+    "category": "cooling",
+    "name": "Lian Li Hydroshift II LCD-C 360CL Svart",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "LCD",
+      "Svart"
+    ],
+    "searchTerms": [
+      "Lian Li Hydroshift II LCD-C 360CL Svart",
+      "Lian Li Hydroshift II LCD-C 360CL Svart 360mm AIO LCD Svart",
+      "Hydroshift II LCD-C 360CL Svart"
+    ]
+  },
+  {
+    "id": "cool-43",
+    "category": "cooling",
+    "name": "Tryx Panorama Upgraded A-RGB 360 Vit",
+    "brand": "Tryx",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Tryx Panorama Upgraded A-RGB 360 Vit",
+      "Tryx Panorama Upgraded A-RGB 360 Vit 360mm AIO Vit ARGB",
+      "Panorama Upgraded A-RGB 360 Vit"
+    ]
+  },
+  {
+    "id": "cool-44",
+    "category": "cooling",
+    "name": "Lian Li Hydroshift II LCD-S 360CL Wireless White",
+    "brand": "Lian Li",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "LCD",
+      "Vit"
+    ],
+    "searchTerms": [
+      "Lian Li Hydroshift II LCD-S 360CL Wireless White",
+      "Lian Li Hydroshift II LCD-S 360CL Wireless White 360mm AIO LCD Vit",
+      "Hydroshift II LCD-S 360CL Wireless White"
+    ]
+  },
+  {
+    "id": "cool-45",
+    "category": "cooling",
+    "name": "Tryx PANORAMA Upgraded 360mm AIO White",
+    "brand": "Tryx",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Tryx PANORAMA Upgraded 360mm AIO White",
+      "Tryx PANORAMA Upgraded 360mm AIO White 360mm AIO Vit ARGB",
+      "PANORAMA Upgraded 360mm AIO White"
+    ]
+  },
+  {
+    "id": "cool-46",
+    "category": "cooling",
+    "name": "ASUS ROG Ryuo IV 360 A-RGB",
+    "brand": "ASUS",
+    "price": 0,
+    "specs": [
+      "360mm AIO",
+      "ARGB",
+      "Premium"
+    ],
+    "searchTerms": [
+      "ASUS ROG Ryuo IV 360 A-RGB",
+      "ASUS ROG Ryuo IV 360 A-RGB 360mm AIO ARGB Premium",
+      "ROG Ryuo IV 360 A-RGB"
+    ]
+  },
+  {
+    "id": "cool-47",
+    "category": "cooling",
+    "name": "DeepCool AG400",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "Prisvärd"
+    ],
+    "searchTerms": [
+      "DeepCool AG400",
+      "DeepCool AG400 Luftkylare 120mm Prisvärd",
+      "AG400"
+    ]
+  },
+  {
+    "id": "cool-48",
+    "category": "cooling",
+    "name": "Thermalright Assassin Spirit 120 V2",
+    "brand": "Thermalright",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "Prisvärd"
+    ],
+    "searchTerms": [
+      "Thermalright Assassin Spirit 120 V2",
+      "Thermalright Assassin Spirit 120 V2 Luftkylare 120mm Prisvärd",
+      "Assassin Spirit 120 V2"
+    ]
+  },
+  {
+    "id": "cool-49",
+    "category": "cooling",
+    "name": "Thermalright Assassin X120 R SE ARGB 120mm",
+    "brand": "Thermalright",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Thermalright Assassin X120 R SE ARGB 120mm",
+      "Thermalright Assassin X120 R SE ARGB 120mm Luftkylare 120mm ARGB",
+      "Assassin X120 R SE ARGB 120mm"
+    ]
+  },
+  {
+    "id": "cool-50",
+    "category": "cooling",
+    "name": "DeepCool AG400 BK ARGB V2",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "DeepCool AG400 BK ARGB V2",
+      "DeepCool AG400 BK ARGB V2 Luftkylare 120mm ARGB",
+      "AG400 BK ARGB V2"
+    ]
+  },
+  {
+    "id": "cool-51",
+    "category": "cooling",
+    "name": "Cooler Master Hyper 212 3DHP ARGB kylare (svart)",
+    "brand": "Cooler Master",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Cooler Master Hyper 212 3DHP ARGB kylare (svart)",
+      "Cooler Master Hyper 212 3DHP ARGB kylare (svart) Luftkylare 120mm ARGB",
+      "Cooler Master Hyper 212 3DHP ARGB kylare",
+      "Cooler Master Hyper 212 3DHP ARGB kylare Luftkylare 120mm ARGB",
+      "Hyper 212 3DHP ARGB kylare (svart)"
+    ]
+  },
+  {
+    "id": "cool-52",
+    "category": "cooling",
+    "name": "Arctic Freezer 36 Kylare",
+    "brand": "Arctic",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "Prisvärd"
+    ],
+    "searchTerms": [
+      "Arctic Freezer 36 Kylare",
+      "Arctic Freezer 36 Kylare Luftkylare 120mm Prisvärd",
+      "Freezer 36 Kylare"
+    ]
+  },
+  {
+    "id": "cool-53",
+    "category": "cooling",
+    "name": "DeepCool AG400 WH ARGB V2",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Vit",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "DeepCool AG400 WH ARGB V2",
+      "DeepCool AG400 WH ARGB V2 Luftkylare Vit ARGB",
+      "AG400 WH ARGB V2"
+    ]
+  },
+  {
+    "id": "cool-54",
+    "category": "cooling",
+    "name": "be quiet! Pure Rock 3 LX",
+    "brand": "be quiet!",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Tyst",
+      "120mm"
+    ],
+    "searchTerms": [
+      "be quiet! Pure Rock 3 LX",
+      "be quiet! Pure Rock 3 LX Luftkylare Tyst 120mm",
+      "Pure Rock 3 LX"
+    ]
+  },
+  {
+    "id": "cool-55",
+    "category": "cooling",
+    "name": "DeepCool AK400 Digital SE",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Digital",
+      "120mm"
+    ],
+    "searchTerms": [
+      "DeepCool AK400 Digital SE",
+      "DeepCool AK400 Digital SE Luftkylare Digital 120mm",
+      "AK400 Digital SE"
+    ]
+  },
+  {
+    "id": "cool-56",
+    "category": "cooling",
+    "name": "DeepCool AK400 Digital SE Vit",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Digital",
+      "Vit"
+    ],
+    "searchTerms": [
+      "DeepCool AK400 Digital SE Vit",
+      "DeepCool AK400 Digital SE Vit Luftkylare Digital Vit",
+      "AK400 Digital SE Vit"
+    ]
+  },
+  {
+    "id": "cool-57",
+    "category": "cooling",
+    "name": "Thermalright Peerless Assassin 120 ARGB",
+    "brand": "Thermalright",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Thermalright Peerless Assassin 120 ARGB",
+      "Thermalright Peerless Assassin 120 ARGB Luftkylare 120mm ARGB",
+      "Peerless Assassin 120 ARGB"
+    ]
+  },
+  {
+    "id": "cool-58",
+    "category": "cooling",
+    "name": "Thermalright Peerless Assassin 120 SE ARGB",
+    "brand": "Thermalright",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "ARGB"
+    ],
+    "searchTerms": [
+      "Thermalright Peerless Assassin 120 SE ARGB",
+      "Thermalright Peerless Assassin 120 SE ARGB Luftkylare 120mm ARGB",
+      "Peerless Assassin 120 SE ARGB"
+    ]
+  },
+  {
+    "id": "cool-59",
+    "category": "cooling",
+    "name": "be quiet! Pure Rock Pro 3 LX",
+    "brand": "be quiet!",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Tyst",
+      "Dual tower"
+    ],
+    "searchTerms": [
+      "be quiet! Pure Rock Pro 3 LX",
+      "be quiet! Pure Rock Pro 3 LX Luftkylare Tyst Dual tower",
+      "Pure Rock Pro 3 LX"
+    ]
+  },
+  {
+    "id": "cool-60",
+    "category": "cooling",
+    "name": "DeepCool AK500 Zero Dark",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Svart",
+      "High TDP"
+    ],
+    "searchTerms": [
+      "DeepCool AK500 Zero Dark",
+      "DeepCool AK500 Zero Dark Luftkylare Svart High TDP",
+      "AK500 Zero Dark"
+    ]
+  },
+  {
+    "id": "cool-61",
+    "category": "cooling",
+    "name": "DeepCool AK620 Zero Dark",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Dual tower",
+      "Svart"
+    ],
+    "searchTerms": [
+      "DeepCool AK620 Zero Dark",
+      "DeepCool AK620 Zero Dark Luftkylare Dual tower Svart",
+      "AK620 Zero Dark"
+    ]
+  },
+  {
+    "id": "cool-62",
+    "category": "cooling",
+    "name": "DeepCool AK620 G2 Digital Nyx",
+    "brand": "DeepCool",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Digital",
+      "Dual tower"
+    ],
+    "searchTerms": [
+      "DeepCool AK620 G2 Digital Nyx",
+      "DeepCool AK620 G2 Digital Nyx Luftkylare Digital Dual tower",
+      "AK620 G2 Digital Nyx"
+    ]
+  },
+  {
+    "id": "cool-63",
+    "category": "cooling",
+    "name": "be quiet! Pure Rock Pro 3",
+    "brand": "be quiet!",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "Tyst",
+      "Dual tower"
+    ],
+    "searchTerms": [
+      "be quiet! Pure Rock Pro 3",
+      "be quiet! Pure Rock Pro 3 Luftkylare Tyst Dual tower",
+      "Pure Rock Pro 3"
+    ]
+  },
+  {
+    "id": "cool-64",
+    "category": "cooling",
+    "name": "Noctua NH-L9x65 chromax.black",
+    "brand": "Noctua",
+    "price": 0,
+    "specs": [
+      "Lågprofil",
+      "Svart",
+      "Tyst"
+    ],
+    "searchTerms": [
+      "Noctua NH-L9x65 chromax.black",
+      "Noctua NH-L9x65 chromax.black Lågprofil Svart Tyst",
+      "NH-L9x65 chromax.black"
+    ]
+  },
+  {
+    "id": "cool-65",
+    "category": "cooling",
+    "name": "Noctua NH-L12S",
+    "brand": "Noctua",
+    "price": 0,
+    "specs": [
+      "Lågprofil",
+      "120mm",
+      "Tyst"
+    ],
+    "searchTerms": [
+      "Noctua NH-L12S",
+      "Noctua NH-L12S Lågprofil 120mm Tyst",
+      "NH-L12S"
+    ]
+  },
+  {
+    "id": "cool-66",
+    "category": "cooling",
+    "name": "Noctua NH-U12A",
+    "brand": "Noctua",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "Premium"
+    ],
+    "searchTerms": [
+      "Noctua NH-U12A",
+      "Noctua NH-U12A Luftkylare 120mm Premium",
+      "NH-U12A"
+    ]
+  },
+  {
+    "id": "cool-67",
+    "category": "cooling",
+    "name": "Noctua NH-U9S",
+    "brand": "Noctua",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "92mm",
+      "Kompakt"
+    ],
+    "searchTerms": [
+      "Noctua NH-U9S",
+      "Noctua NH-U9S Luftkylare 92mm Kompakt",
+      "NH-U9S"
+    ]
+  },
+  {
+    "id": "cool-68",
+    "category": "cooling",
+    "name": "Noctua NH-D12L",
+    "brand": "Noctua",
+    "price": 0,
+    "specs": [
+      "Luftkylare",
+      "120mm",
+      "Dual tower"
+    ],
+    "searchTerms": [
+      "Noctua NH-D12L",
+      "Noctua NH-D12L Luftkylare 120mm Dual tower",
+      "NH-D12L"
     ]
   }
 ];
@@ -3887,6 +5226,82 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "psu-11": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-12": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-13": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-14": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-15": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-16": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-17": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-18": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-19": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-20": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-21": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-22": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-23": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-24": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-25": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-26": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-27": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-28": {
+    "source": "static_reference",
+    "note": null
+  },
+  "psu-29": {
+    "source": "static_reference",
+    "note": null
+  },
   "cool-1": {
     "source": "prisjakt_seed",
     "note": null
@@ -3925,6 +5340,238 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
   },
   "cool-10": {
     "source": "prisjakt_seed",
+    "note": null
+  },
+  "cool-11": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-12": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-13": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-14": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-15": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-16": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-17": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-18": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-19": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-20": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-21": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-22": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-23": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-24": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-25": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-26": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-27": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-28": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-29": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-30": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-31": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-32": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-33": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-34": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-35": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-36": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-37": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-38": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-39": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-40": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-41": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-42": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-43": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-44": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-45": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-46": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-47": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-48": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-49": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-50": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-51": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-52": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-53": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-54": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-55": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-56": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-57": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-58": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-59": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-60": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-61": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-62": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-63": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-64": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-65": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-66": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-67": {
+    "source": "static_reference",
+    "note": null
+  },
+  "cool-68": {
+    "source": "static_reference",
     "note": null
   }
 };

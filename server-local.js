@@ -1792,6 +1792,39 @@ const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
     inet: "https://www.inet.se/produkt/5306606/intel-core-i5-14400f-2-5-ghz-29-5mb",
   },
 };
+const CUSTOM_BUILD_MANUAL_STORE_OFFERS = {
+  "psu-17": [
+    {
+      store_id: "inet",
+      store: "Inet",
+      status: "available",
+      price: 849,
+      total_price: 849,
+      product_url: "https://www.inet.se/produkt/6906118/corsair-cx750-750w",
+    },
+  ],
+  "cool-25": [
+    {
+      store_id: "inet",
+      store: "Inet",
+      status: "available",
+      price: 949,
+      total_price: 949,
+      product_url: "https://www.inet.se/produkt/5325323/deepcool-le360-v2-vit",
+    },
+  ],
+  "cool-28": [
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 929,
+      total_price: 929,
+      product_url:
+        "https://www.proshop.se/CPU-flaektar/Thermalright-Aqua-Elite-360-V3-White-ARGB-CPU-Vattenkylare-Max-26-dBA/3204313",
+    },
+  ],
+};
 const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
   [
     ["amazon se", "amazon-se"],
@@ -3136,6 +3169,21 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
   if (!item) {
     throw new Error("UNKNOWN_CATALOG_ITEM");
+  }
+  const manualOffers = Array.isArray(CUSTOM_BUILD_MANUAL_STORE_OFFERS[item.id])
+    ? CUSTOM_BUILD_MANUAL_STORE_OFFERS[item.id]
+        .map((offer) => {
+          const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
+          return source ? sanitizeCatalogStoreOffer(offer, source, item) : null;
+        })
+        .filter(Boolean)
+    : [];
+  if (manualOffers.length > 0) {
+    return {
+      offers: sortCatalogStoreOffers(manualOffers),
+      referenceLowestPrice: null,
+      referenceSource: null,
+    };
   }
   const offerLists = [];
   let referenceLowestPrice = null;
