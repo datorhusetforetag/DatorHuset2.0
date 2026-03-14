@@ -2770,7 +2770,7 @@ export default function CustomBuild() {
   };
 
   const getDisplayPriceLabel = (item: ComponentItem, category: CategoryKey) => {
-    if (itemsWithoutStorePrice[item.id]) {
+    if (itemsWithoutStorePrice[item.id] && category !== "ram") {
       return "N/A";
     }
     return `${formatPrice(getComparablePrice(item, category))} kr`;
@@ -2919,7 +2919,7 @@ export default function CustomBuild() {
               nextState[entry.item_id] = "prisjakt-offer";
             } else if (entry?.price_source === "search") {
               nextState[entry.item_id] = "search";
-            } else if (entry?.price_source === "no-store") {
+            } else if (entry?.price_source === "no-store" && activeCategory !== "ram") {
               nextState[entry.item_id] = "no-store";
             }
           });
@@ -2930,7 +2930,7 @@ export default function CustomBuild() {
           nextEntries.forEach((entry) => {
             if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
               delete nextState[entry.item_id];
-            } else if (entry?.price_source === "no-store") {
+            } else if (entry?.price_source === "no-store" && activeCategory !== "ram") {
               nextState[entry.item_id] = true;
             } else {
               delete nextState[entry.item_id];
@@ -3234,8 +3234,10 @@ export default function CustomBuild() {
       );
       setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
       if (offers.length === 0) {
-        setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
-        setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
+        if (categoryKey !== "ram") {
+          setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
+          setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
+        }
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
       } else {
         setPriceSourceByItemId((prev) => ({
