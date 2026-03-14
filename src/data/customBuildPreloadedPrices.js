@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T23:17:55.699Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-13T23:58:32.841Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
@@ -25,7 +25,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am5-ryzen-5-7600x": 1999,
   "cpu-am5-ryzen-5-8600g": 1886,
   "cpu-am5-ryzen-7-8700f": 2489,
-  "cpu-am5-ryzen-7-8700f-tray": 2699,
+  "cpu-am5-ryzen-7-8700f-tray": 2289,
   "cpu-am5-ryzen-7-8700g": 2849,
   "cpu-am5-ryzen-5-9600": 2055,
   "cpu-am5-ryzen-5-9600x": 2249,
@@ -453,7 +453,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cpu-am5-ryzen-7-8700f-tray": {
     "category": "cpu",
     "name": "AMD Ryzen 7 8700F Tray",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cpu-am5-ryzen-7-8700g": {

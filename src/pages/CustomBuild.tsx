@@ -1,4 +1,14 @@
-﻿import { useEffect, useMemo, useRef, useState, type ChangeEvent, type Dispatch, type FormEvent, type SetStateAction } from "react";
+﻿import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ChangeEvent,
+  type Dispatch,
+  type FormEvent,
+  type SetStateAction,
+} from "react";
 import { Link } from "react-router-dom";
 import {
   Box,
@@ -178,6 +188,15 @@ type CatalogCategoryPricesResponse = {
 
 type CustomBuildPriceSource = "prisjakt-offer" | "seed" | "fallback" | "search" | "no-store";
 
+type StickyCardMode = "static" | "fixed" | "bottom";
+
+type StickyCardState = {
+  mode: StickyCardMode;
+  minHeight: number;
+  width: number;
+  left: number;
+};
+
 type CategoryConfig = {
   key: CategoryKey;
   label: string;
@@ -327,6 +346,42 @@ const CATEGORY_ID_PREFIX: Record<CategoryKey, string> = {
   case: "case",
   psu: "psu",
   cooling: "cool",
+};
+
+const DEFAULT_STICKY_CARD_STATE: StickyCardState = {
+  mode: "static",
+  minHeight: 0,
+  width: 0,
+  left: 0,
+};
+
+const CUSTOM_BUILD_STICKY_TOP_OFFSET = 96;
+
+const buildStickyCardStyle = (state: StickyCardState): CSSProperties => {
+  if (state.mode === "fixed") {
+    return {
+      position: "fixed",
+      top: `${CUSTOM_BUILD_STICKY_TOP_OFFSET}px`,
+      left: `${state.left}px`,
+      width: `${state.width}px`,
+      zIndex: 30,
+    };
+  }
+
+  if (state.mode === "bottom") {
+    return {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      width: "100%",
+      zIndex: 10,
+    };
+  }
+
+  return {
+    position: "relative",
+    width: "100%",
+  };
 };
 
 const CATALOG_IMAGE_MAP: Record<string, string> = {
@@ -2643,6 +2698,13 @@ export default function CustomBuild() {
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
+  const layoutGridRef = useRef<HTMLDivElement | null>(null);
+  const leftColumnRef = useRef<HTMLElement | null>(null);
+  const leftStickyCardRef = useRef<HTMLDivElement | null>(null);
+  const rightColumnRef = useRef<HTMLElement | null>(null);
+  const rightStickyCardRef = useRef<HTMLDivElement | null>(null);
+  const [leftStickyState, setLeftStickyState] = useState<StickyCardState>(DEFAULT_STICKY_CARD_STATE);
+  const [rightStickyState, setRightStickyState] = useState<StickyCardState>(DEFAULT_STICKY_CARD_STATE);
 
   useEffect(() => {
     try {
@@ -2749,6 +2811,97 @@ export default function CustomBuild() {
     observer.observe(summary);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let animationFrame = 0;
+
+    const updateStickyCards = () => {
+      animationFrame = 0;
+
+      const computeState = (
+        columnElement: HTMLElement | null,
+        cardElement: HTMLDivElement | null
+      ): StickyCardState => {
+        if (!columnElement || !cardElement || window.innerWidth < 1024) {
+          return DEFAULT_STICKY_CARD_STATE;
+        }
+
+        const layoutElement = layoutGridRef.current;
+        if (!layoutElement) {
+          return DEFAULT_STICKY_CARD_STATE;
+        }
+
+        const layoutRect = layoutElement.getBoundingClientRect();
+        const columnRect = columnElement.getBoundingClientRect();
+        const cardHeight = cardElement.offsetHeight;
+        const columnHeight = columnElement.offsetHeight;
+
+        if (!cardHeight || columnHeight <= cardHeight + CUSTOM_BUILD_STICKY_TOP_OFFSET) {
+          return {
+            ...DEFAULT_STICKY_CARD_STATE,
+            minHeight: cardHeight,
+          };
+        }
+
+        const reachedTop = layoutRect.top <= CUSTOM_BUILD_STICKY_TOP_OFFSET;
+        const reachedBottom = layoutRect.bottom <= cardHeight + CUSTOM_BUILD_STICKY_TOP_OFFSET;
+
+        if (!reachedTop) {
+          return {
+            ...DEFAULT_STICKY_CARD_STATE,
+            minHeight: cardHeight,
+          };
+        }
+
+        if (reachedBottom) {
+          return {
+            mode: "bottom",
+            minHeight: cardHeight,
+            width: columnRect.width,
+            left: 0,
+          };
+        }
+
+        return {
+          mode: "fixed",
+          minHeight: cardHeight,
+          width: columnRect.width,
+          left: columnRect.left,
+        };
+      };
+
+      setLeftStickyState(computeState(leftColumnRef.current, leftStickyCardRef.current));
+      setRightStickyState(computeState(rightColumnRef.current, rightStickyCardRef.current));
+    };
+
+    const queueUpdate = () => {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(updateStickyCards);
+    };
+
+    queueUpdate();
+    window.addEventListener("scroll", queueUpdate, { passive: true });
+    window.addEventListener("resize", queueUpdate);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== "undefined") {
+      resizeObserver = new ResizeObserver(() => queueUpdate());
+      [layoutGridRef.current, leftColumnRef.current, leftStickyCardRef.current, rightColumnRef.current, rightStickyCardRef.current]
+        .filter(Boolean)
+        .forEach((element) => resizeObserver?.observe(element as Element));
+    }
+
+    return () => {
+      window.removeEventListener("scroll", queueUpdate);
+      window.removeEventListener("resize", queueUpdate);
+      resizeObserver?.disconnect();
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [activeCategory, expandedItemId, mobileSidebarOpen, selected, storePickerComponent, storePickerLoading]);
 
   useEffect(() => {
     const socket = selected.motherboard?.socket;
@@ -3246,16 +3399,17 @@ export default function CustomBuild() {
       const hasPricedOffer = offers.some(
         (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
       );
-      const hasLinkedOffer = offers.some((offer) => Boolean(offer.product_url) || Boolean(offer.search_url));
+      const hasSearchOffer = offers.some((offer) => Boolean(offer.search_url));
+      const hasDirectProductOffer = offers.some((offer) => Boolean(offer.product_url));
       setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
       if (offers.length === 0) {
         setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
         setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
-        setStorePickerError("Inga butikstr?ffar hittades f?r komponenten.");
+        setStorePickerError("Inga butiksträffar hittades för komponenten.");
       } else {
         setPriceSourceByItemId((prev) => ({
           ...prev,
-          [item.id]: hasPricedOffer ? "prisjakt-offer" : hasLinkedOffer ? "search" : "no-store",
+          [item.id]: hasPricedOffer ? "prisjakt-offer" : hasSearchOffer ? "search" : hasDirectProductOffer ? "fallback" : "no-store",
         }));
         if (hasPricedOffer) {
           setItemsWithoutStorePrice((prev) => {
@@ -3337,7 +3491,7 @@ export default function CustomBuild() {
       return formatCurrencyPrice(Number(offer.total_price ?? offer.price), offer.currency || "SEK");
     }
     if (offer.status === "linked_no_price") return "Pris saknas";
-    if (offer.status === "search_only") return "Sok i butik";
+    if (offer.status === "search_only") return "Sök i butik";
     if (offer.status === "unavailable") return "Ej tillg?nglig";
     if (offer.status === "error") return "Kunde inte läsa";
     return "Ingen träff";
@@ -3613,11 +3767,21 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] lg:items-start">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:self-start`}>
+            <div
+              ref={layoutGridRef}
+              className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]"
+            >
+              <aside
+                ref={leftColumnRef}
+                className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:relative lg:self-stretch`}
+              >
                 <div className="space-y-4">
-                  <div className="lg:sticky lg:top-24 lg:z-10">
-                    <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
+                  <div style={leftStickyState.minHeight > 0 ? { minHeight: `${leftStickyState.minHeight}px` } : undefined}>
+                    <div
+                      ref={leftStickyCardRef}
+                      style={buildStickyCardStyle(leftStickyState)}
+                      className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80"
+                    >
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                       <div className="mt-4 space-y-2">
                         {CATEGORY_LIST.map((category) => {
@@ -4260,7 +4424,7 @@ export default function CustomBuild() {
                                             rel="noreferrer"
                                             className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
                                           >
-                                            {offer.product_url ? "Till butik" : "Sok i butik"}
+                                            {offer.product_url ? "Till butik" : "Sök i butik"}
                                           </a>
                                         ) : (
                                           <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-gray-800 dark:text-gray-500">
@@ -4305,10 +4469,15 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="lg:self-start">
+              <aside
+                ref={rightColumnRef}
+                className="lg:relative lg:self-stretch"
+              >
                 <div className="space-y-4">
-                  <div className="lg:sticky lg:top-24 lg:z-10">
+                  <div style={rightStickyState.minHeight > 0 ? { minHeight: `${rightStickyState.minHeight}px` } : undefined}>
                     <div
+                      ref={rightStickyCardRef}
+                      style={buildStickyCardStyle(rightStickyState)}
                       id="build-summary"
                       className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
                     >
@@ -4361,7 +4530,6 @@ export default function CustomBuild() {
                     {shareStatus ? (
                       <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">{shareStatus}</p>
                     ) : null}
-
                     </div>
                   </div>
                   <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 dark:text-gray-300">
@@ -4443,5 +4611,6 @@ export default function CustomBuild() {
     </div>
   );
 }
+
 
 

@@ -1057,19 +1057,19 @@ const isCatalogOfferWithinExpectedPriceRange = (item, price) => {
 
   if (category === "gpu") {
     lowerMultiplier = 0.55;
-    upperMultiplier = 1.9;
+    upperMultiplier = 1.6;
   } else if (category === "cpu") {
     lowerMultiplier = 0.45;
-    upperMultiplier = 2.25;
+    upperMultiplier = 2.1;
   } else if (category === "motherboard") {
     lowerMultiplier = 0.45;
-    upperMultiplier = 2.5;
+    upperMultiplier = 2.3;
   } else if (category === "psu" || category === "cooling") {
     lowerMultiplier = 0.4;
     upperMultiplier = 2.4;
   } else if (category === "ram" || category === "storage") {
-    lowerMultiplier = 0.35;
-    upperMultiplier = 2.6;
+    lowerMultiplier = 0.4;
+    upperMultiplier = 1.9;
   }
 
   const lowerBound = Math.max(80, Math.round(referencePrice * lowerMultiplier));
@@ -2603,26 +2603,12 @@ const normalizeCatalogProductUrl = (value, sourceId) =>
   firstText(value) ||
   null;
 
-const buildCatalogSearchQuery = (item) => {
-  const searchTerms = Array.isArray(item?.searchTerms)
-    ? item.searchTerms.map((value) => sanitizeText(String(value || ""), 180)).filter(Boolean)
-    : [];
-  return searchTerms[0] || sanitizeText(String(item?.name || ""), 180) || sanitizeText(String(item?.id || ""), 120);
-};
-
 const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
   if (!item) return [];
-  const directLinkStoreIds = Object.keys(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id] || {});
-  const orderedStoreIds = Array.from(
-    new Set([
-      ...directLinkStoreIds,
-      ...CURATED_CUSTOM_BUILD_STORE_SOURCES.map((source) => source.id),
-    ])
-  ).slice(0, 5);
-  const query = buildCatalogSearchQuery(item);
+  const directLinkStoreIds = Object.keys(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id] || {}).slice(0, 5);
   const updatedAtIso = new Date(updatedAt).toISOString();
 
-  return orderedStoreIds
+  return directLinkStoreIds
     .map((storeId) => CURATED_CUSTOM_BUILD_STORE_SOURCES.find((source) => source.id === storeId))
     .filter(Boolean)
     .map((source) => {
@@ -2630,13 +2616,14 @@ const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
         firstText(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id]?.[source.id]),
         source.id
       );
+      if (!directProductUrl) return null;
       return sanitizeCatalogStoreOffer(
         {
           store_id: source.id,
           store: source.name,
-          status: directProductUrl ? "linked_no_price" : "search_only",
+          status: "linked_no_price",
           product_url: directProductUrl,
-          search_url: directProductUrl ? null : source.buildSearchUrl(query),
+          search_url: null,
           updated_at: updatedAtIso,
         },
         source,
@@ -2953,7 +2940,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
           })
         : getCachedCatalogItemStoreOffers(item.id);
       const offers = Array.isArray(response?.offers) ? response.offers : [];
-      const hasStoreLinks = offers.some((offer) => Boolean(offer?.product_url) || Boolean(offer?.search_url));
+      const hasSearchLinks = offers.some((offer) => Boolean(offer?.search_url));
       const hasPricedOffer = offers.some((offer) =>
         offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)
       );
@@ -2961,7 +2948,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
         item_id: item.id,
         lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
         updated_at: response?.updated_at || null,
-        price_source: hasPricedOffer ? "prisjakt-offer" : hasStoreLinks ? "search" : response?.updated_at ? "no-store" : null,
+        price_source: hasPricedOffer ? "prisjakt-offer" : hasSearchLinks ? "search" : response?.updated_at ? "no-store" : null,
       };
     })
   );

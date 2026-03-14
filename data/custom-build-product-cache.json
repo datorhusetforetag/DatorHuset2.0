@@ -1,6 +1,6 @@
 {
   "version": "prisjakt-v2",
-  "saved_at": "2026-03-13T23:17:45.735Z",
+  "saved_at": "2026-03-13T23:51:57.819Z",
   "entries": [
     {
       "key": "prisjakt-v2:cpu-am4-ryzen-3-3100",
@@ -351,7 +351,7 @@
     {
       "key": "prisjakt-v2:cpu-am4-ryzen-7-5700x3d",
       "item_id": "cpu-am4-ryzen-7-5700x3d",
-      "updatedAt": 1773421110120,
+      "updatedAt": 1773445873953,
       "response": {
         "offers": []
       }
@@ -425,7 +425,7 @@
     {
       "key": "prisjakt-v2:cpu-am4-ryzen-7-5800x3d",
       "item_id": "cpu-am4-ryzen-7-5800x3d",
-      "updatedAt": 1773421111786,
+      "updatedAt": 1773445874575,
       "response": {
         "offers": []
       }
@@ -691,6 +691,27 @@
             "search_url": null,
             "price": 2749,
             "total_price": 2749,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock"
+          }
+        ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:cpu-am5-ryzen-7-8700f-tray",
+      "item_id": "cpu-am5-ryzen-7-8700f-tray",
+      "updatedAt": 1773445876880,
+      "response": {
+        "offers": [
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "status": "available",
+            "product_url": "https://www.prisjakt.nu/go-to-shop/12419/offer/3255649?client_id=1331",
+            "search_url": null,
+            "price": 2289,
+            "total_price": 2289,
             "currency": "SEK",
             "shipping_price": null,
             "availability": "in_stock"
@@ -1382,7 +1403,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i3-10105f",
       "item_id": "cpu-lga1200-core-i3-10105f",
-      "updatedAt": 1773421122785,
+      "updatedAt": 1773445877569,
       "response": {
         "offers": []
       }
@@ -1390,7 +1411,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-10400f",
       "item_id": "cpu-lga1200-core-i5-10400f",
-      "updatedAt": 1773421144545,
+      "updatedAt": 1773445878234,
       "response": {
         "offers": []
       }
@@ -1398,7 +1419,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-10600k",
       "item_id": "cpu-lga1200-core-i5-10600k",
-      "updatedAt": 1773421166345,
+      "updatedAt": 1773445878851,
       "response": {
         "offers": []
       }
@@ -1406,7 +1427,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i7-10700f",
       "item_id": "cpu-lga1200-core-i7-10700f",
-      "updatedAt": 1773421188112,
+      "updatedAt": 1773445879521,
       "response": {
         "offers": []
       }
@@ -1414,7 +1435,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i7-10700k",
       "item_id": "cpu-lga1200-core-i7-10700k",
-      "updatedAt": 1773421209871,
+      "updatedAt": 1773445880141,
       "response": {
         "offers": []
       }
@@ -1422,7 +1443,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i9-10900k",
       "item_id": "cpu-lga1200-core-i9-10900k",
-      "updatedAt": 1773421231676,
+      "updatedAt": 1773445880795,
       "response": {
         "offers": []
       }
@@ -1430,7 +1451,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-11400f",
       "item_id": "cpu-lga1200-core-i5-11400f",
-      "updatedAt": 1773421253448,
+      "updatedAt": 1773445881443,
       "response": {
         "offers": []
       }
@@ -1438,7 +1459,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i5-11600k",
       "item_id": "cpu-lga1200-core-i5-11600k",
-      "updatedAt": 1773421275210,
+      "updatedAt": 1773445882125,
       "response": {
         "offers": []
       }
@@ -1446,7 +1467,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i7-11700k",
       "item_id": "cpu-lga1200-core-i7-11700k",
-      "updatedAt": 1773421297001,
+      "updatedAt": 1773445882760,
       "response": {
         "offers": []
       }
@@ -1454,7 +1475,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1200-core-i9-11900k",
       "item_id": "cpu-lga1200-core-i9-11900k",
-      "updatedAt": 1773421318824,
+      "updatedAt": 1773445883379,
       "response": {
         "offers": []
       }
@@ -1462,7 +1483,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-12100f",
       "item_id": "cpu-lga1700-core-i3-12100f",
-      "updatedAt": 1773421340648,
+      "updatedAt": 1773445885006,
       "response": {
         "offers": []
       }
@@ -1470,7 +1491,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-12400-tray",
       "item_id": "cpu-lga1700-core-i5-12400-tray",
-      "updatedAt": 1773421362342,
+      "updatedAt": 1773445886617,
       "response": {
         "offers": []
       }
@@ -1511,7 +1532,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-12600k",
       "item_id": "cpu-lga1700-core-i5-12600k",
-      "updatedAt": 1773421384062,
+      "updatedAt": 1773445888263,
       "response": {
         "offers": []
       }
@@ -1519,7 +1540,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-12600kf",
       "item_id": "cpu-lga1700-core-i5-12600kf",
-      "updatedAt": 1773421405737,
+      "updatedAt": 1773445889880,
       "response": {
         "offers": []
       }
@@ -1527,7 +1548,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-12700kf",
       "item_id": "cpu-lga1700-core-i7-12700kf",
-      "updatedAt": 1773421427501,
+      "updatedAt": 1773445891498,
       "response": {
         "offers": []
       }
@@ -1535,7 +1556,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-12700k",
       "item_id": "cpu-lga1700-core-i7-12700k",
-      "updatedAt": 1773421449246,
+      "updatedAt": 1773445893145,
       "response": {
         "offers": []
       }
@@ -1543,7 +1564,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-12900k",
       "item_id": "cpu-lga1700-core-i9-12900k",
-      "updatedAt": 1773421470954,
+      "updatedAt": 1773445894742,
       "response": {
         "offers": []
       }
@@ -1551,7 +1572,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-13100f",
       "item_id": "cpu-lga1700-core-i3-13100f",
-      "updatedAt": 1773421492629,
+      "updatedAt": 1773445896378,
       "response": {
         "offers": []
       }
@@ -1559,7 +1580,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-13400f",
       "item_id": "cpu-lga1700-core-i5-13400f",
-      "updatedAt": 1773421514410,
+      "updatedAt": 1773445898030,
       "response": {
         "offers": []
       }
@@ -1567,7 +1588,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-14100",
       "item_id": "cpu-lga1700-core-i3-14100",
-      "updatedAt": 1773421536130,
+      "updatedAt": 1773445899649,
       "response": {
         "offers": []
       }
@@ -1575,7 +1596,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i3-14100f",
       "item_id": "cpu-lga1700-core-i3-14100f",
-      "updatedAt": 1773421557787,
+      "updatedAt": 1773445901295,
       "response": {
         "offers": []
       }
@@ -1659,7 +1680,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-13600k",
       "item_id": "cpu-lga1700-core-i5-13600k",
-      "updatedAt": 1773421579615,
+      "updatedAt": 1773445902891,
       "response": {
         "offers": []
       }
@@ -1667,7 +1688,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-13700k",
       "item_id": "cpu-lga1700-core-i7-13700k",
-      "updatedAt": 1773421601404,
+      "updatedAt": 1773445904511,
       "response": {
         "offers": []
       }
@@ -1675,7 +1696,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-14600k",
       "item_id": "cpu-lga1700-core-i5-14600k",
-      "updatedAt": 1773421623170,
+      "updatedAt": 1773445906219,
       "response": {
         "offers": []
       }
@@ -1683,7 +1704,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i5-14600kf",
       "item_id": "cpu-lga1700-core-i5-14600kf",
-      "updatedAt": 1773421644897,
+      "updatedAt": 1773445907852,
       "response": {
         "offers": []
       }
@@ -1691,7 +1712,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-14700k",
       "item_id": "cpu-lga1700-core-i7-14700k",
-      "updatedAt": 1773421666586,
+      "updatedAt": 1773445909539,
       "response": {
         "offers": []
       }
@@ -1699,7 +1720,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i7-14700kf",
       "item_id": "cpu-lga1700-core-i7-14700kf",
-      "updatedAt": 1773421021655,
+      "updatedAt": 1773445911197,
       "response": {
         "offers": []
       }
@@ -1707,7 +1728,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-13900ks",
       "item_id": "cpu-lga1700-core-i9-13900ks",
-      "updatedAt": 1773421023278,
+      "updatedAt": 1773445912833,
       "response": {
         "offers": []
       }
@@ -1715,7 +1736,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-14900k",
       "item_id": "cpu-lga1700-core-i9-14900k",
-      "updatedAt": 1773421024896,
+      "updatedAt": 1773445914438,
       "response": {
         "offers": []
       }
@@ -1723,7 +1744,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-14900kf",
       "item_id": "cpu-lga1700-core-i9-14900kf",
-      "updatedAt": 1773421026580,
+      "updatedAt": 1773445916050,
       "response": {
         "offers": []
       }
@@ -1731,7 +1752,7 @@
     {
       "key": "prisjakt-v2:cpu-lga1700-core-i9-14900ks",
       "item_id": "cpu-lga1700-core-i9-14900ks",
-      "updatedAt": 1773421028206,
+      "updatedAt": 1773445917661,
       "response": {
         "offers": []
       }
@@ -1919,6 +1940,30 @@
       }
     },
     {
+      "key": "prisjakt-v2:mb-am4-asrock-x570-steel-legend",
+      "item_id": "mb-am4-asrock-x570-steel-legend",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:mb-am4-msi-mag-b550m-mortar-wifi",
+      "item_id": "mb-am4-msi-mag-b550m-mortar-wifi",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:mb-am4-asus-rog-crosshair-viii-hero",
+      "item_id": "mb-am4-asus-rog-crosshair-viii-hero",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:mb-am5-msi-b650-tomahawk-wifi",
       "item_id": "mb-am5-msi-b650-tomahawk-wifi",
       "updatedAt": 1773283031338,
@@ -2030,6 +2075,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:mb-am5-asrock-b650m-pro-rs-wifi",
+      "item_id": "mb-am5-asrock-b650m-pro-rs-wifi",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:mb-am5-msi-b650m-mortar-wifi",
       "item_id": "mb-am5-msi-b650m-mortar-wifi",
       "updatedAt": 1773283040038,
@@ -2090,6 +2143,14 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:mb-am5-asrock-x670e-steel-legend",
+      "item_id": "mb-am5-asrock-x670e-steel-legend",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -2563,6 +2624,166 @@
       "key": "prisjakt-v2:mb-lga1700-asus-rog-strix-z790-f",
       "item_id": "mb-lga1700-asus-rog-strix-z790-f",
       "updatedAt": 1773432310022,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-1",
+      "item_id": "gpu-1",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-2",
+      "item_id": "gpu-2",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-3",
+      "item_id": "gpu-3",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-4",
+      "item_id": "gpu-4",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-5",
+      "item_id": "gpu-5",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-6",
+      "item_id": "gpu-6",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-7",
+      "item_id": "gpu-7",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-8",
+      "item_id": "gpu-8",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-9",
+      "item_id": "gpu-9",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-10",
+      "item_id": "gpu-10",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-11",
+      "item_id": "gpu-11",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-12",
+      "item_id": "gpu-12",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-13",
+      "item_id": "gpu-13",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-14",
+      "item_id": "gpu-14",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-15",
+      "item_id": "gpu-15",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-16",
+      "item_id": "gpu-16",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-17",
+      "item_id": "gpu-17",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-18",
+      "item_id": "gpu-18",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-19",
+      "item_id": "gpu-19",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:gpu-20",
+      "item_id": "gpu-20",
+      "updatedAt": 1773445917819,
       "response": {
         "offers": []
       }
@@ -3313,6 +3534,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:gpu-66",
+      "item_id": "gpu-66",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:gpu-67",
       "item_id": "gpu-67",
       "updatedAt": 1773416797194,
@@ -3507,6 +3736,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:ram-5",
+      "item_id": "ram-5",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:ram-6",
       "item_id": "ram-6",
       "updatedAt": 1773293023275,
@@ -3574,6 +3811,70 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-9",
+      "item_id": "ram-9",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-10",
+      "item_id": "ram-10",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-11",
+      "item_id": "ram-11",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-12",
+      "item_id": "ram-12",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-13",
+      "item_id": "ram-13",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-14",
+      "item_id": "ram-14",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-15",
+      "item_id": "ram-15",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-16",
+      "item_id": "ram-16",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -3669,6 +3970,14 @@
       "key": "prisjakt-v2:ram-25",
       "item_id": "ram-25",
       "updatedAt": 1773429516263,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:ram-26",
+      "item_id": "ram-26",
+      "updatedAt": 1773445917819,
       "response": {
         "offers": []
       }
@@ -3879,6 +4188,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:sto-6",
+      "item_id": "sto-6",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:sto-7",
       "item_id": "sto-7",
       "updatedAt": 1773289219023,
@@ -3957,6 +4274,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:sto-9",
+      "item_id": "sto-9",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:sto-10",
       "item_id": "sto-10",
       "updatedAt": 1773289229537,
@@ -3987,6 +4312,14 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:sto-11",
+      "item_id": "sto-11",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -4444,6 +4777,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:sto-34",
+      "item_id": "sto-34",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:sto-35",
       "item_id": "sto-35",
       "updatedAt": 1773429585854,
@@ -4702,6 +5043,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:case-7",
+      "item_id": "case-7",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:case-8",
       "item_id": "case-8",
       "updatedAt": 1773289279103,
@@ -4735,6 +5084,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:case-9",
+      "item_id": "case-9",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:case-10",
       "item_id": "case-10",
       "updatedAt": 1773289293158,
@@ -4765,6 +5122,22 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:case-11",
+      "item_id": "case-11",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
+      "key": "prisjakt-v2:case-12",
+      "item_id": "case-12",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -4834,6 +5207,14 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:case-14",
+      "item_id": "case-14",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -5326,6 +5707,14 @@
       }
     },
     {
+      "key": "prisjakt-v2:case-24",
+      "item_id": "case-24",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
+      }
+    },
+    {
       "key": "prisjakt-v2:case-25",
       "item_id": "case-25",
       "updatedAt": 1773429445242,
@@ -5356,6 +5745,14 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:case-26",
+      "item_id": "case-26",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -5434,6 +5831,14 @@
             "availability": "in_stock"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:case-29",
+      "item_id": "case-29",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
@@ -5592,6 +5997,14 @@
             "updated_at": "2026-03-13T12:50:47.813Z"
           }
         ]
+      }
+    },
+    {
+      "key": "prisjakt-v2:psu-4",
+      "item_id": "psu-4",
+      "updatedAt": 1773445917819,
+      "response": {
+        "offers": []
       }
     },
     {
