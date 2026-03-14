@@ -4231,8 +4231,10 @@ export default function CustomBuild() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:self-start`}>
-                <div className="space-y-4 lg:sticky lg:top-24">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block lg:self-start lg:min-h-0`}>
+                <div
+                  className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                >
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                       <div className="mt-4 space-y-2">
@@ -4920,8 +4922,10 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="hidden lg:block lg:self-start">
-                <div className="space-y-4 lg:sticky lg:top-24">
+              <aside className="hidden lg:block lg:self-start lg:min-h-0">
+                <div
+                  className="space-y-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+                >
                   <div
                     id="build-summary"
                     className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
