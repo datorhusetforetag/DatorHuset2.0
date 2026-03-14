@@ -3775,10 +3775,12 @@ export default function CustomBuild() {
   const expandedStoreCacheKey =
     expandedItemId && expandedItemCategory ? getStoreCacheKey(expandedItemCategory, expandedItemId) : "";
   const expandedStoreSnapshot = expandedStoreCacheKey ? storePickerCache[expandedStoreCacheKey] : undefined;
+  const isDisplayableStoreOffer = (offer: StoreOffer) => {
+    if (!offer || !offer.product_url) return false;
+    return offer.status === "available" || offer.status === "linked_no_price";
+  };
   const expandedStoreOffers = Array.isArray(expandedStoreSnapshot?.offers)
-    ? expandedStoreSnapshot.offers.filter(
-        (offer) => Boolean(offer.product_url) || Boolean(offer.search_url) || Number.isFinite(offer.total_price ?? offer.price)
-      )
+    ? expandedStoreSnapshot.offers.filter((offer) => isDisplayableStoreOffer(offer))
     : [];
 
   const getNextCategoryKey = (currentCategory: CategoryKey) => {
@@ -3840,7 +3842,9 @@ export default function CustomBuild() {
     }
 
     const cachedResult = storePickerCache[cacheKey];
-    const cachedOffers = Array.isArray(cachedResult?.offers) ? cachedResult.offers : [];
+    const cachedOffers = Array.isArray(cachedResult?.offers)
+      ? cachedResult.offers.filter((offer) => isDisplayableStoreOffer(offer))
+      : [];
     if (cachedResult && cachedOffers.length > 0) {
       setStorePickerLoading(false);
       return;
@@ -3862,9 +3866,7 @@ export default function CustomBuild() {
             : data?.error?.message || "Kunde inte hämta butikpriser just nu.";
         throw new Error(fallbackMessage);
       }
-      const offers = Array.isArray(data?.offers)
-        ? data.offers.filter((offer) => Boolean(offer.product_url))
-        : [];
+      const offers = Array.isArray(data?.offers) ? data.offers.filter((offer) => isDisplayableStoreOffer(offer)) : [];
       const hasPricedOffer = offers.some(
         (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
       );
@@ -3955,7 +3957,7 @@ export default function CustomBuild() {
     }
     if (offer.status === "linked_no_price") return "Pris saknas";
     if (offer.status === "search_only") return "Sök i butik";
-    if (offer.status === "unavailable") return "Ej tillg?nglig";
+    if (offer.status === "unavailable") return "Ej tillgänglig";
     if (offer.status === "error") return "Kunde inte läsa";
     return "Ingen träff";
   };
