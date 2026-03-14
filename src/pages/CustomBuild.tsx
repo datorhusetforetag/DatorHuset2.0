@@ -181,11 +181,11 @@ type CatalogCategoryPricesResponse = {
     item_id: string;
     lowest_price: number | null;
     updated_at?: string | null;
-    price_source?: "prisjakt-offer" | "search" | "no-store" | null;
+    price_source?: "live-offer" | "fallback" | "search" | "no-store" | null;
   }>;
 };
 
-type CustomBuildPriceSource = "prisjakt-offer" | "seed" | "fallback" | "search" | "no-store";
+type CustomBuildPriceSource = "live-offer" | "seed" | "fallback" | "search" | "no-store";
 
 
 type CategoryConfig = {
@@ -2792,8 +2792,8 @@ export default function CustomBuild() {
   const getPriceSourceLabel = (item: ComponentItem) => {
     const source = getPriceSource(item);
     switch (source) {
-      case "prisjakt-offer":
-        return "Prisjakt-offer";
+      case "live-offer":
+        return "Live butik";
       case "seed":
         return "Förladdat";
       case "search":
@@ -2915,8 +2915,10 @@ export default function CustomBuild() {
         setPriceSourceByItemId((prev) => {
           const nextState = { ...prev };
           nextEntries.forEach((entry) => {
-            if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
-              nextState[entry.item_id] = "prisjakt-offer";
+            if (entry?.price_source === "fallback") {
+              nextState[entry.item_id] = "fallback";
+            } else if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
+              nextState[entry.item_id] = "live-offer";
             } else if (entry?.price_source === "search") {
               nextState[entry.item_id] = "search";
             } else if (entry?.price_source === "no-store" && activeCategory !== "ram") {
@@ -3242,7 +3244,7 @@ export default function CustomBuild() {
       } else {
         setPriceSourceByItemId((prev) => ({
           ...prev,
-          [item.id]: hasPricedOffer ? "prisjakt-offer" : "fallback",
+          [item.id]: hasPricedOffer ? "live-offer" : "fallback",
         }));
         setItemsWithoutStorePrice((prev) => {
           if (hasPricedOffer) {
@@ -4195,7 +4197,7 @@ export default function CustomBuild() {
                                     </p>
                                     {customBuildDebugEnabled ? (
                                       <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
-                                        {"Debug: Prisjakt-offer = live butik, F\u00f6rladdat = preloadad prisfil, Reservpris = katalogpris, Ingen butik = inga butikstr\u00e4ffar."}
+                                        {"Debug: Live butik = verifierad butikslänk med pris, Förladdat = preloadad prisfil, Reservpris = katalogpris eller aggregatorpris, Ingen butik = inga butiksträffar."}
                                       </p>
                                     ) : null}
                                   </div>
@@ -4411,7 +4413,7 @@ export default function CustomBuild() {
         <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
           <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
-            {"K\u00e4llor: "}<span className="font-semibold">Prisjakt-offer</span>{", "}<span className="font-semibold">Förladdat</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
+            {"Källor: "}<span className="font-semibold">Live butik</span>{", "}<span className="font-semibold">Förladdat</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
           </p>
         </div>
       ) : null}

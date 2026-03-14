@@ -77,7 +77,7 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
-const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "prisjakt-v2";
+const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v1";
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -218,6 +218,8 @@ const customStorePriceCache = new Map();
 const customStorePriceRefreshInFlight = new Map();
 const customBuildProductCache = new Map();
 const customBuildProductRefreshInFlight = new Map();
+const komponentkollCategoryCache = new Map();
+const priceRunnerSearchCache = new Map();
 let customStorePriceCacheWriteChain = Promise.resolve();
 let customBuildProductCacheWriteChain = Promise.resolve();
 let customStorePriceSchedulerStarted = false;
@@ -1057,19 +1059,19 @@ const isCatalogOfferWithinExpectedPriceRange = (item, price) => {
 
   if (category === "gpu") {
     lowerMultiplier = 0.55;
-    upperMultiplier = 1.6;
+    upperMultiplier = 2.2;
   } else if (category === "cpu") {
     lowerMultiplier = 0.45;
-    upperMultiplier = 2.1;
+    upperMultiplier = 3;
   } else if (category === "motherboard") {
     lowerMultiplier = 0.45;
-    upperMultiplier = 2.3;
+    upperMultiplier = 3.2;
   } else if (category === "psu" || category === "cooling") {
     lowerMultiplier = 0.4;
-    upperMultiplier = 2.4;
+    upperMultiplier = 4;
   } else if (category === "ram" || category === "storage") {
-    lowerMultiplier = 0.4;
-    upperMultiplier = 1.9;
+    lowerMultiplier = 0.25;
+    upperMultiplier = 8;
   }
 
   const lowerBound = Math.max(80, Math.round(referencePrice * lowerMultiplier));
@@ -1805,6 +1807,43 @@ const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
   ].map(([name, storeId]) => [normalizeStorePriceQueryKey(name), storeId])
 );
 
+const KOMPONENTKOLL_CATEGORY_PATH_BY_CUSTOM_BUILD_CATEGORY = {
+  cpu: "komponenter/processor",
+  gpu: "komponenter/grafikkort",
+  motherboard: "komponenter/moderkort",
+  ram: "komponenter/ram",
+  storage: "komponenter/ssd",
+  case: "komponenter/chassi",
+  psu: "komponenter/nataggregat-psu",
+  cooling: "komponenter/cpu-kylare",
+};
+
+const KOMPONENTKOLL_STORE_NAME_TO_ID = new Map(
+  [
+    ["amazon", "amazon-se"],
+    ["amazon mp", "amazon-se"],
+    ["computersalg", "computersalg"],
+    ["elgiganten", "elgiganten"],
+    ["inet", "inet"],
+    ["komplett", "komplett"],
+    ["netonnet", "netonnet"],
+    ["proshop", "proshop"],
+    ["webhallen", "webhallen"],
+  ].map(([name, storeId]) => [normalizeStorePriceQueryKey(name), storeId])
+);
+
+const CATALOG_VARIANT_PENALTY_TOKENS = [
+  { token: "rgb", penalty: 5 },
+  { token: "argb", penalty: 5 },
+  { token: "white", penalty: 4 },
+  { token: "vit", penalty: 4 },
+  { token: "black", penalty: 2 },
+  { token: "svart", penalty: 2 },
+  { token: "wifi", penalty: 3 },
+  { token: "tray", penalty: 4 },
+  { token: "begagnad", penalty: 6 },
+];
+
 const normalizePrisjaktProductUrl = (value) => {
   const normalizedUrl = normalizeRelativeUrl(String(value || "").trim(), String(value || "").trim());
   if (!normalizedUrl) return null;
@@ -1918,6 +1957,45 @@ const scoreCatalogPriceMatch = (expectedPrice, actualPrice) => {
   if (diffRatio <= 0.7) return -2;
   if (diffRatio <= 1.2) return -6;
   return -12;
+};
+
+const scoreCatalogVariantPenalty = (title, item) => {
+  const normalizedTitle = normalizeStorePriceQueryKey(title);
+  const normalizedReference = normalizeStorePriceQueryKey(
+    [item?.name || "", ...firstArray(item?.searchTerms)].join(" ")
+  );
+  if (!normalizedTitle || !normalizedReference) return 0;
+  return CATALOG_VARIANT_PENALTY_TOKENS.reduce((sum, entry) => {
+    if (normalizedTitle.includes(entry.token) && !normalizedReference.includes(entry.token)) {
+      return sum - entry.penalty;
+    }
+    return sum;
+  }, 0);
+};
+
+const scoreCatalogSourceProductForItem = (title, item, price = null) => {
+  const safeTitle = sanitizeText(String(title || ""), 240);
+  if (!safeTitle || !doesCatalogTitleMatchItem(safeTitle, item)) {
+    return -1;
+  }
+  const combinedQuery = [item?.name || "", ...firstArray(item?.searchTerms)].join(" ");
+  const titleScore = scoreTitleAgainstQuery(safeTitle, tokenizeForSearchMatch(combinedQuery));
+  const variantPenalty = scoreCatalogVariantPenalty(safeTitle, item);
+  const priceScore = Number.isFinite(price)
+    ? Math.max(-4, scoreCatalogPriceMatch(item?.price, price))
+    : 0;
+  return titleScore + variantPenalty + priceScore;
+};
+
+const extractNextDataScriptJson = (html) => {
+  if (!html || typeof html !== "string") return null;
+  const rawJson = html.match(/<script id="__NEXT_DATA__" type="application\/json">([\s\S]*?)<\/script>/i)?.[1];
+  if (!rawJson) return null;
+  try {
+    return JSON.parse(rawJson);
+  } catch {
+    return null;
+  }
 };
 
 const findBestPrisjaktProductForItem = async (item) => {
@@ -2055,6 +2133,183 @@ const extractStoreOffersFromPrisjaktProductHtml = (html) => {
   }
 
   return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
+};
+
+const getKomponentkollCategoryProducts = async (category) => {
+  const categoryPath = firstText(KOMPONENTKOLL_CATEGORY_PATH_BY_CUSTOM_BUILD_CATEGORY[category]);
+  if (!categoryPath) return [];
+  const cached = komponentkollCategoryCache.get(category);
+  if (
+    cached &&
+    Number.isFinite(cached.updatedAt) &&
+    Date.now() - cached.updatedAt <= CUSTOM_PRICE_CACHE_TTL_MS &&
+    Array.isArray(cached.products)
+  ) {
+    return cached.products;
+  }
+  const url = `https://komponentkoll.se/${categoryPath}`;
+  const html = await fetchTextWithBrowserHeaders(url).catch(() => null);
+  const nextData = extractNextDataScriptJson(html);
+  const products = Array.isArray(nextData?.props?.initialProps?.pageProps?.fullCategoryData?.products)
+    ? nextData.props.initialProps.pageProps.fullCategoryData.products
+    : [];
+  komponentkollCategoryCache.set(category, {
+    updatedAt: Date.now(),
+    products,
+  });
+  return products;
+};
+
+const normalizeKomponentkollStoreId = (value) => {
+  const normalized = normalizeStorePriceQueryKey(value);
+  return KOMPONENTKOLL_STORE_NAME_TO_ID.get(normalized) || null;
+};
+
+const findBestKomponentkollProductForItem = async (item) => {
+  const category = getCustomBuildCategoryForItem(item);
+  const products = await getKomponentkollCategoryProducts(category);
+  if (!Array.isArray(products) || products.length === 0) return null;
+
+  let bestCandidate = null;
+  for (const product of products) {
+    const title = sanitizeText(String(product?.name || ""), 240);
+    const lowestPrice = parseMoneyValue(product?.price, product?.lowestPrice?.amount);
+    const score = scoreCatalogSourceProductForItem(title, item, lowestPrice);
+    if (score < 0) continue;
+    const productUrl = firstText(product?.uri)
+      ? `https://komponentkoll.se/produkt/${sanitizeText(String(product.uri), 240)}`
+      : null;
+    const candidate = {
+      title,
+      lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
+      product_url: productUrl,
+      score,
+    };
+    if (
+      !bestCandidate ||
+      candidate.score > bestCandidate.score ||
+      (candidate.score === bestCandidate.score &&
+        Number.isFinite(candidate.lowest_price) &&
+        (!Number.isFinite(bestCandidate.lowest_price) || candidate.lowest_price < bestCandidate.lowest_price))
+    ) {
+      bestCandidate = candidate;
+    }
+  }
+
+  return bestCandidate;
+};
+
+const extractStoreOffersFromKomponentkollProductHtml = (html, item) => {
+  const nextData = extractNextDataScriptJson(html);
+  const product = nextData?.props?.initialProps?.pageProps?.product;
+  if (!product || !doesCatalogTitleMatchItem(firstText(product?.name), item)) {
+    return [];
+  }
+
+  const rawPrices = Array.isArray(product?.prices) ? product.prices : [];
+  const offersByStoreId = new Map();
+  rawPrices.forEach((entry) => {
+    const normalizedStoreId = normalizeKomponentkollStoreId(
+      firstText(entry?.store?.name, entry?.store?.title, entry?.name)
+    );
+    if (!normalizedStoreId) return;
+    const source = CUSTOM_STORE_SOURCE_BY_ID[normalizedStoreId];
+    if (!source) return;
+    const price = parseMoneyValue(entry?.totalprice, entry?.price);
+    if (!Number.isFinite(price)) return;
+
+    const rawUrl = firstText(entry?.store?.url, entry?.url);
+    const productUrl = normalizeCatalogProductUrl(
+      normalizeRelativeUrl(rawUrl, "https://komponentkoll.se"),
+      normalizedStoreId
+    );
+    const offer = sanitizeCatalogStoreOffer(
+      {
+        store_id: normalizedStoreId,
+        store: source.name,
+        status: "available",
+        product_url: productUrl,
+        search_url: null,
+        price,
+        total_price: price,
+        currency: "SEK",
+        shipping_price: null,
+        availability:
+          firstText(entry?.stock) && /0|no|out|nej|slut/i.test(firstText(entry?.stock))
+            ? "unavailable"
+            : "in_stock",
+      },
+      source,
+      item
+    );
+    if (!isCatalogStoreOfferUseful(offer)) return;
+    const current = offersByStoreId.get(normalizedStoreId);
+    if (!current || (current.total_price ?? current.price) > (offer.total_price ?? offer.price)) {
+      offersByStoreId.set(normalizedStoreId, offer);
+    }
+  });
+
+  return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
+};
+
+const findBestPriceRunnerProductForItem = async (item) => {
+  const searchQueries = buildCatalogSearchQueries(item);
+  let bestCandidate = null;
+
+  for (const query of searchQueries) {
+    const cacheKey = normalizeStorePriceQueryKey(query);
+    let page = priceRunnerSearchCache.get(cacheKey);
+    if (!page || !Number.isFinite(page.updatedAt) || Date.now() - page.updatedAt > CUSTOM_PRICE_CACHE_TTL_MS) {
+      const url = `https://www.pricerunner.se/results?q=${encodeURIComponent(query)}`;
+      const html = await fetchTextWithBrowserHeaders(url).catch(() => null);
+      const script = html
+        ? [...html.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/gi)]
+            .map((match) => match[1])
+            .find((value) => value.includes("__INITIAL_STATE__"))
+        : null;
+      let products = [];
+      if (script) {
+        try {
+          const data = JSON.parse(script);
+          products =
+            data?.__DEHYDRATED_QUERY_STATE?.queries?.find?.((entry) =>
+              Array.isArray(entry?.queryKey) && entry.queryKey[0] === "serp-search"
+            )?.state?.data?.pages?.[0]?.products || [];
+        } catch {
+          products = [];
+        }
+      }
+      page = {
+        updatedAt: Date.now(),
+        products: Array.isArray(products) ? products : [],
+      };
+      priceRunnerSearchCache.set(cacheKey, page);
+    }
+
+    for (const product of firstArray(page?.products)) {
+      const title = sanitizeText(String(product?.name || ""), 240);
+      const lowestPrice = parseMoneyValue(product?.lowestPrice?.amount, product?.cheapestOffer?.price?.amount);
+      const score = scoreCatalogSourceProductForItem(title, item, lowestPrice);
+      if (score < 0) continue;
+      const candidate = {
+        title,
+        lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
+        product_url: firstText(product?.url) ? normalizeRelativeUrl(product.url, "https://www.pricerunner.se") : null,
+        score,
+      };
+      if (
+        !bestCandidate ||
+        candidate.score > bestCandidate.score ||
+        (candidate.score === bestCandidate.score &&
+          Number.isFinite(candidate.lowest_price) &&
+          (!Number.isFinite(bestCandidate.lowest_price) || candidate.lowest_price < bestCandidate.lowest_price))
+      ) {
+        bestCandidate = candidate;
+      }
+    }
+  }
+
+  return bestCandidate;
 };
 
 const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referencePrice = null) => {
@@ -2648,23 +2903,27 @@ const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const hasReasonablePrice =
     effectivePrice === null || !item || isCatalogOfferWithinExpectedPriceRange(item, effectivePrice);
   const fallbackStatus = productUrl ? "linked_no_price" : searchUrl ? "search_only" : "not_found";
+  const requestedStatus = firstText(offer?.status);
+  const effectiveStatus =
+    !productUrl && searchUrl
+      ? "search_only"
+      : requestedStatus && hasReasonablePrice
+        ? requestedStatus
+        : hasReasonablePrice && productUrl && (normalizedTotalPrice !== null || normalizedPrice !== null)
+          ? "available"
+          : fallbackStatus;
   return {
     store_id: sanitizeText(String(offer?.store_id || source?.id || ""), 80),
     store: firstText(offer?.store, source?.name) || source?.name || "Unknown",
-    status:
-      firstText(offer?.status) && hasReasonablePrice
-        ? firstText(offer?.status)
-        : hasReasonablePrice && (normalizedTotalPrice !== null || normalizedPrice !== null)
-          ? "available"
-          : fallbackStatus,
+    status: effectiveStatus,
     product_url: productUrl,
     search_url: searchUrl,
     price:
-      hasReasonablePrice && normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
+      hasReasonablePrice && productUrl && normalizedPrice !== null ? Math.max(0, Math.round(normalizedPrice)) : null,
     total_price:
-      hasReasonablePrice && normalizedTotalPrice !== null
+      hasReasonablePrice && productUrl && normalizedTotalPrice !== null
         ? Math.max(0, Math.round(normalizedTotalPrice))
-        : hasReasonablePrice && normalizedPrice !== null
+        : hasReasonablePrice && productUrl && normalizedPrice !== null
           ? Math.max(0, Math.round(normalizedPrice))
           : null,
     currency: firstText(offer?.currency).toUpperCase() || "SEK",
@@ -2701,13 +2960,36 @@ const isCatalogStoreOfferUseful = (offer) =>
   Number.isFinite(offer?.total_price ?? offer?.price);
 
 const hydrateCatalogStoreOffers = (offers = [], item = null) => {
+  const isBetterCatalogStoreOffer = (candidate, current) => {
+    const rankFor = (offer) => {
+      if (offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)) return 0;
+      if (offer?.status === "linked_no_price" && offer?.product_url) return 1;
+      if (offer?.status === "search_only" && offer?.search_url) return 2;
+      return 3;
+    };
+    const candidateRank = rankFor(candidate);
+    const currentRank = rankFor(current);
+    if (candidateRank !== currentRank) return candidateRank < currentRank;
+    const candidatePrice = Number.isFinite(candidate?.total_price ?? candidate?.price)
+      ? candidate.total_price ?? candidate.price
+      : Number.MAX_SAFE_INTEGER;
+    const currentPrice = Number.isFinite(current?.total_price ?? current?.price)
+      ? current.total_price ?? current.price
+      : Number.MAX_SAFE_INTEGER;
+    if (candidatePrice !== currentPrice) return candidatePrice < currentPrice;
+    return Boolean(candidate?.product_url) && !current?.product_url;
+  };
+
   const normalizedByStoreId = new Map();
   offers.forEach((offer) => {
     const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
     if (!source) return;
     const normalizedOffer = sanitizeCatalogStoreOffer(offer, source, item);
     if (!isCatalogStoreOfferUseful(normalizedOffer)) return;
-    normalizedByStoreId.set(source.id, normalizedOffer);
+    const currentOffer = normalizedByStoreId.get(source.id);
+    if (!currentOffer || isBetterCatalogStoreOffer(normalizedOffer, currentOffer)) {
+      normalizedByStoreId.set(source.id, normalizedOffer);
+    }
   });
   return sortCatalogStoreOffers(Array.from(normalizedByStoreId.values()));
 };
@@ -2727,10 +3009,14 @@ const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], i
     }
 
     const nextHasUsefulData =
-      (nextOffer.status === "available" && Number.isFinite(nextOffer.total_price ?? nextOffer.price)) ||
+      (nextOffer.status === "available" &&
+        Boolean(nextOffer.product_url) &&
+        Number.isFinite(nextOffer.total_price ?? nextOffer.price)) ||
       (nextOffer.status === "linked_no_price" && Boolean(nextOffer.product_url));
     const cachedHasUsefulData =
-      (cachedOffer.status === "available" && Number.isFinite(cachedOffer.total_price ?? cachedOffer.price)) ||
+      (cachedOffer.status === "available" &&
+        Boolean(cachedOffer.product_url) &&
+        Number.isFinite(cachedOffer.total_price ?? cachedOffer.price)) ||
       (cachedOffer.status === "linked_no_price" && Boolean(cachedOffer.product_url));
 
     if (!nextHasUsefulData && cachedHasUsefulData) {
@@ -2794,11 +3080,10 @@ const loadCustomBuildProductCacheFromDisk = async () => {
         : buildCustomBuildProductCacheKey(itemId);
       if (!key || !itemId || !item || !entry?.response) return;
       const cachedOffers = Array.isArray(entry.response.offers) ? entry.response.offers : [];
-      const response = sanitizeCatalogItemResponse(
-        item,
-        cachedOffers,
-        Number.isFinite(updatedAt) ? updatedAt : Date.now()
-      );
+      const response = sanitizeCatalogItemResponse(item, cachedOffers, Number.isFinite(updatedAt) ? updatedAt : Date.now(), {
+        referenceLowestPrice: entry?.response?.reference_lowest_price,
+        referenceSource: entry?.response?.reference_source,
+      });
       customBuildProductCache.set(key, {
         item_id: itemId,
         updatedAt: Number.isFinite(updatedAt) ? updatedAt : Date.now(),
@@ -2815,11 +3100,16 @@ const loadCustomBuildProductCacheFromDisk = async () => {
   }
 };
 
-const sanitizeCatalogItemResponse = (item, offers, updatedAt) => {
+const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
   const hydratedOffers = hydrateCatalogStoreOffers(offers, item).map((offer) => ({
     ...offer,
     updated_at: new Date(updatedAt).toISOString(),
   }));
+  const rawReferenceLowestPrice = Number(options?.referenceLowestPrice);
+  const referenceLowestPrice =
+    Number.isFinite(rawReferenceLowestPrice) && rawReferenceLowestPrice > 0
+      ? Math.max(0, Math.round(rawReferenceLowestPrice))
+      : null;
   const effectiveOffers = hydratedOffers.length > 0
     ? hydratedOffers
     : buildCatalogFallbackStoreOffers(item, updatedAt);
@@ -2829,13 +3119,15 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt) => {
   );
   const lowestPrice = availableOffers.length
     ? Math.min(...availableOffers.map((offer) => offer.total_price ?? offer.price))
-    : null;
+    : referenceLowestPrice;
   return {
     ok: true,
     item_id: item.id,
     updated_at: new Date(updatedAt).toISOString(),
     next_refresh_at: new Date(updatedAt + CUSTOM_PRICE_REFRESH_INTERVAL_MS).toISOString(),
     lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
+    reference_lowest_price: referenceLowestPrice,
+    reference_source: firstText(options?.referenceSource) || null,
     offers: limitedOffers,
   };
 };
@@ -2845,11 +3137,45 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   if (!item) {
     throw new Error("UNKNOWN_CATALOG_ITEM");
   }
-  const prisjaktProduct = await findBestPrisjaktProductForItem(item);
-  if (!prisjaktProduct?.markdown) {
-    return [];
+  const offerLists = [];
+  let referenceLowestPrice = null;
+  let referenceSource = null;
+
+  const prisjaktProduct = await findBestPrisjaktProductForItem(item).catch(() => null);
+  if (prisjaktProduct?.markdown) {
+    const offers = extractStoreOffersFromPrisjaktProductHtml(prisjaktProduct.markdown);
+    if (offers.length > 0) {
+      offerLists.push(offers);
+    }
   }
-  return extractStoreOffersFromPrisjaktProductHtml(prisjaktProduct.markdown);
+
+  const komponentkollProduct = await findBestKomponentkollProductForItem(item).catch(() => null);
+  if (komponentkollProduct?.product_url) {
+    const komponentkollHtml = await fetchTextWithBrowserHeaders(komponentkollProduct.product_url).catch(() => null);
+    if (komponentkollHtml) {
+      const offers = extractStoreOffersFromKomponentkollProductHtml(komponentkollHtml, item);
+      if (offers.length > 0) {
+        offerLists.push(offers);
+      } else if (Number.isFinite(komponentkollProduct.lowest_price)) {
+        referenceLowestPrice = komponentkollProduct.lowest_price;
+        referenceSource = "komponentkoll";
+      }
+    }
+  }
+
+  if (!Number.isFinite(referenceLowestPrice)) {
+    const priceRunnerProduct = await findBestPriceRunnerProductForItem(item).catch(() => null);
+    if (Number.isFinite(priceRunnerProduct?.lowest_price)) {
+      referenceLowestPrice = priceRunnerProduct.lowest_price;
+      referenceSource = "pricerunner";
+    }
+  }
+
+  return {
+    offers: sortCatalogStoreOffers(offerLists.flat()),
+    referenceLowestPrice: Number.isFinite(referenceLowestPrice) ? referenceLowestPrice : null,
+    referenceSource,
+  };
 };
 
 const getCachedCatalogItemStoreOffers = (itemId) => {
@@ -2859,7 +3185,10 @@ const getCachedCatalogItemStoreOffers = (itemId) => {
   const cached = customBuildProductCache.get(cacheKey);
   if (!cached?.response || !Number.isFinite(cached.updatedAt)) return null;
   const cachedOffers = Array.isArray(cached.response.offers) ? cached.response.offers : [];
-  return sanitizeCatalogItemResponse(item, cachedOffers, cached.updatedAt);
+  return sanitizeCatalogItemResponse(item, cachedOffers, cached.updatedAt, {
+    referenceLowestPrice: cached?.response?.reference_lowest_price,
+    referenceSource: cached?.response?.reference_source,
+  });
 };
 
 const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
@@ -2905,9 +3234,12 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
   const refreshPromise = (async () => {
     try {
       const refreshedAt = Date.now();
-      const offers = await refreshCatalogItemStoreOffers(itemId);
-      const mergedOffers = mergeCatalogStoreOffersWithCached(offers, cachedOffers, item);
-      const nextResponse = sanitizeCatalogItemResponse(item, mergedOffers, refreshedAt);
+      const refreshed = await refreshCatalogItemStoreOffers(itemId);
+      const mergedOffers = mergeCatalogStoreOffersWithCached(refreshed?.offers, cachedOffers, item);
+      const nextResponse = sanitizeCatalogItemResponse(item, mergedOffers, refreshedAt, {
+        referenceLowestPrice: refreshed?.referenceLowestPrice,
+        referenceSource: refreshed?.referenceSource,
+      });
       customBuildProductCache.set(cacheKey, {
         item_id: itemId,
         updatedAt: refreshedAt,
@@ -2949,7 +3281,13 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
         item_id: item.id,
         lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
         updated_at: response?.updated_at || null,
-        price_source: hasPricedOffer ? "prisjakt-offer" : response?.updated_at ? "no-store" : null,
+        price_source: hasPricedOffer
+          ? "live-offer"
+          : Number.isFinite(response?.reference_lowest_price)
+            ? "fallback"
+            : response?.updated_at
+              ? "no-store"
+              : null,
       };
     })
   );
