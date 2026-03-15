@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-15T01:36:16.027Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-15T01:56:39.388Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
@@ -172,7 +172,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "ram-26": 2790,
   "ram-27": 2290,
   "ram-28": 2190,
-  "ram-29": 2490,
+  "ram-29": 2130,
   "ram-31": 2390,
   "sto-1": 1990,
   "sto-2": 1699,
@@ -181,159 +181,159 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "sto-5": 1990,
   "sto-6": 2537,
   "sto-7": 990,
-  "sto-8": 1590,
-  "sto-10": 1190,
-  "sto-14": 1400,
+  "sto-8": 2690,
+  "sto-10": 1576,
+  "sto-14": 2499,
   "sto-15": 499,
-  "sto-16": 699,
-  "sto-17": 949,
-  "sto-18": 499,
+  "sto-16": 1111,
+  "sto-17": 1699,
+  "sto-18": 542,
   "sto-19": 999,
   "sto-20": 699,
   "sto-21": 349,
-  "sto-23": 1890,
+  "sto-23": 2508,
   "sto-24": 699,
-  "sto-25": 1790,
-  "sto-26": 1590,
+  "sto-25": 2803,
+  "sto-26": 2789,
   "sto-27": 2419,
-  "sto-28": 1290,
+  "sto-28": 2199,
   "sto-29": 2249,
-  "sto-30": 1490,
-  "sto-31": 2990,
-  "sto-32": 2790,
+  "sto-30": 2599,
+  "sto-31": 4199,
+  "sto-32": 4199,
   "sto-33": 4990,
-  "sto-34": 2990,
-  "sto-35": 3990,
-  "sto-36": 3290,
-  "sto-37": 1990,
+  "sto-34": 5604,
+  "sto-35": 4499,
+  "sto-36": 5490,
+  "sto-37": 2370,
   "sto-38": 1890,
-  "sto-39": 4290,
+  "sto-39": 5974,
   "sto-40": 1490,
-  "case-1": 1390,
-  "case-2": 1290,
-  "case-3": 1490,
-  "case-4": 1090,
-  "case-5": 1390,
-  "case-6": 1290,
+  "case-1": 743,
+  "case-2": 1099,
+  "case-3": 1568,
+  "case-4": 649,
+  "case-5": 1790,
+  "case-6": 1259,
   "case-7": 1261,
-  "case-8": 1090,
-  "case-9": 1690,
-  "case-10": 1690,
-  "case-11": 899,
-  "case-12": 949,
-  "case-13": 999,
-  "case-14": 1290,
-  "case-15": 899,
-  "case-16": 1490,
-  "case-17": 829,
-  "case-18": 1990,
-  "case-19": 1490,
-  "case-20": 1590,
-  "case-21": 1490,
-  "case-22": 1390,
-  "case-23": 999,
-  "case-24": 999,
-  "case-25": 849,
-  "case-26": 699,
-  "case-27": 799,
-  "case-28": 749,
-  "case-29": 799,
-  "psu-1": 1290,
-  "psu-2": 1590,
-  "psu-3": 1390,
+  "case-8": 699,
+  "case-9": 1121,
+  "case-10": 1082,
+  "case-11": 704,
+  "case-12": 736,
+  "case-13": 799,
+  "case-14": 860,
+  "case-15": 949,
+  "case-16": 1099,
+  "case-17": 519,
+  "case-18": 1568,
+  "case-19": 1637,
+  "case-20": 1664,
+  "case-21": 1399,
+  "case-22": 1176,
+  "case-23": 864,
+  "case-24": 829,
+  "case-25": 679,
+  "case-26": 899,
+  "case-27": 570,
+  "case-28": 579,
+  "case-29": 649,
+  "psu-1": 1104,
+  "psu-2": 1528,
+  "psu-3": 1263,
   "psu-4": 2339,
   "psu-5": 1999,
-  "psu-6": 990,
+  "psu-6": 899,
   "psu-7": 1099,
-  "psu-8": 1590,
-  "psu-9": 1190,
-  "psu-10": 1790,
-  "psu-11": 799,
-  "psu-12": 899,
-  "psu-13": 799,
-  "psu-14": 699,
+  "psu-8": 1494,
+  "psu-9": 922,
+  "psu-10": 1694,
+  "psu-11": 629,
+  "psu-12": 635,
+  "psu-13": 606,
+  "psu-14": 639,
   "psu-15": 764,
-  "psu-16": 899,
-  "psu-17": 999,
-  "psu-18": 999,
-  "psu-19": 1099,
-  "psu-20": 1099,
-  "psu-21": 1299,
+  "psu-16": 699,
+  "psu-17": 849,
+  "psu-18": 792,
+  "psu-19": 844,
+  "psu-20": 879,
+  "psu-21": 988,
   "psu-22": 1149,
-  "psu-23": 1399,
-  "psu-24": 1299,
-  "psu-25": 1399,
-  "psu-26": 1599,
-  "psu-27": 1499,
-  "psu-28": 1799,
-  "psu-29": 1999,
-  "cool-1": 1190,
-  "cool-2": 1090,
-  "cool-3": 1990,
-  "cool-4": 1990,
-  "cool-5": 1590,
-  "cool-6": 790,
-  "cool-7": 1790,
-  "cool-8": 1490,
-  "cool-9": 590,
-  "cool-10": 1490,
-  "cool-11": 699,
-  "cool-12": 999,
-  "cool-13": 999,
-  "cool-14": 899,
-  "cool-15": 999,
+  "psu-23": 1083,
+  "psu-24": 999,
+  "psu-25": 1049,
+  "psu-26": 1099,
+  "psu-27": 1099,
+  "psu-28": 1209,
+  "psu-29": 1399,
+  "cool-1": 1049,
+  "cool-2": 1127,
+  "cool-3": 899,
+  "cool-4": 3118,
+  "cool-5": 885,
+  "cool-6": 712,
+  "cool-7": 2090,
+  "cool-8": 1472,
+  "cool-9": 449,
+  "cool-10": 799,
+  "cool-11": 634,
+  "cool-12": 640,
+  "cool-13": 645,
+  "cool-14": 649,
+  "cool-15": 655,
   "cool-16": 1088,
-  "cool-17": 749,
-  "cool-18": 1199,
-  "cool-19": 799,
-  "cool-20": 899,
-  "cool-21": 1199,
+  "cool-17": 684,
+  "cool-18": 727,
+  "cool-19": 731,
+  "cool-20": 757,
+  "cool-21": 899,
   "cool-22": 937,
-  "cool-23": 999,
-  "cool-24": 1299,
+  "cool-23": 770,
+  "cool-24": 833,
   "cool-25": 949,
-  "cool-26": 1399,
-  "cool-27": 1499,
-  "cool-28": 1099,
-  "cool-29": 1299,
-  "cool-30": 1599,
-  "cool-31": 1599,
-  "cool-32": 1599,
-  "cool-33": 1499,
-  "cool-34": 1799,
-  "cool-35": 1899,
-  "cool-36": 1699,
-  "cool-37": 1590,
-  "cool-39": 3299,
-  "cool-40": 2990,
-  "cool-41": 3290,
-  "cool-42": 2590,
-  "cool-43": 3290,
-  "cool-44": 3090,
-  "cool-45": 3290,
-  "cool-46": 2990,
-  "cool-47": 299,
-  "cool-48": 249,
+  "cool-26": 850,
+  "cool-27": 885,
+  "cool-28": 929,
+  "cool-29": 909,
+  "cool-30": 1086,
+  "cool-31": 1069,
+  "cool-32": 1187,
+  "cool-33": 1187,
+  "cool-34": 1152,
+  "cool-35": 1328,
+  "cool-36": 1079,
+  "cool-37": 899,
+  "cool-39": 3317,
+  "cool-40": 2749,
+  "cool-41": 4009,
+  "cool-42": 2087,
+  "cool-43": 3490,
+  "cool-44": 2099,
+  "cool-45": 4258,
+  "cool-46": 4009,
+  "cool-47": 266,
+  "cool-48": 269,
   "cool-49": 299,
-  "cool-50": 349,
-  "cool-51": 449,
-  "cool-52": 349,
-  "cool-53": 349,
+  "cool-50": 310,
+  "cool-51": 329,
+  "cool-52": 337,
+  "cool-53": 346,
   "cool-54": 299,
-  "cool-55": 499,
-  "cool-56": 549,
-  "cool-57": 499,
-  "cool-58": 449,
-  "cool-59": 799,
-  "cool-60": 699,
-  "cool-61": 799,
-  "cool-62": 999,
-  "cool-63": 749,
-  "cool-64": 699,
-  "cool-65": 699,
-  "cool-66": 1190,
-  "cool-67": 699,
-  "cool-68": 999,
+  "cool-55": 366,
+  "cool-56": 366,
+  "cool-57": 489,
+  "cool-58": 509,
+  "cool-59": 586,
+  "cool-60": 600,
+  "cool-61": 686,
+  "cool-62": 839,
+  "cool-63": 479,
+  "cool-64": 869,
+  "cool-65": 829,
+  "cool-66": 1299,
+  "cool-67": 799,
+  "cool-68": 1247,
   "gpu-10": 4390,
   "gpu-30": 6990,
   "gpu-39": 8990,
@@ -1379,7 +1379,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "ram-29": {
     "category": "ram",
     "name": "Kingston Fury Beast RGB 64GB (2x32GB) DDR5 6000MHz CL40",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-31": {
@@ -1433,19 +1433,19 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-8": {
     "category": "storage",
     "name": "Samsung 870 Evo 2TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-10": {
     "category": "storage",
     "name": "Seagate BarraCuda 4TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-14": {
     "category": "storage",
     "name": "Kingston Fury Renegade G5",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-15": {
@@ -1457,19 +1457,19 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-16": {
     "category": "storage",
     "name": "A-Data XPG GAMMIX S55",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-17": {
     "category": "storage",
     "name": "Crucial P310 M.2 2230 NVMe 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-18": {
     "category": "storage",
     "name": "Intenso Premium M.2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-19": {
@@ -1493,7 +1493,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-23": {
     "category": "storage",
     "name": "Corsair MP700 ELITE",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-24": {
@@ -1505,13 +1505,13 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-25": {
     "category": "storage",
     "name": "Crucial T710 (1TB)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-26": {
     "category": "storage",
     "name": "Crucial P510 (2TB)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-27": {
@@ -1523,7 +1523,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-28": {
     "category": "storage",
     "name": "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-29": {
@@ -1535,19 +1535,19 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-30": {
     "category": "storage",
     "name": "Crucial P310 (2TB)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-31": {
     "category": "storage",
     "name": "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-32": {
     "category": "storage",
     "name": "Crucial P310 (4TB)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-33": {
@@ -1559,25 +1559,25 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-34": {
     "category": "storage",
     "name": "Samsung 990 EVO Plus 4TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-35": {
     "category": "storage",
     "name": "Crucial T710 (4TB)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-36": {
     "category": "storage",
     "name": "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-37": {
     "category": "storage",
     "name": "Lexar NM990",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-38": {
@@ -1589,7 +1589,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-39": {
     "category": "storage",
     "name": "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-40": {
@@ -1601,37 +1601,37 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "case-1": {
     "category": "case",
     "name": "NZXT H7 Flow",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-2": {
     "category": "case",
     "name": "Lian Li Lancool 216",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-3": {
     "category": "case",
     "name": "Fractal Design North",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-4": {
     "category": "case",
     "name": "Corsair 4000D Airflow",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-5": {
     "category": "case",
     "name": "Phanteks Eclipse G500A",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-6": {
     "category": "case",
     "name": "be quiet! Pure Base 500DX",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-7": {
@@ -1643,151 +1643,151 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "case-8": {
     "category": "case",
     "name": "NZXT H5 Flow",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-9": {
     "category": "case",
     "name": "Lian Li O11 Dynamic",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-10": {
     "category": "case",
     "name": "Fractal Design Meshify 2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-11": {
     "category": "case",
     "name": "DeepCool CG530 4F",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-12": {
     "category": "case",
     "name": "DeepCool CG530 4F Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-13": {
     "category": "case",
     "name": "Phanteks XT Pro Ultra",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-14": {
     "category": "case",
     "name": "Lian Li Vector V100 PC-chassi (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-15": {
     "category": "case",
     "name": "Lian Li A3",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-16": {
     "category": "case",
     "name": "NZXT H6 Flow Case Dual Chamber RGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-17": {
     "category": "case",
     "name": "DeepCool CG530 Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-18": {
     "category": "case",
     "name": "Fractal Design North XL",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-19": {
     "category": "case",
     "name": "O11 Vision Compact PC-chassi (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-20": {
     "category": "case",
     "name": "Lian Li O11 Vision Compact (Vit/Transparent)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-21": {
     "category": "case",
     "name": "Corsair 3500X",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-22": {
     "category": "case",
     "name": "Lian Li O11D Mini V2 White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-23": {
     "category": "case",
     "name": "Phanteks XT View",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-24": {
     "category": "case",
     "name": "Chieftec Visio Svart RGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-25": {
     "category": "case",
     "name": "DeepCool CG530 Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-26": {
     "category": "case",
     "name": "Cooler Master Elite 301 Mini Tower (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-27": {
     "category": "case",
     "name": "Thermaltake View 170 TG ARGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-28": {
     "category": "case",
     "name": "Kolink Observatory HF",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-29": {
     "category": "case",
     "name": "Kolink Observatory HF Glass Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-1": {
     "category": "psu",
     "name": "Corsair RM750e",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-2": {
     "category": "psu",
     "name": "Corsair RM850x",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-3": {
     "category": "psu",
     "name": "Seasonic Focus GX-750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-4": {
@@ -1805,7 +1805,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-6": {
     "category": "psu",
     "name": "Cooler Master MWE 750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-7": {
@@ -1817,43 +1817,43 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-8": {
     "category": "psu",
     "name": "MSI MPG A850G",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-9": {
     "category": "psu",
     "name": "NZXT C750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-10": {
     "category": "psu",
     "name": "Thermaltake Toughpower GF3",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-11": {
     "category": "psu",
     "name": "GIGABYTE P650G PG5",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-12": {
     "category": "psu",
     "name": "DeepCool PL650-D White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-13": {
     "category": "psu",
     "name": "DeepCool PL650D 650W ATX 3.1",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-14": {
     "category": "psu",
     "name": "MSI MAG A650BN",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-15": {
@@ -1865,37 +1865,37 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-16": {
     "category": "psu",
     "name": "Corsair CX Series CX650 650 Watt",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-17": {
     "category": "psu",
     "name": "Corsair CX750",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-18": {
     "category": "psu",
     "name": "Asus Prime 750W Bronze",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-19": {
     "category": "psu",
     "name": "ASUS TUF Gaming 750B",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-20": {
     "category": "psu",
     "name": "Seasonic Core BC 750W ATX3.1",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-21": {
     "category": "psu",
     "name": "GIGABYTE UD750GM PG5 V2 ICE",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-22": {
@@ -1907,133 +1907,133 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "psu-23": {
     "category": "psu",
     "name": "Gigabyte UD850GM PG5 V2 850W",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-24": {
     "category": "psu",
     "name": "Seasonic Core BC 850W ATX3.1",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-25": {
     "category": "psu",
     "name": "Seasonic G12 GM-850 850W",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-26": {
     "category": "psu",
     "name": "ASUS TUF Gaming 850W Gold ATX 3.1",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-27": {
     "category": "psu",
     "name": "ASUS Prime 850W Gold",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-28": {
     "category": "psu",
     "name": "GIGABYTE UD1000GM PG5 V2 ICE",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-29": {
     "category": "psu",
     "name": "ASUS TUF Gaming 1000W Gold ATX 3.1",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-1": {
     "category": "cooling",
     "name": "Noctua NH-D15",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-2": {
     "category": "cooling",
     "name": "be quiet! Dark Rock Pro 5",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-3": {
     "category": "cooling",
     "name": "Corsair Nautilus 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-4": {
     "category": "cooling",
     "name": "NZXT Kraken Elite V2 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-5": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-6": {
     "category": "cooling",
     "name": "DeepCool AK620",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-7": {
     "category": "cooling",
     "name": "Lian Li Galahad II Trinity SL-INF 360",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-8": {
     "category": "cooling",
     "name": "Cooler Master Liquid 360 ATMOS II VRM",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-9": {
     "category": "cooling",
     "name": "Thermalright Peerless Assassin",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-10": {
     "category": "cooling",
     "name": "Corsair Nautilus 240",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-11": {
     "category": "cooling",
     "name": "DeepCool LE240 V2 Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-12": {
     "category": "cooling",
     "name": "GIGABYTE Gaming 240 vattenkylare (is)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-13": {
     "category": "cooling",
     "name": "Gigabyte Gaming 240 ARGB kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-14": {
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 240 Core II ARGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-15": {
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 240 Kylare (vit)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-16": {
@@ -2045,31 +2045,31 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-17": {
     "category": "cooling",
     "name": "DeepCool LE240 V2 Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-18": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 240 Kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-19": {
     "category": "cooling",
     "name": "DeepCool LM240",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-20": {
     "category": "cooling",
     "name": "DeepCool LE360 V2 Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-21": {
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 360 Core II ARGB Kylare (vit)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-22": {
@@ -2081,181 +2081,181 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-23": {
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 240 Kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-24": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 240 A-RGB Kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-25": {
     "category": "cooling",
     "name": "DeepCool LE360 V2 Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-26": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 280 Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-27": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360 Kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-28": {
     "category": "cooling",
     "name": "Thermalright Aqua Elite 360 V3 vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-29": {
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 360 Kylare (vit)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-30": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro A-RGB White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-31": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360 A-RGB Kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-32": {
     "category": "cooling",
     "name": "Phanteks Glacier One 360 M25 G2 Kylare (vit)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-33": {
     "category": "cooling",
     "name": "Phanteks Glacier One 360 M25 G2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-34": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 420 Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-35": {
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 420 A-RGB Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-36": {
     "category": "cooling",
     "name": "Corsair Nautilus 360 RS ARGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-37": {
     "category": "cooling",
     "name": "Corsair Nautilus 360 (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-39": {
     "category": "cooling",
     "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (vit)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-40": {
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-S 360TL Wireless Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-41": {
     "category": "cooling",
     "name": "Asus ROG Ryuo IV SLC 360 ARGB Kylare",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-42": {
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-C 360CL Svart",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-43": {
     "category": "cooling",
     "name": "Tryx Panorama Upgraded A-RGB 360 Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-44": {
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-S 360CL Wireless White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-45": {
     "category": "cooling",
     "name": "Tryx PANORAMA Upgraded 360mm AIO White",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-46": {
     "category": "cooling",
     "name": "ASUS ROG Ryuo IV 360 A-RGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-47": {
     "category": "cooling",
     "name": "DeepCool AG400",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-48": {
     "category": "cooling",
     "name": "Thermalright Assassin Spirit 120 V2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-49": {
     "category": "cooling",
     "name": "Thermalright Assassin X120 R SE ARGB 120mm",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-50": {
     "category": "cooling",
     "name": "DeepCool AG400 BK ARGB V2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-51": {
     "category": "cooling",
     "name": "Cooler Master Hyper 212 3DHP ARGB kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-52": {
     "category": "cooling",
     "name": "Arctic Freezer 36 Kylare",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-53": {
     "category": "cooling",
     "name": "DeepCool AG400 WH ARGB V2",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-54": {
@@ -2267,85 +2267,85 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-55": {
     "category": "cooling",
     "name": "DeepCool AK400 Digital SE",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-56": {
     "category": "cooling",
     "name": "DeepCool AK400 Digital SE Vit",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-57": {
     "category": "cooling",
     "name": "Thermalright Peerless Assassin 120 ARGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-58": {
     "category": "cooling",
     "name": "Thermalright Peerless Assassin 120 SE ARGB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-59": {
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3 LX",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-60": {
     "category": "cooling",
     "name": "DeepCool AK500 Zero Dark",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-61": {
     "category": "cooling",
     "name": "DeepCool AK620 Zero Dark",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-62": {
     "category": "cooling",
     "name": "DeepCool AK620 G2 Digital Nyx",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-63": {
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-64": {
     "category": "cooling",
     "name": "Noctua NH-L9x65 chromax.black",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-65": {
     "category": "cooling",
     "name": "Noctua NH-L12S",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-66": {
     "category": "cooling",
     "name": "Noctua NH-U12A",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-67": {
     "category": "cooling",
     "name": "Noctua NH-U9S",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-68": {
     "category": "cooling",
     "name": "Noctua NH-D12L",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-10": {
