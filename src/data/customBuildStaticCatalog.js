@@ -51,23 +51,6 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
-    "id": "gpu-4",
-    "category": "gpu",
-    "name": "Zotac GeForce RTX 3060 Twin Edge 12GB",
-    "brand": "Zotac",
-    "price": 3658,
-    "specs": [
-      "12 GB",
-      "RTX 3060",
-      "1080p+"
-    ],
-    "searchTerms": [
-      "Zotac GeForce RTX 3060 Twin Edge 12GB",
-      "Zotac GeForce RTX 3060 Twin Edge 12GB 12 GB RTX 3060 1080p+",
-      "GeForce RTX 3060 Twin Edge 12GB"
-    ]
-  },
-  {
     "id": "gpu-5",
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 5060 8GB OC",
@@ -1664,7 +1647,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Kingston Fury Beast RGB 64GB (2x32GB) DDR5 6000MHz CL40",
     "brand": "Kingston",
-    "price": 2490,
+    "price": 2130,
     "specs": [
       "DDR5",
       "64GB",
@@ -1841,7 +1824,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Samsung 870 Evo 2TB",
     "brand": "Samsung",
-    "price": 1590,
+    "price": 2690,
     "specs": [
       "SATA",
       "560 MB/s",
@@ -1858,7 +1841,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Seagate BarraCuda 4TB",
     "brand": "Seagate",
-    "price": 1190,
+    "price": 1576,
     "specs": [
       "HDD",
       "5400 RPM",
@@ -1875,7 +1858,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Kingston Fury Renegade G5",
     "brand": "Kingston",
-    "price": 1400,
+    "price": 2499,
     "specs": [
       "NVMe"
     ],
@@ -1909,7 +1892,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "A-Data XPG GAMMIX S55",
     "brand": "ADATA",
-    "price": 699,
+    "price": 1111,
     "specs": [
       "NVMe",
       "PCIe 4.0"
@@ -1924,7 +1907,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 M.2 2230 NVMe 1TB",
     "brand": "Crucial",
-    "price": 949,
+    "price": 1699,
     "specs": [
       "NVMe",
       "2230",
@@ -1941,7 +1924,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Intenso Premium M.2",
     "brand": "Intenso",
-    "price": 499,
+    "price": 542,
     "specs": [
       "NVMe",
       "M.2"
@@ -2009,7 +1992,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Corsair MP700 ELITE",
     "brand": "Corsair",
-    "price": 1890,
+    "price": 2508,
     "specs": [
       "NVMe",
       "PCIe 5.0"
@@ -2041,7 +2024,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T710 (1TB)",
     "brand": "Crucial",
-    "price": 1790,
+    "price": 2803,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2060,7 +2043,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P510 (2TB)",
     "brand": "Crucial",
-    "price": 1590,
+    "price": 2789,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2096,7 +2079,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Corsair MP600 CORE XT NVMe PCIe M.2 2TB",
     "brand": "Corsair",
-    "price": 1290,
+    "price": 2199,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2131,7 +2114,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 (2TB)",
     "brand": "Crucial",
-    "price": 1490,
+    "price": 2599,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2150,7 +2133,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 PCIe G4 2280 NVMe M.2 w heatsink 4TB",
     "brand": "Crucial",
-    "price": 2990,
+    "price": 4199,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2168,7 +2151,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial P310 (4TB)",
     "brand": "Crucial",
-    "price": 2790,
+    "price": 4199,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2204,7 +2187,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Samsung 990 EVO Plus 4TB",
     "brand": "Samsung",
-    "price": 2990,
+    "price": 5604,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2221,7 +2204,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T710 (4TB)",
     "brand": "Crucial",
-    "price": 3990,
+    "price": 4499,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2240,7 +2223,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T500 4TB M.2 NVMe PCIe Gen 4 HS",
     "brand": "Crucial",
-    "price": 3290,
+    "price": 5490,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -2258,7 +2241,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Lexar NM990",
     "brand": "Lexar",
-    "price": 1990,
+    "price": 2370,
     "specs": [
       "NVMe",
       "PCIe 5.0"
@@ -2290,7 +2273,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T700 4TB M.2 NVMe PCIe Gen 5 med varmespridare",
     "brand": "Crucial",
-    "price": 4290,
+    "price": 5974,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2325,7 +2308,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "NZXT H7 Flow",
     "brand": "NZXT",
-    "price": 1390,
+    "price": 743,
     "specs": [
       "ATX",
       "Mesh",
@@ -2342,7 +2325,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li Lancool 216",
     "brand": "Lian Li",
-    "price": 1290,
+    "price": 1099,
     "specs": [
       "ATX",
       "Airflow",
@@ -2359,7 +2342,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Fractal Design North",
     "brand": "Fractal",
-    "price": 1490,
+    "price": 1568,
     "specs": [
       "ATX",
       "Träpanel",
@@ -2376,7 +2359,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Corsair 4000D Airflow",
     "brand": "Corsair",
-    "price": 1090,
+    "price": 649,
     "specs": [
       "ATX",
       "Mesh",
@@ -2393,7 +2376,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Phanteks Eclipse G500A",
     "brand": "Phanteks",
-    "price": 1390,
+    "price": 1790,
     "specs": [
       "ATX",
       "RGB",
@@ -2410,7 +2393,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "be quiet! Pure Base 500DX",
     "brand": "be quiet!",
-    "price": 1290,
+    "price": 1259,
     "specs": [
       "ATX",
       "Tyst",
@@ -2446,7 +2429,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "NZXT H5 Flow",
     "brand": "NZXT",
-    "price": 1090,
+    "price": 699,
     "specs": [
       "ATX",
       "Kompakt",
@@ -2463,7 +2446,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li O11 Dynamic",
     "brand": "Lian Li",
-    "price": 1690,
+    "price": 1121,
     "specs": [
       "ATX",
       "Glas",
@@ -2480,7 +2463,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Fractal Design Meshify 2",
     "brand": "Fractal",
-    "price": 1690,
+    "price": 1082,
     "specs": [
       "ATX",
       "Mesh",
@@ -2497,7 +2480,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 4F",
     "brand": "DeepCool",
-    "price": 899,
+    "price": 704,
     "specs": [
       "ATX",
       "4x fans",
@@ -2514,7 +2497,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 4F Vit",
     "brand": "DeepCool",
-    "price": 949,
+    "price": 736,
     "specs": [
       "ATX",
       "4x fans",
@@ -2531,7 +2514,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Phanteks XT Pro Ultra",
     "brand": "Phanteks",
-    "price": 999,
+    "price": 799,
     "specs": [
       "ATX",
       "Airflow",
@@ -2548,7 +2531,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li Vector V100 PC-chassi (svart)",
     "brand": "Lian Li",
-    "price": 1290,
+    "price": 860,
     "specs": [
       "ATX",
       "Showcase",
@@ -2567,7 +2550,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li A3",
     "brand": "Lian Li",
-    "price": 899,
+    "price": 949,
     "specs": [
       "mATX",
       "Compact",
@@ -2583,7 +2566,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "NZXT H6 Flow Case Dual Chamber RGB",
     "brand": "NZXT",
-    "price": 1490,
+    "price": 1099,
     "specs": [
       "ATX",
       "Dual chamber",
@@ -2600,7 +2583,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 Svart",
     "brand": "DeepCool",
-    "price": 829,
+    "price": 519,
     "specs": [
       "ATX",
       "Airflow",
@@ -2617,7 +2600,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Fractal Design North XL",
     "brand": "Fractal",
-    "price": 1990,
+    "price": 1568,
     "specs": [
       "ATX",
       "XL",
@@ -2634,7 +2617,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "O11 Vision Compact PC-chassi (svart)",
     "brand": "Lian Li",
-    "price": 1490,
+    "price": 1637,
     "specs": [
       "ATX",
       "Compact",
@@ -2652,7 +2635,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li O11 Vision Compact (Vit/Transparent)",
     "brand": "Lian Li",
-    "price": 1590,
+    "price": 1664,
     "specs": [
       "ATX",
       "Compact",
@@ -2671,7 +2654,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Corsair 3500X",
     "brand": "Corsair",
-    "price": 1490,
+    "price": 1399,
     "specs": [
       "ATX",
       "Showcase",
@@ -2688,7 +2671,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Lian Li O11D Mini V2 White",
     "brand": "Lian Li",
-    "price": 1390,
+    "price": 1176,
     "specs": [
       "ATX",
       "Mini",
@@ -2705,7 +2688,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Phanteks XT View",
     "brand": "Phanteks",
-    "price": 999,
+    "price": 864,
     "specs": [
       "ATX",
       "Glass",
@@ -2722,7 +2705,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Chieftec Visio Svart RGB",
     "brand": "Chieftec",
-    "price": 999,
+    "price": 829,
     "specs": [
       "ATX",
       "RGB",
@@ -2739,7 +2722,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "DeepCool CG530 Vit",
     "brand": "DeepCool",
-    "price": 849,
+    "price": 679,
     "specs": [
       "ATX",
       "Airflow",
@@ -2756,7 +2739,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Cooler Master Elite 301 Mini Tower (svart)",
     "brand": "Cooler Master",
-    "price": 699,
+    "price": 899,
     "specs": [
       "mATX",
       "Mini tower",
@@ -2775,7 +2758,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Thermaltake View 170 TG ARGB",
     "brand": "Thermaltake",
-    "price": 799,
+    "price": 570,
     "specs": [
       "mATX",
       "ARGB",
@@ -2792,7 +2775,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Kolink Observatory HF",
     "brand": "Kolink",
-    "price": 749,
+    "price": 579,
     "specs": [
       "ATX",
       "Mesh",
@@ -2809,7 +2792,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "case",
     "name": "Kolink Observatory HF Glass Vit",
     "brand": "Kolink",
-    "price": 799,
+    "price": 649,
     "specs": [
       "ATX",
       "Glass",
@@ -2826,7 +2809,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Corsair RM750e",
     "brand": "Corsair",
-    "price": 1290,
+    "price": 1104,
     "specs": [
       "750W",
       "80+ Gold",
@@ -2843,7 +2826,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Corsair RM850x",
     "brand": "Corsair",
-    "price": 1590,
+    "price": 1528,
     "specs": [
       "850W",
       "80+ Gold",
@@ -2860,7 +2843,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic Focus GX-750",
     "brand": "Seasonic",
-    "price": 1390,
+    "price": 1263,
     "specs": [
       "750W",
       "80+ Gold",
@@ -2911,7 +2894,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Cooler Master MWE 750",
     "brand": "Cooler Master",
-    "price": 990,
+    "price": 899,
     "specs": [
       "750W",
       "80+ Gold",
@@ -2945,7 +2928,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "MSI MPG A850G",
     "brand": "MSI",
-    "price": 1590,
+    "price": 1494,
     "specs": [
       "850W",
       "80+ Gold",
@@ -2962,7 +2945,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "NZXT C750",
     "brand": "NZXT",
-    "price": 1190,
+    "price": 922,
     "specs": [
       "750W",
       "80+ Gold",
@@ -2979,7 +2962,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Thermaltake Toughpower GF3",
     "brand": "Thermaltake",
-    "price": 1790,
+    "price": 1694,
     "specs": [
       "850W",
       "80+ Gold",
@@ -2996,7 +2979,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "GIGABYTE P650G PG5",
     "brand": "GIGABYTE",
-    "price": 799,
+    "price": 629,
     "specs": [
       "650W",
       "80+ Gold",
@@ -3013,7 +2996,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "DeepCool PL650-D White",
     "brand": "DeepCool",
-    "price": 899,
+    "price": 635,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3030,7 +3013,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "DeepCool PL650D 650W ATX 3.1",
     "brand": "DeepCool",
-    "price": 799,
+    "price": 606,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3047,7 +3030,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "MSI MAG A650BN",
     "brand": "MSI",
-    "price": 699,
+    "price": 639,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3081,7 +3064,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Corsair CX Series CX650 650 Watt",
     "brand": "Corsair",
-    "price": 899,
+    "price": 699,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3098,7 +3081,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Corsair CX750",
     "brand": "Corsair",
-    "price": 999,
+    "price": 849,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3115,7 +3098,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Asus Prime 750W Bronze",
     "brand": "ASUS",
-    "price": 999,
+    "price": 792,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3132,7 +3115,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS TUF Gaming 750B",
     "brand": "ASUS",
-    "price": 1099,
+    "price": 844,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3149,7 +3132,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic Core BC 750W ATX3.1",
     "brand": "Seasonic",
-    "price": 1099,
+    "price": 879,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3166,7 +3149,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "GIGABYTE UD750GM PG5 V2 ICE",
     "brand": "GIGABYTE",
-    "price": 1299,
+    "price": 988,
     "specs": [
       "750W",
       "80+ Gold",
@@ -3200,7 +3183,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Gigabyte UD850GM PG5 V2 850W",
     "brand": "GIGABYTE",
-    "price": 1399,
+    "price": 1083,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3217,7 +3200,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic Core BC 850W ATX3.1",
     "brand": "Seasonic",
-    "price": 1299,
+    "price": 999,
     "specs": [
       "850W",
       "80+ Bronze",
@@ -3234,7 +3217,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic G12 GM-850 850W",
     "brand": "Seasonic",
-    "price": 1399,
+    "price": 1049,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3251,7 +3234,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS TUF Gaming 850W Gold ATX 3.1",
     "brand": "ASUS",
-    "price": 1599,
+    "price": 1099,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3268,7 +3251,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS Prime 850W Gold",
     "brand": "ASUS",
-    "price": 1499,
+    "price": 1099,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3285,7 +3268,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "GIGABYTE UD1000GM PG5 V2 ICE",
     "brand": "GIGABYTE",
-    "price": 1799,
+    "price": 1209,
     "specs": [
       "1000W",
       "80+ Gold",
@@ -3302,7 +3285,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS TUF Gaming 1000W Gold ATX 3.1",
     "brand": "ASUS",
-    "price": 1999,
+    "price": 1399,
     "specs": [
       "1000W",
       "80+ Gold",
@@ -3319,7 +3302,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-D15",
     "brand": "Noctua",
-    "price": 1190,
+    "price": 1049,
     "specs": [
       "Luftkylare",
       "Tyst",
@@ -3336,7 +3319,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "be quiet! Dark Rock Pro 5",
     "brand": "be quiet!",
-    "price": 1090,
+    "price": 1127,
     "specs": [
       "Luftkylare",
       "Tyst",
@@ -3353,7 +3336,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Corsair Nautilus 360",
     "brand": "Corsair",
-    "price": 1990,
+    "price": 899,
     "specs": [
       "360mm AIO",
       "RGB",
@@ -3370,7 +3353,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "NZXT Kraken Elite V2 360",
     "brand": "NZXT",
-    "price": 1990,
+    "price": 3118,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -3387,7 +3370,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360",
     "brand": "Arctic",
-    "price": 1590,
+    "price": 885,
     "specs": [
       "360mm AIO",
       "Tyst",
@@ -3404,7 +3387,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK620",
     "brand": "DeepCool",
-    "price": 790,
+    "price": 712,
     "specs": [
       "Luftkylare",
       "Hög TDP",
@@ -3421,7 +3404,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Galahad II Trinity SL-INF 360",
     "brand": "Lian Li",
-    "price": 1790,
+    "price": 2090,
     "specs": [
       "360mm AIO",
       "RGB",
@@ -3438,7 +3421,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master Liquid 360 ATMOS II VRM",
     "brand": "Cooler Master",
-    "price": 1490,
+    "price": 1472,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -3455,7 +3438,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Peerless Assassin",
     "brand": "Thermalright",
-    "price": 590,
+    "price": 449,
     "specs": [
       "Luftkylare",
       "Prisvärd",
@@ -3472,7 +3455,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Corsair Nautilus 240",
     "brand": "Corsair",
-    "price": 1490,
+    "price": 799,
     "specs": [
       "240mm AIO",
       "RGB",
@@ -3489,7 +3472,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LE240 V2 Svart",
     "brand": "DeepCool",
-    "price": 699,
+    "price": 634,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3506,7 +3489,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "GIGABYTE Gaming 240 vattenkylare (is)",
     "brand": "GIGABYTE",
-    "price": 999,
+    "price": 640,
     "specs": [
       "240mm AIO",
       "Vit",
@@ -3525,7 +3508,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Gigabyte Gaming 240 ARGB kylare (svart)",
     "brand": "GIGABYTE",
-    "price": 999,
+    "price": 645,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3544,7 +3527,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 240 Core II ARGB",
     "brand": "Cooler Master",
-    "price": 899,
+    "price": 649,
     "specs": [
       "240mm AIO",
       "ARGB",
@@ -3561,7 +3544,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 240 Kylare (vit)",
     "brand": "MSI",
-    "price": 999,
+    "price": 655,
     "specs": [
       "240mm AIO",
       "Vit",
@@ -3598,7 +3581,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LE240 V2 Vit",
     "brand": "DeepCool",
-    "price": 749,
+    "price": 684,
     "specs": [
       "240mm AIO",
       "Vit",
@@ -3615,7 +3598,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 240 Kylare (svart)",
     "brand": "Arctic",
-    "price": 1199,
+    "price": 727,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3634,7 +3617,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LM240",
     "brand": "DeepCool",
-    "price": 799,
+    "price": 731,
     "specs": [
       "240mm AIO",
       "ARGB",
@@ -3651,7 +3634,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LE360 V2 Svart",
     "brand": "DeepCool",
-    "price": 899,
+    "price": 757,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3668,7 +3651,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 360 Core II ARGB Kylare (vit)",
     "brand": "Cooler Master",
-    "price": 1199,
+    "price": 899,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3704,7 +3687,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 240 Kylare (svart)",
     "brand": "MSI",
-    "price": 999,
+    "price": 770,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3723,7 +3706,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 240 A-RGB Kylare (svart)",
     "brand": "Arctic",
-    "price": 1299,
+    "price": 833,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3759,7 +3742,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 280 Svart",
     "brand": "Arctic",
-    "price": 1399,
+    "price": 850,
     "specs": [
       "280mm AIO",
       "Svart",
@@ -3776,7 +3759,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360 Kylare (svart)",
     "brand": "Arctic",
-    "price": 1499,
+    "price": 885,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3795,7 +3778,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Aqua Elite 360 V3 vit",
     "brand": "Thermalright",
-    "price": 1099,
+    "price": 929,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3812,7 +3795,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 360 Kylare (vit)",
     "brand": "MSI",
-    "price": 1299,
+    "price": 909,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3831,7 +3814,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro A-RGB White",
     "brand": "Arctic",
-    "price": 1599,
+    "price": 1086,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3848,7 +3831,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360 A-RGB Kylare (svart)",
     "brand": "Arctic",
-    "price": 1599,
+    "price": 1069,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3867,7 +3850,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Phanteks Glacier One 360 M25 G2 Kylare (vit)",
     "brand": "Phanteks",
-    "price": 1599,
+    "price": 1187,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3886,7 +3869,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Phanteks Glacier One 360 M25 G2",
     "brand": "Phanteks",
-    "price": 1499,
+    "price": 1187,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3903,7 +3886,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 420 Svart",
     "brand": "Arctic",
-    "price": 1799,
+    "price": 1152,
     "specs": [
       "420mm AIO",
       "Svart",
@@ -3920,7 +3903,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 420 A-RGB Svart",
     "brand": "Arctic",
-    "price": 1899,
+    "price": 1328,
     "specs": [
       "420mm AIO",
       "Svart",
@@ -3937,7 +3920,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Corsair Nautilus 360 RS ARGB",
     "brand": "Corsair",
-    "price": 1699,
+    "price": 1079,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -3954,7 +3937,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Corsair Nautilus 360 (svart)",
     "brand": "Corsair",
-    "price": 1590,
+    "price": 899,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3992,7 +3975,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (vit)",
     "brand": "NZXT",
-    "price": 3299,
+    "price": 3317,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4011,7 +3994,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-S 360TL Wireless Svart",
     "brand": "Lian Li",
-    "price": 2990,
+    "price": 2749,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4028,7 +4011,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Asus ROG Ryuo IV SLC 360 ARGB Kylare",
     "brand": "ASUS",
-    "price": 3290,
+    "price": 4009,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -4045,7 +4028,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-C 360CL Svart",
     "brand": "Lian Li",
-    "price": 2590,
+    "price": 2087,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4062,7 +4045,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Tryx Panorama Upgraded A-RGB 360 Vit",
     "brand": "Tryx",
-    "price": 3290,
+    "price": 3490,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -4079,7 +4062,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-S 360CL Wireless White",
     "brand": "Lian Li",
-    "price": 3090,
+    "price": 2099,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4096,7 +4079,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Tryx PANORAMA Upgraded 360mm AIO White",
     "brand": "Tryx",
-    "price": 3290,
+    "price": 4258,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -4113,7 +4096,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "ASUS ROG Ryuo IV 360 A-RGB",
     "brand": "ASUS",
-    "price": 2990,
+    "price": 4009,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -4130,7 +4113,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AG400",
     "brand": "DeepCool",
-    "price": 299,
+    "price": 266,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4147,7 +4130,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Assassin Spirit 120 V2",
     "brand": "Thermalright",
-    "price": 249,
+    "price": 269,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4181,7 +4164,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AG400 BK ARGB V2",
     "brand": "DeepCool",
-    "price": 349,
+    "price": 310,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4198,7 +4181,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master Hyper 212 3DHP ARGB kylare (svart)",
     "brand": "Cooler Master",
-    "price": 449,
+    "price": 329,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4217,7 +4200,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Freezer 36 Kylare",
     "brand": "Arctic",
-    "price": 349,
+    "price": 337,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4234,7 +4217,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AG400 WH ARGB V2",
     "brand": "DeepCool",
-    "price": 349,
+    "price": 346,
     "specs": [
       "Luftkylare",
       "Vit",
@@ -4269,7 +4252,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK400 Digital SE",
     "brand": "DeepCool",
-    "price": 499,
+    "price": 366,
     "specs": [
       "Luftkylare",
       "Digital",
@@ -4286,7 +4269,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK400 Digital SE Vit",
     "brand": "DeepCool",
-    "price": 549,
+    "price": 366,
     "specs": [
       "Luftkylare",
       "Digital",
@@ -4303,7 +4286,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Peerless Assassin 120 ARGB",
     "brand": "Thermalright",
-    "price": 499,
+    "price": 489,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4320,7 +4303,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Peerless Assassin 120 SE ARGB",
     "brand": "Thermalright",
-    "price": 449,
+    "price": 509,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4337,7 +4320,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3 LX",
     "brand": "be quiet!",
-    "price": 799,
+    "price": 586,
     "specs": [
       "Luftkylare",
       "Tyst",
@@ -4354,7 +4337,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK500 Zero Dark",
     "brand": "DeepCool",
-    "price": 699,
+    "price": 600,
     "specs": [
       "Luftkylare",
       "Svart",
@@ -4371,7 +4354,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK620 Zero Dark",
     "brand": "DeepCool",
-    "price": 799,
+    "price": 686,
     "specs": [
       "Luftkylare",
       "Dual tower",
@@ -4388,7 +4371,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK620 G2 Digital Nyx",
     "brand": "DeepCool",
-    "price": 999,
+    "price": 839,
     "specs": [
       "Luftkylare",
       "Digital",
@@ -4405,7 +4388,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3",
     "brand": "be quiet!",
-    "price": 749,
+    "price": 479,
     "specs": [
       "Luftkylare",
       "Tyst",
@@ -4422,7 +4405,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-L9x65 chromax.black",
     "brand": "Noctua",
-    "price": 699,
+    "price": 869,
     "specs": [
       "Lågprofil",
       "Svart",
@@ -4439,7 +4422,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-L12S",
     "brand": "Noctua",
-    "price": 699,
+    "price": 829,
     "specs": [
       "Lågprofil",
       "120mm",
@@ -4456,7 +4439,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-U12A",
     "brand": "Noctua",
-    "price": 1190,
+    "price": 1299,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4473,7 +4456,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-U9S",
     "brand": "Noctua",
-    "price": 699,
+    "price": 799,
     "specs": [
       "Luftkylare",
       "92mm",
@@ -4490,7 +4473,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-D12L",
     "brand": "Noctua",
-    "price": 999,
+    "price": 1247,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4527,10 +4510,6 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-3": {
-    "source": "prisjakt_seed",
-    "note": null
-  },
-  "gpu-4": {
     "source": "prisjakt_seed",
     "note": null
   },
@@ -4891,7 +4870,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "ram-29": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-30": {
@@ -4931,15 +4910,15 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-8": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-10": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-14": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-15": {
@@ -4947,15 +4926,15 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-16": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-19": {
@@ -4971,7 +4950,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-24": {
@@ -4979,11 +4958,11 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-25": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-26": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-27": {
@@ -4991,7 +4970,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-29": {
@@ -4999,15 +4978,15 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-30": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-31": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-32": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-33": {
@@ -5015,19 +4994,19 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-34": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-35": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-36": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-37": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-38": {
@@ -5035,7 +5014,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-39": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-40": {
@@ -5043,27 +5022,27 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-1": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-2": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-3": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-4": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-5": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-6": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-7": {
@@ -5071,103 +5050,103 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-8": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-9": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-10": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-11": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-12": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-13": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-14": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-15": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-16": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-19": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-20": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-21": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-22": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-24": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-25": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-26": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-27": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-29": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-1": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-2": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-3": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-4": {
@@ -5179,7 +5158,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-6": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-7": {
@@ -5187,31 +5166,31 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-8": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-9": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-10": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-11": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-12": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-13": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-14": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-15": {
@@ -5219,27 +5198,27 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-16": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-19": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-20": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-21": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-22": {
@@ -5247,91 +5226,91 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-24": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-25": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-26": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-27": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-29": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-1": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-2": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-3": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-4": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-5": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-6": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-7": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-8": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-9": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-10": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-11": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-12": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-13": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-14": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-15": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-16": {
@@ -5339,23 +5318,23 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-19": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-20": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-21": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-22": {
@@ -5363,63 +5342,63 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-24": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-25": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-26": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-27": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-29": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-30": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-31": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-32": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-33": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-34": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-35": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-36": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-37": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-38": {
@@ -5427,63 +5406,63 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-39": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-40": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-41": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-42": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-43": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-44": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-45": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-46": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-47": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-48": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-49": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-50": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-51": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-52": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-53": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-54": {
@@ -5491,59 +5470,59 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-55": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-56": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-57": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-58": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-59": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-60": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-61": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-62": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-63": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-64": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-65": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-66": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-67": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "cool-68": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   }
 };

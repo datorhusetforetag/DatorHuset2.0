@@ -810,16 +810,6 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       gpuModel: "Intel Arc B580 12GB Limited Edition",
     },
     {
-      id: "gpu-4",
-      name: "Zotac GeForce RTX 3060 Twin Edge 12GB",
-      brand: "Zotac",
-      price: 3299,
-      image: gpu4060Image,
-      specs: ["12 GB", "RTX 3060", "1080p+"],
-      performanceClass: "Entry",
-      gpuModel: "Zotac GeForce RTX 3060 Twin Edge 12GB",
-    },
-    {
       id: "gpu-5",
       name: "ASUS Dual GeForce RTX 5060 8GB OC",
       brand: "ASUS",
