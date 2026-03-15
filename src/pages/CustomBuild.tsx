@@ -1914,7 +1914,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       id: "sto-19",
       name: "Crucial P510 1TB",
       brand: "Crucial",
-      price: 999,
+      price: 1190,
       image: storageCrucialT500Image,
       specs: ["NVMe", "PCIe 5.0", "1TB"],
     },
@@ -1968,9 +1968,9 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "sto-27",
-      name: "Crucial E100 2TB",
+      name: "Crucial E100 M.2 Gen 4 (2TB)",
       brand: "Crucial",
-      price: 2419,
+      price: 2099,
       image: storageCrucialT500Image,
       specs: ["NVMe", "PCIe 4.0", "2TB"],
     },
@@ -2147,11 +2147,11 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
     },
     {
       id: "case-9",
-      name: "Lian Li O11 Dynamic",
+      name: "Lian Li O11 Dynamic Mini V2 Mini-Tower",
       brand: "Lian Li",
-      price: 1690,
+      price: 1121,
       image: CASE_REMOTE_IMAGE_BY_ID["case-9"],
-      specs: ["ATX", "Glas", "Showcase"],
+      specs: ["ATX", "Mini", "Svart/Transparent"],
     },
     {
       id: "case-10",
@@ -2634,7 +2634,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool LE240 V2 Svart",
       brand: "DeepCool",
       price: 699,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "Svart", "ARGB"],
     },
     {
@@ -2642,7 +2642,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "GIGABYTE Gaming 240 vattenkylare (is)",
       brand: "GIGABYTE",
       price: 999,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "Vit", "RGB"],
     },
     {
@@ -2650,7 +2650,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Gigabyte Gaming 240 ARGB kylare (svart)",
       brand: "GIGABYTE",
       price: 999,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "Svart", "ARGB"],
     },
     {
@@ -2666,7 +2666,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "MSI MAG Coreliquid A13 240 Kylare (vit)",
       brand: "MSI",
       price: 999,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2682,7 +2682,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool LE240 V2 Vit",
       brand: "DeepCool",
       price: 749,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2698,7 +2698,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool LM240",
       brand: "DeepCool",
       price: 799,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "ARGB", "Prisvärd"],
     },
     {
@@ -2706,7 +2706,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool LE360 V2 Svart",
       brand: "DeepCool",
       price: 899,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH150iImage,
       specs: ["360mm AIO", "Svart", "ARGB"],
     },
     {
@@ -2730,7 +2730,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "MSI MAG Coreliquid A13 240 Kylare (svart)",
       brand: "MSI",
       price: 999,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH100iImage,
       specs: ["240mm AIO", "Svart", "ARGB"],
     },
     {
@@ -2746,7 +2746,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool LE360 V2 Vit",
       brand: "DeepCool",
       price: 949,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH150iImage,
       specs: ["360mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2770,7 +2770,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Thermalright Aqua Elite 360 V3 vit",
       brand: "Thermalright",
       price: 1099,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH150iImage,
       specs: ["360mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2778,7 +2778,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "MSI MAG Coreliquid A13 360 Kylare (vit)",
       brand: "MSI",
       price: 1299,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingCorsairIcUEH150iImage,
       specs: ["360mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2802,7 +2802,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Phanteks Glacier One 360 M25 G2 Kylare (vit)",
       brand: "Phanteks",
       price: 1599,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingLianLiGalahadIiTrinityImage,
       specs: ["360mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2810,7 +2810,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Phanteks Glacier One 360 M25 G2",
       brand: "Phanteks",
       price: 1499,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingLianLiGalahadIiTrinityImage,
       specs: ["360mm AIO", "Svart", "ARGB"],
     },
     {
@@ -2849,7 +2849,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       id: "cool-38",
       name: "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart)",
       brand: "NZXT",
-      price: 3199,
+      price: 3237,
       image: coolingNzxtKraken360Image,
       specs: ["360mm AIO", "LCD", "Svart"],
     },
@@ -2874,7 +2874,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Asus ROG Ryuo IV SLC 360 ARGB Kylare",
       brand: "ASUS",
       price: 3290,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingNzxtKraken360Image,
       specs: ["360mm AIO", "ARGB", "Premium"],
     },
     {
@@ -2890,7 +2890,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Tryx Panorama Upgraded A-RGB 360 Vit",
       brand: "Tryx",
       price: 3290,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingNzxtKraken360Image,
       specs: ["360mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2906,7 +2906,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Tryx PANORAMA Upgraded 360mm AIO White",
       brand: "Tryx",
       price: 3290,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingNzxtKraken360Image,
       specs: ["360mm AIO", "Vit", "ARGB"],
     },
     {
@@ -2914,7 +2914,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "ASUS ROG Ryuo IV 360 A-RGB",
       brand: "ASUS",
       price: 2990,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingNzxtKraken360Image,
       specs: ["360mm AIO", "ARGB", "Premium"],
     },
     {
@@ -2954,7 +2954,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Cooler Master Hyper 212 3DHP ARGB kylare (svart)",
       brand: "Cooler Master",
       price: 449,
-      image: CATEGORY_IMAGES.cooling.src,
+      image: coolingDeepCoolAk620Image,
       specs: ["Luftkylare", "120mm", "ARGB"],
     },
     {

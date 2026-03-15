@@ -1,4 +1,4 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-15T02:17:22.601Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-15T02:22:24.318Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
@@ -187,14 +187,14 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "sto-16": 1111,
   "sto-17": 1699,
   "sto-18": 542,
-  "sto-19": 999,
+  "sto-19": 1190,
   "sto-20": 1299,
   "sto-21": 349,
   "sto-23": 2508,
   "sto-24": 699,
   "sto-25": 1699,
   "sto-26": 2789,
-  "sto-27": 2419,
+  "sto-27": 2099,
   "sto-28": 2199,
   "sto-29": 2249,
   "sto-30": 2299,
@@ -345,7 +345,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "ram-12": 1200,
   "ram-19": 729,
   "ram-30": 2590,
-  "cool-38": 3199
+  "cool-38": 3212
 };
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
@@ -1468,7 +1468,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-19": {
     "category": "storage",
     "name": "Crucial P510 1TB",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-20": {
@@ -1509,8 +1509,8 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   },
   "sto-27": {
     "category": "storage",
-    "name": "Crucial E100 2TB",
-    "source": "static_reference",
+    "name": "Crucial E100 M.2 Gen 4 (2TB)",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-28": {
@@ -1641,7 +1641,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   },
   "case-9": {
     "category": "case",
-    "name": "Lian Li O11 Dynamic",
+    "name": "Lian Li O11 Dynamic Mini V2 Mini-Tower",
     "source": "prisjakt_seed",
     "note": null
   },
@@ -2416,7 +2416,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-38": {
     "category": "cooling",
     "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart)",
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   }
 };

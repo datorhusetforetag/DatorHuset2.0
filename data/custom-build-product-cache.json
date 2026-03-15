@@ -1,6 +1,6 @@
 {
   "version": "multi-source-v3",
-  "saved_at": "2026-03-15T02:17:22.561Z",
+  "saved_at": "2026-03-15T02:22:16.694Z",
   "entries": [
     {
       "key": "multi-source-v3:case-1",
@@ -1938,32 +1938,70 @@
     {
       "key": "multi-source-v3:case-9",
       "item_id": "case-9",
-      "updatedAt": 1773515731698,
+      "updatedAt": 1773541336694,
       "response": {
         "ok": true,
         "item_id": "case-9",
-        "updated_at": "2026-03-14T19:15:31.698Z",
-        "next_refresh_at": "2026-03-15T19:15:31.698Z",
+        "updated_at": "2026-03-15T02:22:16.694Z",
+        "next_refresh_at": "2026-03-16T02:22:16.694Z",
         "lowest_price": 1121,
         "reference_lowest_price": 1121,
         "reference_source": "komponentkoll",
         "offers": [
           {
-            "store_id": "computersalg",
-            "store": "CSmegastore",
-            "status": "unavailable",
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "store_name": "Elgiganten",
+            "status": "available",
             "trusted_source": "komponentkoll",
-            "product_url": "https://www.computersalg.se/i/24621800/case-lian-li-atx-micro-atx-mini-itx-juodas-mini-tower-o11-dynamic-mini-v2-g99-o11dmiv2x-00",
+            "product_url": "https://www.elgiganten.se/product/gaming/datorkomponenter/datorchassi-tillbehor/chassi/lian-li-o11-dynamic-mini-v2-datorchassi-svart/989723?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
             "search_url": null,
+            "product_title": "Lian Li O11 Dynamic Mini V2 datorchassi (svart)",
             "price": 1121,
             "total_price": 1121,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "unavailable",
-            "updated_at": "2026-03-14T19:15:31.698Z",
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "store_name": "Proshop",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/Chassi/Lian-Li-O11D-Mini-V2-Black-Chassi-Miditower-Svart/3395279",
+            "search_url": null,
+            "product_title": "Lian Li O11 Dynamic Mini V2 datorchassi (svart)",
+            "price": 1121,
+            "total_price": 1121,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "store_name": "Inet",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/6907033/lian-li-o11d-mini-v2-svart",
+            "search_url": null,
+            "product_title": "Lian Li O11 Dynamic Mini V2 datorchassi (svart)",
+            "price": 1229,
+            "total_price": 1229,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
             "error": null
           }
-        ]
+        ],
+        "source_product_title": "Lian Li O11 Dynamic Mini V2 datorchassi (svart)",
+        "source_product_url": "https://komponentkoll.se/produkt/1447178-lian-li-o11d-mini-v2-svart"
       }
     },
     {
@@ -4214,6 +4252,126 @@
             "error": null
           }
         ]
+      }
+    },
+    {
+      "key": "multi-source-v3:cool-38",
+      "item_id": "cool-38",
+      "updatedAt": 1773541336694,
+      "response": {
+        "ok": true,
+        "item_id": "cool-38",
+        "updated_at": "2026-03-15T02:22:16.694Z",
+        "next_refresh_at": "2026-03-16T02:22:16.694Z",
+        "lowest_price": 3212,
+        "reference_lowest_price": 3212,
+        "reference_source": "komponentkoll",
+        "offers": [
+          {
+            "store_id": "amazon-se",
+            "store": "Amazon.se",
+            "store_name": "Amazon.se",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "http://www.amazon.se/dp/B0D9GV78D8/ref=asc_df_B0D9GV78D81773529500000/?tag=komponentko03-21&creative=380333&creativeASIN=B0D9GV78D8&linkCode=asn",
+            "search_url": null,
+            "product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+            "price": 3212,
+            "total_price": 3212,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "proshop",
+            "store": "Proshop",
+            "store_name": "Proshop",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.proshop.se/CPU-flaektar/NZXT-Kraken-Elite-RGB-V2-360-2024-Svart-med-RGB-ljus-CPU-Vattenkylare-Max-30-dBA/3301180",
+            "search_url": null,
+            "product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+            "price": 3236,
+            "total_price": 3236,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "store_name": "Elgiganten",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.elgiganten.se/product/gaming/datorkomponenter/datorflaktar-kylning/vattenkylning-till-dator/nzxt-kraken-360-elite-v2-rgb-cpu-vatskekylare-svart/857302?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+            "search_url": null,
+            "product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+            "price": 3237,
+            "total_price": 3237,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "komplett",
+            "store": "Komplett",
+            "store_name": "Komplett",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.komplett.se/product/1316838/datorutrustning/datorkomponenter/kylningvattenkylning/cpu-vattenkylning/nzxt-kraken-360-elite-v2-2024-rgb-kylare-svart?channable=02f53f69640031333136383338f3",
+            "search_url": null,
+            "product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+            "price": 3237,
+            "total_price": 3237,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "computersalg",
+            "store": "CSmegastore",
+            "store_name": "CSmegastore",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.computersalg.se/i/21584582/nzxt-kraken-elite-360-rgb-kylsystem-med-v%c3%a4tska-till-processorn-med-lcd-display-elementstorlek-360-mm-f%c3%b6r-lga1851-lga1700",
+            "search_url": null,
+            "product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+            "price": 3620,
+            "total_price": 3620,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "out_of_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "inet",
+            "store": "Inet",
+            "store_name": "Inet",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.inet.se/produkt/5324996/nzxt-kraken-elite-rgb-v2-360-svart",
+            "search_url": null,
+            "product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+            "price": 3749,
+            "total_price": 3749,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          }
+        ],
+        "source_product_title": "NZXT Kraken 360 Elite V2 2024 RGB Kjøler (sort)",
+        "source_product_url": "https://komponentkoll.se/produkt/1403822-nzxt-kraken-elite-rgb-v2-360mm-svart"
       }
     },
     {
@@ -21383,32 +21541,53 @@
     {
       "key": "multi-source-v3:sto-19",
       "item_id": "sto-19",
-      "updatedAt": 1773515214615,
+      "updatedAt": 1773541336694,
       "response": {
         "ok": true,
         "item_id": "sto-19",
-        "updated_at": "2026-03-14T19:06:54.615Z",
-        "next_refresh_at": "2026-03-15T19:06:54.615Z",
-        "lowest_price": 1983,
-        "reference_lowest_price": 1983,
+        "updated_at": "2026-03-15T02:22:16.694Z",
+        "next_refresh_at": "2026-03-16T02:22:16.694Z",
+        "lowest_price": 1190,
+        "reference_lowest_price": 1190,
         "reference_source": "komponentkoll",
         "offers": [
           {
-            "store_id": "computersalg",
-            "store": "CSmegastore",
-            "status": "unavailable",
+            "store_id": "inet",
+            "store": "Inet",
+            "store_name": "Inet",
+            "status": "available",
             "trusted_source": "komponentkoll",
-            "product_url": "https://www.computersalg.se/i/24195175/crucial-p510-ssd-1-tb-inbyggd-m-2-2280-pci-express-5-0-x4-nvme-integrerad-kylfl%c3%a4ns",
+            "product_url": "https://www.inet.se/produkt/4306140/crucial-p510-1tb-m-2-nvme-pcie-gen-5",
             "search_url": null,
-            "price": 1983,
-            "total_price": 1983,
+            "product_title": "Crucial P510 1TB",
+            "price": 1190,
+            "total_price": 1190,
             "currency": "SEK",
             "shipping_price": null,
-            "availability": "unavailable",
-            "updated_at": "2026-03-14T19:06:54.615Z",
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "computersalg",
+            "store": "CSmegastore",
+            "store_name": "CSmegastore",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.computersalg.se/i/24195176/crucial-p510-ssd-1-tb-inbyggd-m-2-2280-pci-express-5-0-x4-nvme",
+            "search_url": null,
+            "product_title": "Crucial P510 1TB",
+            "price": 1934,
+            "total_price": 1934,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "out_of_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
             "error": null
           }
-        ]
+        ],
+        "source_product_title": "Crucial P510 1TB",
+        "source_product_url": "https://komponentkoll.se/produkt/1438015-crucial-p510-1tb-m-2-nvme-pcie-gen-5"
       }
     },
     {
@@ -21901,16 +22080,53 @@
     {
       "key": "multi-source-v3:sto-27",
       "item_id": "sto-27",
-      "updatedAt": 1773537307246,
+      "updatedAt": 1773541336694,
       "response": {
         "ok": true,
         "item_id": "sto-27",
-        "updated_at": "2026-03-15T01:15:07.246Z",
-        "next_refresh_at": "2026-03-16T01:15:07.246Z",
-        "lowest_price": null,
-        "reference_lowest_price": null,
-        "reference_source": null,
-        "offers": []
+        "updated_at": "2026-03-15T02:22:16.694Z",
+        "next_refresh_at": "2026-03-16T02:22:16.694Z",
+        "lowest_price": 2099,
+        "reference_lowest_price": 2099,
+        "reference_source": "komponentkoll",
+        "offers": [
+          {
+            "store_id": "elgiganten",
+            "store": "Elgiganten",
+            "store_name": "Elgiganten",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.elgiganten.se/product/gaming/datorkomponenter/intern-lagring/intern-ssd/crucial-e100-intern-m2-gen-4-ssd-2-tb/991845?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+            "search_url": null,
+            "product_title": "Crucial E100 M.2 Gen 4 (2 TB)",
+            "price": 2099,
+            "total_price": 2099,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "in_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          },
+          {
+            "store_id": "computersalg",
+            "store": "CSmegastore",
+            "store_name": "CSmegastore",
+            "status": "available",
+            "trusted_source": "komponentkoll",
+            "product_url": "https://www.computersalg.se/i/24512633/crucial-e100-ssd-2-tb-inbyggd-m-2-2280-pcie-4-0-x4-nvme",
+            "search_url": null,
+            "product_title": "Crucial E100 M.2 Gen 4 (2 TB)",
+            "price": 2792,
+            "total_price": 2792,
+            "currency": "SEK",
+            "shipping_price": null,
+            "availability": "out_of_stock",
+            "updated_at": "2026-03-15T02:22:16.694Z",
+            "error": null
+          }
+        ],
+        "source_product_title": "Crucial E100 M.2 Gen 4 (2 TB)",
+        "source_product_url": "https://komponentkoll.se/produkt/1446759-crucial-e100"
       }
     },
     {
