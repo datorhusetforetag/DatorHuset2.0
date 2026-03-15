@@ -53,7 +53,8 @@ export const CUSTOM_BUILD_STORE_SOURCES = [
   { id: "komplett", name: "Komplett" },
   { id: "amazon-se", name: "Amazon.se" },
   { id: "proshop", name: "Proshop" },
-  { id: "computersalg", name: "Computersalg" },
+  { id: "computersalg", name: "CSmegastore" },
+  { id: "dustin", name: "Dustin" },
   { id: "netonnet", name: "NetOnNet" },
 ];
 
@@ -1153,6 +1154,17 @@ const LGA1700_MOTHERBOARDS = [
 
 export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
   "cpu-am4-ryzen-7-5800x3d",
+  "cpu-am4-ryzen-5-3600",
+  "cpu-am4-ryzen-7-5700x3d",
+  "cpu-lga1200-core-i3-10105f",
+  "cpu-lga1200-core-i5-10600k",
+  "cpu-lga1200-core-i7-10700f",
+  "cpu-lga1200-core-i7-10700k",
+  "cpu-lga1200-core-i9-10900k",
+  "cpu-lga1200-core-i5-11400f",
+  "cpu-lga1200-core-i5-11600k",
+  "cpu-lga1200-core-i7-11700k",
+  "cpu-lga1200-core-i9-11900k",
   "cpu-lga1700-core-i7-13700k",
   "mb-am4-gigabyte-x570-aorus-elite",
   "mb-am4-msi-mag-b550m-mortar-wifi",
@@ -1179,11 +1191,6 @@ export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
   "gpu-10",
   "gpu-30",
   "gpu-39",
-  "sto-6",
-  "sto-22",
-  "sto-27",
-  "sto-29",
-  "psu-7",
   "cool-38",
 ]);
 

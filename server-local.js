@@ -77,7 +77,7 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
-const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v2";
+const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v3";
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -857,10 +857,17 @@ const CUSTOM_STORE_SOURCES = [
   },
   {
     id: "computersalg",
-    name: "Computersalg",
+    name: "CSmegastore",
     buildSearchUrl: (query) => `https://www.computersalg.se/i/0/s.aspx?k=${encodeURIComponent(query)}`,
     productUrlPattern: "https?:\\/\\/(?:www\\.)?computersalg\\.se\\/i\\/\\d+\\/[^\\s)\\]]+",
     siteSearchDomain: "computersalg.se",
+  },
+  {
+    id: "dustin",
+    name: "Dustin",
+    buildSearchUrl: (query) => `https://www.dustinhome.se/search/${encodeURIComponent(query)}`,
+    productUrlPattern: "https?:\\/\\/(?:www\\.)?dustinhome\\.se\\/product\\/[^\\s)\\]]+",
+    siteSearchDomain: "dustinhome.se",
   },
   {
     id: "netonnet",
@@ -1352,6 +1359,7 @@ const isLikelyProductUrlForStore = (url, sourceId) => {
   if (sourceId === "power") return /\/product\//i.test(lower) || /\/p-\d+/i.test(lower);
   if (sourceId === "proshop") return /\/[a-z0-9_-]+\/[a-z0-9-]+\/\d+/i.test(lower);
   if (sourceId === "computersalg") return /\/i\/\d+\/[a-z0-9-]+/i.test(lower);
+  if (sourceId === "dustin") return /\/product\//i.test(lower);
   if (sourceId === "netonnet") return /\/art\//i.test(lower);
   return true;
 };
@@ -1375,7 +1383,13 @@ const normalizeOfferUrlForStore = (url, sourceId) => {
       normalized.search = "";
       normalized.hash = "";
     }
-    if (sourceId === "netonnet" || sourceId === "proshop" || sourceId === "webhallen" || sourceId === "inet") {
+    if (
+      sourceId === "netonnet" ||
+      sourceId === "proshop" ||
+      sourceId === "webhallen" ||
+      sourceId === "inet" ||
+      sourceId === "dustin"
+    ) {
       normalized.hash = "";
     }
     if (isLikelySearchResultUrl(normalized.toString())) return null;
@@ -1933,6 +1947,11 @@ const PRISJAKT_PRODUCT_URL_OVERRIDES = {
   "mb-am4-msi-b550-tomahawk": "https://www.prisjakt.nu/produkt.php?p=5386548",
   "mb-am5-msi-b650-tomahawk-wifi": "https://www.prisjakt.nu/produkt.php?p=7153870",
   "mb-am4-gigabyte-x570-aorus-elite": "https://www.prisjakt.nu/produkt.php?p=5150976",
+  "case-7": "https://www.prisjakt.nu/produkt.php?p=7575012",
+  "psu-5": "https://www.prisjakt.nu/produkt.php?p=11649473",
+  "psu-7": "https://www.prisjakt.nu/produkt.php?p=7253294",
+  "psu-22": "https://www.prisjakt.nu/produkt.php?p=14904366",
+  "sto-33": "https://www.prisjakt.nu/produkt.php?p=14671473",
 };
 const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "ram-1": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
@@ -1943,6 +1962,7 @@ const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "ram-24": "https://komponentkoll.se/produkt/1382458-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-vit",
   "mb-am4-gigabyte-x570-aorus-elite": "https://komponentkoll.se/produkt/105944-gigabyte-x570-aorus-elite-socket-am4",
   "mb-am4-msi-mag-b550m-mortar-wifi": "https://komponentkoll.se/produkt/119236-msi-mag-b550m-mortar-wifi",
+  "psu-22": "https://komponentkoll.se/produkt/1441695-cooler-master-mwe-850w-gold-v3-atx-3-1",
 };
 const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
   "cpu-am4-ryzen-3-3100": {
@@ -1956,6 +1976,26 @@ const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
   },
 };
 const CUSTOM_BUILD_MANUAL_STORE_OFFERS = {
+  "sto-6": [
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 2537,
+      total_price: 2537,
+      product_url: "https://www.proshop.se/SSD/WD-Blue-SN580-SSD-2TB-PCIe-40-M2-2280/3199923",
+    },
+  ],
+  "sto-29": [
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 2249,
+      total_price: 2249,
+      product_url: "https://www.proshop.se/SSD/Crucial-P510-SSD-2TB-Med-vaermespridare-PCIe-50-M2-2280/3337600",
+    },
+  ],
   "psu-17": [
     {
       store_id: "inet",
@@ -1987,12 +2027,61 @@ const CUSTOM_BUILD_MANUAL_STORE_OFFERS = {
         "https://www.proshop.se/CPU-flaektar/Thermalright-Aqua-Elite-360-V3-White-ARGB-CPU-Vattenkylare-Max-26-dBA/3204313",
     },
   ],
+  "psu-7": [
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 1099,
+      total_price: 1099,
+      product_url: "https://www.proshop.se/Stroemfoersoerjning/ASUS-TUF-GAMING-850G-Stroemfoersoerjning-850-Watt-135-mm-ATX-80-Plus-Gold-certificate/3313654",
+    },
+  ],
+  "psu-22": [
+    {
+      store_id: "komplett",
+      store: "Komplett",
+      status: "available",
+      price: 1149,
+      total_price: 1149,
+      product_url: "https://www.komplett.se/product/1325401/datorutrustning/datorkomponenter/nataggregat/nataggregat/cooler-master-mwe-gold-850-v3-psu",
+    },
+  ],
+  "cool-54": [
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 299,
+      total_price: 299,
+      product_url: "https://www.proshop.se/CPU-flaektar/be-quiet-PURE-ROCK-3-LX-CPU-Luftkylare-Max-31-dBA/3348133",
+    },
+    {
+      store_id: "inet",
+      store: "Inet",
+      status: "available",
+      price: 359,
+      total_price: 359,
+      product_url: "https://www.inet.se/produkt/5325775/be-quiet-pure-rock-3-lx-black",
+    },
+    {
+      store_id: "dustin",
+      store: "Dustin",
+      status: "available",
+      price: 399,
+      total_price: 399,
+      product_url: "https://www.dustin.se/product/5020045423/pure-rock-3-lx",
+    },
+  ],
 };
 const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
   [
     ["amazon se", "amazon-se"],
     ["amazon.se", "amazon-se"],
+    ["csmegastore", "computersalg"],
+    ["csm", "computersalg"],
     ["computersalg", "computersalg"],
+    ["dustin", "dustin"],
     ["elgiganten", "elgiganten"],
     ["inet", "inet"],
     ["komplett", "komplett"],
@@ -2018,7 +2107,10 @@ const KOMPONENTKOLL_STORE_NAME_TO_ID = new Map(
   [
     ["amazon", "amazon-se"],
     ["amazon mp", "amazon-se"],
+    ["csmegastore", "computersalg"],
+    ["csm", "computersalg"],
     ["computersalg", "computersalg"],
+    ["dustin", "dustin"],
     ["elgiganten", "elgiganten"],
     ["inet", "inet"],
     ["komplett", "komplett"],

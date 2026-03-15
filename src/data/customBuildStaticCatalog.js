@@ -4,7 +4,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 3050 6GB OC",
     "brand": "ASUS",
-    "price": 2199,
+    "price": 1899,
     "specs": [
       "6 GB",
       "RTX 3050",
@@ -21,7 +21,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 5050 8GB OC",
     "brand": "ASUS",
-    "price": 2899,
+    "price": 2889,
     "specs": [
       "8 GB",
       "RTX 5050",
@@ -38,7 +38,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Intel Arc B580 12GB Limited Edition",
     "brand": "Intel",
-    "price": 3499,
+    "price": 2699,
     "specs": [
       "12 GB",
       "Arc B580",
@@ -55,7 +55,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Zotac GeForce RTX 3060 Twin Edge 12GB",
     "brand": "Zotac",
-    "price": 3299,
+    "price": 3658,
     "specs": [
       "12 GB",
       "RTX 3060",
@@ -72,7 +72,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Dual GeForce RTX 5060 8GB OC",
     "brand": "ASUS",
-    "price": 3899,
+    "price": 3990,
     "specs": [
       "8 GB",
       "RTX 5060",
@@ -89,7 +89,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PNY GeForce RTX 5060 OC Dual Fan",
     "brand": "PNY",
-    "price": 3999,
+    "price": 3949,
     "specs": [
       "8 GB",
       "RTX 5060",
@@ -106,7 +106,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 WINDFORCE MAX 8GB OC",
     "brand": "Gigabyte",
-    "price": 4099,
+    "price": 3290,
     "specs": [
       "8 GB",
       "RTX 5060",
@@ -123,7 +123,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Radeon RX 9060 XT 8GB Dual",
     "brand": "ASUS",
-    "price": 4190,
+    "price": 3790,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -140,7 +140,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte Radeon RX 9060 XT GAMING 8GB OC",
     "brand": "Gigabyte",
-    "price": 4290,
+    "price": 4045,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -174,7 +174,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Acer Nitro Radeon RX 9060 XT OC 8GB",
     "brand": "Acer",
-    "price": 4090,
+    "price": 3289,
     "specs": [
       "8 GB",
       "RX 9060 XT",
@@ -191,7 +191,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5060 Ti 8GB VENTUS 2X OC PLUS",
     "brand": "MSI",
-    "price": 4990,
+    "price": 3999,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -208,7 +208,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gainward GeForce RTX 5060 Ti Ghost 8GB",
     "brand": "Gainward",
-    "price": 5090,
+    "price": 3990,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -225,7 +225,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 Ti AERO OC",
     "brand": "Gigabyte",
-    "price": 5290,
+    "price": 6890,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -242,7 +242,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 Ti WINDFORCE",
     "brand": "Gigabyte",
-    "price": 4890,
+    "price": 4190,
     "specs": [
       "8 GB",
       "RTX 5060 Ti",
@@ -259,7 +259,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5060 Ti 16GB VENTUS 2X OC PLUS",
     "brand": "MSI",
-    "price": 5790,
+    "price": 6390,
     "specs": [
       "16 GB",
       "RTX 5060 Ti",
@@ -276,7 +276,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5060 Ti WINDFORCE 16GB OC",
     "brand": "Gigabyte",
-    "price": 5890,
+    "price": 5190,
     "specs": [
       "16 GB",
       "RTX 5060 Ti",
@@ -293,7 +293,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS GeForce RTX 5060 Ti Dual 16GB OC",
     "brand": "ASUS",
-    "price": 6090,
+    "price": 6990,
     "specs": [
       "16 GB",
       "RTX 5060 Ti",
@@ -310,7 +310,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte Radeon RX 9060 XT GAMING 16GB OC",
     "brand": "Gigabyte",
-    "price": 5390,
+    "price": 5990,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -327,7 +327,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PULSE RX 9060 XT GAMING OC 16GB",
     "brand": "Sapphire",
-    "price": 5490,
+    "price": 4599,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -344,7 +344,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PowerColor Reaper AMD Radeon RX 9060 XT",
     "brand": "PowerColor",
-    "price": 5590,
+    "price": 5490,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -361,7 +361,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Prime Radeon RX 9060 XT 16GB OC",
     "brand": "ASUS",
-    "price": 5790,
+    "price": 4590,
     "specs": [
       "16 GB",
       "RX 9060 XT",
@@ -378,7 +378,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PowerColor Reaper AMD Radeon RX 9070",
     "brand": "PowerColor",
-    "price": 7290,
+    "price": 6990,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -395,7 +395,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME Radeon RX 9070 16GB OC",
     "brand": "ASUS",
-    "price": 7490,
+    "price": 6790,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -412,7 +412,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PULSE RX 9070 GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 7590,
+    "price": 7374,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -429,7 +429,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "XFX Radeon RX 9070 Swift Triple 90mm Fan Black",
     "brand": "XFX",
-    "price": 7690,
+    "price": 8169,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -446,7 +446,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "XFX Radeon RX 9070 Swift Triple 90mm Fan White",
     "brand": "XFX",
-    "price": 7790,
+    "price": 7013,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -463,7 +463,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PURE RX 9070 GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 7890,
+    "price": 7286,
     "specs": [
       "16 GB",
       "RX 9070",
@@ -480,7 +480,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 WINDFORCE 12GB OC",
     "brand": "Gigabyte",
-    "price": 6790,
+    "price": 6490,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -514,7 +514,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME GeForce RTX 5070 12GB OC",
     "brand": "ASUS",
-    "price": 7090,
+    "price": 7990,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -531,7 +531,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 EAGLE OC ICE",
     "brand": "Gigabyte",
-    "price": 7190,
+    "price": 7249,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -548,7 +548,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS GeForce RTX 5070 Dual 12GB OC",
     "brand": "ASUS",
-    "price": 7290,
+    "price": 6999,
     "specs": [
       "12 GB",
       "RTX 5070",
@@ -582,7 +582,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PowerColor Reaper AMD Radeon RX 9070 XT",
     "brand": "PowerColor",
-    "price": 8290,
+    "price": 8690,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -599,7 +599,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire NITRO+ RX 9070 XT GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 9190,
+    "price": 9047,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -616,7 +616,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Sapphire PULSE RX 9070 XT GAMING 16 GB",
     "brand": "Sapphire",
-    "price": 8690,
+    "price": 7490,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -633,7 +633,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming Radeon RX 9070 XT 16GB OC",
     "brand": "ASUS",
-    "price": 9390,
+    "price": 8190,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -667,7 +667,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASRock Radeon RX 9070 XT Steel Legend 16GB",
     "brand": "ASRock",
-    "price": 9490,
+    "price": 8257,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -684,7 +684,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME Radeon RX 9070 XT 16GB OC",
     "brand": "ASUS",
-    "price": 8890,
+    "price": 6990,
     "specs": [
       "16 GB",
       "RX 9070 XT",
@@ -701,7 +701,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI RTX 5070 Ti 16G GAMING TRIO OC White 16GB",
     "brand": "MSI",
-    "price": 10490,
+    "price": 11990,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -718,7 +718,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5070 Ti VENTUS 3X 16GB OC",
     "brand": "MSI",
-    "price": 10690,
+    "price": 9890,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -735,7 +735,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS PRIME GeForce RTX 5070 Ti 16GB OC",
     "brand": "ASUS",
-    "price": 10790,
+    "price": 11790,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -752,7 +752,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 Ti WINDFORCE SFF 16GB OC",
     "brand": "Gigabyte",
-    "price": 10890,
+    "price": 10499,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -769,7 +769,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Inno3D GeForce RTX 5070 Ti X3 OC White",
     "brand": "Inno3D",
-    "price": 10990,
+    "price": 9990,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -786,7 +786,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "PNY GeForce RTX 5070 Ti OC",
     "brand": "PNY",
-    "price": 10990,
+    "price": 11490,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -803,7 +803,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5070 Ti X3 OC",
     "brand": "INNO3D",
-    "price": 10890,
+    "price": 10299,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -820,7 +820,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ZOTAC GeForce RTX 5070 Ti Solid Core OC White",
     "brand": "ZOTAC",
-    "price": 11290,
+    "price": 11890,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -837,7 +837,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5070 Ti 16GB OC",
     "brand": "ASUS",
-    "price": 11490,
+    "price": 12374,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -854,7 +854,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5070 Ti EAGLE ICE SFF 16GB OC",
     "brand": "Gigabyte",
-    "price": 11390,
+    "price": 11990,
     "specs": [
       "16 GB",
       "RTX 5070 Ti",
@@ -888,7 +888,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G GAMING TRIO OC WHITE",
     "brand": "MSI",
-    "price": 15490,
+    "price": 16490,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -905,7 +905,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "MSI GeForce RTX 5080 16G VENTUS 3X OC",
     "brand": "MSI",
-    "price": 14290,
+    "price": 13990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -922,7 +922,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 WINDFORCE OC SFF 16GB",
     "brand": "Gigabyte",
-    "price": 14590,
+    "price": 14567,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -939,7 +939,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5080 Aorus Master 16GB",
     "brand": "Gigabyte",
-    "price": 16990,
+    "price": 16793,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -956,7 +956,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG ASTRAL GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 17490,
+    "price": 17990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -973,7 +973,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 15990,
+    "price": 15499,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -990,7 +990,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS Prime GeForce RTX 5080 16GB OC",
     "brand": "ASUS",
-    "price": 14990,
+    "price": 13990,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1007,7 +1007,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5080 X3 OC",
     "brand": "INNO3D",
-    "price": 14690,
+    "price": 13490,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1024,7 +1024,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Palit GeForce RTX 5080 GamingPro OC 16GB",
     "brand": "Palit",
-    "price": 14890,
+    "price": 13892,
     "specs": [
       "16 GB",
       "RTX 5080",
@@ -1041,7 +1041,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB OC",
     "brand": "ASUS",
-    "price": 37990,
+    "price": 35519,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1058,7 +1058,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "INNO3D GeForce RTX 5090 32GB iCHILL Frostbite",
     "brand": "INNO3D",
-    "price": 36990,
+    "price": 29999,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1075,7 +1075,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS TUF Gaming GeForce RTX 5090 32GB OC",
     "brand": "ASUS",
-    "price": 35990,
+    "price": 32990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1092,7 +1092,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 WINDFORCE 32GB OC",
     "brand": "Gigabyte",
-    "price": 34990,
+    "price": 30999,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1109,7 +1109,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "Gigabyte GeForce RTX 5090 32GB Aorus Stealth Ice",
     "brand": "Gigabyte",
-    "price": 38990,
+    "price": 35990,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1126,7 +1126,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral GeForce RTX 5090 32GB",
     "brand": "ASUS",
-    "price": 36990,
+    "price": 35519,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1143,7 +1143,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "gpu",
     "name": "ASUS ROG Astral LC GeForce RTX 5090 GAMING 32G OC",
     "brand": "ASUS",
-    "price": 41990,
+    "price": 36999,
     "specs": [
       "32 GB",
       "RTX 5090",
@@ -1481,7 +1481,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance RGB 16GB (2x8GB) DDR5 6000MHz CL36",
     "brand": "Corsair",
-    "price": 753,
+    "price": 829,
     "specs": [
       "DDR5",
       "16GB",
@@ -1502,7 +1502,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Vengeance RGB 32GB (2x16GB) DDR5 6000MHz CL36",
     "brand": "Corsair",
-    "price": 994,
+    "price": 1299,
     "specs": [
       "DDR5",
       "32GB",
@@ -1605,7 +1605,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "ram",
     "name": "Corsair Dominator Platinum RGB 64GB (2x32GB) DDR5 6000MHz CL40",
     "brand": "Corsair",
-    "price": 2491,
+    "price": 2790,
     "specs": [
       "DDR5",
       "64GB",
@@ -1722,7 +1722,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Samsung 990 Pro 1TB",
     "brand": "Samsung",
-    "price": 1190,
+    "price": 1990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1739,7 +1739,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "WD Black SN850X 1TB",
     "brand": "WD",
-    "price": 1090,
+    "price": 1699,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1756,7 +1756,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Crucial T500 1TB",
     "brand": "Crucial",
-    "price": 990,
+    "price": 1799,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1773,7 +1773,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "storage",
     "name": "Samsung 990 Pro 2TB",
     "brand": "Samsung",
-    "price": 1890,
+    "price": 2990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
@@ -1805,18 +1805,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "sto-6",
     "category": "storage",
-    "name": "WD Blue SN580 1TB",
+    "name": "WD Blue SN580 2TB",
     "brand": "WD",
-    "price": 790,
+    "price": 2537,
     "specs": [
       "NVMe",
       "PCIe 4.0",
-      "4150 MB/s"
+      "2TB"
     ],
     "searchTerms": [
-      "WD Blue SN580 1TB",
-      "WD Blue SN580 1TB NVMe PCIe 4.0 4150 MB/s",
-      "Blue SN580 1TB"
+      "WD Blue SN580 2TB",
+      "WD Blue SN580 2TB NVMe PCIe 4.0 2TB",
+      "Blue SN580 2TB"
     ]
   },
   {
@@ -1854,23 +1854,6 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
-    "id": "sto-9",
-    "category": "storage",
-    "name": "Crucial MX500 1TB",
-    "brand": "Crucial",
-    "price": 890,
-    "specs": [
-      "SATA",
-      "560 MB/s",
-      "2.5-inch"
-    ],
-    "searchTerms": [
-      "Crucial MX500 1TB",
-      "Crucial MX500 1TB SATA 560 MB/s 2.5-inch",
-      "MX500 1TB"
-    ]
-  },
-  {
     "id": "sto-10",
     "category": "storage",
     "name": "Seagate BarraCuda 4TB",
@@ -1885,35 +1868,6 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "Seagate BarraCuda 4TB",
       "Seagate BarraCuda 4TB HDD 5400 RPM 3.5-inch",
       "BarraCuda 4TB"
-    ]
-  },
-  {
-    "id": "sto-11",
-    "category": "storage",
-    "name": "Team Group T-Force G50",
-    "brand": "TeamGroup",
-    "price": 900,
-    "specs": [
-      "SSD"
-    ],
-    "searchTerms": [
-      "Team Group T-Force G50",
-      "Team Group T-Force G50 SSD"
-    ]
-  },
-  {
-    "id": "sto-13",
-    "category": "storage",
-    "name": "Lexar Professional NM1090",
-    "brand": "Lexar",
-    "price": 1200,
-    "specs": [
-      "NVMe"
-    ],
-    "searchTerms": [
-      "Lexar Professional NM1090",
-      "Lexar Professional NM1090 NVMe",
-      "Professional NM1090"
     ]
   },
   {
@@ -2051,21 +2005,6 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     ]
   },
   {
-    "id": "sto-22",
-    "category": "storage",
-    "name": "Team Group MP33 256GB",
-    "brand": "TeamGroup",
-    "price": 399,
-    "specs": [
-      "NVMe",
-      "256GB"
-    ],
-    "searchTerms": [
-      "Team Group MP33 256GB",
-      "Team Group MP33 256GB NVMe 256GB"
-    ]
-  },
-  {
     "id": "sto-23",
     "category": "storage",
     "name": "Corsair MP700 ELITE",
@@ -2138,20 +2077,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "sto-27",
     "category": "storage",
-    "name": "Crucial E100 M.2 Gen 4 (2TB)",
+    "name": "Crucial E100 2TB",
     "brand": "Crucial",
-    "price": 1190,
+    "price": 2419,
     "specs": [
       "NVMe",
       "PCIe 4.0",
       "2TB"
     ],
     "searchTerms": [
-      "Crucial E100 M.2 Gen 4 (2TB)",
-      "Crucial E100 M.2 Gen 4 (2TB) NVMe PCIe 4.0 2TB",
-      "Crucial E100 M.2 Gen 4",
-      "Crucial E100 M.2 Gen 4 NVMe PCIe 4.0 2TB",
-      "E100 M.2 Gen 4 (2TB)"
+      "Crucial E100 2TB",
+      "Crucial E100 2TB NVMe PCIe 4.0 2TB",
+      "E100 2TB"
     ]
   },
   {
@@ -2174,9 +2111,9 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "sto-29",
     "category": "storage",
-    "name": "Crucial P510 med kylflansar (2TB)",
+    "name": "Crucial P510 Heatsink 2TB",
     "brand": "Crucial",
-    "price": 1690,
+    "price": 2249,
     "specs": [
       "NVMe",
       "PCIe 5.0",
@@ -2184,11 +2121,9 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
       "Heatsink"
     ],
     "searchTerms": [
-      "Crucial P510 med kylflansar (2TB)",
-      "Crucial P510 med kylflansar (2TB) NVMe PCIe 5.0 2TB Heatsink",
-      "Crucial P510 med kylflansar",
-      "Crucial P510 med kylflansar NVMe PCIe 5.0 2TB Heatsink",
-      "P510 med kylflansar (2TB)"
+      "Crucial P510 Heatsink 2TB",
+      "Crucial P510 Heatsink 2TB NVMe PCIe 5.0 2TB Heatsink",
+      "P510 Heatsink 2TB"
     ]
   },
   {
@@ -2250,18 +2185,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "sto-33",
     "category": "storage",
-    "name": "WD Black SN7100 4TB Gen 4",
+    "name": "WD Black SN7100 4TB",
     "brand": "WD",
-    "price": 2990,
+    "price": 4990,
     "specs": [
       "NVMe",
       "PCIe 4.0",
       "4TB"
     ],
     "searchTerms": [
-      "WD Black SN7100 4TB Gen 4",
-      "WD Black SN7100 4TB Gen 4 NVMe PCIe 4.0 4TB",
-      "Black SN7100 4TB Gen 4"
+      "WD Black SN7100 4TB",
+      "WD Black SN7100 4TB NVMe PCIe 4.0 4TB",
+      "Black SN7100 4TB"
     ]
   },
   {
@@ -2490,18 +2425,20 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "case-7",
     "category": "case",
-    "name": "Cooler Master TD500 Mesh",
+    "name": "Cooler Master MasterBox TD500 Mesh V2 (Svart)",
     "brand": "Cooler Master",
-    "price": 1190,
+    "price": 1261,
     "specs": [
       "ATX",
       "Mesh",
       "ARGB"
     ],
     "searchTerms": [
-      "Cooler Master TD500 Mesh",
-      "Cooler Master TD500 Mesh ATX Mesh ARGB",
-      "TD500 Mesh"
+      "Cooler Master MasterBox TD500 Mesh V2 (Svart)",
+      "Cooler Master MasterBox TD500 Mesh V2 (Svart) ATX Mesh ARGB",
+      "Cooler Master MasterBox TD500 Mesh V2",
+      "Cooler Master MasterBox TD500 Mesh V2 ATX Mesh ARGB",
+      "MasterBox TD500 Mesh V2 (Svart)"
     ]
   },
   {
@@ -2938,35 +2875,35 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "psu-4",
     "category": "psu",
-    "name": "Seasonic Vertex GX-1000",
+    "name": "Seasonic VERTEX GX-1200",
     "brand": "Seasonic",
-    "price": 2490,
+    "price": 2339,
     "specs": [
-      "1000W",
+      "1200W",
       "80+ Gold",
-      "ATX 3.0"
+      "ATX 3.1"
     ],
     "searchTerms": [
-      "Seasonic Vertex GX-1000",
-      "Seasonic Vertex GX-1000 1000W 80+ Gold ATX 3.0",
-      "Vertex GX-1000"
+      "Seasonic VERTEX GX-1200",
+      "Seasonic VERTEX GX-1200 1200W 80+ Gold ATX 3.1",
+      "VERTEX GX-1200"
     ]
   },
   {
     "id": "psu-5",
     "category": "psu",
-    "name": "be quiet! Straight Power 12",
+    "name": "be quiet! Straight Power 12 Platinum 1200W",
     "brand": "be quiet!",
-    "price": 2290,
+    "price": 1999,
     "specs": [
-      "1000W",
+      "1200W",
       "80+ Platinum",
-      "ATX 3.0"
+      "ATX 3.1"
     ],
     "searchTerms": [
-      "be quiet! Straight Power 12",
-      "be quiet! Straight Power 12 1000W 80+ Platinum ATX 3.0",
-      "Straight Power 12"
+      "be quiet! Straight Power 12 Platinum 1200W",
+      "be quiet! Straight Power 12 Platinum 1200W 1200W 80+ Platinum ATX 3.1",
+      "Straight Power 12 Platinum 1200W"
     ]
   },
   {
@@ -2989,18 +2926,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "psu-7",
     "category": "psu",
-    "name": "ASUS TUF Gaming 850G",
+    "name": "ASUS TUF Gaming 850G 850W Gold",
     "brand": "ASUS",
-    "price": 1690,
+    "price": 1099,
     "specs": [
       "850W",
       "80+ Gold",
-      "Tuff byggd"
+      "Modulärt"
     ],
     "searchTerms": [
-      "ASUS TUF Gaming 850G",
-      "ASUS TUF Gaming 850G 850W 80+ Gold Tuff byggd",
-      "TUF Gaming 850G"
+      "ASUS TUF Gaming 850G 850W Gold",
+      "ASUS TUF Gaming 850G 850W Gold 850W 80+ Gold Modulärt",
+      "TUF Gaming 850G 850W Gold"
     ]
   },
   {
@@ -3059,7 +2996,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "GIGABYTE P650G PG5",
     "brand": "GIGABYTE",
-    "price": 629,
+    "price": 799,
     "specs": [
       "650W",
       "80+ Gold",
@@ -3076,7 +3013,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "DeepCool PL650-D White",
     "brand": "DeepCool",
-    "price": 635,
+    "price": 899,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3093,7 +3030,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "DeepCool PL650D 650W ATX 3.1",
     "brand": "DeepCool",
-    "price": 606,
+    "price": 799,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3110,7 +3047,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "MSI MAG A650BN",
     "brand": "MSI",
-    "price": 639,
+    "price": 699,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3125,18 +3062,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "psu-15",
     "category": "psu",
-    "name": "Cooler Master MWE 750W Bronze V3 ATX 3.1",
+    "name": "Cooler Master MWE Bronze 750 V3 ATX 3.1",
     "brand": "Cooler Master",
-    "price": 649,
+    "price": 764,
     "specs": [
       "750W",
       "80+ Bronze",
       "ATX 3.1"
     ],
     "searchTerms": [
-      "Cooler Master MWE 750W Bronze V3 ATX 3.1",
-      "Cooler Master MWE 750W Bronze V3 ATX 3.1 750W 80+ Bronze ATX 3.1",
-      "MWE 750W Bronze V3 ATX 3.1"
+      "Cooler Master MWE Bronze 750 V3 ATX 3.1",
+      "Cooler Master MWE Bronze 750 V3 ATX 3.1 750W 80+ Bronze ATX 3.1",
+      "MWE Bronze 750 V3 ATX 3.1"
     ]
   },
   {
@@ -3144,7 +3081,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Corsair CX Series CX650 650 Watt",
     "brand": "Corsair",
-    "price": 699,
+    "price": 899,
     "specs": [
       "650W",
       "80+ Bronze",
@@ -3161,7 +3098,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Corsair CX750",
     "brand": "Corsair",
-    "price": 849,
+    "price": 999,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3178,7 +3115,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Asus Prime 750W Bronze",
     "brand": "ASUS",
-    "price": 779,
+    "price": 999,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3195,7 +3132,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS TUF Gaming 750B",
     "brand": "ASUS",
-    "price": 844,
+    "price": 1099,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3212,7 +3149,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic Core BC 750W ATX3.1",
     "brand": "Seasonic",
-    "price": 851,
+    "price": 1099,
     "specs": [
       "750W",
       "80+ Bronze",
@@ -3229,7 +3166,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "GIGABYTE UD750GM PG5 V2 ICE",
     "brand": "GIGABYTE",
-    "price": 973,
+    "price": 1299,
     "specs": [
       "750W",
       "80+ Gold",
@@ -3244,18 +3181,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "psu-22",
     "category": "psu",
-    "name": "Cooler Master MWE Gold 850W",
+    "name": "Cooler Master MWE Gold 850 V3 ATX 3.1",
     "brand": "Cooler Master",
-    "price": 1491,
+    "price": 1149,
     "specs": [
       "850W",
       "80+ Gold",
-      "Modulärt"
+      "ATX 3.1"
     ],
     "searchTerms": [
-      "Cooler Master MWE Gold 850W",
-      "Cooler Master MWE Gold 850W 850W 80+ Gold Modulärt",
-      "MWE Gold 850W"
+      "Cooler Master MWE Gold 850 V3 ATX 3.1",
+      "Cooler Master MWE Gold 850 V3 ATX 3.1 850W 80+ Gold ATX 3.1",
+      "MWE Gold 850 V3 ATX 3.1"
     ]
   },
   {
@@ -3263,7 +3200,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Gigabyte UD850GM PG5 V2 850W",
     "brand": "GIGABYTE",
-    "price": 949,
+    "price": 1399,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3280,7 +3217,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic Core BC 850W ATX3.1",
     "brand": "Seasonic",
-    "price": 999,
+    "price": 1299,
     "specs": [
       "850W",
       "80+ Bronze",
@@ -3297,7 +3234,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "Seasonic G12 GM-850 850W",
     "brand": "Seasonic",
-    "price": 1049,
+    "price": 1399,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3314,7 +3251,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS TUF Gaming 850W Gold ATX 3.1",
     "brand": "ASUS",
-    "price": 1099,
+    "price": 1599,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3331,7 +3268,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS Prime 850W Gold",
     "brand": "ASUS",
-    "price": 1099,
+    "price": 1499,
     "specs": [
       "850W",
       "80+ Gold",
@@ -3348,7 +3285,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "GIGABYTE UD1000GM PG5 V2 ICE",
     "brand": "GIGABYTE",
-    "price": 1209,
+    "price": 1799,
     "specs": [
       "1000W",
       "80+ Gold",
@@ -3365,7 +3302,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "psu",
     "name": "ASUS TUF Gaming 1000W Gold ATX 3.1",
     "brand": "ASUS",
-    "price": 1399,
+    "price": 1999,
     "specs": [
       "1000W",
       "80+ Gold",
@@ -3552,7 +3489,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LE240 V2 Svart",
     "brand": "DeepCool",
-    "price": 632,
+    "price": 699,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3569,7 +3506,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "GIGABYTE Gaming 240 vattenkylare (is)",
     "brand": "GIGABYTE",
-    "price": 638,
+    "price": 999,
     "specs": [
       "240mm AIO",
       "Vit",
@@ -3588,7 +3525,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Gigabyte Gaming 240 ARGB kylare (svart)",
     "brand": "GIGABYTE",
-    "price": 644,
+    "price": 999,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3607,7 +3544,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 240 Core II ARGB",
     "brand": "Cooler Master",
-    "price": 644,
+    "price": 899,
     "specs": [
       "240mm AIO",
       "ARGB",
@@ -3624,7 +3561,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 240 Kylare (vit)",
     "brand": "MSI",
-    "price": 649,
+    "price": 999,
     "specs": [
       "240mm AIO",
       "Vit",
@@ -3641,18 +3578,19 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "cool-16",
     "category": "cooling",
-    "name": "Arctic Liquid Freezer III 280 A-RGB Vit",
+    "name": "Arctic Liquid Freezer III Pro 280 A-RGB White",
     "brand": "Arctic",
-    "price": 598,
+    "price": 1088,
     "specs": [
       "280mm AIO",
       "Vit",
-      "ARGB"
+      "ARGB",
+      "Pro"
     ],
     "searchTerms": [
-      "Arctic Liquid Freezer III 280 A-RGB Vit",
-      "Arctic Liquid Freezer III 280 A-RGB Vit 280mm AIO Vit ARGB",
-      "Liquid Freezer III 280 A-RGB Vit"
+      "Arctic Liquid Freezer III Pro 280 A-RGB White",
+      "Arctic Liquid Freezer III Pro 280 A-RGB White 280mm AIO Vit ARGB Pro",
+      "Liquid Freezer III Pro 280 A-RGB White"
     ]
   },
   {
@@ -3660,7 +3598,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LE240 V2 Vit",
     "brand": "DeepCool",
-    "price": 684,
+    "price": 749,
     "specs": [
       "240mm AIO",
       "Vit",
@@ -3677,7 +3615,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 240 Kylare (svart)",
     "brand": "Arctic",
-    "price": 723,
+    "price": 1199,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3696,7 +3634,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LM240",
     "brand": "DeepCool",
-    "price": 727,
+    "price": 799,
     "specs": [
       "240mm AIO",
       "ARGB",
@@ -3713,7 +3651,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool LE360 V2 Svart",
     "brand": "DeepCool",
-    "price": 757,
+    "price": 899,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3730,7 +3668,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master MasterLiquid 360 Core II ARGB Kylare (vit)",
     "brand": "Cooler Master",
-    "price": 779,
+    "price": 1199,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3747,18 +3685,18 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "cool-22",
     "category": "cooling",
-    "name": "Arctic Liquid Freezer III 240 A-RGB Vit",
+    "name": "Arctic Liquid Freezer III Pro 240 A-RGB",
     "brand": "Arctic",
-    "price": 799,
+    "price": 937,
     "specs": [
       "240mm AIO",
-      "Vit",
-      "ARGB"
+      "ARGB",
+      "Pro"
     ],
     "searchTerms": [
-      "Arctic Liquid Freezer III 240 A-RGB Vit",
-      "Arctic Liquid Freezer III 240 A-RGB Vit 240mm AIO Vit ARGB",
-      "Liquid Freezer III 240 A-RGB Vit"
+      "Arctic Liquid Freezer III Pro 240 A-RGB",
+      "Arctic Liquid Freezer III Pro 240 A-RGB 240mm AIO ARGB Pro",
+      "Liquid Freezer III Pro 240 A-RGB"
     ]
   },
   {
@@ -3766,7 +3704,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 240 Kylare (svart)",
     "brand": "MSI",
-    "price": 649,
+    "price": 999,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3785,7 +3723,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 240 A-RGB Kylare (svart)",
     "brand": "Arctic",
-    "price": 820,
+    "price": 1299,
     "specs": [
       "240mm AIO",
       "Svart",
@@ -3821,7 +3759,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 280 Svart",
     "brand": "Arctic",
-    "price": 868,
+    "price": 1399,
     "specs": [
       "280mm AIO",
       "Svart",
@@ -3838,7 +3776,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360 Kylare (svart)",
     "brand": "Arctic",
-    "price": 885,
+    "price": 1499,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3857,7 +3795,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Aqua Elite 360 V3 vit",
     "brand": "Thermalright",
-    "price": 929,
+    "price": 1099,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3874,7 +3812,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "MSI MAG Coreliquid A13 360 Kylare (vit)",
     "brand": "MSI",
-    "price": 909,
+    "price": 1299,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3893,7 +3831,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro A-RGB White",
     "brand": "Arctic",
-    "price": 1071,
+    "price": 1599,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3910,7 +3848,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 360 A-RGB Kylare (svart)",
     "brand": "Arctic",
-    "price": 1054,
+    "price": 1599,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3929,7 +3867,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Phanteks Glacier One 360 M25 G2 Kylare (vit)",
     "brand": "Phanteks",
-    "price": 1187,
+    "price": 1599,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -3948,7 +3886,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Phanteks Glacier One 360 M25 G2",
     "brand": "Phanteks",
-    "price": 1186,
+    "price": 1499,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -3965,7 +3903,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 420 Svart",
     "brand": "Arctic",
-    "price": 1198,
+    "price": 1799,
     "specs": [
       "420mm AIO",
       "Svart",
@@ -3982,7 +3920,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Liquid Freezer III Pro 420 A-RGB Svart",
     "brand": "Arctic",
-    "price": 1328,
+    "price": 1899,
     "specs": [
       "420mm AIO",
       "Svart",
@@ -3999,7 +3937,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Corsair Nautilus 360 RS ARGB",
     "brand": "Corsair",
-    "price": 1072,
+    "price": 1699,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -4016,7 +3954,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Corsair Nautilus 360 (svart)",
     "brand": "Corsair",
-    "price": 899,
+    "price": 1590,
     "specs": [
       "360mm AIO",
       "Svart",
@@ -4035,7 +3973,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart)",
     "brand": "NZXT",
-    "price": 3236,
+    "price": 3199,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4054,7 +3992,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (vit)",
     "brand": "NZXT",
-    "price": 3289,
+    "price": 3299,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4073,7 +4011,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-S 360TL Wireless Svart",
     "brand": "Lian Li",
-    "price": 2749,
+    "price": 2990,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4090,7 +4028,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Asus ROG Ryuo IV SLC 360 ARGB Kylare",
     "brand": "ASUS",
-    "price": 3971,
+    "price": 3290,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -4107,7 +4045,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-C 360CL Svart",
     "brand": "Lian Li",
-    "price": 2086,
+    "price": 2590,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4124,7 +4062,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Tryx Panorama Upgraded A-RGB 360 Vit",
     "brand": "Tryx",
-    "price": 3490,
+    "price": 3290,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -4141,7 +4079,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Lian Li Hydroshift II LCD-S 360CL Wireless White",
     "brand": "Lian Li",
-    "price": 2099,
+    "price": 3090,
     "specs": [
       "360mm AIO",
       "LCD",
@@ -4158,7 +4096,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Tryx PANORAMA Upgraded 360mm AIO White",
     "brand": "Tryx",
-    "price": 4258,
+    "price": 3290,
     "specs": [
       "360mm AIO",
       "Vit",
@@ -4175,7 +4113,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "ASUS ROG Ryuo IV 360 A-RGB",
     "brand": "ASUS",
-    "price": 3971,
+    "price": 2990,
     "specs": [
       "360mm AIO",
       "ARGB",
@@ -4192,7 +4130,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AG400",
     "brand": "DeepCool",
-    "price": 266,
+    "price": 299,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4209,7 +4147,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Assassin Spirit 120 V2",
     "brand": "Thermalright",
-    "price": 269,
+    "price": 249,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4226,7 +4164,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Assassin X120 R SE ARGB 120mm",
     "brand": "Thermalright",
-    "price": 279,
+    "price": 299,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4243,7 +4181,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AG400 BK ARGB V2",
     "brand": "DeepCool",
-    "price": 299,
+    "price": 349,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4260,7 +4198,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Cooler Master Hyper 212 3DHP ARGB kylare (svart)",
     "brand": "Cooler Master",
-    "price": 309,
+    "price": 449,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4279,7 +4217,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Arctic Freezer 36 Kylare",
     "brand": "Arctic",
-    "price": 336,
+    "price": 349,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4296,7 +4234,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AG400 WH ARGB V2",
     "brand": "DeepCool",
-    "price": 346,
+    "price": 349,
     "specs": [
       "Luftkylare",
       "Vit",
@@ -4311,18 +4249,19 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
   {
     "id": "cool-54",
     "category": "cooling",
-    "name": "be quiet! Pure Rock 3 LX",
+    "name": "be quiet! Pure Rock 3 LX - Black",
     "brand": "be quiet!",
-    "price": 353,
+    "price": 299,
     "specs": [
       "Luftkylare",
       "Tyst",
-      "120mm"
+      "120mm",
+      "Svart"
     ],
     "searchTerms": [
-      "be quiet! Pure Rock 3 LX",
-      "be quiet! Pure Rock 3 LX Luftkylare Tyst 120mm",
-      "Pure Rock 3 LX"
+      "be quiet! Pure Rock 3 LX - Black",
+      "be quiet! Pure Rock 3 LX - Black Luftkylare Tyst 120mm Svart",
+      "Pure Rock 3 LX - Black"
     ]
   },
   {
@@ -4330,7 +4269,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK400 Digital SE",
     "brand": "DeepCool",
-    "price": 366,
+    "price": 499,
     "specs": [
       "Luftkylare",
       "Digital",
@@ -4347,7 +4286,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK400 Digital SE Vit",
     "brand": "DeepCool",
-    "price": 366,
+    "price": 549,
     "specs": [
       "Luftkylare",
       "Digital",
@@ -4364,7 +4303,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Peerless Assassin 120 ARGB",
     "brand": "Thermalright",
-    "price": 479,
+    "price": 499,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4381,7 +4320,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Thermalright Peerless Assassin 120 SE ARGB",
     "brand": "Thermalright",
-    "price": 509,
+    "price": 449,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4398,7 +4337,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3 LX",
     "brand": "be quiet!",
-    "price": 549,
+    "price": 799,
     "specs": [
       "Luftkylare",
       "Tyst",
@@ -4415,7 +4354,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK500 Zero Dark",
     "brand": "DeepCool",
-    "price": 591,
+    "price": 699,
     "specs": [
       "Luftkylare",
       "Svart",
@@ -4432,7 +4371,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK620 Zero Dark",
     "brand": "DeepCool",
-    "price": 663,
+    "price": 799,
     "specs": [
       "Luftkylare",
       "Dual tower",
@@ -4449,7 +4388,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "DeepCool AK620 G2 Digital Nyx",
     "brand": "DeepCool",
-    "price": 729,
+    "price": 999,
     "specs": [
       "Luftkylare",
       "Digital",
@@ -4466,7 +4405,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3",
     "brand": "be quiet!",
-    "price": 479,
+    "price": 749,
     "specs": [
       "Luftkylare",
       "Tyst",
@@ -4483,7 +4422,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-L9x65 chromax.black",
     "brand": "Noctua",
-    "price": 849,
+    "price": 699,
     "specs": [
       "Lågprofil",
       "Svart",
@@ -4500,7 +4439,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-L12S",
     "brand": "Noctua",
-    "price": 799,
+    "price": 699,
     "specs": [
       "Lågprofil",
       "120mm",
@@ -4517,7 +4456,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-U12A",
     "brand": "Noctua",
-    "price": 1299,
+    "price": 1190,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4534,7 +4473,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-U9S",
     "brand": "Noctua",
-    "price": 799,
+    "price": 699,
     "specs": [
       "Luftkylare",
       "92mm",
@@ -4551,7 +4490,7 @@ export const STATIC_CUSTOM_BUILD_CATALOG_ITEMS = [
     "category": "cooling",
     "name": "Noctua NH-D12L",
     "brand": "Noctua",
-    "price": 1247,
+    "price": 999,
     "specs": [
       "Luftkylare",
       "120mm",
@@ -4580,39 +4519,39 @@ export const STATIC_CUSTOM_BUILD_CATEGORY_KEYS = [
 
 export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
   "gpu-1": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-2": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-3": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-4": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-5": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-6": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-7": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-8": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-9": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-10": {
@@ -4620,79 +4559,79 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-11": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-12": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-13": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-14": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-15": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-16": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-17": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-18": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-19": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-20": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-21": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-22": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-23": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-24": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-25": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-26": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-27": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-28": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-29": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-30": {
@@ -4700,35 +4639,35 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-31": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-32": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-33": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-34": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-35": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-36": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-37": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-38": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-39": {
@@ -4736,51 +4675,51 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-40": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-41": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-42": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-43": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-44": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-45": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-46": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-47": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-48": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-49": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-50": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-51": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-52": {
@@ -4788,67 +4727,67 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "gpu-53": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-54": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-55": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-56": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-57": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-58": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-59": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-60": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-61": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-62": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-63": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-64": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-65": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-66": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-67": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-68": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "ram-1": {
@@ -4916,11 +4855,11 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "ram-20": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-21": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-22": {
@@ -4940,7 +4879,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "ram-26": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-27": {
@@ -4964,19 +4903,19 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-1": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-2": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-3": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-4": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-5": {
@@ -4984,7 +4923,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-6": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-7": {
@@ -4995,19 +4934,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "source": "static_reference",
     "note": null
   },
-  "sto-9": {
-    "source": "static_reference",
-    "note": null
-  },
   "sto-10": {
-    "source": "static_reference",
-    "note": null
-  },
-  "sto-11": {
-    "source": "static_reference",
-    "note": null
-  },
-  "sto-13": {
     "source": "static_reference",
     "note": null
   },
@@ -5043,10 +4970,6 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "source": "static_reference",
     "note": null
   },
-  "sto-22": {
-    "source": "static_reference",
-    "note": null
-  },
   "sto-23": {
     "source": "static_reference",
     "note": null
@@ -5072,7 +4995,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-29": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-30": {
@@ -5088,7 +5011,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "sto-33": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "sto-34": {
@@ -5144,7 +5067,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "case-7": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "case-8": {
@@ -5248,11 +5171,11 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-4": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-5": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-6": {
@@ -5260,7 +5183,7 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-7": {
-    "source": "static_reference",
+    "source": "prisjakt_seed",
     "note": null
   },
   "psu-8": {
@@ -5276,19 +5199,19 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-11": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-12": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-13": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-14": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-15": {
@@ -5296,27 +5219,27 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-16": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-17": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-18": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-19": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-20": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-21": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-22": {
@@ -5324,31 +5247,31 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "psu-23": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-24": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-25": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-26": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-27": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-28": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "psu-29": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-1": {
@@ -5392,23 +5315,23 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-11": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-12": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-13": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-14": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-15": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-16": {
@@ -5416,23 +5339,23 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-17": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-18": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-19": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-20": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-21": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-22": {
@@ -5440,127 +5363,127 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-23": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-24": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-25": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-26": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-27": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-28": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-29": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-30": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-31": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-32": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-33": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-34": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-35": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-36": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-37": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-38": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-39": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-40": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-41": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-42": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-43": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-44": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-45": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-46": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-47": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-48": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-49": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-50": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-51": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-52": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-53": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-54": {
@@ -5568,59 +5491,59 @@ export const STATIC_CUSTOM_BUILD_PRELOAD_METADATA = {
     "note": null
   },
   "cool-55": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-56": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-57": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-58": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-59": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-60": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-61": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-62": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-63": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-64": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-65": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-66": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-67": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "cool-68": {
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   }
 };
