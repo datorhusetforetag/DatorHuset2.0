@@ -611,6 +611,446 @@ const getItemGpuChip = (item: ComponentItem) => {
   return "";
 };
 
+type SortDirection = "asc" | "desc";
+type SortKey =
+  | "popularity"
+  | "price"
+  | "chipset"
+  | "speed"
+  | "cores"
+  | "vram"
+  | "ramSize"
+  | "ramSpeed"
+  | "ramCl"
+  | "storageSize"
+  | "read"
+  | "write"
+  | "wattage"
+  | "coolingType";
+
+const CPU_VENDOR_CARD_OPTIONS = ["Alla", "AMD", "Intel"];
+const CPU_PERFORMANCE_OPTIONS = ["Kontor / Media", "Gaming", "Entusiast"];
+const CPU_MODEL_OPTIONS = [
+  "Core i3",
+  "Core i5",
+  "Core i7",
+  "Core i9",
+  "Ryzen 5",
+  "Ryzen 7",
+  "Ryzen 9",
+  "Core Ultra 5",
+  "Core Ultra 7",
+  "Core Ultra 9",
+  "Threadripper",
+];
+const GPU_VENDOR_CARD_OPTIONS = ["Alla", "AMD", "Nvidia", "Intel"];
+const GPU_MANUFACTURER_OPTIONS = [
+  "ASUS",
+  "Intel",
+  "PNY",
+  "Gigabyte",
+  "XFX",
+  "Acer",
+  "MSI",
+  "Gainward",
+  "Sapphire",
+  "PowerColor",
+  "Zotac",
+  "ASRock",
+  "Inno3D",
+  "INNO3D",
+  "ZOTAC",
+  "Palit",
+];
+const MOTHERBOARD_MANUFACTURER_OPTIONS = ["ASUS", "MSI", "ASRock", "Gigabyte", "NZXT"];
+const RAM_SIZE_CARD_OPTIONS = [16, 32, 64];
+const RAM_TYPE_CARD_OPTIONS = ["DDR4", "DDR5"];
+const RAM_MANUFACTURER_OPTIONS = [
+  "Corsair",
+  "ADATA",
+  "Crucial",
+  "G.Skill",
+  "Kingston",
+  "PNY",
+  "Patriot Memory",
+  "Team Group",
+];
+const STORAGE_SIZE_CARD_OPTIONS = [256, 512, 1024, 2048, 4096];
+const STORAGE_TYPE_CARD_OPTIONS = ['M.2', '2.5" SATA'];
+const STORAGE_MANUFACTURER_OPTIONS = [
+  "Corsair",
+  "Crucial",
+  "Kingston",
+  "Lexar",
+  "MSI",
+  "PNY",
+  "Patriot Memory",
+  "Samsung",
+  "Seagate",
+  "Silicon Power",
+  "Toshiba",
+  "WD",
+  "ADATA",
+  "Team Group",
+];
+const STORAGE_FORM_FACTOR_OPTIONS = ['2.5"', "M.2", "M.2 2230", "M.2 2280"];
+const STORAGE_INTERFACE_OPTIONS = ["M.2", "M.2 PCIe Gen3", "M.2 PCIe Gen4", "M.2 PCIe Gen5"];
+const PSU_WATTAGE_CARD_OPTIONS = [400, 500, 600, 700, 800, 1000, 1200];
+const PSU_MIN_RATING_CARD_OPTIONS = ["Bronze", "Gold", "Platinum"];
+const PSU_MANUFACTURER_OPTIONS = [
+  "Cooler Master",
+  "Corsair",
+  "EVGA",
+  "Fractal Design",
+  "ASUS",
+  "NZXT",
+  "Phanteks",
+  "Seasonic",
+  "be quiet!",
+  "Deepcool",
+  "FSP",
+  "LIAN LI",
+  "Thermaltake",
+  "Silverstone",
+  "Kolink",
+  "MSI",
+  "Gigabyte",
+];
+const PSU_MODULAR_OPTIONS = ["Ja", "Semi", "Nej"];
+const PSU_FORM_FACTOR_OPTIONS = ["ATX", "SFX"];
+const PSU_ATX_STANDARD_OPTIONS = ["3.0", "3.1"];
+const COOLING_TYPE_CARD_OPTIONS = ["Luft", "Vatten"];
+const COOLING_MANUFACTURER_OPTIONS = [
+  "ASUS",
+  "Arctic",
+  "Cooler Master",
+  "Corsair",
+  "Deepcool",
+  "Fractal Design",
+  "MSI",
+  "NZXT",
+  "Noctua",
+  "Phanteks",
+  "Thermalright",
+  "Thermaltake",
+  "be quiet!",
+  "LIAN LI",
+];
+const COOLING_SOCKET_OPTIONS = ["AM4", "AM5", "1700", "1851", "1200"];
+const MOTHERBOARD_FORM_FACTOR_OPTIONS = ["ATX", "mATX", "mITX", "E-ATX"];
+const CASE_FORM_FACTOR_OPTIONS = ["ATX", "mATX", "mITX", "E-ATX"];
+const MOTHERBOARD_RAM_TYPE_OPTIONS = ["DDR4", "DDR5"];
+const CHIPSET_DISPLAY_ORDER = [
+  "AMD WRX90",
+  "AMD TRX50",
+  "AMD X870E",
+  "AMD X870",
+  "AMD X670E",
+  "AMD X670",
+  "AMD B850",
+  "AMD B840",
+  "AMD B650E",
+  "AMD B650",
+  "AMD A620",
+  "AMD X570",
+  "AMD B550",
+  "AMD B450",
+  "AMD A520",
+  "Intel Z890",
+  "Intel B860",
+  "Intel H810",
+  "Intel Z790",
+  "Intel H770",
+  "Intel B760",
+  "Intel Z690",
+  "Intel H670",
+  "Intel B660",
+  "Intel H610",
+  "Intel Z590",
+  "Intel B560",
+  "Intel H510",
+  "Intel Z490",
+];
+
+const normalizeBrandLabel = (value: string) => {
+  const normalized = normalizeFilterToken(value);
+  if (normalized === "g.skill") return "G.Skill";
+  if (normalized === "adata") return "ADATA";
+  if (normalized === "patriot memory") return "Patriot Memory";
+  if (normalized === "team group") return "Team Group";
+  if (normalized === "be quiet!") return "be quiet!";
+  if (normalized === "deepcool") return "Deepcool";
+  if (normalized === "lian li") return "LIAN LI";
+  if (normalized === "wd") return "WD";
+  return value;
+};
+
+const getFirstMatchNumber = (value: string, pattern: RegExp) => {
+  const match = value.match(pattern);
+  return match ? Number(match[1]) : null;
+};
+
+const withDetailsText = (item: ComponentItem) => `${collectItemSearchText(item)} ${Object.entries(item.details || {})
+  .map(([key, value]) => `${key} ${value}`)
+  .join(" ")}`;
+
+const normalizeCapacityToGb = (value: number, unit: string) =>
+  unit.toLowerCase().startsWith("tb") ? value * 1024 : value;
+
+const getCpuModelFamily = (item: ComponentItem) => {
+  const text = normalizeFilterToken(item.name);
+  const families = [
+    "Core Ultra 9",
+    "Core Ultra 7",
+    "Core Ultra 5",
+    "Core i9",
+    "Core i7",
+    "Core i5",
+    "Core i3",
+    "Ryzen 9",
+    "Ryzen 7",
+    "Ryzen 5",
+    "Ryzen 3",
+    "Threadripper",
+  ];
+  return families.find((family) => normalizeFilterToken(family) && text.includes(normalizeFilterToken(family))) || "";
+};
+
+const getCpuSpeedGhz = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const speeds = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*ghz/gi)].map((match) =>
+    Number(match[1].replace(",", "."))
+  );
+  return speeds.length > 0 ? Math.max(...speeds) : null;
+};
+
+const getCpuCoreCount = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const coreMatch = text.match(/(\d+)\s*k[äa]rnor/i);
+  if (coreMatch) return Number(coreMatch[1]);
+  const detailMatch = getFirstMatchNumber(String(item.details?.cores || ""), /(\d+)/);
+  return detailMatch;
+};
+
+const getCpuPerformanceTier = (item: ComponentItem) => {
+  const family = getCpuModelFamily(item);
+  const cores = getCpuCoreCount(item) || 0;
+  if (/threadripper|core ultra 9|core i9|ryzen 9/i.test(family) || cores >= 16) return "Entusiast";
+  if (/core i7|core i5|ryzen 7|ryzen 5|core ultra 7|core ultra 5/i.test(family) || cores >= 6) return "Gaming";
+  return "Kontor / Media";
+};
+
+const getGpuChipVendor = (item: ComponentItem) => {
+  const text = normalizeFilterToken(`${item.name} ${item.gpuModel || ""}`);
+  if (text.includes("rx ") || text.includes("radeon")) return "AMD";
+  if (text.includes("rtx ") || text.includes("geforce")) return "Nvidia";
+  if (text.includes("arc ")) return "Intel";
+  return item.brand;
+};
+
+const getGpuVramGb = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  return getFirstMatchNumber(text, /(\d+)\s*gb/i);
+};
+
+const getGpuLengthMm = (item: ComponentItem) => {
+  const detailText = String(item.details?.length || item.details?.längd || "");
+  const fromDetails = getFirstMatchNumber(detailText, /(\d+)\s*mm/i);
+  if (fromDetails) return fromDetails;
+  return null;
+};
+
+const getMotherboardWifiValue = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  if (text.includes("wifi")) return "Ja";
+  return "Nej";
+};
+
+const getMotherboardMemorySlots = (item: ComponentItem) => {
+  const detailText = String(item.details?.memorySlots || item.details?.minnesplatser || "");
+  const fromDetails = getFirstMatchNumber(detailText, /(\d+)/);
+  if (fromDetails) return fromDetails;
+  const text = withDetailsText(item);
+  if (/2\s*x?\s*dimm|2\s*dimm/i.test(text)) return 2;
+  if (/4\s*x?\s*dimm|4\s*dimm/i.test(text)) return 4;
+  return null;
+};
+
+const getMotherboardM2Slots = (item: ComponentItem) => {
+  const detailText = String(item.details?.m2Slots || item.details?.m2 || item.details?.["M.2 slots"] || "");
+  const fromDetails = getFirstMatchNumber(detailText, /(\d+)/);
+  if (fromDetails) return fromDetails;
+  const text = withDetailsText(item);
+  const match = text.match(/(\d+)\s*x?\s*m\.?2/i);
+  return match ? Number(match[1]) : null;
+};
+
+const getDisplayChipsetValue = (item: ComponentItem) => {
+  const chipset = getItemChipsetFilterValue(item);
+  if (!chipset) return "";
+  const socket = getItemSocketFilterValue(item);
+  const isIntel = socket.startsWith("LGA") || /^Z|^B[6-9]|^H/i.test(chipset);
+  return `${isIntel ? "Intel" : "AMD"} ${chipset}`;
+};
+
+const getChipsetSortRank = (value: string) => {
+  const index = CHIPSET_DISPLAY_ORDER.findIndex((entry) => normalizeFilterToken(entry) === normalizeFilterToken(value));
+  return index >= 0 ? CHIPSET_DISPLAY_ORDER.length - index : 0;
+};
+
+const getRamSizeGb = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const parenMatch = text.match(/\((\d+)x(\d+)gb\)/i);
+  if (parenMatch) return Number(parenMatch[1]) * Number(parenMatch[2]);
+  const sizeMatches = [...text.matchAll(/(\d+)\s*gb/gi)].map((match) => Number(match[1]));
+  return sizeMatches.length > 0 ? Math.max(...sizeMatches) : null;
+};
+
+const getRamSpeedMhz = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const speedMatch = text.match(/(\d{4,5})\s*(?:mhz|mt\/s)/i);
+  return speedMatch ? Number(speedMatch[1]) : null;
+};
+
+const getRamClValue = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const clMatch = text.match(/cl\s*(\d+)/i);
+  return clMatch ? Number(clMatch[1]) : null;
+};
+
+const getRamModulesValue = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const moduleMatch = text.match(/\((\d+)x\d+\s*gb\)/i);
+  return moduleMatch ? Number(moduleMatch[1]) : null;
+};
+
+const getStorageSizeGb = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const matches = [...text.matchAll(/(\d+(?:[.,]\d+)?)\s*(tb|gb)\b/gi)].map((match) =>
+    normalizeCapacityToGb(Number(match[1].replace(",", ".")), match[2])
+  );
+  return matches.length > 0 ? Math.max(...matches) : null;
+};
+
+const getStorageReadMb = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const matches = [...text.matchAll(/(\d{3,5})\s*mb\/s/gi)].map((match) => Number(match[1]));
+  return matches.length > 0 ? Math.max(...matches) : null;
+};
+
+const getStorageWriteMb = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const matches = [...text.matchAll(/(\d{3,5})\s*mb\/s/gi)].map((match) => Number(match[1]));
+  return matches.length > 1 ? Math.min(...matches) : matches.length === 1 ? matches[0] : null;
+};
+
+const getStorageFormFactorValue = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  if (text.includes('2.5"') || text.includes("2.5 sata")) return '2.5"';
+  if (text.includes("2230")) return "M.2 2230";
+  if (text.includes("2280")) return "M.2 2280";
+  if (text.includes("m.2") || text.includes("m2")) return "M.2";
+  return "";
+};
+
+const getStorageInterfaceValue = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  if (text.includes("gen5") || text.includes("pcie 5")) return "M.2 PCIe Gen5";
+  if (text.includes("gen4") || text.includes("pcie 4")) return "M.2 PCIe Gen4";
+  if (text.includes("gen3") || text.includes("pcie 3")) return "M.2 PCIe Gen3";
+  if (text.includes("sata")) return "SATA 6Gb/s";
+  if (text.includes("m.2") || text.includes("m2")) return "M.2";
+  return "";
+};
+
+const getStorageTypeCardLabel = (item: ComponentItem) => {
+  const type = getItemStorageTypeFilterValue(item);
+  if (type === "SATA") return '2.5" SATA';
+  return "M.2";
+};
+
+const getPsuLengthMm = (item: ComponentItem) => {
+  const detailText = String(item.details?.length || item.details?.längd || "");
+  const fromDetails = getFirstMatchNumber(detailText, /(\d+)\s*mm/i);
+  if (fromDetails) return fromDetails;
+  return null;
+};
+
+const getPsuModularOption = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  if (text.includes("semi")) return "Semi";
+  if (text.includes("modular") || text.includes("modulart")) return "Ja";
+  return "Nej";
+};
+
+const getPsuAtxStandard = (item: ComponentItem) => {
+  const text = withDetailsText(item);
+  const match = text.match(/atx\s*(3\.[01])/i);
+  return match ? match[1] : "";
+};
+
+const getPsuFormFactorValue = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  if (text.includes("sfx")) return "SFX";
+  if (text.includes("atx")) return "ATX";
+  return "";
+};
+
+const getCoolingTypeValue = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  if (text.includes("aio") || text.includes("240") || text.includes("280") || text.includes("360") || text.includes("420") || text.includes("vatten")) {
+    return "Vatten";
+  }
+  return "Luft";
+};
+
+const getCoolingHeightMm = (item: ComponentItem) => {
+  const detailText = String(item.details?.height || item.details?.hojd || item.details?.höjd || "");
+  const fromDetails = getFirstMatchNumber(detailText, /(\d+)\s*mm/i);
+  if (fromDetails) return fromDetails;
+  if (getCoolingTypeValue(item) === "Luft") {
+    return getFirstMatchNumber(withDetailsText(item), /(\d+)\s*mm/i);
+  }
+  return null;
+};
+
+const getCoolingSocketLabels = (item: ComponentItem) => {
+  const text = normalizeFilterToken(withDetailsText(item));
+  const matches: string[] = [];
+  if (text.includes("am4")) matches.push("AM4");
+  if (text.includes("am5")) matches.push("AM5");
+  if (text.includes("1700")) matches.push("1700");
+  if (text.includes("1851")) matches.push("1851");
+  if (text.includes("1200")) matches.push("1200");
+  return matches;
+};
+
+const getItemPopularityScore = (item: ComponentItem, category: CategoryKey, index: number) => {
+  let score = 1000 - index;
+  const highlight = normalizeFilterToken(item.highlight || "");
+  if (highlight.includes("popular") || highlight.includes("popul")) score += 200;
+  if (highlight.includes("gaming") || highlight.includes("favorit")) score += 150;
+  if (highlight.includes("nyhet")) score += 100;
+  if (category === "cpu" && /x3d/i.test(item.name)) score += 60;
+  if (category === "gpu" && /5070|9070|5080|5090/i.test(item.name)) score += 40;
+  return score;
+};
+
+const sortValuesByPreferredOrder = (values: string[], preferredOrder: string[]) => {
+  const available = new Set(values.map((value) => normalizeFilterToken(value)));
+  const ordered = preferredOrder.filter((value) => available.has(normalizeFilterToken(value)));
+  const rest = values
+    .filter((value) => !ordered.some((orderedValue) => normalizeFilterToken(orderedValue) === normalizeFilterToken(value)))
+    .sort((a, b) => a.localeCompare(b, "sv"));
+  return [...ordered, ...rest];
+};
+
+const getNumericBounds = (values: Array<number | null>) => {
+  const valid = values.filter((value): value is number => typeof value === "number" && Number.isFinite(value));
+  if (valid.length === 0) return { min: 0, max: 0 };
+  return { min: Math.min(...valid), max: Math.max(...valid) };
+};
+
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   cpu: [
     {
@@ -3179,19 +3619,60 @@ export default function CustomBuild() {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 0]);
   const [customBuildDebugEnabled, setCustomBuildDebugEnabled] = useState(false);
+  const [showDetailedFilters, setShowDetailedFilters] = useState(false);
   const [socketFilters, setSocketFilters] = useState<string[]>([]);
   const [chipsetFilters, setChipsetFilters] = useState<string[]>([]);
   const [ramTypeFilters, setRamTypeFilters] = useState<string[]>([]);
   const [formFactorFilters, setFormFactorFilters] = useState<string[]>([]);
   const [pcieGenerationFilters, setPcieGenerationFilters] = useState<string[]>([]);
   const [storageTypeFilters, setStorageTypeFilters] = useState<string[]>([]);
-  const [cpuChipFilter, setCpuChipFilter] = useState("Alla");
   const [gpuPerformanceFilters, setGpuPerformanceFilters] = useState<string[]>([]);
-  const [gpuChipFilter, setGpuChipFilter] = useState("Alla");
-  const [gpuExactModelFilter, setGpuExactModelFilter] = useState("Alla");
   const [psuRatingFilters, setPsuRatingFilters] = useState<string[]>([]);
-  const [psuModularFilter, setPsuModularFilter] = useState<"Alla" | "Modular">("Alla");
   const [psuWattageRange, setPsuWattageRange] = useState<[number, number]>([0, 0]);
+  const [tableSortByCategory, setTableSortByCategory] = useState<Record<CategoryKey, { key: SortKey; direction: SortDirection }>>({
+    cpu: { key: "popularity", direction: "desc" },
+    gpu: { key: "popularity", direction: "desc" },
+    motherboard: { key: "popularity", direction: "desc" },
+    ram: { key: "price", direction: "asc" },
+    storage: { key: "price", direction: "asc" },
+    case: { key: "price", direction: "asc" },
+    psu: { key: "price", direction: "asc" },
+    cooling: { key: "price", direction: "asc" },
+  });
+  const [cpuPerformanceFilters, setCpuPerformanceFilters] = useState<string[]>([]);
+  const [cpuModelFilters, setCpuModelFilters] = useState<string[]>([]);
+  const [gpuChipVendorFilter, setGpuChipVendorFilter] = useState("Alla");
+  const [gpuManufacturerFilters, setGpuManufacturerFilters] = useState<string[]>([]);
+  const [gpuVramRange, setGpuVramRange] = useState<[number, number]>([0, 0]);
+  const [gpuLengthRange, setGpuLengthRange] = useState<[number, number]>([0, 0]);
+  const [motherboardManufacturerFilters, setMotherboardManufacturerFilters] = useState<string[]>([]);
+  const [motherboardWifiFilter, setMotherboardWifiFilter] = useState<"Alla" | "Ja" | "Nej">("Alla");
+  const [motherboardMemorySlotsRange, setMotherboardMemorySlotsRange] = useState<[number, number]>([0, 0]);
+  const [motherboardM2SlotsRange, setMotherboardM2SlotsRange] = useState<[number, number]>([0, 0]);
+  const [ramMinimumSizeCard, setRamMinimumSizeCard] = useState<number | null>(null);
+  const [ramManufacturers, setRamManufacturers] = useState<string[]>([]);
+  const [ramSizeRange, setRamSizeRange] = useState<[number, number]>([0, 0]);
+  const [ramSpeedRange, setRamSpeedRange] = useState<[number, number]>([0, 0]);
+  const [ramClRange, setRamClRange] = useState<[number, number]>([0, 0]);
+  const [ramModulesRange, setRamModulesRange] = useState<[number, number]>([0, 0]);
+  const [storageMinimumSizeCard, setStorageMinimumSizeCard] = useState<number | null>(null);
+  const [storageManufacturerFilters, setStorageManufacturerFilters] = useState<string[]>([]);
+  const [storageFormFactorFilters, setStorageFormFactorFilters] = useState<string[]>([]);
+  const [storageInterfaceFilters, setStorageInterfaceFilters] = useState<string[]>([]);
+  const [storageSizeRange, setStorageSizeRange] = useState<[number, number]>([0, 0]);
+  const [storageReadRange, setStorageReadRange] = useState<[number, number]>([0, 0]);
+  const [storageWriteRange, setStorageWriteRange] = useState<[number, number]>([0, 0]);
+  const [psuMinimumWattCard, setPsuMinimumWattCard] = useState<number | null>(null);
+  const [psuMinimumRatingCard, setPsuMinimumRatingCard] = useState<string | null>(null);
+  const [psuManufacturerFilters, setPsuManufacturerFilters] = useState<string[]>([]);
+  const [psuModularFiltersDetailed, setPsuModularFiltersDetailed] = useState<string[]>([]);
+  const [psuAtxStandardFilters, setPsuAtxStandardFilters] = useState<string[]>([]);
+  const [psuFormFactorFilters, setPsuFormFactorFilters] = useState<string[]>([]);
+  const [psuLengthRange, setPsuLengthRange] = useState<[number, number]>([0, 0]);
+  const [coolingTypeFilter, setCoolingTypeFilter] = useState<"Alla" | "Luft" | "Vatten">("Alla");
+  const [coolingManufacturerFilters, setCoolingManufacturerFilters] = useState<string[]>([]);
+  const [coolingSocketFilters, setCoolingSocketFilters] = useState<string[]>([]);
+  const [coolingHeightRange, setCoolingHeightRange] = useState<[number, number]>([0, 0]);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
@@ -3397,11 +3878,6 @@ export default function CustomBuild() {
     }
   };
 
-  const brandOptions = useMemo(() => {
-    const brands = Array.from(new Set(items.map((item) => item.brand)));
-    return ["Alla", ...brands];
-  }, [items]);
-
   const priceBounds = useMemo(() => {
     const prices = items.map((item) => getComparablePrice(item, activeCategory));
     const min = Math.min(...prices);
@@ -3416,61 +3892,90 @@ export default function CustomBuild() {
     setPriceRange([priceBounds.min, priceBounds.max]);
   }, [priceBounds.min, priceBounds.max]);
 
-  const psuWattageBounds = useMemo(() => {
-    const values = COMPONENTS.psu
-      .map((item) => getItemPsuWattage(item))
-      .filter((value): value is number => typeof value === "number" && Number.isFinite(value));
-    const min = values.length > 0 ? Math.min(...values) : 0;
-    const max = values.length > 0 ? Math.max(...values) : 0;
-    return { min, max };
-  }, []);
+  const gpuVramBounds = useMemo(() => getNumericBounds(items.map((item) => getGpuVramGb(item))), [items]);
+  const gpuLengthBounds = useMemo(() => getNumericBounds(items.map((item) => getGpuLengthMm(item))), [items]);
+  const motherboardMemorySlotBounds = useMemo(() => getNumericBounds(items.map((item) => getMotherboardMemorySlots(item))), [items]);
+  const motherboardM2Bounds = useMemo(() => getNumericBounds(items.map((item) => getMotherboardM2Slots(item))), [items]);
+  const ramSizeBounds = useMemo(() => getNumericBounds(items.map((item) => getRamSizeGb(item))), [items]);
+  const ramSpeedBounds = useMemo(() => getNumericBounds(items.map((item) => getRamSpeedMhz(item))), [items]);
+  const ramClBounds = useMemo(() => getNumericBounds(items.map((item) => getRamClValue(item))), [items]);
+  const ramModulesBounds = useMemo(() => getNumericBounds(items.map((item) => getRamModulesValue(item))), [items]);
+  const storageSizeBounds = useMemo(() => getNumericBounds(items.map((item) => getStorageSizeGb(item))), [items]);
+  const storageReadBounds = useMemo(() => getNumericBounds(items.map((item) => getStorageReadMb(item))), [items]);
+  const storageWriteBounds = useMemo(() => getNumericBounds(items.map((item) => getStorageWriteMb(item))), [items]);
+  const psuWattageBounds = useMemo(() => getNumericBounds(items.map((item) => getItemPsuWattage(item))), [items]);
+  const psuLengthBounds = useMemo(() => getNumericBounds(items.map((item) => getPsuLengthMm(item))), [items]);
+  const coolingHeightBounds = useMemo(() => getNumericBounds(items.map((item) => getCoolingHeightMm(item))), [items]);
 
-  useEffect(() => {
-    setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
-  }, [psuWattageBounds.min, psuWattageBounds.max]);
+  useEffect(() => setGpuVramRange([gpuVramBounds.min, gpuVramBounds.max]), [gpuVramBounds.min, gpuVramBounds.max]);
+  useEffect(() => setGpuLengthRange([gpuLengthBounds.min, gpuLengthBounds.max]), [gpuLengthBounds.min, gpuLengthBounds.max]);
+  useEffect(() => setMotherboardMemorySlotsRange([motherboardMemorySlotBounds.min, motherboardMemorySlotBounds.max]), [motherboardMemorySlotBounds.min, motherboardMemorySlotBounds.max]);
+  useEffect(() => setMotherboardM2SlotsRange([motherboardM2Bounds.min, motherboardM2Bounds.max]), [motherboardM2Bounds.min, motherboardM2Bounds.max]);
+  useEffect(() => setRamSizeRange([ramSizeBounds.min, ramSizeBounds.max]), [ramSizeBounds.min, ramSizeBounds.max]);
+  useEffect(() => setRamSpeedRange([ramSpeedBounds.min, ramSpeedBounds.max]), [ramSpeedBounds.min, ramSpeedBounds.max]);
+  useEffect(() => setRamClRange([ramClBounds.min, ramClBounds.max]), [ramClBounds.min, ramClBounds.max]);
+  useEffect(() => setRamModulesRange([ramModulesBounds.min, ramModulesBounds.max]), [ramModulesBounds.min, ramModulesBounds.max]);
+  useEffect(() => setStorageSizeRange([storageSizeBounds.min, storageSizeBounds.max]), [storageSizeBounds.min, storageSizeBounds.max]);
+  useEffect(() => setStorageReadRange([storageReadBounds.min, storageReadBounds.max]), [storageReadBounds.min, storageReadBounds.max]);
+  useEffect(() => setStorageWriteRange([storageWriteBounds.min, storageWriteBounds.max]), [storageWriteBounds.min, storageWriteBounds.max]);
+  useEffect(() => setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]), [psuWattageBounds.min, psuWattageBounds.max]);
+  useEffect(() => setPsuLengthRange([psuLengthBounds.min, psuLengthBounds.max]), [psuLengthBounds.min, psuLengthBounds.max]);
+  useEffect(() => setCoolingHeightRange([coolingHeightBounds.min, coolingHeightBounds.max]), [coolingHeightBounds.min, coolingHeightBounds.max]);
 
   const socketFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemSocketFilterValue(item)).filter(Boolean))),
+    () => Array.from(new Set(items.map((item) => getItemSocketFilterValue(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
     [items]
   );
   const chipsetFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemChipsetFilterValue(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getDisplayChipsetValue(item)).filter(Boolean))), CHIPSET_DISPLAY_ORDER),
     [items]
   );
   const gpuPerformanceFilterOptions = useMemo(
     () => Array.from(new Set(items.map((item) => getItemGpuPerformanceClass(item)).filter(Boolean))),
     [items]
   );
-  const cpuChipFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemCpuChip(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
-    [items]
-  );
-  const gpuChipFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemGpuChip(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
-    [items]
-  );
-  const gpuExactModelFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemGpuExactModel(item)).filter(Boolean))).sort((a, b) => a.localeCompare(b, "sv")),
-    [items]
-  );
   const ramTypeFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemRamTypeFilterValue(item)).filter(Boolean))),
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getItemRamTypeFilterValue(item)).filter(Boolean))), RAM_TYPE_CARD_OPTIONS),
     [items]
   );
-  const formFactorFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemFormFactorFilterValue(item)).filter(Boolean))),
+  const motherboardManufacturerOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))), MOTHERBOARD_MANUFACTURER_OPTIONS),
     [items]
   );
-  const pcieGenerationFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemPcieGenerationFilterValue(item)).filter(Boolean))),
+  const gpuManufacturerOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))), GPU_MANUFACTURER_OPTIONS),
     [items]
   );
-  const storageTypeFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemStorageTypeFilterValue(item)).filter(Boolean))),
+  const ramManufacturerOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))), RAM_MANUFACTURER_OPTIONS),
+    [items]
+  );
+  const storageManufacturerOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))), STORAGE_MANUFACTURER_OPTIONS),
+    [items]
+  );
+  const storageFormFactorOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getStorageFormFactorValue(item)).filter(Boolean))), STORAGE_FORM_FACTOR_OPTIONS),
+    [items]
+  );
+  const storageInterfaceOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getStorageInterfaceValue(item)).filter(Boolean))), STORAGE_INTERFACE_OPTIONS),
     [items]
   );
   const psuRatingFilterOptions = useMemo(
-    () => Array.from(new Set(items.map((item) => getItemPsuRating(item)).filter(Boolean))),
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getItemPsuRating(item)).filter(Boolean))), ["Bronze", "Silver", "Gold", "Platinum", "Titanium"]),
+    [items]
+  );
+  const psuManufacturerOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))), PSU_MANUFACTURER_OPTIONS),
+    [items]
+  );
+  const coolingManufacturerOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))), COOLING_MANUFACTURER_OPTIONS),
+    [items]
+  );
+  const caseFormFactorOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getItemFormFactorFilterValue(item)).filter(Boolean))), CASE_FORM_FACTOR_OPTIONS),
     [items]
   );
 
@@ -3485,9 +3990,7 @@ export default function CustomBuild() {
     const loadLowestPrices = async () => {
       pendingItems.forEach((item) => lowestPriceLookupStartedRef.current.add(item.id));
       try {
-        const endpoint = `${normalizedApiBase}/api/custom-build/catalog-prices?category=${encodeURIComponent(
-          activeCategory
-        )}`;
+        const endpoint = `${normalizedApiBase}/api/custom-build/catalog-prices?category=${encodeURIComponent(activeCategory)}`;
         const response = await fetch(endpoint);
         if (!response.ok) return;
         const data = (await response.json().catch(() => ({}))) as CatalogCategoryPricesResponse;
@@ -3532,8 +4035,8 @@ export default function CustomBuild() {
           });
           return nextState;
         });
-      } catch (error) {
-        // Keep reference prices if the catalog price endpoint is temporarily unavailable.
+      } catch {
+        // Keep cached or reference prices on temporary API issues.
       }
     };
 
@@ -3543,148 +4046,271 @@ export default function CustomBuild() {
     };
   }, [items, normalizedApiBase, activeCategory]);
 
-  const toggleArrayFilter = (
-    value: string,
-    setter: Dispatch<SetStateAction<string[]>>
-  ) => {
+  const toggleArrayFilter = (value: string, setter: Dispatch<SetStateAction<string[]>>) => {
     setter((prev) => (prev.includes(value) ? prev.filter((entry) => entry !== value) : [...prev, value]));
   };
 
-  const usesSocketFilters = activeCategory === "cpu" || activeCategory === "motherboard";
-  const usesChipsetFilters = activeCategory === "motherboard";
-  const usesGpuFilters = activeCategory === "gpu";
-  const usesRamTypeFilters = activeCategory === "motherboard" || activeCategory === "ram";
-  const usesFormFactorFilters = activeCategory === "motherboard" || activeCategory === "case";
-  const usesPcieGenerationFilters = activeCategory === "motherboard" || activeCategory === "storage";
-  const usesStorageTypeFilters = activeCategory === "storage";
-  const usesPsuFilters = activeCategory === "psu";
+  const toggleSortForCategory = (key: SortKey, defaultDirection: SortDirection = "desc") => {
+    setTableSortByCategory((prev) => {
+      const current = prev[activeCategory];
+      if (current?.key === key) {
+        return {
+          ...prev,
+          [activeCategory]: {
+            key,
+            direction: current.direction === "asc" ? "desc" : "asc",
+          },
+        };
+      }
+      return {
+        ...prev,
+        [activeCategory]: { key, direction: defaultDirection },
+      };
+    });
+  };
 
   const clearAdvancedFilters = () => {
-    if (usesSocketFilters) setSocketFilters([]);
-    if (usesChipsetFilters) setChipsetFilters([]);
-    if (activeCategory === "cpu") setCpuChipFilter("Alla");
-    if (usesGpuFilters) {
-      setGpuPerformanceFilters([]);
-      setGpuChipFilter("Alla");
-      setGpuExactModelFilter("Alla");
-    }
-    if (usesRamTypeFilters) setRamTypeFilters([]);
-    if (usesFormFactorFilters) setFormFactorFilters([]);
-    if (usesPcieGenerationFilters) setPcieGenerationFilters([]);
-    if (usesStorageTypeFilters) setStorageTypeFilters([]);
-    if (usesPsuFilters) {
-      setPsuRatingFilters([]);
-      setPsuModularFilter("Alla");
-      setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
-    }
+    setSocketFilters([]);
+    setChipsetFilters([]);
+    setRamTypeFilters([]);
+    setFormFactorFilters([]);
+    setStorageTypeFilters([]);
+    setGpuPerformanceFilters([]);
+    setCpuPerformanceFilters([]);
+    setCpuModelFilters([]);
+    setGpuManufacturerFilters([]);
+    setMotherboardManufacturerFilters([]);
+    setMotherboardWifiFilter("Alla");
+    setRamManufacturers([]);
+    setStorageManufacturerFilters([]);
+    setStorageFormFactorFilters([]);
+    setStorageInterfaceFilters([]);
+    setPsuRatingFilters([]);
+    setPsuManufacturerFilters([]);
+    setPsuModularFiltersDetailed([]);
+    setPsuAtxStandardFilters([]);
+    setPsuFormFactorFilters([]);
+    setCoolingManufacturerFilters([]);
+    setCoolingSocketFilters([]);
+    setRamMinimumSizeCard(null);
+    setStorageMinimumSizeCard(null);
+    setPsuMinimumWattCard(null);
+    setPsuMinimumRatingCard(null);
+    setCoolingTypeFilter("Alla");
+    setGpuChipVendorFilter("Alla");
+    setGpuVramRange([gpuVramBounds.min, gpuVramBounds.max]);
+    setGpuLengthRange([gpuLengthBounds.min, gpuLengthBounds.max]);
+    setMotherboardMemorySlotsRange([motherboardMemorySlotBounds.min, motherboardMemorySlotBounds.max]);
+    setMotherboardM2SlotsRange([motherboardM2Bounds.min, motherboardM2Bounds.max]);
+    setRamSizeRange([ramSizeBounds.min, ramSizeBounds.max]);
+    setRamSpeedRange([ramSpeedBounds.min, ramSpeedBounds.max]);
+    setRamClRange([ramClBounds.min, ramClBounds.max]);
+    setRamModulesRange([ramModulesBounds.min, ramModulesBounds.max]);
+    setStorageSizeRange([storageSizeBounds.min, storageSizeBounds.max]);
+    setStorageReadRange([storageReadBounds.min, storageReadBounds.max]);
+    setStorageWriteRange([storageWriteBounds.min, storageWriteBounds.max]);
+    setPsuWattageRange([psuWattageBounds.min, psuWattageBounds.max]);
+    setPsuLengthRange([psuLengthBounds.min, psuLengthBounds.max]);
+    setCoolingHeightRange([coolingHeightBounds.min, coolingHeightBounds.max]);
   };
 
   const hasActiveAdvancedFilters =
-    (usesSocketFilters && socketFilters.length > 0) ||
-    (usesChipsetFilters && chipsetFilters.length > 0) ||
-    (activeCategory === "cpu" && cpuChipFilter !== "Alla") ||
-    (usesGpuFilters && (gpuPerformanceFilters.length > 0 || gpuChipFilter !== "Alla" || gpuExactModelFilter !== "Alla")) ||
-    (usesRamTypeFilters && ramTypeFilters.length > 0) ||
-    (usesFormFactorFilters && formFactorFilters.length > 0) ||
-    (usesPcieGenerationFilters && pcieGenerationFilters.length > 0) ||
-    (usesStorageTypeFilters && storageTypeFilters.length > 0) ||
-    (usesPsuFilters &&
-      (psuRatingFilters.length > 0 ||
-        psuModularFilter !== "Alla" ||
-        psuWattageRange[0] !== psuWattageBounds.min ||
-        psuWattageRange[1] !== psuWattageBounds.max));
+    socketFilters.length > 0 ||
+    chipsetFilters.length > 0 ||
+    gpuPerformanceFilters.length > 0 ||
+    cpuPerformanceFilters.length > 0 ||
+    cpuModelFilters.length > 0 ||
+    gpuManufacturerFilters.length > 0 ||
+    motherboardManufacturerFilters.length > 0 ||
+    motherboardWifiFilter !== "Alla" ||
+    ramTypeFilters.length > 0 ||
+    formFactorFilters.length > 0 ||
+    storageTypeFilters.length > 0 ||
+    ramManufacturers.length > 0 ||
+    storageManufacturerFilters.length > 0 ||
+    storageFormFactorFilters.length > 0 ||
+    storageInterfaceFilters.length > 0 ||
+    psuRatingFilters.length > 0 ||
+    psuManufacturerFilters.length > 0 ||
+    psuModularFiltersDetailed.length > 0 ||
+    psuAtxStandardFilters.length > 0 ||
+    psuFormFactorFilters.length > 0 ||
+    coolingManufacturerFilters.length > 0 ||
+    coolingSocketFilters.length > 0 ||
+    ramMinimumSizeCard !== null ||
+    storageMinimumSizeCard !== null ||
+    psuMinimumWattCard !== null ||
+    psuMinimumRatingCard !== null ||
+    gpuChipVendorFilter !== "Alla" ||
+    coolingTypeFilter !== "Alla" ||
+    gpuVramRange[0] !== gpuVramBounds.min ||
+    gpuVramRange[1] !== gpuVramBounds.max ||
+    gpuLengthRange[0] !== gpuLengthBounds.min ||
+    gpuLengthRange[1] !== gpuLengthBounds.max ||
+    motherboardMemorySlotsRange[0] !== motherboardMemorySlotBounds.min ||
+    motherboardMemorySlotsRange[1] !== motherboardMemorySlotBounds.max ||
+    motherboardM2SlotsRange[0] !== motherboardM2Bounds.min ||
+    motherboardM2SlotsRange[1] !== motherboardM2Bounds.max ||
+    ramSizeRange[0] !== ramSizeBounds.min ||
+    ramSizeRange[1] !== ramSizeBounds.max ||
+    ramSpeedRange[0] !== ramSpeedBounds.min ||
+    ramSpeedRange[1] !== ramSpeedBounds.max ||
+    ramClRange[0] !== ramClBounds.min ||
+    ramClRange[1] !== ramClBounds.max ||
+    ramModulesRange[0] !== ramModulesBounds.min ||
+    ramModulesRange[1] !== ramModulesBounds.max ||
+    storageSizeRange[0] !== storageSizeBounds.min ||
+    storageSizeRange[1] !== storageSizeBounds.max ||
+    storageReadRange[0] !== storageReadBounds.min ||
+    storageReadRange[1] !== storageReadBounds.max ||
+    storageWriteRange[0] !== storageWriteBounds.min ||
+    storageWriteRange[1] !== storageWriteBounds.max ||
+    psuWattageRange[0] !== psuWattageBounds.min ||
+    psuWattageRange[1] !== psuWattageBounds.max ||
+    psuLengthRange[0] !== psuLengthBounds.min ||
+    psuLengthRange[1] !== psuLengthBounds.max ||
+    coolingHeightRange[0] !== coolingHeightBounds.min ||
+    coolingHeightRange[1] !== coolingHeightBounds.max;
 
   const filteredItems = useMemo(() => {
+    const selectedMotherboardSocket = selected.motherboard?.socket;
+    const selectedCpuSocket = selected.cpu?.socket;
+    const allowedRamType = selectedMotherboardSocket ? SOCKET_RAM_TYPE[selectedMotherboardSocket] : null;
+
     return items.filter((item) => {
-      const matchesBrand = activeBrand === "Alla" || item.brand === activeBrand;
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const selectedMotherboardSocket = selected.motherboard?.socket;
-      const selectedCpuSocket = selected.cpu?.socket;
-      const allowedRamType = selectedMotherboardSocket
-        ? SOCKET_RAM_TYPE[selectedMotherboardSocket]
-        : null;
-      const matchesSocket =
+      const comparablePrice = getComparablePrice(item, activeCategory);
+      const matchesPrice = comparablePrice >= priceRange[0] && comparablePrice <= priceRange[1];
+      const matchesCompatibilitySocket =
         activeCategory === "cpu" && selectedMotherboardSocket
           ? item.socket === selectedMotherboardSocket
           : activeCategory === "motherboard" && selectedCpuSocket
           ? item.socket === selectedCpuSocket
           : true;
-      const matchesRamType =
-        activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
-      const matchesPrice = getComparablePrice(item, activeCategory) <= priceRange[1];
-      const itemSocket = getItemSocketFilterValue(item);
-      const itemChipset = getItemChipsetFilterValue(item);
-      const itemCpuChip = getItemCpuChip(item);
-      const itemGpuPerformanceClass = getItemGpuPerformanceClass(item);
-      const itemGpuChip = getItemGpuChip(item);
-      const itemGpuExactModel = getItemGpuExactModel(item);
-      const itemRamType = getItemRamTypeFilterValue(item);
-      const itemFormFactor = getItemFormFactorFilterValue(item);
-      const itemPcieGeneration = getItemPcieGenerationFilterValue(item);
-      const itemStorageType = getItemStorageTypeFilterValue(item);
-      const itemPsuRating = getItemPsuRating(item);
-      const itemPsuModular = getItemPsuModularValue(item);
-      const itemPsuWattage = getItemPsuWattage(item);
+      const matchesCompatibilityRam = activeCategory !== "ram" || !allowedRamType ? true : item.ramType === allowedRamType;
 
-      const matchesSelectedSocketFilter =
-        !usesSocketFilters || socketFilters.length === 0 || (itemSocket ? socketFilters.includes(itemSocket) : false);
-      const matchesSelectedChipsetFilter =
-        !usesChipsetFilters || chipsetFilters.length === 0 || (itemChipset ? chipsetFilters.includes(itemChipset) : false);
-      const matchesSelectedCpuChipFilter =
-        activeCategory !== "cpu" || cpuChipFilter === "Alla" || itemCpuChip === cpuChipFilter;
-      const matchesSelectedGpuPerformanceFilter =
-        !usesGpuFilters ||
-        gpuPerformanceFilters.length === 0 ||
-        (itemGpuPerformanceClass ? gpuPerformanceFilters.includes(itemGpuPerformanceClass) : false);
-      const matchesSelectedGpuChipFilter =
-        !usesGpuFilters || gpuChipFilter === "Alla" || itemGpuChip === gpuChipFilter;
-      const matchesSelectedGpuExactModelFilter =
-        !usesGpuFilters || gpuExactModelFilter === "Alla" || itemGpuExactModel === gpuExactModelFilter;
-      const matchesSelectedRamTypeFilter =
-        !usesRamTypeFilters || ramTypeFilters.length === 0 || (itemRamType ? ramTypeFilters.includes(itemRamType) : false);
-      const matchesSelectedFormFactorFilter =
-        !usesFormFactorFilters ||
-        formFactorFilters.length === 0 ||
-        (itemFormFactor ? formFactorFilters.includes(itemFormFactor) : false);
-      const matchesSelectedPcieGenerationFilter =
-        !usesPcieGenerationFilters ||
-        pcieGenerationFilters.length === 0 ||
-        (itemPcieGeneration ? pcieGenerationFilters.includes(itemPcieGeneration) : false);
-      const matchesSelectedStorageTypeFilter =
-        !usesStorageTypeFilters ||
-        storageTypeFilters.length === 0 ||
-        (itemStorageType ? storageTypeFilters.includes(itemStorageType) : false);
-      const matchesSelectedPsuRatingFilter =
-        !usesPsuFilters ||
-        psuRatingFilters.length === 0 ||
-        (itemPsuRating ? psuRatingFilters.includes(itemPsuRating) : false);
-      const matchesSelectedPsuModularFilter =
-        !usesPsuFilters || psuModularFilter === "Alla" || itemPsuModular === psuModularFilter;
-      const matchesSelectedPsuWattage =
-        !usesPsuFilters ||
-        itemPsuWattage === null ||
-        (itemPsuWattage >= psuWattageRange[0] && itemPsuWattage <= psuWattageRange[1]);
+      if (!matchesSearch || !matchesPrice || !matchesCompatibilitySocket || !matchesCompatibilityRam) {
+        return false;
+      }
 
-      return (
-        matchesBrand &&
-        matchesSearch &&
-        matchesSocket &&
-        matchesRamType &&
-        matchesPrice &&
-        matchesSelectedSocketFilter &&
-        matchesSelectedChipsetFilter &&
-        matchesSelectedCpuChipFilter &&
-        matchesSelectedGpuPerformanceFilter &&
-        matchesSelectedGpuChipFilter &&
-        matchesSelectedGpuExactModelFilter &&
-        matchesSelectedRamTypeFilter &&
-        matchesSelectedFormFactorFilter &&
-        matchesSelectedPcieGenerationFilter &&
-        matchesSelectedStorageTypeFilter &&
-        matchesSelectedPsuRatingFilter &&
-        matchesSelectedPsuModularFilter &&
-        matchesSelectedPsuWattage
-      );
+      if (activeCategory === "cpu") {
+        const modelFamily = getCpuModelFamily(item);
+        const performanceTier = getCpuPerformanceTier(item);
+        if (activeBrand !== "Alla" && item.brand !== activeBrand) return false;
+        if (cpuPerformanceFilters.length > 0 && !cpuPerformanceFilters.includes(performanceTier)) return false;
+        if (cpuModelFilters.length > 0 && !cpuModelFilters.includes(modelFamily)) return false;
+        return true;
+      }
+
+      if (activeCategory === "motherboard") {
+        const manufacturer = normalizeBrandLabel(item.brand);
+        const itemChipset = getDisplayChipsetValue(item);
+        const itemFormFactor = getItemFormFactorValue(item);
+        const itemRamType = getItemRamTypeFilterValue(item);
+        const itemWifi = getMotherboardWifiValue(item);
+        const memorySlots = getMotherboardMemorySlots(item);
+        const m2Slots = getMotherboardM2Slots(item);
+        if (motherboardManufacturerFilters.length > 0 && !motherboardManufacturerFilters.includes(manufacturer)) return false;
+        if (chipsetFilters.length > 0 && (!itemChipset || !chipsetFilters.includes(itemChipset))) return false;
+        if (formFactorFilters.length > 0 && (!itemFormFactor || !formFactorFilters.includes(itemFormFactor))) return false;
+        if (ramTypeFilters.length > 0 && (!itemRamType || !ramTypeFilters.includes(itemRamType))) return false;
+        if (socketFilters.length > 0 && !socketFilters.includes(getItemSocketFilterValue(item))) return false;
+        if (motherboardWifiFilter !== "Alla" && itemWifi !== motherboardWifiFilter) return false;
+        if (memorySlots !== null && (memorySlots < motherboardMemorySlotsRange[0] || memorySlots > motherboardMemorySlotsRange[1])) return false;
+        if (m2Slots !== null && (m2Slots < motherboardM2SlotsRange[0] || m2Slots > motherboardM2SlotsRange[1])) return false;
+        return true;
+      }
+
+      if (activeCategory === "gpu") {
+        const manufacturer = normalizeBrandLabel(item.brand);
+        const vendor = getGpuChipVendor(item);
+        const vram = getGpuVramGb(item);
+        const length = getGpuLengthMm(item);
+        if (gpuChipVendorFilter !== "Alla" && vendor !== gpuChipVendorFilter) return false;
+        if (gpuPerformanceFilters.length > 0 && !gpuPerformanceFilters.includes(getItemGpuPerformanceClass(item))) return false;
+        if (gpuManufacturerFilters.length > 0 && !gpuManufacturerFilters.includes(manufacturer)) return false;
+        if (vram !== null && (vram < gpuVramRange[0] || vram > gpuVramRange[1])) return false;
+        if (length !== null && (length < gpuLengthRange[0] || length > gpuLengthRange[1])) return false;
+        return true;
+      }
+
+      if (activeCategory === "ram") {
+        const manufacturer = normalizeBrandLabel(item.brand);
+        const size = getRamSizeGb(item);
+        const speed = getRamSpeedMhz(item);
+        const cl = getRamClValue(item);
+        const modules = getRamModulesValue(item);
+        const type = getItemRamTypeFilterValue(item);
+        if (ramMinimumSizeCard !== null && (size === null || size < ramMinimumSizeCard)) return false;
+        if (ramTypeFilters.length > 0 && (!type || !ramTypeFilters.includes(type))) return false;
+        if (ramManufacturers.length > 0 && !ramManufacturers.includes(manufacturer)) return false;
+        if (size !== null && (size < ramSizeRange[0] || size > ramSizeRange[1])) return false;
+        if (speed !== null && (speed < ramSpeedRange[0] || speed > ramSpeedRange[1])) return false;
+        if (cl !== null && (cl < ramClRange[0] || cl > ramClRange[1])) return false;
+        if (modules !== null && (modules < ramModulesRange[0] || modules > ramModulesRange[1])) return false;
+        return true;
+      }
+
+      if (activeCategory === "storage") {
+        const manufacturer = normalizeBrandLabel(item.brand);
+        const size = getStorageSizeGb(item);
+        const read = getStorageReadMb(item);
+        const write = getStorageWriteMb(item);
+        const formFactor = getStorageFormFactorValue(item);
+        const iface = getStorageInterfaceValue(item);
+        const typeLabel = getStorageTypeCardLabel(item);
+        if (storageMinimumSizeCard !== null && (size === null || size < storageMinimumSizeCard)) return false;
+        if (storageTypeFilters.length > 0 && !storageTypeFilters.includes(typeLabel)) return false;
+        if (storageManufacturerFilters.length > 0 && !storageManufacturerFilters.includes(manufacturer)) return false;
+        if (storageFormFactorFilters.length > 0 && (!formFactor || !storageFormFactorFilters.includes(formFactor))) return false;
+        if (storageInterfaceFilters.length > 0 && (!iface || !storageInterfaceFilters.includes(iface))) return false;
+        if (size !== null && (size < storageSizeRange[0] || size > storageSizeRange[1])) return false;
+        if (read !== null && (read < storageReadRange[0] || read > storageReadRange[1])) return false;
+        if (write !== null && (write < storageWriteRange[0] || write > storageWriteRange[1])) return false;
+        return true;
+      }
+
+      if (activeCategory === "psu") {
+        const manufacturer = normalizeBrandLabel(item.brand);
+        const wattage = getItemPsuWattage(item);
+        const rating = getItemPsuRating(item);
+        const modular = getPsuModularOption(item);
+        const atxStandard = getPsuAtxStandard(item);
+        const formFactor = getPsuFormFactorValue(item);
+        const length = getPsuLengthMm(item);
+        const ratingRank = ["Bronze", "Silver", "Gold", "Platinum", "Titanium"];
+        const requiredRatingIndex = psuMinimumRatingCard ? ratingRank.indexOf(psuMinimumRatingCard) : -1;
+        const itemRatingIndex = ratingRank.indexOf(rating);
+        if (psuMinimumWattCard !== null && (wattage === null || wattage < psuMinimumWattCard)) return false;
+        if (requiredRatingIndex >= 0 && itemRatingIndex >= 0 && itemRatingIndex < requiredRatingIndex) return false;
+        if (psuManufacturerFilters.length > 0 && !psuManufacturerFilters.includes(manufacturer)) return false;
+        if (psuRatingFilters.length > 0 && (!rating || !psuRatingFilters.includes(rating))) return false;
+        if (psuModularFiltersDetailed.length > 0 && !psuModularFiltersDetailed.includes(modular)) return false;
+        if (psuAtxStandardFilters.length > 0 && (!atxStandard || !psuAtxStandardFilters.includes(atxStandard))) return false;
+        if (psuFormFactorFilters.length > 0 && (!formFactor || !psuFormFactorFilters.includes(formFactor))) return false;
+        if (wattage !== null && (wattage < psuWattageRange[0] || wattage > psuWattageRange[1])) return false;
+        if (length !== null && (length < psuLengthRange[0] || length > psuLengthRange[1])) return false;
+        return true;
+      }
+
+      if (activeCategory === "cooling") {
+        const manufacturer = normalizeBrandLabel(item.brand);
+        const type = getCoolingTypeValue(item);
+        const height = getCoolingHeightMm(item);
+        const sockets = getCoolingSocketLabels(item);
+        if (coolingTypeFilter !== "Alla" && type !== coolingTypeFilter) return false;
+        if (coolingManufacturerFilters.length > 0 && !coolingManufacturerFilters.includes(manufacturer)) return false;
+        if (coolingSocketFilters.length > 0 && !coolingSocketFilters.every((socket) => sockets.includes(socket))) return false;
+        if (height !== null && (height < coolingHeightRange[0] || height > coolingHeightRange[1])) return false;
+        return true;
+      }
+
+      if (activeCategory === "case") {
+        const itemFormFactor = getItemFormFactorFilterValue(item);
+        if (formFactorFilters.length > 0 && (!itemFormFactor || !formFactorFilters.includes(itemFormFactor))) return false;
+      }
+
+      return true;
     });
   }, [
     items,
@@ -3697,28 +4323,254 @@ export default function CustomBuild() {
     lowestOfferPriceByItemId,
     socketFilters,
     chipsetFilters,
-    cpuChipFilter,
-    gpuPerformanceFilters,
-    gpuChipFilter,
-    gpuExactModelFilter,
     ramTypeFilters,
     formFactorFilters,
-    pcieGenerationFilters,
     storageTypeFilters,
+    gpuPerformanceFilters,
+    cpuPerformanceFilters,
+    cpuModelFilters,
+    gpuChipVendorFilter,
+    gpuManufacturerFilters,
+    motherboardManufacturerFilters,
+    motherboardWifiFilter,
+    motherboardMemorySlotsRange,
+    motherboardM2SlotsRange,
+    ramMinimumSizeCard,
+    ramManufacturers,
+    ramSizeRange,
+    ramSpeedRange,
+    ramClRange,
+    ramModulesRange,
+    storageMinimumSizeCard,
+    storageManufacturerFilters,
+    storageFormFactorFilters,
+    storageInterfaceFilters,
+    storageSizeRange,
+    storageReadRange,
+    storageWriteRange,
+    psuMinimumWattCard,
+    psuMinimumRatingCard,
+    psuManufacturerFilters,
     psuRatingFilters,
-    psuModularFilter,
+    psuModularFiltersDetailed,
+    psuAtxStandardFilters,
+    psuFormFactorFilters,
     psuWattageRange,
-    usesSocketFilters,
-    usesChipsetFilters,
-    usesGpuFilters,
-    usesRamTypeFilters,
-    usesFormFactorFilters,
-    usesPcieGenerationFilters,
-    usesStorageTypeFilters,
-    usesPsuFilters,
+    psuLengthRange,
+    coolingTypeFilter,
+    coolingManufacturerFilters,
+    coolingSocketFilters,
+    coolingHeightRange,
+    gpuVramRange,
+    gpuLengthRange,
   ]);
 
+  const activeSort = tableSortByCategory[activeCategory];
+  const itemIndexLookup = useMemo(() => Object.fromEntries(items.map((item, index) => [item.id, index])), [items]);
 
+  const sortedItems = useMemo(() => {
+    const direction = activeSort?.direction === "asc" ? 1 : -1;
+    const getSortValue = (item: ComponentItem) => {
+      switch (activeSort?.key) {
+        case "price":
+          return getComparablePrice(item, activeCategory);
+        case "chipset":
+          return getChipsetSortRank(getDisplayChipsetValue(item));
+        case "speed":
+          return getCpuSpeedGhz(item) ?? 0;
+        case "cores":
+          return getCpuCoreCount(item) ?? 0;
+        case "vram":
+          return getGpuVramGb(item) ?? 0;
+        case "ramSize":
+          return getRamSizeGb(item) ?? 0;
+        case "ramSpeed":
+          return getRamSpeedMhz(item) ?? 0;
+        case "ramCl":
+          return getRamClValue(item) ?? 0;
+        case "storageSize":
+          return getStorageSizeGb(item) ?? 0;
+        case "read":
+          return getStorageReadMb(item) ?? 0;
+        case "write":
+          return getStorageWriteMb(item) ?? 0;
+        case "wattage":
+          return getItemPsuWattage(item) ?? 0;
+        case "coolingType":
+          return getCoolingTypeValue(item) === "Vatten" ? 2 : 1;
+        case "popularity":
+        default:
+          return getItemPopularityScore(item, activeCategory, itemIndexLookup[item.id] ?? 0);
+      }
+    };
+
+    return [...filteredItems].sort((a, b) => {
+      const aValue = getSortValue(a);
+      const bValue = getSortValue(b);
+      if (aValue === bValue) {
+        return (itemIndexLookup[a.id] ?? 0) - (itemIndexLookup[b.id] ?? 0);
+      }
+      if (typeof aValue === "string" || typeof bValue === "string") {
+        return String(aValue).localeCompare(String(bValue), "sv") * direction;
+      }
+      return ((aValue as number) - (bValue as number)) * direction;
+    });
+  }, [filteredItems, activeSort, activeCategory, itemIndexLookup, lowestOfferPriceByItemId]);
+
+  const tableSortButtons = useMemo(() => {
+    switch (activeCategory) {
+      case "cpu":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "speed" as SortKey, label: "Hastighet", direction: "desc" as SortDirection },
+          { key: "cores" as SortKey, label: "Kärnor", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      case "motherboard":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "chipset" as SortKey, label: "Chipset", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      case "gpu":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "vram" as SortKey, label: "Minne", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      case "ram":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "ramSpeed" as SortKey, label: "Hastighet", direction: "desc" as SortDirection },
+          { key: "ramCl" as SortKey, label: "CL", direction: "asc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      case "storage":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "read" as SortKey, label: "Läs", direction: "desc" as SortDirection },
+          { key: "write" as SortKey, label: "Skriv", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      case "psu":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "wattage" as SortKey, label: "Effekt", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      case "cooling":
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "coolingType" as SortKey, label: "Typ", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+      default:
+        return [
+          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
+          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
+        ];
+    }
+  }, [activeCategory]);
+
+  const renderCardFilterGrid = (
+    label: string,
+    options: string[],
+    isActive: (option: string) => boolean,
+    onToggle: (option: string) => void,
+    columns = "sm:grid-cols-2 xl:grid-cols-3"
+  ) => {
+    if (options.length === 0) return null;
+    return (
+      <div className="space-y-3">
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+        <div className={`grid grid-cols-1 gap-3 ${columns}`}>
+          {options.map((option) => (
+            <button
+              key={`${label}-${option}`}
+              type="button"
+              onClick={() => onToggle(option)}
+              className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
+                isActive(option)
+                  ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10"
+                  : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-[#101926] dark:text-gray-200"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderToggleChipGroup = (
+    label: string,
+    options: string[],
+    selectedOptions: string[],
+    onToggle: (option: string) => void
+  ) => {
+    if (options.length === 0) return null;
+    return (
+      <div className="space-y-2">
+        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+        <div className="flex flex-wrap gap-2">
+          {options.map((option) => (
+            <button
+              key={`${label}-${option}`}
+              type="button"
+              onClick={() => onToggle(option)}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
+                selectedOptions.includes(option)
+                  ? "bg-yellow-400 text-gray-900"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-[#101926] dark:text-gray-200 dark:hover:bg-[#162234]"
+              }`}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderRangeFilter = (
+    label: string,
+    range: [number, number],
+    bounds: { min: number; max: number },
+    onChange: (value: [number, number]) => void,
+    unit = "",
+    step = 1
+  ) => {
+    if (bounds.max <= bounds.min) return null;
+    return (
+      <div className="space-y-2">
+        <div className="flex items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{label}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {range[0]}
+            {unit} - {range[1]}
+            {unit}
+          </p>
+        </div>
+        <input
+          type="range"
+          min={bounds.min}
+          max={bounds.max}
+          step={step}
+          value={range[1]}
+          onChange={(event) => onChange([bounds.min, Number(event.target.value)])}
+          className="h-1 w-full accent-yellow-400"
+        />
+      </div>
+    );
+  };
+
+  const formatCapacityCardLabel = (value: number) => {
+    if (value >= 1024) {
+      return `${value / 1024}TB`;
+    }
+    return `${value}GB`;
+  };
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
   const allComponentsSelected = selectedCount === CATEGORY_LIST.length;
@@ -4327,25 +5179,74 @@ export default function CustomBuild() {
                       </div>
                     </div>
                   </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {brandOptions.map((brand) => (
-                      <button
-                        key={brand}
-                        type="button"
-                        onClick={() => setActiveBrand(brand)}
-                        className={`rounded-full px-4 py-2 text-xs font-semibold border transition-colors ${
-                          activeBrand === brand
-                            ? "bg-yellow-400 text-gray-900 border-yellow-400"
-                            : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300 dark:hover:border-gray-500"
-                        }`}
-                      >
-                        {brand}
-                      </button>
-                    ))}
+
+                  <div className="mt-6 space-y-5">
+                    {activeCategory === "cpu"
+                      ? (
+                        <>
+                          {renderCardFilterGrid("Välj processortillverkare", CPU_VENDOR_CARD_OPTIONS, (option) => activeBrand === option, (option) => setActiveBrand(option))}
+                          {renderCardFilterGrid("Välj din prestandanivå", CPU_PERFORMANCE_OPTIONS, (option) => cpuPerformanceFilters.includes(option), (option) => toggleArrayFilter(option, setCpuPerformanceFilters))}
+                        </>
+                      )
+                      : null}
+                    {activeCategory === "gpu"
+                      ? (
+                        <>
+                          {renderCardFilterGrid("Välj chiptillverkare", GPU_VENDOR_CARD_OPTIONS, (option) => gpuChipVendorFilter === option, (option) => setGpuChipVendorFilter(option), "sm:grid-cols-2 xl:grid-cols-4")}
+                          {renderCardFilterGrid("Välj din prestandaklass", gpuPerformanceFilterOptions, (option) => gpuPerformanceFilters.includes(option), (option) => toggleArrayFilter(option, setGpuPerformanceFilters), "sm:grid-cols-2 xl:grid-cols-3")}
+                        </>
+                      )
+                      : null}
+                    {activeCategory === "ram"
+                      ? (
+                        <>
+                          {renderCardFilterGrid("Minsta storlek på minne", RAM_SIZE_CARD_OPTIONS.map((value) => `${value}GB`), (option) => ramMinimumSizeCard === Number(option.replace("GB", "")), (option) => {
+                            const next = Number(option.replace("GB", ""));
+                            setRamMinimumSizeCard((prev) => (prev === next ? null : next));
+                          }, "sm:grid-cols-3")}
+                          {renderCardFilterGrid("Typ", RAM_TYPE_CARD_OPTIONS, (option) => ramTypeFilters.includes(option), (option) => toggleArrayFilter(option, setRamTypeFilters), "sm:grid-cols-2")}
+                        </>
+                      )
+                      : null}
+                    {activeCategory === "storage"
+                      ? (
+                        <>
+                          {renderCardFilterGrid("Storlek", STORAGE_SIZE_CARD_OPTIONS.map((value) => formatCapacityCardLabel(value)), (option) => storageMinimumSizeCard === (option.endsWith("TB") ? Number(option.replace("TB", "")) * 1024 : Number(option.replace("GB", ""))), (option) => {
+                            const next = option.endsWith("TB") ? Number(option.replace("TB", "")) * 1024 : Number(option.replace("GB", ""));
+                            setStorageMinimumSizeCard((prev) => (prev === next ? null : next));
+                          }, "sm:grid-cols-3 xl:grid-cols-5")}
+                          {renderCardFilterGrid("Typ", STORAGE_TYPE_CARD_OPTIONS, (option) => storageTypeFilters.includes(option), (option) => toggleArrayFilter(option, setStorageTypeFilters), "sm:grid-cols-2")}
+                        </>
+                      )
+                      : null}
+                    {activeCategory === "psu"
+                      ? (
+                        <>
+                          {renderCardFilterGrid("Välj minsta effekt", PSU_WATTAGE_CARD_OPTIONS.map((value) => (value >= 1200 ? "1200W+" : `${value}W`)), (option) => {
+                            const next = option === "1200W+" ? 1200 : Number(option.replace("W", ""));
+                            return psuMinimumWattCard === next;
+                          }, (option) => {
+                            const next = option === "1200W+" ? 1200 : Number(option.replace("W", ""));
+                            setPsuMinimumWattCard((prev) => (prev === next ? null : next));
+                          }, "sm:grid-cols-3 xl:grid-cols-4")}
+                          {renderCardFilterGrid("Välj 80-plus certifiering", PSU_MIN_RATING_CARD_OPTIONS, (option) => psuMinimumRatingCard === option, (option) => setPsuMinimumRatingCard((prev) => (prev === option ? null : option)), "sm:grid-cols-3")}
+                        </>
+                      )
+                      : null}
+                    {activeCategory === "cooling"
+                      ? renderCardFilterGrid("Välj kylningstyp", COOLING_TYPE_CARD_OPTIONS, (option) => coolingTypeFilter === option, (option) => setCoolingTypeFilter((prev) => (prev === option ? "Alla" : option as "Luft" | "Vatten")), "sm:grid-cols-2")
+                      : null}
                   </div>
-                  <div className="mt-5 border-t border-gray-200 pt-4 dark:border-gray-800">
+
+                  <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-[#111926]">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">Filter</p>
+                      <button
+                        type="button"
+                        onClick={() => setShowDetailedFilters((prev) => !prev)}
+                        className="text-left text-sm font-semibold text-gray-900 dark:text-gray-100"
+                      >
+                        Detaljerat filter {showDetailedFilters ? "▴" : "▾"}
+                      </button>
                       {hasActiveAdvancedFilters ? (
                         <button
                           type="button"
@@ -4356,291 +5257,105 @@ export default function CustomBuild() {
                         </button>
                       ) : null}
                     </div>
-
-                    {(activeCategory === "cpu" || activeCategory === "motherboard") && socketFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Socket</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {socketFilterOptions.map((socket) => (
-                            <button
-                              key={socket}
-                              type="button"
-                              onClick={() => toggleArrayFilter(socket, setSocketFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                socketFilters.includes(socket)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {socket}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "motherboard" && chipsetFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Chipset</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {chipsetFilterOptions.map((chipset) => (
-                            <button
-                              key={chipset}
-                              type="button"
-                              onClick={() => toggleArrayFilter(chipset, setChipsetFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                chipsetFilters.includes(chipset)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {chipset}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "cpu" && cpuChipFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">CPU-chip</p>
-                        <div className="mt-2">
-                          <select
-                            value={cpuChipFilter}
-                            onChange={(event) => setCpuChipFilter(event.target.value)}
-                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
-                          >
-                            <option value="Alla">Alla chip</option>
-                            {cpuChipFilterOptions.map((cpuChip) => (
-                              <option key={cpuChip} value={cpuChip}>
-                                {cpuChip}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "gpu" && gpuPerformanceFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Prestandaklass</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {gpuPerformanceFilterOptions.map((performanceClass) => (
-                            <button
-                              key={performanceClass}
-                              type="button"
-                              onClick={() => toggleArrayFilter(performanceClass, setGpuPerformanceFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                gpuPerformanceFilters.includes(performanceClass)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {performanceClass}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "gpu" && gpuChipFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">GPU-chip</p>
-                        <div className="mt-2">
-                          <select
-                            value={gpuChipFilter}
-                            onChange={(event) => setGpuChipFilter(event.target.value)}
-                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
-                          >
-                            <option value="Alla">Alla chip</option>
-                            {gpuChipFilterOptions.map((gpuChip) => (
-                              <option key={gpuChip} value={gpuChip}>
-                                {gpuChip}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "gpu" && gpuExactModelFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Exakt modell</p>
-                        <div className="mt-2">
-                          <select
-                            value={gpuExactModelFilter}
-                            onChange={(event) => setGpuExactModelFilter(event.target.value)}
-                            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
-                          >
-                            <option value="Alla">Alla modeller</option>
-                            {gpuExactModelFilterOptions.map((gpuModel) => (
-                              <option key={gpuModel} value={gpuModel}>
-                                {gpuModel}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {(activeCategory === "motherboard" || activeCategory === "ram") && ramTypeFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Minne</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {ramTypeFilterOptions.map((ramType) => (
-                            <button
-                              key={ramType}
-                              type="button"
-                              onClick={() => toggleArrayFilter(ramType, setRamTypeFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                ramTypeFilters.includes(ramType)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {ramType}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {(activeCategory === "motherboard" || activeCategory === "case") && formFactorFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Formfaktor</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {formFactorFilterOptions.map((formFactor) => (
-                            <button
-                              key={formFactor}
-                              type="button"
-                              onClick={() => toggleArrayFilter(formFactor, setFormFactorFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                formFactorFilters.includes(formFactor)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {formFactor}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {(activeCategory === "motherboard" || activeCategory === "storage") && pcieGenerationFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">PCIe-generation</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {pcieGenerationFilterOptions.map((pcieGeneration) => (
-                            <button
-                              key={pcieGeneration}
-                              type="button"
-                              onClick={() => toggleArrayFilter(pcieGeneration, setPcieGenerationFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                pcieGenerationFilters.includes(pcieGeneration)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {pcieGeneration}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "storage" && storageTypeFilterOptions.length > 0 ? (
-                      <div className="mt-4">
-                        <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Lagringstyp</p>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {storageTypeFilterOptions.map((storageType) => (
-                            <button
-                              key={storageType}
-                              type="button"
-                              onClick={() => toggleArrayFilter(storageType, setStorageTypeFilters)}
-                              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                storageTypeFilters.includes(storageType)
-                                  ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                  : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                              }`}
-                            >
-                              {storageType}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    ) : null}
-
-                    {activeCategory === "psu" ? (
-                      <div className="mt-4 space-y-4">
-                        <div>
-                          <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Effekt</p>
-                          <div className="mt-2 flex items-center gap-3">
-                            <input
-                              type="range"
-                              min={psuWattageBounds.min}
-                              max={psuWattageBounds.max}
-                              step="50"
-                              value={psuWattageRange[1]}
-                              onChange={(event) =>
-                                setPsuWattageRange([psuWattageBounds.min, Number(event.target.value)])
-                              }
-                              className="h-1 w-full max-w-[260px] accent-yellow-400"
-                            />
-                            <span className="text-xs text-gray-600 dark:text-gray-400">
-                              {psuWattageRange[0]}-{psuWattageRange[1]} W
-                            </span>
-                          </div>
-                        </div>
-
-                        {psuRatingFilterOptions.length > 0 ? (
-                          <div>
-                            <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">80+ rating</p>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {psuRatingFilterOptions.map((rating) => (
-                                <button
-                                  key={rating}
-                                  type="button"
-                                  onClick={() => toggleArrayFilter(rating, setPsuRatingFilters)}
-                                  className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                    psuRatingFilters.includes(rating)
-                                      ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                      : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                                  }`}
-                                >
-                                  {rating}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
+                    {showDetailedFilters ? (
+                      <div className="mt-4 space-y-5">
+                        {activeCategory === "cpu" ? (
+                          <>
+                            {renderToggleChipGroup("Modell", CPU_MODEL_OPTIONS.filter((option) => items.some((item) => getCpuModelFamily(item) === option)), cpuModelFilters, (option) => toggleArrayFilter(option, setCpuModelFilters))}
+                            {renderToggleChipGroup("Socket", socketFilterOptions, socketFilters, (option) => toggleArrayFilter(option, setSocketFilters))}
+                          </>
                         ) : null}
-
-                        <div>
-                          <p className="text-[11px] uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400">Kablage</p>
-                          <div className="mt-2 flex flex-wrap gap-2">
-                            {["Alla", "Modular"].map((modularOption) => (
-                              <button
-                                key={modularOption}
-                                type="button"
-                                onClick={() => setPsuModularFilter(modularOption as "Alla" | "Modular")}
-                                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
-                                  psuModularFilter === modularOption
-                                    ? "border-yellow-400 bg-yellow-400 text-gray-900"
-                                    : "border-gray-300 text-gray-600 hover:border-gray-400 dark:border-gray-700 dark:text-gray-300"
-                                }`}
-                              >
-                                {modularOption}
-                              </button>
-                            ))}
-                          </div>
-                        </div>
+                        {activeCategory === "motherboard" ? (
+                          <>
+                            {renderToggleChipGroup("Tillverkare", motherboardManufacturerOptions, motherboardManufacturerFilters, (option) => toggleArrayFilter(option, setMotherboardManufacturerFilters))}
+                            {renderToggleChipGroup("Formfaktor", MOTHERBOARD_FORM_FACTOR_OPTIONS.filter((option) => formFactorFilterOptions.includes(option)), formFactorFilters, (option) => toggleArrayFilter(option, setFormFactorFilters))}
+                            {renderToggleChipGroup("Socket", socketFilterOptions, socketFilters, (option) => toggleArrayFilter(option, setSocketFilters))}
+                            {renderToggleChipGroup("Chipset", chipsetFilterOptions, chipsetFilters, (option) => toggleArrayFilter(option, setChipsetFilters))}
+                            {renderToggleChipGroup("Minnestyp", MOTHERBOARD_RAM_TYPE_OPTIONS.filter((option) => ramTypeFilterOptions.includes(option)), ramTypeFilters, (option) => toggleArrayFilter(option, setRamTypeFilters))}
+                            {renderCardFilterGrid("Wi-Fi", ["Ja", "Nej"], (option) => motherboardWifiFilter === option, (option) => setMotherboardWifiFilter((prev) => (prev === option ? "Alla" : option as "Ja" | "Nej")), "sm:grid-cols-2")}
+                            {renderRangeFilter("Minnesplatser", motherboardMemorySlotsRange, motherboardMemorySlotBounds, setMotherboardMemorySlotsRange)}
+                            {renderRangeFilter("M.2 platser", motherboardM2SlotsRange, motherboardM2Bounds, setMotherboardM2SlotsRange)}
+                          </>
+                        ) : null}
+                        {activeCategory === "gpu" ? (
+                          <>
+                            {renderToggleChipGroup("Tillverkare", gpuManufacturerOptions, gpuManufacturerFilters, (option) => toggleArrayFilter(option, setGpuManufacturerFilters))}
+                            {renderRangeFilter("Minne", gpuVramRange, gpuVramBounds, setGpuVramRange, " GB")}
+                            {renderRangeFilter("Längd", gpuLengthRange, gpuLengthBounds, setGpuLengthRange, " mm")}
+                          </>
+                        ) : null}
+                        {activeCategory === "ram" ? (
+                          <>
+                            {renderToggleChipGroup("Tillverkare", ramManufacturerOptions, ramManufacturers, (option) => toggleArrayFilter(option, setRamManufacturers))}
+                            {renderRangeFilter("Storlek", ramSizeRange, ramSizeBounds, setRamSizeRange, " GB")}
+                            {renderRangeFilter("Hastighet", ramSpeedRange, ramSpeedBounds, setRamSpeedRange, " MHz")}
+                            {renderRangeFilter("CL", ramClRange, ramClBounds, setRamClRange)}
+                            {renderRangeFilter("Moduler", ramModulesRange, ramModulesBounds, setRamModulesRange)}
+                          </>
+                        ) : null}
+                        {activeCategory === "storage" ? (
+                          <>
+                            {renderToggleChipGroup("Tillverkare", storageManufacturerOptions, storageManufacturerFilters, (option) => toggleArrayFilter(option, setStorageManufacturerFilters))}
+                            {renderToggleChipGroup("Formfaktor", storageFormFactorOptions, storageFormFactorFilters, (option) => toggleArrayFilter(option, setStorageFormFactorFilters))}
+                            {renderToggleChipGroup("Interface", storageInterfaceOptions, storageInterfaceFilters, (option) => toggleArrayFilter(option, setStorageInterfaceFilters))}
+                            {renderRangeFilter("Storlek", storageSizeRange, storageSizeBounds, setStorageSizeRange, " GB")}
+                            {renderRangeFilter("Läs", storageReadRange, storageReadBounds, setStorageReadRange, " MB/s")}
+                            {renderRangeFilter("Skriv", storageWriteRange, storageWriteBounds, setStorageWriteRange, " MB/s")}
+                          </>
+                        ) : null}
+                        {activeCategory === "psu" ? (
+                          <>
+                            {renderToggleChipGroup("Tillverkare", psuManufacturerOptions, psuManufacturerFilters, (option) => toggleArrayFilter(option, setPsuManufacturerFilters))}
+                            {renderRangeFilter("Längd", psuLengthRange, psuLengthBounds, setPsuLengthRange, " mm")}
+                            {renderRangeFilter("Effekt", psuWattageRange, psuWattageBounds, setPsuWattageRange, " W", 50)}
+                            {renderToggleChipGroup("Modulär", PSU_MODULAR_OPTIONS, psuModularFiltersDetailed, (option) => toggleArrayFilter(option, setPsuModularFiltersDetailed))}
+                            {renderToggleChipGroup("80 PLUS", ["Bronze", "Silver", "Gold", "Platinum", "Titanium"], psuRatingFilters, (option) => toggleArrayFilter(option, setPsuRatingFilters))}
+                            {renderToggleChipGroup("ATX standard", PSU_ATX_STANDARD_OPTIONS, psuAtxStandardFilters, (option) => toggleArrayFilter(option, setPsuAtxStandardFilters))}
+                            {renderToggleChipGroup("Formfaktor", PSU_FORM_FACTOR_OPTIONS, psuFormFactorFilters, (option) => toggleArrayFilter(option, setPsuFormFactorFilters))}
+                          </>
+                        ) : null}
+                        {activeCategory === "cooling" ? (
+                          <>
+                            {renderToggleChipGroup("Tillverkare", coolingManufacturerOptions, coolingManufacturerFilters, (option) => toggleArrayFilter(option, setCoolingManufacturerFilters))}
+                            {renderRangeFilter("Höjd", coolingHeightRange, coolingHeightBounds, setCoolingHeightRange, " mm")}
+                            {renderToggleChipGroup("Kompatibla sockets", COOLING_SOCKET_OPTIONS.filter((option) => items.some((item) => getCoolingSocketLabels(item).includes(option))), coolingSocketFilters, (option) => toggleArrayFilter(option, setCoolingSocketFilters))}
+                          </>
+                        ) : null}
+                        {activeCategory === "case" ? (
+                          <>
+                            {renderToggleChipGroup("Formfaktor", CASE_FORM_FACTOR_OPTIONS.filter((option) => caseFormFactorOptions.includes(option)), formFactorFilters, (option) => toggleArrayFilter(option, setFormFactorFilters))}
+                          </>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>
-                </div>
 
+                  <div className="mt-5 grid gap-2 border-b border-gray-200 pb-4 dark:border-gray-800 sm:grid-cols-2 xl:grid-cols-4">
+                    {tableSortButtons.map((sortButton) => {
+                      const isActive = activeSort?.key === sortButton.key;
+                      const arrow = isActive ? (activeSort.direction === "asc" ? "↑" : "↓") : "↕";
+                      return (
+                        <button
+                          key={`${activeCategory}-${sortButton.key}`}
+                          type="button"
+                          onClick={() => toggleSortForCategory(sortButton.key, sortButton.direction)}
+                          className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
+                            isActive
+                              ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10"
+                              : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-[#101926] dark:text-gray-200"
+                          }`}
+                        >
+                          <span className="flex items-center justify-between gap-3">
+                            <span>{sortButton.label}</span>
+                            <span>{arrow}</span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
                 <div className="space-y-4">
-                  {filteredItems.map((item) => {
+                  {sortedItems.map((item) => {
                     const isSelected = selected[activeCategory]?.id === item.id;
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
@@ -5015,6 +5730,8 @@ export default function CustomBuild() {
     </div>
   );
 }
+
+
 
 
 
