@@ -260,7 +260,7 @@ const CASE_REMOTE_IMAGE_BY_ID: Record<string, string> = {
   "case-6": buildPricespyProductImageUrl(5339161),
   "case-7": "https://a.storyblok.com/f/281110/0784b7eca1/td500-mesh-black-gallery-1.png",
   "case-8": buildPricespyProductImageUrl(13900663),
-  "case-9": "https://lian-li.com/wp-content/uploads/2020/11/O11D-black-side.jpg",
+  "case-9": "https://komponentkoll.se/api/thumbnail/240/1447178.jpg",
   "case-10": buildPricespyProductImageUrl(5641231),
   "case-11": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cases/CG530_4F/Gallery/800X800/01.jpg",
   "case-12": "https://cdn.deepcool.com/public/ProductFile/DEEPCOOL/Cases/CG530_WH_4F/Gallery/800X800/01.jpg",
@@ -2400,7 +2400,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "GIGABYTE P650G PG5",
       brand: "GIGABYTE",
       price: 799,
-      image: CATEGORY_IMAGES.psu.src,
+      image: psuMsiMpgA850gImage,
       specs: ["650W", "80+ Gold", "ATX 3.0"],
     },
     {
@@ -2408,7 +2408,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool PL650-D White",
       brand: "DeepCool",
       price: 899,
-      image: CATEGORY_IMAGES.psu.src,
+      image: psuCoolerMasterMwe750Image,
       specs: ["650W", "80+ Bronze", "Vit"],
     },
     {
@@ -2416,7 +2416,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "DeepCool PL650D 650W ATX 3.1",
       brand: "DeepCool",
       price: 799,
-      image: CATEGORY_IMAGES.psu.src,
+      image: psuCoolerMasterMwe750Image,
       specs: ["650W", "80+ Bronze", "ATX 3.1"],
     },
     {
@@ -2480,7 +2480,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "GIGABYTE UD750GM PG5 V2 ICE",
       brand: "GIGABYTE",
       price: 1299,
-      image: CATEGORY_IMAGES.psu.src,
+      image: psuMsiMpgA850gImage,
       specs: ["750W", "80+ Gold", "Modulärt"],
     },
     {
@@ -2496,7 +2496,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "Gigabyte UD850GM PG5 V2 850W",
       brand: "GIGABYTE",
       price: 1399,
-      image: CATEGORY_IMAGES.psu.src,
+      image: psuMsiMpgA850gImage,
       specs: ["850W", "80+ Gold", "Modulärt"],
     },
     {
@@ -2536,7 +2536,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       name: "GIGABYTE UD1000GM PG5 V2 ICE",
       brand: "GIGABYTE",
       price: 1799,
-      image: CATEGORY_IMAGES.psu.src,
+      image: psuMsiMpgA850gImage,
       specs: ["1000W", "80+ Gold", "Modulärt"],
     },
     {
