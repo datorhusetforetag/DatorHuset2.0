@@ -1,27 +1,27 @@
-export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-15T02:22:24.318Z";
+export const CUSTOM_BUILD_PRELOADED_PRICES_VERSION = "generated-2026-03-21T21:13:04.319Z";
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-am4-ryzen-3-3100": 390,
-  "cpu-am4-ryzen-3-3200g": 626,
-  "cpu-am4-ryzen-5-4500": 759,
-  "cpu-am4-ryzen-5-5500": 989,
+  "cpu-am4-ryzen-3-3200g": 611,
+  "cpu-am4-ryzen-5-4500": 744,
+  "cpu-am4-ryzen-5-5500": 900,
   "cpu-am4-ryzen-5-5600": 1249,
-  "cpu-am4-ryzen-5-5600x": 1429,
+  "cpu-am4-ryzen-5-5600x": 1406,
   "cpu-am4-ryzen-5-5600gt": 1249,
-  "cpu-am4-ryzen-7-5700g": 2089,
-  "cpu-am4-ryzen-7-5700x": 1563,
-  "cpu-am4-ryzen-7-5700": 1700,
-  "cpu-am4-ryzen-7-5800x": 2177,
+  "cpu-am4-ryzen-7-5700g": 2070,
+  "cpu-am4-ryzen-7-5700x": 1839,
+  "cpu-am4-ryzen-7-5700": 1709,
+  "cpu-am4-ryzen-7-5800x": 2157,
   "cpu-am4-ryzen-7-5800xt": 2289,
   "cpu-am4-ryzen-9-5900x": 3249,
-  "cpu-am4-ryzen-9-5950x": 3631,
+  "cpu-am4-ryzen-9-5950x": 3574,
   "cpu-am5-ryzen-5-7500f-tray": 1689,
   "cpu-am5-ryzen-5-7500x3d": 2429,
-  "cpu-am5-ryzen-5-7600": 1989,
+  "cpu-am5-ryzen-5-7600": 2017,
   "cpu-am5-ryzen-5-7600-tray": 1949,
-  "cpu-am5-ryzen-5-7600x": 1989,
-  "cpu-am5-ryzen-5-8600g": 1886,
-  "cpu-am5-ryzen-7-8700f": 2289,
+  "cpu-am5-ryzen-5-7600x": 1814,
+  "cpu-am5-ryzen-5-8600g": 1869,
+  "cpu-am5-ryzen-7-8700f": 2169,
   "cpu-am5-ryzen-7-8700f-tray": 2289,
   "cpu-am5-ryzen-7-8700g": 2849,
   "cpu-am5-ryzen-5-9600": 1988,
@@ -44,8 +44,8 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-lga1700-core-i3-12100f": 962,
   "cpu-lga1700-core-i5-12400-tray": 1449,
   "cpu-lga1700-core-i5-12400f": 1499,
-  "cpu-lga1700-core-i5-12600k": 1849,
-  "cpu-lga1700-core-i5-12600kf": 1849,
+  "cpu-lga1700-core-i5-12600k": 2074,
+  "cpu-lga1700-core-i5-12600kf": 2074,
   "cpu-lga1700-core-i7-12700kf": 2799,
   "cpu-lga1700-core-i7-12700k": 2799,
   "cpu-lga1700-core-i9-12900k": 3244,
@@ -59,69 +59,124 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cpu-lga1700-core-i5-14600kf": 2599,
   "cpu-lga1700-core-i7-14700k": 3789,
   "cpu-lga1700-core-i7-14700kf": 3789,
-  "cpu-lga1700-core-i9-13900ks": 8387,
+  "cpu-lga1700-core-i9-13900ks": 9124,
   "cpu-lga1700-core-i9-14900k": 4689,
   "cpu-lga1700-core-i9-14900kf": 4689,
   "cpu-lga1700-core-i9-14900ks": 7485,
-  "mb-am4-msi-b550-tomahawk": 1729,
-  "mb-am4-asus-tuf-b550-plus-wifi-ii": 1429,
-  "mb-am4-gigabyte-b550-aorus-elite-v2": 1477,
-  "mb-am4-asrock-b550m-pro4": 1158,
-  "mb-am4-msi-mpg-b550-gaming-plus": 1243,
+  "mb-am4-asrock-a520m-hvs": 576,
+  "mb-am4-asrock-a520m-hdv": 611,
+  "mb-am4-asus-prime-a520m-r": 613,
+  "mb-am4-asus-prime-a520m-k": 613,
+  "mb-am4-msi-a520m-a-pro": 649,
+  "mb-am4-asrock-b450-pro4-r20": 891,
+  "mb-am4-gigabyte-b550m-k": 1019,
+  "mb-am4-asrock-b550m-hdv": 782,
+  "mb-am4-asus-prime-b550m-a": 924,
+  "mb-am4-asrock-b550m-phantom-gaming-4": 914,
+  "mb-am4-msi-b550-tomahawk": 3568,
+  "mb-am4-asus-tuf-b550-plus-wifi-ii": 1469,
+  "mb-am4-gigabyte-b550-aorus-elite-v2": 1475,
+  "mb-am4-asrock-b550m-pro4": 1160,
+  "mb-am4-msi-mpg-b550-gaming-plus": 1245,
+  "mb-am4-msi-b550m-pro-vdh-wifi": 1374,
   "mb-am4-asus-rog-strix-b550-f-gaming-wifi-ii": 1747,
-  "mb-am4-asrock-x570-steel-legend": 2499,
-  "mb-am5-msi-b650-tomahawk-wifi": 1865,
-  "mb-am5-gigabyte-b650-aorus-elite-ax": 1866,
-  "mb-am5-asus-tuf-b650-plus-wifi": 1599,
+  "mb-am4-asrock-x570-steel-legend": 3534,
+  "mb-am4-gigabyte-b550i-aorus-pro-ax": 1844,
+  "mb-am5-asrock-a620am-hvs": 795,
+  "mb-am5-sapphire-pulse-a620am": 1137,
+  "mb-am5-msi-b650-tomahawk-wifi": 1860,
+  "mb-am5-gigabyte-b650-aorus-elite-ax": 1847,
+  "mb-am5-asus-tuf-b650-plus-wifi": 1490,
   "mb-am5-msi-b650m-mortar-wifi": 2555,
-  "mb-am5-asus-rog-strix-b650e-f": 2110,
-  "mb-am5-gigabyte-x670-aorus-elite-ax": 2971,
+  "mb-am5-asus-rog-strix-b650e-f": 2087,
+  "mb-am5-gigabyte-x670-aorus-elite-ax": 4566,
   "mb-am5-msi-x670e-carbon-wifi": 4199,
-  "mb-am5-asus-x870-a-gaming-wifi": 3390,
+  "mb-am5-asus-x870-a-gaming-wifi": 3290,
+  "mb-am5-asus-b650e-max-gaming-wifi-d5": 1049,
+  "mb-am5-asrock-b650m-h-m2-plus": 1036,
+  "mb-am5-gigabyte-b840m-h": 1222,
+  "mb-am5-asrock-b650m-hdv-m2-d5": 1149,
+  "mb-am5-asrock-b650m-pg-lightning": 1189,
+  "mb-am5-msi-pro-b850-s-wifi6e": 1786,
+  "mb-am5-asrock-b850m-x-r20": 1295,
+  "mb-am5-asrock-b850m-x-wifi-r20": 1313,
+  "mb-am5-gigabyte-b650-eagle-ax-wifi-d5": 1490,
+  "mb-am5-gigabyte-b850-eagle-wifi-d5": 1490,
+  "mb-am5-gigabyte-b850m-force": 1551,
+  "mb-am5-asrock-b850m-pro-rs-wifi": 1609,
+  "mb-am5-gigabyte-b850m-force-wifi6e": 1650,
+  "mb-am5-asrock-b850-pro-a-wifi": 1477,
+  "mb-am5-msi-b850m-gaming-plus-wifi6e": 1744,
+  "mb-am5-gigabyte-b850-eagle-ice": 1765,
+  "mb-am5-asrock-b850m-steel-legend-wifi": 1771,
+  "mb-am5-asrock-b850m-riptide-wifi": 1864,
+  "mb-am5-asus-b850-max-gaming-wifi-d5": 2889,
+  "mb-am5-gigabyte-b850m-eagle-wifi6e-ice": 1978,
+  "mb-am5-gigabyte-b850m-aorus-elite-wf6e-ice": 2220,
+  "mb-am5-sapphire-pure-b850m-wifi": 2090,
+  "mb-am5-asrock-x870-pro-rs": 2205,
+  "mb-am5-gigabyte-b850-aorus-elite-wf7-ice": 2438,
+  "mb-am5-asrock-x870-pro-rs-wifi": 2543,
+  "mb-am5-sapphire-pure-b850a-wifi7": 2590,
+  "mb-am5-asus-tuf-b850-btf-wifi-w": 2636,
+  "mb-am5-gigabyte-x870-gaming-x-wifi-7": 1490,
+  "mb-am5-gigabyte-x870-aorus-elite-wifi7": 2969,
+  "mb-am5-gigabyte-x870-aorus-elite-ice": 2799,
+  "mb-am5-asrock-x870-steel-legend-wifi": 2817,
+  "mb-am5-asrock-x870-livemixer-wifi": 3199,
+  "mb-am5-msi-mag-x870-tomahawk-wifi": 2890,
+  "mb-am5-asrock-x870-nova-wifi": 3314,
+  "mb-am5-gigabyte-x870i-aorus-pro-ice": 3468,
+  "mb-am5-gigabyte-x870e-aorus-pro-ice": 3490,
+  "mb-am5-gigabyte-x870e-aorus-elite-x3d": 3499,
+  "mb-am5-gigabyte-x870-aorus-elite-x3d-ice": 3590,
+  "mb-am5-asus-rog-crosshair-x870e-glacial": 14690,
+  "mb-am5-asrock-x870e-taichi": 4439,
+  "mb-am5-gigabyte-x870e-aero-x3d-wood": 4721,
   "mb-lga1200-asus-tuf-b560-plus-wifi": 1499,
   "mb-lga1200-asrock-b560-pro4": 1199,
   "mb-lga1700-msi-b760m-mortar-wifi": 2988,
-  "mb-lga1700-asus-tuf-b760-plus-wifi": 1469,
+  "mb-lga1700-asus-tuf-b760-plus-wifi": 1504,
   "mb-lga1700-gigabyte-b760-aorus-elite-ax": 2317,
-  "mb-lga1700-asrock-b760-pro-rs": 1213,
-  "mb-lga1700-msi-z790-tomahawk-wifi": 2496,
+  "mb-lga1700-asrock-b760-pro-rs": 1212,
+  "mb-lga1700-msi-z790-tomahawk-wifi": 2278,
   "mb-lga1700-asus-tuf-z790-plus-wifi": 2409,
-  "mb-lga1700-gigabyte-z790-aorus-elite-ax": 2439,
-  "mb-lga1700-asrock-z790-pro-rs": 1839,
+  "mb-lga1700-gigabyte-z790-aorus-elite-ax": 2453,
+  "mb-lga1700-asrock-z790-pro-rs": 1854,
   "mb-lga1700-msi-z790-edge-wifi": 4351,
-  "mb-lga1700-asus-rog-strix-z790-f": 4299,
+  "mb-lga1700-asus-rog-strix-z790-f": 3219,
   "gpu-1": 1899,
   "gpu-2": 2889,
   "gpu-3": 2699,
-  "gpu-5": 3790,
+  "gpu-5": 3990,
   "gpu-6": 3949,
   "gpu-7": 3290,
   "gpu-8": 3790,
-  "gpu-9": 3790,
+  "gpu-9": 4045,
   "gpu-11": 3289,
   "gpu-12": 3999,
   "gpu-13": 3990,
   "gpu-14": 4990,
   "gpu-15": 4190,
-  "gpu-16": 4999,
-  "gpu-17": 4999,
+  "gpu-16": 6390,
+  "gpu-17": 5190,
   "gpu-18": 6990,
-  "gpu-19": 3890,
+  "gpu-19": 5990,
   "gpu-20": 4599,
-  "gpu-21": 4899,
-  "gpu-22": 4490,
-  "gpu-23": 5790,
+  "gpu-21": 5490,
+  "gpu-22": 4590,
+  "gpu-23": 6990,
   "gpu-24": 6790,
   "gpu-25": 7374,
   "gpu-26": 8169,
   "gpu-27": 7690,
   "gpu-28": 7749,
   "gpu-29": 6490,
-  "gpu-31": 7790,
+  "gpu-31": 7990,
   "gpu-32": 7249,
   "gpu-33": 6999,
   "gpu-34": 7190,
-  "gpu-35": 7990,
+  "gpu-35": 8690,
   "gpu-36": 9249,
   "gpu-37": 7490,
   "gpu-38": 8190,
@@ -136,9 +191,9 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "gpu-48": 10299,
   "gpu-49": 11890,
   "gpu-50": 12374,
-  "gpu-51": 11830,
+  "gpu-51": 11990,
   "gpu-52": 14290,
-  "gpu-53": 15749,
+  "gpu-53": 16490,
   "gpu-54": 13990,
   "gpu-55": 14567,
   "gpu-56": 16793,
@@ -188,20 +243,20 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "sto-17": 1699,
   "sto-18": 542,
   "sto-19": 1190,
-  "sto-20": 1299,
+  "sto-20": 699,
   "sto-21": 349,
   "sto-23": 2508,
   "sto-24": 699,
-  "sto-25": 1699,
+  "sto-25": 2803,
   "sto-26": 2789,
   "sto-27": 2099,
   "sto-28": 2199,
   "sto-29": 2249,
-  "sto-30": 2299,
+  "sto-30": 2599,
   "sto-31": 4199,
   "sto-32": 4199,
   "sto-33": 4990,
-  "sto-34": 4790,
+  "sto-34": 5604,
   "sto-35": 4499,
   "sto-36": 5490,
   "sto-37": 2370,
@@ -236,7 +291,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "case-26": 899,
   "case-27": 570,
   "case-28": 579,
-  "case-29": 636,
+  "case-29": 649,
   "psu-1": 1104,
   "psu-2": 1528,
   "psu-3": 1263,
@@ -244,22 +299,22 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "psu-5": 1999,
   "psu-6": 899,
   "psu-7": 1099,
-  "psu-8": 1492,
+  "psu-8": 1494,
   "psu-9": 922,
   "psu-10": 1694,
   "psu-11": 629,
   "psu-12": 635,
   "psu-13": 606,
   "psu-14": 639,
-  "psu-15": 649,
+  "psu-15": 764,
   "psu-16": 699,
   "psu-17": 849,
-  "psu-18": 779,
+  "psu-18": 792,
   "psu-19": 844,
   "psu-20": 879,
   "psu-21": 988,
   "psu-22": 1149,
-  "psu-23": 949,
+  "psu-23": 1083,
   "psu-24": 999,
   "psu-25": 1049,
   "psu-26": 1099,
@@ -277,7 +332,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cool-9": 449,
   "cool-10": 799,
   "cool-11": 634,
-  "cool-12": 638,
+  "cool-12": 640,
   "cool-13": 645,
   "cool-14": 649,
   "cool-15": 655,
@@ -286,9 +341,9 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cool-18": 727,
   "cool-19": 731,
   "cool-20": 757,
-  "cool-21": 779,
-  "cool-22": 936,
-  "cool-23": 649,
+  "cool-21": 899,
+  "cool-22": 937,
+  "cool-23": 770,
   "cool-24": 833,
   "cool-25": 949,
   "cool-26": 850,
@@ -298,44 +353,44 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "cool-30": 1599,
   "cool-31": 1069,
   "cool-32": 1187,
-  "cool-33": 1186,
+  "cool-33": 1187,
   "cool-34": 1152,
   "cool-35": 1328,
   "cool-36": 1079,
   "cool-37": 899,
-  "cool-39": 3237,
+  "cool-39": 3317,
   "cool-40": 2749,
-  "cool-41": 3969,
-  "cool-42": 2086,
+  "cool-41": 4009,
+  "cool-42": 2087,
   "cool-43": 3490,
   "cool-44": 2099,
   "cool-45": 4258,
-  "cool-46": 3969,
+  "cool-46": 4009,
   "cool-47": 266,
   "cool-48": 269,
   "cool-49": 299,
   "cool-50": 310,
-  "cool-51": 309,
+  "cool-51": 329,
   "cool-52": 349,
   "cool-53": 346,
   "cool-54": 299,
   "cool-55": 366,
   "cool-56": 366,
-  "cool-57": 479,
+  "cool-57": 489,
   "cool-58": 509,
-  "cool-59": 549,
+  "cool-59": 586,
   "cool-60": 600,
   "cool-61": 686,
-  "cool-62": 729,
+  "cool-62": 839,
   "cool-63": 479,
-  "cool-64": 849,
-  "cool-65": 799,
+  "cool-64": 869,
+  "cool-65": 829,
   "cool-66": 1299,
   "cool-67": 799,
   "cool-68": 1247,
-  "gpu-10": 3790,
-  "gpu-30": 5990,
-  "gpu-39": 7690,
+  "gpu-10": 4390,
+  "gpu-30": 6990,
+  "gpu-39": 8990,
   "ram-5": 2690,
   "ram-6": 990,
   "ram-7": 1390,
@@ -345,7 +400,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_BY_ID = {
   "ram-12": 1200,
   "ram-19": 729,
   "ram-30": 2590,
-  "cool-38": 3212
+  "cool-38": 3237
 };
 
 export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
@@ -721,6 +776,66 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "mb-am4-asrock-a520m-hvs": {
+    "category": "motherboard",
+    "name": "ASRock A520M-HVS",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asrock-a520m-hdv": {
+    "category": "motherboard",
+    "name": "ASRock A520M-HDV",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asus-prime-a520m-r": {
+    "category": "motherboard",
+    "name": "ASUS Prime A520M-R",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asus-prime-a520m-k": {
+    "category": "motherboard",
+    "name": "ASUS Prime A520M-K",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-msi-a520m-a-pro": {
+    "category": "motherboard",
+    "name": "MSI A520M-A PRO",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asrock-b450-pro4-r20": {
+    "category": "motherboard",
+    "name": "ASRock B450 Pro4 R2.0",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-gigabyte-b550m-k": {
+    "category": "motherboard",
+    "name": "Gigabyte B550M K",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asrock-b550m-hdv": {
+    "category": "motherboard",
+    "name": "ASRock B550M-HDV",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asus-prime-b550m-a": {
+    "category": "motherboard",
+    "name": "ASUS Prime B550M-A",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-asrock-b550m-phantom-gaming-4": {
+    "category": "motherboard",
+    "name": "ASRock B550M Phantom Gaming 4",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "mb-am4-msi-b550-tomahawk": {
     "category": "motherboard",
     "name": "MSI MAG B550 Tomahawk",
@@ -751,6 +866,12 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
     "source": "prisjakt_seed",
     "note": null
   },
+  "mb-am4-msi-b550m-pro-vdh-wifi": {
+    "category": "motherboard",
+    "name": "MSI B550M PRO-VDH WIFI",
+    "source": "prisjakt_seed",
+    "note": null
+  },
   "mb-am4-asus-rog-strix-b550-f-gaming-wifi-ii": {
     "category": "motherboard",
     "name": "ASUS ROG Strix B550-F Gaming WiFi II",
@@ -760,7 +881,25 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-am4-asrock-x570-steel-legend": {
     "category": "motherboard",
     "name": "ASRock X570 Steel Legend",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am4-gigabyte-b550i-aorus-pro-ax": {
+    "category": "motherboard",
+    "name": "Gigabyte B550I AORUS PRO AX",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-a620am-hvs": {
+    "category": "motherboard",
+    "name": "ASRock A620AM-HVS",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-sapphire-pulse-a620am": {
+    "category": "motherboard",
+    "name": "Sapphire Pulse A620AM",
+    "source": "prisjakt_seed",
     "note": null
   },
   "mb-am5-msi-b650-tomahawk-wifi": {
@@ -808,6 +947,252 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-am5-asus-x870-a-gaming-wifi": {
     "category": "motherboard",
     "name": "ASUS ROG Strix X870-A Gaming WiFi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asus-b650e-max-gaming-wifi-d5": {
+    "category": "motherboard",
+    "name": "ASUS B650E MAX GAMING WIFI D5",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b650m-h-m2-plus": {
+    "category": "motherboard",
+    "name": "ASRock B650M-H/M.2+",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b840m-h": {
+    "category": "motherboard",
+    "name": "Gigabyte B840M H",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b650m-hdv-m2-d5": {
+    "category": "motherboard",
+    "name": "ASRock B650M-HDV/M.2 D5",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b650m-pg-lightning": {
+    "category": "motherboard",
+    "name": "ASRock B650M PG Lightning",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-msi-pro-b850-s-wifi6e": {
+    "category": "motherboard",
+    "name": "MSI PRO B850-S WIFI6E",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b850m-x-r20": {
+    "category": "motherboard",
+    "name": "ASRock B850M-X R2.0",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b850m-x-wifi-r20": {
+    "category": "motherboard",
+    "name": "ASRock B850M-X WIFI R2.0",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b650-eagle-ax-wifi-d5": {
+    "category": "motherboard",
+    "name": "Gigabyte B650 EAGLE AX WIFI D5",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850-eagle-wifi-d5": {
+    "category": "motherboard",
+    "name": "Gigabyte B850 EAGLE WIFI D5",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850m-force": {
+    "category": "motherboard",
+    "name": "GIGABYTE B850M FORCE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b850m-pro-rs-wifi": {
+    "category": "motherboard",
+    "name": "ASRock B850M Pro RS WiFi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850m-force-wifi6e": {
+    "category": "motherboard",
+    "name": "GIGABYTE B850M FORCE WIFI6E",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b850-pro-a-wifi": {
+    "category": "motherboard",
+    "name": "ASRock B850 Pro-A WiFi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-msi-b850m-gaming-plus-wifi6e": {
+    "category": "motherboard",
+    "name": "MSI B850M GAMING PLUS WIFI6E",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850-eagle-ice": {
+    "category": "motherboard",
+    "name": "Gigabyte B850 Eagle Ice",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b850m-steel-legend-wifi": {
+    "category": "motherboard",
+    "name": "ASRock B850M Steel Legend WiFi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-b850m-riptide-wifi": {
+    "category": "motherboard",
+    "name": "ASRock B850M Riptide WiFi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asus-b850-max-gaming-wifi-d5": {
+    "category": "motherboard",
+    "name": "ASUS B850 MAX GAMING WIFI D5",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850m-eagle-wifi6e-ice": {
+    "category": "motherboard",
+    "name": "Gigabyte B850M EAGLE WIFI6E ICE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850m-aorus-elite-wf6e-ice": {
+    "category": "motherboard",
+    "name": "Gigabyte B850M Aorus Elite WF6E ICE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-sapphire-pure-b850m-wifi": {
+    "category": "motherboard",
+    "name": "Sapphire Pure B850M WIFI",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-x870-pro-rs": {
+    "category": "motherboard",
+    "name": "ASRock X870 PRO RS",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-b850-aorus-elite-wf7-ice": {
+    "category": "motherboard",
+    "name": "Gigabyte B850 AORUS ELITE WF7 ICE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-x870-pro-rs-wifi": {
+    "category": "motherboard",
+    "name": "ASRock X870 PRO RS WIFI",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-sapphire-pure-b850a-wifi7": {
+    "category": "motherboard",
+    "name": "Sapphire Pure B850A WIFI7",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asus-tuf-b850-btf-wifi-w": {
+    "category": "motherboard",
+    "name": "ASUS TUF GAMING B850-BTF WIFI W",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870-gaming-x-wifi-7": {
+    "category": "motherboard",
+    "name": "Gigabyte X870 Gaming X WiFi 7",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870-aorus-elite-wifi7": {
+    "category": "motherboard",
+    "name": "GigaByte X870 AORUS ELITE WIFI7",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870-aorus-elite-ice": {
+    "category": "motherboard",
+    "name": "GIGABYTE X870 AORUS ELITE ICE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-x870-steel-legend-wifi": {
+    "category": "motherboard",
+    "name": "ASRock X870 STEEL LEGEND WIFI",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-x870-livemixer-wifi": {
+    "category": "motherboard",
+    "name": "ASRock X870 LIVEMIXER WIFI",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-msi-mag-x870-tomahawk-wifi": {
+    "category": "motherboard",
+    "name": "MSI MAG X870 TOMAHAWK WIFI",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-x870-nova-wifi": {
+    "category": "motherboard",
+    "name": "ASRock X870 NOVA WiFi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870i-aorus-pro-ice": {
+    "category": "motherboard",
+    "name": "Gigabyte X870I Aorus Pro Ice",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870e-aorus-pro-ice": {
+    "category": "motherboard",
+    "name": "GIGABYTE X870E AORUS PRO ICE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870e-aorus-elite-x3d": {
+    "category": "motherboard",
+    "name": "Gigabyte X870E AORUS ELITE X3D",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870-aorus-elite-x3d-ice": {
+    "category": "motherboard",
+    "name": "Gigabyte X870 AORUS ELITE X3D ICE",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asus-rog-crosshair-x870e-glacial": {
+    "category": "motherboard",
+    "name": "Asus ROG Crosshair X870E Glacial",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-asrock-x870e-taichi": {
+    "category": "motherboard",
+    "name": "ASRock X870E Taichi",
+    "source": "prisjakt_seed",
+    "note": null
+  },
+  "mb-am5-gigabyte-x870e-aero-x3d-wood": {
+    "category": "motherboard",
+    "name": "Gigabyte X870E Aero X3D Wood",
     "source": "prisjakt_seed",
     "note": null
   },
@@ -880,7 +1265,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "mb-lga1700-asus-rog-strix-z790-f": {
     "category": "motherboard",
     "name": "ASUS ROG Strix Z790-F Gaming WiFi",
-    "source": "catalog_fallback",
+    "source": "prisjakt_seed",
     "note": null
   },
   "gpu-1": {
@@ -1474,7 +1859,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "sto-20": {
     "category": "storage",
     "name": "Crucial E100 M.2 Gen 4 (1TB)",
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "sto-21": {
@@ -2344,19 +2729,19 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "gpu-10": {
     "category": "gpu",
     "name": "XFX Swift AMD Radeon RX 9060 XT OC Gaming White",
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-30": {
     "category": "gpu",
     "name": "MSI GeForce RTX 5070 12G VENTUS 2X OC",
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "gpu-39": {
     "category": "gpu",
     "name": "ASUS Prime Radeon RX 9070 XT OC White",
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   },
   "ram-5": {
@@ -2416,7 +2801,7 @@ export const CUSTOM_BUILD_PRELOADED_PRICE_META_BY_ID = {
   "cool-38": {
     "category": "cooling",
     "name": "NZXT Kraken 360 Elite V2 2024 RGB Kylare (svart)",
-    "source": "prisjakt_seed",
+    "source": "static_reference",
     "note": null
   }
 };
