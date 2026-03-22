@@ -262,7 +262,7 @@ export default function ComputerDetails() {
   const [usedPartsFromApi, setUsedPartsFromApi] = useState<Record<string, boolean> | null>(null);
   const [usedPartsConfigured, setUsedPartsConfigured] = useState<boolean>(false);
   const [productImagesFromApi, setProductImagesFromApi] = useState<string[]>([]);
-  const { products } = useProducts();
+  const { products, loading: productsLoading } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
   const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSandboxSettings());
@@ -283,6 +283,22 @@ export default function ComputerDetails() {
   const localComputer = COMPUTERS.find((c) => c.id === id);
   const supabaseOnlyProduct = localComputer ? null : getProductFromLookup(productLookup, id);
   const computer: Computer | undefined = localComputer || (supabaseOnlyProduct ? buildComputerFromSupabaseProduct(supabaseOnlyProduct) : undefined);
+  const resolvedComputer: Computer = computer || {
+    id: id || "unknown-product",
+    name: "Laddar produkt",
+    price: 0,
+    cpu: "",
+    gpu: "",
+    ram: "",
+    storage: "",
+    storagetype: "SSD",
+    tier: "Silver",
+    rating: 0,
+    reviews: 0,
+    image: DETAIL_FALLBACK_IMAGE,
+    images: [DETAIL_FALLBACK_IMAGE],
+    usedVariantEnabled: false,
+  };
   const baseProductId = computer
     ? localComputer
       ? getProductIdByName(localComputer.name) || getProductIdByName(localComputer.id)
@@ -294,15 +310,14 @@ export default function ComputerDetails() {
   const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 
   const fallbackComputerImages = useMemo(() => {
-    if (!computer) return [];
     return Array.from(
       new Set(
-        [...(Array.isArray(computer.images) ? computer.images : []), computer.image || ""]
+        [...(Array.isArray(resolvedComputer.images) ? resolvedComputer.images : []), resolvedComputer.image || ""]
           .map((image) => normalizeProductImagePath(image) || "")
           .filter(Boolean)
       )
     );
-  }, [computer]);
+  }, [resolvedComputer]);
 
   const images = useMemo(() => {
     const rawImages = productImagesFromApi.length > 0 ? productImagesFromApi : fallbackComputerImages;
@@ -386,25 +401,6 @@ export default function ComputerDetails() {
     };
   }, [activeProductId]);
 
-  if (!computer) {
-    return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
-        <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
-          <h1 className="text-2xl font-bold mb-4">Datorn hittades inte</h1>
-          <button
-            onClick={() => navigate("/products")}
-            className="bg-yellow-400 hover:bg-[#11667b] hover:text-white text-gray-900 px-6 py-3 rounded font-semibold transition-colors inline-flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Tillbaka till produkter
-          </button>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
   const handleAddToCart = async () => {
     try {
       setAddingToCart(true);
@@ -422,17 +418,17 @@ export default function ComputerDetails() {
     }
   };
 
-  const reviewData = TOP_SELLER_REVIEWS[computer.id] ?? buildDefaultReviewData(computer);
-  const activeVariant = useUsedVariant && hasUsedVariant && computer.usedVariant ? computer.usedVariant : null;
-  const usedDisplayName = computer.usedVariant?.productKey || toUsedName(computer.name);
+  const reviewData = TOP_SELLER_REVIEWS[resolvedComputer.id] ?? buildDefaultReviewData(resolvedComputer);
+  const activeVariant = useUsedVariant && hasUsedVariant && resolvedComputer.usedVariant ? resolvedComputer.usedVariant : null;
+  const usedDisplayName = resolvedComputer.usedVariant?.productKey || toUsedName(resolvedComputer.name);
   const fallbackName =
-    useUsedVariant && hasUsedVariant && computer.usedVariant ? usedDisplayName : computer.name;
+    useUsedVariant && hasUsedVariant && resolvedComputer.usedVariant ? usedDisplayName : resolvedComputer.name;
   const activeProduct = useUsedVariant
     ? (usedProductId ? getProductFromLookup(productLookup, usedProductId) : null) ||
-      (computer.usedVariant?.productKey ? getProductFromLookup(productLookup, computer.usedVariant.productKey) : null)
+      (resolvedComputer.usedVariant?.productKey ? getProductFromLookup(productLookup, resolvedComputer.usedVariant.productKey) : null)
     : getProductFromLookup(productLookup, activeProductId) ||
-      getProductFromLookup(productLookup, computer.name) ||
-      getProductFromLookup(productLookup, computer.id);
+      getProductFromLookup(productLookup, resolvedComputer.name) ||
+      getProductFromLookup(productLookup, resolvedComputer.id);
   useEffect(() => {
     if (!activeProductId) return;
     let isMounted = true;
@@ -588,13 +584,13 @@ export default function ComputerDetails() {
   const merged = mergeProductFields(
     {
       name: fallbackName,
-      price: activeVariant?.price ?? computer.price,
-      cpu: activeVariant?.cpu ?? computer.cpu,
-      gpu: activeVariant?.gpu ?? computer.gpu,
-      ram: activeVariant?.ram ?? computer.ram,
-      storage: activeVariant?.storage ?? computer.storage,
-      storagetype: activeVariant?.storagetype ?? computer.storagetype,
-      tier: activeVariant?.tier ?? computer.tier,
+      price: activeVariant?.price ?? resolvedComputer.price,
+      cpu: activeVariant?.cpu ?? resolvedComputer.cpu,
+      gpu: activeVariant?.gpu ?? resolvedComputer.gpu,
+      ram: activeVariant?.ram ?? resolvedComputer.ram,
+      storage: activeVariant?.storage ?? resolvedComputer.storage,
+      storagetype: activeVariant?.storagetype ?? resolvedComputer.storagetype,
+      tier: activeVariant?.tier ?? resolvedComputer.tier,
     },
     activeProduct,
   );
@@ -614,7 +610,7 @@ export default function ComputerDetails() {
     cpuCooler: merged.cpuCooler,
     os: osValue,
   };
-  const baseUsedParts = (computer as Computer & { usedParts?: DetailUsedPartsSource }).usedParts || null;
+  const baseUsedParts = (resolvedComputer as Computer & { usedParts?: DetailUsedPartsSource }).usedParts || null;
   const fallbackUsedParts = toUsedPartsSettings(useUsedVariant ? activeVariant?.usedParts : baseUsedParts);
   const usedParts = useMemo(
     () => (usedPartsConfigured ? sanitizeUsedPartsSettings(usedPartsFromApi) : fallbackUsedParts),
@@ -733,7 +729,7 @@ export default function ComputerDetails() {
       name: displayName,
       image: imageUrls,
       description: `${displaySpecs.cpu}, ${displaySpecs.gpu}, ${displaySpecs.ram}, ${displaySpecs.storage} ${displaySpecs.storagetype}`,
-      sku: computer.id,
+      sku: resolvedComputer.id,
       brand: {
         "@type": "Brand",
         name: "DatorHuset",
@@ -743,7 +739,7 @@ export default function ComputerDetails() {
         priceCurrency: "SEK",
         price: displayPrice,
         availability: availability.schema,
-        url: `${baseUrl}/computer/${computer.id}`,
+        url: `${baseUrl}/computer/${resolvedComputer.id}`,
       },
       aggregateRating: {
         "@type": "AggregateRating",
@@ -782,7 +778,7 @@ export default function ComputerDetails() {
           "@type": "ListItem",
           position: 3,
           name: displayName,
-          item: `${baseUrl}/computer/${computer.id}`,
+          item: `${baseUrl}/computer/${resolvedComputer.id}`,
         },
       ],
     };
@@ -790,7 +786,7 @@ export default function ComputerDetails() {
       "@context": "https://schema.org",
       "@graph": [productSchema, breadcrumbSchema],
     };
-  }, [availability.schema, computer, detailImageCandidates, displayName, displayPrice, displaySpecs, reviewData]);
+  }, [availability.schema, resolvedComputer, detailImageCandidates, displayName, displayPrice, displaySpecs, reviewData]);
 
   const renderStars = (rating: number) => (
     <div className="flex items-center gap-1">
@@ -839,18 +835,49 @@ export default function ComputerDetails() {
       }),
     [productLookup],
   );
-  const comparisonCandidates = enrichedComputers.filter((c) => c.id !== computer.id);
-  const sameTier = comparisonCandidates.filter((c) => c.tier === computer.tier);
+  const comparisonCandidates = enrichedComputers.filter((c) => c.id !== resolvedComputer.id);
+  const sameTier = comparisonCandidates.filter((c) => c.tier === resolvedComputer.tier);
   const comparisonPool = (sameTier.length >= 2
     ? sameTier
-    : [...sameTier, ...comparisonCandidates.filter((c) => c.tier !== computer.tier)]
+    : [...sameTier, ...comparisonCandidates.filter((c) => c.tier !== resolvedComputer.tier)]
   ).slice(0, 2);
   const currentComparisonItem =
-    enrichedComputers.find((entry) => entry.id === computer.id) ||
-    ({ ...computer, image: detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE, images: detailImageCandidates } as Computer);
+    enrichedComputers.find((entry) => entry.id === resolvedComputer.id) ||
+    ({ ...resolvedComputer, image: detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE, images: detailImageCandidates } as Computer);
   const comparisonItems = [currentComparisonItem, ...comparisonPool];
   const hasMultipleImages = detailImageCandidates.length > 1;
   const resolvedImage = detailImageCandidates[selectedImage] || detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
+
+  if (!computer && productsLoading) {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+        <Navbar />
+        <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
+          <h1 className="text-2xl font-bold mb-4">Laddar produkt...</h1>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (!computer) {
+    return (
+      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+        <Navbar />
+        <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
+          <h1 className="text-2xl font-bold mb-4">Datorn hittades inte</h1>
+          <button
+            onClick={() => navigate("/products")}
+            className="bg-yellow-400 hover:bg-[#11667b] hover:text-white text-gray-900 px-6 py-3 rounded font-semibold transition-colors inline-flex items-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Tillbaka till produkter
+          </button>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
@@ -1082,11 +1109,11 @@ export default function ComputerDetails() {
                 </div>
               );
               })}
-              {computer.bundleIncludes?.length ? (
+              {resolvedComputer.bundleIncludes?.length ? (
                 <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] p-3">
                   <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
                   <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
-                    {computer.bundleIncludes.map((item) => (
+                    {resolvedComputer.bundleIncludes.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
                   </ul>
@@ -1310,12 +1337,12 @@ export default function ComputerDetails() {
                 <Link
                   to={`/computer/${item.id}`}
                   className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
-                    item.id === computer.id
+                    item.id === resolvedComputer.id
                       ? "bg-gray-200 text-gray-700 cursor-default dark:bg-gray-800 dark:text-gray-300"
                       : "bg-yellow-400 text-gray-900 hover:bg-[#11667b] hover:text-white"
                   }`}
                 >
-                  {item.id === computer.id ? "Aktuell" : "Visa produkt"}
+                  {item.id === resolvedComputer.id ? "Aktuell" : "Visa produkt"}
                 </Link>
               </div>
             ))}
@@ -1326,7 +1353,7 @@ export default function ComputerDetails() {
         <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
           <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{"Andra som tittat p\u00e5 samma produkt tittar \u00e4ven p\u00e5:"}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {enrichedComputers.filter((c) => c.id !== computer.id).slice(0, 4).map((related) => (
+            {enrichedComputers.filter((c) => c.id !== resolvedComputer.id).slice(0, 4).map((related) => (
               <button
                 key={related.id}
                 onClick={() => navigate(`/computer/${related.id}`)}
