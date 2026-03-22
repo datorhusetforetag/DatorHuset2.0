@@ -192,6 +192,7 @@ const buildComputerFromSupabaseProduct = (product: SupabaseProduct): Computer =>
 export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
+  const shouldClearFilters = searchParams.get("clear_filters") === "1";
   const hasAppliedCategory = useRef(false);
   const hasAppliedQueryFilters = useRef(false);
   const [priceRange, setPriceRange] = useState([0, 40000]);
@@ -356,6 +357,16 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
+    if (shouldClearFilters) {
+      localStorage.removeItem(FILTER_STORAGE_KEY);
+      setPriceRange([0, 40000]);
+      setSelectedGPUs([]);
+      setSelectedCPUs([]);
+      setSelectedTiers([]);
+      setShowUsedOnly(false);
+      return;
+    }
+
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
     if (!stored) return;
     try {
@@ -387,7 +398,7 @@ export default function Products() {
     } catch (error) {
       console.warn("Failed to read saved filters", error);
     }
-  }, []);
+  }, [shouldClearFilters]);
 
   useEffect(() => {
     if (!activeCategory || hasAppliedCategory.current) return;
