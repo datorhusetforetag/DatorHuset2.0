@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
@@ -14,12 +14,16 @@ import chieftecVisioBanner from "../../public/products/newpc/chieftecvisio_new.p
 import cg530Banner from "../../public/products/newpc/cg530_new4.jpg";
 import allBlackBanner from "../../public/products/newpc/allblack-main.jpg";
 import allWhiteBanner from "../../public/products/newpc/allwhite-1.jpg";
+import budgetCategoryBanner from "../../images/product images/Budget-catagory.webp";
+import pricePerformanceCategoryBanner from "../../images/product images/price-performance-banner.webp";
+import o11WhiteBanner from "../../images/product images/o11white.webp";
+import o11BlackBanner from "../../images/product images/o11black.webp";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v3";
 const DEFAULT_PRODUCTS_PRICE_MAX = 40000;
 const RAM_PRICE_TOOLTIP =
-  "Priserna på RAM har gått upp med cirka 500%, därav användning av begagnade RAM.";
+  "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
@@ -82,96 +86,79 @@ type InventoryEntry = {
 
 const DEFAULT_BANNER: BannerConfig = {
   eyebrow: "Topplistan",
-  title: "Bästa säljare inom stationära datorer i hela Norden!",
+  title: "B\u00e4sta s\u00e4ljare inom station\u00e4ra datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
   images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
-  background:
-    "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+  background: "bg-[#facc15]",
   imageSize: "large",
 };
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   budget: {
-    eyebrow: "Budgetvänliga",
-    title: "Budget betyder inte dåligt",
-    description: "Smarta val som håller priset nere utan att tumma på känslan.",
-    images: [chieftecVistaBanner],
+    eyebrow: "Budgetv\u00e4nliga",
+    title: "Budget betyder inte d\u00e5ligt",
+    description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
+    images: [budgetCategoryBanner],
     stickers: [
       {
-        label: "Bäst i budget-klass",
-        className: "bg-yellow-400 text-gray-900",
+        label: "B\u00e4st i budget-klass",
+        className: "bg-[#11667b] text-white",
       },
     ],
-    background:
-      "bg-gradient-to-r from-slate-950 via-purple-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+    background: "bg-[#facc15]",
   },
   "best-selling": {
-    eyebrow: "Mest för pengarna",
-    title: "Mest för pengarna",
-    description: "Våra mest prisvärda byggen \u2013 noggrant utvalda för maximal valuta.",
+    eyebrow: "Mest f\u00f6r pengarna",
+    title: "Mest f\u00f6r pengarna",
+    description: "V\u00e5ra mest prisv\u00e4rda byggen \u2013 noggrant utvalda f\u00f6r maximal valuta.",
     images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
     stickers: [
       {
         label: "DatorHusets val",
-        className: "bg-red-500 text-white",
+        className: "bg-[#11667b] text-white",
       },
       {
         label: "Mest valuta",
-        className: "bg-sky-500 text-white",
+        className: "bg-[#11667b] text-white",
       },
       {
         label: "Otrolig Prestanda",
-        className: "bg-orange-500 text-white",
+        className: "bg-[#11667b] text-white",
       },
     ],
-    background:
-      "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+    background: "bg-[#facc15]",
   },
   "price-performance": {
     eyebrow: "Price-Performance",
     title: "Price-Performance",
     description: "Byggen med starkast balans mellan pris och prestanda.",
-    images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
+    images: [pricePerformanceCategoryBanner],
     stickers: [
       {
-        label: "Mest för pengarna",
-        className: "bg-sky-500 text-white",
-      },
-      {
-        label: "Price-Performance",
-        className: "bg-yellow-400 text-gray-900",
-      },
-      {
-        label: "Smart val",
-        className: "bg-orange-500 text-white",
+        label: "Mest f\u00f6r pengarna",
+        className: "bg-[#11667b] text-white",
       },
     ],
-    background:
-      "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+    background: "bg-[#facc15]",
   },
   toptier: {
-    eyebrow: "Bästa prestanda",
-    title: "När bara det snabbaste duger",
-    description: "Toppbyggen för dig som vill ha maximal kraft och kompromisslös kvalitet.",
-    images: [allBlackBanner, allWhiteBanner],
+    eyebrow: "B\u00e4sta prestanda",
+    title: "N\u00e4r bara det snabbaste duger",
+    description: "Toppbyggen f\u00f6r dig som vill ha maximal kraft och kompromissl\u00f6s kvalitet.",
+    images: [o11WhiteBanner, o11BlackBanner],
     stickers: [
-      {
-        label: "Bäst i Klass",
-        className: "bg-yellow-400 text-gray-900",
-      },
       {
         label: "Topline",
         className: "bg-[#11667b] text-white",
       },
     ],
-    background:
-      "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+    background: "bg-[#facc15]",
     imageSize: "large",
   },
 };
 
 const bundleItems = [
-  { label: "Skärm", icon: Monitor },
+  { label: "Sk\u00e4rm", icon: Monitor },
   { label: "Tangentbord", icon: Keyboard },
   { label: "Mus", icon: Mouse },
   { label: "Headset", icon: Headphones },
@@ -663,10 +650,10 @@ export default function Products() {
   };
 
   const categoryLabel = (() => {
-    if (activeCategory === "budget") return "Budgetvänliga";
+    if (activeCategory === "budget") return "Budgetv\u00e4nliga";
     if (activeCategory === "price-performance") return "Price-Performance";
-    if (activeCategory === "best-selling") return "Mest för pengarna";
-    if (activeCategory === "toptier") return "Bästa prestanda";
+    if (activeCategory === "best-selling") return "Mest f\u00f6r pengarna";
+    if (activeCategory === "toptier") return "B\u00e4sta prestanda";
     return "";
   })();
 
@@ -684,76 +671,101 @@ export default function Products() {
   const hasFilters = activeFilters.length > 0;
 
   const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
-  const hasMultipleImages = banner.images.length > 1;
-  const bannerImageSize = banner.imageSize ?? "normal";
-  const imageMaxWidth =
-    bannerImageSize === "large" ? "sm:max-w-[600px] lg:max-w-[640px]" : "sm:max-w-[520px] lg:max-w-[560px]";
-  const imageAspect = hasMultipleImages ? "aspect-[16/10] sm:aspect-[16/9]" : "aspect-[16/9]";
-  const imageGridColumns = banner.images.length >= 3 ? "grid-cols-3" : "grid-cols-2";
-  const imageGridClass = hasMultipleImages
-    ? `grid ${imageGridColumns} gap-2 sm:gap-3 w-full max-w-full ${imageMaxWidth} ml-auto`
-    : `grid grid-cols-1 w-full max-w-full ${imageMaxWidth} ml-auto`;
-  const imageItemClass = "w-full";
+  const leadBannerImage = banner.images[0];
+  const secondaryBannerImage = banner.images[1];
+  const primarySticker = banner.stickers?.[0];
+  const secondaryStickers = banner.stickers?.slice(1, 3) ?? [];
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
       <Navbar />
       <main className="flex-1">
         <section className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
-          <div className="container mx-auto">
-            <div className="rounded-3xl border border-gray-200 dark:border-[#1a2636] bg-[#facc15] overflow-hidden">
-              <div className="grid gap-6 sm:gap-8 lg:gap-10 md:grid-cols-[1.25fr_0.75fr] lg:grid-cols-[1.35fr_0.65fr] p-5 sm:p-6 lg:p-10 items-start">
-                <div className="min-w-0">
-                  <p className="text-xs uppercase tracking-[0.35em] text-gray-900/70">
-                    {banner.eyebrow}
-                  </p>
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mt-4 leading-tight text-gray-900 break-words">
-                    {banner.title}
-                  </h1>
-                  <p className="text-sm md:text-base text-gray-800 mt-4 max-w-xl break-words">
-                    {banner.description}
-                  </p>
-                  {banner.variant === "bundle" ? (
-                    <div className="mt-6 flex flex-wrap gap-3">
-                      {bundleItems.map((item) => (
-                        <div
-                          key={item.label}
-                          className="flex items-center gap-2 rounded-full bg-gray-100 text-gray-700 border border-gray-200 px-3 py-1 text-xs dark:bg-[#0b131f] dark:text-slate-200 dark:border-[#1a2636]"
-                        >
-                          <item.icon className="w-4 h-4 text-yellow-500 dark:text-yellow-300" />
-                          <span>{item.label}</span>
-                        </div>
-                      ))}
+          <div className="mx-auto w-full max-w-[1480px]">
+            <div className={`overflow-hidden rounded-3xl border border-[#e4b700] text-gray-900 ${banner.background}`}>
+              {activeCategory === "toptier" ? (
+                <div className="grid items-center gap-6 px-8 py-8 sm:px-10 sm:py-10 lg:grid-cols-[0.82fr_1.1fr_0.82fr] lg:gap-8 lg:px-10 xl:px-12">
+                  <div className="min-w-0">
+                    <div className="relative mr-auto w-full max-w-[21rem]">
+                      <img
+                        src={leadBannerImage}
+                        alt={"Bannerbild v\u00e4nster"}
+                        className="h-40 w-full rounded-[1.35rem] object-contain shadow-none sm:h-48 lg:h-56"
+                        loading="lazy"
+                      />
                     </div>
-                  ) : null}
-                </div>
-                <div className="min-w-0">
-                  <div className={imageGridClass}>
-                    {banner.images.map((image, index) => (
-                      <div
-                        key={`${image}-${index}`}
-                        className={`relative w-full ${imageAspect} ${imageItemClass} rounded-2xl overflow-hidden border border-gray-200 bg-gray-50 dark:border-[#1a2636] dark:bg-[#0b131f]`}
-                      >
-                        <img
-                          src={image}
-                          alt={`Bannerbild ${index + 1}`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                        {banner.stickers?.[index] ? (
-                          <span
-                            className={`absolute top-3 left-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm ${
-                              banner.stickers[index].className
-                            }`}
-                          >
-                            {banner.stickers[index].label}
-                          </span>
-                        ) : null}
+                  </div>
+                  <div className="min-w-0 text-center">
+                    <p className="text-xs uppercase tracking-[0.4em] text-gray-900/65">
+                      {banner.eyebrow}
+                    </p>
+                    <h1 className="mt-4 break-words text-3xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-4xl sm:leading-[1.02] lg:text-[4rem]">
+                      {banner.title}
+                    </h1>
+                    <p className="mx-auto mt-4 max-w-2xl break-words text-sm text-gray-800 sm:text-base lg:text-[1.05rem]">
+                      {banner.description}
+                    </p>
+                    {primarySticker ? (
+                      <div className="mt-6 flex justify-center">
+                        <div className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker.className}`}>
+                          {primarySticker.label}
+                        </div>
                       </div>
-                    ))}
+                    ) : null}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="relative ml-auto w-full max-w-[21rem]">
+                      <img
+                        src={secondaryBannerImage ?? leadBannerImage}
+                        alt={"Bannerbild h\u00f6ger"}
+                        className="h-40 w-full rounded-[1.35rem] object-contain shadow-none sm:h-48 lg:h-56"
+                        loading="lazy"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                <div className="grid items-center gap-6 px-8 py-8 sm:px-10 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10 lg:px-10 xl:px-12">
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase tracking-[0.4em] text-gray-900/65">
+                      {banner.eyebrow}
+                    </p>
+                    <h1 className="mt-4 break-words text-3xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-4xl sm:leading-[1.02] lg:text-[4rem]">
+                      {banner.title}
+                    </h1>
+                    <p className="mt-4 max-w-2xl break-words text-sm text-gray-800 sm:text-base lg:text-[1.05rem]">
+                      {banner.description}
+                    </p>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="relative ml-auto w-full max-w-[24rem] lg:max-w-[26rem]">
+                      <img
+                        src={leadBannerImage}
+                        alt="Bannerbild"
+                        className="h-40 w-full rounded-[1.35rem] object-contain shadow-none sm:h-48 lg:h-56"
+                        loading="lazy"
+                      />
+                      <div
+                        className={`absolute left-4 top-4 rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker?.className ?? "bg-[#11667b] text-white"}`}
+                      >
+                        {primarySticker?.label ?? banner.eyebrow}
+                      </div>
+                      {secondaryStickers.length > 0 ? (
+                        <div className="absolute bottom-3 left-4 flex gap-2">
+                          {secondaryStickers.map((sticker) => (
+                            <span
+                              key={sticker.label}
+                              className={`rounded-full px-3 py-1 text-xs font-semibold shadow-md ${sticker.className}`}
+                            >
+                              {sticker.label}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </section>
@@ -767,7 +779,7 @@ export default function Products() {
             >
               Filter
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {mobileFiltersOpen ? "Dölj" : "Visa"}
+                {mobileFiltersOpen ? "D\u00f6lj" : "Visa"}
               </span>
             </button>
             {hasFilters && (
@@ -877,7 +889,7 @@ export default function Products() {
                     type="button"
                     onClick={() => setShowAllGpus((prev) => !prev)}
                     className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    aria-label={showAllGpus ? "Visa färre grafikkort" : "Visa fler grafikkort"}
+                    aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
                   >
                     {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -939,7 +951,7 @@ export default function Products() {
                     type="button"
                     onClick={() => setShowAllCpus((prev) => !prev)}
                     className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    aria-label={showAllCpus ? "Visa färre processorer" : "Visa fler processorer"}
+                    aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
                   >
                     {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -1001,7 +1013,7 @@ export default function Products() {
                     type="button"
                     onClick={() => setShowAllTiers((prev) => !prev)}
                     className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    aria-label={showAllTiers ? "Visa färre kategorier" : "Visa fler kategorier"}
+                    aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
                   >
                     {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -1041,7 +1053,7 @@ export default function Products() {
               </div>
             )}
             <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Stationära datorer"}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
                 Visar {filteredProducts.length} av {displayCards.length} produkter
               </p>
