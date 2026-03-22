@@ -11,7 +11,8 @@ import { getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
-const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
+const FILTER_STORAGE_KEY = "datorhuset_filters_v2";
+const DEFAULT_PRODUCTS_PRICE_MAX = 40000;
 const RAM_PRICE_TOOLTIP =
   "Priserna på RAM har gått upp med cirka 500%, därav användning av begagnade RAM.";
 const toUsedName = (name: string) => {
@@ -195,7 +196,7 @@ export default function Products() {
   const shouldClearFilters = searchParams.get("clear_filters") === "1";
   const hasAppliedCategory = useRef(false);
   const hasAppliedQueryFilters = useRef(false);
-  const [priceRange, setPriceRange] = useState([0, 40000]);
+  const [priceRange, setPriceRange] = useState([0, DEFAULT_PRODUCTS_PRICE_MAX]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
@@ -359,7 +360,7 @@ export default function Products() {
   useEffect(() => {
     if (shouldClearFilters) {
       localStorage.removeItem(FILTER_STORAGE_KEY);
-      setPriceRange([0, 40000]);
+      setPriceRange([0, DEFAULT_PRODUCTS_PRICE_MAX]);
       setSelectedGPUs([]);
       setSelectedCPUs([]);
       setSelectedTiers([]);
@@ -378,7 +379,16 @@ export default function Products() {
         showUsedOnly?: boolean;
       };
       if (Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) {
-        setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
+        const [storedMin, storedMax] = parsed.priceRange;
+        if (
+          Number.isFinite(storedMin) &&
+          Number.isFinite(storedMax) &&
+          storedMin >= 0 &&
+          storedMax > 0 &&
+          storedMax >= storedMin
+        ) {
+          setPriceRange([storedMin, storedMax]);
+        }
       }
       if (Array.isArray(parsed.selectedGPUs)) {
         const normalized = parsed.selectedGPUs.map((gpu) => getFilterLabel("gpu", gpu));
@@ -410,9 +420,19 @@ export default function Products() {
 
   useEffect(() => {
     if (hasAppliedQueryFilters.current) return;
-    const minParam = Number(searchParams.get("price_min"));
-    const maxParam = Number(searchParams.get("price_max"));
-    if (Number.isFinite(minParam) && Number.isFinite(maxParam)) {
+    const minParamRaw = searchParams.get("price_min");
+    const maxParamRaw = searchParams.get("price_max");
+    const minParam = minParamRaw !== null ? Number(minParamRaw) : null;
+    const maxParam = maxParamRaw !== null ? Number(maxParamRaw) : null;
+    if (
+      minParam !== null &&
+      maxParam !== null &&
+      Number.isFinite(minParam) &&
+      Number.isFinite(maxParam) &&
+      minParam >= 0 &&
+      maxParam > 0 &&
+      maxParam >= minParam
+    ) {
       setPriceRange([minParam, maxParam]);
     }
     const tiersParam = searchParams.get("tiers");
@@ -445,7 +465,7 @@ export default function Products() {
     setSelectedCPUs([]);
     setSelectedTiers([]);
     setShowUsedOnly(false);
-    setPriceRange([0, 40000]);
+    setPriceRange([0, DEFAULT_PRODUCTS_PRICE_MAX]);
   }, [preset]);
   const filterComputers = useMemo(() => {
     if (preset === "budget") {
@@ -511,6 +531,28 @@ export default function Products() {
       useUsedVariant: showUsedOnly && Boolean(computer.usedVariant),
     }));
   }, [filterComputers, preset, showUsedOnly]);
+  const effectivePriceMax = useMemo(() => {
+    const maxPrice = displayCards.reduce((max, card) => {
+      const variant = getDisplayVariant(card.computer, card.useUsedVariant);
+      return Number.isFinite(variant.price) ? Math.max(max, variant.price) : max;
+    }, 0);
+    return Math.max(DEFAULT_PRODUCTS_PRICE_MAX, maxPrice);
+  }, [displayCards]);
+
+  useEffect(() => {
+    setPriceRange((prev) => {
+      const [min, max] = prev;
+      if (!Number.isFinite(min) || !Number.isFinite(max) || max <= 0 || max < min) {
+        return [0, effectivePriceMax];
+      }
+      const clampedMin = Math.max(0, Math.min(min, effectivePriceMax));
+      const clampedMax = Math.max(clampedMin, Math.min(max, effectivePriceMax));
+      if (clampedMin !== min || clampedMax !== max) {
+        return [clampedMin, clampedMax];
+      }
+      return prev;
+    });
+  }, [effectivePriceMax]);
   const gpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).gpu)));
   const cpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).cpu)));
   const tiers = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).tier)));
@@ -595,7 +637,7 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setPriceRange([0, 40000]);
+    setPriceRange([0, effectivePriceMax]);
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
@@ -615,7 +657,7 @@ export default function Products() {
   if (showUsedOnly) {
     activeFilters.push("Begagnade datorer");
   }
-  if (priceRange[0] !== 0 || priceRange[1] !== 40000) {
+  if (priceRange[0] !== 0 || priceRange[1] !== effectivePriceMax) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
   }
   selectedGPUs.forEach((gpu) => activeFilters.push(`GPU: ${gpu}`));
@@ -737,7 +779,7 @@ export default function Products() {
                   <input
                     type="range"
                     min="0"
-                    max="40000"
+                    max={effectivePriceMax}
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="w-full accent-yellow-400"
