@@ -104,15 +104,6 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     background:
       "bg-gradient-to-r from-slate-950 via-purple-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
-  paket: {
-    eyebrow: "Paket",
-    title: "Allt du behöver, redo att köra",
-    description: "Kompletta paket med dator, skärm och tillbehör i ett och samma köp.",
-    images: ["/products/newpc/chieftecvisio_new.png"],
-    background:
-      "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
-    variant: "bundle",
-  },
   "best-selling": {
     eyebrow: "Mest för pengarna",
     title: "Mest för pengarna",
@@ -597,9 +588,6 @@ export default function Products() {
           if (activeCategory === "toptier") {
             return card.computer.classLabels?.includes("Toptier PC's");
           }
-        if (activeCategory === "paket") {
-          return card.computer.classLabels?.includes("Paket PC's");
-        }
         return true;
       })();
 
@@ -648,7 +636,6 @@ export default function Products() {
     if (activeCategory === "budget") return "Budgetvänlig";
     if (activeCategory === "best-selling") return "Mest för pengarna";
     if (activeCategory === "toptier") return "Bästa prestanda";
-    if (activeCategory === "paket") return "Paket";
     return "";
   })();
 
