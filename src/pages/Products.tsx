@@ -421,9 +421,6 @@ export default function Products() {
 
   useEffect(() => {
     if (!activeCategory || hasAppliedCategory.current) return;
-    if (activeCategory === "budget") {
-      setPriceRange([0, 6000]);
-    }
     hasAppliedCategory.current = true;
   }, [activeCategory]);
 
@@ -620,7 +617,7 @@ export default function Products() {
       const categoryMatch = (() => {
         if (!activeCategory) return true;
         if (activeCategory === "budget") {
-          return hasCategoryTag(product, activeCategory) || displayPrice <= 6000 || card.computer.classLabels?.includes("Budget PC's");
+          return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Budget PC's");
         }
         if (activeCategory === "best-selling" || activeCategory === "price-performance") {
           return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Best-Selling PC's");
