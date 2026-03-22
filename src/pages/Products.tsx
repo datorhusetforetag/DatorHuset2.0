@@ -9,6 +9,11 @@ import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
+import chieftecVistaBanner from "../../images/product images/NewPCImages/chieftecvista_new3.jpg";
+import chieftecVisioBanner from "../../images/product images/NewPCImages/ChieftecVisio_new.png";
+import cg530Banner from "../../images/product images/NewPCImages/cg530_new4.jpg";
+import allBlackBanner from "../../images/product images/NewPCImages/allblack.jpg";
+import allWhiteBanner from "../../images/product images/NewPCImages/allwhite (1).jpg";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v2";
@@ -79,11 +84,7 @@ const DEFAULT_BANNER: BannerConfig = {
   eyebrow: "Topplistan",
   title: "Bästa säljare inom stationära datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
-  images: [
-    "/products/newpc/chieftecvista_new.png",
-    "/products/newpc/chieftecvisio_new.png",
-    "/products/newpc/cg530_new.png",
-  ],
+  images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
   background:
     "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   imageSize: "large",
@@ -94,7 +95,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Budgetvänligt",
     title: "Budget betyder inte dåligt",
     description: "Smarta val som håller priset nere utan att tumma på känslan.",
-    images: ["/products/newpc/chieftecvista_new.png"],
+    images: [chieftecVistaBanner],
     stickers: [
       {
         label: "Bäst i budget-klass",
@@ -108,11 +109,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Mest för pengarna",
     title: "Mest för pengarna",
     description: "Våra mest prisvärda byggen \u2013 noggrant utvalda för maximal valuta.",
-    images: [
-      "/products/newpc/chieftecvista_new.png",
-      "/products/newpc/chieftecvisio_new.png",
-      "/products/newpc/cg530_new.png",
-    ],
+    images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
     stickers: [
       {
         label: "DatorHusets val",
@@ -134,10 +131,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     eyebrow: "Bästa prestanda",
     title: "När bara det snabbaste duger",
     description: "Toppbyggen för dig som vill ha maximal kraft och kompromisslös kvalitet.",
-    images: [
-      "/products/newpc/allblack-main.jpg",
-      "/products/newpc/allwhite-1.jpg",
-    ],
+    images: [allBlackBanner, allWhiteBanner],
     stickers: [
       {
         label: "Bäst i Klass",
