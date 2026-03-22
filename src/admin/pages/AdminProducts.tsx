@@ -21,9 +21,11 @@ import {
 } from "@/lib/usedParts";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import {
+  ADMIN_LISTING_TAG_OPTIONS,
   ADMIN_DLSS_FSR_MODE_OPTIONS,
   createListingRequestSchema as sharedCreateListingRequestSchema,
   formatZodValidationError as formatContractValidationError,
+  normalizeListingTags,
   updateListingRequestSchema as sharedUpdateListingRequestSchema,
 } from "../../../shared/adminListingContract.js";
 
@@ -50,6 +52,7 @@ type AdminProduct = {
   case_name?: string | null;
   cpu_cooler?: string | null;
   os?: string | null;
+  tags?: string[] | null;
 };
 
 type InventoryItem = {
@@ -96,13 +99,14 @@ type ListingDraft = {
   case_name: string;
   cpu_cooler: string;
   os: string;
+  tags: string[];
   quantity_in_stock: number;
   is_preorder: boolean;
   eta_input: string;
   eta_note: string;
 };
 
-type ListingField = Exclude<keyof ListingDraft, "is_preorder" | "description">;
+type ListingField = Exclude<keyof ListingDraft, "is_preorder" | "description" | "tags">;
 
 const PRODUCT_FORM_FIELDS: ListingField[] = [
   "name",
@@ -165,6 +169,7 @@ const EMPTY_DRAFT: ListingDraft = {
   case_name: "",
   cpu_cooler: "",
   os: "Windows 11 Pro",
+  tags: [],
   quantity_in_stock: 0,
   is_preorder: false,
   eta_input: "",
@@ -222,6 +227,7 @@ const buildUsedDraftFromBase = (base: ListingDraft): ListingDraft => {
 };
 
 const DEFAULT_USED_DRAFT = buildUsedDraftFromBase(EMPTY_DRAFT);
+const LISTING_TAG_LABELS = ADMIN_LISTING_TAG_OPTIONS;
 
 const normalizeFpsEditorEntry = (entry: FpsSandboxEntry): FpsSandboxEntry => {
   const game = FPS_SANDBOX_GAME_OPTIONS.includes(entry.game as (typeof FPS_SANDBOX_GAME_OPTIONS)[number])
@@ -405,6 +411,7 @@ export default function AdminProducts() {
     case_name: String(row.case_name ?? ""),
     cpu_cooler: String(row.cpu_cooler ?? ""),
     os: String(row.os ?? ""),
+    tags: normalizeListingTags(row.tags),
     quantity_in_stock: Math.max(0, Number(row.quantity_in_stock || 0)),
     is_preorder: Boolean(row.is_preorder),
     eta_days: Number.isFinite(Number(row.eta_days)) ? Number(row.eta_days) : null,
@@ -580,6 +587,23 @@ export default function AdminProducts() {
       ...prev,
       [key]: NUMERIC_FIELDS.has(key) ? Math.max(0, Number(rawValue) || 0) : rawValue,
     }));
+  };
+
+  const toggleDraftTag = (target: "base" | "used", tag: string) => {
+    const apply = (current: string[]) =>
+      current.includes(tag) ? current.filter((entry) => entry !== tag) : [...current, tag];
+    if (target === "base") {
+      setDraft((prev) => ({ ...prev, tags: normalizeListingTags(apply(prev.tags || [])) }));
+      return;
+    }
+    setUsedDraft((prev) => ({ ...prev, tags: normalizeListingTags(apply(prev.tags || [])) }));
+  };
+
+  const toggleItemTag = (id: string, tag: string) => {
+    const target = items.find((item) => item.id === id);
+    const current = Array.isArray(target?.tags) ? target.tags : [];
+    const next = current.includes(tag) ? current.filter((entry) => entry !== tag) : [...current, tag];
+    setItem(id, "tags", normalizeListingTags(next));
   };
 
   const addImageUrlToDraft = (target: "base" | "used", rawUrl: string) => {
@@ -806,6 +830,7 @@ export default function AdminProducts() {
         storage: toTextValue(item.storage),
         storage_type: toTextValue(item.storage_type),
         tier: toTextValue(item.tier),
+        tags: normalizeListingTags(item.tags),
         motherboard: toTextValue(item.motherboard),
         psu: toTextValue(item.psu),
         case_name: toTextValue(item.case_name),
@@ -977,6 +1002,7 @@ export default function AdminProducts() {
         storage: toTextValue(item?.storage),
         storage_type: toTextValue(item?.storage_type),
         tier: toTextValue(item?.tier),
+        tags: normalizeListingTags(item?.tags),
         motherboard: toTextValue(item?.motherboard),
         psu: toTextValue(item?.psu),
         case_name: toTextValue(item?.case_name),
@@ -1045,6 +1071,7 @@ export default function AdminProducts() {
       storage: merged.storage || "",
       storage_type: merged.storage_type || "",
       tier: merged.tier || "",
+      tags: normalizeListingTags(merged.tags),
       motherboard: merged.motherboard || "",
       psu: merged.psu || "",
       case_name: merged.case_name || "",
@@ -1255,6 +1282,7 @@ export default function AdminProducts() {
       case_name: toTextValue(item.case_name),
       cpu_cooler: toTextValue(item.cpu_cooler),
       os: toTextValue(item.os),
+      tags: normalizeListingTags(item.tags),
       quantity_in_stock: 0,
       is_preorder: Boolean(item.is_preorder),
       eta_days: eta.eta_days,
@@ -1435,6 +1463,28 @@ export default function AdminProducts() {
             </select>
           </label>
         </div>
+        <div className="space-y-2">
+          <p className="text-xs text-slate-400">Taggar</p>
+          <div className="flex flex-wrap gap-2">
+            {LISTING_TAG_LABELS.map((tag) => {
+              const active = draft.tags.includes(tag);
+              return (
+                <button
+                  key={`draft-tag-${tag}`}
+                  type="button"
+                  onClick={() => toggleDraftTag("base", tag)}
+                  className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${
+                    active
+                      ? "border-cyan-400/60 bg-cyan-500/15 text-cyan-100"
+                      : "border-slate-700/60 bg-slate-950/40 text-slate-300 hover:border-cyan-400/40 hover:text-cyan-100"
+                  }`}
+                >
+                  {tag}
+                </button>
+              );
+            })}
+          </div>
+        </div>
         <label className="block text-xs text-slate-400">
           Beskrivning
           <textarea
@@ -1555,6 +1605,28 @@ export default function AdminProducts() {
                     <option value="true">Ja</option>
                   </select>
                 </label>
+              </div>
+              <div className="space-y-2">
+                <p className="text-xs text-slate-400">Taggar</p>
+                <div className="flex flex-wrap gap-2">
+                  {LISTING_TAG_LABELS.map((tag) => {
+                    const active = usedDraft.tags.includes(tag);
+                    return (
+                      <button
+                        key={`used-draft-tag-${tag}`}
+                        type="button"
+                        onClick={() => toggleDraftTag("used", tag)}
+                        className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${
+                          active
+                            ? "border-cyan-400/60 bg-cyan-500/15 text-cyan-100"
+                            : "border-slate-700/60 bg-slate-950/40 text-slate-300 hover:border-cyan-400/40 hover:text-cyan-100"
+                        }`}
+                      >
+                        {tag}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <label className="block text-xs text-slate-400">
@@ -1879,6 +1951,28 @@ export default function AdminProducts() {
                         <option value="true">På</option>
                       </select>
                     </label>
+                  </div>
+                  <div className="mt-3 space-y-2">
+                    <p className="text-xs text-slate-400">Taggar</p>
+                    <div className="flex flex-wrap gap-2">
+                      {LISTING_TAG_LABELS.map((tag) => {
+                        const active = Array.isArray(item.tags) && item.tags.includes(tag);
+                        return (
+                          <button
+                            key={`${item.id}-tag-${tag}`}
+                            type="button"
+                            onClick={() => toggleItemTag(item.id, tag)}
+                            className={`rounded-lg border px-3 py-2 text-xs font-semibold transition ${
+                              active
+                                ? "border-cyan-400/60 bg-cyan-500/15 text-cyan-100"
+                                : "border-slate-700/60 bg-slate-950/40 text-slate-300 hover:border-cyan-400/40 hover:text-cyan-100"
+                            }`}
+                          >
+                            {tag}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
 

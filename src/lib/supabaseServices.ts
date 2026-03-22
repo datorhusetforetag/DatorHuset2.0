@@ -94,6 +94,30 @@ export async function getAllInventory() {
   return data || [];
 }
 
+export async function getListingTagsMap() {
+  const { data, error } = await supabase
+    .from('ui_settings')
+    .select('key, value')
+    .like('key', 'listing_tags:%');
+
+  if (error) throw error;
+
+  const map: Record<string, string[]> = {};
+  (data || []).forEach((row: any) => {
+    const key = String(row?.key || '');
+    const productId = key.startsWith('listing_tags:') ? key.slice('listing_tags:'.length).trim() : '';
+    if (!productId) return;
+    const rawValue = row?.value;
+    const tags = Array.isArray(rawValue?.tags)
+      ? rawValue.tags
+      : Array.isArray(rawValue)
+        ? rawValue
+        : [];
+    map[productId] = tags.map((tag: unknown) => String(tag || '').trim()).filter(Boolean);
+  });
+  return map;
+}
+
 // ============================================================
 // UI SETTINGS SERVICE
 // ============================================================

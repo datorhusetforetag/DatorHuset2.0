@@ -30,6 +30,7 @@ import {
   createListingRequestSchema,
   formatZodValidationError,
   listingWriteSchema,
+  normalizeListingTags,
   updateListingRequestSchema,
 } from "./shared/adminListingContract.js";
 
@@ -4251,6 +4252,16 @@ const parseEtaFromListingPayload = (input) => {
   return { eta_days: null, eta_note: etaNote || null };
 };
 
+const parseListingTagsSetting = (value) => {
+  if (value && typeof value === "object" && Array.isArray(value.tags)) {
+    return normalizeListingTags(value.tags);
+  }
+  if (Array.isArray(value)) {
+    return normalizeListingTags(value);
+  }
+  return [];
+};
+
 const ensureUniqueSlug = async (slugInput, name, excludeProductId = "") => {
   const baseSlug = slugifyValue(slugInput || name) || `produkt-${Date.now()}`;
   let slug = baseSlug;
@@ -4347,6 +4358,7 @@ const buildListingResponse = ({
   fpsByProductId,
   usedVariantByProductId,
   usedPartsByProductId,
+  tagsByProductId,
   productImagesByProductId,
   variantLinkByBaseId,
   variantBaseByUsedId,
@@ -4390,6 +4402,7 @@ const buildListingResponse = ({
     storage: product.storage,
     storage_type: product.storage_type,
     tier: product.tier,
+    tags: parseListingTagsSetting(tagsByProductId.get(product.id)),
     motherboard: product.motherboard,
     psu: product.psu,
     case_name: product.case_name,
@@ -4449,6 +4462,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
     `fps:${id}`,
     `used_variant:${id}`,
     `used_parts:${id}`,
+    `listing_tags:${id}`,
     `product_images:${id}`,
     `used_variant_link:${id}`,
     `listing_group:${id}`,
@@ -4466,6 +4480,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
   const fpsByProductId = new Map();
   const usedVariantByProductId = new Map();
   const usedPartsByProductId = new Map();
+  const tagsByProductId = new Map();
   const productImagesByProductId = new Map();
   const variantLinkByBaseId = new Map();
   const variantBaseByUsedId = new Map();
@@ -4483,6 +4498,10 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
     }
     if (key.startsWith("used_parts:")) {
       usedPartsByProductId.set(key.slice(11), setting.value);
+      return;
+    }
+    if (key.startsWith("listing_tags:")) {
+      tagsByProductId.set(key.slice(13), setting.value);
       return;
     }
     if (key.startsWith("product_images:")) {
@@ -4517,6 +4536,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
       fpsByProductId,
       usedVariantByProductId,
       usedPartsByProductId,
+      tagsByProductId,
       productImagesByProductId,
       variantLinkByBaseId,
       variantBaseByUsedId,
@@ -4664,6 +4684,16 @@ const persistListingState = async ({ req, user, productId, listing, fpsInput, us
     .upsert([{ key: usedPartsKey, value: normalizedUsedParts, updated_at: new Date() }], { onConflict: "key" });
   if (usedPartsError) {
     throw new Error(usedPartsError.message || "Kunde inte uppdatera begagnade komponenttaggar.");
+  }
+
+  const normalizedTags = normalizeListingTags(parsedListing.tags);
+  const tagsKey = `listing_tags:${productId}`;
+  const { error: tagsError } = await supabase.from("ui_settings").upsert(
+    [{ key: tagsKey, value: { tags: normalizedTags }, updated_at: new Date() }],
+    { onConflict: "key" }
+  );
+  if (tagsError) {
+    throw new Error(tagsError.message || "Kunde inte uppdatera listningstaggar.");
   }
 
   const normalizedFps = sanitizeFpsSettings(fpsInput || parsedListing.fps, EMPTY_FPS_SETTINGS);

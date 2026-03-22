@@ -184,6 +184,21 @@ const buildComputerFromSupabaseProduct = (product: SupabaseProduct): Computer =>
   };
 };
 
+const normalizeListingTagKey = (value: string) =>
+  String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const PRODUCT_CATEGORY_TAGS: Record<string, string[]> = {
+  budget: ["budgetvanliga"],
+  "price-performance": ["price-performance"],
+  "best-selling": ["price-performance"],
+  toptier: ["basta-prestanda"],
+};
+
 export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
@@ -482,6 +497,13 @@ export default function Products() {
       productIdByName.get(normalizeProductKey(key)) || productIdByName.get(normalizeProductKey(computer.id));
     return getProductFromLookup(productLookup, lookupId);
   };
+  const hasCategoryTag = (product: SupabaseProduct | null | undefined, category: string) => {
+    if (!product) return false;
+    const allowed = PRODUCT_CATEGORY_TAGS[category] || [];
+    if (allowed.length === 0) return false;
+    const productTags = Array.isArray(product.tags) ? product.tags.map(normalizeListingTagKey) : [];
+    return allowed.some((tag) => productTags.includes(tag));
+  };
   const getDisplayVariant = (computer: Computer, useUsedVariant: boolean) => {
     const baseVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : computer;
     return mergeProductFields(
@@ -593,17 +615,18 @@ export default function Products() {
   const filteredProducts = useMemo(() => {
     return displayCards.filter((card) => {
       const variant = getDisplayVariant(card.computer, card.useUsedVariant);
+      const product = getProductForVariant(card.computer, card.useUsedVariant);
       const displayPrice = variant.price;
       const categoryMatch = (() => {
         if (!activeCategory) return true;
         if (activeCategory === "budget") {
-          return displayPrice <= 6000 || card.computer.classLabels?.includes("Budget PC's");
+          return hasCategoryTag(product, activeCategory) || displayPrice <= 6000 || card.computer.classLabels?.includes("Budget PC's");
         }
         if (activeCategory === "best-selling" || activeCategory === "price-performance") {
-          return card.computer.classLabels?.includes("Best-Selling PC's");
+          return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Best-Selling PC's");
         }
         if (activeCategory === "toptier") {
-          return card.computer.classLabels?.includes("Toptier PC's");
+          return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Toptier PC's");
         }
         return true;
       })();

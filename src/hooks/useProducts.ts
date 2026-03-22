@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getProducts } from '@/lib/supabaseServices';
+import { getListingTagsMap, getProducts } from '@/lib/supabaseServices';
 
 export interface SupabaseProduct {
   id: string; // UUID
@@ -23,6 +23,7 @@ export interface SupabaseProduct {
   os?: string | null;
   dlss_multiplier?: number | null;
   frame_gen_multiplier?: number | null;
+  tags?: string[] | null;
 }
 
 let productCache: SupabaseProduct[] = [];
@@ -50,12 +51,18 @@ export async function loadProducts(forceRefresh = false) {
 
   productLoadPromise = (async () => {
     try {
-      const rawProducts = await getProducts();
+      const [rawProducts, tagsByProductId] = await Promise.all([
+        getProducts(),
+        getListingTagsMap().catch(() => ({} as Record<string, string[]>)),
+      ]);
       productCache = rawProducts.filter((product) => {
         const name = (product.name || "").trim().toLowerCase();
         const slug = (product.slug || "").trim().toLowerCase();
         return name !== "remove" && slug !== "test";
-      });
+      }).map((product) => ({
+        ...product,
+        tags: Array.isArray(tagsByProductId[product.id]) ? tagsByProductId[product.id] : [],
+      }));
       productMapCache = {};
       productCache.forEach((product) => {
         if (product.legacy_id) {

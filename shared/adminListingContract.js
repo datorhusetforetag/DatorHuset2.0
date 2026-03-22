@@ -11,6 +11,38 @@ export const ADMIN_FPS_GAME_OPTIONS = [
 
 export const ADMIN_FPS_RESOLUTION_OPTIONS = ["1080p", "1440p", "4K"];
 export const ADMIN_DLSS_FSR_MODE_OPTIONS = ["quality", "balanced", "performance"];
+export const ADMIN_LISTING_TAG_OPTIONS = ["Budgetvänliga", "Price-Performance", "Bästa prestanda"];
+
+const normalizeTagKey = (value) =>
+  String(value || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const LISTING_TAG_BY_KEY = ADMIN_LISTING_TAG_OPTIONS.reduce((map, tag) => {
+  map[normalizeTagKey(tag)] = tag;
+  return map;
+}, {});
+
+export const normalizeListingTags = (value) => {
+  const items = Array.isArray(value)
+    ? value
+    : value === null || value === undefined || value === ""
+      ? []
+      : [value];
+  const seen = new Set();
+  const normalized = [];
+  items.forEach((entry) => {
+    const resolved = LISTING_TAG_BY_KEY[normalizeTagKey(entry)];
+    if (!resolved || seen.has(resolved)) return;
+    seen.add(resolved);
+    normalized.push(resolved);
+  });
+  return normalized;
+};
 
 const normalizeNullableString = (value) => {
   if (value === null || value === undefined) return null;
@@ -65,6 +97,10 @@ export const listingWriteSchema = z.object({
   storage: z.string().trim().min(1).max(120),
   storage_type: z.string().trim().min(1).max(40),
   tier: z.string().trim().min(1).max(40),
+  tags: z.preprocess(
+    (value) => normalizeListingTags(value),
+    z.array(z.string().trim().min(1).max(40)).max(ADMIN_LISTING_TAG_OPTIONS.length)
+  ).optional().default([]),
   motherboard: z.preprocess(normalizeNullableString, z.string().trim().max(120).nullable()).optional(),
   psu: z.preprocess(normalizeNullableString, z.string().trim().max(120).nullable()).optional(),
   case_name: z.preprocess(normalizeNullableString, z.string().trim().max(120).nullable()).optional(),
