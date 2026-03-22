@@ -92,7 +92,7 @@ const DEFAULT_BANNER: BannerConfig = {
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   budget: {
-    eyebrow: "Budgetvänligt",
+    eyebrow: "Budgetvänliga",
     title: "Budget betyder inte dåligt",
     description: "Smarta val som håller priset nere utan att tumma på känslan.",
     images: [chieftecVistaBanner],
@@ -121,6 +121,28 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
       },
       {
         label: "Otrolig Prestanda",
+        className: "bg-orange-500 text-white",
+      },
+    ],
+    background:
+      "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
+  },
+  "price-performance": {
+    eyebrow: "Price-Performance",
+    title: "Price-Performance",
+    description: "Byggen med starkast balans mellan pris och prestanda.",
+    images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
+    stickers: [
+      {
+        label: "Mest för pengarna",
+        className: "bg-sky-500 text-white",
+      },
+      {
+        label: "Price-Performance",
+        className: "bg-yellow-400 text-gray-900",
+      },
+      {
+        label: "Smart val",
         className: "bg-orange-500 text-white",
       },
     ],
@@ -456,6 +478,9 @@ export default function Products() {
     if (preset === "budget") {
       return COMPUTERS.filter((computer) => computer.name === "Cheapo - Ny");
     }
+    if (preset === "price-performance") {
+      return COMPUTERS.filter((computer) => computer.classLabels?.includes("Best-Selling PC's"));
+    }
     if (preset === "toptier") {
       return COMPUTERS.filter((computer) =>
         ["All in, all out - BLACK nybyggd", "All white, all out - NYPRIS"].includes(computer.name)
@@ -576,12 +601,12 @@ export default function Products() {
         if (activeCategory === "budget") {
           return displayPrice <= 6000 || card.computer.classLabels?.includes("Budget PC's");
         }
-          if (activeCategory === "best-selling") {
-            return card.computer.classLabels?.includes("Best-Selling PC's");
-          }
-          if (activeCategory === "toptier") {
-            return card.computer.classLabels?.includes("Toptier PC's");
-          }
+        if (activeCategory === "best-selling" || activeCategory === "price-performance") {
+          return card.computer.classLabels?.includes("Best-Selling PC's");
+        }
+        if (activeCategory === "toptier") {
+          return card.computer.classLabels?.includes("Toptier PC's");
+        }
         return true;
       })();
 
@@ -627,7 +652,8 @@ export default function Products() {
   };
 
   const categoryLabel = (() => {
-    if (activeCategory === "budget") return "Budgetvänlig";
+    if (activeCategory === "budget") return "Budgetvänliga";
+    if (activeCategory === "price-performance") return "Price-Performance";
     if (activeCategory === "best-selling") return "Mest för pengarna";
     if (activeCategory === "toptier") return "Bästa prestanda";
     return "";

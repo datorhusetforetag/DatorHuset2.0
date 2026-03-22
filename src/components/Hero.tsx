@@ -1,4 +1,4 @@
-﻿import { ChevronLeft, ChevronRight, Hammer, Monitor, Rocket, Wallet } from "lucide-react";
+import { BadgePercent, ChevronLeft, ChevronRight, Hammer, Monitor, Rocket, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useMemo, useRef } from "react";
 import { COMPUTERS } from "@/data/computers";
@@ -12,9 +12,10 @@ const FALLBACK_IMAGE = "/Datorhuset.png";
 
 const categories = [
   { name: "Alla produkter", icon: Monitor, href: "/products?clear_filters=1" },
-  { name: "Budget\u00e4nlig", icon: Wallet, href: "/products?preset=budget" },
+  { name: "Budget\u00e4nliga", icon: Wallet, href: "/products?category=budget&clear_filters=1" },
+  { name: "Price-Performance", icon: BadgePercent, href: "/products?category=price-performance&clear_filters=1" },
   { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
-  { name: "B\u00e4sta Prestanda", icon: Rocket, href: "/products?preset=toptier" },
+  { name: "B\u00e4sta prestanda", icon: Rocket, href: "/products?category=toptier&clear_filters=1" },
 ];
 
 export const Hero = () => {
@@ -113,7 +114,7 @@ export const Hero = () => {
 
         <div className="mb-12">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Popul\u00e4ra kategorier"}</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {categories.map((category) => (
               <Link
                 key={category.name}
