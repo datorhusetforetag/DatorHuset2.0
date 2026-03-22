@@ -5113,18 +5113,20 @@ export default function CustomBuild() {
                     <p className="mt-4 text-sm text-gray-600 dark:text-gray-300">
                       Hittar du inte exakt komponent? Mejla oss vilket build du vill ha.
                     </p>
-                    <Link
-                      to="/kundservice"
-                      className="mt-4 inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
-                    >
-                      {"F\u00e5 r\u00e5dgivning"}
-                    </Link>
-                    <a
-                      href="mailto:datorhuset.foretag@gmail.com?subject=Custom%20build%20fo%CC%88rfra%CC%8Agning"
-                      className="mt-3 inline-flex items-center justify-center gap-2 rounded-lg bg-[#11667b] px-4 py-2 font-semibold text-white transition-colors hover:bg-[#0d4d5d]"
-                    >
-                      Mejla oss
-                    </a>
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      <Link
+                        to="/kundservice"
+                        className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                      >
+                        {"F\u00e5 r\u00e5dgivning"}
+                      </Link>
+                      <a
+                        href="https://datorhuset.site/service-reparation"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#11667b] px-4 py-2 font-semibold text-white transition-colors hover:bg-[#0d4d5d]"
+                      >
+                        Mejla oss
+                      </a>
+                    </div>
                   </div>
                 </div>
               </aside>
