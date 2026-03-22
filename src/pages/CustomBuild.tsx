@@ -4491,7 +4491,7 @@ export default function CustomBuild() {
               onClick={() => onToggle(option)}
               className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                 isActive(option)
-                  ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10"
+                  ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10 dark:text-white"
                   : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-[#101926] dark:text-gray-200"
               }`}
             >
@@ -4521,7 +4521,7 @@ export default function CustomBuild() {
               onClick={() => onToggle(option)}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                 selectedOptions.includes(option)
-                  ? "bg-yellow-400 text-gray-900"
+                  ? "bg-yellow-400 text-gray-900 dark:bg-yellow-400/15 dark:text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-[#101926] dark:text-gray-200 dark:hover:bg-[#162234]"
               }`}
             >
