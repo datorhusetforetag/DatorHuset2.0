@@ -9,11 +9,11 @@ import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
-import chieftecVistaBanner from "../../images/product images/NewPCImages/chieftecvista_new3.jpg";
-import chieftecVisioBanner from "../../images/product images/NewPCImages/ChieftecVisio_new.png";
-import cg530Banner from "../../images/product images/NewPCImages/cg530_new4.jpg";
-import allBlackBanner from "../../images/product images/NewPCImages/allblack.jpg";
-import allWhiteBanner from "../../images/product images/NewPCImages/allwhite (1).jpg";
+import chieftecVistaBanner from "../../public/products/newpc/chieftecvista_new3.jpg";
+import chieftecVisioBanner from "../../public/products/newpc/chieftecvisio_new.png";
+import cg530Banner from "../../public/products/newpc/cg530_new4.jpg";
+import allBlackBanner from "../../public/products/newpc/allblack-main.jpg";
+import allWhiteBanner from "../../public/products/newpc/allwhite-1.jpg";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v2";
