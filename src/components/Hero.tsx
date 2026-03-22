@@ -77,8 +77,8 @@ export const Hero = () => {
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-28 sm:h-36 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
               <div className="relative z-10 pr-3">
-                <p className="text-sm uppercase tracking-[0.18em] text-gray-600 dark:text-gray-300">Nyhet</p>
-                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">Platina Frostbyte \u00e4r nu i lager!</p>
+                <p className="text-sm uppercase tracking-[0.18em] text-gray-600 dark:text-gray-300">Nyhet!</p>
+                <p className="text-lg sm:text-xl font-bold text-gray-900 dark:text-gray-100">{"Platina Curver är nu i lager!"}</p>
               </div>
               <img
                 src="/images/foretagsdeal.webp"
