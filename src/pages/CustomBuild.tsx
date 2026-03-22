@@ -5043,8 +5043,8 @@ export default function CustomBuild() {
             </div>
 
             <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block self-start`}>
-                <div className="space-y-4 sticky top-24 self-start">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block self-start lg:sticky lg:top-24`}>
+                <div className="space-y-4">
                   <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-800 dark:bg-gray-900/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Komponenter</p>
                       <div className="mt-4 space-y-2">
@@ -5350,7 +5350,7 @@ export default function CustomBuild() {
                           onClick={() => toggleSortForCategory(sortButton.key, sortButton.direction)}
                           className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                             isActive
-                              ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10"
+                              ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10 dark:text-white"
                               : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-[#101926] dark:text-gray-200"
                           }`}
                         >
@@ -5604,8 +5604,8 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="hidden lg:block self-start">
-                <div className="space-y-4 sticky top-24 self-start">
+              <aside className="hidden lg:block self-start lg:sticky lg:top-24">
+                <div className="space-y-4">
                   <div
                     id="build-summary"
                     className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-gray-800 dark:bg-gray-900/80 scroll-mt-24"
