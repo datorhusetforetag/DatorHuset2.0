@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { getProductIdByName, useProducts } from "@/hooks/useProducts";
+import { getProductIdByName, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
@@ -38,6 +38,26 @@ const GAME_IMAGES: Record<string, string> = {
 };
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
+
+const buildComputerFromSupabaseProduct = (product: SupabaseProduct): Computer => {
+  const normalizedImage = normalizeProductImagePath(product.image_url || "") || DETAIL_FALLBACK_IMAGE;
+  return {
+    id: product.id,
+    name: product.name,
+    price: typeof product.price_cents === "number" ? product.price_cents / 100 : 0,
+    cpu: product.cpu || "",
+    gpu: product.gpu || "",
+    ram: product.ram || "",
+    storage: product.storage || "",
+    storagetype: product.storage_type || "SSD",
+    tier: product.tier || "Silver",
+    rating: typeof product.rating === "number" ? product.rating : 0,
+    reviews: typeof product.reviews_count === "number" ? product.reviews_count : 0,
+    image: normalizedImage,
+    images: [normalizedImage],
+    usedVariantEnabled: false,
+  };
+};
 const DEFAULT_PRODUCT_INFO = [
   {
     title: "Game Changer",
@@ -260,10 +280,16 @@ export default function ComputerDetails() {
     etaNote: string | null;
   } | null>(null);
 
-  const computer: Computer | undefined = COMPUTERS.find((c) => c.id === id);
-  const baseProductId = computer ? getProductIdByName(computer.name) || getProductIdByName(computer.id) : null;
-  const usedProductId = computer?.usedVariant?.productKey
-    ? getProductIdByName(computer.usedVariant.productKey)
+  const localComputer = COMPUTERS.find((c) => c.id === id);
+  const supabaseOnlyProduct = localComputer ? null : getProductFromLookup(productLookup, id);
+  const computer: Computer | undefined = localComputer || (supabaseOnlyProduct ? buildComputerFromSupabaseProduct(supabaseOnlyProduct) : undefined);
+  const baseProductId = computer
+    ? localComputer
+      ? getProductIdByName(localComputer.name) || getProductIdByName(localComputer.id)
+      : supabaseOnlyProduct?.id || null
+    : null;
+  const usedProductId = localComputer?.usedVariant?.productKey
+    ? getProductIdByName(localComputer.usedVariant.productKey)
     : null;
   const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
 

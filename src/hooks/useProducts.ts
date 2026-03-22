@@ -27,6 +27,7 @@ export interface SupabaseProduct {
 
 let productCache: SupabaseProduct[] = [];
 let productMapCache: { [key: string]: string } = {}; // name -> UUID mapping
+let productLoadPromise: Promise<SupabaseProduct[]> | null = null;
 
 export const normalizeProductKey = (value: string) => {
   if (!value) return "";
@@ -39,8 +40,15 @@ export const normalizeProductKey = (value: string) => {
     .replace(/^-+|-+$/g, "");
 };
 
-export async function loadProducts() {
-  if (productCache.length === 0) {
+export async function loadProducts(forceRefresh = false) {
+  if (!forceRefresh && productCache.length > 0) {
+    return productCache;
+  }
+  if (!forceRefresh && productLoadPromise) {
+    return productLoadPromise;
+  }
+
+  productLoadPromise = (async () => {
     try {
       const rawProducts = await getProducts();
       productCache = rawProducts.filter((product) => {
@@ -48,7 +56,7 @@ export async function loadProducts() {
         const slug = (product.slug || "").trim().toLowerCase();
         return name !== "remove" && slug !== "test";
       });
-      // Create mapping by tier and name for easy lookup
+      productMapCache = {};
       productCache.forEach((product) => {
         if (product.legacy_id) {
           const legacyKey = normalizeProductKey(product.legacy_id);
@@ -64,12 +72,21 @@ export async function loadProducts() {
         if (slugKey) {
           productMapCache[slugKey] = product.id;
         }
+        const idKey = normalizeProductKey(product.id);
+        if (idKey) {
+          productMapCache[idKey] = product.id;
+        }
       });
+      return productCache;
     } catch (error) {
       console.error('Failed to load products from Supabase:', error);
+      return productCache;
+    } finally {
+      productLoadPromise = null;
     }
-  }
-  return productCache;
+  })();
+
+  return productLoadPromise;
 }
 
 export function getProductIdByName(name: string): string | null {
@@ -86,7 +103,7 @@ export function useProducts() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const data = await loadProducts();
+        const data = await loadProducts(true);
         setProducts(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load products');

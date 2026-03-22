@@ -1977,9 +1977,13 @@ const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "gpu-46": "https://komponentkoll.se/produkt/1431295-inno3d-geforce-rtx-5070-ti-16gb-3x-oc-white",
   "gpu-47": "https://komponentkoll.se/produkt/1431531-pny-geforce-rtx-5070-ti-16gb-oc",
   "sto-19": "https://komponentkoll.se/produkt/1438015-crucial-p510-1tb-m-2-nvme-pcie-gen-5",
+  "sto-26": "https://komponentkoll.se/produkt/1438016-crucial-p510-2tb-m-2-nvme-pcie-gen-5",
   "sto-27": "https://komponentkoll.se/produkt/1446759-crucial-e100",
+  "sto-32": "https://komponentkoll.se/produkt/1441465-crucial-p310",
   "case-9": "https://komponentkoll.se/produkt/1447178-lian-li-o11d-mini-v2-svart",
   "cool-38": "https://komponentkoll.se/produkt/1403822-nzxt-kraken-elite-rgb-v2-360mm-svart",
+  "cool-30": "https://komponentkoll.se/produkt/1437073-arctic-liquid-freezer-iii-pro-360-a-rgb-kylare-vit",
+  "cool-52": "https://komponentkoll.se/produkt/1392730-arctic-freezer-36",
   "mb-am4-gigabyte-x570-aorus-elite": "https://komponentkoll.se/produkt/105944-gigabyte-x570-aorus-elite-socket-am4",
   "mb-am4-msi-mag-b550m-mortar-wifi": "https://komponentkoll.se/produkt/119236-msi-mag-b550m-mortar-wifi",
   "psu-22": "https://komponentkoll.se/produkt/1441695-cooler-master-mwe-850w-gold-v3-atx-3-1",
@@ -2093,6 +2097,112 @@ const CUSTOM_BUILD_MANUAL_STORE_OFFERS = {
       product_url: "https://www.dustin.se/product/5020045423/pure-rock-3-lx",
     },
   ],
+  "sto-32": [
+    {
+      store_id: "amazon-se",
+      store: "Amazon.se",
+      status: "available",
+      price: 2900,
+      total_price: 2900,
+      product_url: "https://www.amazon.se/dp/B0CM8W1S8K",
+    },
+  ],
+  "sto-27": [
+    {
+      store_id: "elgiganten",
+      store: "Elgiganten",
+      status: "unavailable",
+      price: 2099,
+      total_price: 2099,
+      product_url:
+        "https://www.elgiganten.se/product/gaming/datorkomponenter/intern-lagring/intern-ssd/crucial-e100-intern-m2-gen-4-ssd-2-tb/991845?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+      availability: "unavailable",
+    },
+    {
+      store_id: "computersalg",
+      store: "CSmegastore",
+      status: "unavailable",
+      price: 2779,
+      total_price: 2779,
+      product_url: "https://www.computersalg.se/i/24512633/crucial-e100-ssd-2-tb-inbyggd-m-2-2280-pcie-4-0-x4-nvme",
+      availability: "unavailable",
+    },
+  ],
+  "cool-30": [
+    {
+      store_id: "webhallen",
+      store: "Webhallen",
+      status: "available",
+      price: 1199,
+      total_price: 1199,
+      product_url: "https://www.webhallen.com/se/product/384673",
+    },
+    {
+      store_id: "elgiganten",
+      store: "Elgiganten",
+      status: "available",
+      price: 1199,
+      total_price: 1199,
+      product_url:
+        "https://www.elgiganten.se/product/gaming/datorkomponenter/datorflaktar-kylning/vattenkylning-till-dator/arctic-liquid-freezer-iii-pro-360-a-rgb-cpu-vatskekylare-vit/966783?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+    },
+    {
+      store_id: "computersalg",
+      store: "CSmegastore",
+      status: "available",
+      price: 1269,
+      total_price: 1269,
+      product_url:
+        "https://www.csmegastore.se/i/24206202/arctic-liquid-freezer-iii-pro-360-a-rgb-kylsystem-med-v%C3%A4tska-till-processorn-elementstorlek-360-mm-f%C3%B6r-am5-am4-lga1700",
+    },
+    {
+      store_id: "inet",
+      store: "Inet",
+      status: "available",
+      price: 1290,
+      total_price: 1290,
+      product_url: "https://www.inet.se/produkt/5325385/arctic-liquid-freezer-iii-pro-360-a-rgb-vit",
+    },
+  ],
+  "cool-52": [
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 287,
+      total_price: 287,
+      product_url: "https://www.proshop.se/CPU-flaektar/Arctic-Freezer-36-CPU-Luftkylare/3235749",
+    },
+    {
+      store_id: "elgiganten",
+      store: "Elgiganten",
+      status: "available",
+      price: 299,
+      total_price: 299,
+      product_url:
+        "https://www.elgiganten.se/product/gaming/datorkomponenter/datorflaktar-kylning/cpu-kylare-flaktar/arctic-freezer-36-cpu-luftkylare/966789?utm_source=komponentkoll&utm_medium=pricecomp&utm_campaign=komponentkoll_listing",
+    },
+  ],
+  "gpu-10": [
+    {
+      store_id: "komplett",
+      store: "Komplett",
+      status: "available",
+      price: 3790,
+      total_price: 3790,
+      product_url:
+        "https://www.komplett.se/product/1324908/datorutrustning/datorkomponenter/grafikkort/xfx-swift-amd-radeon-rx-9060-xt-oc-gaming-vit?channable=02f53f6964003133323439303862",
+    },
+    {
+      store_id: "proshop",
+      store: "Proshop",
+      status: "available",
+      price: 4451,
+      total_price: 4451,
+      product_url:
+        "https://www.proshop.se/Grafikkort/XFX-Radeon-RX-9060-XT-Swift-Dual-Fan-White-8GB-GDDR6-RAM-Grafikkort/3383869",
+    },
+  ],
 };
 const PRISJAKT_ALLOWED_STORE_NAME_TO_ID = new Map(
   [
@@ -2127,6 +2237,8 @@ const KOMPONENTKOLL_STORE_NAME_TO_ID = new Map(
   [
     ["amazon", "amazon-se"],
     ["amazon mp", "amazon-se"],
+    ["se_amazon_mp", "amazon-se"],
+    ["amazon marketplace", "amazon-se"],
     ["csmegastore", "computersalg"],
     ["csm", "computersalg"],
     ["computersalg", "computersalg"],
@@ -2139,6 +2251,33 @@ const KOMPONENTKOLL_STORE_NAME_TO_ID = new Map(
     ["webhallen", "webhallen"],
   ].map(([name, storeId]) => [normalizeStorePriceQueryKey(name), storeId])
 );
+
+const parseKomponentkollAvailability = (value) => {
+  const normalized = normalizeStorePriceQueryKey(value);
+  if (!normalized) return null;
+  if (
+    normalized === "0" ||
+    normalized === "no" ||
+    normalized === "false" ||
+    normalized === "nej" ||
+    normalized === "slut" ||
+    normalized === "slut-i-lager" ||
+    normalized === "out-of-stock" ||
+    normalized === "sold-out"
+  ) {
+    return "unavailable";
+  }
+  if (
+    normalized === "yes" ||
+    normalized === "ja" ||
+    /^[1-9]\d*$/.test(normalized) ||
+    normalized === "in-stock" ||
+    normalized === "i-lager"
+  ) {
+    return "in_stock";
+  }
+  return null;
+};
 
 const CATALOG_VARIANT_PENALTY_TOKENS = [
   { token: "rgb", penalty: 5 },
@@ -2557,10 +2696,7 @@ const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = 
         total_price: price,
         currency: "SEK",
         shipping_price: null,
-        availability:
-          firstText(entry?.stock) && /0|no|out|nej|slut/i.test(firstText(entry?.stock))
-            ? "unavailable"
-            : "in_stock",
+        availability: parseKomponentkollAvailability(firstText(entry?.stock)),
       },
       source,
       item
@@ -2573,6 +2709,41 @@ const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = 
   });
 
   return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
+};
+
+const extractKomponentkollReferencePriceFromHtml = (html, item, sourceUrl = "") => {
+  const nextData = extractNextDataScriptJson(html);
+  const product = nextData?.props?.initialProps?.pageProps?.product;
+  const productTitleForMatch = `${firstText(product?.name)} ${buildTitleFromProductUrl(sourceUrl)}`.trim();
+  if (!product || !doesCatalogTitleMatchItem(productTitleForMatch, item)) {
+    return null;
+  }
+
+  const rawPrices = Array.isArray(product?.prices) ? product.prices : [];
+  const parsedPrices = rawPrices
+    .map((entry) => parseMoneyValue(entry?.totalprice, entry?.price))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  if (parsedPrices.length > 0) {
+    return Math.min(...parsedPrices);
+  }
+
+  const aggregateLowPrice = parseMoneyValue(product?.price, product?.lowestPrice?.amount);
+  if (Number.isFinite(aggregateLowPrice) && aggregateLowPrice > 0) {
+    return aggregateLowPrice;
+  }
+
+  const productLdJsonMatches = [...String(html || "").matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/gi)];
+  for (const match of productLdJsonMatches) {
+    try {
+      const payload = JSON.parse(match[1]);
+      const lowPrice = parseMoneyValue(payload?.offers?.lowPrice, payload?.offers?.price);
+      if (Number.isFinite(lowPrice) && lowPrice > 0) {
+        return lowPrice;
+      }
+    } catch {}
+  }
+
+  return null;
 };
 
 const findBestPriceRunnerProductForItem = async (item) => {
@@ -3203,6 +3374,14 @@ const normalizeCatalogProductUrl = (value, sourceId) =>
   firstText(value) ||
   null;
 
+const shouldBypassCatalogPriceRangeValidation = (item, trustedSource) => {
+  const category = getCustomBuildCategoryForItem(item);
+  if (category === "ram") {
+    return trustedSource === "manual";
+  }
+  return TRUSTED_CATALOG_REFERENCE_SOURCES.has(trustedSource);
+};
+
 const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
   if (!item) return [];
   const directLinkStoreIds = Object.keys(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id] || {}).slice(0, 5);
@@ -3249,7 +3428,7 @@ const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   const hasReasonablePrice =
     effectivePrice === null ||
     !item ||
-    TRUSTED_CATALOG_REFERENCE_SOURCES.has(trustedSource) ||
+    shouldBypassCatalogPriceRangeValidation(item, trustedSource) ||
     isCatalogOfferWithinExpectedPriceRange(item, effectivePrice);
   const fallbackStatus = productUrl ? "linked_no_price" : searchUrl ? "search_only" : "not_found";
   const requestedStatus = firstText(offer?.status);
@@ -3467,7 +3646,7 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
       : null;
   const validatedReferenceLowestPrice =
     Number.isFinite(referenceLowestPrice) &&
-    (TRUSTED_CATALOG_REFERENCE_SOURCES.has(String(referenceSource || "").toLowerCase()) ||
+    (shouldBypassCatalogPriceRangeValidation(item, String(referenceSource || "").toLowerCase()) ||
       isCatalogOfferWithinExpectedPriceRange(item, referenceLowestPrice))
       ? referenceLowestPrice
       : null;
@@ -3507,10 +3686,13 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
         .filter(Boolean)
     : [];
   if (manualOffers.length > 0) {
+    const manualReferenceLowestPrice = manualOffers
+      .map((offer) => offer?.total_price ?? offer?.price)
+      .filter((value) => Number.isFinite(value) && value > 0);
     return {
       offers: sortCatalogStoreOffers(manualOffers),
-      referenceLowestPrice: null,
-      referenceSource: null,
+      referenceLowestPrice: manualReferenceLowestPrice.length > 0 ? Math.min(...manualReferenceLowestPrice) : null,
+      referenceSource: manualReferenceLowestPrice.length > 0 ? "manual" : null,
     };
   }
   const offerLists = [];
@@ -3526,6 +3708,11 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
         item,
         komponentkollProduct.product_url
       );
+      const komponentkollReferenceFromPage = extractKomponentkollReferencePriceFromHtml(
+        komponentkollHtml,
+        item,
+        komponentkollProduct.product_url
+      );
       if (offers.length > 0) {
         offerLists.push(offers);
         const komponentkollOfferPrices = offers
@@ -3533,6 +3720,12 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
           .filter((value) => Number.isFinite(value) && value > 0);
         if (komponentkollOfferPrices.length > 0) {
           referenceLowestPrice = Math.min(...komponentkollOfferPrices);
+          referenceSource = "komponentkoll";
+        }
+      }
+      if (Number.isFinite(komponentkollReferenceFromPage) && komponentkollReferenceFromPage > 0) {
+        if (!Number.isFinite(referenceLowestPrice) || komponentkollReferenceFromPage < referenceLowestPrice) {
+          referenceLowestPrice = komponentkollReferenceFromPage;
           referenceSource = "komponentkoll";
         }
       }
@@ -4090,6 +4283,62 @@ const UPLOAD_IMAGE_MIME_TO_EXT = {
   "image/png": "png",
   "image/webp": "webp",
   "image/avif": "avif",
+};
+
+let resolvedProductImageBucket = null;
+let ensureProductImageBucketPromise = null;
+
+const ensureProductImageBucketReady = async () => {
+  if (!supabase) {
+    throw new Error("SUPABASE_NOT_CONFIGURED");
+  }
+  if (resolvedProductImageBucket) {
+    return resolvedProductImageBucket;
+  }
+  if (ensureProductImageBucketPromise) {
+    return ensureProductImageBucketPromise;
+  }
+
+  ensureProductImageBucketPromise = (async () => {
+    const fallbackBuckets = Array.from(new Set([PRODUCT_IMAGE_BUCKET, "public-assets"].filter(Boolean)));
+    const { data: buckets } = await supabase.storage.listBuckets().catch(() => ({ data: [] }));
+    if (Array.isArray(buckets)) {
+      for (const bucketName of fallbackBuckets) {
+        if (buckets.some((bucket) => sanitizeText(bucket?.name, 120) === bucketName)) {
+          resolvedProductImageBucket = bucketName;
+          return bucketName;
+        }
+      }
+    }
+
+    const { error: createError } = await supabase.storage.createBucket(PRODUCT_IMAGE_BUCKET, {
+      public: true,
+      fileSizeLimit: String(MAX_UPLOAD_IMAGE_BYTES),
+      allowedMimeTypes: Object.keys(UPLOAD_IMAGE_MIME_TO_EXT),
+    });
+    if (!createError || /already exists/i.test(String(createError?.message || ""))) {
+      resolvedProductImageBucket = PRODUCT_IMAGE_BUCKET;
+      return PRODUCT_IMAGE_BUCKET;
+    }
+
+    const { data: retryBuckets } = await supabase.storage.listBuckets().catch(() => ({ data: [] }));
+    if (Array.isArray(retryBuckets)) {
+      for (const bucketName of fallbackBuckets) {
+        if (retryBuckets.some((bucket) => sanitizeText(bucket?.name, 120) === bucketName)) {
+          resolvedProductImageBucket = bucketName;
+          return bucketName;
+        }
+      }
+    }
+
+    throw new Error(createError.message || "Could not resolve product image bucket.");
+  })();
+
+  try {
+    return await ensureProductImageBucketPromise;
+  } finally {
+    ensureProductImageBucketPromise = null;
+  }
 };
 
 const buildListingResponse = ({
@@ -5194,12 +5443,27 @@ app.post("/api/admin/v2/uploads/product-image", async (req, res) => {
     const fileBase = ensureImagePathSlug(fileNameInput || `image-${Date.now()}`, "bild");
     const objectPath = `listings/${safeSlug}/${Date.now()}-${fileBase}.${extension}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from(PRODUCT_IMAGE_BUCKET)
+    const bucketName = await ensureProductImageBucketReady();
+    let { error: uploadError } = await supabase.storage
+      .from(bucketName)
       .upload(objectPath, binary, {
         contentType: mimeType,
         upsert: false,
       });
+
+    if (uploadError && /bucket/i.test(String(uploadError.message || ""))) {
+      resolvedProductImageBucket = null;
+      const retryBucketName = await ensureProductImageBucketReady();
+      ({ error: uploadError } = await supabase.storage
+        .from(retryBucketName)
+        .upload(objectPath, binary, {
+          contentType: mimeType,
+          upsert: false,
+        }));
+      if (!uploadError) {
+        resolvedProductImageBucket = retryBucketName;
+      }
+    }
 
     if (uploadError) {
       return jsonError(
@@ -5210,14 +5474,15 @@ app.post("/api/admin/v2/uploads/product-image", async (req, res) => {
       );
     }
 
-    const publicUrlData = supabase.storage.from(PRODUCT_IMAGE_BUCKET).getPublicUrl(objectPath);
-    const url = sanitizeImageUrl(publicUrlData?.data?.publicUrl) || buildStoragePublicUrl(PRODUCT_IMAGE_BUCKET, objectPath);
+    const activeBucketName = resolvedProductImageBucket || bucketName;
+    const publicUrlData = supabase.storage.from(activeBucketName).getPublicUrl(objectPath);
+    const url = sanitizeImageUrl(publicUrlData?.data?.publicUrl) || buildStoragePublicUrl(activeBucketName, objectPath);
 
     return res.status(201).json({
       ok: true,
       data: {
         url,
-        bucket: PRODUCT_IMAGE_BUCKET,
+        bucket: activeBucketName,
         path: objectPath,
       },
     });

@@ -52,6 +52,49 @@ const motherboard = (
   ),
 });
 
+const customBuildSlugify = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const inferMotherboardImageKey = (name) => {
+  const normalized = String(name || "").toLowerCase();
+  if (normalized.startsWith("asus rog")) return "moboAsusRogB650E";
+  if (normalized.startsWith("asus tuf")) return "moboAsusTufZ790Plus";
+  if (normalized.startsWith("asus")) return "moboAsusPrimeB650MA";
+  if (normalized.startsWith("msi")) return normalized.includes("z") ? "moboMsiMpgZ790Edge" : "moboMsiB760MMortar";
+  if (normalized.startsWith("gigabyte") || normalized.startsWith("gigabyte") || normalized.startsWith("giga")) {
+    return normalized.includes("z") || normalized.includes("aorus")
+      ? "moboGigabyteZ790AorusElite"
+      : "moboGigabyteB650AorusElite";
+  }
+  if (normalized.startsWith("nzxt")) return "moboAsusRogB650E";
+  if (normalized.startsWith("sapphire")) return "moboAsusPrimeB650MA";
+  if (normalized.startsWith("asrock")) {
+    return normalized.includes("steel") || normalized.includes("taichi") || normalized.includes("nova")
+      ? "moboAsrockX670ESteelLegend"
+      : "moboAsrockZ790ProRs";
+  }
+  return "moboAsrockZ790ProRs";
+};
+
+const createMotherboardCatalogEntries = (socket, entries) =>
+  entries.map((entry) =>
+    motherboard(
+      entry.id || `mb-${customBuildSlugify(socket)}-${customBuildSlugify(entry.name)}`,
+      entry.name,
+      socket,
+      entry.price,
+      entry.imageKey || inferMotherboardImageKey(entry.name),
+      entry.specs,
+      entry.details,
+      entry.highlight || null
+    )
+  );
+
 export const CUSTOM_BUILD_STORE_SOURCES = [
   { id: "inet", name: "Inet" },
   { id: "webhallen", name: "Webhallen" },
@@ -1598,6 +1641,250 @@ const LGA1700_MOTHERBOARDS = [
   }, "Premium"),
 ];
 
+const ADDITIONAL_LGA1200_MOTHERBOARDS = createMotherboardCatalogEntries("LGA1200", [
+  {
+    name: "ASRock H510M-H2/M.2 SE",
+    price: 799,
+    specs: ["H510", "mATX", "DDR4", "LGA1200"],
+    details: { chipset: "H510", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" },
+  },
+  {
+    name: "ASRock H510M-HDV/M.2 SE",
+    price: 849,
+    specs: ["H510", "mATX", "DDR4", "LGA1200"],
+    details: { chipset: "H510", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" },
+  },
+]);
+
+const ADDITIONAL_LGA1700_MOTHERBOARDS = createMotherboardCatalogEntries("LGA1700", [
+  {
+    name: "GIGABYTE H610M H V2 DDR4",
+    price: 899,
+    specs: ["H610", "mATX", "DDR4", "LGA1700"],
+    details: { chipset: "H610", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" },
+  },
+  {
+    name: "ASRock H610M-HDV/M.2+ D5",
+    price: 999,
+    specs: ["H610", "mATX", "DDR5", "LGA1700"],
+    details: { chipset: "H610", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" },
+  },
+  {
+    name: "ASRock H610M-H2/M.2 D5",
+    price: 999,
+    specs: ["H610", "mATX", "DDR5", "LGA1700"],
+    details: { chipset: "H610", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" },
+  },
+  {
+    name: "ASRock H610M-HDV/M.2 R2.0",
+    price: 949,
+    specs: ["H610", "mATX", "DDR4", "LGA1700"],
+    details: { chipset: "H610", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" },
+  },
+  {
+    name: "ASRock B760M-HDV/M.2",
+    price: 1199,
+    specs: ["B760", "mATX", "DDR5", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock B760M-H2/M.2",
+    price: 1249,
+    specs: ["B760", "mATX", "DDR5", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock B760M-HDV/M.2 D4",
+    price: 1149,
+    specs: ["B760", "mATX", "DDR4", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "GIGABYTE B760M H DDR4",
+    price: 1199,
+    specs: ["B760", "mATX", "DDR4", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "GIGABYTE B760M DS3H GEN5",
+    price: 1399,
+    specs: ["B760", "mATX", "DDR5", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "Asus Prime B760-PLUS",
+    price: 1599,
+    specs: ["B760", "ATX", "DDR5", "LGA1700"],
+    details: { chipset: "B760", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "MSI B760M-P PRO",
+    price: 1299,
+    specs: ["B760", "mATX", "DDR5", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "ASUS PRO B760M-R D4",
+    price: 1299,
+    specs: ["B760", "mATX", "DDR4", "LGA1700"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR4", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "Gigabyte B760 GAMING X WIFI6E GEN5",
+    price: 1999,
+    specs: ["B760", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "B760", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "MSI B760M GAMING PLUS WIFI",
+    price: 1799,
+    specs: ["B760", "mATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock B760M-ITX/D4 WIFI",
+    price: 1899,
+    specs: ["B760", "Mini-ITX", "DDR4", "Wi-Fi"],
+    details: { chipset: "B760", formFactor: "Mini-ITX", memory: "DDR4", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "GIGABYTE B760 GAMING X DDR4",
+    price: 1799,
+    specs: ["B760", "ATX", "DDR4", "LGA1700"],
+    details: { chipset: "B760", formFactor: "ATX", memory: "DDR4", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock B760M Steel Legend WIFI D5",
+    price: 2099,
+    specs: ["B760", "mATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "B760", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+    highlight: "Value",
+  },
+  {
+    name: "MSI B760 GAMING PLUS WIFI",
+    price: 1999,
+    specs: ["B760", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "B760", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "GIGABYTE Z790 D",
+    price: 2299,
+    specs: ["Z790", "ATX", "DDR5", "LGA1700"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock Z790 PG Lightning",
+    price: 2399,
+    specs: ["Z790", "ATX", "DDR5", "LGA1700"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "Gigabyte Z790 D AX",
+    price: 2499,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "ASUS PRIME Z790-P WIFI",
+    price: 2899,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock Z790M-ITX WiFi",
+    price: 2999,
+    specs: ["Z790", "Mini-ITX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "Mini-ITX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "MSI PRO Z790-P WIFI",
+    price: 2899,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "MSI Z790 GAMING PLUS WIFI",
+    price: 2999,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock Z790 Phantom Gaming Sonic",
+    price: 3499,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+    highlight: "Special",
+  },
+  {
+    name: "ASRock Z790I Lightning WIFI",
+    price: 3299,
+    specs: ["Z790", "Mini-ITX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "Mini-ITX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" },
+  },
+  {
+    name: "ASRock Z790 TAICHI LITE",
+    price: 4499,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" },
+    highlight: "Premium",
+  },
+  {
+    name: "ASUS TUF GAMING Z790-PLUS D4",
+    price: 2799,
+    specs: ["Z790", "ATX", "DDR4", "LGA1700"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR4", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" },
+  },
+  {
+    name: "Gigabyte Z790 Aorus Master",
+    price: 5299,
+    specs: ["Z790", "ATX", "DDR5", "Wi-Fi"],
+    details: { chipset: "Z790", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "10G LAN" },
+    highlight: "Premium",
+  },
+]);
+
+const LGA1851_MOTHERBOARDS = createMotherboardCatalogEntries("LGA1851", [
+  { name: "ASRock H810M-X", price: 999, specs: ["H810", "mATX", "DDR5", "LGA1851"], details: { chipset: "H810", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 4.0", wireless: "No", network: "1G LAN" } },
+  { name: "ASRock H810M-X WIFI", price: 1149, specs: ["H810", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "H810", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 4.0", wireless: "Wi-Fi 6E", network: "1G LAN" } },
+  { name: "ASRock B860M-H2", price: 1399, specs: ["B860", "mATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "ASRock B860M-X", price: 1449, specs: ["B860", "mATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "ASRock B860M Pro-A", price: 1499, specs: ["B860", "mATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "ASRock B860M-X WiFi", price: 1599, specs: ["B860", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" } },
+  { name: "MSI PRO B860-P", price: 1699, specs: ["B860", "ATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "GIGABYTE B860M EAGLE V2", price: 1699, specs: ["B860", "mATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "ASRock B860M Pro RS", price: 1699, specs: ["B860", "mATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "ASRock B860M Pro-A WiFi", price: 1799, specs: ["B860", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" } },
+  { name: "ASRock B860 Pro-A WiFi", price: 1899, specs: ["B860", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" } },
+  { name: "ASRock B860M Pro RS WiFi", price: 1849, specs: ["B860", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" } },
+  { name: "ASRock B860 Pro RS", price: 1949, specs: ["B860", "ATX", "DDR5", "LGA1851"], details: { chipset: "B860", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "ASRock B860I WiFi", price: 2199, specs: ["B860", "Mini-ITX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "Mini-ITX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "Gigabyte B860 GAMING X WIFI6E", price: 2199, specs: ["B860", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" } },
+  { name: "Gigabyte B860 AORUS ELITE WF7 ICE", price: 2499, specs: ["B860", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "ASRock B860M Steel Legend WiFi", price: 2199, specs: ["B860", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "Gigabyte B860M GAMING X WIFI6E", price: 2099, specs: ["B860", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "B860", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 6E", network: "2.5G LAN" } },
+  { name: "MSI Z890 Godlike", price: 14990, specs: ["Z890", "E-ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "E-ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "10G LAN" }, highlight: "Flagship" },
+  { name: "ASRock Z890 Taichi Lite", price: 5299, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" }, highlight: "Premium" },
+  { name: "ASRock Z890 PRO-A", price: 2999, specs: ["Z890", "ATX", "DDR5", "LGA1851"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "GIGABYTE Z890M GAMING X", price: 2799, specs: ["Z890", "mATX", "DDR5", "LGA1851"], details: { chipset: "Z890", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "No", network: "2.5G LAN" } },
+  { name: "MSI PRO Z890-S WIFI", price: 3199, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "MSI PRO Z890-P WIFI", price: 3299, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "ASRock Z890 PRO RS WIFI WHITE", price: 3599, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "Gigabyte Z890 AORUS ELITE WIFI D5", price: 3699, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "GIGABYTE Z890M A ELITE WF7 ICE", price: 3899, specs: ["Z890", "mATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "mATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "ASRock Z890 RIPTIDE WIFI", price: 3799, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "ASRock Z890 LIVEMIXER WIFI", price: 3899, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "GIGABYTE Z890 A ELITE WF7 ICE", price: 4199, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "ASRock Z890I NOVA WIFI", price: 4299, specs: ["Z890", "Mini-ITX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "Mini-ITX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" } },
+  { name: "Gigabyte Z890 Aorus Elite X Ice", price: 4399, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "2.5G LAN" } },
+  { name: "MSI MAG Z890 TOMAHAWK WIFI", price: 4499, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" } },
+  { name: "GIGABYTE Z890 AORUS PRO ICE", price: 4999, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" } },
+  { name: "NZXT N9 Z890", price: 5499, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" }, highlight: "Premium" },
+  { name: "ASUS ROG STRIX Z890-A GAMING WIFI", price: 4999, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" } },
+  { name: "ASUS ROG STRIX Z890-E GAMING WIFI", price: 6999, specs: ["Z890", "ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" }, highlight: "Premium" },
+  { name: "GIGABYTE Z890 AORUS XTREME AI TOP", price: 12490, specs: ["Z890", "E-ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "E-ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "10G LAN" }, highlight: "Flagship" },
+  { name: "GIGABYTE AORUS Z890 TACHYON ICE", price: 10990, specs: ["Z890", "E-ATX", "DDR5", "Wi-Fi"], details: { chipset: "Z890", formFactor: "E-ATX", memory: "DDR5", pcie: "PCIe 5.0", wireless: "Wi-Fi 7", network: "5G LAN" }, highlight: "Extreme OC" },
+]);
+
 export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
   "cpu-am4-ryzen-7-5800x3d",
   "cpu-am4-ryzen-5-3600",
@@ -1613,18 +1900,23 @@ export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
   "cpu-lga1200-core-i9-11900k",
   "cpu-lga1700-core-i7-13700k",
   "mb-am4-gigabyte-x570-aorus-elite",
+  "mb-am4-asrock-x570-steel-legend",
   "mb-am4-msi-mag-b550m-mortar-wifi",
   "mb-am4-asus-rog-crosshair-viii-hero",
   "mb-am5-asrock-b650m-pro-rs-wifi",
+  "mb-am5-gigabyte-x670-aorus-elite-ax",
   "mb-am5-asrock-x670e-steel-legend",
+  "mb-lga1200-asus-tuf-b560-plus-wifi",
   "mb-lga1200-msi-b560-tomahawk-wifi",
   "mb-lga1200-gigabyte-b560-aorus-pro-ax",
+  "mb-lga1200-asrock-b560-pro4",
   "mb-lga1200-asus-prime-z590-p",
   "mb-lga1200-msi-z590-tomahawk-wifi",
   "mb-lga1200-gigabyte-z590-aorus-elite-ax",
   "mb-lga1200-asrock-z590-steel-legend",
   "mb-lga1200-asus-rog-strix-z490-f",
   "mb-lga1200-msi-z490-gaming-edge-wifi",
+  "mb-lga1700-asus-rog-strix-z790-f",
   "ram-5",
   "ram-6",
   "ram-7",
@@ -1634,10 +1926,8 @@ export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
   "ram-12",
   "ram-19",
   "ram-30",
-  "gpu-10",
   "gpu-30",
   "gpu-39",
-  "cool-38",
 ]);
 
 export const CUSTOM_BUILD_CATALOG_ITEMS = [
@@ -1649,6 +1939,9 @@ export const CUSTOM_BUILD_CATALOG_ITEMS = [
   ...AM5_MOTHERBOARDS,
   ...LGA1200_MOTHERBOARDS,
   ...LGA1700_MOTHERBOARDS,
+  ...ADDITIONAL_LGA1200_MOTHERBOARDS,
+  ...ADDITIONAL_LGA1700_MOTHERBOARDS,
+  ...LGA1851_MOTHERBOARDS,
   ...STATIC_CUSTOM_BUILD_CATALOG_ITEMS,
 ].filter((item) => !REMOVED_CUSTOM_BUILD_ITEM_IDS.has(item.id));
 

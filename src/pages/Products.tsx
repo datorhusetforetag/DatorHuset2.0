@@ -5,17 +5,15 @@ import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS, Computer } from "@/data/computers";
-import { normalizeProductKey, useProducts } from "@/hooks/useProducts";
+import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
 import { getAllInventory } from "@/lib/supabaseServices";
-import { sanitizeUsedPartsSettings, UsedPartsSettings } from "@/lib/usedParts";
+import { normalizeProductImagePath } from "@/lib/productImageResolver";
 
-const FALLBACK_IMAGE = "/Datorhuset.png";
+const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
 const FILTER_STORAGE_KEY = "datorhuset_filters_v1";
-const DEFAULT_PRICE_RANGE: [number, number] = [0, 40000];
 const RAM_PRICE_TOOLTIP =
-  "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
+  "Priserna på RAM har gått upp med cirka 500%, därav användning av begagnade RAM.";
 const toUsedName = (name: string) => {
   const trimmed = name.trim();
   const replaced = trimmed.replace(/\s*-\s*Ny$/i, " - Begagnade");
@@ -76,39 +74,14 @@ type InventoryEntry = {
   eta_note?: string | null;
 };
 
-type ProductImagesResponse = {
-  images?: string[];
-  image_url?: string | null;
-};
-
-type CardUsedPartsSource = {
-  cpu?: boolean;
-  gpu?: boolean;
-  ram?: boolean;
-  storage?: boolean;
-  motherboard?: boolean;
-  psu?: boolean;
-  case_name?: boolean;
-  cpu_cooler?: boolean;
-  caseName?: boolean;
-  cpuCooler?: boolean;
-};
-
-const toUsedPartsSettings = (source?: CardUsedPartsSource | null): UsedPartsSettings =>
-  sanitizeUsedPartsSettings({
-    ...(source || {}),
-    case_name: source?.case_name ?? source?.caseName,
-    cpu_cooler: source?.cpu_cooler ?? source?.cpuCooler,
-  });
-
 const DEFAULT_BANNER: BannerConfig = {
   eyebrow: "Topplistan",
-  title: "B\u00e4sta s\u00e4ljare inom station\u00e4ra datorer i hela Norden!",
+  title: "Bästa säljare inom stationära datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
   images: [
-    "/products/newpc/allblack-main.jpg",
-    "/products/newpc/allwhite-1.jpg",
-    "/products/newpc/cg530_new.png",
+    "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
+    "/products/Horizon3_Elite_Hero_2000x.webp",
+    "/products/Voyager_Hero_NoGeforce_2000x.webp",
   ],
   background:
     "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
@@ -117,13 +90,13 @@ const DEFAULT_BANNER: BannerConfig = {
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   budget: {
-    eyebrow: "Budgetv\u00e4nligt",
-    title: "Budget betyder inte d\u00e5ligt",
-    description: "Smarta val som h\u00e5ller priset nere utan att tumma p\u00e5 k\u00e4nslan.",
-    images: ["/products/newpc/cg530_new.png"],
+    eyebrow: "Budgetvänligt",
+    title: "Budget betyder inte dåligt",
+    description: "Smarta val som håller priset nere utan att tumma på känslan.",
+    images: ["/products/NavBase_Hero_Colorswap_2000x.webp"],
     stickers: [
       {
-        label: "B\u00e4st i budget-klass",
+        label: "Bäst i budget-klass",
         className: "bg-yellow-400 text-gray-900",
       },
     ],
@@ -132,21 +105,21 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
   },
   paket: {
     eyebrow: "Paket",
-    title: "Allt du beh\u00f6ver, redo att k\u00f6ra",
-    description: "Kompletta paket med dator, sk\u00e4rm och tillbeh\u00f6r i ett och samma k\u00f6p.",
-    images: ["/products/newpc/allwhite-1.jpg"],
+    title: "Allt du behöver, redo att köra",
+    description: "Kompletta paket med dator, skärm och tillbehör i ett och samma köp.",
+    images: ["/products/Horizon3_Elite_Hero_2000x.webp"],
     background:
       "bg-gradient-to-r from-slate-950 via-blue-950 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
     variant: "bundle",
   },
   "best-selling": {
-    eyebrow: "Mest f\u00f6r pengarna",
-    title: "Mest f\u00f6r pengarna",
-    description: "V\u00e5ra mest prisv\u00e4rda byggen \u2013 noggrant utvalda f\u00f6r maximal valuta.",
+    eyebrow: "Mest för pengarna",
+    title: "Mest för pengarna",
+    description: "Våra mest prisvärda byggen \u2013 noggrant utvalda för maximal valuta.",
     images: [
-      "/products/newpc/allblack-main.jpg",
-      "/products/newpc/allwhite-1.jpg",
-      "/products/newpc/cg530_new.png",
+      "/products/Horizon_Pro_Hero_wEliteComponents_2000x.webp",
+      "/products/Traveler_Hero_1_2000x.webp",
+      "/products/Voyager_Hero_NoGeforce_2000x.webp",
     ],
     stickers: [
       {
@@ -166,16 +139,16 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
       "bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 dark:bg-[#0F1824] dark:[background-image:none]",
   },
   toptier: {
-    eyebrow: "B\u00e4sta prestanda",
-    title: "N\u00e4r bara det snabbaste duger",
-    description: "Toppbyggen f\u00f6r dig som vill ha maximal kraft och kompromissl\u00f6s kvalitet.",
+    eyebrow: "Bästa prestanda",
+    title: "När bara det snabbaste duger",
+    description: "Toppbyggen för dig som vill ha maximal kraft och kompromisslös kvalitet.",
     images: [
-      "/products/newpc/allblack-main.jpg",
-      "/products/newpc/allwhite-1.jpg",
+      "/products/Voy_Red_Hero_2000x.webp",
+      "/products/Voyager_Hero_NoGeforce_2000x_2.webp",
     ],
     stickers: [
       {
-        label: "B\u00e4st i Klass",
+        label: "Bäst i Klass",
         className: "bg-yellow-400 text-gray-900",
       },
       {
@@ -190,43 +163,46 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
 };
 
 const bundleItems = [
-  { label: "Sk\u00e4rm", icon: Monitor },
+  { label: "Skärm", icon: Monitor },
   { label: "Tangentbord", icon: Keyboard },
   { label: "Mus", icon: Mouse },
   { label: "Headset", icon: Headphones },
 ];
 
-const normalizePriceRange = (range?: number[]) => {
-  if (!Array.isArray(range) || range.length !== 2) return DEFAULT_PRICE_RANGE;
-  const min = Number(range[0]);
-  const max = Number(range[1]);
-  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= 0) {
-    return DEFAULT_PRICE_RANGE;
-  }
-  const clampedMin = Math.max(DEFAULT_PRICE_RANGE[0], Math.min(min, DEFAULT_PRICE_RANGE[1]));
-  const clampedMax = Math.max(clampedMin, Math.min(max, DEFAULT_PRICE_RANGE[1]));
-  return [clampedMin, clampedMax] as [number, number];
+const buildComputerFromSupabaseProduct = (product: SupabaseProduct): Computer => {
+  const normalizedImage = normalizeProductImagePath(product.image_url || "") || FALLBACK_IMAGE;
+  return {
+    id: product.id,
+    name: product.name,
+    price: typeof product.price_cents === "number" ? product.price_cents / 100 : 0,
+    cpu: product.cpu || "",
+    gpu: product.gpu || "",
+    ram: product.ram || "",
+    storage: product.storage || "",
+    storagetype: product.storage_type || "SSD",
+    tier: product.tier || "Silver",
+    rating: typeof product.rating === "number" ? product.rating : 0,
+    reviews: typeof product.reviews_count === "number" ? product.reviews_count : 0,
+    image: normalizedImage,
+    images: [normalizedImage],
+    usedVariantEnabled: false,
+  };
 };
 
 export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
-  const clearFiltersParam = searchParams.get("clear_filters") === "1";
   const hasAppliedCategory = useRef(false);
   const hasAppliedQueryFilters = useRef(false);
-  const [priceRange, setPriceRange] = useState<[number, number]>(DEFAULT_PRICE_RANGE);
+  const [priceRange, setPriceRange] = useState([0, 40000]);
   const [selectedGPUs, setSelectedGPUs] = useState<string[]>([]);
   const [selectedCPUs, setSelectedCPUs] = useState<string[]>([]);
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [showUsedOnly, setShowUsedOnly] = useState(false);
-  const [showInStockOnly, setShowInStockOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [showAllGpus, setShowAllGpus] = useState(false);
   const [showAllCpus, setShowAllCpus] = useState(false);
-  const [usedVariantEnabledMap, setUsedVariantEnabledMap] = useState<Record<string, boolean>>({});
-  const [usedPartsByProductId, setUsedPartsByProductId] = useState<Record<string, UsedPartsSettings>>({});
-  const [usedPartsConfiguredByProductId, setUsedPartsConfiguredByProductId] = useState<Record<string, boolean>>({});
-  const [imagesByProductId, setImagesByProductId] = useState<Record<string, string[]>>({});
+  const [showAllTiers, setShowAllTiers] = useState(false);
   const { products } = useProducts();
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const [inventoryLoading, setInventoryLoading] = useState(true);
@@ -315,12 +291,6 @@ export default function Products() {
   const productIdByName = useMemo(() => {
     const map = new Map<string, string>();
     products.forEach((product) => {
-      if (product.legacy_id) {
-        const legacyKey = normalizeProductKey(product.legacy_id);
-        if (legacyKey) {
-          map.set(legacyKey, product.id);
-        }
-      }
       const nameKey = normalizeProductKey(product.name);
       if (nameKey) {
         map.set(nameKey, product.id);
@@ -335,169 +305,30 @@ export default function Products() {
     return map;
   }, [products]);
 
-  const getBaseProductId = (computer: Computer) => {
-    return (
-      productIdByName.get(normalizeProductKey(computer.name)) ||
-      productIdByName.get(normalizeProductKey(computer.id)) ||
-      null
-    );
-  };
-
-  const isUsedVariantEnabled = (computer: Computer) => {
-    if (!computer.usedVariant) return false;
-    const baseId = getBaseProductId(computer);
-    const apiValue = baseId ? usedVariantEnabledMap[baseId] : undefined;
-    return apiValue ?? computer.usedVariantEnabled ?? true;
-  };
-
-  useEffect(() => {
-    if (products.length === 0) return;
-    let active = true;
-    const loadUsedVariantSettings = async () => {
-      const targets = COMPUTERS.filter((computer) => computer.usedVariant)
-        .map((computer) => getBaseProductId(computer))
-        .filter((id): id is string => Boolean(id));
-      const missing = targets.filter((id) => usedVariantEnabledMap[id] === undefined);
-      if (missing.length === 0) return;
-      await Promise.all(
-        missing.map(async (id) => {
-          try {
-            const response = await fetch(`/api/used-variant/${id}`);
-            if (!response.ok) return;
-            const data = await response.json();
-            if (!active || typeof data?.enabled !== "boolean") return;
-            setUsedVariantEnabledMap((prev) => ({ ...prev, [id]: data.enabled }));
-          } catch (error) {
-            console.warn("Failed to load used-variant setting", error);
-          }
-        })
-      );
-    };
-    loadUsedVariantSettings();
-    return () => {
-      active = false;
-    };
-  }, [products, productIdByName, usedVariantEnabledMap]);
-
-  useEffect(() => {
-    if (products.length === 0) return;
-    let active = true;
-    const loadProductImages = async () => {
-      const targets = Array.from(
-        new Set(
-          COMPUTERS.flatMap((computer) => {
-            const ids: string[] = [];
-            const baseId =
-              productIdByName.get(normalizeProductKey(computer.name)) ||
-              productIdByName.get(normalizeProductKey(computer.id));
-            if (baseId) ids.push(baseId);
-            if (computer.usedVariant?.productKey) {
-              const usedId = productIdByName.get(normalizeProductKey(computer.usedVariant.productKey));
-              if (usedId) ids.push(usedId);
-            }
-            return ids;
-          })
-        )
-      );
-      const missing = targets.filter((id) => !imagesByProductId[id]);
-      if (missing.length === 0) return;
-      const loaded = await Promise.all(
-        missing.map(async (id) => {
-          try {
-            const response = await fetch(`/api/product-images/${id}`);
-            const data = (await response.json().catch(() => ({}))) as ProductImagesResponse;
-            if (!response.ok) return { id, images: [] as string[] };
-            const combined = Array.from(
-              new Set(
-                [...(Array.isArray(data?.images) ? data.images : []), data?.image_url || ""]
-                  .map((entry) => normalizeProductImagePath(entry || "") || "")
-                  .filter((entry) => Boolean(entry) && !/\/datorhuset\.png$/i.test(entry))
-              )
-            );
-            return { id, images: combined };
-          } catch (error) {
-            console.warn("Failed to load product images", error);
-            return { id, images: [] as string[] };
-          }
-        })
-      );
-      if (!active) return;
-      setImagesByProductId((prev) => {
-        const next = { ...prev };
-        loaded.forEach((entry) => {
-          next[entry.id] = entry.images;
-        });
-        return next;
+  const localComputerKeys = useMemo(() => {
+    const keys = new Set<string>();
+    COMPUTERS.forEach((computer) => {
+      [computer.id, computer.name, computer.usedVariant?.productKey].forEach((value) => {
+        const normalized = normalizeProductKey(String(value || ""));
+        if (normalized) {
+          keys.add(normalized);
+        }
       });
-    };
-    loadProductImages();
-    return () => {
-      active = false;
-    };
-  }, [imagesByProductId, productIdByName, products]);
+    });
+    return keys;
+  }, []);
 
-  useEffect(() => {
-    if (products.length === 0) return;
-    let active = true;
-    const loadUsedPartsSettings = async () => {
-      const targets = Array.from(
-        new Set(
-          COMPUTERS.flatMap((computer) => {
-            const ids: string[] = [];
-            const baseId =
-              productIdByName.get(normalizeProductKey(computer.name)) ||
-              productIdByName.get(normalizeProductKey(computer.id));
-            if (baseId) ids.push(baseId);
-            if (computer.usedVariant?.productKey) {
-              const usedId = productIdByName.get(normalizeProductKey(computer.usedVariant.productKey));
-              if (usedId) ids.push(usedId);
-            }
-            return ids;
-          })
-        )
-      );
-      const missing = targets.filter((id) => usedPartsConfiguredByProductId[id] === undefined);
-      if (missing.length === 0) return;
-      const loaded = await Promise.all(
-        missing.map(async (id) => {
-          try {
-            const response = await fetch(`/api/used-parts/${id}`);
-            const data = await response.json().catch(() => ({}));
-            if (!response.ok) {
-              return { id, configured: false, used_parts: sanitizeUsedPartsSettings(null) };
-            }
-            return {
-              id,
-              configured: data?.configured === true,
-              used_parts: sanitizeUsedPartsSettings(data?.used_parts),
-            };
-          } catch (error) {
-            console.warn("Failed to load used-parts setting", error);
-            return { id, configured: false, used_parts: sanitizeUsedPartsSettings(null) };
-          }
-        })
-      );
-      if (!active) return;
-      setUsedPartsConfiguredByProductId((prev) => {
-        const next = { ...prev };
-        loaded.forEach((entry) => {
-          next[entry.id] = entry.configured;
+  const supabaseOnlyComputers = useMemo(() => {
+    return products
+      .filter((product) => {
+        const lookupCandidates = [product.id, product.slug, product.legacy_id, product.name];
+        return !lookupCandidates.some((candidate) => {
+          const normalized = normalizeProductKey(String(candidate || ""));
+          return normalized ? localComputerKeys.has(normalized) : false;
         });
-        return next;
-      });
-      setUsedPartsByProductId((prev) => {
-        const next = { ...prev };
-        loaded.forEach((entry) => {
-          next[entry.id] = entry.used_parts;
-        });
-        return next;
-      });
-    };
-    loadUsedPartsSettings();
-    return () => {
-      active = false;
-    };
-  }, [products, productIdByName, usedPartsConfiguredByProductId]);
+      })
+      .map((product) => buildComputerFromSupabaseProduct(product));
+  }, [products, localComputerKeys]);
 
   useEffect(() => {
     let active = true;
@@ -525,16 +356,6 @@ export default function Products() {
   }, []);
 
   useEffect(() => {
-    if (clearFiltersParam) {
-      localStorage.removeItem(FILTER_STORAGE_KEY);
-      setPriceRange(DEFAULT_PRICE_RANGE);
-      setSelectedGPUs([]);
-      setSelectedCPUs([]);
-      setSelectedTiers([]);
-      setShowUsedOnly(false);
-      setShowInStockOnly(false);
-      return;
-    }
     const stored = localStorage.getItem(FILTER_STORAGE_KEY);
     if (!stored) return;
     try {
@@ -544,10 +365,9 @@ export default function Products() {
         selectedCPUs?: string[];
         selectedTiers?: string[];
         showUsedOnly?: boolean;
-        showInStockOnly?: boolean;
       };
       if (Array.isArray(parsed.priceRange) && parsed.priceRange.length === 2) {
-        setPriceRange(normalizePriceRange(parsed.priceRange));
+        setPriceRange([parsed.priceRange[0], parsed.priceRange[1]]);
       }
       if (Array.isArray(parsed.selectedGPUs)) {
         const normalized = parsed.selectedGPUs.map((gpu) => getFilterLabel("gpu", gpu));
@@ -564,26 +384,15 @@ export default function Products() {
       if (typeof parsed.showUsedOnly === "boolean") {
         setShowUsedOnly(parsed.showUsedOnly);
       }
-      if (typeof parsed.showInStockOnly === "boolean") {
-        setShowInStockOnly(parsed.showInStockOnly);
-      }
     } catch (error) {
       console.warn("Failed to read saved filters", error);
     }
-  }, [clearFiltersParam]);
+  }, []);
 
   useEffect(() => {
     if (!activeCategory || hasAppliedCategory.current) return;
     if (activeCategory === "budget") {
       setPriceRange([0, 6000]);
-    }
-    if (activeCategory === "paket") {
-      setPriceRange(DEFAULT_PRICE_RANGE);
-      setSelectedGPUs([]);
-      setSelectedCPUs([]);
-      setSelectedTiers([]);
-      setShowUsedOnly(false);
-      setShowInStockOnly(false);
     }
     hasAppliedCategory.current = true;
   }, [activeCategory]);
@@ -593,7 +402,7 @@ export default function Products() {
     const minParam = Number(searchParams.get("price_min"));
     const maxParam = Number(searchParams.get("price_max"));
     if (Number.isFinite(minParam) && Number.isFinite(maxParam)) {
-      setPriceRange(normalizePriceRange([minParam, maxParam]));
+      setPriceRange([minParam, maxParam]);
     }
     const tiersParam = searchParams.get("tiers");
     if (tiersParam) {
@@ -614,10 +423,9 @@ export default function Products() {
       selectedCPUs,
       selectedTiers,
       showUsedOnly,
-      showInStockOnly,
     };
     localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(payload));
-  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers, showUsedOnly, showInStockOnly]);
+  }, [priceRange, selectedGPUs, selectedCPUs, selectedTiers, showUsedOnly]);
 
   const preset = searchParams.get("preset")?.toLowerCase() || "";
   useEffect(() => {
@@ -626,46 +434,31 @@ export default function Products() {
     setSelectedCPUs([]);
     setSelectedTiers([]);
     setShowUsedOnly(false);
-    setShowInStockOnly(false);
-    setPriceRange(DEFAULT_PRICE_RANGE);
+    setPriceRange([0, 40000]);
   }, [preset]);
   const filterComputers = useMemo(() => {
     if (preset === "budget") {
-      return COMPUTERS.filter((computer) => computer.name === "Silver-Speedster");
+      return COMPUTERS.filter((computer) => computer.name === "Cheapo - Ny");
     }
     if (preset === "toptier") {
       return COMPUTERS.filter((computer) =>
-        ["All Black, All Out", "All White, All Out"].includes(computer.name)
+        ["All in, all out - BLACK nybyggd", "All white, all out - NYPRIS"].includes(computer.name)
       );
     }
-    return showUsedOnly
-      ? COMPUTERS.filter((computer) => computer.usedVariant && isUsedVariantEnabled(computer))
-      : COMPUTERS;
-  }, [preset, showUsedOnly, usedVariantEnabledMap]);
+    return showUsedOnly ? COMPUTERS.filter((computer) => computer.usedVariant) : [...COMPUTERS, ...supabaseOnlyComputers];
+  }, [preset, showUsedOnly, supabaseOnlyComputers]);
   const getProductForVariant = (computer: Computer, useUsedVariant: boolean) => {
     const key =
       useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name;
-    const directMatch = getProductFromLookup(productLookup, key);
-    if (directMatch) return directMatch;
-    if (useUsedVariant) {
-      const usedId = computer.usedVariant?.productKey
-        ? productIdByName.get(normalizeProductKey(computer.usedVariant.productKey))
-        : undefined;
-      return getProductFromLookup(productLookup, usedId);
-    }
     const lookupId =
       productIdByName.get(normalizeProductKey(key)) || productIdByName.get(normalizeProductKey(computer.id));
     return getProductFromLookup(productLookup, lookupId);
   };
   const getDisplayVariant = (computer: Computer, useUsedVariant: boolean) => {
     const baseVariant = useUsedVariant && computer.usedVariant ? computer.usedVariant : computer;
-    const fallbackName =
-      useUsedVariant && computer.usedVariant
-        ? computer.usedVariant.productKey || toUsedName(computer.name)
-        : computer.name;
     return mergeProductFields(
       {
-        name: fallbackName,
+        name: computer.name,
         price: baseVariant.price,
         cpu: baseVariant.cpu,
         gpu: baseVariant.gpu,
@@ -677,26 +470,10 @@ export default function Products() {
       getProductForVariant(computer, useUsedVariant),
     );
   };
-  const getDisplayName = (computer: Computer, useUsedVariant: boolean) =>
-    getDisplayVariant(computer, useUsedVariant).name;
-  const getImageCandidatesForVariant = (
-    productId: string | null,
-    fallbackImages: string[]
-  ) => {
-    const fromApi = productId ? imagesByProductId[productId] || [] : [];
-    if (fromApi.length > 0) return fromApi;
-    const normalizedFallback = Array.from(new Set(fallbackImages.filter(Boolean)));
-    return normalizedFallback.length > 0 ? normalizedFallback : [FALLBACK_IMAGE];
-  };
-  const getUsedPartsForVariant = (
-    computer: Computer,
-    useUsedVariant: boolean,
-    productId: string | null
-  ): UsedPartsSettings => {
-    const fallback = toUsedPartsSettings(useUsedVariant ? computer.usedVariant?.usedParts : null);
-    if (!productId) return fallback;
-    if (usedPartsConfiguredByProductId[productId] !== true) return fallback;
-    return sanitizeUsedPartsSettings(usedPartsByProductId[productId]);
+  const getDisplayName = (computer: Computer, useUsedVariant: boolean) => {
+    const product = getProductForVariant(computer, useUsedVariant);
+    if (product?.name) return product.name;
+    return useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
   };
   type DisplayCard = { computer: Computer; useUsedVariant: boolean };
   const displayCards = useMemo<DisplayCard[]>(() => {
@@ -707,7 +484,7 @@ export default function Products() {
         computer: cheapo,
         useUsedVariant: false,
       };
-      const usedCard = cheapo.usedVariant && isUsedVariantEnabled(cheapo)
+      const usedCard = cheapo.usedVariant
         ? {
             computer: cheapo,
             useUsedVariant: true,
@@ -720,9 +497,9 @@ export default function Products() {
     }
     return filterComputers.map((computer) => ({
       computer,
-      useUsedVariant: showUsedOnly && isUsedVariantEnabled(computer),
+      useUsedVariant: showUsedOnly && Boolean(computer.usedVariant),
     }));
-  }, [filterComputers, preset, showUsedOnly, usedVariantEnabledMap]);
+  }, [filterComputers, preset, showUsedOnly]);
   const gpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).gpu)));
   const cpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).cpu)));
   const tiers = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).tier)));
@@ -744,10 +521,13 @@ export default function Products() {
   );
   const visibleGpus = gpuOptions.slice(0, filterPreviewCount);
   const visibleCpus = cpuOptions.slice(0, filterPreviewCount);
+  const visibleTiers = tierOptions.slice(0, filterPreviewCount);
   const extraGpus = gpuOptions.slice(filterPreviewCount);
   const extraCpus = cpuOptions.slice(filterPreviewCount);
+  const extraTiers = tierOptions.slice(filterPreviewCount);
   const hasMoreGpus = gpuOptions.length > filterPreviewCount;
   const hasMoreCpus = cpuOptions.length > filterPreviewCount;
+  const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
     return displayCards.filter((card) => {
@@ -780,17 +560,8 @@ export default function Products() {
       const tierMatch =
         selectedTiers.length === 0 ||
         selectedTiers.some((label) => tierLabelMap.get(label)?.includes(variant.tier));
-      const supabaseKey =
-        card.useUsedVariant && card.computer.usedVariant?.productKey
-          ? card.computer.usedVariant.productKey
-          : card.computer.name;
-      const supabaseId =
-        productIdByName.get(normalizeProductKey(supabaseKey)) ||
-        productIdByName.get(normalizeProductKey(card.computer.id));
-      const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
-      const inStockMatch = !showInStockOnly || Boolean(inventory && (inventory.quantity_in_stock ?? 0) > 0);
 
-      return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch && inStockMatch;
+      return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
     });
   }, [
     activeCategory,
@@ -802,9 +573,6 @@ export default function Products() {
     cpuLabelMap,
     tierLabelMap,
     displayCards,
-    inventoryMap,
-    productIdByName,
-    showInStockOnly,
   ]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
@@ -816,18 +584,17 @@ export default function Products() {
   };
 
   const clearFilters = () => {
-    setPriceRange(DEFAULT_PRICE_RANGE);
+    setPriceRange([0, 40000]);
     setSelectedGPUs([]);
     setSelectedCPUs([]);
     setSelectedTiers([]);
     setShowUsedOnly(false);
-    setShowInStockOnly(false);
   };
 
   const categoryLabel = (() => {
-    if (activeCategory === "budget") return "Budgetv\u00e4nlig";
-    if (activeCategory === "best-selling") return "Mest f\u00f6r pengarna";
-    if (activeCategory === "toptier") return "B\u00e4sta prestanda";
+    if (activeCategory === "budget") return "Budgetvänlig";
+    if (activeCategory === "best-selling") return "Mest för pengarna";
+    if (activeCategory === "toptier") return "Bästa prestanda";
     if (activeCategory === "paket") return "Paket";
     return "";
   })();
@@ -837,10 +604,7 @@ export default function Products() {
   if (showUsedOnly) {
     activeFilters.push("Begagnade datorer");
   }
-  if (showInStockOnly) {
-    activeFilters.push("Endast i lager");
-  }
-  if (priceRange[0] !== DEFAULT_PRICE_RANGE[0] || priceRange[1] !== DEFAULT_PRICE_RANGE[1]) {
+  if (priceRange[0] !== 0 || priceRange[1] !== 40000) {
     activeFilters.push(`Pris: ${priceRange[0].toLocaleString("sv-SE")} - ${priceRange[1].toLocaleString("sv-SE")} kr`);
   }
   selectedGPUs.forEach((gpu) => activeFilters.push(`GPU: ${gpu}`));
@@ -932,7 +696,7 @@ export default function Products() {
             >
               Filter
               <span className="text-xs text-gray-500 dark:text-gray-400">
-                {mobileFiltersOpen ? "D\u00f6lj" : "Visa"}
+                {mobileFiltersOpen ? "Dölj" : "Visa"}
               </span>
             </button>
             {hasFilters && (
@@ -949,7 +713,7 @@ export default function Products() {
 
         <div className="flex flex-col lg:flex-row flex-1 mt-4 sm:mt-6 pt-6 sm:pt-8 border-t border-gray-200 dark:border-[#1a2636] gap-6">
           <div
-            className={`w-full lg:max-w-xs bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 lg:border-r lg:border-y-0 lg:border-l-0 rounded-2xl p-5 sm:p-6 space-y-8 h-fit lg:sticky lg:top-24 ${
+            className={`w-full lg:max-w-xs bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 lg:border-r lg:border-y-0 lg:border-l-0 rounded-2xl lg:rounded-none p-5 sm:p-6 space-y-8 h-fit lg:sticky lg:top-24 ${
               mobileFiltersOpen ? "block" : "hidden"
             } lg:block`}
           >
@@ -959,14 +723,14 @@ export default function Products() {
               <div className="mb-8">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Pris</h3>
                 <div className="space-y-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max={DEFAULT_PRICE_RANGE[1]}
-                      value={priceRange[1]}
-                      onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                      className="w-full accent-yellow-400"
-                    />
+                  <input
+                    type="range"
+                    min="0"
+                    max="40000"
+                    value={priceRange[1]}
+                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                    className="w-full accent-yellow-400"
+                  />
                   <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
                     <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
                     <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>
@@ -976,15 +740,6 @@ export default function Products() {
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Skick</h3>
-                <label className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
-                  <input
-                    type="checkbox"
-                    checked={showInStockOnly}
-                    onChange={() => setShowInStockOnly((prev) => !prev)}
-                    className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                  />
-                  <span>Se varor i lager</span>
-                </label>
                 <label className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
                   <input
                     type="checkbox"
@@ -1051,7 +806,7 @@ export default function Products() {
                     type="button"
                     onClick={() => setShowAllGpus((prev) => !prev)}
                     className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
+                    aria-label={showAllGpus ? "Visa färre grafikkort" : "Visa fler grafikkort"}
                   >
                     {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -1113,7 +868,7 @@ export default function Products() {
                     type="button"
                     onClick={() => setShowAllCpus((prev) => !prev)}
                     className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
+                    aria-label={showAllCpus ? "Visa färre processorer" : "Visa fler processorer"}
                   >
                     {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
@@ -1124,22 +879,62 @@ export default function Products() {
 
               <div className="mb-8 space-y-3">
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
-                <div className="space-y-3">
-                  {tierOptions.map((option) => (
-                    <label
-                      key={option.label}
-                      className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedTiers.includes(option.label)}
-                        onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                        className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
-                      />
-                      <span className="capitalize">{option.label}</span>
-                    </label>
-                  ))}
+                <div
+                  className={`transition-all duration-300 ${
+                    showAllTiers
+                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
+                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
+                  }`}
+                >
+                  <div className="space-y-3">
+                    {visibleTiers.map((option) => (
+                      <label
+                        key={option.label}
+                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedTiers.includes(option.label)}
+                          onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                        />
+                        <span className="capitalize">{option.label}</span>
+                      </label>
+                    ))}
+                  </div>
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ${
+                      showAllTiers ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
+                    }`}
+                  >
+                    <div className="mt-3 space-y-3">
+                      {extraTiers.map((option) => (
+                        <label
+                          key={option.label}
+                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedTiers.includes(option.label)}
+                            onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          />
+                          <span className="capitalize">{option.label}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
                 </div>
+                {hasMoreTiers && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllTiers((prev) => !prev)}
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    aria-label={showAllTiers ? "Visa färre kategorier" : "Visa fler kategorier"}
+                  >
+                    {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </button>
+                )}
               </div>
 
               <button
@@ -1175,7 +970,7 @@ export default function Products() {
               </div>
             )}
             <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Stationära datorer"}</h2>
               <p className="text-gray-600 dark:text-gray-300">
                 Visar {filteredProducts.length} av {displayCards.length} produkter
               </p>
@@ -1202,7 +997,6 @@ export default function Products() {
                   const supabaseId =
                     productIdByName.get(normalizeProductKey(supabaseKey)) ||
                     productIdByName.get(normalizeProductKey(computer.id));
-                  const usedParts = getUsedPartsForVariant(computer, useUsedVariant, supabaseId || null);
                   const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
                   const hasInventory = Boolean(inventory);
                   const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
@@ -1228,44 +1022,18 @@ export default function Products() {
                       : null;
 
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
-                  const fallbackCardImages = Array.from(
-                    new Set(
-                      [
-                        ...(Array.isArray(computer.images) ? computer.images : []),
-                        computer.image || "",
-                        resolveProductImage(getProductForVariant(computer, useUsedVariant), FALLBACK_IMAGE) || "",
-                        FALLBACK_IMAGE,
-                      ]
-                        .map((path) => normalizeProductImagePath(path) || "")
-                        .filter(Boolean)
-                    )
-                  );
-                  const cardImageCandidates = getImageCandidatesForVariant(supabaseId || null, fallbackCardImages);
-                  const primaryCardImage = cardImageCandidates[0] || FALLBACK_IMAGE;
-
-                  const detailPath = useUsedVariant
-                    ? `/computer/${computer.id}?variant=used`
-                    : `/computer/${computer.id}`;
 
                   return (
-                    <Link key={cardKey} to={detailPath} className="group">
+                    <Link key={cardKey} to={`/computer/${computer.id}`} className="group">
                       <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
                         <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
                           <img
-                            src={primaryCardImage}
+                            src={computer.image}
                             alt={displayName}
                             className="w-full h-full object-cover"
                             loading="lazy"
                             decoding="async"
-                            data-image-index="0"
                             onError={(e) => {
-                              const currentIndex = Number(e.currentTarget.dataset.imageIndex || "0");
-                              const nextIndex = currentIndex + 1;
-                              if (nextIndex < cardImageCandidates.length) {
-                                e.currentTarget.src = cardImageCandidates[nextIndex];
-                                e.currentTarget.dataset.imageIndex = String(nextIndex);
-                                return;
-                              }
                               e.currentTarget.src = FALLBACK_IMAGE;
                             }}
                           />
@@ -1303,47 +1071,24 @@ export default function Products() {
                           </div>
 
                           <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
-                            <p className="flex flex-wrap items-center gap-2">
-                              <span className="truncate">CPU: {variant.cpu}</span>
-                              {usedParts.cpu ? (
-                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
-                                  Begagnade
-                                </span>
-                              ) : null}
-                            </p>
-                            <p className="flex flex-wrap items-center gap-2">
-                              <span className="truncate">GPU: {variant.gpu}</span>
-                              {usedParts.gpu ? (
-                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
-                                  Begagnade
-                                </span>
-                              ) : null}
-                            </p>
+                            <p className="truncate">CPU: {variant.cpu}</p>
+                            <p className="truncate">GPU: {variant.gpu}</p>
                             <p className="flex flex-wrap items-center gap-2">
                               <span>
                                 RAM:{" "}
-                                <span className={usedParts.ram ? "cursor-help" : ""} title={usedParts.ram ? RAM_PRICE_TOOLTIP : undefined}>
+                                <span className="cursor-help" title={RAM_PRICE_TOOLTIP}>
                                   {variant.ram}
                                 </span>
                               </span>
-                              {usedParts.ram ? (
-                                <span
-                                  className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
-                                  title={RAM_PRICE_TOOLTIP}
-                                >
-                                  Begagnade
-                                </span>
-                              ) : null}
-                            </p>
-                            <p className="flex flex-wrap items-center gap-2">
-                              <span className="truncate">
-                                Lagring: {variant.storage} {variant.storagetype}
+                              <span
+                                className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
+                                title={RAM_PRICE_TOOLTIP}
+                              >
+                                Begagnade
                               </span>
-                              {usedParts.storage ? (
-                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
-                                  Begagnade
-                                </span>
-                              ) : null}
+                            </p>
+                            <p className="truncate">
+                              Lagring: {variant.storage} {variant.storagetype}
                             </p>
                           </div>
 
