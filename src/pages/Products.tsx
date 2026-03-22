@@ -16,7 +16,7 @@ import allBlackBanner from "../../public/products/newpc/allblack-main.jpg";
 import allWhiteBanner from "../../public/products/newpc/allwhite-1.jpg";
 
 const FALLBACK_IMAGE = "https://placehold.co/800x600?text=Gaming+PC";
-const FILTER_STORAGE_KEY = "datorhuset_filters_v2";
+const FILTER_STORAGE_KEY = "datorhuset_filters_v3";
 const DEFAULT_PRODUCTS_PRICE_MAX = 40000;
 const RAM_PRICE_TOOLTIP =
   "Priserna på RAM har gått upp med cirka 500%, därav användning av begagnade RAM.";
@@ -391,7 +391,7 @@ export default function Products() {
           Number.isFinite(storedMin) &&
           Number.isFinite(storedMax) &&
           storedMin >= 0 &&
-          storedMax > 0 &&
+          storedMax > storedMin &&
           storedMax >= storedMin
         ) {
           setPriceRange([storedMin, storedMax]);
@@ -563,6 +563,17 @@ export default function Products() {
       return prev;
     });
   }, [effectivePriceMax]);
+
+  useEffect(() => {
+    if (shouldClearFilters) return;
+    if (searchParams.has("price_min") || searchParams.has("price_max")) return;
+    setPriceRange((prev) => {
+      if (prev[0] === 0 && prev[1] === 0 && effectivePriceMax > 0) {
+        return [0, effectivePriceMax];
+      }
+      return prev;
+    });
+  }, [effectivePriceMax, searchParams, shouldClearFilters]);
   const gpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).gpu)));
   const cpus = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).cpu)));
   const tiers = Array.from(new Set(displayCards.map((card) => getDisplayVariant(card.computer, card.useUsedVariant).tier)));

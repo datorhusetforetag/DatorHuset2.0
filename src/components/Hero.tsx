@@ -12,7 +12,7 @@ const FALLBACK_IMAGE = "/Datorhuset.png";
 
 const categories = [
   { name: "Alla produkter", icon: Monitor, href: "/products?clear_filters=1" },
-  { name: "Budget\u00e4nliga", icon: Wallet, href: "/products?category=budget&clear_filters=1" },
+  { name: "Budgetv\u00e4nliga", icon: Wallet, href: "/products?category=budget&clear_filters=1" },
   { name: "Price-Performance", icon: BadgePercent, href: "/products?category=price-performance&clear_filters=1" },
   { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
   { name: "B\u00e4sta prestanda", icon: Rocket, href: "/products?category=toptier&clear_filters=1" },
