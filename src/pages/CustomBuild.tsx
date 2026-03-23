@@ -3548,6 +3548,176 @@ const staticComponentItemsWithPreloadedPrices: Record<
   cooling: COMPONENTS.cooling.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
 };
 
+const DISPLAY_COMPONENT_ITEMS_BY_CATEGORY: Record<CategoryKey, ComponentItem[]> = {
+  cpu: catalogComponentItems.cpu,
+  motherboard: catalogComponentItems.motherboard,
+  gpu: staticComponentItemsWithPreloadedPrices.gpu,
+  ram: staticComponentItemsWithPreloadedPrices.ram,
+  storage: staticComponentItemsWithPreloadedPrices.storage,
+  case: staticComponentItemsWithPreloadedPrices.case,
+  psu: staticComponentItemsWithPreloadedPrices.psu,
+  cooling: staticComponentItemsWithPreloadedPrices.cooling,
+};
+
+const DUPLICATE_COMPONENT_IMAGE_ITEM_IDS = (() => {
+  const firstItemIdByImage = new Map<string, string>();
+  const duplicateItemIds = new Set<string>();
+
+  Object.values(DISPLAY_COMPONENT_ITEMS_BY_CATEGORY)
+    .flat()
+    .forEach((item) => {
+      if (!item.image) return;
+      const imageKey = item.image.trim();
+      if (!imageKey) return;
+
+      const firstItemId = firstItemIdByImage.get(imageKey);
+      if (!firstItemId) {
+        firstItemIdByImage.set(imageKey, item.id);
+        return;
+      }
+
+      duplicateItemIds.add(item.id);
+    });
+
+  return duplicateItemIds;
+})();
+
+const COMPONENT_CARD_THEME_BY_CATEGORY: Record<CategoryKey, { start: string; end: string; accent: string }> = {
+  cpu: { start: "#0f172a", end: "#1d4ed8", accent: "#93c5fd" },
+  gpu: { start: "#111827", end: "#2563eb", accent: "#facc15" },
+  motherboard: { start: "#1f2937", end: "#0f766e", accent: "#99f6e4" },
+  ram: { start: "#3f1d7a", end: "#7c3aed", accent: "#f9a8d4" },
+  storage: { start: "#123047", end: "#0f766e", accent: "#67e8f9" },
+  case: { start: "#1f2937", end: "#4b5563", accent: "#e5e7eb" },
+  psu: { start: "#3f3f46", end: "#111827", accent: "#fde68a" },
+  cooling: { start: "#164e63", end: "#0f172a", accent: "#bfdbfe" },
+};
+
+const GENERATED_COMPONENT_IMAGE_BY_KEY = new Map<string, string>();
+
+const getComponentImageBadgeLabel = (category: CategoryKey) => {
+  switch (category) {
+    case "cpu":
+      return "CPU";
+    case "gpu":
+      return "GPU";
+    case "motherboard":
+      return "MOBO";
+    case "ram":
+      return "RAM";
+    case "storage":
+      return "SSD";
+    case "case":
+      return "CASE";
+    case "psu":
+      return "PSU";
+    case "cooling":
+      return "COOL";
+    default:
+      return "PART";
+  }
+};
+
+const getComponentImageTitleLines = (item: ComponentItem) => {
+  const cleanedName = item.name.replace(/\s+/g, " ").trim();
+  if (cleanedName.length <= 28) {
+    return [cleanedName, item.specs.slice(0, 2).join(" • ") || item.brand];
+  }
+
+  const words = cleanedName.split(" ");
+  const lines: string[] = [];
+  let currentLine = "";
+
+  words.forEach((word) => {
+    const nextLine = currentLine ? `${currentLine} ${word}` : word;
+    if (nextLine.length <= 26 || !currentLine) {
+      currentLine = nextLine;
+      return;
+    }
+
+    if (lines.length < 2) {
+      lines.push(currentLine);
+    }
+    currentLine = word;
+  });
+
+  if (currentLine && lines.length < 2) {
+    lines.push(currentLine);
+  }
+
+  while (lines.length < 2) {
+    lines.push(item.specs.slice(0, 2).join(" • ") || item.brand);
+  }
+
+  return lines.slice(0, 2);
+};
+
+const escapeSvgText = (value: string) =>
+  value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+
+const buildGeneratedComponentImage = (category: CategoryKey, item: ComponentItem) => {
+  const cacheKey = `${category}:${item.id}`;
+  const cachedImage = GENERATED_COMPONENT_IMAGE_BY_KEY.get(cacheKey);
+  if (cachedImage) return cachedImage;
+
+  const theme = COMPONENT_CARD_THEME_BY_CATEGORY[category];
+  const [titleLineOne, titleLineTwo] = getComponentImageTitleLines(item);
+  const specLine = item.specs.slice(0, 3).join(" • ") || item.brand;
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="${theme.start}" />
+          <stop offset="100%" stop-color="${theme.end}" />
+        </linearGradient>
+      </defs>
+      <rect width="720" height="480" rx="36" fill="url(#bg)" />
+      <circle cx="610" cy="108" r="118" fill="${theme.accent}" fill-opacity="0.18" />
+      <circle cx="110" cy="408" r="136" fill="#ffffff" fill-opacity="0.08" />
+      <rect x="42" y="42" width="118" height="42" rx="21" fill="#ffffff" fill-opacity="0.14" />
+      <text x="101" y="69" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#ffffff">
+        ${getComponentImageBadgeLabel(category)}
+      </text>
+      <text x="42" y="166" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#ffffff">
+        ${escapeSvgText(item.brand)}
+      </text>
+      <text x="42" y="232" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#ffffff">
+        ${escapeSvgText(titleLineOne)}
+      </text>
+      <text x="42" y="286" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="600" fill="#dbeafe">
+        ${escapeSvgText(titleLineTwo)}
+      </text>
+      <text x="42" y="368" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="500" fill="#e5eefc">
+        ${escapeSvgText(specLine)}
+      </text>
+      <text x="42" y="430" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" fill="${theme.accent}">
+        ${escapeSvgText(item.id.toUpperCase())}
+      </text>
+    </svg>
+  `;
+  const imageUri = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.replace(/\s{2,}/g, " ").trim())}`;
+  GENERATED_COMPONENT_IMAGE_BY_KEY.set(cacheKey, imageUri);
+  return imageUri;
+};
+
+const getResolvedComponentImage = (category: CategoryKey, item: ComponentItem) => {
+  if (category === "case" && CASE_REMOTE_IMAGE_BY_ID[item.id]) {
+    return CASE_REMOTE_IMAGE_BY_ID[item.id];
+  }
+  if (item.image && !DUPLICATE_COMPONENT_IMAGE_ITEM_IDS.has(item.id)) {
+    return item.image;
+  }
+  if (item.image || DUPLICATE_COMPONENT_IMAGE_ITEM_IDS.has(item.id)) {
+    return buildGeneratedComponentImage(category, item);
+  }
+  return undefined;
+};
+
 const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
   if (category === "cpu") return catalogComponentItems.cpu;
   if (category === "motherboard") return catalogComponentItems.motherboard;
@@ -4761,11 +4931,19 @@ export default function CustomBuild() {
     scrollToCategoryPicker();
   };
 
-  const getStoreOfferStatusLabel = (offer: StoreOffer) => {
+  const getStoreOfferStatusLabel = (offer: StoreOffer, item: ComponentItem, category: CategoryKey) => {
     if (offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)) {
       return formatCurrencyPrice(Number(offer.total_price ?? offer.price), offer.currency || "SEK");
     }
-    if (offer.status === "linked_no_price") return "Pris saknas";
+    if (offer.status === "linked_no_price") {
+      if (category === "ram") {
+        const fallbackPrice = getComparablePrice(item, category);
+        if (Number.isFinite(fallbackPrice) && fallbackPrice > 0) {
+          return `Ca ${formatPrice(fallbackPrice)} kr`;
+        }
+      }
+      return "Pris saknas";
+    }
     if (offer.status === "search_only") return "Sök i butik";
     if (offer.status === "unavailable") return "Ej tillgänglig";
     if (offer.status === "error") return "Kunde inte läsa";
@@ -5371,10 +5549,9 @@ export default function CustomBuild() {
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
-                    const remoteImageOverride =
-                      activeCategory === "case" ? CASE_REMOTE_IMAGE_BY_ID[item.id] : undefined;
-                    const imageSrc = remoteImageOverride ?? item.image ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
-                    const imageAlt = remoteImageOverride || item.image ? item.name : (categoryImage?.alt ?? "Komponent");
+                    const resolvedItemImage = getResolvedComponentImage(activeCategory, item);
+                    const imageSrc = resolvedItemImage ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
+                    const imageAlt = item.name || categoryImage?.alt || "Komponent";
                     const detailEntries = Object.entries(item.details || {});
                     const showStorePanel = supportsStoreOffersForCategory(activeCategory);
                     const storeOffersForItem = isExpanded ? expandedStoreOffers : [];
@@ -5550,7 +5727,7 @@ export default function CustomBuild() {
                                             {offer.store}
                                           </p>
                                           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                                            {getStoreOfferStatusLabel(offer)}
+                                            {getStoreOfferStatusLabel(offer, item, activeCategory)}
                                           </p>
                                         </div>
                                           <div className="flex items-center gap-2">

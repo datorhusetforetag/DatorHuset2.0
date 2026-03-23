@@ -30,6 +30,7 @@ const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
+const AdminSiteSandbox = lazy(() => import("./admin/pages/AdminSiteSandbox.tsx"));
 const queryClient = new QueryClient();
 const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
 
@@ -56,6 +57,7 @@ const App = () => (
                     <Route path="produkter" element={<AdminProducts />} />
                     <Route path="bestallningar" element={<AdminOrders />} />
                     <Route path="bygg" element={<AdminOrders />} />
+                    <Route path="site-sandbox" element={<AdminSiteSandbox />} />
                     <Route path="logs" element={<AdminLogs />} />
                   </Route>
                   <Route path="*" element={<AdminNotFound />} />

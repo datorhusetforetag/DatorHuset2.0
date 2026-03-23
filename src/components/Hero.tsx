@@ -5,23 +5,29 @@ import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { resolveProductImage } from "@/lib/productImageResolver";
+import { DEFAULT_SITE_SETTINGS, type SiteHeroCategory, type SiteSettings } from "@/lib/siteSettings";
 import { buildUtmContent, withUtm } from "@/lib/utm";
 import winMouseImage from "../../images/WinMouse.png";
 
 const FALLBACK_IMAGE = "/Datorhuset.png";
 
-const categories = [
-  { name: "Alla produkter", icon: Monitor, href: "/products?clear_filters=1" },
-  { name: "Budgetv\u00e4nliga", icon: Wallet, href: "/products?category=budget&clear_filters=1" },
-  { name: "Price-Performance", icon: BadgePercent, href: "/products?category=price-performance&clear_filters=1" },
-  { name: "Custom Bygg", icon: Hammer, href: "/custom-bygg" },
-  { name: "B\u00e4sta prestanda", icon: Rocket, href: "/products?category=toptier&clear_filters=1" },
-];
+const CATEGORY_ICON_MAP = {
+  monitor: Monitor,
+  wallet: Wallet,
+  "badge-percent": BadgePercent,
+  hammer: Hammer,
+  rocket: Rocket,
+};
 
-export const Hero = () => {
+type HeroProps = {
+  settings?: SiteSettings["homepage"]["hero"];
+};
+
+export const Hero = ({ settings = DEFAULT_SITE_SETTINGS.homepage.hero }: HeroProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
+  const categories = settings.categories;
   const featuredComputers = useMemo(
     () =>
       COMPUTERS.slice(0, 6).map((computer) => {
@@ -71,19 +77,19 @@ export const Hero = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12">
           <div className="bg-yellow-400 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[230px] sm:min-h-[320px] col-span-1 md:col-span-2 shadow-lg border border-yellow-500">
             <div>
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">Veckansbygg!</h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-3">{settings.primary.title}</h2>
               <p className="text-sm sm:text-base text-gray-900 font-semibold mb-4 flex items-center gap-2">
-                {"Elektronik f\u00f6r f\u00f6retag"} <ChevronRight className="inline w-5 h-5" />
+                {settings.primary.subtitle} <ChevronRight className="inline w-5 h-5" />
               </p>
             </div>
             <div className="bg-white/80 dark:bg-gray-800 rounded-lg h-28 sm:h-36 flex items-center justify-between overflow-hidden border border-yellow-500/40 dark:border-gray-700 px-4 sm:px-6">
               <div className="relative z-10 pr-3">
-                <p className="text-sm uppercase tracking-[0.18em] text-gray-600 dark:text-gray-300">Nyhet!</p>
-                <p className="text-sm sm:text-base text-gray-900 font-semibold dark:text-gray-100">{"Platina Curver \u00e4r nu i lager!"}</p>
+                <p className="text-sm uppercase tracking-[0.18em] text-gray-600 dark:text-gray-300">{settings.primary.featureEyebrow}</p>
+                <p className="text-sm sm:text-base text-gray-900 font-semibold dark:text-gray-100">{settings.primary.featureTitle}</p>
               </div>
               <img
-                src="/images/foretagsdeal.webp"
-                alt="Gamingdator f\u00f6r f\u00f6retagsdeal"
+                src={settings.primary.featureImage}
+                alt={settings.primary.featureImageAlt}
                 className="h-[88%] w-auto max-w-[42%] sm:max-w-[40%] md:max-w-[38%] object-contain object-right drop-shadow-[0_16px_28px_rgba(0,0,0,0.25)]"
                 loading="lazy"
                 decoding="async"
@@ -93,14 +99,12 @@ export const Hero = () => {
 
           <div className="bg-gray-900 rounded-lg p-4 sm:p-6 lg:p-8 flex flex-col justify-between min-h-[220px] sm:min-h-[320px] relative overflow-hidden">
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">
-                {"Veckans Deal - F\u00e5 en g\u00e5va vid k\u00f6pet!"}
-              </h2>
-              <p className="text-white text-sm mb-4">{"F\u00e5 en exklusiv g\u00e5va n\u00e4r du handlar hos oss."}</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-white mb-2">{settings.secondary.title}</h2>
+              <p className="text-white text-sm mb-4">{settings.secondary.description}</p>
               <p className="text-yellow-400 text-sm font-semibold">Musmatta, tangentbord, mus eller uppgraderade komponenter!</p>
             </div>
             <div className="flex gap-2 relative z-10">
-              <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">{"G\u00e5va vid k\u00f6p"}</span>
+              <span className="bg-yellow-400 text-gray-900 px-3 py-1 rounded text-sm font-bold">{settings.secondary.badge}</span>
             </div>
             <img
               src={winMouseImage}
@@ -113,9 +117,11 @@ export const Hero = () => {
         </div>
 
         <div className="mb-12">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{"Popul\u00e4ra kategorier"}</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{settings.categoriesTitle}</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {categories.map((category) => (
+            {categories.map((category: SiteHeroCategory) => {
+              const Icon = CATEGORY_ICON_MAP[category.icon] || Monitor;
+              return (
               <Link
                 key={category.name}
                 to={withUtm(category.href, {
@@ -126,15 +132,16 @@ export const Hero = () => {
                 })}
                 className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 text-center hover:shadow-lg hover:border-[#11667b] transition-all dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800"
               >
-                <category.icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
+                <Icon className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-yellow-500 mb-3" aria-hidden />
                 <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2">{category.name}</p>
               </Link>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         <div className="mb-12 relative">
-          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">Senast visade produkter</h3>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6">{settings.featuredTitle}</h3>
           <div className="relative">
             <div ref={carouselRef} className="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth pb-4 pr-4 snap-x snap-mandatory">
               {featuredComputers.map((computer) => (

@@ -1,11 +1,12 @@
 ﻿import { useMemo, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck } from "lucide-react";
+import { ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck, Wand2 } from "lucide-react";
 import { useAdminAccess } from "./useAdminAccess";
 
 const navItems = [
   { to: "/produkter", label: "Produkter & Lager", icon: LayoutGrid },
   { to: "/bestallningar", label: "Beställningar", icon: ClipboardList },
+  { to: "/site-sandbox", label: "Site Sandbox", icon: Wand2 },
   { to: "/logs", label: "Loggar", icon: ScrollText },
 ];
 

@@ -33,6 +33,12 @@ import {
   normalizeListingTags,
   updateListingRequestSchema,
 } from "./shared/adminListingContract.js";
+import {
+  DEFAULT_SITE_SETTINGS,
+  SITE_SETTINGS_KEY,
+  normalizeSiteSettings,
+  siteSettingsSchema,
+} from "./shared/siteSettingsContract.js";
 
 dotenv.config();
 
@@ -3634,6 +3640,31 @@ const loadCustomBuildProductCacheFromDisk = async () => {
   }
 };
 
+const shouldPreferCatalogReferenceLowestPrice = (item, availableLowestPrice, referenceLowestPrice) => {
+  if (!Number.isFinite(availableLowestPrice) || availableLowestPrice <= 0) return false;
+  if (!Number.isFinite(referenceLowestPrice) || referenceLowestPrice <= 0) return false;
+  if (availableLowestPrice <= referenceLowestPrice) return false;
+
+  const category = getCustomBuildCategoryForItem(item);
+  let maxReferenceMultiplier = 1.8;
+
+  if (category === "ram") {
+    maxReferenceMultiplier = 1.35;
+  } else if (category === "storage") {
+    maxReferenceMultiplier = 1.6;
+  } else if (category === "cpu") {
+    maxReferenceMultiplier = 1.5;
+  } else if (category === "motherboard") {
+    maxReferenceMultiplier = 1.55;
+  } else if (category === "gpu") {
+    maxReferenceMultiplier = 1.45;
+  } else if (category === "psu" || category === "cooling" || category === "case") {
+    maxReferenceMultiplier = 1.6;
+  }
+
+  return availableLowestPrice > referenceLowestPrice * maxReferenceMultiplier;
+};
+
 const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
   const hydratedOffers = hydrateCatalogStoreOffers(offers, item).map((offer) => ({
     ...offer,
@@ -3655,12 +3686,23 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
     ? hydratedOffers
     : buildCatalogFallbackStoreOffers(item, updatedAt);
   const limitedOffers = effectiveOffers.slice(0, 5);
-  const availableOffers = limitedOffers.filter(
-    (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
-  );
-  const lowestPrice = availableOffers.length
-    ? Math.min(...availableOffers.map((offer) => offer.total_price ?? offer.price))
-    : validatedReferenceLowestPrice;
+  const availableOfferPrices = limitedOffers
+    .filter(
+      (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
+    )
+    .map((offer) => offer.total_price ?? offer.price);
+  const availableLowestPrice = availableOfferPrices.length > 0
+    ? Math.min(...availableOfferPrices)
+    : null;
+  const lowestPrice = shouldPreferCatalogReferenceLowestPrice(
+    item,
+    availableLowestPrice,
+    validatedReferenceLowestPrice
+  )
+    ? validatedReferenceLowestPrice
+    : Number.isFinite(availableLowestPrice)
+      ? availableLowestPrice
+      : validatedReferenceLowestPrice;
   return {
     ok: true,
     item_id: item.id,
@@ -4206,6 +4248,55 @@ const logAdminAction = async (req, user, action, resourceType, resourceId, metad
   } catch (error) {
     console.warn("Admin audit log failed:", error);
   }
+};
+
+const getSiteSettings = async () => {
+  if (!supabase) {
+    return DEFAULT_SITE_SETTINGS;
+  }
+
+  const { data, error } = await supabase
+    .from("ui_settings")
+    .select("value")
+    .eq("key", SITE_SETTINGS_KEY)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message || "Failed to read site settings.");
+  }
+
+  return normalizeSiteSettings(data?.value);
+};
+
+const writeSiteSettings = async (value) => {
+  if (!supabase) {
+    throw new Error("Supabase not configured.");
+  }
+
+  const parsed = siteSettingsSchema.safeParse(value);
+  if (!parsed.success) {
+    const error = new Error("INVALID_SITE_SETTINGS");
+    error.validation = formatZodValidationError(parsed.error);
+    throw error;
+  }
+
+  const payload = {
+    key: SITE_SETTINGS_KEY,
+    value: parsed.data,
+    updated_at: new Date(),
+  };
+
+  const { data, error } = await supabase
+    .from("ui_settings")
+    .upsert([payload], { onConflict: "key" })
+    .select("value")
+    .single();
+
+  if (error) {
+    throw new Error(error.message || "Failed to update site settings.");
+  }
+
+  return normalizeSiteSettings(data?.value);
 };
 
 const requireServiceRoleKey = (res) => {
@@ -6164,6 +6255,56 @@ app.patch("/api/admin/v2/orders/:orderId/checklista", async (req, res) => {
   } catch (error) {
     console.error("Admin v2 checklist error:", error);
     return jsonError(res, 500, "ORDER_CHECKLIST_UPDATE_FAILED", "Kunde inte uppdatera checklista.");
+  }
+});
+
+app.get("/api/site-settings", async (_req, res) => {
+  try {
+    const settings = await getSiteSettings();
+    return res.json({ ok: true, settings });
+  } catch (error) {
+    console.error("Public site settings error:", error);
+    return res.json({ ok: true, settings: DEFAULT_SITE_SETTINGS });
+  }
+});
+
+app.get("/api/admin/v2/site-settings", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    const settings = await getSiteSettings();
+    return res.json({ ok: true, settings });
+  } catch (error) {
+    console.error("Admin site settings read error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_READ_FAILED", "Kunde inte hamta site settings.");
+  }
+});
+
+app.put("/api/admin/v2/site-settings", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const nextSettings = await writeSiteSettings(req.body?.settings);
+    await logAdminAction(req, user, "site_settings_update_v2", "ui_settings", SITE_SETTINGS_KEY, {
+      role,
+      version: nextSettings.version,
+    });
+    return res.json({ ok: true, settings: nextSettings });
+  } catch (error) {
+    if (error?.message === "INVALID_SITE_SETTINGS") {
+      return jsonError(res, 400, "INVALID_SITE_SETTINGS", "Ogiltiga site settings.", error.validation || null);
+    }
+    console.error("Admin site settings update error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_UPDATE_FAILED", "Kunde inte spara site settings.");
   }
 });
 
