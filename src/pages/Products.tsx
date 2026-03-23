@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
@@ -200,6 +201,7 @@ const PRODUCT_CATEGORY_TAGS: Record<string, string[]> = {
 };
 
 export default function Products() {
+  const { settings: siteSettings } = useSiteSettings();
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const shouldClearFilters = searchParams.get("clear_filters") === "1";
@@ -690,7 +692,30 @@ export default function Products() {
   selectedTiers.forEach((tier) => activeFilters.push(`Kategori: ${tier}`));
   const hasFilters = activeFilters.length > 0;
 
-  const banner = CATEGORY_BANNERS[activeCategory] ?? DEFAULT_BANNER;
+  const configuredBanners = siteSettings.pages.products.banners;
+  const bannerKey =
+    activeCategory === "budget" ||
+    activeCategory === "best-selling" ||
+    activeCategory === "price-performance" ||
+    activeCategory === "toptier"
+      ? activeCategory
+      : "default";
+  const configuredBanner = configuredBanners[bannerKey];
+  const fallbackBanner = bannerKey === "default" ? DEFAULT_BANNER : CATEGORY_BANNERS[bannerKey];
+  const banner = {
+    ...fallbackBanner,
+    eyebrow: configuredBanner.eyebrow,
+    title: configuredBanner.title,
+    description: configuredBanner.description,
+    images: configuredBanner.images.filter(Boolean).length > 0 ? configuredBanner.images.filter(Boolean) : fallbackBanner.images,
+    stickers:
+      configuredBanner.stickers.length > 0
+        ? configuredBanner.stickers.map((label) => ({
+            label,
+            className: "bg-[#11667b] text-white",
+          }))
+        : fallbackBanner.stickers,
+  };
   const leadBannerImage = banner.images[0];
   const secondaryBannerImage = banner.images[1];
   const primarySticker = banner.stickers?.[0];

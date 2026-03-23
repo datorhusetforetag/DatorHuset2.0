@@ -1,16 +1,20 @@
-﻿import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 export default function CustomerService() {
+  const { settings: siteSettings } = useSiteSettings();
+  const pageSettings = siteSettings.pages.customerService;
+
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "DatorHuset",
     url: "https://datorhuset.site/",
     image: "https://datorhuset.site/Datorhuset.png",
-    email: "support@datorhuset.site",
+    email: pageSettings.contactEmail,
     address: {
       "@type": "PostalAddress",
       addressLocality: "Stockholm",
@@ -47,25 +51,23 @@ export default function CustomerService() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50">
       <SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />
       <Navbar />
       <main className="flex-1">
-        <section className="bg-yellow-400 overflow-hidden">
-          <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center">
+        <section className="overflow-hidden bg-yellow-400">
+          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
+            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Kundservice</p>
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Kontakta oss</h1>
-                <p className="text-gray-800 mt-4 max-w-2xl">
-                  Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.
-                </p>
-                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">{pageSettings.heroEyebrow}</p>
+                <h1 className="mt-4 text-4xl font-bold text-gray-900 lg:text-5xl">{pageSettings.heroTitle}</h1>
+                <p className="mt-4 max-w-2xl text-gray-800">{pageSettings.heroDescription}</p>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <Link
-                    to="/faq"
-                    className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                    to={pageSettings.heroCtaHref}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-900 px-6 py-3 font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
                   >
-                    Se FAQ
+                    {pageSettings.heroCtaLabel}
                   </Link>
                 </div>
               </div>
@@ -73,7 +75,7 @@ export default function CustomerService() {
                 <img
                   src="/Datorhuset.png"
                   alt="DatorHuset logo"
-                  className="w-full max-w-md h-56 sm:h-72 lg:h-80 object-contain object-center"
+                  className="h-56 w-full max-w-md object-contain object-center sm:h-72 lg:h-80"
                   loading="lazy"
                   decoding="async"
                 />
@@ -82,56 +84,55 @@ export default function CustomerService() {
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12 max-w-5xl space-y-6">
+        <section className="container mx-auto max-w-5xl space-y-6 px-4 py-12">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
-              <h2 className="text-lg font-semibold">Kontaktuppgifter</h2>
+            <div className="space-y-2 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+              <h2 className="text-lg font-semibold">{pageSettings.contactTitle}</h2>
               <p>
                 E-post:{" "}
-                <a className="text-blue-600 dark:text-blue-400" href="mailto:support@datorhuset.site">
-                  support@datorhuset.site
+                <a className="text-blue-600 dark:text-blue-400" href={`mailto:${pageSettings.contactEmail}`}>
+                  {pageSettings.contactEmail}
                 </a>
               </p>
             </div>
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-2">
-              <h2 className="text-lg font-semibold">Öppettider</h2>
-              <p>Svarstider på mejl: 11:00 - 03:00</p>
-              <p>Vi svarar på mejl både under vardagar och helger.</p>
+            <div className="space-y-2 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+              <h2 className="text-lg font-semibold">{pageSettings.hoursTitle}</h2>
+              {pageSettings.hoursLines.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
             </div>
           </div>
 
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-3">
-            <h2 className="text-lg font-semibold">Supportärenden</h2>
-            <p>För frågor om beställningar, returer eller fakturor: ange ordernummer och beskriv ärendet kort.</p>
-            <p>Teknisk support: beskriv problemet, vilka komponenter som används och bifoga bilder om möjligt.</p>
+          <div className="space-y-3 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+            <h2 className="text-lg font-semibold">{pageSettings.supportTitle}</h2>
+            {pageSettings.supportLines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Vanliga ärenden</h2>
+            <div className="space-y-4 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+              <h2 className="text-lg font-semibold">{pageSettings.commonIssuesTitle}</h2>
               <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <li>Orderstatus, leveranstider och spårning</li>
-                <li>Ändringar i beställning eller uppgraderingar</li>
-                <li>Garantifrågor och reklamation</li>
-                <li>Felsökning, service och reparation</li>
-                <li>Företagslösningar och faktura</li>
+                {pageSettings.commonIssues.map((issue) => (
+                  <li key={issue}>{issue}</li>
+                ))}
               </ul>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Vi återkommer normalt inom 24 timmar på vardagar.</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">{pageSettings.commonIssuesNote}</p>
             </div>
 
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6 space-y-4">
-              <h2 className="text-lg font-semibold">Så arbetar vi</h2>
-              <ol className="space-y-2 text-sm text-gray-700 dark:text-gray-300 list-decimal list-inside">
-                <li>Du beskriver ditt ärende via mail eller formulär.</li>
-                <li>Vi återkommer med frågor eller förslag.</li>
-                <li>Du får en tydlig offert och tidsplan.</li>
-                <li>Vi uppdaterar dig när arbetet är klart.</li>
+            <div className="space-y-4 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+              <h2 className="text-lg font-semibold">{pageSettings.workflowTitle}</h2>
+              <ol className="list-inside list-decimal space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                {pageSettings.workflowSteps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
               </ol>
               <Link
-                to="/service-reparation"
-                className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                to={pageSettings.workflowCtaHref}
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white"
               >
-                Starta serviceärende
+                {pageSettings.workflowCtaLabel}
               </Link>
             </div>
           </div>

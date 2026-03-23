@@ -6,20 +6,26 @@ type StepsSectionProps = {
   settings?: SiteSettings["homepage"]["steps"];
 };
 
-const renderStepIcon = (icon: SiteStepItem["icon"]) => (
-  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-500 dark:text-yellow-300">
-    <SiteIcon icon={icon} className="h-7 w-7" />
-  </div>
-);
+const renderStepIcon = (icon: SiteStepItem["icon"]) => {
+  if (icon === "refresh-euro") {
+    return (
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-400 dark:text-yellow-300">
+        <SiteIcon icon={icon} className="h-7 w-7" />
+      </div>
+    );
+  }
+  return (
+    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-400 dark:text-yellow-300">
+      <SiteIcon icon={icon} className="h-7 w-7" />
+    </div>
+  );
+};
 
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
-  if (!settings.enabled) return null;
-
   return (
     <section className="bg-[#f5f6f8] text-gray-900 transition-colors dark:bg-[#111827] dark:text-gray-100">
       <div className="container mx-auto flex flex-col items-center px-4 py-12 text-center sm:py-16 lg:py-20">
         <div className="mb-8 sm:mb-10">
-          <p className="mb-3 text-xs uppercase tracking-[0.3em] text-[#11667b] dark:text-[#9dd4e0]">{settings.eyebrow}</p>
           <h2 className="mb-3 text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl lg:text-4xl">{settings.title}</h2>
           <p className="text-sm text-gray-700 dark:text-gray-300 sm:text-base">{settings.description}</p>
         </div>

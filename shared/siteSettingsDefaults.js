@@ -1,4 +1,4 @@
-export const SITE_SETTINGS_VERSION = 2;
+export const SITE_SETTINGS_VERSION = 3;
 
 export const SITE_ICON_OPTIONS = [
   "monitor",
@@ -9,25 +9,12 @@ export const SITE_ICON_OPTIONS = [
   "package",
   "refresh-euro",
   "shield",
-  "truck",
-  "wrench",
-  "star",
   "headset",
-  "sparkles",
-  "cpu",
 ];
 
 export const DEFAULT_SITE_SETTINGS = {
   version: SITE_SETTINGS_VERSION,
   site: {
-    announcement: {
-      enabled: true,
-      theme: "dark",
-      label: "Just nu",
-      text: "Fa snabbare leverans pa utvalda gaming- och foretagsbyggen hela veckan.",
-      href: "/products?clear_filters=1",
-      linkLabel: "Se sortimentet",
-    },
     navigation: {
       brandName: "DatorHuset",
       menuLabel: "Meny",
@@ -41,7 +28,6 @@ export const DEFAULT_SITE_SETTINGS = {
       ],
     },
     footer: {
-      brandText: "Byggda datorer, service och uppgraderingar for gaming, studier och foretag.",
       supportTitle: "Kundservice",
       supportEmail: "support@datorhuset.site",
       supportHours: "Svarstider 11:00-15:00",
@@ -66,54 +52,26 @@ export const DEFAULT_SITE_SETTINGS = {
         },
       ],
       socialLinks: [
-        {
-          platform: "instagram",
-          label: "Instagram",
-          href: "https://www.instagram.com/datorhuset_uf/",
-        },
-        {
-          platform: "x",
-          label: "X",
-          href: "https://x.com/DatorHuset_UF",
-        },
-        {
-          platform: "tiktok",
-          label: "TikTok",
-          href: "https://www.tiktok.com/@datorhuset_uf?lang=en-GB",
-        },
-        {
-          platform: "youtube",
-          label: "YouTube",
-          href: "https://www.youtube.com/@DatorHuset",
-        },
+        { platform: "instagram", label: "Instagram", href: "https://www.instagram.com/datorhuset_uf/" },
+        { platform: "x", label: "X", href: "https://x.com/DatorHuset_UF" },
+        { platform: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@datorhuset_uf?lang=en-GB" },
+        { platform: "youtube", label: "YouTube", href: "https://www.youtube.com/@DatorHuset" },
       ],
       copyright: "©2026 DatorHuset UF. All rights reserved.",
     },
   },
   homepage: {
     hero: {
-      enabled: true,
-      primary: {
-        eyebrow: "DatorHuset live",
-        title: "Veckans bygg",
-        subtitle: "Elektronik for foretag",
-        primaryLabel: "Se alla datorer",
-        primaryHref: "/products",
-        secondaryLabel: "Bygg custom",
-        secondaryHref: "/custom-bygg",
-        featureEyebrow: "Nyhet",
-        featureTitle: "Platina Curver ar nu i lager",
-        featureImage: "/images/foretagsdeal.webp",
-        featureImageAlt: "Gamingdator for foretagsdeal",
-      },
-      secondary: {
-        title: "Veckans deal - Fa en gava vid kopet",
-        description: "Fa en exklusiv gava nar du handlar hos oss.",
-        badge: "Gava vid kop",
-        note: "Musmatta, tangentbord, mus eller uppgraderade komponenter!",
-        image: "",
-        imageAlt: "Gava vid kop",
-      },
+      title: "Veckansbygg!",
+      subtitle: "Elektronik for foretag",
+      featureEyebrow: "Nyhet!",
+      featureTitle: "Platina Curver ar nu i lager!",
+      featureImage: "/images/foretagsdeal.webp",
+      featureImageAlt: "Gamingdator for foretagsdeal",
+      secondaryTitle: "Veckans Deal - Fa en gava vid kopet!",
+      secondaryDescription: "Fa en exklusiv gava nar du handlar hos oss.",
+      secondaryBadge: "Gava vid kop",
+      secondaryNote: "Musmatta, tangentbord, mus eller uppgraderade komponenter!",
       categoriesTitle: "Populara kategorier",
       categories: [
         { name: "Alla produkter", icon: "monitor", href: "/products?clear_filters=1" },
@@ -126,18 +84,7 @@ export const DEFAULT_SITE_SETTINGS = {
       featuredCount: 6,
       featuredInventoryLabel: "I lager",
     },
-    trustBar: {
-      enabled: true,
-      title: "Darfor valjer kunder DatorHuset",
-      items: [
-        { value: "24h", label: "Svarstid pa vanliga servicearenden", icon: "headset" },
-        { value: "100%", label: "Byggs och testas innan leverans", icon: "shield" },
-        { value: "Flex", label: "Nya, begagnade och custom alternativ", icon: "wrench" },
-      ],
-    },
     steps: {
-      enabled: true,
-      eyebrow: "Sa fungerar det",
       title: "Att kopa en riktigt bra dator har aldrig varit sa latt",
       description: "Sa har koper du din dator via var tjanst",
       primaryLabel: "Kop din dator",
@@ -153,47 +100,17 @@ export const DEFAULT_SITE_SETTINGS = {
         {
           title: "2. Vi bygger och packar din dator",
           description:
-            "Vi koper komponenterna och bygger datorn. Byggtiden varierar beroende pa om du bestaller nytt, begagnat eller custom.",
+            "Vi koper komponenterna och bygger datorn. Byggtiden varierar fran 3 dagar till nagra veckor beroende pa om du bestaller en helt ny dator, en dator med begagnade komponenter eller en custom-bygg. Se FAQ for mer information.",
           icon: "package",
         },
         {
-          title: "3. Leverans eller hamta upp",
+          title: "3. Leverans/hamta upp",
           description: "Datorn ar byggd och klar. Hamta upp den eller valj fraktalternativ.",
           icon: "refresh-euro",
         },
       ],
     },
-    showcase: {
-      enabled: true,
-      eyebrow: "Mer kontroll",
-      title: "Sandladas med fler kampanjytor",
-      description: "Anvand admin-API:t for att styra vad kunderna ser pa startsidan utan nya deployer.",
-      cards: [
-        {
-          icon: "sparkles",
-          title: "Snabba kampanjer",
-          description: "Byt ut budskap, CTA:er och menyinnehall nar du vill pusha en specifik kategori.",
-          linkLabel: "Oppna produkter",
-          href: "/products",
-        },
-        {
-          icon: "cpu",
-          title: "Skraddarsydda bygg",
-          description: "Lyft custom bygg, service eller foretagspaket med egna block och nya sektioner.",
-          linkLabel: "Ga till custom bygg",
-          href: "/custom-bygg",
-        },
-        {
-          icon: "truck",
-          title: "Leverans och trygghet",
-          description: "Justera trust-signaler och supportinformation nar leverans, garanti eller service ar fokus.",
-          linkLabel: "Kontakta oss",
-          href: "/kundservice",
-        },
-      ],
-    },
     promo: {
-      enabled: true,
       eyebrow: "Mer fran DatorHuset",
       title: "Vi bygger, fixar och optimerar for dig",
       description:
@@ -235,16 +152,121 @@ export const DEFAULT_SITE_SETTINGS = {
         },
       ],
     },
-    ctaBand: {
-      enabled: true,
-      badge: "Sandbox live",
-      eyebrow: "Skifta fokus pa minuter",
-      title: "Pusha kampanjer, support eller custom-bygg direkt fran admin",
-      description: "Anvand utkast, publicera live nar du ar klar och hall huvudsidan uppdaterad utan kodandringar.",
-      primaryLabel: "Se produkter",
-      primaryHref: "/products",
-      secondaryLabel: "Ga till kundservice",
-      secondaryHref: "/kundservice",
+  },
+  pages: {
+    products: {
+      banners: {
+        default: {
+          eyebrow: "Topplistan",
+          title: "Basta saljare inom stationara datorer i hela Norden!",
+          description: "Utvalda byggen som levererar prestanda, design och trygg service.",
+          images: [],
+          stickers: [],
+        },
+        budget: {
+          eyebrow: "Budgetvanliga",
+          title: "Budget betyder inte daligt",
+          description: "Smarta val som haller priset nere utan att tumma pa kanslan.",
+          images: [],
+          stickers: ["Bast i budget-klass"],
+        },
+        "best-selling": {
+          eyebrow: "Mest for pengarna",
+          title: "Mest for pengarna",
+          description: "Vara mest prisvarda byggen - noggrant utvalda for maximal valuta.",
+          images: [],
+          stickers: ["DatorHusets val", "Mest valuta", "Otrolig Prestanda"],
+        },
+        "price-performance": {
+          eyebrow: "Price-Performance",
+          title: "Price-Performance",
+          description: "Byggen med starkast balans mellan pris och prestanda.",
+          images: [],
+          stickers: ["Mest for pengarna"],
+        },
+        toptier: {
+          eyebrow: "Basta prestanda",
+          title: "Nar bara det snabbaste duger",
+          description: "Toppbyggen for dig som vill ha maximal kraft och kompromisslos kvalitet.",
+          images: [],
+          stickers: ["Topline"],
+        },
+      },
+    },
+    serviceRepair: {
+      heroEyebrow: "Service & reparation",
+      heroTitle: "Vi reparerar, uppgraderar och optimerar din dator",
+      heroDescription:
+        "DatorHuset hjalper dig med allt fran felsokning till komplett uppgradering. Snabb respons, tydlig offert och service som satter prestanda i fokus.",
+      primaryLabel: "Kontakta service",
+      primaryHref: "/kundservice",
+      secondaryLabel: "Se vara datorer",
+      secondaryHref: "/products",
+      flowTitle: "Lamna in pa reparation? Borja har.",
+      flowDescription: "Vart flode ar byggt for tydlighet och snabbhet. Du vet vad som sker och nar.",
+      steps: [
+        {
+          value: "step-1",
+          title: "1. Felsok din enhet",
+          body: "Beskriv felet sa noggrant du kan. Vara tekniker analyserar och aterkommer snabbt.",
+        },
+        {
+          value: "step-2",
+          title: "2. Godkann offert",
+          body: "Vi svarar med rekommendation, prisbild och tidsplan. Du far en tydlig offert innan vi startar. Inga dolda kostnader.",
+        },
+        {
+          value: "step-3",
+          title: "3. Service och test",
+          body: "Vi reparerar, uppgraderar och stresstestar for att sakerstalla stabilitet.",
+        },
+        {
+          value: "step-4",
+          title: "4. Hamta upp eller fa leverans",
+          body: "Vi meddelar nar din dator ar klar. Valj hamtning eller leverans. Se instruktioner i Mina bestallningar.",
+        },
+        {
+          value: "step-5",
+          title: "5. Efterservice",
+          body: "Behov av finjustering? Vi finns kvar for support och tips.",
+        },
+      ],
+      formTitle: "Beskriv ditt problem",
+      formDescription: "Fyll i formularet sa kan vi snabbare hjalpa dig ratt. Ju mer detaljer, desto battre offert.",
+    },
+    customerService: {
+      heroEyebrow: "Kundservice",
+      heroTitle: "Kontakta oss",
+      heroDescription: "Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.",
+      heroCtaLabel: "Se FAQ",
+      heroCtaHref: "/faq",
+      contactTitle: "Kontaktuppgifter",
+      contactEmail: "support@datorhuset.site",
+      hoursTitle: "Oppettider",
+      hoursLines: ["Svarstider pa mejl: 11:00 - 03:00", "Vi svarar pa mejl bade under vardagar och helger."],
+      supportTitle: "Supportarenden",
+      supportLines: [
+        "For fragor om bestallningar, returer eller fakturor: ange ordernummer och beskriv arendet kort.",
+        "Teknisk support: beskriv problemet, vilka komponenter som anvands och bifoga bilder om mojligt.",
+      ],
+      commonIssuesTitle: "Vanliga arenden",
+      commonIssues: [
+        "Orderstatus, leveranstider och sparning",
+        "Andringar i bestallning eller uppgraderingar",
+        "Garantifragor och reklamation",
+        "Felsokning, service och reparation",
+        "Foretagslosningar och faktura",
+      ],
+      commonIssuesNote: "Vi aterkommer normalt inom 24 timmar pa vardagar.",
+      workflowTitle: "Sa arbetar vi",
+      workflowSteps: [
+        "Du beskriver ditt arende via mail eller formular.",
+        "Vi aterkommer med fragor eller forslag.",
+        "Du far en tydlig offert och tidsplan.",
+        "Vi uppdaterar dig nar arbetet ar klart.",
+      ],
+      workflowCtaLabel: "Starta servicearende",
+      workflowCtaHref: "/service-reparation",
     },
   },
 };

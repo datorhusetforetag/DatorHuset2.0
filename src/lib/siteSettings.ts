@@ -12,12 +12,7 @@ export type SiteIconKey =
   | "package"
   | "refresh-euro"
   | "shield"
-  | "truck"
-  | "wrench"
-  | "star"
-  | "headset"
-  | "sparkles"
-  | "cpu";
+  | "headset";
 
 export type SiteLinkItem = {
   label: string;
@@ -49,44 +44,11 @@ export type SitePromoCard = {
   secondaryHref: string;
 };
 
-export type SiteTrustMetric = {
-  value: string;
-  label: string;
-  icon: SiteIconKey;
-};
-
-export type SiteShowcaseCard = {
-  icon: SiteIconKey;
-  title: string;
-  description: string;
-  linkLabel: string;
-  href: string;
-};
-
-export type SiteFooterColumn = {
-  title: string;
-  links: SiteLinkItem[];
-};
-
 export type SiteSocialPlatform = "instagram" | "x" | "tiktok" | "youtube";
 
-export type SiteSocialLink = {
-  platform: SiteSocialPlatform;
-  label: string;
-  href: string;
-};
-
 export type SiteSettings = {
-  version: 2;
+  version: 3;
   site: {
-    announcement: {
-      enabled: boolean;
-      theme: "dark" | "yellow" | "teal";
-      label: string;
-      text: string;
-      href: string;
-      linkLabel: string;
-    };
     navigation: {
       brandName: string;
       menuLabel: string;
@@ -95,53 +57,40 @@ export type SiteSettings = {
       menuItems: SiteLinkItem[];
     };
     footer: {
-      brandText: string;
       supportTitle: string;
       supportEmail: string;
       supportHours: string;
-      columns: SiteFooterColumn[];
-      socialLinks: SiteSocialLink[];
+      columns: Array<{
+        title: string;
+        links: SiteLinkItem[];
+      }>;
+      socialLinks: Array<{
+        platform: SiteSocialPlatform;
+        label: string;
+        href: string;
+      }>;
       copyright: string;
     };
   };
   homepage: {
     hero: {
-      enabled: boolean;
-      primary: {
-        eyebrow: string;
-        title: string;
-        subtitle: string;
-        primaryLabel: string;
-        primaryHref: string;
-        secondaryLabel: string;
-        secondaryHref: string;
-        featureEyebrow: string;
-        featureTitle: string;
-        featureImage: string;
-        featureImageAlt: string;
-      };
-      secondary: {
-        title: string;
-        description: string;
-        badge: string;
-        note: string;
-        image: string;
-        imageAlt: string;
-      };
+      title: string;
+      subtitle: string;
+      featureEyebrow: string;
+      featureTitle: string;
+      featureImage: string;
+      featureImageAlt: string;
+      secondaryTitle: string;
+      secondaryDescription: string;
+      secondaryBadge: string;
+      secondaryNote: string;
       categoriesTitle: string;
       categories: SiteHeroCategory[];
       featuredTitle: string;
       featuredCount: number;
       featuredInventoryLabel: string;
     };
-    trustBar: {
-      enabled: boolean;
-      title: string;
-      items: SiteTrustMetric[];
-    };
     steps: {
-      enabled: boolean;
-      eyebrow: string;
       title: string;
       description: string;
       primaryLabel: string;
@@ -150,30 +99,63 @@ export type SiteSettings = {
       secondaryHref: string;
       items: SiteStepItem[];
     };
-    showcase: {
-      enabled: boolean;
-      eyebrow: string;
-      title: string;
-      description: string;
-      cards: SiteShowcaseCard[];
-    };
     promo: {
-      enabled: boolean;
       eyebrow: string;
       title: string;
       description: string;
       cards: SitePromoCard[];
     };
-    ctaBand: {
-      enabled: boolean;
-      badge: string;
-      eyebrow: string;
-      title: string;
-      description: string;
+  };
+  pages: {
+    products: {
+      banners: Record<
+        "default" | "budget" | "best-selling" | "price-performance" | "toptier",
+        {
+          eyebrow: string;
+          title: string;
+          description: string;
+          images: string[];
+          stickers: string[];
+        }
+      >;
+    };
+    serviceRepair: {
+      heroEyebrow: string;
+      heroTitle: string;
+      heroDescription: string;
       primaryLabel: string;
       primaryHref: string;
       secondaryLabel: string;
       secondaryHref: string;
+      flowTitle: string;
+      flowDescription: string;
+      steps: Array<{
+        value: string;
+        title: string;
+        body: string;
+      }>;
+      formTitle: string;
+      formDescription: string;
+    };
+    customerService: {
+      heroEyebrow: string;
+      heroTitle: string;
+      heroDescription: string;
+      heroCtaLabel: string;
+      heroCtaHref: string;
+      contactTitle: string;
+      contactEmail: string;
+      hoursTitle: string;
+      hoursLines: string[];
+      supportTitle: string;
+      supportLines: string[];
+      commonIssuesTitle: string;
+      commonIssues: string[];
+      commonIssuesNote: string;
+      workflowTitle: string;
+      workflowSteps: string[];
+      workflowCtaLabel: string;
+      workflowCtaHref: string;
     };
   };
 };
@@ -193,7 +175,7 @@ const deepMerge = <T,>(defaults: T, candidate: unknown): T => {
       const candidateValue = nextCandidate[key];
 
       if (key === "version") {
-        base[key] = 2;
+        base[key] = 3;
         continue;
       }
 

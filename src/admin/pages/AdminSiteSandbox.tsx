@@ -1,325 +1,312 @@
-import { useEffect, useState } from "react";
-import {
-  Code2,
-  Copy,
-  Eye,
-  LayoutTemplate,
-  MenuSquare,
-  Paintbrush,
-  RefreshCcw,
-  RotateCcw,
-  Rows3,
-  Save,
-  Send,
-  ShieldCheck,
-  Sparkles,
-  Wand2,
-} from "lucide-react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { Eye, Globe, LayoutTemplate, RefreshCcw, Save, Send, Sparkles, Wand2 } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
   DEFAULT_SITE_SETTINGS,
   SITE_ICON_OPTIONS,
   normalizeSiteSettings,
   type SiteIconKey,
   type SiteSettings,
-  type SiteSocialPlatform,
 } from "@/lib/siteSettings";
-import { SiteIcon } from "@/components/SiteIcon";
-import { AdminAccessContext } from "../useAdminAccess";
+import type { AdminAccessContext } from "../useAdminAccess";
 
-const prettyJson = (value: unknown) => JSON.stringify(value, null, 2);
-
-type SandboxMode = "draft" | "live";
-type CanvasTab = "builder" | "json";
-type BuilderSection = "mood" | "navigation" | "hero" | "journey" | "campaigns" | "footer";
 type SiteSettingsBundle = {
-  draft: SiteSettings;
   live: SiteSettings;
+  draft: SiteSettings;
 };
 
-const defaultBundle: SiteSettingsBundle = {
-  draft: DEFAULT_SITE_SETTINGS,
-  live: DEFAULT_SITE_SETTINGS,
-};
+type ProductsBannerKey = "default" | "budget" | "best-selling" | "price-performance" | "toptier";
 
-const SECTION_ITEMS: Array<{
-  id: BuilderSection;
-  title: string;
+type PreviewPageDefinition = {
+  key:
+    | "home"
+    | "products-default"
+    | "products-budget"
+    | "products-price-performance"
+    | "products-toptier"
+    | "service-repair"
+    | "customer-service";
+  label: string;
+  path: string;
+  group: "home" | "products" | "serviceRepair" | "customerService";
+  bannerKey?: ProductsBannerKey;
   description: string;
-  icon: typeof Paintbrush;
-}> = [
-  { id: "mood", title: "Mood Board", description: "Theme, strip and preset direction.", icon: Paintbrush },
-  { id: "navigation", title: "Navigation", description: "Brand, search and top links.", icon: MenuSquare },
-  { id: "hero", title: "Hero Stage", description: "Headline, CTAs and category cards.", icon: LayoutTemplate },
-  { id: "journey", title: "Journey", description: "Trust metrics and buying steps.", icon: ShieldCheck },
-  { id: "campaigns", title: "Campaigns", description: "Showcase, promo cards and final CTA.", icon: Sparkles },
-  { id: "footer", title: "Footer", description: "Support copy and social cluster.", icon: Rows3 },
+};
+
+const PREVIEW_PAGES: PreviewPageDefinition[] = [
+  {
+    key: "home",
+    label: "Startsida",
+    path: "/",
+    group: "home",
+    description: "Hero, steg, kampanjkort och global navigation/footer.",
+  },
+  {
+    key: "products-default",
+    label: "Produkter: standard",
+    path: "/products",
+    group: "products",
+    bannerKey: "default",
+    description: "Standardbanner for produktsidan.",
+  },
+  {
+    key: "products-budget",
+    label: "Produkter: budget",
+    path: "/products?category=budget",
+    group: "products",
+    bannerKey: "budget",
+    description: "Banner for budgetkategorin.",
+  },
+  {
+    key: "products-price-performance",
+    label: "Produkter: price-performance",
+    path: "/products?category=price-performance",
+    group: "products",
+    bannerKey: "price-performance",
+    description: "Banner for price-performance.",
+  },
+  {
+    key: "products-toptier",
+    label: "Produkter: top tier",
+    path: "/products?category=toptier",
+    group: "products",
+    bannerKey: "toptier",
+    description: "Banner for basta prestanda.",
+  },
+  {
+    key: "service-repair",
+    label: "Service & reparation",
+    path: "/service-reparation",
+    group: "serviceRepair",
+    description: "Hero, CTA, serviceflode och formularkopior.",
+  },
+  {
+    key: "customer-service",
+    label: "Kundservice",
+    path: "/kundservice",
+    group: "customerService",
+    description: "Hero, kontaktblock, vanliga arenden och arbetsflode.",
+  },
 ];
 
-const PRESET_LIBRARY = [
-  {
-    id: "gaming-launch",
-    title: "Gaming Launch",
-    description: "Brighter strip, louder hero and higher-energy CTAs.",
-  },
-  {
-    id: "service-week",
-    title: "Service Week",
-    description: "Support-led messaging around service and repairs.",
-  },
-  {
-    id: "business-clean",
-    title: "Business Clean",
-    description: "A calmer front page for teams and office buyers.",
-  },
-];
+const cloneSettings = (value: SiteSettings): SiteSettings => normalizeSiteSettings(JSON.parse(JSON.stringify(value)));
 
-const fieldClass =
-  "w-full rounded-2xl border border-white/10 bg-[#0a101a] px-4 py-3 text-sm text-white outline-none transition focus:border-[#11667b] focus:ring-2 focus:ring-[#11667b]/25";
-const panelClass =
-  "rounded-[1.75rem] border border-white/10 bg-[#0c1320]/90 p-5 shadow-[0_20px_80px_rgba(0,0,0,0.24)]";
+const parseDelimitedLines = (value: string, size: number) =>
+  value
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const parts = line.split("|").map((part) => part.trim());
+      return Array.from({ length: size }, (_, index) => parts[index] || "");
+    });
 
-const toLines = (value: string) =>
+const parseSimpleLines = (value: string) =>
   value
     .split("\n")
     .map((line) => line.trim())
     .filter(Boolean);
 
-const serializeMenuItems = (settings: SiteSettings) =>
-  settings.site.navigation.menuItems.map((item) => `${item.label}|${item.href}`).join("\n");
+const formatSimpleLines = (items: string[]) => items.join("\n");
+const toDelimitedLines = (rows: string[][]) => rows.map((row) => row.join("|")).join("\n");
 
-const parseMenuItems = (value: string) => {
-  const next = toLines(value)
-    .map((line) => {
-      const [label, href] = line.split("|");
-      return { label: (label || "Ny lank").trim(), href: (href || "/products").trim() };
-    })
-    .slice(0, 8);
-  return next.length > 0 ? next : DEFAULT_SITE_SETTINGS.site.navigation.menuItems;
+const buildPreviewOrigin = () => {
+  const configured = String(import.meta.env.VITE_PUBLIC_SITE_URL || "").trim().replace(/\/+$/, "");
+  if (configured) return configured;
+  if (typeof window === "undefined") return "";
+  if (window.location.hostname.startsWith("admin.")) {
+    return window.location.origin.replace("//admin.", "//");
+  }
+  return window.location.origin;
 };
 
-const serializeHeroCategories = (settings: SiteSettings) =>
-  settings.homepage.hero.categories.map((item) => `${item.name}|${item.icon}|${item.href}`).join("\n");
-
-const parseHeroCategories = (value: string) => {
-  const next = toLines(value)
-    .map((line) => {
-      const [name, icon, href] = line.split("|");
-      return {
-        name: (name || "Ny kategori").trim(),
-        icon: (SITE_ICON_OPTIONS.includes((icon || "").trim() as SiteIconKey)
-          ? (icon || "").trim()
-          : "monitor") as SiteIconKey,
-        href: (href || "/products").trim(),
-      };
-    })
-    .slice(0, 8);
-  return next.length > 0 ? next : DEFAULT_SITE_SETTINGS.homepage.hero.categories;
+const buildPreviewUrl = (origin: string, page: PreviewPageDefinition, previewNonce: number) => {
+  const url = new URL(page.path, origin || window.location.origin);
+  url.searchParams.set("site-settings-mode", "draft");
+  url.searchParams.set("preview_ts", String(previewNonce));
+  return url.toString();
 };
 
-const serializeTrustMetrics = (settings: SiteSettings) =>
-  settings.homepage.trustBar.items.map((item) => `${item.value}|${item.label}|${item.icon}`).join("\n");
-
-const parseTrustMetrics = (value: string) => {
-  const next = toLines(value)
-    .map((line) => {
-      const [metricValue, label, icon] = line.split("|");
-      return {
-        value: (metricValue || "24h").trim(),
-        label: (label || "Ny trygghetssignal").trim(),
-        icon: (SITE_ICON_OPTIONS.includes((icon || "").trim() as SiteIconKey)
-          ? (icon || "").trim()
-          : "shield") as SiteIconKey,
-      };
-    })
-    .slice(0, 5);
-  return next.length >= 2 ? next : DEFAULT_SITE_SETTINGS.homepage.trustBar.items;
+const parseApiPayload = async (response: Response) => {
+  const raw = await response.text();
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return { error: raw };
+  }
 };
 
-const serializeSteps = (settings: SiteSettings) =>
-  settings.homepage.steps.items.map((item) => `${item.title}|${item.description}|${item.icon}`).join("\n");
-
-const parseSteps = (value: string) => {
-  const next = toLines(value)
-    .map((line) => {
-      const [title, description, icon] = line.split("|");
-      return {
-        title: (title || "Nytt steg").trim(),
-        description: (description || "Beskriv det har steget.").trim(),
-        icon: (SITE_ICON_OPTIONS.includes((icon || "").trim() as SiteIconKey)
-          ? (icon || "").trim()
-          : "monitor") as SiteIconKey,
-      };
-    })
-    .slice(0, 5);
-  return next.length >= 3 ? next : DEFAULT_SITE_SETTINGS.homepage.steps.items;
-};
-
-const serializeShowcaseCards = (settings: SiteSettings) =>
-  settings.homepage.showcase.cards
-    .map((item) => `${item.icon}|${item.title}|${item.description}|${item.linkLabel}|${item.href}`)
-    .join("\n");
-
-const parseShowcaseCards = (value: string) => {
-  const next = toLines(value)
-    .map((line) => {
-      const [icon, title, description, linkLabel, href] = line.split("|");
-      return {
-        icon: (SITE_ICON_OPTIONS.includes((icon || "").trim() as SiteIconKey)
-          ? (icon || "").trim()
-          : "sparkles") as SiteIconKey,
-        title: (title || "Nytt block").trim(),
-        description: (description || "Beskriv blocket.").trim(),
-        linkLabel: (linkLabel || "Las mer").trim(),
-        href: (href || "/products").trim(),
-      };
-    })
-    .slice(0, 6);
-  return next.length >= 2 ? next : DEFAULT_SITE_SETTINGS.homepage.showcase.cards;
-};
-
-const serializePromoCards = (settings: SiteSettings) =>
-  settings.homepage.promo.cards.map((item) => `${item.title}|${item.description}|${item.image}`).join("\n");
-
-const parsePromoCards = (value: string, settings: SiteSettings) => {
-  const next = toLines(value)
-    .map((line, index) => {
-      const [title, description, image] = line.split("|");
-      const fallback = settings.homepage.promo.cards[index] || DEFAULT_SITE_SETTINGS.homepage.promo.cards[0];
-      return {
-        ...fallback,
-        title: (title || fallback.title).trim(),
-        description: (description || fallback.description).trim(),
-        image: (image || fallback.image).trim(),
-      };
-    })
-    .slice(0, 3);
-  return next.length >= 2 ? next : settings.homepage.promo.cards;
-};
-
-const serializeSocialLinks = (settings: SiteSettings) =>
-  settings.site.footer.socialLinks.map((item) => `${item.platform}|${item.label}|${item.href}`).join("\n");
-
-const parseSocialLinks = (value: string) => {
-  const next = toLines(value)
-    .map((line) => {
-      const [platform, label, href] = line.split("|");
-      const normalizedPlatform = ((platform || "").trim() || "instagram") as SiteSocialPlatform;
-      return {
-        platform: (["instagram", "x", "tiktok", "youtube"].includes(normalizedPlatform)
-          ? normalizedPlatform
-          : "instagram") as SiteSocialPlatform,
-        label: (label || "Instagram").trim(),
-        href: (href || "https://instagram.com").trim(),
-      };
-    })
-    .slice(0, 6);
-  return next.length > 0 ? next : DEFAULT_SITE_SETTINGS.site.footer.socialLinks;
-};
-
-const FieldBlock = ({
-  label,
+const SectionCard = ({
+  id,
+  title,
   description,
   children,
 }: {
-  label: string;
+  id: string;
+  title: string;
   description?: string;
-  children: React.ReactNode;
+  children: ReactNode;
 }) => (
-  <label className="space-y-2">
-    <div className="space-y-1">
-      <p className="text-sm font-semibold text-white">{label}</p>
-      {description ? <p className="text-xs text-slate-400">{description}</p> : null}
+  <section id={id} className="rounded-[28px] border border-slate-800 bg-slate-950/70 p-5 shadow-[0_20px_80px_rgba(2,6,23,0.35)]">
+    <div className="mb-4">
+      <h3 className="text-base font-semibold text-white">{title}</h3>
+      {description ? <p className="mt-1 text-sm text-slate-400">{description}</p> : null}
+    </div>
+    <div className="space-y-4">{children}</div>
+  </section>
+);
+
+const FieldBlock = ({
+  label,
+  hint,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  children: ReactNode;
+}) => (
+  <label className="block">
+    <div className="mb-2 flex items-center justify-between gap-3">
+      <span className="text-sm font-medium text-slate-200">{label}</span>
+      {hint ? <span className="text-[11px] uppercase tracking-[0.14em] text-slate-500">{hint}</span> : null}
     </div>
     {children}
   </label>
 );
 
-const ToggleCard = ({
+const BuilderPanel = ({
   title,
-  description,
-  checked,
-  onToggle,
+  eyebrow,
+  children,
 }: {
   title: string;
-  description: string;
-  checked: boolean;
-  onToggle: (checked: boolean) => void;
+  eyebrow: string;
+  children: ReactNode;
 }) => (
-  <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 p-4">
-    <div>
-      <p className="text-sm font-semibold text-white">{title}</p>
-      <p className="mt-1 text-xs text-slate-400">{description}</p>
+  <div className="overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))]">
+    <div className="border-b border-slate-800 px-6 py-5">
+      <p className="text-[11px] uppercase tracking-[0.32em] text-cyan-300/80">{eyebrow}</p>
+      <h2 className="mt-2 text-xl font-semibold text-white">{title}</h2>
     </div>
-    <button
-      type="button"
-      onClick={() => onToggle(!checked)}
-      className={`relative inline-flex h-8 w-14 items-center rounded-full transition ${checked ? "bg-[#11667b]" : "bg-slate-700"}`}
-    >
-      <span className={`inline-block h-6 w-6 rounded-full bg-white transition ${checked ? "translate-x-7" : "translate-x-1"}`} />
-    </button>
+    <div className="space-y-5 p-6">{children}</div>
   </div>
 );
 
 export default function AdminSiteSandbox() {
-  const { isAdmin, loading, error, token, apiBase, role, signInWithGoogle } =
+  const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
-  const [selectedMode, setSelectedMode] = useState<SandboxMode>("draft");
-  const [selectedSection, setSelectedSection] = useState<BuilderSection>("mood");
-  const [canvasTab, setCanvasTab] = useState<CanvasTab>("builder");
-  const [editorValues, setEditorValues] = useState<Record<SandboxMode, string>>({
-    draft: prettyJson(DEFAULT_SITE_SETTINGS),
-    live: prettyJson(DEFAULT_SITE_SETTINGS),
+  const canMutate = isAdmin && role !== "readonly";
+  const previewOrigin = useMemo(() => buildPreviewOrigin(), []);
+  const [selectedPageKey, setSelectedPageKey] = useState<PreviewPageDefinition["key"]>("home");
+  const [bundle, setBundle] = useState<SiteSettingsBundle>({
+    live: cloneSettings(DEFAULT_SITE_SETTINGS),
+    draft: cloneSettings(DEFAULT_SITE_SETTINGS),
   });
-  const [bundle, setBundle] = useState<SiteSettingsBundle>(defaultBundle);
+  const [draftSettings, setDraftSettings] = useState<SiteSettings>(cloneSettings(DEFAULT_SITE_SETTINGS));
+  const [jsonDraft, setJsonDraft] = useState(JSON.stringify(DEFAULT_SITE_SETTINGS, null, 2));
+  const [showAdvancedJson, setShowAdvancedJson] = useState(false);
   const [loadingSettings, setLoadingSettings] = useState(false);
-  const [saving, setSaving] = useState(false);
+  const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const [resetting, setResetting] = useState(false);
-  const [cloning, setCloning] = useState(false);
+  const [resettingDraft, setResettingDraft] = useState(false);
+  const [resettingDefaults, setResettingDefaults] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
   const [localError, setLocalError] = useState("");
-  const [saveMessage, setSaveMessage] = useState("");
+  const [previewNonce, setPreviewNonce] = useState(Date.now());
 
-  const canMutate = role === "admin" || role === "ops" || role === "";
-  const currentSettings = bundle[selectedMode];
+  const selectedPage = useMemo(
+    () => PREVIEW_PAGES.find((page) => page.key === selectedPageKey) || PREVIEW_PAGES[0],
+    [selectedPageKey],
+  );
 
-  const setModeSettings = (mode: SandboxMode, nextSettings: SiteSettings) => {
-    const normalized = normalizeSiteSettings(nextSettings);
-    setBundle((current) => ({ ...current, [mode]: normalized }));
-    setEditorValues((current) => ({ ...current, [mode]: prettyJson(normalized) }));
-  };
+  const previewUrl = useMemo(
+    () => buildPreviewUrl(previewOrigin, selectedPage, previewNonce),
+    [previewNonce, previewOrigin, selectedPage],
+  );
 
-  const updateModeSettings = (mode: SandboxMode, updater: (settings: SiteSettings) => void) => {
-    const next = structuredClone(bundle[mode]);
-    updater(next);
-    setModeSettings(mode, next);
-  };
+  const draftIsDirty = useMemo(
+    () => JSON.stringify(draftSettings) !== JSON.stringify(bundle.draft),
+    [bundle.draft, draftSettings],
+  );
 
-  const syncBundleIntoEditors = (nextBundle: SiteSettingsBundle) => {
-    setBundle(nextBundle);
-    setEditorValues({
-      draft: prettyJson(nextBundle.draft),
-      live: prettyJson(nextBundle.live),
+  const draftDiffersFromLive = useMemo(
+    () => JSON.stringify(bundle.live) !== JSON.stringify(draftSettings),
+    [bundle.live, draftSettings],
+  );
+
+  const sectionLinks = useMemo(() => {
+    const base = [{ id: "global-chrome", label: "Global chrome" }];
+    if (selectedPage.group === "home") {
+      return [
+        ...base,
+        { id: "home-hero", label: "Hero" },
+        { id: "home-categories", label: "Kategorier" },
+        { id: "home-steps", label: "Kopflode" },
+        { id: "home-promo", label: "Promokort" },
+      ];
+    }
+    if (selectedPage.group === "products") {
+      return [...base, { id: "products-banner", label: "Banner" }];
+    }
+    if (selectedPage.group === "serviceRepair") {
+      return [
+        ...base,
+        { id: "service-hero", label: "Hero" },
+        { id: "service-flow", label: "Flode" },
+        { id: "service-form", label: "Formular" },
+      ];
+    }
+    return [
+      ...base,
+      { id: "customer-hero", label: "Hero" },
+      { id: "customer-contact", label: "Kontakt" },
+      { id: "customer-issues", label: "Vanliga arenden" },
+      { id: "customer-workflow", label: "Arbetsflode" },
+    ];
+  }, [selectedPage.group]);
+
+  useEffect(() => {
+    setJsonDraft(JSON.stringify(draftSettings, null, 2));
+  }, [draftSettings]);
+
+  const touchPreview = () => setPreviewNonce(Date.now());
+
+  const updateDraft = (recipe: (draft: SiteSettings) => void) => {
+    setDraftSettings((current) => {
+      const next = cloneSettings(current);
+      recipe(next);
+      return next;
     });
+    setStatusMessage("");
+    setLocalError("");
   };
 
   const loadSettings = async () => {
     if (!token || !isAdmin) return;
     setLoadingSettings(true);
     setLocalError("");
-    setSaveMessage("");
     try {
       const response = await fetch(`${apiBase}/api/admin/v2/site-settings`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const payload = await response.json().catch(() => ({}));
+      const payload = await parseApiPayload(response);
       if (!response.ok) {
         throw new Error(payload?.error?.message || payload?.error || "Kunde inte hamta site settings.");
       }
-      syncBundleIntoEditors({
-        draft: normalizeSiteSettings(payload?.settings?.draft),
+
+      const nextBundle = {
         live: normalizeSiteSettings(payload?.settings?.live),
-      });
+        draft: normalizeSiteSettings(payload?.settings?.draft),
+      };
+      setBundle(nextBundle);
+      setDraftSettings(cloneSettings(nextBundle.draft));
+      setStatusMessage("Hamtade senaste live- och draftversionerna.");
+      touchPreview();
     } catch (nextError) {
       setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte hamta site settings.");
     } finally {
@@ -331,670 +318,1456 @@ export default function AdminSiteSandbox() {
     if (isAdmin) {
       void loadSettings();
     }
-  }, [isAdmin, token, apiBase]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAdmin]);
 
-  const parseCurrentEditor = () => normalizeSiteSettings(JSON.parse(editorValues[selectedMode]));
-
-  const handleFormat = () => {
+  const saveDraft = async () => {
+    if (!token || !canMutate) return;
+    setSavingDraft(true);
     setLocalError("");
-    try {
-      setEditorValues((current) => ({ ...current, [selectedMode]: prettyJson(JSON.parse(current[selectedMode])) }));
-    } catch {
-      setLocalError("JSON ar inte giltig. Ratta formatet innan du fortsatter.");
-    }
-  };
-
-  const handleApplyJson = () => {
-    setLocalError("");
-    try {
-      setModeSettings(selectedMode, parseCurrentEditor());
-      setSaveMessage("JSON synkades till buildern.");
-    } catch {
-      setLocalError("JSON ar inte giltig. Buildern kunde inte uppdateras.");
-    }
-  };
-
-  const handleSave = async () => {
-    if (!token || !isAdmin || !canMutate) return;
-    setSaving(true);
-    setLocalError("");
-    setSaveMessage("");
-
-    let parsedSettings;
-    try {
-      parsedSettings = parseCurrentEditor();
-      setModeSettings(selectedMode, parsedSettings);
-    } catch {
-      setSaving(false);
-      setLocalError("JSON ar inte giltig. Spara stoppades.");
-      return;
-    }
-
+    setStatusMessage("");
     try {
       const response = await fetch(`${apiBase}/api/admin/v2/site-settings`, {
         method: "PUT",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ mode: selectedMode, settings: parsedSettings }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        const details = payload?.error?.details;
-        const detailText =
-          details && typeof details === "object"
-            ? prettyJson(details)
-            : payload?.error?.message || payload?.error || "Kunde inte spara site settings.";
-        throw new Error(detailText);
-      }
-      setModeSettings(selectedMode, normalizeSiteSettings(payload?.settings));
-      setSaveMessage(
-        selectedMode === "draft"
-          ? "Utkastet sparades. Fortsatt jobba i buildern eller publicera nar du ar nojd."
-          : "Live-laget sparades direkt pa huvudsidan."
-      );
-    } catch (nextError) {
-      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte spara site settings.");
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleReset = async () => {
-    if (!token || !isAdmin || !canMutate) return;
-    setResetting(true);
-    setLocalError("");
-    setSaveMessage("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/reset`, {
-        method: "POST",
-        headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ mode: selectedMode }),
+        body: JSON.stringify({ mode: "draft", settings: draftSettings }),
       });
-      const payload = await response.json().catch(() => ({}));
+      const payload = await parseApiPayload(response);
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte aterstalla site settings.");
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte spara utkastet.");
       }
-      setModeSettings(selectedMode, normalizeSiteSettings(payload?.settings));
-      setSaveMessage(`${selectedMode === "draft" ? "Utkast" : "Live"} aterstalldes till standardinnehall.`);
+      const savedDraft = normalizeSiteSettings(payload?.settings);
+      setBundle((current) => ({ ...current, draft: savedDraft }));
+      setDraftSettings(cloneSettings(savedDraft));
+      setStatusMessage("Utkastet ar sparat. Live-sajten ar fortfarande oforandrad.");
+      touchPreview();
     } catch (nextError) {
-      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte aterstalla site settings.");
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte spara utkastet.");
     } finally {
-      setResetting(false);
+      setSavingDraft(false);
     }
   };
 
-  const handleCloneLiveToDraft = async () => {
-    if (!token || !isAdmin || !canMutate) return;
-    setCloning(true);
-    setLocalError("");
-    setSaveMessage("");
-    try {
-      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/clone-live-to-draft`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte kopiera live till utkast.");
-      }
-      syncBundleIntoEditors({
-        draft: normalizeSiteSettings(payload?.settings?.draft),
-        live: normalizeSiteSettings(payload?.settings?.live),
-      });
-      setSelectedMode("draft");
-      setSaveMessage("Live-innehall kopierades till draft. Buildern ar redo for nya ideer.");
-    } catch (nextError) {
-      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte kopiera live till utkast.");
-    } finally {
-      setCloning(false);
-    }
-  };
-
-  const handlePublish = async () => {
-    if (!token || !isAdmin || !canMutate) return;
+  const publishDraft = async () => {
+    if (!token || !canMutate) return;
+    if (!window.confirm("Publicera draft till live? Detta andrar den publika sajten.")) return;
     setPublishing(true);
     setLocalError("");
-    setSaveMessage("");
+    setStatusMessage("");
     try {
       const response = await fetch(`${apiBase}/api/admin/v2/site-settings/publish`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
-      const payload = await response.json().catch(() => ({}));
+      const payload = await parseApiPayload(response);
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte publicera utkastet.");
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte publicera draften.");
       }
-      syncBundleIntoEditors({
-        draft: normalizeSiteSettings(payload?.settings?.draft),
+      const nextBundle = {
         live: normalizeSiteSettings(payload?.settings?.live),
-      });
-      setSelectedMode("live");
-      setSaveMessage("Draft publicerades live pa huvudsidan.");
+        draft: normalizeSiteSettings(payload?.settings?.draft),
+      };
+      setBundle(nextBundle);
+      setDraftSettings(cloneSettings(nextBundle.draft));
+      setStatusMessage("Draften ar nu publicerad till live.");
+      touchPreview();
     } catch (nextError) {
-      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte publicera utkastet.");
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte publicera draften.");
     } finally {
       setPublishing(false);
     }
   };
 
-  const applyPreset = (presetId: string) => {
-    updateModeSettings(selectedMode, (settings) => {
-      if (presetId === "gaming-launch") {
-        settings.site.announcement.theme = "yellow";
-        settings.site.announcement.label = "Ny drop";
-        settings.site.announcement.text = "Lansera nya gamingbyggen med starkare CTA-tryck och en mer energisk forstasida.";
-        settings.homepage.hero.primary.eyebrow = "Gaming launch";
-        settings.homepage.hero.primary.title = "Bygg en setup som faktiskt sticker ut";
-        settings.homepage.hero.primary.primaryLabel = "Shoppa gaming";
-        settings.homepage.hero.primary.primaryHref = "/products?category=toptier&clear_filters=1";
+  const cloneLiveToDraft = async () => {
+    if (!token || !canMutate) return;
+    if (!window.confirm("Ersatt nuvarande draft med liveversionen?")) return;
+    setResettingDraft(true);
+    setLocalError("");
+    setStatusMessage("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/clone-live-to-draft`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte aterstalla draft fran live.");
       }
-      if (presetId === "service-week") {
-        settings.site.announcement.theme = "teal";
-        settings.site.announcement.label = "Servicefokus";
-        settings.site.announcement.text = "Pusha felsokning, rengoring och uppgraderingar med ett supportlett uttryck.";
-        settings.homepage.hero.primary.eyebrow = "Service week";
-        settings.homepage.hero.primary.title = "Ge gamla datorer ett nytt liv";
-        settings.homepage.hero.primary.primaryLabel = "Boka service";
-        settings.homepage.hero.primary.primaryHref = "/service-reparation";
-      }
-      if (presetId === "business-clean") {
-        settings.site.announcement.theme = "dark";
-        settings.site.navigation.brandName = "DatorHuset Pro";
-        settings.homepage.hero.primary.eyebrow = "Foretagspaket";
-        settings.homepage.hero.primary.title = "Fardiga datorfloden for team, skolor och kontor";
-        settings.homepage.trustBar.title = "Tryggt upplagg for team och inkop";
-      }
-    });
-    setSelectedSection("mood");
-    setCanvasTab("builder");
-    const preset = PRESET_LIBRARY.find((item) => item.id === presetId);
-    setSaveMessage(`${preset?.title || "Preset"} applicerades pa ${selectedMode}.`);
+      const nextBundle = {
+        live: normalizeSiteSettings(payload?.settings?.live),
+        draft: normalizeSiteSettings(payload?.settings?.draft),
+      };
+      setBundle(nextBundle);
+      setDraftSettings(cloneSettings(nextBundle.draft));
+      setStatusMessage("Draften matchar nu liveversionen.");
+      touchPreview();
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte aterstalla draft fran live.");
+    } finally {
+      setResettingDraft(false);
+    }
   };
 
-  const summaryRows = [
-    { label: "Announcement", value: currentSettings.site.announcement.enabled ? "On" : "Off" },
-    { label: "Menu links", value: String(currentSettings.site.navigation.menuItems.length) },
-    { label: "Hero cards", value: String(currentSettings.homepage.hero.categories.length) },
-    { label: "Trust nodes", value: String(currentSettings.homepage.trustBar.items.length) },
-    { label: "Showcase cards", value: String(currentSettings.homepage.showcase.cards.length) },
-    { label: "Social nodes", value: String(currentSettings.site.footer.socialLinks.length) },
-  ];
+  const resetDraftToDefaults = async () => {
+    if (!token || !canMutate) return;
+    if (!window.confirm("Aterstall draft till standardsidan?")) return;
+    setResettingDefaults(true);
+    setLocalError("");
+    setStatusMessage("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/reset`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mode: "draft" }),
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte aterstalla draften.");
+      }
+      const nextDraft = normalizeSiteSettings(payload?.settings);
+      setBundle((current) => ({ ...current, draft: nextDraft }));
+      setDraftSettings(cloneSettings(nextDraft));
+      setStatusMessage("Draften ar aterstalld till standardsidan.");
+      touchPreview();
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte aterstalla draften.");
+    } finally {
+      setResettingDefaults(false);
+    }
+  };
 
-  const renderPreview = () => (
-    <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-[#050911] shadow-[0_28px_90px_rgba(0,0,0,0.3)]">
-      <div
-        className={`px-5 py-3 text-xs font-semibold uppercase tracking-[0.28em] ${
-          currentSettings.site.announcement.theme === "yellow"
-            ? "bg-yellow-300 text-gray-900"
-            : currentSettings.site.announcement.theme === "teal"
-              ? "bg-[#11667b] text-white"
-              : "bg-[#101927] text-white"
-        }`}
-      >
-        {currentSettings.site.announcement.enabled
-          ? `${currentSettings.site.announcement.label} • ${currentSettings.site.announcement.text}`
-          : "Announcement off"}
-      </div>
-      <div className="border-b border-white/10 bg-[#0c1421] px-5 py-4">
-        <p className="text-[11px] uppercase tracking-[0.3em] text-slate-500">
-          {selectedMode === "draft" ? "Draft preview" : "Live preview"}
-        </p>
-        <h3 className="mt-2 text-lg font-semibold text-white">{currentSettings.site.navigation.brandName}</h3>
-      </div>
-      <div className="space-y-4 bg-[radial-gradient(circle_at_top_left,_rgba(255,212,59,0.16),_transparent_35%),linear-gradient(180deg,#101826_0%,#0a0f17_100%)] p-5">
-        <div className="rounded-[1.75rem] border border-yellow-400/20 bg-yellow-300/90 p-5 text-gray-900">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-gray-700">{currentSettings.homepage.hero.primary.eyebrow}</p>
-          <h4 className="mt-3 text-2xl font-black leading-tight">{currentSettings.homepage.hero.primary.title}</h4>
-          <div className="mt-4 flex flex-wrap gap-2 text-xs font-semibold">
-            <span className="rounded-full bg-gray-900 px-3 py-2 text-white">{currentSettings.homepage.hero.primary.primaryLabel}</span>
-            <span className="rounded-full border border-gray-900/25 px-3 py-2">{currentSettings.homepage.hero.primary.secondaryLabel}</span>
-          </div>
-        </div>
+  const applyJsonDraft = () => {
+    try {
+      const parsed = JSON.parse(jsonDraft);
+      setDraftSettings(normalizeSiteSettings(parsed));
+      setLocalError("");
+      setStatusMessage("JSON-utkastet ar laddat i buildern. Spara draft nar du ar klar.");
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Ogiltig JSON.");
+    }
+  };
 
-        {currentSettings.homepage.trustBar.enabled ? (
-          <div className="grid gap-3 sm:grid-cols-3">
-            {currentSettings.homepage.trustBar.items.slice(0, 3).map((item) => (
-              <div key={`${item.value}-${item.label}`} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                <SiteIcon icon={item.icon} className="h-5 w-5 text-yellow-300" />
-                <p className="mt-3 text-lg font-semibold text-white">{item.value}</p>
-                <p className="mt-1 text-xs text-slate-400">{item.label}</p>
-              </div>
-            ))}
-          </div>
-        ) : null}
+  const formatJsonDraft = () => {
+    try {
+      const parsed = JSON.parse(jsonDraft);
+      setJsonDraft(JSON.stringify(normalizeSiteSettings(parsed), null, 2));
+      setLocalError("");
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Ogiltig JSON.");
+    }
+  };
 
-        {currentSettings.homepage.showcase.enabled ? (
-          <div className="rounded-[1.75rem] border border-white/10 bg-[#0f1824] p-5">
-            <p className="text-[11px] uppercase tracking-[0.3em] text-[#9dd4e0]">{currentSettings.homepage.showcase.eyebrow}</p>
-            <h4 className="mt-3 text-xl font-bold text-white">{currentSettings.homepage.showcase.title}</h4>
-            <div className="mt-4 grid gap-3">
-              {currentSettings.homepage.showcase.cards.slice(0, 3).map((card) => (
-                <div key={card.title} className="rounded-2xl border border-white/10 bg-white/5 p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#11667b]/20 text-[#9dd4e0]">
-                      <SiteIcon icon={card.icon} className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-white">{card.title}</p>
-                      <p className="text-xs text-slate-400">{card.linkLabel}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        ) : null}
-
-        <div className="rounded-[1.75rem] border border-white/10 bg-[#0c1421] p-5">
-          <p className="text-sm font-semibold text-white">{currentSettings.site.footer.supportTitle}</p>
-          <p className="mt-1 text-xs text-slate-400">{currentSettings.site.footer.supportEmail}</p>
-        </div>
-      </div>
-    </div>
+  const navMenuLines = toDelimitedLines(
+    draftSettings.site.navigation.menuItems.map((item) => [item.label, item.href]),
   );
+  const socialLines = toDelimitedLines(
+    draftSettings.site.footer.socialLinks.map((item) => [item.platform, item.label, item.href]),
+  );
+  const footerColumnsLines = draftSettings.site.footer.columns
+    .map((column) => `${column.title}::${column.links.map((link) => `${link.label}|${link.href}`).join(";;")}`)
+    .join("\n");
 
-  const renderBuilder = () => {
-    if (selectedSection === "mood") {
-      return (
-        <div className="space-y-5">
-          <div className={panelClass}>
-            <p className="text-xs uppercase tracking-[0.3em] text-[#9dd4e0]">Creative presets</p>
-            <div className="mt-5 grid gap-4 xl:grid-cols-3">
-              {PRESET_LIBRARY.map((preset) => (
-                <button
-                  key={preset.id}
-                  type="button"
-                  onClick={() => applyPreset(preset.id)}
-                  className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 text-left transition hover:border-[#11667b] hover:bg-[#11667b]/10"
-                >
-                  <p className="text-sm font-semibold text-white">{preset.title}</p>
-                  <p className="mt-2 text-sm text-slate-400">{preset.description}</p>
-                </button>
-              ))}
-            </div>
-          </div>
+  const selectedBanner = selectedPage.bannerKey
+    ? draftSettings.pages.products.banners[selectedPage.bannerKey]
+    : draftSettings.pages.products.banners.default;
 
-          <div className={panelClass}>
-            <div className="grid gap-4 xl:grid-cols-2">
-              <ToggleCard
-                title="Announcement strip"
-                description="Turn the top campaign strip on or off."
-                checked={currentSettings.site.announcement.enabled}
-                onToggle={(checked) => updateModeSettings(selectedMode, (settings) => { settings.site.announcement.enabled = checked; })}
-              />
-              <FieldBlock label="Announcement theme">
-                <select
-                  value={currentSettings.site.announcement.theme}
-                  onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.announcement.theme = event.target.value as SiteSettings["site"]["announcement"]["theme"]; })}
-                  className={fieldClass}
-                >
-                  <option value="dark">dark</option>
-                  <option value="yellow">yellow</option>
-                  <option value="teal">teal</option>
-                </select>
-              </FieldBlock>
-            </div>
-            <div className="mt-5 grid gap-4 xl:grid-cols-2">
-              <FieldBlock label="Campaign label">
-                <input value={currentSettings.site.announcement.label} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.announcement.label = event.target.value; })} className={fieldClass} />
-              </FieldBlock>
-              <FieldBlock label="Link label">
-                <input value={currentSettings.site.announcement.linkLabel} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.announcement.linkLabel = event.target.value; })} className={fieldClass} />
-              </FieldBlock>
-            </div>
-            <div className="mt-5 grid gap-4 xl:grid-cols-2">
-              <FieldBlock label="Announcement text">
-                <textarea value={currentSettings.site.announcement.text} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.announcement.text = event.target.value; })} className={`${fieldClass} min-h-[120px] resize-none`} />
-              </FieldBlock>
-              <FieldBlock label="Announcement href">
-                <input value={currentSettings.site.announcement.href} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.announcement.href = event.target.value; })} className={fieldClass} />
-              </FieldBlock>
-            </div>
-          </div>
-        </div>
-      );
-    }
-
-    if (selectedSection === "navigation") {
-      return (
-        <div className={panelClass}>
-          <div className="grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Brand name">
-              <input value={currentSettings.site.navigation.brandName} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.navigation.brandName = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <FieldBlock label="Search placeholder">
-              <input value={currentSettings.site.navigation.searchPlaceholder} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.navigation.searchPlaceholder = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Menu label">
-              <input value={currentSettings.site.navigation.menuLabel} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.navigation.menuLabel = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <FieldBlock label="Admin portal href">
-              <input value={currentSettings.site.navigation.adminPortalHref} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.navigation.adminPortalHref = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Menu items" description="One row per item: label|href">
-              <textarea value={serializeMenuItems(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.navigation.menuItems = parseMenuItems(event.target.value); })} className={`${fieldClass} min-h-[220px] resize-none`} />
-            </FieldBlock>
-          </div>
-        </div>
-      );
-    }
-
-    if (selectedSection === "hero") {
-      return (
-        <div className={panelClass}>
-          <ToggleCard
-            title="Hero section"
-            description="Show or hide the main hero stage."
-            checked={currentSettings.homepage.hero.enabled}
-            onToggle={(checked) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.enabled = checked; })}
-          />
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Eyebrow">
-              <input value={currentSettings.homepage.hero.primary.eyebrow} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.primary.eyebrow = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <FieldBlock label="Subtitle">
-              <input value={currentSettings.homepage.hero.primary.subtitle} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.primary.subtitle = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Main title">
-              <textarea value={currentSettings.homepage.hero.primary.title} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.primary.title = event.target.value; })} className={`${fieldClass} min-h-[110px] resize-none`} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Primary CTA">
-              <input value={currentSettings.homepage.hero.primary.primaryLabel} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.primary.primaryLabel = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <FieldBlock label="Primary href">
-              <input value={currentSettings.homepage.hero.primary.primaryHref} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.primary.primaryHref = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Secondary CTA">
-              <input value={currentSettings.homepage.hero.primary.secondaryLabel} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.primary.secondaryLabel = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <FieldBlock label="Featured count">
-              <input type="number" min={0} max={10} value={currentSettings.homepage.hero.featuredCount} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.featuredCount = Number(event.target.value || 0); })} className={fieldClass} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Category cards" description="One row per card: name|icon|href">
-              <textarea value={serializeHeroCategories(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.hero.categories = parseHeroCategories(event.target.value); })} className={`${fieldClass} min-h-[220px] resize-none`} />
-            </FieldBlock>
-          </div>
-        </div>
-      );
-    }
-
-    if (selectedSection === "journey") {
-      return (
-        <div className={panelClass}>
-          <div className="grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Trust title">
-              <input value={currentSettings.homepage.trustBar.title} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.trustBar.title = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <ToggleCard
-              title="Trust bar"
-              description="Toggle the credibility strip."
-              checked={currentSettings.homepage.trustBar.enabled}
-              onToggle={(checked) => updateModeSettings(selectedMode, (settings) => { settings.homepage.trustBar.enabled = checked; })}
-            />
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Trust metrics" description="One row per metric: value|label|icon">
-              <textarea value={serializeTrustMetrics(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.trustBar.items = parseTrustMetrics(event.target.value); })} className={`${fieldClass} min-h-[180px] resize-none`} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Steps title">
-              <textarea value={currentSettings.homepage.steps.title} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.steps.title = event.target.value; })} className={`${fieldClass} min-h-[110px] resize-none`} />
-            </FieldBlock>
-            <FieldBlock label="Steps description">
-              <textarea value={currentSettings.homepage.steps.description} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.steps.description = event.target.value; })} className={`${fieldClass} min-h-[110px] resize-none`} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Buying steps" description="One row per step: title|description|icon">
-              <textarea value={serializeSteps(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.steps.items = parseSteps(event.target.value); })} className={`${fieldClass} min-h-[220px] resize-none`} />
-            </FieldBlock>
-          </div>
-        </div>
-      );
-    }
-
-    if (selectedSection === "campaigns") {
-      return (
-        <div className={panelClass}>
-          <div className="grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="Showcase title">
-              <textarea value={currentSettings.homepage.showcase.title} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.showcase.title = event.target.value; })} className={`${fieldClass} min-h-[110px] resize-none`} />
-            </FieldBlock>
-            <FieldBlock label="Showcase description">
-              <textarea value={currentSettings.homepage.showcase.description} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.showcase.description = event.target.value; })} className={`${fieldClass} min-h-[110px] resize-none`} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Showcase cards" description="One row per card: icon|title|description|linkLabel|href">
-              <textarea value={serializeShowcaseCards(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.showcase.cards = parseShowcaseCards(event.target.value); })} className={`${fieldClass} min-h-[220px] resize-none`} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5">
-            <FieldBlock label="Promo cards" description="One row per card: title|description|image">
-              <textarea value={serializePromoCards(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.promo.cards = parsePromoCards(event.target.value, settings); })} className={`${fieldClass} min-h-[180px] resize-none`} />
-            </FieldBlock>
-          </div>
-          <div className="mt-5 grid gap-4 xl:grid-cols-2">
-            <FieldBlock label="CTA badge">
-              <input value={currentSettings.homepage.ctaBand.badge} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.ctaBand.badge = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-            <FieldBlock label="CTA title">
-              <input value={currentSettings.homepage.ctaBand.title} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.homepage.ctaBand.title = event.target.value; })} className={fieldClass} />
-            </FieldBlock>
-          </div>
-        </div>
-      );
-    }
-
+  if (loading) {
     return (
-      <div className={panelClass}>
-        <FieldBlock label="Footer brand text">
-          <textarea value={currentSettings.site.footer.brandText} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.footer.brandText = event.target.value; })} className={`${fieldClass} min-h-[110px] resize-none`} />
-        </FieldBlock>
-        <div className="mt-5 grid gap-4 xl:grid-cols-2">
-          <FieldBlock label="Support title">
-            <input value={currentSettings.site.footer.supportTitle} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.footer.supportTitle = event.target.value; })} className={fieldClass} />
-          </FieldBlock>
-          <FieldBlock label="Support email">
-            <input value={currentSettings.site.footer.supportEmail} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.footer.supportEmail = event.target.value; })} className={fieldClass} />
-          </FieldBlock>
-        </div>
-        <div className="mt-5">
-          <FieldBlock label="Social links" description="One row per item: platform|label|href">
-            <textarea value={serializeSocialLinks(currentSettings)} onChange={(event) => updateModeSettings(selectedMode, (settings) => { settings.site.footer.socialLinks = parseSocialLinks(event.target.value); })} className={`${fieldClass} min-h-[180px] resize-none`} />
-          </FieldBlock>
-        </div>
+      <div className="rounded-[32px] border border-slate-800 bg-slate-950/70 p-8 text-sm text-slate-300">
+        Verifierar admin-atkomst...
       </div>
     );
-  };
+  }
 
-  if (!token) {
+  if (!isAdmin) {
     return (
-      <div className="rounded-[2rem] border border-slate-800 bg-[#0c1320]/90 p-8 text-center">
-        <h2 className="text-xl font-semibold">Logga in for att fortsatta</h2>
-        <p className="mt-2 text-sm text-slate-400">Du maste vara inloggad med ditt admin-konto.</p>
-        <button type="button" onClick={signInWithGoogle} className="mt-4 inline-flex items-center justify-center rounded-full bg-yellow-400 px-5 py-3 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white">
+      <div className="rounded-[32px] border border-slate-800 bg-slate-950/70 p-8">
+        <p className="text-sm text-slate-300">{error || "Du maste vara inloggad med admin-behorighet for att anvanda sandboxen."}</p>
+        <Button className="mt-4" onClick={() => void signInWithGoogle()}>
           Logga in med Google
-        </button>
+        </Button>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-[radial-gradient(circle_at_top_left,_rgba(255,212,59,0.18),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(17,102,123,0.28),_transparent_34%),linear-gradient(135deg,#09111d_0%,#101c2c_55%,#0d1624_100%)] p-6 shadow-[0_24px_90px_rgba(0,0,0,0.28)]">
-        <div className="absolute -right-20 -top-20 h-52 w-52 rounded-full bg-[#11667b]/25 blur-3xl" />
-        <div className="absolute left-10 top-10 h-28 w-28 rounded-full bg-yellow-400/15 blur-3xl" />
-        <div className="relative grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-          <div>
-            <p className="text-xs uppercase tracking-[0.4em] text-[#9dd4e0]">Creative Control Room</p>
-            <h2 className="mt-4 max-w-3xl text-4xl font-black leading-tight text-white sm:text-5xl">
-              Make the admin sandbox feel like a site builder, not a config file.
-            </h2>
-            <p className="mt-4 max-w-2xl text-base text-slate-300">
-              Pick a section, try a preset, shape the copy, and watch the mini site canvas update before you publish.
+      <div className="overflow-hidden rounded-[36px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(250,204,21,0.2),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.14),_transparent_24%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))]">
+        <div className="flex flex-col gap-8 px-6 py-7 xl:flex-row xl:items-end xl:justify-between">
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.32em] text-cyan-200">
+              <Wand2 className="h-3.5 w-3.5" />
+              Site Sandbox
+            </div>
+            <h1 className="mt-4 text-3xl font-semibold text-white">Bygg utkast mot den riktiga sajten</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+              Buildern styr draften. Iframen visar den riktiga publika sidan i draftlage, och inget gar live forran du
+              trycker pa <span className="font-semibold text-white">Publish changes to live server</span>.
             </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              {(["draft", "live"] as SandboxMode[]).map((mode) => (
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Preview</p>
+              <p className="mt-2 text-sm font-semibold text-white">{selectedPage.label}</p>
+              <p className="mt-1 text-xs text-slate-400">{selectedPage.description}</p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Draftstatus</p>
+              <p className="mt-2 text-sm font-semibold text-white">{draftIsDirty ? "Lokala osparade andringar" : "Synkad med sparad draft"}</p>
+              <p className="mt-1 text-xs text-slate-400">
+                {draftDiffersFromLive ? "Draft skiljer sig fran live." : "Draft matchar live just nu."}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Public site</p>
+              <p className="mt-2 text-sm font-semibold text-white">{previewOrigin || "Samma origin som admin"}</p>
+              <p className="mt-1 text-xs text-slate-400">Iframen laster den verkliga routen, inte en mock.</p>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Behorighet</p>
+              <p className="mt-2 text-sm font-semibold text-white">{role || "admin"}</p>
+              <p className="mt-1 text-xs text-slate-400">
+                {canMutate ? "Du kan spara draft och publicera." : "Readonly: preview och granskning."}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[360px,minmax(0,1fr)] 2xl:grid-cols-[400px,minmax(0,1fr)]">
+        <div className="space-y-6">
+          <BuilderPanel title="Page selector" eyebrow="Builder mode">
+            <div className="space-y-3">
+              {PREVIEW_PAGES.map((page) => (
                 <button
-                  key={mode}
+                  key={page.key}
                   type="button"
-                  onClick={() => setSelectedMode(mode)}
-                  className={`rounded-full px-5 py-3 text-sm font-semibold transition ${
-                    selectedMode === mode
-                      ? "bg-white text-[#09111d]"
-                      : "border border-white/10 bg-white/5 text-white hover:border-[#11667b]"
-                  }`}
+                  onClick={() => setSelectedPageKey(page.key)}
+                  className={cn(
+                    "w-full rounded-2xl border px-4 py-4 text-left transition",
+                    selectedPage.key === page.key
+                      ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+                      : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
+                  )}
                 >
-                  {mode === "draft" ? "Draft sandbox" : "Live site"}
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold">{page.label}</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-400">{page.description}</p>
+                    </div>
+                    <LayoutTemplate className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                  </div>
                 </button>
               ))}
             </div>
-          </div>
+          </BuilderPanel>
 
-          <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-2">
-            {summaryRows.map((item) => (
-              <div key={item.label} className="rounded-[1.5rem] border border-white/10 bg-white/5 p-4 backdrop-blur">
-                <p className="text-[11px] uppercase tracking-[0.26em] text-slate-500">{item.label}</p>
-                <p className="mt-3 text-2xl font-semibold text-white">{item.value}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div className="flex flex-wrap gap-2">
-        <button type="button" onClick={loadSettings} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0c1320]/90 px-4 py-2 text-sm font-semibold text-white hover:border-[#11667b]">
-          <RefreshCcw className="h-4 w-4" />
-          Ladda om
-        </button>
-        <button type="button" onClick={handleCloneLiveToDraft} disabled={!canMutate || cloning} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0c1320]/90 px-4 py-2 text-sm font-semibold text-white hover:border-[#11667b] disabled:opacity-50">
-          <Copy className="h-4 w-4" />
-          {cloning ? "Kopierar..." : "Live -> Draft"}
-        </button>
-        <button type="button" onClick={handleReset} disabled={!canMutate || resetting} className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0c1320]/90 px-4 py-2 text-sm font-semibold text-white hover:border-[#11667b] disabled:opacity-50">
-          <RotateCcw className="h-4 w-4" />
-          {resetting ? "Aterstaller..." : `Standard ${selectedMode}`}
-        </button>
-        <button type="button" onClick={handleSave} disabled={!canMutate || saving} className="inline-flex items-center gap-2 rounded-full bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-50">
-          <Save className="h-4 w-4" />
-          {saving ? "Sparar..." : `Spara ${selectedMode}`}
-        </button>
-        <button type="button" onClick={handlePublish} disabled={!canMutate || publishing} className="inline-flex items-center gap-2 rounded-full border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-200 hover:border-emerald-400 hover:bg-emerald-500/20 disabled:opacity-50">
-          <Send className="h-4 w-4" />
-          {publishing ? "Publicerar..." : "Publicera draft"}
-        </button>
-      </div>
-
-      {loading && <p className="text-sm text-slate-400">Verifierar atkomst...</p>}
-      {!loading && error && <p className="text-sm text-red-400">{error}</p>}
-      {loadingSettings && <p className="text-sm text-slate-400">Laddar site settings...</p>}
-      {localError ? <pre className="whitespace-pre-wrap rounded-[1.5rem] border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">{localError}</pre> : null}
-      {saveMessage ? <div className="rounded-[1.5rem] border border-emerald-500/30 bg-emerald-500/10 p-4 text-sm text-emerald-200">{saveMessage}</div> : null}
-
-      <div className="grid gap-6 2xl:grid-cols-[280px_minmax(0,1fr)_420px]">
-        <aside className="space-y-3">
-          {SECTION_ITEMS.map((section) => {
-            const Icon = section.icon;
-            const selected = selectedSection === section.id;
-            return (
-              <button
-                key={section.id}
-                type="button"
-                onClick={() => {
-                  setCanvasTab("builder");
-                  setSelectedSection(section.id);
-                }}
-                className={`w-full rounded-[1.6rem] border p-4 text-left transition ${
-                  selected ? "border-[#11667b] bg-[#11667b]/12" : "border-white/10 bg-[#0c1320]/90 hover:border-[#11667b]/60"
-                }`}
+          <BuilderPanel title="Actions" eyebrow="Draft controls">
+            <div className="grid gap-3">
+              <Button onClick={() => void loadSettings()} disabled={loadingSettings}>
+                <RefreshCcw className="h-4 w-4" />
+                {loadingSettings ? "Laddar..." : "Reload site settings"}
+              </Button>
+              <Button variant="secondary" onClick={() => void saveDraft()} disabled={!canMutate || savingDraft}>
+                <Save className="h-4 w-4" />
+                {savingDraft ? "Sparar draft..." : "Save draft only"}
+              </Button>
+              <Button variant="outline" onClick={() => void cloneLiveToDraft()} disabled={!canMutate || resettingDraft}>
+                <Sparkles className="h-4 w-4" />
+                {resettingDraft ? "Aterstaller..." : "Reset draft to live"}
+              </Button>
+              <Button variant="outline" onClick={() => void resetDraftToDefaults()} disabled={!canMutate || resettingDefaults}>
+                <RefreshCcw className="h-4 w-4" />
+                {resettingDefaults ? "Aterstaller..." : "Reset draft to defaults"}
+              </Button>
+              <Button
+                className="bg-yellow-400 text-slate-950 hover:bg-yellow-300"
+                onClick={() => void publishDraft()}
+                disabled={!canMutate || publishing}
               >
+                <Send className="h-4 w-4" />
+                {publishing ? "Publicerar..." : "Publish changes to live server"}
+              </Button>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-xs text-slate-400">
+              <p className="font-semibold text-slate-200">Publiceringsregel</p>
+              <p className="mt-2 leading-5">
+                Buildern jobbar alltid mot draft. Liveversionen andras bara via publiceringsknappen ovan.
+              </p>
+            </div>
+          </BuilderPanel>
+
+          <BuilderPanel title="Sections" eyebrow="Jump links">
+            <div className="space-y-2">
+              {sectionLinks.map((section) => (
+                <a
+                  key={section.id}
+                  href={`#${section.id}`}
+                  className="block rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-300 transition hover:border-slate-700 hover:text-white"
+                >
+                  {section.label}
+                </a>
+              ))}
+            </div>
+          </BuilderPanel>
+        </div>
+
+        <div className="space-y-6">
+          <div className="grid gap-6 2xl:grid-cols-[minmax(0,0.95fr),minmax(520px,1.05fr)]">
+            <div className="space-y-6">
+              <BuilderPanel title={`${selectedPage.label} builder`} eyebrow="Visual controls">
+                <SectionCard
+                  id="global-chrome"
+                  title="Global chrome"
+                  description="Navigation, footer och gemensamma element som visas pa alla preview-sidor."
+                >
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FieldBlock label="Brand name">
+                      <Input
+                        value={draftSettings.site.navigation.brandName}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.navigation.brandName = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Menu label">
+                      <Input
+                        value={draftSettings.site.navigation.menuLabel}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.navigation.menuLabel = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Search placeholder">
+                      <Input
+                        value={draftSettings.site.navigation.searchPlaceholder}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.navigation.searchPlaceholder = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Admin portal href">
+                      <Input
+                        value={draftSettings.site.navigation.adminPortalHref}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.navigation.adminPortalHref = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                  </div>
+
+                  <FieldBlock label="Navigation links" hint="label|href">
+                    <Textarea
+                      value={navMenuLines}
+                      onChange={(event) => updateDraft((draft) => {
+                        draft.site.navigation.menuItems = parseDelimitedLines(event.target.value, 2)
+                          .filter(([label, href]) => label && href)
+                          .map(([label, href]) => ({ label, href }));
+                      })}
+                      rows={5}
+                      className="border-slate-700 bg-slate-900 text-slate-50"
+                    />
+                  </FieldBlock>
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FieldBlock label="Footer support title">
+                      <Input
+                        value={draftSettings.site.footer.supportTitle}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.footer.supportTitle = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Footer support email">
+                      <Input
+                        value={draftSettings.site.footer.supportEmail}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.footer.supportEmail = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Support hours">
+                      <Input
+                        value={draftSettings.site.footer.supportHours}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.footer.supportHours = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Copyright">
+                      <Input
+                        value={draftSettings.site.footer.copyright}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.footer.copyright = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                  </div>
+
+                  <FieldBlock label="Footer columns" hint="ColumnTitle::label|href;;label|href">
+                    <Textarea
+                      value={footerColumnsLines}
+                      onChange={(event) => updateDraft((draft) => {
+                        draft.site.footer.columns = event.target.value
+                          .split("\n")
+                          .map((line) => line.trim())
+                          .filter(Boolean)
+                          .map((line) => {
+                            const [titleRaw, linksRaw = ""] = line.split("::");
+                            const links = linksRaw
+                              .split(";;")
+                              .map((entry) => entry.trim())
+                              .filter(Boolean)
+                              .map((entry) => {
+                                const [label, href] = entry.split("|").map((part) => part.trim());
+                                return label && href ? { label, href } : null;
+                              })
+                              .filter((entry): entry is { label: string; href: string } => Boolean(entry));
+                            return { title: titleRaw?.trim() || "", links };
+                          })
+                          .filter((column) => column.title && column.links.length > 0);
+                      })}
+                      rows={6}
+                      className="border-slate-700 bg-slate-900 text-slate-50"
+                    />
+                  </FieldBlock>
+
+                  <FieldBlock label="Social links" hint="platform|label|href">
+                    <Textarea
+                      value={socialLines}
+                      onChange={(event) => updateDraft((draft) => {
+                        draft.site.footer.socialLinks = parseDelimitedLines(event.target.value, 3)
+                          .filter(([platform, label, href]) => platform && label && href)
+                          .map(([platform, label, href]) => ({
+                            platform: platform as SiteSettings["site"]["footer"]["socialLinks"][number]["platform"],
+                            label,
+                            href,
+                          }));
+                      })}
+                      rows={5}
+                      className="border-slate-700 bg-slate-900 text-slate-50"
+                    />
+                  </FieldBlock>
+                </SectionCard>
+
+                {selectedPage.group === "home" ? (
+                  <>
+                    <SectionCard id="home-hero" title="Hero" description="Styr startsidans oversta block utan att andra layouten.">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Main title">
+                          <Input
+                            value={draftSettings.homepage.hero.title}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.title = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Subtitle">
+                          <Input
+                            value={draftSettings.homepage.hero.subtitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.subtitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Feature eyebrow">
+                          <Input
+                            value={draftSettings.homepage.hero.featureEyebrow}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.featureEyebrow = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Feature title">
+                          <Input
+                            value={draftSettings.homepage.hero.featureTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.featureTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Feature image">
+                          <Input
+                            value={draftSettings.homepage.hero.featureImage}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.featureImage = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Feature image alt">
+                          <Input
+                            value={draftSettings.homepage.hero.featureImageAlt}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.featureImageAlt = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary title">
+                          <Input
+                            value={draftSettings.homepage.hero.secondaryTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.secondaryTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary badge">
+                          <Input
+                            value={draftSettings.homepage.hero.secondaryBadge}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.secondaryBadge = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+
+                      <FieldBlock label="Secondary description">
+                        <Textarea
+                          value={draftSettings.homepage.hero.secondaryDescription}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.homepage.hero.secondaryDescription = event.target.value;
+                          })}
+                          rows={3}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+
+                      <FieldBlock label="Secondary note">
+                        <Input
+                          value={draftSettings.homepage.hero.secondaryNote}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.homepage.hero.secondaryNote = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <FieldBlock label="Categories title">
+                          <Input
+                            value={draftSettings.homepage.hero.categoriesTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.categoriesTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Featured title">
+                          <Input
+                            value={draftSettings.homepage.hero.featuredTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.featuredTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Inventory pill">
+                          <Input
+                            value={draftSettings.homepage.hero.featuredInventoryLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.hero.featuredInventoryLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+
+                      <FieldBlock label="Featured count">
+                        <Input
+                          type="number"
+                          min={0}
+                          max={10}
+                          value={draftSettings.homepage.hero.featuredCount}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.homepage.hero.featuredCount = Math.max(0, Math.min(10, Number(event.target.value) || 0));
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+
+                    <SectionCard id="home-categories" title="Category cards" description="Kort i hero-karusellen.">
+                      <div className="space-y-4">
+                        {draftSettings.homepage.hero.categories.map((category, index) => (
+                          <div key={`${category.name}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                            <div className="mb-3 flex items-center justify-between">
+                              <p className="text-sm font-semibold text-white">Kategori {index + 1}</p>
+                              <button
+                                type="button"
+                                onClick={() => updateDraft((draft) => {
+                                  draft.homepage.hero.categories.splice(index, 1);
+                                })}
+                                className="text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+                              >
+                                Ta bort
+                              </button>
+                            </div>
+                            <div className="grid gap-4 md:grid-cols-3">
+                              <FieldBlock label="Name">
+                                <Input
+                                  value={category.name}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.hero.categories[index].name = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Icon">
+                                <select
+                                  value={category.icon}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.hero.categories[index].icon = event.target.value as SiteIconKey;
+                                  })}
+                                  className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-50"
+                                >
+                                  {SITE_ICON_OPTIONS.map((icon) => (
+                                    <option key={icon} value={icon}>
+                                      {icon}
+                                    </option>
+                                  ))}
+                                </select>
+                              </FieldBlock>
+                              <FieldBlock label="Href">
+                                <Input
+                                  value={category.href}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.hero.categories[index].href = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                            </div>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          onClick={() => updateDraft((draft) => {
+                            draft.homepage.hero.categories.push({
+                              name: "Ny kategori",
+                              icon: "monitor",
+                              href: "/products",
+                            });
+                          })}
+                        >
+                          Lagg till kategori
+                        </Button>
+                      </div>
+                    </SectionCard>
+
+                    <SectionCard id="home-steps" title="Kopflode" description="Stegsektionen under hero.">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Section title">
+                          <Input
+                            value={draftSettings.homepage.steps.title}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.steps.title = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Section description">
+                          <Input
+                            value={draftSettings.homepage.steps.description}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.steps.description = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Primary CTA label">
+                          <Input
+                            value={draftSettings.homepage.steps.primaryLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.steps.primaryLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Primary CTA href">
+                          <Input
+                            value={draftSettings.homepage.steps.primaryHref}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.steps.primaryHref = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary CTA label">
+                          <Input
+                            value={draftSettings.homepage.steps.secondaryLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.steps.secondaryLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary CTA href">
+                          <Input
+                            value={draftSettings.homepage.steps.secondaryHref}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.steps.secondaryHref = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+
+                      <div className="space-y-4">
+                        {draftSettings.homepage.steps.items.map((item, index) => (
+                          <div key={`${item.title}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                            <div className="mb-3 flex items-center justify-between">
+                              <p className="text-sm font-semibold text-white">Steg {index + 1}</p>
+                              <button
+                                type="button"
+                                onClick={() => updateDraft((draft) => {
+                                  draft.homepage.steps.items.splice(index, 1);
+                                })}
+                                className="text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+                              >
+                                Ta bort
+                              </button>
+                            </div>
+                            <div className="grid gap-4 md:grid-cols-3">
+                              <FieldBlock label="Title">
+                                <Input
+                                  value={item.title}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.steps.items[index].title = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Icon">
+                                <select
+                                  value={item.icon}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.steps.items[index].icon = event.target.value as SiteIconKey;
+                                  })}
+                                  className="h-10 w-full rounded-md border border-slate-700 bg-slate-950 px-3 text-sm text-slate-50"
+                                >
+                                  {SITE_ICON_OPTIONS.map((icon) => (
+                                    <option key={icon} value={icon}>
+                                      {icon}
+                                    </option>
+                                  ))}
+                                </select>
+                              </FieldBlock>
+                              <FieldBlock label="Description">
+                                <Textarea
+                                  value={item.description}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.steps.items[index].description = event.target.value;
+                                  })}
+                                  rows={3}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                            </div>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          onClick={() => updateDraft((draft) => {
+                            draft.homepage.steps.items.push({
+                              title: "Nytt steg",
+                              description: "Beskriv steget har.",
+                              icon: "monitor",
+                            });
+                          })}
+                        >
+                          Lagg till steg
+                        </Button>
+                      </div>
+                    </SectionCard>
+
+                    <SectionCard id="home-promo" title="Promokort" description="De tva stora korten langst ned pa startsidan.">
+                      <div className="grid gap-4 md:grid-cols-3">
+                        <FieldBlock label="Eyebrow">
+                          <Input
+                            value={draftSettings.homepage.promo.eyebrow}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.promo.eyebrow = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input
+                            value={draftSettings.homepage.promo.title}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.promo.title = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Description">
+                          <Textarea
+                            value={draftSettings.homepage.promo.description}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.homepage.promo.description = event.target.value;
+                            })}
+                            rows={3}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+
+                      <div className="space-y-4">
+                        {draftSettings.homepage.promo.cards.map((card, index) => (
+                          <div key={`${card.title}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                            <div className="mb-3 flex items-center justify-between">
+                              <p className="text-sm font-semibold text-white">Kort {index + 1}</p>
+                              <button
+                                type="button"
+                                onClick={() => updateDraft((draft) => {
+                                  draft.homepage.promo.cards.splice(index, 1);
+                                })}
+                                className="text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+                              >
+                                Ta bort
+                              </button>
+                            </div>
+                            <div className="grid gap-4 md:grid-cols-2">
+                              <FieldBlock label="Eyebrow">
+                                <Input
+                                  value={card.eyebrow}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].eyebrow = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Title">
+                                <Input
+                                  value={card.title}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].title = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Image">
+                                <Input
+                                  value={card.image}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].image = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Image alt">
+                                <Input
+                                  value={card.imageAlt}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].imageAlt = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Primary CTA label">
+                                <Input
+                                  value={card.primaryLabel}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].primaryLabel = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Primary CTA href">
+                                <Input
+                                  value={card.primaryHref}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].primaryHref = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Secondary CTA label">
+                                <Input
+                                  value={card.secondaryLabel}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].secondaryLabel = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Secondary CTA href">
+                                <Input
+                                  value={card.secondaryHref}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.homepage.promo.cards[index].secondaryHref = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                            </div>
+
+                            <FieldBlock label="Description">
+                              <Textarea
+                                value={card.description}
+                                onChange={(event) => updateDraft((draft) => {
+                                  draft.homepage.promo.cards[index].description = event.target.value;
+                                })}
+                                rows={3}
+                                className="border-slate-700 bg-slate-950 text-slate-50"
+                              />
+                            </FieldBlock>
+
+                            <FieldBlock label="Bullet points" hint="one per line">
+                              <Textarea
+                                value={formatSimpleLines(card.bullets)}
+                                onChange={(event) => updateDraft((draft) => {
+                                  draft.homepage.promo.cards[index].bullets = parseSimpleLines(event.target.value);
+                                })}
+                                rows={4}
+                                className="border-slate-700 bg-slate-950 text-slate-50"
+                              />
+                            </FieldBlock>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          onClick={() => updateDraft((draft) => {
+                            draft.homepage.promo.cards.push({
+                              eyebrow: "Ny sektion",
+                              title: "Nytt kort",
+                              description: "Beskriv kortets innehall har.",
+                              image: "",
+                              imageAlt: "Nytt kort",
+                              bullets: ["Fordel 1"],
+                              primaryLabel: "Primar CTA",
+                              primaryHref: "/products",
+                              secondaryLabel: "Sekundar CTA",
+                              secondaryHref: "/kundservice",
+                            });
+                          })}
+                        >
+                          Lagg till promokort
+                        </Button>
+                      </div>
+                    </SectionCard>
+                  </>
+                ) : null}
+
+                {selectedPage.group === "products" ? (
+                  <SectionCard
+                    id="products-banner"
+                    title="Product banner"
+                    description="Buildern styr bara bannern for den kategori som visas i previewn."
+                  >
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <FieldBlock label="Eyebrow">
+                        <Input
+                          value={selectedBanner.eyebrow}
+                          onChange={(event) => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].eyebrow = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                      <FieldBlock label="Title">
+                        <Input
+                          value={selectedBanner.title}
+                          onChange={(event) => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].title = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </div>
+
+                    <FieldBlock label="Description">
+                      <Textarea
+                        value={selectedBanner.description}
+                        onChange={(event) => updateDraft((draft) => {
+                          if (!selectedPage.bannerKey) return;
+                          draft.pages.products.banners[selectedPage.bannerKey].description = event.target.value;
+                        })}
+                        rows={3}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+
+                    <FieldBlock label="Stickers" hint="one per line">
+                      <Textarea
+                        value={formatSimpleLines(selectedBanner.stickers)}
+                        onChange={(event) => updateDraft((draft) => {
+                          if (!selectedPage.bannerKey) return;
+                          draft.pages.products.banners[selectedPage.bannerKey].stickers = parseSimpleLines(event.target.value);
+                        })}
+                        rows={3}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+
+                    <FieldBlock label="Images" hint="one per line">
+                      <Textarea
+                        value={formatSimpleLines(selectedBanner.images)}
+                        onChange={(event) => updateDraft((draft) => {
+                          if (!selectedPage.bannerKey) return;
+                          draft.pages.products.banners[selectedPage.bannerKey].images = parseSimpleLines(event.target.value);
+                        })}
+                        rows={4}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                  </SectionCard>
+                ) : null}
+
+                {selectedPage.group === "serviceRepair" ? (
+                  <>
+                    <SectionCard id="service-hero" title="Service hero">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Eyebrow">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.heroEyebrow}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.heroEyebrow = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.heroTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.heroTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Primary CTA label">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.primaryLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.primaryLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Primary CTA href">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.primaryHref}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.primaryHref = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary CTA label">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.secondaryLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.secondaryLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary CTA href">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.secondaryHref}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.secondaryHref = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Description">
+                        <Textarea
+                          value={draftSettings.pages.serviceRepair.heroDescription}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.serviceRepair.heroDescription = event.target.value;
+                          })}
+                          rows={4}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+                    <SectionCard id="service-flow" title="Service flow">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Flow title">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.flowTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.flowTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Flow description">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.flowDescription}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.flowDescription = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Accordion steps" hint="value|title|body">
+                        <Textarea
+                          value={toDelimitedLines(
+                            draftSettings.pages.serviceRepair.steps.map((step) => [step.value, step.title, step.body]),
+                          )}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.serviceRepair.steps = parseDelimitedLines(event.target.value, 3)
+                              .filter(([value, title, body]) => value && title && body)
+                              .map(([value, title, body]) => ({ value, title, body }));
+                          })}
+                          rows={8}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+
+                    <SectionCard id="service-form" title="Form section">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Form title">
+                          <Input
+                            value={draftSettings.pages.serviceRepair.formTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.formTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Form description">
+                          <Textarea
+                            value={draftSettings.pages.serviceRepair.formDescription}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.serviceRepair.formDescription = event.target.value;
+                            })}
+                            rows={3}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                    </SectionCard>
+                  </>
+                ) : null}
+
+                {selectedPage.group === "customerService" ? (
+                  <>
+                    <SectionCard id="customer-hero" title="Customer service hero">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Eyebrow">
+                          <Input
+                            value={draftSettings.pages.customerService.heroEyebrow}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.heroEyebrow = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input
+                            value={draftSettings.pages.customerService.heroTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.heroTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="CTA label">
+                          <Input
+                            value={draftSettings.pages.customerService.heroCtaLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.heroCtaLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="CTA href">
+                          <Input
+                            value={draftSettings.pages.customerService.heroCtaHref}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.heroCtaHref = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Description">
+                        <Textarea
+                          value={draftSettings.pages.customerService.heroDescription}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.customerService.heroDescription = event.target.value;
+                          })}
+                          rows={4}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+
+                    <SectionCard id="customer-contact" title="Contact blocks">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Contact title">
+                          <Input
+                            value={draftSettings.pages.customerService.contactTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.contactTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Contact email">
+                          <Input
+                            value={draftSettings.pages.customerService.contactEmail}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.contactEmail = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Hours title">
+                          <Input
+                            value={draftSettings.pages.customerService.hoursTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.hoursTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Support title">
+                          <Input
+                            value={draftSettings.pages.customerService.supportTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.supportTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+
+                      <FieldBlock label="Hours lines" hint="one per line">
+                        <Textarea
+                          value={formatSimpleLines(draftSettings.pages.customerService.hoursLines)}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.customerService.hoursLines = parseSimpleLines(event.target.value);
+                          })}
+                          rows={4}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+
+                      <FieldBlock label="Support lines" hint="one per line">
+                        <Textarea
+                          value={formatSimpleLines(draftSettings.pages.customerService.supportLines)}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.customerService.supportLines = parseSimpleLines(event.target.value);
+                          })}
+                          rows={4}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+
+                    <SectionCard id="customer-issues" title="Vanliga arenden">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Section title">
+                          <Input
+                            value={draftSettings.pages.customerService.commonIssuesTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.commonIssuesTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Note">
+                          <Input
+                            value={draftSettings.pages.customerService.commonIssuesNote}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.commonIssuesNote = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Issue list" hint="one per line">
+                        <Textarea
+                          value={formatSimpleLines(draftSettings.pages.customerService.commonIssues)}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.customerService.commonIssues = parseSimpleLines(event.target.value);
+                          })}
+                          rows={6}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+
+                    <SectionCard id="customer-workflow" title="Arbetsflode">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Workflow title">
+                          <Input
+                            value={draftSettings.pages.customerService.workflowTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.workflowTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Workflow CTA label">
+                          <Input
+                            value={draftSettings.pages.customerService.workflowCtaLabel}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.workflowCtaLabel = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Workflow CTA href">
+                          <Input
+                            value={draftSettings.pages.customerService.workflowCtaHref}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.workflowCtaHref = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Workflow steps" hint="one per line">
+                        <Textarea
+                          value={formatSimpleLines(draftSettings.pages.customerService.workflowSteps)}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.customerService.workflowSteps = parseSimpleLines(event.target.value);
+                          })}
+                          rows={6}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+                  </>
+                ) : null}
+              </BuilderPanel>
+
+              <BuilderPanel title="Advanced JSON" eyebrow="Fallback mode">
+                <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
+                  <div>
+                    <p className="text-sm font-semibold text-white">Raw settings editor</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      For bulkedits eller kopieringar. Buildern ovan ar fortfarande primarvyn.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowAdvancedJson((current) => !current)}
+                    className="rounded-xl border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+                  >
+                    {showAdvancedJson ? "Dolj JSON" : "Visa JSON"}
+                  </button>
+                </div>
+
+                {showAdvancedJson ? (
+                  <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                    <Textarea
+                      value={jsonDraft}
+                      onChange={(event) => setJsonDraft(event.target.value)}
+                      rows={26}
+                      className="font-mono text-xs border-slate-700 bg-slate-950 text-slate-50"
+                    />
+                    <div className="flex flex-wrap gap-3">
+                      <Button variant="outline" onClick={formatJsonDraft}>
+                        Format JSON
+                      </Button>
+                      <Button variant="secondary" onClick={applyJsonDraft}>
+                        Apply to builder
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
+              </BuilderPanel>
+            </div>
+
+            <BuilderPanel title="Live preview" eyebrow="Exact public render">
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/5">
-                    <Icon className="h-5 w-5 text-white" />
+                  <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">
+                    <Eye className="h-4 w-4" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-white">{section.title}</p>
-                    <p className="mt-1 text-xs text-slate-400">{section.description}</p>
+                    <p className="text-sm font-semibold text-white">{selectedPage.label}</p>
+                    <p className="text-xs text-slate-400">{selectedPage.path}</p>
                   </div>
                 </div>
-              </button>
-            );
-          })}
-        </aside>
-
-        <section className="space-y-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <button type="button" onClick={() => setCanvasTab("builder")} className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${canvasTab === "builder" ? "bg-white text-[#09111d]" : "border border-white/10 bg-[#0c1320]/90 text-white hover:border-[#11667b]"}`}>
-              <Wand2 className="h-4 w-4" />
-              Builder
-            </button>
-            <button type="button" onClick={() => setCanvasTab("json")} className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition ${canvasTab === "json" ? "bg-white text-[#09111d]" : "border border-white/10 bg-[#0c1320]/90 text-white hover:border-[#11667b]"}`}>
-              <Code2 className="h-4 w-4" />
-              Advanced JSON
-            </button>
-          </div>
-
-          {canvasTab === "builder" ? (
-            renderBuilder()
-          ) : (
-            <div className={panelClass}>
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Advanced mode</p>
-                  <h3 className="mt-2 text-xl font-semibold text-white">Raw JSON is still here when you need full control</h3>
-                </div>
-                <div className="flex gap-2">
-                  <button type="button" onClick={handleFormat} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:border-[#11667b]">Format</button>
-                  <button type="button" onClick={handleApplyJson} className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white hover:border-[#11667b]">Apply</button>
+                <div className="flex flex-wrap gap-3">
+                  <Button variant="outline" onClick={touchPreview}>
+                    <RefreshCcw className="h-4 w-4" />
+                    Reload preview
+                  </Button>
+                  <a
+                    href={previewUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+                  >
+                    <Globe className="h-4 w-4" />
+                    Open preview in new tab
+                  </a>
                 </div>
               </div>
-              <textarea value={editorValues[selectedMode]} onChange={(event) => setEditorValues((current) => ({ ...current, [selectedMode]: event.target.value }))} spellCheck={false} className="mt-5 min-h-[860px] w-full rounded-[1.5rem] border border-white/10 bg-[#050911] p-5 font-mono text-sm text-slate-100 outline-none focus:border-[#11667b]" />
-            </div>
-          )}
-        </section>
 
-        <aside className="space-y-5">
-          <div className={panelClass}>
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-[#9dd4e0]">Preview</p>
-                <h3 className="mt-2 text-xl font-semibold text-white">Mini site canvas</h3>
+              <div className="rounded-[28px] border border-slate-800 bg-slate-950/60 p-3">
+                <div className="mb-3 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-xs text-slate-400">
+                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+                  <span className="ml-3 truncate font-mono text-[11px] text-slate-300">{previewUrl}</span>
+                </div>
+                <div className="overflow-hidden rounded-[24px] border border-slate-800 bg-white">
+                  <iframe
+                    key={previewUrl}
+                    title={`Preview ${selectedPage.label}`}
+                    src={previewUrl}
+                    className="h-[940px] w-full bg-white"
+                  />
+                </div>
               </div>
-              <Eye className="h-5 w-5 text-[#9dd4e0]" />
-            </div>
-            <p className="mt-3 text-sm text-slate-400">A condensed site-maker preview to judge mood, hierarchy and CTA balance.</p>
-            <div className="mt-5">{renderPreview()}</div>
+            </BuilderPanel>
           </div>
-
-          <div className={panelClass}>
-            <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Builder guide</p>
-            <div className="mt-4 space-y-3 text-sm text-slate-300">
-              <p>Use the section rail on the left like page blocks in a site builder.</p>
-              <p>Use line-based repeaters when you want to move faster than clicking through cards.</p>
-              <p>If you need full schema coverage, jump to JSON and sync the result back into the builder.</p>
-            </div>
-          </div>
-        </aside>
+        </div>
       </div>
+
+      {statusMessage ? (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+          {statusMessage}
+        </div>
+      ) : null}
+      {localError ? (
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+          {localError}
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -6290,11 +6290,13 @@ app.patch("/api/admin/v2/orders/:orderId/checklista", async (req, res) => {
 
 app.get("/api/site-settings", async (_req, res) => {
   try {
-    const settings = await getSiteSettings("live");
-    return res.json({ ok: true, mode: "live", settings });
+    const mode = resolveSiteSettingsMode(_req.query?.mode);
+    const settings = await getSiteSettings(mode);
+    return res.json({ ok: true, mode, settings });
   } catch (error) {
     console.error("Public site settings error:", error);
-    return res.json({ ok: true, mode: "live", settings: DEFAULT_SITE_SETTINGS });
+    const mode = resolveSiteSettingsMode(_req.query?.mode);
+    return res.json({ ok: true, mode, settings: DEFAULT_SITE_SETTINGS });
   }
 });
 
