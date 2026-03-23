@@ -227,6 +227,7 @@ const customStorePriceCache = new Map();
 const customStorePriceRefreshInFlight = new Map();
 const customBuildProductCache = new Map();
 const customBuildProductRefreshInFlight = new Map();
+const customBuildProductImageCache = new Map();
 const komponentkollCategoryCache = new Map();
 const komponentkollProductSearchCache = new Map();
 const priceRunnerSearchCache = new Map();
@@ -2617,16 +2618,40 @@ const normalizeKomponentkollStoreId = (value) => {
   return KOMPONENTKOLL_STORE_NAME_TO_ID.get(normalized) || null;
 };
 
+const buildKomponentkollThumbnailUrl = (productId) => {
+  const normalizedId = sanitizeText(String(productId || ""), 40).replace(/[^\d]/g, "");
+  return normalizedId ? `https://komponentkoll.se/api/thumbnail/240/${normalizedId}.jpg` : null;
+};
+
+const extractKomponentkollProductIdFromUrl = (url) => {
+  const normalizedUrl = firstText(url);
+  if (!normalizedUrl) return null;
+  const directMatch = normalizedUrl.match(/\/produkt\/(\d+)(?:[-/]|$)/i);
+  if (directMatch?.[1]) {
+    return directMatch[1];
+  }
+  try {
+    const parsed = new URL(normalizedUrl);
+    const pathMatch = parsed.pathname.match(/\/produkt\/(\d+)(?:[-/]|$)/i);
+    return pathMatch?.[1] || null;
+  } catch {
+    return null;
+  }
+};
+
 const findBestKomponentkollProductForItem = async (item) => {
   const overrideUrl = normalizeRelativeUrl(
     firstText(CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES[item?.id]),
     "https://komponentkoll.se"
   );
+  const overrideProductId = extractKomponentkollProductIdFromUrl(overrideUrl);
   if (overrideUrl) {
     return {
       title: sanitizeText(String(item?.name || ""), 240),
       lowest_price: null,
       product_url: overrideUrl,
+      product_id: overrideProductId,
+      image_url: buildKomponentkollThumbnailUrl(overrideProductId),
       score: Number.MAX_SAFE_INTEGER,
     };
   }
@@ -2647,6 +2672,11 @@ const findBestKomponentkollProductForItem = async (item) => {
       title,
       lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
       product_url: productUrl,
+      product_id: sanitizeText(String(product?.id || ""), 40),
+      image_url:
+        product?.has_thumb && firstText(product?.id)
+          ? buildKomponentkollThumbnailUrl(product.id)
+          : null,
       score,
     };
     if (
@@ -3624,6 +3654,7 @@ const loadCustomBuildProductCacheFromDisk = async () => {
       const response = sanitizeCatalogItemResponse(item, cachedOffers, Number.isFinite(updatedAt) ? updatedAt : Date.now(), {
         referenceLowestPrice: entry?.response?.reference_lowest_price,
         referenceSource: entry?.response?.reference_source,
+        imageUrl: entry?.response?.image_url,
       });
       customBuildProductCache.set(key, {
         item_id: itemId,
@@ -3664,6 +3695,86 @@ const shouldPreferCatalogReferenceLowestPrice = (item, availableLowestPrice, ref
   }
 
   return availableLowestPrice > referenceLowestPrice * maxReferenceMultiplier;
+};
+
+const setCachedCatalogItemImageUrl = (itemId, imageUrl) => {
+  const normalizedImageUrl = sanitizeImageUrl(imageUrl);
+  if (!itemId || !normalizedImageUrl) return;
+  const cacheKey = buildCustomBuildProductCacheKey(itemId);
+  const cached = customBuildProductCache.get(cacheKey);
+  if (!cached?.response || cached.response.image_url === normalizedImageUrl) return;
+  customBuildProductCache.set(cacheKey, {
+    ...cached,
+    response: {
+      ...cached.response,
+      image_url: normalizedImageUrl,
+    },
+  });
+  queueCustomBuildProductCacheSave();
+};
+
+const resolveCatalogItemImageUrl = async (item, options = {}) => {
+  const excludedImageUrls = new Set(
+    firstArray(options?.excludeImageUrls)
+      .map((value) => sanitizeImageUrl(value))
+      .filter(Boolean)
+  );
+  const allowCandidateImageUrl = (value) => {
+    const normalizedValue = sanitizeImageUrl(value);
+    return normalizedValue && !excludedImageUrls.has(normalizedValue) ? normalizedValue : null;
+  };
+  const preferAlternateSources = Boolean(options?.preferAlternateSources);
+  const cachedImageUrl = allowCandidateImageUrl(options?.imageUrl || options?.response?.image_url);
+  if (cachedImageUrl && !preferAlternateSources) {
+    return cachedImageUrl;
+  }
+
+  const komponentkollProduct =
+    options?.komponentkollProduct || (await findBestKomponentkollProductForItem(item).catch(() => null));
+  const komponentkollImageUrl = allowCandidateImageUrl(
+    komponentkollProduct?.image_url || buildKomponentkollThumbnailUrl(komponentkollProduct?.product_id)
+  );
+  if (komponentkollImageUrl && !preferAlternateSources) {
+    return komponentkollImageUrl;
+  }
+
+  const offerUrls = Array.from(
+    new Set(
+      firstArray(options?.offers)
+        .map((offer) => normalizeRelativeUrl(firstText(offer?.product_url), firstText(offer?.product_url)))
+        .filter(Boolean)
+    )
+  ).slice(0, 4);
+  for (const offerUrl of offerUrls) {
+    const imageUrl = await getCatalogProductImageUrl(offerUrl).catch(() => null);
+    const normalizedImageUrl = allowCandidateImageUrl(imageUrl);
+    if (normalizedImageUrl) {
+      return normalizedImageUrl;
+    }
+  }
+
+  const fallbackProductUrls = [
+    komponentkollProduct?.product_url,
+    options?.prisjaktProduct?.url,
+    options?.priceRunnerProduct?.product_url,
+  ]
+    .map((value) => normalizeRelativeUrl(firstText(value), firstText(value)))
+    .filter(Boolean);
+  for (const productUrl of fallbackProductUrls) {
+    const imageUrl = await getCatalogProductImageUrl(productUrl).catch(() => null);
+    const normalizedImageUrl = allowCandidateImageUrl(imageUrl);
+    if (normalizedImageUrl) {
+      return normalizedImageUrl;
+    }
+  }
+
+  if (cachedImageUrl) {
+    return cachedImageUrl;
+  }
+  if (komponentkollImageUrl) {
+    return komponentkollImageUrl;
+  }
+  return null;
 };
 
 const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
@@ -3712,6 +3823,7 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
     lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
     reference_lowest_price: validatedReferenceLowestPrice,
     reference_source: validatedReferenceLowestPrice ? referenceSource : null,
+    image_url: sanitizeImageUrl(options?.imageUrl) || null,
     offers: limitedOffers,
   };
 };
@@ -3733,15 +3845,20 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
     const manualReferenceLowestPrice = manualOffers
       .map((offer) => offer?.total_price ?? offer?.price)
       .filter((value) => Number.isFinite(value) && value > 0);
+    const manualImageUrl = await resolveCatalogItemImageUrl(item, {
+      offers: manualOffers,
+    }).catch(() => null);
     return {
       offers: sortCatalogStoreOffers(manualOffers),
       referenceLowestPrice: manualReferenceLowestPrice.length > 0 ? Math.min(...manualReferenceLowestPrice) : null,
       referenceSource: manualReferenceLowestPrice.length > 0 ? "manual" : null,
+      imageUrl: manualImageUrl,
     };
   }
   const offerLists = [];
   let referenceLowestPrice = null;
   let referenceSource = null;
+  let priceRunnerProduct = null;
 
   const komponentkollProduct = await findBestKomponentkollProductForItem(item).catch(() => null);
   if (komponentkollProduct?.product_url) {
@@ -3798,17 +3915,25 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   }
 
   if (!Number.isFinite(referenceLowestPrice)) {
-    const priceRunnerProduct = await findBestPriceRunnerProductForItem(item).catch(() => null);
+    priceRunnerProduct = await findBestPriceRunnerProductForItem(item).catch(() => null);
     if (Number.isFinite(priceRunnerProduct?.lowest_price)) {
       referenceLowestPrice = priceRunnerProduct.lowest_price;
       referenceSource = "pricerunner";
     }
   }
 
+  const imageUrl = await resolveCatalogItemImageUrl(item, {
+    offers: offerLists.flat(),
+    komponentkollProduct,
+    prisjaktProduct,
+    priceRunnerProduct,
+  }).catch(() => null);
+
   return {
     offers: sortCatalogStoreOffers(offerLists.flat()),
     referenceLowestPrice: Number.isFinite(referenceLowestPrice) ? referenceLowestPrice : null,
     referenceSource,
+    imageUrl,
   };
 };
 
@@ -3822,6 +3947,7 @@ const getCachedCatalogItemStoreOffers = (itemId) => {
   return sanitizeCatalogItemResponse(item, cachedOffers, cached.updatedAt, {
     referenceLowestPrice: cached?.response?.reference_lowest_price,
     referenceSource: cached?.response?.reference_source,
+    imageUrl: cached?.response?.image_url,
   });
 };
 
@@ -3873,6 +3999,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
       const nextResponse = sanitizeCatalogItemResponse(item, mergedOffers, refreshedAt, {
         referenceLowestPrice: refreshed?.referenceLowestPrice,
         referenceSource: refreshed?.referenceSource,
+        imageUrl: refreshed?.imageUrl,
       });
       customBuildProductCache.set(cacheKey, {
         item_id: itemId,
@@ -3897,7 +4024,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
 
 const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false) => {
   const items = getCustomBuildCatalogItemsByCategory(category);
-  const results = await Promise.all(
+  const entries = await Promise.all(
     items.map(async (item) => {
       const response = forceRefresh
         ? await getOrRefreshCatalogItemStoreOffers(item.id, {
@@ -3905,6 +4032,13 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
             allowStale: false,
           })
         : getCachedCatalogItemStoreOffers(item.id);
+      let imageUrl = await resolveCatalogItemImageUrl(item, {
+        response,
+        offers: response?.offers,
+      }).catch(() => null);
+      if (imageUrl) {
+        setCachedCatalogItemImageUrl(item.id, imageUrl);
+      }
       const offers = Array.isArray(response?.offers)
         ? response.offers.filter((offer) => Boolean(offer?.product_url))
         : [];
@@ -3912,19 +4046,54 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
         offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)
       );
       return {
-        item_id: item.id,
-        lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
-        updated_at: response?.updated_at || null,
-        price_source: hasPricedOffer
-          ? "live-offer"
-          : Number.isFinite(response?.reference_lowest_price)
-            ? "fallback"
-            : response?.updated_at
-              ? "no-store"
-              : null,
+        item,
+        response,
+        offers,
+        hasPricedOffer,
+        imageUrl: imageUrl || sanitizeImageUrl(response?.image_url) || null,
       };
     })
   );
+
+  const usedImageUrls = new Set();
+  for (const entry of entries) {
+    const needsAlternativeImage = !entry?.imageUrl || usedImageUrls.has(entry.imageUrl);
+    if (!needsAlternativeImage) {
+      usedImageUrls.add(entry.imageUrl);
+      continue;
+    }
+    const alternativeImageUrl = await resolveCatalogItemImageUrl(entry.item, {
+      response: entry.response,
+      offers: entry.offers,
+      imageUrl: entry.imageUrl,
+      preferAlternateSources: true,
+      excludeImageUrls: [entry.imageUrl, ...Array.from(usedImageUrls)].filter(Boolean),
+    }).catch(() => null);
+    if (alternativeImageUrl) {
+      entry.imageUrl = alternativeImageUrl;
+      setCachedCatalogItemImageUrl(entry.item.id, alternativeImageUrl);
+    }
+    if (entry.imageUrl) {
+      usedImageUrls.add(entry.imageUrl);
+    }
+  }
+
+  const results = entries.map((entry) => {
+    const response = entry?.response;
+    return {
+      item_id: entry.item.id,
+      lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
+      updated_at: response?.updated_at || null,
+      image_url: entry?.imageUrl || sanitizeImageUrl(response?.image_url) || null,
+      price_source: entry?.hasPricedOffer
+        ? "live-offer"
+        : Number.isFinite(response?.reference_lowest_price)
+          ? "fallback"
+          : response?.updated_at
+            ? "no-store"
+            : null,
+    };
+  });
   return {
     ok: true,
     category,
@@ -4073,6 +4242,92 @@ const sanitizeImageUrl = (value) => {
   if (isBlockedLegacyImagePath(absolute)) return "";
   if (absolute.startsWith("/") || /^https?:\/\//i.test(absolute)) return absolute;
   return "";
+};
+
+const extractMetaImageUrlFromHtml = (html, baseUrl = "") => {
+  if (!html || typeof html !== "string") return null;
+  const metaTags = html.match(/<meta\b[^>]*>/gi) || [];
+  for (const metaTag of metaTags) {
+    const propertyMatch = metaTag.match(/\b(?:property|name)\s*=\s*["']([^"']+)["']/i);
+    const propertyName = sanitizeText(propertyMatch?.[1] || "", 120).toLowerCase();
+    if (!["og:image", "twitter:image", "twitter:image:src"].includes(propertyName)) continue;
+    const contentMatch = metaTag.match(/\bcontent\s*=\s*["']([^"']+)["']/i);
+    const rawUrl = firstText(contentMatch?.[1]);
+    const normalizedUrl = sanitizeImageUrl(normalizeRelativeUrl(rawUrl, baseUrl));
+    if (normalizedUrl) {
+      return normalizedUrl;
+    }
+  }
+  return null;
+};
+
+const collectImageCandidatesFromNode = (node, out = []) => {
+  if (!node) return out;
+  if (Array.isArray(node)) {
+    node.forEach((entry) => collectImageCandidatesFromNode(entry, out));
+    return out;
+  }
+  if (typeof node === "string") {
+    out.push(node);
+    return out;
+  }
+  if (typeof node !== "object") return out;
+  const directCandidates = [
+    node.url,
+    node.contentUrl,
+    node.secureUrl,
+    node.thumbnailUrl,
+    node.primaryImageOfPage,
+  ];
+  directCandidates.forEach((candidate) => {
+    if (typeof candidate === "string" && candidate.trim()) {
+      out.push(candidate);
+    }
+  });
+  if (node.image) {
+    collectImageCandidatesFromNode(node.image, out);
+  }
+  return out;
+};
+
+const extractProductImageUrlFromJsonLd = (html, baseUrl = "") => {
+  const scripts = extractJsonLdScripts(html);
+  const products = [];
+  scripts.forEach((script) => collectProductsFromJsonLd(script, products));
+  for (const product of products) {
+    const imageCandidates = collectImageCandidatesFromNode(product?.image, []);
+    for (const candidate of imageCandidates) {
+      const normalizedUrl = sanitizeImageUrl(normalizeRelativeUrl(candidate, baseUrl));
+      if (normalizedUrl) {
+        return normalizedUrl;
+      }
+    }
+  }
+  return null;
+};
+
+const extractCatalogProductImageUrlFromHtml = (html, baseUrl = "") =>
+  extractProductImageUrlFromJsonLd(html, baseUrl) || extractMetaImageUrlFromHtml(html, baseUrl);
+
+const getCatalogProductImageUrl = async (url) => {
+  const normalizedUrl = normalizeRelativeUrl(firstText(url), firstText(url));
+  if (!normalizedUrl) return null;
+  const cached = customBuildProductImageCache.get(normalizedUrl);
+  if (
+    cached &&
+    Number.isFinite(cached.updatedAt) &&
+    Date.now() - cached.updatedAt <= CUSTOM_PRICE_CACHE_TTL_MS * 2
+  ) {
+    return cached.imageUrl || null;
+  }
+
+  const html = await fetchTextWithBrowserHeaders(normalizedUrl).catch(() => null);
+  const imageUrl = extractCatalogProductImageUrlFromHtml(html, normalizedUrl);
+  customBuildProductImageCache.set(normalizedUrl, {
+    updatedAt: Date.now(),
+    imageUrl: imageUrl || null,
+  });
+  return imageUrl || null;
 };
 
 const sanitizeImageList = (value, fallbackPrimary = "") => {
@@ -5280,8 +5535,19 @@ const handleCatalogItemOffersRequest = async (req, res) => {
       return jsonError(res, 400, "INVALID_ITEM_ID", "Ogiltig katalogprodukt.");
     }
     const forceRefresh = String(req.query?.refresh || "").trim() === "1";
+    const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
     const snapshot = await getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh });
-    return res.json(snapshot);
+    const imageUrl = await resolveCatalogItemImageUrl(item, {
+      response: snapshot,
+      offers: snapshot?.offers,
+    }).catch(() => null);
+    if (imageUrl) {
+      setCachedCatalogItemImageUrl(itemId, imageUrl);
+    }
+    return res.json({
+      ...snapshot,
+      image_url: imageUrl || sanitizeImageUrl(snapshot?.image_url) || null,
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Kunde inte hämta produktens butikspriser.";
     return jsonError(res, 502, "CATALOG_ITEM_FETCH_FAILED", message);

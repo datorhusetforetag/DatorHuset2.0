@@ -171,6 +171,7 @@ type CatalogItemOffersResponse = {
   item_id: string;
   updated_at?: string;
   lowest_price?: number | null;
+  image_url?: string | null;
   offers: StoreOffer[];
 };
 
@@ -181,6 +182,7 @@ type CatalogCategoryPricesResponse = {
     item_id: string;
     lowest_price: number | null;
     updated_at?: string | null;
+    image_url?: string | null;
     price_source?: "live-offer" | "fallback" | "search" | "no-store" | null;
   }>;
 };
@@ -246,7 +248,7 @@ const CATEGORY_LIST: CategoryConfig[] = [
   },
 ];
 
-const FALLBACK_COMPONENT_IMAGE = "https://placehold.co/360x240?text=Komponent";
+const FALLBACK_COMPONENT_IMAGE = cpu12400fImage;
 const buildPricespyProductImageUrl = (productId: number | string) =>
   `https://pricespy-75b8.kxcdn.com/product/standard/800/${productId}.jpg`;
 
@@ -284,6 +286,28 @@ const CASE_REMOTE_IMAGE_BY_ID: Record<string, string> = {
   "case-29":
     "https://impro.usercontent.one/appid/oneComWsb/domain/kolink.eu/media/kolink.eu/onewebmedia/Cases/OBSERVATORY%20HF%20Glass%20White/GEKL_131_01.jpg?etag=%222247d-64e5c3ef%22&sourceContentType=image%2Fjpeg&quality=85",
 };
+const CATALOG_IMAGE_OVERRIDE_BY_ID: Record<string, string> = {
+  "cpu-am5-ryzen-7-8700f-tray":
+    "https://www.amd.com/content/dam/amd/en/images/products/processors/ryzen/2608523-amd-ryzen-8000-series-processor.jpg",
+  "gpu-42":
+    "https://storage-asset.msi.com/global/picture/product/product_17421809804a33390517f3c8c98d5b917bf326f327.webp",
+  "mb-am5-msi-b650m-mortar-wifi":
+    "https://storage-asset.msi.com/global/picture/product/product_1664786100a9659f7edbe77972f26916ac5675fd77.webp",
+  "ram-4": ramCrucialProImage,
+  "sto-6": storageWdBlueSn580Image,
+  "sto-8": storageSamsung870EvoImage,
+  "sto-10": storageSeagateBarraCudaImage,
+  "sto-21": "https://www.intenso.de/wp-content/uploads/2024/02/intenso-m2-ssd-pcie-premium-intro-1.jpg",
+  "sto-29":
+    "https://assets.micron.com/adobe/assets/urn:aaid:aem:1f58c474-a1f9-4fb8-a32f-09865f4cba27/renditions/transformpng-640-640.png/as/crucial-ssd-p510-heatsink-isolated-front-2.png",
+  "sto-31":
+    "https://assets.micron.com/adobe/assets/urn:aaid:aem:315aa9ee-7898-4f13-9aa6-8d14d6dc135e/renditions/transformpng-640-640.png/as/crucial-ssd-p310-2280-heatsink-front-view.png",
+  "psu-7": psuAsusTufGaming850gImage,
+  "cool-7": coolingLianLiGalahadIiTrinityImage,
+  "cool-8": "https://a.storyblok.com/f/281110/2400x2400/14c2f18af4/ml-atmos-ii-vrm-fan-hover-01.png",
+  "cool-21": coolingCoolerMasterMasterLiquid360Image,
+  "cool-28": "https://www.thermalright.com/wp-content/uploads/2023/08/1-3.jpg",
+};
 const TrashIcon = ({ className }: { className?: string }) => (
   <svg
     viewBox="0 0 24 24"
@@ -309,14 +333,14 @@ const SOCKET_RAM_TYPE: Record<string, "DDR4" | "DDR5"> = {
   LGA1200: "DDR4",
 };
 const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
-  cpu: { src: "https://placehold.co/360x240?text=CPU", alt: "Processor" },
-  gpu: { src: "https://placehold.co/360x240?text=GPU", alt: "Grafikkort" },
-  motherboard: { src: "https://placehold.co/360x240?text=Moderkort", alt: "Moderkort" },
-  ram: { src: "https://placehold.co/360x240?text=RAM", alt: "RAM-minne" },
-  storage: { src: "https://placehold.co/360x240?text=SSD", alt: "Lagring" },
-  case: { src: "https://placehold.co/360x240?text=Chassi", alt: "Chassi" },
-  psu: { src: "https://placehold.co/360x240?text=PSU", alt: "Nätaggregat" },
-  cooling: { src: "https://placehold.co/360x240?text=Kylning", alt: "Kylning" },
+  cpu: { src: cpu12400fImage, alt: "Processor" },
+  gpu: { src: gpu5070Image, alt: "Grafikkort" },
+  motherboard: { src: moboAsusRogB650EImage, alt: "Moderkort" },
+  ram: { src: ramKingstonFuryBeastImage, alt: "RAM-minne" },
+  storage: { src: storageSamsung990Pro1tbImage, alt: "Lagring" },
+  case: { src: CASE_REMOTE_IMAGE_BY_ID["case-1"], alt: "Chassi" },
+  psu: { src: psuCorsairRm750eImage, alt: "Nätaggregat" },
+  cooling: { src: coolingNzxtKraken360Image, alt: "Kylning" },
 };
 const CATEGORY_ORDER: CategoryKey[] = [
   "cpu",
@@ -3548,174 +3572,24 @@ const staticComponentItemsWithPreloadedPrices: Record<
   cooling: COMPONENTS.cooling.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
 };
 
-const DISPLAY_COMPONENT_ITEMS_BY_CATEGORY: Record<CategoryKey, ComponentItem[]> = {
-  cpu: catalogComponentItems.cpu,
-  motherboard: catalogComponentItems.motherboard,
-  gpu: staticComponentItemsWithPreloadedPrices.gpu,
-  ram: staticComponentItemsWithPreloadedPrices.ram,
-  storage: staticComponentItemsWithPreloadedPrices.storage,
-  case: staticComponentItemsWithPreloadedPrices.case,
-  psu: staticComponentItemsWithPreloadedPrices.psu,
-  cooling: staticComponentItemsWithPreloadedPrices.cooling,
-};
-
-const DUPLICATE_COMPONENT_IMAGE_ITEM_IDS = (() => {
-  const firstItemIdByImage = new Map<string, string>();
-  const duplicateItemIds = new Set<string>();
-
-  Object.values(DISPLAY_COMPONENT_ITEMS_BY_CATEGORY)
-    .flat()
-    .forEach((item) => {
-      if (!item.image) return;
-      const imageKey = item.image.trim();
-      if (!imageKey) return;
-
-      const firstItemId = firstItemIdByImage.get(imageKey);
-      if (!firstItemId) {
-        firstItemIdByImage.set(imageKey, item.id);
-        return;
-      }
-
-      duplicateItemIds.add(item.id);
-    });
-
-  return duplicateItemIds;
-})();
-
-const COMPONENT_CARD_THEME_BY_CATEGORY: Record<CategoryKey, { start: string; end: string; accent: string }> = {
-  cpu: { start: "#0f172a", end: "#1d4ed8", accent: "#93c5fd" },
-  gpu: { start: "#111827", end: "#2563eb", accent: "#facc15" },
-  motherboard: { start: "#1f2937", end: "#0f766e", accent: "#99f6e4" },
-  ram: { start: "#3f1d7a", end: "#7c3aed", accent: "#f9a8d4" },
-  storage: { start: "#123047", end: "#0f766e", accent: "#67e8f9" },
-  case: { start: "#1f2937", end: "#4b5563", accent: "#e5e7eb" },
-  psu: { start: "#3f3f46", end: "#111827", accent: "#fde68a" },
-  cooling: { start: "#164e63", end: "#0f172a", accent: "#bfdbfe" },
-};
-
-const GENERATED_COMPONENT_IMAGE_BY_KEY = new Map<string, string>();
-
-const getComponentImageBadgeLabel = (category: CategoryKey) => {
-  switch (category) {
-    case "cpu":
-      return "CPU";
-    case "gpu":
-      return "GPU";
-    case "motherboard":
-      return "MOBO";
-    case "ram":
-      return "RAM";
-    case "storage":
-      return "SSD";
-    case "case":
-      return "CASE";
-    case "psu":
-      return "PSU";
-    case "cooling":
-      return "COOL";
-    default:
-      return "PART";
+const getResolvedComponentImage = (
+  category: CategoryKey,
+  item: ComponentItem,
+  catalogImageUrl?: string | null
+) => {
+  if (catalogImageUrl) {
+    return catalogImageUrl;
   }
-};
-
-const getComponentImageTitleLines = (item: ComponentItem) => {
-  const cleanedName = item.name.replace(/\s+/g, " ").trim();
-  if (cleanedName.length <= 28) {
-    return [cleanedName, item.specs.slice(0, 2).join(" • ") || item.brand];
+  if (CATALOG_IMAGE_OVERRIDE_BY_ID[item.id]) {
+    return CATALOG_IMAGE_OVERRIDE_BY_ID[item.id];
   }
-
-  const words = cleanedName.split(" ");
-  const lines: string[] = [];
-  let currentLine = "";
-
-  words.forEach((word) => {
-    const nextLine = currentLine ? `${currentLine} ${word}` : word;
-    if (nextLine.length <= 26 || !currentLine) {
-      currentLine = nextLine;
-      return;
-    }
-
-    if (lines.length < 2) {
-      lines.push(currentLine);
-    }
-    currentLine = word;
-  });
-
-  if (currentLine && lines.length < 2) {
-    lines.push(currentLine);
-  }
-
-  while (lines.length < 2) {
-    lines.push(item.specs.slice(0, 2).join(" • ") || item.brand);
-  }
-
-  return lines.slice(0, 2);
-};
-
-const escapeSvgText = (value: string) =>
-  value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
-
-const buildGeneratedComponentImage = (category: CategoryKey, item: ComponentItem) => {
-  const cacheKey = `${category}:${item.id}`;
-  const cachedImage = GENERATED_COMPONENT_IMAGE_BY_KEY.get(cacheKey);
-  if (cachedImage) return cachedImage;
-
-  const theme = COMPONENT_CARD_THEME_BY_CATEGORY[category];
-  const [titleLineOne, titleLineTwo] = getComponentImageTitleLines(item);
-  const specLine = item.specs.slice(0, 3).join(" • ") || item.brand;
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">
-      <defs>
-        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="${theme.start}" />
-          <stop offset="100%" stop-color="${theme.end}" />
-        </linearGradient>
-      </defs>
-      <rect width="720" height="480" rx="36" fill="url(#bg)" />
-      <circle cx="610" cy="108" r="118" fill="${theme.accent}" fill-opacity="0.18" />
-      <circle cx="110" cy="408" r="136" fill="#ffffff" fill-opacity="0.08" />
-      <rect x="42" y="42" width="118" height="42" rx="21" fill="#ffffff" fill-opacity="0.14" />
-      <text x="101" y="69" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" fill="#ffffff">
-        ${getComponentImageBadgeLabel(category)}
-      </text>
-      <text x="42" y="166" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#ffffff">
-        ${escapeSvgText(item.brand)}
-      </text>
-      <text x="42" y="232" font-family="Arial, Helvetica, sans-serif" font-size="40" font-weight="700" fill="#ffffff">
-        ${escapeSvgText(titleLineOne)}
-      </text>
-      <text x="42" y="286" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="600" fill="#dbeafe">
-        ${escapeSvgText(titleLineTwo)}
-      </text>
-      <text x="42" y="368" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="500" fill="#e5eefc">
-        ${escapeSvgText(specLine)}
-      </text>
-      <text x="42" y="430" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="600" fill="${theme.accent}">
-        ${escapeSvgText(item.id.toUpperCase())}
-      </text>
-    </svg>
-  `;
-  const imageUri = `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg.replace(/\s{2,}/g, " ").trim())}`;
-  GENERATED_COMPONENT_IMAGE_BY_KEY.set(cacheKey, imageUri);
-  return imageUri;
-};
-
-const getResolvedComponentImage = (category: CategoryKey, item: ComponentItem) => {
   if (category === "case" && CASE_REMOTE_IMAGE_BY_ID[item.id]) {
     return CASE_REMOTE_IMAGE_BY_ID[item.id];
   }
-  if (item.image && !DUPLICATE_COMPONENT_IMAGE_ITEM_IDS.has(item.id)) {
+  if (item.image) {
     return item.image;
   }
-  if (item.image || DUPLICATE_COMPONENT_IMAGE_ITEM_IDS.has(item.id)) {
-    return buildGeneratedComponentImage(category, item);
-  }
-  return undefined;
+  return CATEGORY_IMAGES[category]?.src ?? FALLBACK_COMPONENT_IMAGE;
 };
 
 const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
@@ -3863,6 +3737,7 @@ export default function CustomBuild() {
   const [lowestOfferPriceByItemId, setLowestOfferPriceByItemId] = useState<Record<string, number>>(
     () => ({ ...CUSTOM_BUILD_PRELOADED_PRICE_BY_ID })
   );
+  const [imageUrlByItemId, setImageUrlByItemId] = useState<Record<string, string>>({});
   const [priceSourceByItemId, setPriceSourceByItemId] = useState<Record<string, CustomBuildPriceSource>>(() =>
     Object.fromEntries(
       Object.keys(CUSTOM_BUILD_PRELOADED_PRICE_BY_ID).map((itemId) => [itemId, "seed" as CustomBuildPriceSource])
@@ -4166,6 +4041,15 @@ export default function CustomBuild() {
         const data = (await response.json().catch(() => ({}))) as CatalogCategoryPricesResponse;
         const nextEntries = Array.isArray(data?.prices) ? data.prices : [];
         if (isCancelled || nextEntries.length === 0) return;
+        setImageUrlByItemId((prev) => {
+          const nextState = { ...prev };
+          nextEntries.forEach((entry) => {
+            if (typeof entry?.image_url === "string" && entry.image_url.trim()) {
+              nextState[entry.item_id] = entry.image_url.trim();
+            }
+          });
+          return nextState;
+        });
         setLowestOfferPriceByItemId((prev) => {
           const nextState = { ...prev };
           nextEntries.forEach((entry) => {
@@ -4826,6 +4710,12 @@ export default function CustomBuild() {
       ? cachedResult.offers.filter((offer) => isDisplayableStoreOffer(offer))
       : [];
     if (cachedResult && cachedOffers.length > 0) {
+      if (typeof cachedResult.image_url === "string" && cachedResult.image_url.trim()) {
+        setImageUrlByItemId((prev) => ({
+          ...prev,
+          [item.id]: cachedResult.image_url!.trim(),
+        }));
+      }
       setStorePickerLoading(false);
       return;
     }
@@ -4850,7 +4740,21 @@ export default function CustomBuild() {
       const hasPricedOffer = offers.some(
         (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
       );
-      setStorePickerCache((prev) => ({ ...prev, [cacheKey]: { ok: true, item_id: item.id, offers } }));
+      setStorePickerCache((prev) => ({
+        ...prev,
+        [cacheKey]: {
+          ok: true,
+          item_id: item.id,
+          image_url: typeof data?.image_url === "string" ? data.image_url : null,
+          offers,
+        },
+      }));
+      if (typeof data?.image_url === "string" && data.image_url.trim()) {
+        setImageUrlByItemId((prev) => ({
+          ...prev,
+          [item.id]: data.image_url!.trim(),
+        }));
+      }
       if (offers.length === 0) {
         if (categoryKey !== "ram") {
           setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
@@ -5549,8 +5453,17 @@ export default function CustomBuild() {
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
-                    const resolvedItemImage = getResolvedComponentImage(activeCategory, item);
+                    const resolvedItemImage = getResolvedComponentImage(
+                      activeCategory,
+                      item,
+                      imageUrlByItemId[item.id]
+                    );
                     const imageSrc = resolvedItemImage ?? categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
+                    const backupImageSrc =
+                      CATALOG_IMAGE_OVERRIDE_BY_ID[item.id] ||
+                      item.image ||
+                      categoryImage?.src ||
+                      FALLBACK_COMPONENT_IMAGE;
                     const imageAlt = item.name || categoryImage?.alt || "Komponent";
                     const detailEntries = Object.entries(item.details || {});
                     const showStorePanel = supportsStoreOffersForCategory(activeCategory);
@@ -5572,6 +5485,16 @@ export default function CustomBuild() {
                               loading="lazy"
                               decoding="async"
                               onError={(event) => {
+                                const categoryFallbackSrc = categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
+                                if (event.currentTarget.src !== backupImageSrc) {
+                                  event.currentTarget.src = backupImageSrc;
+                                  return;
+                                }
+                                if (event.currentTarget.src !== categoryFallbackSrc) {
+                                  event.currentTarget.src = categoryFallbackSrc;
+                                  return;
+                                }
+                                event.currentTarget.onerror = null;
                                 event.currentTarget.src = FALLBACK_COMPONENT_IMAGE;
                               }}
                             />
