@@ -1,4 +1,7 @@
-import { DEFAULT_SITE_SETTINGS as SHARED_DEFAULT_SITE_SETTINGS } from "../../shared/siteSettingsDefaults.js";
+import {
+  DEFAULT_SITE_SETTINGS as SHARED_DEFAULT_SITE_SETTINGS,
+  SITE_ICON_OPTIONS as SHARED_SITE_ICON_OPTIONS,
+} from "../../shared/siteSettingsDefaults.js";
 
 export type SiteIconKey =
   | "monitor"
@@ -214,5 +217,6 @@ const deepMerge = <T,>(defaults: T, candidate: unknown): T => {
 };
 
 export const DEFAULT_SITE_SETTINGS = SHARED_DEFAULT_SITE_SETTINGS as SiteSettings;
+export const SITE_ICON_OPTIONS = SHARED_SITE_ICON_OPTIONS as SiteIconKey[];
 
 export const normalizeSiteSettings = (value: unknown): SiteSettings => deepMerge(DEFAULT_SITE_SETTINGS, value);
