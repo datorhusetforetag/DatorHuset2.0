@@ -1,5 +1,7 @@
-﻿import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Instagram, Twitter, Youtube } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import type { SiteSocialLink } from "@/lib/siteSettings";
 import logo from "/Datorhuset.png";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -11,82 +13,79 @@ const TikTokIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+const renderSocialIcon = (item: SiteSocialLink) => {
+  if (item.platform === "instagram") return <Instagram className="h-5 w-5" />;
+  if (item.platform === "youtube") return <Youtube className="h-5 w-5" />;
+  if (item.platform === "tiktok") return <TikTokIcon className="h-5 w-5" />;
+  return <Twitter className="h-5 w-5" />;
+};
+
 export const Footer = () => {
+  const { settings } = useSiteSettings();
+  const footer = settings.site.footer;
+
   return (
-    <footer className="bg-[#0f1824] text-gray-100 border-t border-[#1a2636]">
+    <footer className="border-t border-[#1a2636] bg-[#0f1824] text-gray-100">
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr_1fr]">
-          <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
-            <div className="space-y-2">
-              <h4 className="text-base font-semibold">Kontakta oss</h4>
-              <Link to="/faq" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">FAQ</Link>
-              <Link to="/kundservice" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Kundservice / Kontaktuppgifter</Link>
-              <Link to="/about" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Om oss</Link>
-              <Link to="/privacy-policy" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Integritetspolicy</Link>
-              <Link to="/terms-of-service" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Allmänna villkor</Link>
-            </div>
+          <div className="space-y-3 rounded-3xl border border-white/10 bg-white/5 p-5">
+            <img
+              src={logo}
+              alt="DatorHuset logo"
+              className="h-12 w-12 object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+            <h4 className="text-lg font-semibold">{settings.site.navigation.brandName}</h4>
+            <p className="text-sm leading-relaxed text-gray-300">{footer.brandText}</p>
+          </div>
 
-            <div className="space-y-2">
-              <h4 className="text-base font-semibold">Våra tjänster</h4>
-              <Link to="/products" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Våra datorer</Link>
-              <Link to="/custom-bygg" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Custom bygg</Link>
-              <Link to="/service-reparation" className="block text-sm text-gray-200 hover:text-[#11667b] transition-colors">Service / reparation</Link>
-            </div>
+          <div className="grid gap-6 sm:grid-cols-2">
+            {footer.columns.map((column) => (
+              <div key={column.title} className="space-y-2">
+                <h4 className="text-base font-semibold">{column.title}</h4>
+                {column.links.map((link) => (
+                  <Link
+                    key={`${column.title}-${link.href}`}
+                    to={link.href}
+                    className="block text-sm text-gray-200 transition-colors hover:text-[#11667b]"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+            ))}
           </div>
 
           <div className="space-y-4 border-t border-[#1a2636] pt-4 lg:border-t-0 lg:pt-0">
             <div className="space-y-1">
-              <h4 className="text-base font-semibold">Kundservice</h4>
-              <p className="text-sm text-gray-200">support@datorhuset.site</p>
-              <p className="text-sm text-gray-400">Svarstider 11:00-15:00</p>
+              <h4 className="text-base font-semibold">{footer.supportTitle}</h4>
+              <p className="text-sm text-gray-200">{footer.supportEmail}</p>
+              <p className="text-sm text-gray-400">{footer.supportHours}</p>
             </div>
 
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Följ oss</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-500">Folj oss</p>
                 <div className="flex items-center gap-3">
-                  <a
-                    href="https://www.instagram.com/datorhuset_uf/"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="DatorHuset på Instagram"
-                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                  >
-                    <Instagram className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="https://x.com/DatorHuset_UF"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="DatorHuset på X"
-                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                  >
-                    <Twitter className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="https://www.tiktok.com/@datorhuset_uf?lang=en-GB"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="DatorHuset på TikTok"
-                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                  >
-                    <TikTokIcon className="w-5 h-5" />
-                  </a>
-                  <a
-                    href="https://www.youtube.com/@DatorHuset"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="DatorHuset på YouTube"
-                    className="w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-200 hover:text-[#11667b] hover:border-[#11667b] transition-colors"
-                  >
-                    <Youtube className="w-5 h-5" />
-                  </a>
+                  {footer.socialLinks.map((link) => (
+                    <a
+                      key={`${link.platform}-${link.href}`}
+                      href={link.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`${settings.site.navigation.brandName} pa ${link.label}`}
+                      className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-700 text-gray-200 transition-colors hover:border-[#11667b] hover:text-[#11667b]"
+                    >
+                      {renderSocialIcon(link)}
+                    </a>
+                  ))}
                 </div>
               </div>
               <img
                 src={logo}
                 alt="DatorHuset logo"
-                className="w-12 h-12 object-contain"
+                className="h-12 w-12 object-contain"
                 loading="lazy"
                 decoding="async"
               />
@@ -95,7 +94,7 @@ export const Footer = () => {
         </div>
 
         <div className="mt-8 border-t border-[#1a2636] pt-4">
-          <p className="text-sm text-gray-400">©2026 DatorHuset UF. All rights reserved.</p>
+          <p className="text-sm text-gray-400">{footer.copyright}</p>
         </div>
       </div>
     </footer>

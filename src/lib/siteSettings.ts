@@ -1,3 +1,5 @@
+import { DEFAULT_SITE_SETTINGS as SHARED_DEFAULT_SITE_SETTINGS } from "../../shared/siteSettingsDefaults.js";
+
 export type SiteIconKey =
   | "monitor"
   | "wallet"
@@ -5,7 +7,19 @@ export type SiteIconKey =
   | "hammer"
   | "rocket"
   | "package"
-  | "refresh-euro";
+  | "refresh-euro"
+  | "shield"
+  | "truck"
+  | "wrench"
+  | "star"
+  | "headset"
+  | "sparkles"
+  | "cpu";
+
+export type SiteLinkItem = {
+  label: string;
+  href: string;
+};
 
 export type SiteHeroCategory = {
   name: string;
@@ -32,13 +46,72 @@ export type SitePromoCard = {
   secondaryHref: string;
 };
 
+export type SiteTrustMetric = {
+  value: string;
+  label: string;
+  icon: SiteIconKey;
+};
+
+export type SiteShowcaseCard = {
+  icon: SiteIconKey;
+  title: string;
+  description: string;
+  linkLabel: string;
+  href: string;
+};
+
+export type SiteFooterColumn = {
+  title: string;
+  links: SiteLinkItem[];
+};
+
+export type SiteSocialPlatform = "instagram" | "x" | "tiktok" | "youtube";
+
+export type SiteSocialLink = {
+  platform: SiteSocialPlatform;
+  label: string;
+  href: string;
+};
+
 export type SiteSettings = {
-  version: 1;
+  version: 2;
+  site: {
+    announcement: {
+      enabled: boolean;
+      theme: "dark" | "yellow" | "teal";
+      label: string;
+      text: string;
+      href: string;
+      linkLabel: string;
+    };
+    navigation: {
+      brandName: string;
+      menuLabel: string;
+      searchPlaceholder: string;
+      adminPortalHref: string;
+      menuItems: SiteLinkItem[];
+    };
+    footer: {
+      brandText: string;
+      supportTitle: string;
+      supportEmail: string;
+      supportHours: string;
+      columns: SiteFooterColumn[];
+      socialLinks: SiteSocialLink[];
+      copyright: string;
+    };
+  };
   homepage: {
     hero: {
+      enabled: boolean;
       primary: {
+        eyebrow: string;
         title: string;
         subtitle: string;
+        primaryLabel: string;
+        primaryHref: string;
+        secondaryLabel: string;
+        secondaryHref: string;
         featureEyebrow: string;
         featureTitle: string;
         featureImage: string;
@@ -48,12 +121,24 @@ export type SiteSettings = {
         title: string;
         description: string;
         badge: string;
+        note: string;
+        image: string;
+        imageAlt: string;
       };
       categoriesTitle: string;
       categories: SiteHeroCategory[];
       featuredTitle: string;
+      featuredCount: number;
+      featuredInventoryLabel: string;
+    };
+    trustBar: {
+      enabled: boolean;
+      title: string;
+      items: SiteTrustMetric[];
     };
     steps: {
+      enabled: boolean;
+      eyebrow: string;
       title: string;
       description: string;
       primaryLabel: string;
@@ -62,123 +147,72 @@ export type SiteSettings = {
       secondaryHref: string;
       items: SiteStepItem[];
     };
+    showcase: {
+      enabled: boolean;
+      eyebrow: string;
+      title: string;
+      description: string;
+      cards: SiteShowcaseCard[];
+    };
     promo: {
+      enabled: boolean;
       eyebrow: string;
       title: string;
       description: string;
       cards: SitePromoCard[];
     };
+    ctaBand: {
+      enabled: boolean;
+      badge: string;
+      eyebrow: string;
+      title: string;
+      description: string;
+      primaryLabel: string;
+      primaryHref: string;
+      secondaryLabel: string;
+      secondaryHref: string;
+    };
   };
 };
 
-export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  version: 1,
-  homepage: {
-    hero: {
-      primary: {
-        title: "Veckans bygg",
-        subtitle: "Elektronik for foretag",
-        featureEyebrow: "Nyhet",
-        featureTitle: "Platina Curver ar nu i lager",
-        featureImage: "/images/foretagsdeal.webp",
-        featureImageAlt: "Gamingdator for foretagsdeal",
-      },
-      secondary: {
-        title: "Veckans deal - Fa en gava vid kopet",
-        description: "Fa en exklusiv gava nar du handlar hos oss.",
-        badge: "Gava vid kop",
-      },
-      categoriesTitle: "Populara kategorier",
-      categories: [
-        { name: "Alla produkter", icon: "monitor", href: "/products?clear_filters=1" },
-        { name: "Budgetvanliga", icon: "wallet", href: "/products?category=budget&clear_filters=1" },
-        { name: "Price-Performance", icon: "badge-percent", href: "/products?category=price-performance&clear_filters=1" },
-        { name: "Custom Bygg", icon: "hammer", href: "/custom-bygg" },
-        { name: "Basta prestanda", icon: "rocket", href: "/products?category=toptier&clear_filters=1" },
-      ],
-      featuredTitle: "Senast visade produkter",
-    },
-    steps: {
-      title: "Att kopa en riktigt bra dator har aldrig varit sa latt",
-      description: "Sa har koper du din dator via var tjanst",
-      primaryLabel: "Kop din dator",
-      primaryHref: "/products",
-      secondaryLabel: "Gor en custom bygg",
-      secondaryHref: "/custom-bygg",
-      items: [
-        {
-          title: "1. Gor en preorder",
-          description: "Hitta ett brett utbud av datorer eller skicka in ett custom-bygge du vill ha.",
-          icon: "monitor",
-        },
-        {
-          title: "2. Vi bygger och packar din dator",
-          description:
-            "Vi koper komponenterna och bygger datorn. Byggtiden varierar beroende pa om du bestaller nytt, begagnat eller custom.",
-          icon: "package",
-        },
-        {
-          title: "3. Leverans eller hamta upp",
-          description: "Datorn ar byggd och klar. Hamta upp den eller valj fraktalternativ.",
-          icon: "refresh-euro",
-        },
-      ],
-    },
-    promo: {
-      eyebrow: "Mer fran DatorHuset",
-      title: "Vi bygger, fixar och optimerar for dig",
-      description:
-        "Valj service om du vill fa din dator tillbaka i toppform eller bygg ett helt nytt system fran grunden.",
-      cards: [
-        {
-          eyebrow: "Service & reparation",
-          title: "Vi far din dator tillbaka i toppform",
-          description:
-            "Snabb felsokning, tydlig offert och proffsig optimering. Vi tar hand om allt fran prestandaproblem till uppgraderingar.",
-          image: "/products/newpc/cg530_new.png",
-          imageAlt: "Service och reparation av datorer",
-          bullets: [
-            "Felsokning inom 24 timmar pa vanliga fel",
-            "Rengoring, kylning och stabilitetstester",
-            "Garanti pa utfort arbete och uppgraderingar",
-          ],
-          primaryLabel: "Service & reparation",
-          primaryHref: "/service-reparation",
-          secondaryLabel: "Fraga en tekniker",
-          secondaryHref: "/kundservice",
-        },
-        {
-          eyebrow: "Custom bygg",
-          title: "Byggd for din vardag och din gaming",
-          description:
-            "Valj komponenter, stil och budget. Vi bygger, testar och levererar en dator som ar helt anpassad efter dig.",
-          image: "/products/newpc/allwhite-1.jpg",
-          imageAlt: "Custom byggda datorer",
-          bullets: [
-            "Valj prestandaniva, formfaktor och RGB",
-            "Optimerade for gaming, kreativt arbete eller AI",
-            "Trygg leverans med test och verifiering",
-          ],
-          primaryLabel: "Ga till custom bygg",
-          primaryHref: "/custom-bygg",
-          secondaryLabel: "Se fardiga datorer",
-          secondaryHref: "/products",
-        },
-      ],
-    },
-  },
-};
-
-export const normalizeSiteSettings = (value: unknown): SiteSettings => {
-  const candidate = value as Partial<SiteSettings> | null | undefined;
-  if (!candidate || typeof candidate !== "object") return DEFAULT_SITE_SETTINGS;
-
-  const homepage = candidate.homepage;
-  if (!homepage || typeof homepage !== "object") return DEFAULT_SITE_SETTINGS;
-
-  if (!homepage.hero || !homepage.steps || !homepage.promo) {
-    return DEFAULT_SITE_SETTINGS;
+const deepMerge = <T,>(defaults: T, candidate: unknown): T => {
+  if (Array.isArray(defaults)) {
+    return (Array.isArray(candidate) ? candidate : defaults) as T;
   }
 
-  return candidate as SiteSettings;
+  if (defaults && typeof defaults === "object") {
+    const base = {} as Record<string, unknown>;
+    const nextCandidate = candidate && typeof candidate === "object" ? (candidate as Record<string, unknown>) : {};
+    const keys = new Set([...Object.keys(defaults as Record<string, unknown>), ...Object.keys(nextCandidate)]);
+
+    for (const key of keys) {
+      const defaultValue = (defaults as Record<string, unknown>)[key];
+      const candidateValue = nextCandidate[key];
+
+      if (key === "version") {
+        base[key] = 2;
+        continue;
+      }
+
+      if (Array.isArray(defaultValue)) {
+        base[key] = Array.isArray(candidateValue) ? candidateValue : defaultValue;
+        continue;
+      }
+
+      if (defaultValue && typeof defaultValue === "object") {
+        base[key] = deepMerge(defaultValue, candidateValue);
+        continue;
+      }
+
+      base[key] = candidateValue === undefined ? defaultValue : candidateValue;
+    }
+
+    return base as T;
+  }
+
+  return (candidate === undefined ? defaults : candidate) as T;
 };
+
+export const DEFAULT_SITE_SETTINGS = SHARED_DEFAULT_SITE_SETTINGS as SiteSettings;
+
+export const normalizeSiteSettings = (value: unknown): SiteSettings => deepMerge(DEFAULT_SITE_SETTINGS, value);

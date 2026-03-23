@@ -35,6 +35,7 @@ import {
 } from "./shared/adminListingContract.js";
 import {
   DEFAULT_SITE_SETTINGS,
+  SITE_SETTINGS_DRAFT_KEY,
   SITE_SETTINGS_KEY,
   normalizeSiteSettings,
   siteSettingsSchema,
@@ -4250,7 +4251,12 @@ const logAdminAction = async (req, user, action, resourceType, resourceId, metad
   }
 };
 
-const getSiteSettings = async () => {
+const resolveSiteSettingsMode = (value) => (value === "live" ? "live" : "draft");
+
+const getSiteSettingsStorageKey = (mode = "live") =>
+  mode === "draft" ? SITE_SETTINGS_DRAFT_KEY : SITE_SETTINGS_KEY;
+
+const readSiteSettingsValue = async (mode = "live") => {
   if (!supabase) {
     return DEFAULT_SITE_SETTINGS;
   }
@@ -4258,7 +4264,7 @@ const getSiteSettings = async () => {
   const { data, error } = await supabase
     .from("ui_settings")
     .select("value")
-    .eq("key", SITE_SETTINGS_KEY)
+    .eq("key", getSiteSettingsStorageKey(mode))
     .maybeSingle();
 
   if (error) {
@@ -4268,7 +4274,17 @@ const getSiteSettings = async () => {
   return normalizeSiteSettings(data?.value);
 };
 
-const writeSiteSettings = async (value) => {
+const getSiteSettings = async (mode = "live") => readSiteSettingsValue(mode);
+
+const getSiteSettingsBundle = async () => {
+  const [live, draft] = await Promise.all([
+    readSiteSettingsValue("live"),
+    readSiteSettingsValue("draft"),
+  ]);
+  return { live, draft };
+};
+
+const writeSiteSettings = async (value, mode = "live") => {
   if (!supabase) {
     throw new Error("Supabase not configured.");
   }
@@ -4281,7 +4297,7 @@ const writeSiteSettings = async (value) => {
   }
 
   const payload = {
-    key: SITE_SETTINGS_KEY,
+    key: getSiteSettingsStorageKey(mode),
     value: parsed.data,
     updated_at: new Date(),
   };
@@ -4297,6 +4313,20 @@ const writeSiteSettings = async (value) => {
   }
 
   return normalizeSiteSettings(data?.value);
+};
+
+const resetSiteSettings = async (mode = "draft") => writeSiteSettings(DEFAULT_SITE_SETTINGS, mode);
+
+const publishDraftSiteSettings = async () => {
+  const draft = await readSiteSettingsValue("draft");
+  const live = await writeSiteSettings(draft, "live");
+  return { draft, live };
+};
+
+const cloneLiveSettingsToDraft = async () => {
+  const live = await readSiteSettingsValue("live");
+  const draft = await writeSiteSettings(live, "draft");
+  return { live, draft };
 };
 
 const requireServiceRoleKey = (res) => {
@@ -6260,11 +6290,11 @@ app.patch("/api/admin/v2/orders/:orderId/checklista", async (req, res) => {
 
 app.get("/api/site-settings", async (_req, res) => {
   try {
-    const settings = await getSiteSettings();
-    return res.json({ ok: true, settings });
+    const settings = await getSiteSettings("live");
+    return res.json({ ok: true, mode: "live", settings });
   } catch (error) {
     console.error("Public site settings error:", error);
-    return res.json({ ok: true, settings: DEFAULT_SITE_SETTINGS });
+    return res.json({ ok: true, mode: "live", settings: DEFAULT_SITE_SETTINGS });
   }
 });
 
@@ -6275,8 +6305,9 @@ app.get("/api/admin/v2/site-settings", async (req, res) => {
   try {
     const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
     if (!access) return;
-    const settings = await getSiteSettings();
-    return res.json({ ok: true, settings });
+    const requestedMode = resolveSiteSettingsMode(req.query?.mode);
+    const settings = await getSiteSettingsBundle();
+    return res.json({ ok: true, selectedMode: requestedMode, settings });
   } catch (error) {
     console.error("Admin site settings read error:", error);
     return jsonError(res, 500, "SITE_SETTINGS_READ_FAILED", "Kunde inte hamta site settings.");
@@ -6293,18 +6324,91 @@ app.put("/api/admin/v2/site-settings", async (req, res) => {
     const { user, role } = access;
     if (!requireServiceRoleKey(res)) return;
 
-    const nextSettings = await writeSiteSettings(req.body?.settings);
-    await logAdminAction(req, user, "site_settings_update_v2", "ui_settings", SITE_SETTINGS_KEY, {
+    const mode = resolveSiteSettingsMode(req.body?.mode || req.query?.mode);
+    const nextSettings = await writeSiteSettings(req.body?.settings, mode);
+    await logAdminAction(req, user, "site_settings_update_v2", "ui_settings", getSiteSettingsStorageKey(mode), {
       role,
+      mode,
       version: nextSettings.version,
     });
-    return res.json({ ok: true, settings: nextSettings });
+    return res.json({ ok: true, mode, settings: nextSettings });
   } catch (error) {
     if (error?.message === "INVALID_SITE_SETTINGS") {
       return jsonError(res, 400, "INVALID_SITE_SETTINGS", "Ogiltiga site settings.", error.validation || null);
     }
     console.error("Admin site settings update error:", error);
     return jsonError(res, 500, "SITE_SETTINGS_UPDATE_FAILED", "Kunde inte spara site settings.");
+  }
+});
+
+app.post("/api/admin/v2/site-settings/publish", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const settings = await publishDraftSiteSettings();
+    await logAdminAction(req, user, "site_settings_publish_v2", "ui_settings", SITE_SETTINGS_KEY, {
+      role,
+      version: settings.live.version,
+    });
+    return res.json({ ok: true, settings });
+  } catch (error) {
+    console.error("Admin site settings publish error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_PUBLISH_FAILED", "Kunde inte publicera utkastet.");
+  }
+});
+
+app.post("/api/admin/v2/site-settings/reset", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const mode = resolveSiteSettingsMode(req.body?.mode || req.query?.mode);
+    const settings = await resetSiteSettings(mode);
+    await logAdminAction(req, user, "site_settings_reset_v2", "ui_settings", getSiteSettingsStorageKey(mode), {
+      role,
+      mode,
+      version: settings.version,
+    });
+    return res.json({ ok: true, mode, settings });
+  } catch (error) {
+    if (error?.message === "INVALID_SITE_SETTINGS") {
+      return jsonError(res, 400, "INVALID_SITE_SETTINGS", "Ogiltiga site settings.", error.validation || null);
+    }
+    console.error("Admin site settings reset error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_RESET_FAILED", "Kunde inte aterstalla site settings.");
+  }
+});
+
+app.post("/api/admin/v2/site-settings/clone-live-to-draft", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const settings = await cloneLiveSettingsToDraft();
+    await logAdminAction(req, user, "site_settings_clone_live_to_draft_v2", "ui_settings", SITE_SETTINGS_DRAFT_KEY, {
+      role,
+      version: settings.draft.version,
+    });
+    return res.json({ ok: true, settings });
+  } catch (error) {
+    console.error("Admin site settings clone error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_CLONE_FAILED", "Kunde inte kopiera live till utkast.");
   }
 });
 

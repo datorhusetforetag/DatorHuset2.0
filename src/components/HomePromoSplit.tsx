@@ -62,6 +62,8 @@ const renderPromoCard = (card: SitePromoCard, campaign: string) => (
 );
 
 export const HomePromoSplit = ({ settings = DEFAULT_SITE_SETTINGS.homepage.promo }: HomePromoSplitProps) => {
+  if (!settings.enabled) return null;
+
   return (
     <section className="bg-gray-50 text-gray-900 dark:bg-background dark:text-gray-50">
       <div className="container mx-auto px-4 py-12 sm:py-16 lg:py-20">
