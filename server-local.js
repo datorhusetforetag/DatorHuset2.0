@@ -4001,12 +4001,13 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
   const items = getCustomBuildCatalogItemsByCategory(category);
   const entries = await Promise.all(
     items.map(async (item) => {
+      const cachedResponse = getCachedCatalogItemStoreOffers(item.id);
       const response = forceRefresh
         ? await getOrRefreshCatalogItemStoreOffers(item.id, {
             forceRefresh: true,
             allowStale: false,
           })
-        : getCachedCatalogItemStoreOffers(item.id);
+        : cachedResponse || await getOrRefreshCatalogItemStoreOffers(item.id);
       let imageUrl = await resolveCatalogItemImageUrl(item, {
         response,
         offers: response?.offers,
