@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { Eye, Globe, LayoutTemplate, RefreshCcw, Save, Send, Sparkles, Wand2 } from "lucide-react";
+import { ChevronDown, ChevronRight, Eye, Globe, LayoutTemplate, RefreshCcw, Save, Send, Sparkles } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,6 +40,7 @@ type PreviewPageDefinition = {
 
 type PreviewViewport = "desktop" | "tablet" | "mobile";
 type PreviewFrameState = "loading" | "ready" | "error";
+type TopMenuKey = "file" | "draft" | "json";
 
 const PREVIEW_PAGES: PreviewPageDefinition[] = [
   {
@@ -216,6 +217,40 @@ const BuilderPanel = ({
   </div>
 );
 
+const CollapsibleBuilderPanel = ({
+  title,
+  eyebrow,
+  description,
+  collapsed,
+  onToggle,
+  children,
+}: {
+  title: string;
+  eyebrow: string;
+  description?: string;
+  collapsed: boolean;
+  onToggle: () => void;
+  children: ReactNode;
+}) => (
+  <div className="overflow-hidden rounded-[28px] border border-slate-800 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.96))]">
+    <button
+      type="button"
+      onClick={onToggle}
+      className="flex w-full items-start justify-between gap-4 px-5 py-4 text-left transition hover:bg-slate-900/30"
+    >
+      <div>
+        <p className="text-[11px] uppercase tracking-[0.28em] text-cyan-300/80">{eyebrow}</p>
+        <h3 className="mt-2 text-base font-semibold text-white">{title}</h3>
+        {description ? <p className="mt-1 text-sm text-slate-400">{description}</p> : null}
+      </div>
+      <span className="mt-1 rounded-xl border border-slate-700 bg-slate-950/70 p-2 text-slate-300">
+        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+      </span>
+    </button>
+    {!collapsed ? <div className="space-y-4 border-t border-slate-800 px-5 py-5">{children}</div> : null}
+  </div>
+);
+
 export default function AdminSiteSandbox() {
   const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
@@ -228,7 +263,6 @@ export default function AdminSiteSandbox() {
   });
   const [draftSettings, setDraftSettings] = useState<SiteSettings>(cloneSettings(DEFAULT_SITE_SETTINGS));
   const [jsonDraft, setJsonDraft] = useState(JSON.stringify(DEFAULT_SITE_SETTINGS, null, 2));
-  const [showAdvancedJson, setShowAdvancedJson] = useState(false);
   const [loadingSettings, setLoadingSettings] = useState(false);
   const [savingDraft, setSavingDraft] = useState(false);
   const [publishing, setPublishing] = useState(false);
@@ -240,6 +274,11 @@ export default function AdminSiteSandbox() {
   const [activeSectionId, setActiveSectionId] = useState("global-chrome");
   const [previewViewport, setPreviewViewport] = useState<PreviewViewport>("desktop");
   const [previewFrameState, setPreviewFrameState] = useState<PreviewFrameState>("loading");
+  const [activeTopMenu, setActiveTopMenu] = useState<TopMenuKey | null>(null);
+  const [collapsedPanels, setCollapsedPanels] = useState({
+    pageSelector: false,
+    sections: false,
+  });
 
   const selectedPage = useMemo(
     () => PREVIEW_PAGES.find((page) => page.key === selectedPageKey) || PREVIEW_PAGES[0],
@@ -292,6 +331,11 @@ export default function AdminSiteSandbox() {
     ];
   }, [selectedPage.group]);
 
+  const activeSection = useMemo(
+    () => sectionLinks.find((section) => section.id === activeSectionId) || sectionLinks[0] || null,
+    [activeSectionId, sectionLinks],
+  );
+
   useEffect(() => {
     setJsonDraft(JSON.stringify(draftSettings, null, 2));
   }, [draftSettings]);
@@ -305,6 +349,14 @@ export default function AdminSiteSandbox() {
   const touchPreview = () => {
     setPreviewFrameState("loading");
     setPreviewNonce(Date.now());
+  };
+
+  const toggleTopMenu = (menu: TopMenuKey) => {
+    setActiveTopMenu((current) => (current === menu ? null : menu));
+  };
+
+  const togglePanel = (panel: keyof typeof collapsedPanels) => {
+    setCollapsedPanels((current) => ({ ...current, [panel]: !current[panel] }));
   };
 
   const updateDraft = (recipe: (draft: SiteSettings) => void) => {
@@ -527,7 +579,11 @@ export default function AdminSiteSandbox() {
         ? "mx-auto w-full max-w-[860px]"
         : "mx-auto w-full max-w-[430px]";
   const previewViewportHeightClass =
-    previewViewport === "desktop" ? "h-[940px]" : previewViewport === "tablet" ? "h-[1080px]" : "h-[820px]";
+    previewViewport === "desktop"
+      ? "h-[780px] lg:h-[920px] 2xl:h-[1080px]"
+      : previewViewport === "tablet"
+        ? "h-[1040px]"
+        : "h-[820px]";
   const isActiveSection = (sectionId: string) => activeSectionId === sectionId;
 
   useEffect(() => {
@@ -555,83 +611,67 @@ export default function AdminSiteSandbox() {
 
   return (
     <div className="space-y-6">
-      <div className="overflow-hidden rounded-[36px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(250,204,21,0.2),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.14),_transparent_24%),linear-gradient(135deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))]">
-        <div className="flex flex-col gap-8 px-6 py-7 xl:flex-row xl:items-end xl:justify-between">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] uppercase tracking-[0.32em] text-cyan-200">
-              <Wand2 className="h-3.5 w-3.5" />
-              Site Sandbox
-            </div>
-            <h1 className="mt-4 text-3xl font-semibold text-white">Bygg utkast mot den riktiga sajten</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-              Buildern styr draften. Iframen visar den riktiga publika sidan i draftlage, och inget gar live forran du
-              trycker pa <span className="font-semibold text-white">Publish changes to live server</span>.
-            </p>
-          </div>
-
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Preview</p>
-              <p className="mt-2 text-sm font-semibold text-white">{selectedPage.label}</p>
-              <p className="mt-1 text-xs text-slate-400">{selectedPage.description}</p>
-            </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Draftstatus</p>
-              <p className="mt-2 text-sm font-semibold text-white">{draftIsDirty ? "Lokala osparade andringar" : "Synkad med sparad draft"}</p>
-              <p className="mt-1 text-xs text-slate-400">
-                {draftDiffersFromLive ? "Draft skiljer sig fran live." : "Draft matchar live just nu."}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Public site</p>
-              <p className="mt-2 text-sm font-semibold text-white">{previewOrigin || "Samma origin som admin"}</p>
-              <p className="mt-1 text-xs text-slate-400">Iframen laster den verkliga routen, inte en mock.</p>
-            </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3">
-              <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">Behorighet</p>
-              <p className="mt-2 text-sm font-semibold text-white">{role || "admin"}</p>
-              <p className="mt-1 text-xs text-slate-400">
-                {canMutate ? "Du kan spara draft och publicera." : "Readonly: preview och granskning."}
-              </p>
-            </div>
+      <div className="overflow-hidden rounded-[28px] border border-slate-800 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_20px_80px_rgba(2,6,23,0.35)]">
+        <div className="flex flex-wrap items-center gap-1 border-b border-slate-800 px-3 py-2">
+          {[
+            { key: "file" as const, label: "File" },
+            { key: "draft" as const, label: "Draft" },
+            { key: "json" as const, label: "Advanced JSON" },
+          ].map((menu) => (
+            <button
+              key={menu.key}
+              type="button"
+              onClick={() => toggleTopMenu(menu.key)}
+              className={cn(
+                "rounded-lg px-3 py-1.5 text-sm transition",
+                activeTopMenu === menu.key
+                  ? "bg-slate-800 text-white"
+                  : "text-slate-300 hover:bg-slate-900/70 hover:text-white",
+              )}
+            >
+              {menu.label}
+            </button>
+          ))}
+          <div className="ml-auto flex flex-wrap items-center gap-2 text-xs text-slate-400">
+            <span className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1">
+              {selectedPage.label}
+            </span>
+            <span className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1">
+              {draftDiffersFromLive ? "Draft differs from live" : "Draft matches live"}
+            </span>
           </div>
         </div>
-      </div>
 
-      <div className="grid gap-6 xl:grid-cols-[360px,minmax(0,1fr)] 2xl:grid-cols-[400px,minmax(0,1fr)]">
-        <div className="space-y-6">
-          <BuilderPanel title="Page selector" eyebrow="Builder mode">
-            <div className="space-y-3">
-              {PREVIEW_PAGES.map((page) => (
-                <button
-                  key={page.key}
-                  type="button"
-                  onClick={() => setSelectedPageKey(page.key)}
-                  className={cn(
-                    "w-full rounded-2xl border px-4 py-4 text-left transition",
-                    selectedPage.key === page.key
-                      ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
-                      : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
-                  )}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold">{page.label}</p>
-                      <p className="mt-1 text-xs leading-5 text-slate-400">{page.description}</p>
-                    </div>
-                    <LayoutTemplate className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                  </div>
-                </button>
-              ))}
-            </div>
-          </BuilderPanel>
-
-          <BuilderPanel title="Actions" eyebrow="Draft controls">
-            <div className="grid gap-3">
+        {activeTopMenu === "file" ? (
+          <div className="space-y-4 border-t border-slate-800 bg-slate-950/45 p-4">
+            <div className="grid gap-3 md:grid-cols-3">
               <Button onClick={() => void loadSettings()} disabled={loadingSettings}>
                 <RefreshCcw className="h-4 w-4" />
                 {loadingSettings ? "Laddar..." : "Reload site settings"}
               </Button>
+              <Button variant="outline" onClick={touchPreview}>
+                <RefreshCcw className="h-4 w-4" />
+                Reload preview
+              </Button>
+              <a
+                href={previewUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+              >
+                <Globe className="h-4 w-4" />
+                Open preview in new tab
+              </a>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-sm text-slate-300">
+              Public route: <span className="font-mono text-slate-100">{selectedPage.path}</span>
+            </div>
+          </div>
+        ) : null}
+
+        {activeTopMenu === "draft" ? (
+          <div className="space-y-4 border-t border-slate-800 bg-slate-950/45 p-4">
+            <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
               <Button variant="secondary" onClick={() => void saveDraft()} disabled={!canMutate || savingDraft}>
                 <Save className="h-4 w-4" />
                 {savingDraft ? "Sparar draft..." : "Save draft only"}
@@ -652,44 +692,133 @@ export default function AdminSiteSandbox() {
                 <Send className="h-4 w-4" />
                 {publishing ? "Publicerar..." : "Publish changes to live server"}
               </Button>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
+                {draftIsDirty ? "Lokala osparade andringar." : "Lokalt synkad med sparad draft."}
+              </div>
             </div>
-            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4 text-xs text-slate-400">
-              <p className="font-semibold text-slate-200">Publiceringsregel</p>
-              <p className="mt-2 leading-5">
-                Buildern jobbar alltid mot draft. Liveversionen andras bara via publiceringsknappen ovan.
-              </p>
-            </div>
-          </BuilderPanel>
+          </div>
+        ) : null}
 
-          <BuilderPanel title="Sections" eyebrow="Page-scoped controls">
-            <div className="space-y-3">
-              {sectionLinks.map((section) => (
-                <button
-                  key={section.id}
-                  type="button"
-                  onClick={() => setActiveSectionId(section.id)}
-                  className={cn(
-                    "w-full rounded-2xl border px-4 py-4 text-left transition",
-                    isActiveSection(section.id)
-                      ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
-                      : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:text-white",
-                  )}
-                >
-                  <p className="text-sm font-semibold">{section.label}</p>
-                  <p className="mt-1 text-xs leading-5 text-slate-400">{section.description}</p>
-                </button>
-              ))}
+        {activeTopMenu === "json" ? (
+          <div className="space-y-4 border-t border-slate-800 bg-slate-950/45 p-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+              <Textarea
+                value={jsonDraft}
+                onChange={(event) => setJsonDraft(event.target.value)}
+                rows={18}
+                className="border-slate-700 bg-slate-950 font-mono text-xs text-slate-50"
+              />
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Button variant="outline" onClick={formatJsonDraft}>
+                  Format JSON
+                </Button>
+                <Button variant="secondary" onClick={applyJsonDraft}>
+                  Apply to builder
+                </Button>
+              </div>
             </div>
-          </BuilderPanel>
+          </div>
+        ) : null}
+      </div>
+
+      {statusMessage ? (
+        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+          {statusMessage}
+        </div>
+      ) : null}
+      {localError ? (
+        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
+          {localError}
+        </div>
+      ) : null}
+
+      <BuilderPanel title="Live preview" eyebrow="Exact public render">
+        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr),auto] xl:items-start">
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
+            <div className="flex items-center gap-3">
+              <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">
+                <Eye className="h-4 w-4" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-white">{selectedPage.label}</p>
+                <p className="mt-1 text-xs text-slate-400">{selectedPage.description}</p>
+                <p className="mt-1 text-xs text-slate-500">
+                  {previewFrameState === "loading"
+                    ? "Preview is loading the real draft route."
+                    : previewFrameState === "error"
+                      ? "Iframe render failed. Use the File menu to open the preview in a new tab."
+                      : "Iframe is rendering the real public page with draft data."}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={() => setPreviewViewport("desktop")} className={previewViewportButtonClass("desktop")}>
+              Desktop
+            </button>
+            <button type="button" onClick={() => setPreviewViewport("tablet")} className={previewViewportButtonClass("tablet")}>
+              Tablet
+            </button>
+            <button type="button" onClick={() => setPreviewViewport("mobile")} className={previewViewportButtonClass("mobile")}>
+              Mobile
+            </button>
+          </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="grid gap-6 2xl:grid-cols-[minmax(0,0.95fr),minmax(520px,1.05fr)]">
-            <div className="space-y-6">
-              <BuilderPanel
-                title={`${selectedPage.label} builder`}
-                eyebrow={activeSectionId === "global-chrome" ? "Global controls" : "Focused section"}
+        <div className="rounded-[28px] border border-slate-800 bg-slate-950/60 p-3">
+          <div className="mb-3 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-xs text-slate-400">
+            <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+            <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+            <span className="ml-3 truncate font-mono text-[11px] text-slate-300">{previewUrl}</span>
+          </div>
+          <div className={cn("overflow-hidden rounded-[24px] border border-slate-800 bg-white transition-all", previewViewportShellClass)}>
+            <iframe
+              key={`${previewUrl}-${previewViewport}`}
+              title={`Preview ${selectedPage.label}`}
+              src={previewUrl}
+              onLoad={() => setPreviewFrameState("ready")}
+              onError={() => setPreviewFrameState("error")}
+              className={cn("w-full bg-white", previewViewportHeightClass)}
+            />
+          </div>
+        </div>
+      </BuilderPanel>
+
+      <BuilderPanel
+        title={`${selectedPage.label} builder`}
+        eyebrow="Main function builder"
+      >
+        <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-white">{selectedPage.label}</p>
+              <p className="mt-1 text-xs text-slate-400">
+                {activeSection ? `${activeSection.label}: ${activeSection.description}` : selectedPage.description}
+              </p>
+            </div>
+            <div className="rounded-full border border-slate-700 bg-slate-950/80 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
+              {selectedPage.path}
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {sectionLinks.map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setActiveSectionId(section.id)}
+                className={cn(
+                  "rounded-full border px-3 py-2 text-xs font-semibold transition",
+                  isActiveSection(section.id)
+                    ? "border-cyan-400/50 bg-cyan-400/12 text-white"
+                    : "border-slate-700 bg-slate-950/70 text-slate-300 hover:border-slate-500 hover:text-white",
+                )}
               >
+                {section.label}
+              </button>
+            ))}
+          </div>
+        </div>
                 {isActiveSection("global-chrome") ? (
                 <SectionCard
                   id="global-chrome"
@@ -1836,129 +1965,66 @@ export default function AdminSiteSandbox() {
                 ) : null}
               </BuilderPanel>
 
-              <BuilderPanel title="Advanced JSON" eyebrow="Fallback mode">
-                <div className="flex items-center justify-between gap-4 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
+      <div className="grid gap-6 xl:grid-cols-2">
+        <CollapsibleBuilderPanel
+          title="Page selector"
+          eyebrow="Navigation"
+          description="Choose which real route the sandbox preview and builder should target."
+          collapsed={collapsedPanels.pageSelector}
+          onToggle={() => togglePanel("pageSelector")}
+        >
+          <div className="space-y-3">
+            {PREVIEW_PAGES.map((page) => (
+              <button
+                key={page.key}
+                type="button"
+                onClick={() => setSelectedPageKey(page.key)}
+                className={cn(
+                  "w-full rounded-2xl border px-4 py-4 text-left transition",
+                  selectedPage.key === page.key
+                    ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+                    : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
+                )}
+              >
+                <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-sm font-semibold text-white">Raw settings editor</p>
-                    <p className="mt-1 text-xs text-slate-400">
-                      For bulkedits eller kopieringar. Buildern ovan ar fortfarande primarvyn.
-                    </p>
+                    <p className="text-sm font-semibold">{page.label}</p>
+                    <p className="mt-1 text-xs leading-5 text-slate-400">{page.description}</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setShowAdvancedJson((current) => !current)}
-                    className="rounded-xl border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-                  >
-                    {showAdvancedJson ? "Dolj JSON" : "Visa JSON"}
-                  </button>
+                  <LayoutTemplate className="mt-0.5 h-4 w-4 flex-shrink-0" />
                 </div>
-
-                {showAdvancedJson ? (
-                  <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
-                    <Textarea
-                      value={jsonDraft}
-                      onChange={(event) => setJsonDraft(event.target.value)}
-                      rows={26}
-                      className="font-mono text-xs border-slate-700 bg-slate-950 text-slate-50"
-                    />
-                    <div className="flex flex-wrap gap-3">
-                      <Button variant="outline" onClick={formatJsonDraft}>
-                        Format JSON
-                      </Button>
-                      <Button variant="secondary" onClick={applyJsonDraft}>
-                        Apply to builder
-                      </Button>
-                    </div>
-                  </div>
-                ) : null}
-              </BuilderPanel>
-            </div>
-
-            <BuilderPanel title="Live preview" eyebrow="Exact public render" className="xl:sticky xl:top-24">
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">
-                    <Eye className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{selectedPage.label}</p>
-                    <p className="text-xs text-slate-400">{selectedPage.path}</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="outline" onClick={touchPreview}>
-                    <RefreshCcw className="h-4 w-4" />
-                    Reload preview
-                  </Button>
-                  <a
-                    href={previewUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
-                  >
-                    <Globe className="h-4 w-4" />
-                    Open preview in new tab
-                  </a>
-                </div>
-              </div>
-
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
-                <div>
-                  <p className="text-sm font-semibold text-white">Preview mode</p>
-                  <p className="mt-1 text-xs text-slate-400">
-                    {previewFrameState === "loading"
-                      ? "Laddar exakt publik route i draftlage."
-                      : previewFrameState === "error"
-                        ? "Previewn kunde inte renderas i iframen. Testa att oppna i ny flik."
-                        : "Buildern visar samma route som den publika sajten, men med draftdata."}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  <button type="button" onClick={() => setPreviewViewport("desktop")} className={previewViewportButtonClass("desktop")}>
-                    Desktop
-                  </button>
-                  <button type="button" onClick={() => setPreviewViewport("tablet")} className={previewViewportButtonClass("tablet")}>
-                    Tablet
-                  </button>
-                  <button type="button" onClick={() => setPreviewViewport("mobile")} className={previewViewportButtonClass("mobile")}>
-                    Mobile
-                  </button>
-                </div>
-              </div>
-
-              <div className="rounded-[28px] border border-slate-800 bg-slate-950/60 p-3">
-                <div className="mb-3 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-xs text-slate-400">
-                  <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                  <span className="ml-3 truncate font-mono text-[11px] text-slate-300">{previewUrl}</span>
-                </div>
-                <div className={cn("overflow-hidden rounded-[24px] border border-slate-800 bg-white transition-all", previewViewportShellClass)}>
-                  <iframe
-                    key={`${previewUrl}-${previewViewport}`}
-                    title={`Preview ${selectedPage.label}`}
-                    src={previewUrl}
-                    onLoad={() => setPreviewFrameState("ready")}
-                    onError={() => setPreviewFrameState("error")}
-                    className={cn("w-full bg-white", previewViewportHeightClass)}
-                  />
-                </div>
-              </div>
-            </BuilderPanel>
+              </button>
+            ))}
           </div>
-        </div>
-      </div>
+        </CollapsibleBuilderPanel>
 
-      {statusMessage ? (
-        <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-          {statusMessage}
-        </div>
-      ) : null}
-      {localError ? (
-        <div className="rounded-2xl border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-          {localError}
-        </div>
-      ) : null}
+        <CollapsibleBuilderPanel
+          title="Section navigator"
+          eyebrow="Page-scoped controls"
+          description="Jump between the editable areas for the active page."
+          collapsed={collapsedPanels.sections}
+          onToggle={() => togglePanel("sections")}
+        >
+          <div className="space-y-3">
+            {sectionLinks.map((section) => (
+              <button
+                key={section.id}
+                type="button"
+                onClick={() => setActiveSectionId(section.id)}
+                className={cn(
+                  "w-full rounded-2xl border px-4 py-4 text-left transition",
+                  isActiveSection(section.id)
+                    ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+                    : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:text-white",
+                )}
+              >
+                <p className="text-sm font-semibold">{section.label}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-400">{section.description}</p>
+              </button>
+            ))}
+          </div>
+        </CollapsibleBuilderPanel>
+      </div>
     </div>
   );
 }
