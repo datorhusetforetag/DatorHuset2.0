@@ -252,6 +252,7 @@ const customStorePriceCache = new Map();
 const customStorePriceRefreshInFlight = new Map();
 const customBuildProductCache = new Map();
 const customBuildProductRefreshInFlight = new Map();
+let customBuildProductCacheLoadPromise = null;
 const customBuildProductImageCache = new Map();
 const komponentkollCategoryCache = new Map();
 const komponentkollProductSearchCache = new Map();
@@ -3649,6 +3650,16 @@ const loadCustomBuildProductCacheFromDisk = async () => {
   }
 };
 
+const ensureCustomBuildProductCacheLoaded = async () => {
+  if (!customBuildProductCacheLoadPromise) {
+    customBuildProductCacheLoadPromise = loadCustomBuildProductCacheFromDisk().catch((error) => {
+      customBuildProductCacheLoadPromise = null;
+      throw error;
+    });
+  }
+  return customBuildProductCacheLoadPromise;
+};
+
 const shouldPreferCatalogReferenceLowestPrice = (item, availableLowestPrice, referenceLowestPrice) => {
   if (!Number.isFinite(availableLowestPrice) || availableLowestPrice <= 0) return false;
   if (!Number.isFinite(referenceLowestPrice) || referenceLowestPrice <= 0) return false;
@@ -3927,6 +3938,7 @@ const getCachedCatalogItemStoreOffers = (itemId) => {
 };
 
 const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
+  await ensureCustomBuildProductCacheLoaded();
   const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
   if (!item) {
     throw new Error("UNKNOWN_CATALOG_ITEM");
@@ -3998,6 +4010,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
 };
 
 const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false) => {
+  await ensureCustomBuildProductCacheLoaded();
   const items = getCustomBuildCatalogItemsByCategory(category);
   const entries = await Promise.all(
     items.map(async (item) => {
@@ -4081,7 +4094,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
 const startCustomBuildProductScheduler = async () => {
   if (customBuildProductSchedulerStarted) return;
   customBuildProductSchedulerStarted = true;
-  await loadCustomBuildProductCacheFromDisk();
+  await ensureCustomBuildProductCacheLoaded();
   const refreshAll = async () => {
     const itemIds = CUSTOM_BUILD_CATALOG_ITEMS.map((item) => item.id);
     for (const itemId of itemIds) {
