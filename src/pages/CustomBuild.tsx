@@ -3888,7 +3888,7 @@ export default function CustomBuild() {
   };
 
   const getDisplayPriceLabel = (item: ComponentItem, category: CategoryKey) => {
-    if (itemsWithoutStorePrice[item.id] && category !== "ram") {
+    if (itemsWithoutStorePrice[item.id]) {
       return "N/A";
     }
     return `${formatPrice(getComparablePrice(item, category))} kr`;
@@ -4070,7 +4070,7 @@ export default function CustomBuild() {
               nextState[entry.item_id] = "live-offer";
             } else if (entry?.price_source === "search") {
               nextState[entry.item_id] = "search";
-            } else if (entry?.price_source === "no-store" && activeCategory !== "ram") {
+            } else if (entry?.price_source === "no-store") {
               nextState[entry.item_id] = "no-store";
             }
           });
@@ -4081,7 +4081,7 @@ export default function CustomBuild() {
           nextEntries.forEach((entry) => {
             if (Number.isFinite(entry?.lowest_price) && Number(entry.lowest_price) > 0) {
               delete nextState[entry.item_id];
-            } else if (entry?.price_source === "no-store" && activeCategory !== "ram") {
+            } else if (entry?.price_source === "no-store") {
               nextState[entry.item_id] = true;
             } else {
               delete nextState[entry.item_id];
@@ -4756,10 +4756,8 @@ export default function CustomBuild() {
         }));
       }
       if (offers.length === 0) {
-        if (categoryKey !== "ram") {
-          setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
-          setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
-        }
+        setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
+        setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
       } else {
         setPriceSourceByItemId((prev) => ({

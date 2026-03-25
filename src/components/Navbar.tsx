@@ -39,6 +39,7 @@ export const Navbar = () => {
   const showBackButton = location.pathname !== "/";
   const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
   const navigation = settings.site.navigation;
+  const navigationLogo = navigation.logoUrl?.trim() || "/Datorhuset.png";
 
   const searchState = useMemo(
     () =>
@@ -212,7 +213,7 @@ export const Navbar = () => {
                   to="/"
                   className="flex min-w-0 flex-shrink-0 items-center gap-2 text-base font-bold text-gray-900 dark:text-white sm:text-xl"
                 >
-                  <img src="/Datorhuset.png" alt={navigation.brandName} className="h-9 w-9 object-contain sm:h-12 sm:w-12" loading="eager" decoding="async" />
+                  <img src={navigationLogo} alt={navigation.brandName} className="h-9 w-9 object-contain sm:h-12 sm:w-12" loading="eager" decoding="async" />
                   <span className="max-w-[140px] truncate font-[Orbitron] sm:max-w-none">{navigation.brandName}</span>
                 </Link>
               </div>

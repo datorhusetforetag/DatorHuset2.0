@@ -1,4 +1,4 @@
-export const SITE_SETTINGS_VERSION = 3;
+export const SITE_SETTINGS_VERSION = 4;
 
 export const SITE_ICON_OPTIONS = [
   "monitor",
@@ -17,6 +17,7 @@ export const DEFAULT_SITE_SETTINGS = {
   site: {
     navigation: {
       brandName: "DatorHuset",
+      logoUrl: "/Datorhuset.png",
       menuLabel: "Meny",
       searchPlaceholder: "Sok bland produkter, komponenter och kategorier",
       adminPortalHref: "https://admin.datorhuset.site",
@@ -31,6 +32,7 @@ export const DEFAULT_SITE_SETTINGS = {
       supportTitle: "Kundservice",
       supportEmail: "support@datorhuset.site",
       supportHours: "Svarstider 11:00-15:00",
+      logoUrl: "/Datorhuset.png",
       columns: [
         {
           title: "Kontakta oss",
@@ -162,6 +164,10 @@ export const DEFAULT_SITE_SETTINGS = {
           description: "Utvalda byggen som levererar prestanda, design och trygg service.",
           images: [],
           stickers: [],
+          primaryLabel: "Se alla datorer",
+          primaryHref: "/products",
+          secondaryLabel: "Custom bygg",
+          secondaryHref: "/custom-bygg",
         },
         budget: {
           eyebrow: "Budgetvanliga",
@@ -169,6 +175,10 @@ export const DEFAULT_SITE_SETTINGS = {
           description: "Smarta val som haller priset nere utan att tumma pa kanslan.",
           images: [],
           stickers: ["Bast i budget-klass"],
+          primaryLabel: "Se budgetdatorer",
+          primaryHref: "/products?category=budget&clear_filters=1",
+          secondaryLabel: "Fraga oss",
+          secondaryHref: "/kundservice",
         },
         "best-selling": {
           eyebrow: "Mest for pengarna",
@@ -176,6 +186,10 @@ export const DEFAULT_SITE_SETTINGS = {
           description: "Vara mest prisvarda byggen - noggrant utvalda for maximal valuta.",
           images: [],
           stickers: ["DatorHusets val", "Mest valuta", "Otrolig Prestanda"],
+          primaryLabel: "Se favoriterna",
+          primaryHref: "/products?category=best-selling&clear_filters=1",
+          secondaryLabel: "Custom bygg",
+          secondaryHref: "/custom-bygg",
         },
         "price-performance": {
           eyebrow: "Price-Performance",
@@ -183,6 +197,10 @@ export const DEFAULT_SITE_SETTINGS = {
           description: "Byggen med starkast balans mellan pris och prestanda.",
           images: [],
           stickers: ["Mest for pengarna"],
+          primaryLabel: "Se price-performance",
+          primaryHref: "/products?category=price-performance&clear_filters=1",
+          secondaryLabel: "Jamfor alternativ",
+          secondaryHref: "/kundservice",
         },
         toptier: {
           eyebrow: "Basta prestanda",
@@ -190,6 +208,10 @@ export const DEFAULT_SITE_SETTINGS = {
           description: "Toppbyggen for dig som vill ha maximal kraft och kompromisslos kvalitet.",
           images: [],
           stickers: ["Topline"],
+          primaryLabel: "Se toppmodeller",
+          primaryHref: "/products?category=toptier&clear_filters=1",
+          secondaryLabel: "Bygg din egen",
+          secondaryHref: "/custom-bygg",
         },
       },
     },
@@ -238,6 +260,8 @@ export const DEFAULT_SITE_SETTINGS = {
       heroEyebrow: "Kundservice",
       heroTitle: "Kontakta oss",
       heroDescription: "Behöver du hjälp med en beställning, service eller garanti? Vi svarar snabbt med tydliga besked.",
+      heroImage: "/Datorhuset.png",
+      heroImageAlt: "DatorHuset logo",
       heroCtaLabel: "Se FAQ",
       heroCtaHref: "/faq",
       contactTitle: "Kontaktuppgifter",

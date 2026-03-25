@@ -58,6 +58,10 @@ const productsBannerSchema = z.object({
   description: siteTextSchema(320),
   images: z.array(optionalImageSchema).max(3),
   stickers: z.array(siteTextSchema(60)).max(3),
+  primaryLabel: siteTextSchema(80),
+  primaryHref: siteLinkSchema,
+  secondaryLabel: siteTextSchema(80),
+  secondaryHref: siteLinkSchema,
 });
 
 const serviceRepairFlowItemSchema = z.object({
@@ -105,6 +109,7 @@ export const siteSettingsSchema = z.object({
   site: z.object({
     navigation: z.object({
       brandName: siteTextSchema(60),
+      logoUrl: optionalImageSchema,
       menuLabel: siteTextSchema(40),
       searchPlaceholder: siteTextSchema(120),
       adminPortalHref: siteLinkSchema,
@@ -114,6 +119,7 @@ export const siteSettingsSchema = z.object({
       supportTitle: siteTextSchema(60),
       supportEmail: siteTextSchema(120),
       supportHours: siteTextSchema(80),
+      logoUrl: optionalImageSchema,
       columns: z.array(z.object({
         title: siteTextSchema(80),
         links: z.array(siteLinkItemSchema).min(1).max(6),
@@ -184,6 +190,8 @@ export const siteSettingsSchema = z.object({
       heroEyebrow: siteTextSchema(80),
       heroTitle: siteTextSchema(160),
       heroDescription: siteTextSchema(260),
+      heroImage: optionalImageSchema,
+      heroImageAlt: siteTextSchema(160),
       heroCtaLabel: siteTextSchema(80),
       heroCtaHref: siteLinkSchema,
       contactTitle: siteTextSchema(80),

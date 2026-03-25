@@ -117,7 +117,32 @@ const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://
   .split(",")
   .map((url) => url.trim())
   .filter(Boolean);
-const isAllowedOrigin = (origin) => !origin || FRONTEND_URLS.includes(origin);
+const normalizeOrigin = (value) => {
+  try {
+    return new URL(String(value || "").trim()).origin;
+  } catch (error) {
+    return null;
+  }
+};
+const buildAdminPreviewOrigins = (origins) => {
+  const result = new Set();
+  origins.forEach((origin) => {
+    const normalizedOrigin = normalizeOrigin(origin);
+    if (!normalizedOrigin) return;
+    result.add(normalizedOrigin);
+    try {
+      const parsed = new URL(normalizedOrigin);
+      if (!parsed.hostname.startsWith("admin.")) {
+        result.add(`${parsed.protocol}//admin.${parsed.host}`);
+      }
+    } catch (error) {
+      // Ignore malformed preview origins from env.
+    }
+  });
+  return Array.from(result);
+};
+const ALLOWED_FRONTEND_ORIGINS = Array.from(new Set(buildAdminPreviewOrigins(FRONTEND_URLS)));
+const isAllowedOrigin = (origin) => !origin || ALLOWED_FRONTEND_ORIGINS.includes(origin);
 const STRIPE_WEBHOOK_ALLOWED_IPS = (process.env.STRIPE_WEBHOOK_ALLOWED_IPS || "")
   .split(",")
   .map((ip) => ip.trim())
@@ -283,13 +308,13 @@ const cspDirectives = {
   defaultSrc: ["'self'"],
   baseUri: ["'self'"],
   objectSrc: ["'none'"],
-  frameAncestors: ["'none'"],
+  frameAncestors: ["'self'", ...ALLOWED_FRONTEND_ORIGINS],
   imgSrc: ["'self'", "data:", "https:"],
   fontSrc: ["'self'", "data:", "https:"],
   styleSrc: ["'self'", "'unsafe-inline'", "https:"],
   scriptSrc: ["'self'", "https://js.stripe.com"],
-  frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com"],
-  connectSrc: ["'self'", "https://api.stripe.com", "https://*.supabase.co", ...FRONTEND_URLS],
+  frameSrc: ["'self'", "https://js.stripe.com", "https://hooks.stripe.com", ...ALLOWED_FRONTEND_ORIGINS],
+  connectSrc: ["'self'", "https://api.stripe.com", "https://*.supabase.co", ...ALLOWED_FRONTEND_ORIGINS],
   formAction: ["'self'", "https://checkout.stripe.com"],
   upgradeInsecureRequests: [],
 };
@@ -1087,9 +1112,6 @@ const isCatalogOfferWithinExpectedPriceRange = (item, price) => {
   } else if (category === "psu" || category === "cooling") {
     lowerMultiplier = 0.4;
     upperMultiplier = 4;
-  } else if (category === "ram") {
-    lowerMultiplier = 0.55;
-    upperMultiplier = 1.75;
   } else if (category === "storage") {
     lowerMultiplier = 0.35;
     upperMultiplier = 4.5;
@@ -1173,35 +1195,6 @@ const getRamOfferValidationRequirements = (item) => {
 };
 
 const doesCatalogExactSpecMatchItem = (item, title, url = "") => {
-  const category = getCustomBuildCategoryForItem(item);
-  if (category !== "ram") {
-    return true;
-  }
-
-  const combined = normalizeStorePriceQueryKey(`${firstText(title)} ${buildTitleFromProductUrl(url)}`);
-  if (!combined) return false;
-
-  const requirements = getRamOfferValidationRequirements(item);
-  if (requirements.ddr && !combined.includes(requirements.ddr)) {
-    return false;
-  }
-  if (requirements.cl && !combined.includes(requirements.cl)) {
-    return false;
-  }
-  if (requirements.speed) {
-    const speedRegex = new RegExp(`\\b${requirements.speed}(?:mhz|mts)?\\b`, "i");
-    if (!speedRegex.test(combined)) {
-      return false;
-    }
-  }
-  if (
-    Array.isArray(requirements.capacities) &&
-    requirements.capacities.length > 0 &&
-    !requirements.capacities.some((token) => doesCatalogTitleContainEquivalentStrongToken(combined, token))
-  ) {
-    return false;
-  }
-
   return true;
 };
 
@@ -1221,18 +1214,6 @@ const getOfferModelTokensForItem = (item) =>
 const getRequiredModelTokenMatchesForItem = (item, modelTokens) => {
   const category = getCustomBuildCategoryForItem(item);
   if (!Array.isArray(modelTokens) || modelTokens.length === 0) return 0;
-  if (category === "ram") {
-    const capacityOrSpeedTokens = modelTokens.filter(
-      (token) =>
-        /(gb|tb)$/i.test(token) ||
-        /^\d{4,5}$/.test(token) ||
-        /^cl\d+$/i.test(token) ||
-        /^\d+x\d+(gb|tb)$/i.test(token)
-    );
-    if (capacityOrSpeedTokens.length >= 3) return 3;
-    if (capacityOrSpeedTokens.length >= 2) return 2;
-    return 1;
-  }
   if (category === "storage") {
     return modelTokens.length >= 3 ? 2 : 1;
   }
@@ -3413,10 +3394,6 @@ const normalizeCatalogProductUrl = (value, sourceId) =>
   null;
 
 const shouldBypassCatalogPriceRangeValidation = (item, trustedSource) => {
-  const category = getCustomBuildCategoryForItem(item);
-  if (category === "ram") {
-    return trustedSource === "manual";
-  }
   return TRUSTED_CATALOG_REFERENCE_SOURCES.has(trustedSource);
 };
 
@@ -3680,9 +3657,7 @@ const shouldPreferCatalogReferenceLowestPrice = (item, availableLowestPrice, ref
   const category = getCustomBuildCategoryForItem(item);
   let maxReferenceMultiplier = 1.8;
 
-  if (category === "ram") {
-    maxReferenceMultiplier = 1.35;
-  } else if (category === "storage") {
+  if (category === "storage") {
     maxReferenceMultiplier = 1.6;
   } else if (category === "cpu") {
     maxReferenceMultiplier = 1.5;

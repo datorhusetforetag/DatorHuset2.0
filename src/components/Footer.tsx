@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, Youtube } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import logo from "/Datorhuset.png";
-
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden>
     <path
@@ -15,6 +13,7 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 export const Footer = () => {
   const { settings } = useSiteSettings();
   const footer = settings.site.footer;
+  const footerLogo = footer.logoUrl?.trim() || "/Datorhuset.png";
 
   return (
     <footer className="border-t border-[#1a2636] bg-[#0f1824] text-gray-100">
@@ -66,7 +65,7 @@ export const Footer = () => {
                   ))}
                 </div>
               </div>
-              <img src={logo} alt="DatorHuset logo" className="h-12 w-12 object-contain" loading="lazy" decoding="async" />
+              <img src={footerLogo} alt="DatorHuset logo" className="h-12 w-12 object-contain" loading="lazy" decoding="async" />
             </div>
           </div>
         </div>

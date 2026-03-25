@@ -26,6 +26,7 @@ type PreviewPageDefinition = {
     | "home"
     | "products-default"
     | "products-budget"
+    | "products-best-selling"
     | "products-price-performance"
     | "products-toptier"
     | "service-repair"
@@ -36,6 +37,9 @@ type PreviewPageDefinition = {
   bannerKey?: ProductsBannerKey;
   description: string;
 };
+
+type PreviewViewport = "desktop" | "tablet" | "mobile";
+type PreviewFrameState = "loading" | "ready" | "error";
 
 const PREVIEW_PAGES: PreviewPageDefinition[] = [
   {
@@ -60,6 +64,14 @@ const PREVIEW_PAGES: PreviewPageDefinition[] = [
     group: "products",
     bannerKey: "budget",
     description: "Banner for budgetkategorin.",
+  },
+  {
+    key: "products-best-selling",
+    label: "Produkter: mest for pengarna",
+    path: "/products?category=best-selling",
+    group: "products",
+    bannerKey: "best-selling",
+    description: "Banner for mest-for-pengarna-flodet.",
   },
   {
     key: "products-price-performance",
@@ -182,13 +194,20 @@ const FieldBlock = ({
 const BuilderPanel = ({
   title,
   eyebrow,
+  className,
   children,
 }: {
   title: string;
   eyebrow: string;
+  className?: string;
   children: ReactNode;
 }) => (
-  <div className="overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))]">
+  <div
+    className={cn(
+      "overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))]",
+      className,
+    )}
+  >
     <div className="border-b border-slate-800 px-6 py-5">
       <p className="text-[11px] uppercase tracking-[0.32em] text-cyan-300/80">{eyebrow}</p>
       <h2 className="mt-2 text-xl font-semibold text-white">{title}</h2>
@@ -218,6 +237,9 @@ export default function AdminSiteSandbox() {
   const [statusMessage, setStatusMessage] = useState("");
   const [localError, setLocalError] = useState("");
   const [previewNonce, setPreviewNonce] = useState(Date.now());
+  const [activeSectionId, setActiveSectionId] = useState("global-chrome");
+  const [previewViewport, setPreviewViewport] = useState<PreviewViewport>("desktop");
+  const [previewFrameState, setPreviewFrameState] = useState<PreviewFrameState>("loading");
 
   const selectedPage = useMemo(
     () => PREVIEW_PAGES.find((page) => page.key === selectedPageKey) || PREVIEW_PAGES[0],
@@ -240,33 +262,33 @@ export default function AdminSiteSandbox() {
   );
 
   const sectionLinks = useMemo(() => {
-    const base = [{ id: "global-chrome", label: "Global chrome" }];
+    const base = [{ id: "global-chrome", label: "Global chrome", description: "Navigation, logo och footer." }];
     if (selectedPage.group === "home") {
       return [
         ...base,
-        { id: "home-hero", label: "Hero" },
-        { id: "home-categories", label: "Kategorier" },
-        { id: "home-steps", label: "Kopflode" },
-        { id: "home-promo", label: "Promokort" },
+        { id: "home-hero", label: "Hero", description: "Huvudbudskap, feature-kort och sekundar copy." },
+        { id: "home-categories", label: "Kategorier", description: "Snabblankar och ikonval." },
+        { id: "home-steps", label: "Kopflode", description: "Steg, CTA-knappar och copy." },
+        { id: "home-promo", label: "Promokort", description: "De stora kampanjkorten pa startsidan." },
       ];
     }
     if (selectedPage.group === "products") {
-      return [...base, { id: "products-banner", label: "Banner" }];
+      return [...base, { id: "products-banner", label: "Banner", description: "Rubrik, bilder, stickers och CTA." }];
     }
     if (selectedPage.group === "serviceRepair") {
       return [
         ...base,
-        { id: "service-hero", label: "Hero" },
-        { id: "service-flow", label: "Flode" },
-        { id: "service-form", label: "Formular" },
+        { id: "service-hero", label: "Hero", description: "Hero-copy och knappar." },
+        { id: "service-flow", label: "Flode", description: "Stegen och introduktionen till processen." },
+        { id: "service-form", label: "Formular", description: "Formulartitel och beskrivning." },
       ];
     }
     return [
       ...base,
-      { id: "customer-hero", label: "Hero" },
-      { id: "customer-contact", label: "Kontakt" },
-      { id: "customer-issues", label: "Vanliga arenden" },
-      { id: "customer-workflow", label: "Arbetsflode" },
+      { id: "customer-hero", label: "Hero", description: "Hero-copy, CTA och hero-bild." },
+      { id: "customer-contact", label: "Kontakt", description: "Kontaktinfo, oppettider och supportcopy." },
+      { id: "customer-issues", label: "Vanliga arenden", description: "Arendelista och svarstid." },
+      { id: "customer-workflow", label: "Arbetsflode", description: "Processen och slut-CTA." },
     ];
   }, [selectedPage.group]);
 
@@ -274,7 +296,16 @@ export default function AdminSiteSandbox() {
     setJsonDraft(JSON.stringify(draftSettings, null, 2));
   }, [draftSettings]);
 
-  const touchPreview = () => setPreviewNonce(Date.now());
+  useEffect(() => {
+    setActiveSectionId((current) =>
+      sectionLinks.some((section) => section.id === current) ? current : (sectionLinks[0]?.id ?? "global-chrome"),
+    );
+  }, [sectionLinks]);
+
+  const touchPreview = () => {
+    setPreviewFrameState("loading");
+    setPreviewNonce(Date.now());
+  };
 
   const updateDraft = (recipe: (draft: SiteSettings) => void) => {
     setDraftSettings((current) => {
@@ -482,6 +513,26 @@ export default function AdminSiteSandbox() {
   const selectedBanner = selectedPage.bannerKey
     ? draftSettings.pages.products.banners[selectedPage.bannerKey]
     : draftSettings.pages.products.banners.default;
+  const previewViewportButtonClass = (viewport: PreviewViewport) =>
+    cn(
+      "rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+      previewViewport === viewport
+        ? "border-cyan-400/50 bg-cyan-400/12 text-white"
+        : "border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white",
+    );
+  const previewViewportShellClass =
+    previewViewport === "desktop"
+      ? "w-full"
+      : previewViewport === "tablet"
+        ? "mx-auto w-full max-w-[860px]"
+        : "mx-auto w-full max-w-[430px]";
+  const previewViewportHeightClass =
+    previewViewport === "desktop" ? "h-[940px]" : previewViewport === "tablet" ? "h-[1080px]" : "h-[820px]";
+  const isActiveSection = (sectionId: string) => activeSectionId === sectionId;
+
+  useEffect(() => {
+    setPreviewFrameState("loading");
+  }, [previewUrl, previewViewport]);
 
   if (loading) {
     return (
@@ -610,16 +661,23 @@ export default function AdminSiteSandbox() {
             </div>
           </BuilderPanel>
 
-          <BuilderPanel title="Sections" eyebrow="Jump links">
-            <div className="space-y-2">
+          <BuilderPanel title="Sections" eyebrow="Page-scoped controls">
+            <div className="space-y-3">
               {sectionLinks.map((section) => (
-                <a
+                <button
                   key={section.id}
-                  href={`#${section.id}`}
-                  className="block rounded-xl border border-slate-800 bg-slate-950/50 px-4 py-3 text-sm text-slate-300 transition hover:border-slate-700 hover:text-white"
+                  type="button"
+                  onClick={() => setActiveSectionId(section.id)}
+                  className={cn(
+                    "w-full rounded-2xl border px-4 py-4 text-left transition",
+                    isActiveSection(section.id)
+                      ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+                      : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:text-white",
+                  )}
                 >
-                  {section.label}
-                </a>
+                  <p className="text-sm font-semibold">{section.label}</p>
+                  <p className="mt-1 text-xs leading-5 text-slate-400">{section.description}</p>
+                </button>
               ))}
             </div>
           </BuilderPanel>
@@ -628,7 +686,11 @@ export default function AdminSiteSandbox() {
         <div className="space-y-6">
           <div className="grid gap-6 2xl:grid-cols-[minmax(0,0.95fr),minmax(520px,1.05fr)]">
             <div className="space-y-6">
-              <BuilderPanel title={`${selectedPage.label} builder`} eyebrow="Visual controls">
+              <BuilderPanel
+                title={`${selectedPage.label} builder`}
+                eyebrow={activeSectionId === "global-chrome" ? "Global controls" : "Focused section"}
+              >
+                {isActiveSection("global-chrome") ? (
                 <SectionCard
                   id="global-chrome"
                   title="Global chrome"
@@ -653,6 +715,15 @@ export default function AdminSiteSandbox() {
                         className="border-slate-700 bg-slate-900 text-slate-50"
                       />
                     </FieldBlock>
+                    <FieldBlock label="Navigation logo URL">
+                      <Input
+                        value={draftSettings.site.navigation.logoUrl}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.navigation.logoUrl = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
                     <FieldBlock label="Search placeholder">
                       <Input
                         value={draftSettings.site.navigation.searchPlaceholder}
@@ -667,6 +738,15 @@ export default function AdminSiteSandbox() {
                         value={draftSettings.site.navigation.adminPortalHref}
                         onChange={(event) => updateDraft((draft) => {
                           draft.site.navigation.adminPortalHref = event.target.value;
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Footer logo URL">
+                      <Input
+                        value={draftSettings.site.footer.logoUrl}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.footer.logoUrl = event.target.value;
                         })}
                         className="border-slate-700 bg-slate-900 text-slate-50"
                       />
@@ -770,9 +850,11 @@ export default function AdminSiteSandbox() {
                     />
                   </FieldBlock>
                 </SectionCard>
+                ) : null}
 
                 {selectedPage.group === "home" ? (
                   <>
+                    {isActiveSection("home-hero") ? (
                     <SectionCard id="home-hero" title="Hero" description="Styr startsidans oversta block utan att andra layouten.">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Main title">
@@ -913,7 +995,9 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("home-categories") ? (
                     <SectionCard id="home-categories" title="Category cards" description="Kort i hero-karusellen.">
                       <div className="space-y-4">
                         {draftSettings.homepage.hero.categories.map((category, index) => (
@@ -981,7 +1065,9 @@ export default function AdminSiteSandbox() {
                         </Button>
                       </div>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("home-steps") ? (
                     <SectionCard id="home-steps" title="Kopflode" description="Stegsektionen under hero.">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Section title">
@@ -1107,7 +1193,9 @@ export default function AdminSiteSandbox() {
                         </Button>
                       </div>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("home-promo") ? (
                     <SectionCard id="home-promo" title="Promokort" description="De tva stora korten langst ned pa startsidan.">
                       <div className="grid gap-4 md:grid-cols-3">
                         <FieldBlock label="Eyebrow">
@@ -1274,10 +1362,12 @@ export default function AdminSiteSandbox() {
                         </Button>
                       </div>
                     </SectionCard>
+                    ) : null}
                   </>
                 ) : null}
 
                 {selectedPage.group === "products" ? (
+                  isActiveSection("products-banner") ? (
                   <SectionCard
                     id="products-banner"
                     title="Product banner"
@@ -1341,11 +1431,55 @@ export default function AdminSiteSandbox() {
                         className="border-slate-700 bg-slate-900 text-slate-50"
                       />
                     </FieldBlock>
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <FieldBlock label="Primary CTA label">
+                        <Input
+                          value={selectedBanner.primaryLabel}
+                          onChange={(event) => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].primaryLabel = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                      <FieldBlock label="Primary CTA href">
+                        <Input
+                          value={selectedBanner.primaryHref}
+                          onChange={(event) => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].primaryHref = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                      <FieldBlock label="Secondary CTA label">
+                        <Input
+                          value={selectedBanner.secondaryLabel}
+                          onChange={(event) => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].secondaryLabel = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                      <FieldBlock label="Secondary CTA href">
+                        <Input
+                          value={selectedBanner.secondaryHref}
+                          onChange={(event) => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].secondaryHref = event.target.value;
+                          })}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </div>
                   </SectionCard>
+                  ) : null
                 ) : null}
 
                 {selectedPage.group === "serviceRepair" ? (
                   <>
+                    {isActiveSection("service-hero") ? (
                     <SectionCard id="service-hero" title="Service hero">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Eyebrow">
@@ -1414,6 +1548,8 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
+                    {isActiveSection("service-flow") ? (
                     <SectionCard id="service-flow" title="Service flow">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Flow title">
@@ -1450,7 +1586,9 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("service-form") ? (
                     <SectionCard id="service-form" title="Form section">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Form title">
@@ -1474,11 +1612,13 @@ export default function AdminSiteSandbox() {
                         </FieldBlock>
                       </div>
                     </SectionCard>
+                    ) : null}
                   </>
                 ) : null}
 
                 {selectedPage.group === "customerService" ? (
                   <>
+                    {isActiveSection("customer-hero") ? (
                     <SectionCard id="customer-hero" title="Customer service hero">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Eyebrow">
@@ -1517,6 +1657,24 @@ export default function AdminSiteSandbox() {
                             className="border-slate-700 bg-slate-900 text-slate-50"
                           />
                         </FieldBlock>
+                        <FieldBlock label="Hero image URL">
+                          <Input
+                            value={draftSettings.pages.customerService.heroImage}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.heroImage = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Hero image alt">
+                          <Input
+                            value={draftSettings.pages.customerService.heroImageAlt}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.customerService.heroImageAlt = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
                       </div>
                       <FieldBlock label="Description">
                         <Textarea
@@ -1529,7 +1687,9 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("customer-contact") ? (
                     <SectionCard id="customer-contact" title="Contact blocks">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Contact title">
@@ -1592,7 +1752,9 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("customer-issues") ? (
                     <SectionCard id="customer-issues" title="Vanliga arenden">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Section title">
@@ -1625,7 +1787,9 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
 
+                    {isActiveSection("customer-workflow") ? (
                     <SectionCard id="customer-workflow" title="Arbetsflode">
                       <div className="grid gap-4 md:grid-cols-2">
                         <FieldBlock label="Workflow title">
@@ -1667,6 +1831,7 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </SectionCard>
+                    ) : null}
                   </>
                 ) : null}
               </BuilderPanel>
@@ -1709,7 +1874,7 @@ export default function AdminSiteSandbox() {
               </BuilderPanel>
             </div>
 
-            <BuilderPanel title="Live preview" eyebrow="Exact public render">
+            <BuilderPanel title="Live preview" eyebrow="Exact public render" className="xl:sticky xl:top-24">
               <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
                 <div className="flex items-center gap-3">
                   <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">
@@ -1737,6 +1902,30 @@ export default function AdminSiteSandbox() {
                 </div>
               </div>
 
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
+                <div>
+                  <p className="text-sm font-semibold text-white">Preview mode</p>
+                  <p className="mt-1 text-xs text-slate-400">
+                    {previewFrameState === "loading"
+                      ? "Laddar exakt publik route i draftlage."
+                      : previewFrameState === "error"
+                        ? "Previewn kunde inte renderas i iframen. Testa att oppna i ny flik."
+                        : "Buildern visar samma route som den publika sajten, men med draftdata."}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => setPreviewViewport("desktop")} className={previewViewportButtonClass("desktop")}>
+                    Desktop
+                  </button>
+                  <button type="button" onClick={() => setPreviewViewport("tablet")} className={previewViewportButtonClass("tablet")}>
+                    Tablet
+                  </button>
+                  <button type="button" onClick={() => setPreviewViewport("mobile")} className={previewViewportButtonClass("mobile")}>
+                    Mobile
+                  </button>
+                </div>
+              </div>
+
               <div className="rounded-[28px] border border-slate-800 bg-slate-950/60 p-3">
                 <div className="mb-3 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-xs text-slate-400">
                   <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
@@ -1744,12 +1933,14 @@ export default function AdminSiteSandbox() {
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
                   <span className="ml-3 truncate font-mono text-[11px] text-slate-300">{previewUrl}</span>
                 </div>
-                <div className="overflow-hidden rounded-[24px] border border-slate-800 bg-white">
+                <div className={cn("overflow-hidden rounded-[24px] border border-slate-800 bg-white transition-all", previewViewportShellClass)}>
                   <iframe
-                    key={previewUrl}
+                    key={`${previewUrl}-${previewViewport}`}
                     title={`Preview ${selectedPage.label}`}
                     src={previewUrl}
-                    className="h-[940px] w-full bg-white"
+                    onLoad={() => setPreviewFrameState("ready")}
+                    onError={() => setPreviewFrameState("error")}
+                    className={cn("w-full bg-white", previewViewportHeightClass)}
                   />
                 </div>
               </div>

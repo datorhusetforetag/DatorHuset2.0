@@ -47,10 +47,11 @@ export type SitePromoCard = {
 export type SiteSocialPlatform = "instagram" | "x" | "tiktok" | "youtube";
 
 export type SiteSettings = {
-  version: 3;
+  version: 4;
   site: {
     navigation: {
       brandName: string;
+      logoUrl: string;
       menuLabel: string;
       searchPlaceholder: string;
       adminPortalHref: string;
@@ -60,6 +61,7 @@ export type SiteSettings = {
       supportTitle: string;
       supportEmail: string;
       supportHours: string;
+      logoUrl: string;
       columns: Array<{
         title: string;
         links: SiteLinkItem[];
@@ -116,6 +118,10 @@ export type SiteSettings = {
           description: string;
           images: string[];
           stickers: string[];
+          primaryLabel: string;
+          primaryHref: string;
+          secondaryLabel: string;
+          secondaryHref: string;
         }
       >;
     };
@@ -141,6 +147,8 @@ export type SiteSettings = {
       heroEyebrow: string;
       heroTitle: string;
       heroDescription: string;
+      heroImage: string;
+      heroImageAlt: string;
       heroCtaLabel: string;
       heroCtaHref: string;
       contactTitle: string;
@@ -175,7 +183,7 @@ const deepMerge = <T,>(defaults: T, candidate: unknown): T => {
       const candidateValue = nextCandidate[key];
 
       if (key === "version") {
-        base[key] = 3;
+        base[key] = 4;
         continue;
       }
 

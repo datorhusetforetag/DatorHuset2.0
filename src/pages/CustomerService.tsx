@@ -7,6 +7,8 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 export default function CustomerService() {
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.customerService;
+  const heroImage = pageSettings.heroImage?.trim() || "/Datorhuset.png";
+  const heroImageAlt = pageSettings.heroImageAlt?.trim() || "DatorHuset logo";
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
@@ -73,8 +75,8 @@ export default function CustomerService() {
               </div>
               <div className="flex items-center justify-center">
                 <img
-                  src="/Datorhuset.png"
-                  alt="DatorHuset logo"
+                  src={heroImage}
+                  alt={heroImageAlt}
                   className="h-56 w-full max-w-md object-contain object-center sm:h-72 lg:h-80"
                   loading="lazy"
                   decoding="async"

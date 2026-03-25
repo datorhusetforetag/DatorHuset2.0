@@ -71,6 +71,10 @@ type BannerConfig = {
   description: string;
   images: string[];
   stickers?: BannerSticker[];
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
   background: string;
   variant?: "bundle";
   imageSize?: "normal" | "large";
@@ -90,6 +94,10 @@ const DEFAULT_BANNER: BannerConfig = {
   title: "B\u00e4sta s\u00e4ljare inom station\u00e4ra datorer i hela Norden!",
   description: "Utvalda byggen som levererar prestanda, design och trygg service.",
   images: [chieftecVistaBanner, chieftecVisioBanner, cg530Banner],
+  primaryLabel: "Se alla datorer",
+  primaryHref: "/products",
+  secondaryLabel: "Custom bygg",
+  secondaryHref: "/custom-bygg",
   background: "bg-[#facc15]",
   imageSize: "large",
 };
@@ -106,6 +114,10 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-[#11667b] text-white",
       },
     ],
+    primaryLabel: "Se budgetdatorer",
+    primaryHref: "/products?category=budget&clear_filters=1",
+    secondaryLabel: "Fr\u00e5ga oss",
+    secondaryHref: "/kundservice",
     background: "bg-[#facc15]",
   },
   "best-selling": {
@@ -127,6 +139,10 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-[#11667b] text-white",
       },
     ],
+    primaryLabel: "Se favoriterna",
+    primaryHref: "/products?category=best-selling&clear_filters=1",
+    secondaryLabel: "Custom bygg",
+    secondaryHref: "/custom-bygg",
     background: "bg-[#facc15]",
   },
   "price-performance": {
@@ -140,6 +156,10 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-[#11667b] text-white",
       },
     ],
+    primaryLabel: "Se price-performance",
+    primaryHref: "/products?category=price-performance&clear_filters=1",
+    secondaryLabel: "J\u00e4mf\u00f6r alternativ",
+    secondaryHref: "/kundservice",
     background: "bg-[#facc15]",
   },
   toptier: {
@@ -153,6 +173,10 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-[#11667b] text-white",
       },
     ],
+    primaryLabel: "Se toppmodeller",
+    primaryHref: "/products?category=toptier&clear_filters=1",
+    secondaryLabel: "Bygg din egen",
+    secondaryHref: "/custom-bygg",
     background: "bg-[#facc15]",
     imageSize: "large",
   },
@@ -708,6 +732,10 @@ export default function Products() {
     title: configuredBanner.title,
     description: configuredBanner.description,
     images: configuredBanner.images.filter(Boolean).length > 0 ? configuredBanner.images.filter(Boolean) : fallbackBanner.images,
+    primaryLabel: configuredBanner.primaryLabel,
+    primaryHref: configuredBanner.primaryHref,
+    secondaryLabel: configuredBanner.secondaryLabel,
+    secondaryHref: configuredBanner.secondaryHref,
     stickers:
       configuredBanner.stickers.length > 0
         ? configuredBanner.stickers.map((label) => ({
@@ -750,6 +778,20 @@ export default function Products() {
                     <p className="mx-auto mt-4 max-w-2xl break-words text-sm text-gray-800 sm:text-base lg:text-[1.05rem]">
                       {banner.description}
                     </p>
+                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+                      <Link
+                        to={banner.primaryHref}
+                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#11667b]"
+                      >
+                        {banner.primaryLabel}
+                      </Link>
+                      <Link
+                        to={banner.secondaryHref}
+                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
+                      >
+                        {banner.secondaryLabel}
+                      </Link>
+                    </div>
                     {primarySticker ? (
                       <div className="mt-6 flex justify-center">
                         <div className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker.className}`}>
@@ -781,6 +823,20 @@ export default function Products() {
                     <p className="mt-4 max-w-2xl break-words text-sm text-gray-800 sm:text-base lg:text-[1.05rem]">
                       {banner.description}
                     </p>
+                    <div className="mt-6 flex flex-wrap items-center gap-3">
+                      <Link
+                        to={banner.primaryHref}
+                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#11667b]"
+                      >
+                        {banner.primaryLabel}
+                      </Link>
+                      <Link
+                        to={banner.secondaryHref}
+                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
+                      >
+                        {banner.secondaryLabel}
+                      </Link>
+                    </div>
                   </div>
                   <div className="min-w-0">
                     <div className="relative ml-auto w-full max-w-[24rem] lg:max-w-[26rem]">
