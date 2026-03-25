@@ -1075,6 +1075,18 @@ const getNumericBounds = (values: Array<number | null>) => {
   return { min: Math.min(...valid), max: Math.max(...valid) };
 };
 
+const UNSUPPORTED_RAM_ITEM_IDS = new Set([
+  "ram-5",
+  "ram-6",
+  "ram-7",
+  "ram-9",
+  "ram-10",
+  "ram-11",
+  "ram-12",
+  "ram-19",
+  "ram-30",
+]);
+
 const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   cpu: [
     {
@@ -2260,7 +2272,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       image: ramCorsairVengeanceImage,
       specs: ["DDR5", "64GB", "6000 MT/s", "CL40"],
     },
-  ],
+  ].filter((item) => !UNSUPPORTED_RAM_ITEM_IDS.has(item.id)),
   storage: [
     {
       id: "sto-1",
