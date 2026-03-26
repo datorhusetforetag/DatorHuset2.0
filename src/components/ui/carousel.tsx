@@ -80,6 +80,21 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
       [scrollPrev, scrollNext],
     );
 
+    const handleWheel = React.useCallback(
+      (event: React.WheelEvent<HTMLDivElement>) => {
+        if (orientation !== "horizontal" || !api) return;
+        const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+        if (Math.abs(dominantDelta) < 8) return;
+        event.preventDefault();
+        if (dominantDelta > 0) {
+          api.scrollNext();
+        } else {
+          api.scrollPrev();
+        }
+      },
+      [api, orientation],
+    );
+
     React.useEffect(() => {
       if (!api || !setApi) {
         return;
@@ -118,6 +133,7 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         <div
           ref={ref}
           onKeyDownCapture={handleKeyDown}
+          onWheelCapture={handleWheel}
           className={cn("relative", className)}
           role="region"
           aria-roledescription="carousel"

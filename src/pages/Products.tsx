@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SeoHead } from "@/components/SeoHead";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -226,6 +227,7 @@ const PRODUCT_CATEGORY_TAGS: Record<string, string[]> = {
 
 export default function Products() {
   const { settings: siteSettings } = useSiteSettings();
+  const motion = siteSettings.site.motion;
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const shouldClearFilters = searchParams.get("clear_filters") === "1";
@@ -748,17 +750,28 @@ export default function Products() {
   const secondaryBannerImage = banner.images[1];
   const primarySticker = banner.stickers?.[0];
   const secondaryStickers = banner.stickers?.slice(1, 3) ?? [];
+  const seoUrl =
+    typeof window !== "undefined" ? window.location.href : `https://datorhuset.site${activeCategory ? `/products?category=${activeCategory}` : "/products"}`;
+  const seoTitle = `${banner.title} | DatorHuset`;
+  const seoDescription = banner.description || "Gamingdatorer och färdiga byggen från DatorHuset.";
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
+      <SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />
       <Navbar />
       <main className="flex-1">
         <section className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
           <div className="mx-auto w-full max-w-[1480px]">
             <div className={`overflow-hidden rounded-3xl border border-[#e4b700] text-gray-900 ${banner.background}`}>
               {activeCategory === "toptier" ? (
-                <div className="grid items-center gap-6 px-8 py-8 sm:px-10 sm:py-10 lg:grid-cols-[0.82fr_1.1fr_0.82fr] lg:gap-8 lg:px-10 xl:px-12">
-                  <div className="min-w-0">
+                <div
+                  className="grid items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[0.82fr_1.1fr_0.82fr] lg:gap-8 lg:px-10 xl:px-12"
+                  style={{
+                    animationDuration: `${motion.bannerRevealDurationMs}ms`,
+                    ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+                  }}
+                >
+                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, animationDelay: `${motion.heroRevealStaggerMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
                     <div className="relative mr-auto w-full max-w-[21rem]">
                       <img
                         src={leadBannerImage}
@@ -768,7 +781,7 @@ export default function Products() {
                       />
                     </div>
                   </div>
-                  <div className="min-w-0 text-center">
+                  <div className="min-w-0 text-center animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
                     <p className="text-xs uppercase tracking-[0.4em] text-gray-900/65">
                       {banner.eyebrow}
                     </p>
@@ -800,7 +813,7 @@ export default function Products() {
                       </div>
                     ) : null}
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, animationDelay: `${motion.heroRevealStaggerMs * 2}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
                     <div className="relative ml-auto w-full max-w-[21rem]">
                       <img
                         src={secondaryBannerImage ?? leadBannerImage}
@@ -812,8 +825,14 @@ export default function Products() {
                   </div>
                 </div>
               ) : (
-                <div className="grid items-center gap-6 px-8 py-8 sm:px-10 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10 lg:px-10 xl:px-12">
-                  <div className="min-w-0">
+                <div
+                  className="grid items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10 lg:px-10 xl:px-12"
+                  style={{
+                    animationDuration: `${motion.bannerRevealDurationMs}ms`,
+                    ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+                  }}
+                >
+                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
                     <p className="text-xs uppercase tracking-[0.4em] text-gray-900/65">
                       {banner.eyebrow}
                     </p>
@@ -838,7 +857,7 @@ export default function Products() {
                       </Link>
                     </div>
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, animationDelay: `${motion.heroRevealStaggerMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
                     <div className="relative ml-auto w-full max-w-[24rem] lg:max-w-[26rem]">
                       <img
                         src={leadBannerImage}

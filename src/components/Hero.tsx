@@ -14,9 +14,13 @@ const FALLBACK_IMAGE = "/Datorhuset.png";
 
 type HeroProps = {
   settings?: SiteSettings["homepage"]["hero"];
+  motion?: SiteSettings["site"]["motion"];
 };
 
-export const Hero = ({ settings = DEFAULT_SITE_SETTINGS.homepage.hero }: HeroProps) => {
+export const Hero = ({
+  settings = DEFAULT_SITE_SETTINGS.homepage.hero,
+  motion = DEFAULT_SITE_SETTINGS.site.motion,
+}: HeroProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const { products } = useProducts();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
@@ -63,11 +67,27 @@ export const Hero = ({ settings = DEFAULT_SITE_SETTINGS.homepage.hero }: HeroPro
     container.scrollBy({ left: direction === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
   };
 
+  const handleCarouselWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+    const container = carouselRef.current;
+    if (!container) return;
+    const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+    if (Math.abs(dominantDelta) < 8) return;
+    event.preventDefault();
+    const cardWidth = 384 + 16;
+    container.scrollBy({ left: dominantDelta > 0 ? cardWidth : -cardWidth, behavior: "smooth" });
+  };
+
   return (
     <section className="bg-white transition-colors dark:bg-background">
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="mb-8 grid grid-cols-1 gap-4 sm:mb-12 sm:gap-6 md:grid-cols-3">
-          <div className="col-span-1 flex min-h-[230px] flex-col justify-between rounded-lg border border-yellow-500 bg-yellow-400 p-4 shadow-lg sm:min-h-[320px] sm:p-6 lg:p-8 md:col-span-2">
+          <div
+            className="col-span-1 flex min-h-[230px] flex-col justify-between rounded-lg border border-yellow-500 bg-yellow-400 p-4 shadow-lg animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8 md:col-span-2"
+            style={{
+              animationDuration: `${motion.heroRevealDurationMs}ms`,
+              ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+            }}
+          >
             <div>
               <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">{settings.title}</h2>
               <p className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-900 sm:text-base">
@@ -89,7 +109,14 @@ export const Hero = ({ settings = DEFAULT_SITE_SETTINGS.homepage.hero }: HeroPro
             </div>
           </div>
 
-          <div className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-gray-900 p-4 sm:min-h-[320px] sm:p-6 lg:p-8">
+          <div
+            className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-gray-900 p-4 animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8"
+            style={{
+              animationDuration: `${motion.heroRevealDurationMs}ms`,
+              animationDelay: `${motion.heroRevealStaggerMs}ms`,
+              ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+            }}
+          >
             <div className="relative z-10">
               <h2 className="mb-2 text-2xl font-bold text-white sm:text-3xl">{settings.secondaryTitle}</h2>
               <p className="mb-4 text-sm text-white">{settings.secondaryDescription}</p>
@@ -120,7 +147,8 @@ export const Hero = ({ settings = DEFAULT_SITE_SETTINGS.homepage.hero }: HeroPro
                   utm_campaign: "populara_kategorier",
                   utm_content: buildUtmContent(category.name),
                 })}
-                className="rounded-lg border border-gray-200 bg-white p-4 text-center transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800 sm:p-6"
+                className="rounded-lg border border-gray-200 bg-white p-4 text-center transition-all hover:border-[#11667b] hover:shadow-lg hover:[transform:scale(var(--card-hover-scale))] dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800 sm:p-6"
+                style={{ ["--card-hover-scale" as string]: String(motion.cardHoverScale) }}
               >
                 <SiteIcon icon={category.icon} className="mx-auto mb-3 h-8 w-8 text-yellow-500 sm:h-10 sm:w-10" />
                 <p className="line-clamp-2 text-sm font-medium text-gray-900 dark:text-gray-100">{category.name}</p>
@@ -132,12 +160,22 @@ export const Hero = ({ settings = DEFAULT_SITE_SETTINGS.homepage.hero }: HeroPro
         <div className="relative mb-12">
           <h3 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">{settings.featuredTitle}</h3>
           <div className="relative">
-            <div ref={carouselRef} className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 pr-4 no-scrollbar">
-              {featuredComputers.map((computer) => (
+            <div
+              ref={carouselRef}
+              onWheel={handleCarouselWheel}
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 pr-4 no-scrollbar"
+            >
+              {featuredComputers.map((computer, index) => (
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}
-                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:hover:border-[#11667b] sm:w-80 md:w-96"
+                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border border-gray-200 bg-white transition-all animate-in fade-in slide-in-from-bottom-4 hover:border-[#11667b] hover:shadow-lg hover:[transform:scale(var(--card-hover-scale))] dark:border-gray-700 dark:bg-gray-900 dark:hover:border-[#11667b] sm:w-80 md:w-96"
+                  style={{
+                    animationDuration: `${motion.bannerRevealDurationMs}ms`,
+                    animationDelay: `${index * motion.heroRevealStaggerMs}ms`,
+                    ["--card-hover-scale" as string]: String(motion.cardHoverScale),
+                    ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+                  }}
                 >
                   <div className="flex h-44 items-center justify-center bg-gray-100 dark:bg-gray-800 sm:h-52">
                     <img

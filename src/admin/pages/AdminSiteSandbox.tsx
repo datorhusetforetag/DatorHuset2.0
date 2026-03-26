@@ -1,5 +1,21 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
-import { ChevronDown, ChevronRight, Eye, Globe, LayoutTemplate, RefreshCcw, Save, Send, Sparkles } from "lucide-react";
+import {
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  Eye,
+  FileWarning,
+  Globe,
+  History,
+  ImagePlus,
+  LayoutTemplate,
+  RefreshCcw,
+  RotateCcw,
+  Save,
+  Send,
+  Sparkles,
+  Upload,
+} from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -41,6 +57,35 @@ type PreviewPageDefinition = {
 type PreviewViewport = "desktop" | "tablet" | "mobile";
 type PreviewFrameState = "loading" | "ready" | "error";
 type TopMenuKey = "file" | "draft" | "json";
+type PreviewTheme = "light" | "dark";
+type PreviewAuth = "logged-out" | "logged-in";
+
+type SiteSettingsHistoryEntry = {
+  id: string;
+  mode: "live" | "draft";
+  name: string;
+  source: string;
+  created_at: string;
+  actor_id?: string | null;
+  settings: SiteSettings;
+};
+
+type SiteSettingsAsset = {
+  url: string;
+  source: string;
+};
+
+type SiteSettingsValidationIssue = {
+  severity: "error" | "warning";
+  path: string;
+  message: string;
+  value?: string | null;
+};
+
+type SiteSettingsValidationResult = {
+  ok: boolean;
+  issues: SiteSettingsValidationIssue[];
+};
 
 const PREVIEW_PAGES: PreviewPageDefinition[] = [
   {
@@ -137,10 +182,18 @@ const buildPreviewOrigin = () => {
   return window.location.origin;
 };
 
-const buildPreviewUrl = (origin: string, page: PreviewPageDefinition, previewNonce: number) => {
+const buildPreviewUrl = (
+  origin: string,
+  page: PreviewPageDefinition,
+  previewNonce: number,
+  previewTheme: PreviewTheme,
+  previewAuth: PreviewAuth,
+) => {
   const url = new URL(page.path, origin || window.location.origin);
   url.searchParams.set("site-settings-mode", "draft");
   url.searchParams.set("preview_ts", String(previewNonce));
+  url.searchParams.set("preview-theme", previewTheme);
+  url.searchParams.set("preview-auth", previewAuth);
   return url.toString();
 };
 
@@ -152,6 +205,34 @@ const parseApiPayload = async (response: Response) => {
   } catch {
     return { error: raw };
   }
+};
+
+const fileToBase64 = (file: File) =>
+  new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(new Error("Kunde inte läsa filen."));
+    reader.readAsDataURL(file);
+  });
+
+const collectDiffLines = (beforeValue: unknown, afterValue: unknown, path = ""): string[] => {
+  if (typeof beforeValue === "object" && beforeValue && typeof afterValue === "object" && afterValue) {
+    const keys = new Set([
+      ...Object.keys(beforeValue as Record<string, unknown>),
+      ...Object.keys(afterValue as Record<string, unknown>),
+    ]);
+    return Array.from(keys).flatMap((key) =>
+      collectDiffLines(
+        (beforeValue as Record<string, unknown>)[key],
+        (afterValue as Record<string, unknown>)[key],
+        path ? `${path}.${key}` : key,
+      ),
+    );
+  }
+  if (JSON.stringify(beforeValue) === JSON.stringify(afterValue)) {
+    return [];
+  }
+  return [path || "root"];
 };
 
 const SectionCard = ({
@@ -191,6 +272,83 @@ const FieldBlock = ({
     {children}
   </label>
 );
+
+const ImageField = ({
+  label,
+  value,
+  onChange,
+  assets,
+  uploadTarget,
+  onUpload,
+  uploading,
+}: {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  assets: SiteSettingsAsset[];
+  uploadTarget: string;
+  onUpload: (target: string, file: File | null) => Promise<void>;
+  uploading: boolean;
+}) => {
+  const suggestions = useMemo(
+    () => assets.filter((asset) => asset.url !== value).slice(0, 6),
+    [assets, value],
+  );
+
+  return (
+    <FieldBlock label={label}>
+      <div className="space-y-3 rounded-2xl border border-slate-800 bg-slate-950/60 p-3">
+        <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/60">
+          {value ? (
+            <img src={value} alt={label} className="h-40 w-full object-cover" loading="lazy" decoding="async" />
+          ) : (
+            <div className="flex h-40 items-center justify-center text-sm text-slate-500">Ingen bild vald</div>
+          )}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white">
+            <Upload className="h-4 w-4" />
+            {uploading ? "Laddar upp..." : "Ladda upp"}
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/avif"
+              className="hidden"
+              disabled={uploading}
+              onChange={async (event) => {
+                const file = event.target.files?.[0] || null;
+                await onUpload(uploadTarget, file);
+                event.currentTarget.value = "";
+              }}
+            />
+          </label>
+          <button
+            type="button"
+            onClick={() => onChange("")}
+            className="rounded-lg border border-slate-700 px-3 py-2 text-xs font-semibold text-slate-300 transition hover:border-slate-500 hover:text-white"
+          >
+            Rensa
+          </button>
+        </div>
+        <Input value={value} onChange={(event) => onChange(event.target.value)} className="border-slate-700 bg-slate-900 text-slate-50" />
+        {suggestions.length > 0 ? (
+          <div className="grid gap-2 md:grid-cols-3">
+            {suggestions.map((asset) => (
+              <button
+                key={asset.url}
+                type="button"
+                onClick={() => onChange(asset.url)}
+                className="overflow-hidden rounded-xl border border-slate-800 bg-slate-900/50 text-left transition hover:border-cyan-400/50"
+              >
+                <img src={asset.url} alt={asset.source} className="h-20 w-full object-cover" loading="lazy" decoding="async" />
+                <div className="px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-slate-400">{asset.source}</div>
+              </button>
+            ))}
+          </div>
+        ) : null}
+      </div>
+    </FieldBlock>
+  );
+};
 
 const BuilderPanel = ({
   title,
@@ -273,8 +431,18 @@ export default function AdminSiteSandbox() {
   const [previewNonce, setPreviewNonce] = useState(Date.now());
   const [activeSectionId, setActiveSectionId] = useState("global-chrome");
   const [previewViewport, setPreviewViewport] = useState<PreviewViewport>("desktop");
+  const [previewTheme, setPreviewTheme] = useState<PreviewTheme>("light");
+  const [previewAuth, setPreviewAuth] = useState<PreviewAuth>("logged-out");
   const [previewFrameState, setPreviewFrameState] = useState<PreviewFrameState>("loading");
   const [activeTopMenu, setActiveTopMenu] = useState<TopMenuKey | null>(null);
+  const [historyEntries, setHistoryEntries] = useState<SiteSettingsHistoryEntry[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [selectedSnapshotId, setSelectedSnapshotId] = useState("");
+  const [snapshotName, setSnapshotName] = useState("");
+  const [validation, setValidation] = useState<SiteSettingsValidationResult | null>(null);
+  const [validating, setValidating] = useState(false);
+  const [assetLibrary, setAssetLibrary] = useState<SiteSettingsAsset[]>([]);
+  const [uploadingSiteImageTarget, setUploadingSiteImageTarget] = useState("");
   const [collapsedPanels, setCollapsedPanels] = useState({
     pageSelector: false,
     sections: false,
@@ -286,8 +454,16 @@ export default function AdminSiteSandbox() {
   );
 
   const previewUrl = useMemo(
-    () => buildPreviewUrl(previewOrigin, selectedPage, previewNonce),
-    [previewNonce, previewOrigin, selectedPage],
+    () => buildPreviewUrl(previewOrigin, selectedPage, previewNonce, previewTheme, previewAuth),
+    [previewAuth, previewNonce, previewOrigin, previewTheme, selectedPage],
+  );
+  const selectedSnapshot = useMemo(
+    () => historyEntries.find((entry) => entry.id === selectedSnapshotId) || null,
+    [historyEntries, selectedSnapshotId],
+  );
+  const snapshotDiffLines = useMemo(
+    () => (selectedSnapshot ? collectDiffLines(selectedSnapshot.settings, draftSettings) : []),
+    [draftSettings, selectedSnapshot],
   );
 
   const draftIsDirty = useMemo(
@@ -301,7 +477,10 @@ export default function AdminSiteSandbox() {
   );
 
   const sectionLinks = useMemo(() => {
-    const base = [{ id: "global-chrome", label: "Global chrome", description: "Navigation, logo och footer." }];
+    const base = [
+      { id: "global-chrome", label: "Global chrome", description: "Navigation, logo och footer." },
+      { id: "global-motion", label: "Motion", description: "Styr hero- och banneranimationer på hela sajten." },
+    ];
     if (selectedPage.group === "home") {
       return [
         ...base,
@@ -390,6 +569,7 @@ export default function AdminSiteSandbox() {
       setDraftSettings(cloneSettings(nextBundle.draft));
       setStatusMessage("Hamtade senaste live- och draftversionerna.");
       touchPreview();
+      await validateDraftSettings(nextBundle.draft);
     } catch (nextError) {
       setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte hamta site settings.");
     } finally {
@@ -397,9 +577,167 @@ export default function AdminSiteSandbox() {
     }
   };
 
+  const loadHistory = async () => {
+    if (!token || !isAdmin) return;
+    setHistoryLoading(true);
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/history?mode=draft`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta historik.");
+      }
+      const entries = Array.isArray(payload?.entries)
+        ? payload.entries.map((entry: SiteSettingsHistoryEntry) => ({
+            ...entry,
+            settings: normalizeSiteSettings(entry.settings),
+          }))
+        : [];
+      setHistoryEntries(entries);
+      setSelectedSnapshotId((current) => current || entries[0]?.id || "");
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte hämta historik.");
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const loadAssets = async () => {
+    if (!token || !isAdmin) return;
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/assets`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta bilder.");
+      }
+      setAssetLibrary(Array.isArray(payload?.assets) ? payload.assets : []);
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte hämta bilder.");
+    }
+  };
+
+  const validateDraftSettings = async (nextSettings = draftSettings) => {
+    if (!token || !isAdmin) return null;
+    setValidating(true);
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/validate`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mode: "draft", settings: nextSettings }),
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte validera utkastet.");
+      }
+      setValidation(payload?.validation || null);
+      return payload?.validation || null;
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte validera utkastet.");
+      return null;
+    } finally {
+      setValidating(false);
+    }
+  };
+
+  const createNamedSnapshot = async () => {
+    if (!token || !canMutate) return;
+    if (!snapshotName.trim()) {
+      setLocalError("Ange ett namn för snapshoten.");
+      return;
+    }
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/snapshot`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mode: "draft", name: snapshotName.trim() }),
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte skapa snapshot.");
+      }
+      setSnapshotName("");
+      setStatusMessage(`Snapshot skapad: ${payload?.entry?.name || "Utkast"}.`);
+      await loadHistory();
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte skapa snapshot.");
+    }
+  };
+
+  const rollbackSnapshot = async () => {
+    if (!token || !canMutate || !selectedSnapshotId) return;
+    if (!window.confirm("Återställ utkastet till den valda versionen?")) return;
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/site-settings/rollback`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ mode: "draft", snapshot_id: selectedSnapshotId }),
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte återställa versionen.");
+      }
+      const nextDraft = normalizeSiteSettings(payload?.settings);
+      setBundle((current) => ({ ...current, draft: nextDraft }));
+      setDraftSettings(cloneSettings(nextDraft));
+      setStatusMessage("Utkastet återställdes från versionshistoriken.");
+      touchPreview();
+      await loadHistory();
+      await validateDraftSettings(nextDraft);
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte återställa versionen.");
+    }
+  };
+
+  const uploadSiteImage = async (target: string, file: File | null) => {
+    if (!file || !token || !canMutate) return;
+    setUploadingSiteImageTarget(target);
+    try {
+      const base64 = await fileToBase64(file);
+      const response = await fetch(`${apiBase}/api/admin/v2/uploads/site-image`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          file_name: file.name,
+          mime_type: file.type || "image/jpeg",
+          data_base64: base64,
+          target,
+        }),
+      });
+      const payload = await parseApiPayload(response);
+      if (!response.ok) {
+        throw new Error(payload?.error?.message || payload?.error || "Kunde inte ladda upp bilden.");
+      }
+      const url = String(payload?.data?.url || "");
+      if (url) {
+        setAssetLibrary((current) => [{ url, source: "upload" }, ...current.filter((asset) => asset.url !== url)]);
+      }
+    } catch (nextError) {
+      setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte ladda upp bilden.");
+    } finally {
+      setUploadingSiteImageTarget("");
+    }
+  };
+
   useEffect(() => {
     if (isAdmin) {
       void loadSettings();
+      void loadHistory();
+      void loadAssets();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
@@ -416,7 +754,7 @@ export default function AdminSiteSandbox() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ mode: "draft", settings: draftSettings }),
+        body: JSON.stringify({ mode: "draft", settings: draftSettings, snapshot_name: snapshotName.trim() || undefined }),
       });
       const payload = await parseApiPayload(response);
       if (!response.ok) {
@@ -425,8 +763,12 @@ export default function AdminSiteSandbox() {
       const savedDraft = normalizeSiteSettings(payload?.settings);
       setBundle((current) => ({ ...current, draft: savedDraft }));
       setDraftSettings(cloneSettings(savedDraft));
+      if (snapshotName.trim()) {
+        setSnapshotName("");
+      }
       setStatusMessage("Utkastet ar sparat. Live-sajten ar fortfarande oforandrad.");
       touchPreview();
+      await Promise.all([loadHistory(), validateDraftSettings(savedDraft)]);
     } catch (nextError) {
       setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte spara utkastet.");
     } finally {
@@ -437,6 +779,11 @@ export default function AdminSiteSandbox() {
   const publishDraft = async () => {
     if (!token || !canMutate) return;
     if (!window.confirm("Publicera draft till live? Detta andrar den publika sajten.")) return;
+    const nextValidation = await validateDraftSettings();
+    if (nextValidation && !nextValidation.ok) {
+      setLocalError("Rätta valideringsfelen innan du publicerar.");
+      return;
+    }
     setPublishing(true);
     setLocalError("");
     setStatusMessage("");
@@ -460,6 +807,7 @@ export default function AdminSiteSandbox() {
       setDraftSettings(cloneSettings(nextBundle.draft));
       setStatusMessage("Draften ar nu publicerad till live.");
       touchPreview();
+      await loadHistory();
     } catch (nextError) {
       setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte publicera draften.");
     } finally {
@@ -493,6 +841,7 @@ export default function AdminSiteSandbox() {
       setDraftSettings(cloneSettings(nextBundle.draft));
       setStatusMessage("Draften matchar nu liveversionen.");
       touchPreview();
+      await Promise.all([loadHistory(), validateDraftSettings(nextBundle.draft)]);
     } catch (nextError) {
       setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte aterstalla draft fran live.");
     } finally {
@@ -524,6 +873,7 @@ export default function AdminSiteSandbox() {
       setDraftSettings(cloneSettings(nextDraft));
       setStatusMessage("Draften ar aterstalld till standardsidan.");
       touchPreview();
+      await Promise.all([loadHistory(), validateDraftSettings(nextDraft)]);
     } catch (nextError) {
       setLocalError(nextError instanceof Error ? nextError.message : "Kunde inte aterstalla draften.");
     } finally {
@@ -565,13 +915,15 @@ export default function AdminSiteSandbox() {
   const selectedBanner = selectedPage.bannerKey
     ? draftSettings.pages.products.banners[selectedPage.bannerKey]
     : draftSettings.pages.products.banners.default;
-  const previewViewportButtonClass = (viewport: PreviewViewport) =>
+  const previewModeButtonClass = (active: boolean) =>
     cn(
       "rounded-full border px-3 py-1.5 text-xs font-semibold transition",
-      previewViewport === viewport
+      active
         ? "border-cyan-400/50 bg-cyan-400/12 text-white"
         : "border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white",
     );
+  const previewViewportButtonClass = (viewport: PreviewViewport) =>
+    previewModeButtonClass(previewViewport === viewport);
   const previewViewportShellClass =
     previewViewport === "desktop"
       ? "w-full"
@@ -752,16 +1104,32 @@ export default function AdminSiteSandbox() {
               </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" onClick={() => setPreviewViewport("desktop")} className={previewViewportButtonClass("desktop")}>
-              Desktop
-            </button>
-            <button type="button" onClick={() => setPreviewViewport("tablet")} className={previewViewportButtonClass("tablet")}>
-              Tablet
-            </button>
-            <button type="button" onClick={() => setPreviewViewport("mobile")} className={previewViewportButtonClass("mobile")}>
-              Mobile
-            </button>
+          <div className="space-y-3">
+            <div className="flex flex-wrap gap-2">
+              <button type="button" onClick={() => setPreviewViewport("desktop")} className={previewViewportButtonClass("desktop")}>
+                Desktop
+              </button>
+              <button type="button" onClick={() => setPreviewViewport("tablet")} className={previewViewportButtonClass("tablet")}>
+                Tablet
+              </button>
+              <button type="button" onClick={() => setPreviewViewport("mobile")} className={previewViewportButtonClass("mobile")}>
+                Mobile
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(["light", "dark"] as PreviewTheme[]).map((theme) => (
+                <button key={theme} type="button" onClick={() => setPreviewTheme(theme)} className={previewModeButtonClass(theme === previewTheme)}>
+                  {theme === "light" ? "Ljust läge" : "Mörkt läge"}
+                </button>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(["logged-out", "logged-in"] as PreviewAuth[]).map((authState) => (
+                <button key={authState} type="button" onClick={() => setPreviewAuth(authState)} className={previewModeButtonClass(authState === previewAuth)}>
+                  {authState === "logged-in" ? "Inloggad" : "Utloggad"}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -784,6 +1152,127 @@ export default function AdminSiteSandbox() {
           </div>
         </div>
       </BuilderPanel>
+
+      <div className="grid gap-6 xl:grid-cols-2">
+        <BuilderPanel title="Publish validation" eyebrow="Safe checks before live">
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="secondary" onClick={() => void validateDraftSettings()} disabled={validating}>
+              <FileWarning className="h-4 w-4" />
+              {validating ? "Validerar..." : "Kör validering"}
+            </Button>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
+              {validation
+                ? validation.ok
+                  ? "Inga blockerande fel hittades."
+                  : `${validation.issues.filter((issue) => issue.severity === "error").length} blockerande fel`
+                : "Ingen validering körd än."}
+            </div>
+          </div>
+          <div className="space-y-3">
+            {(validation?.issues || []).length === 0 ? (
+              <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-200">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4" />
+                  Klart att publicera. Utkastet klarade de aktuella länkar-, bild- och copy-kontrollerna.
+                </div>
+              </div>
+            ) : (
+              (validation?.issues || []).map((issue, index) => (
+                <div
+                  key={`${issue.path}-${index}`}
+                  className={cn(
+                    "rounded-2xl border px-4 py-4 text-sm",
+                    issue.severity === "error"
+                      ? "border-rose-500/30 bg-rose-500/10 text-rose-100"
+                      : "border-amber-500/30 bg-amber-500/10 text-amber-100",
+                  )}
+                >
+                  <p className="font-semibold">{issue.path}</p>
+                  <p className="mt-1">{issue.message}</p>
+                  {issue.value ? <p className="mt-2 break-all font-mono text-xs opacity-80">{issue.value}</p> : null}
+                </div>
+              ))
+            )}
+          </div>
+        </BuilderPanel>
+
+        <BuilderPanel title="Version history" eyebrow="Named drafts, diff and rollback">
+          <div className="flex flex-wrap gap-3">
+            <Input
+              value={snapshotName}
+              onChange={(event) => setSnapshotName(event.target.value)}
+              placeholder="Namnge snapshot, till exempel Sommarkampanj v2"
+              className="border-slate-700 bg-slate-900 text-slate-50"
+            />
+            <Button variant="secondary" onClick={() => void createNamedSnapshot()} disabled={!canMutate}>
+              <History className="h-4 w-4" />
+              Spara snapshot
+            </Button>
+            <Button variant="outline" onClick={() => void loadHistory()} disabled={historyLoading}>
+              <RefreshCcw className="h-4 w-4" />
+              {historyLoading ? "Laddar..." : "Ladda historik"}
+            </Button>
+            <Button variant="outline" onClick={() => void rollbackSnapshot()} disabled={!canMutate || !selectedSnapshotId}>
+              <RotateCcw className="h-4 w-4" />
+              Rollback
+            </Button>
+          </div>
+          <div className="grid gap-4 lg:grid-cols-[0.9fr,1.1fr]">
+            <div className="space-y-3">
+              {historyEntries.map((entry) => (
+                <button
+                  key={entry.id}
+                  type="button"
+                  onClick={() => setSelectedSnapshotId(entry.id)}
+                  className={cn(
+                    "w-full rounded-2xl border px-4 py-4 text-left transition",
+                    selectedSnapshotId === entry.id
+                      ? "border-cyan-400/50 bg-cyan-400/12 text-white"
+                      : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
+                  )}
+                >
+                  <p className="text-sm font-semibold">{entry.name}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{entry.source}</p>
+                  <p className="mt-2 text-xs text-slate-500">{new Date(entry.created_at).toLocaleString("sv-SE")}</p>
+                </button>
+              ))}
+              {historyEntries.length === 0 ? (
+                <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4 text-sm text-slate-400">
+                  Ingen historik ännu. Spara ett namngivet snapshot eller ett utkast för att börja bygga versionsspår.
+                </div>
+              ) : null}
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+              {selectedSnapshot ? (
+                <>
+                  <p className="text-sm font-semibold text-white">{selectedSnapshot.name}</p>
+                  <p className="mt-1 text-xs text-slate-400">
+                    {selectedSnapshot.source} • {new Date(selectedSnapshot.created_at).toLocaleString("sv-SE")}
+                  </p>
+                  <div className="mt-4 space-y-2">
+                    <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Ändrade paths mot nuvarande utkast</p>
+                    {snapshotDiffLines.length > 0 ? (
+                      <div className="max-h-72 space-y-2 overflow-y-auto pr-2">
+                        {snapshotDiffLines.map((line) => (
+                          <div key={line} className="rounded-xl border border-slate-800 bg-slate-900/50 px-3 py-2 font-mono text-xs text-slate-200">
+                            {line}
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-3 text-sm text-emerald-200">
+                        Den valda versionen matchar nuvarande utkast.
+                      </div>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="text-sm text-slate-400">Välj en version för att se diff och köra rollback.</div>
+              )}
+            </div>
+          </div>
+        </BuilderPanel>
+      </div>
 
       <BuilderPanel
         title={`${selectedPage.label} builder`}
@@ -844,15 +1333,17 @@ export default function AdminSiteSandbox() {
                         className="border-slate-700 bg-slate-900 text-slate-50"
                       />
                     </FieldBlock>
-                    <FieldBlock label="Navigation logo URL">
-                      <Input
-                        value={draftSettings.site.navigation.logoUrl}
-                        onChange={(event) => updateDraft((draft) => {
-                          draft.site.navigation.logoUrl = event.target.value;
-                        })}
-                        className="border-slate-700 bg-slate-900 text-slate-50"
-                      />
-                    </FieldBlock>
+                    <ImageField
+                      label="Navigation logo"
+                      value={draftSettings.site.navigation.logoUrl}
+                      assets={assetLibrary}
+                      uploadTarget="navigation-logo"
+                      uploading={uploadingSiteImageTarget === "navigation-logo"}
+                      onUpload={uploadSiteImage}
+                      onChange={(value) => updateDraft((draft) => {
+                        draft.site.navigation.logoUrl = value;
+                      })}
+                    />
                     <FieldBlock label="Search placeholder">
                       <Input
                         value={draftSettings.site.navigation.searchPlaceholder}
@@ -871,15 +1362,17 @@ export default function AdminSiteSandbox() {
                         className="border-slate-700 bg-slate-900 text-slate-50"
                       />
                     </FieldBlock>
-                    <FieldBlock label="Footer logo URL">
-                      <Input
-                        value={draftSettings.site.footer.logoUrl}
-                        onChange={(event) => updateDraft((draft) => {
-                          draft.site.footer.logoUrl = event.target.value;
-                        })}
-                        className="border-slate-700 bg-slate-900 text-slate-50"
-                      />
-                    </FieldBlock>
+                    <ImageField
+                      label="Footer logo"
+                      value={draftSettings.site.footer.logoUrl}
+                      assets={assetLibrary}
+                      uploadTarget="footer-logo"
+                      uploading={uploadingSiteImageTarget === "footer-logo"}
+                      onUpload={uploadSiteImage}
+                      onChange={(value) => updateDraft((draft) => {
+                        draft.site.footer.logoUrl = value;
+                      })}
+                    />
                   </div>
 
                   <FieldBlock label="Navigation links" hint="label|href">
@@ -981,6 +1474,78 @@ export default function AdminSiteSandbox() {
                 </SectionCard>
                 ) : null}
 
+                {isActiveSection("global-motion") ? (
+                <SectionCard
+                  id="global-motion"
+                  title="Motion system"
+                  description="Finjustera rörelse i startsidans hero och produktsidans banners utan kodändringar."
+                >
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FieldBlock label="Hero reveal duration (ms)">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={4000}
+                        value={draftSettings.site.motion.heroRevealDurationMs}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.motion.heroRevealDurationMs = Math.max(0, Math.min(4000, Number(event.target.value) || 0));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Hero stagger (ms)">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={1500}
+                        value={draftSettings.site.motion.heroRevealStaggerMs}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.motion.heroRevealStaggerMs = Math.max(0, Math.min(1500, Number(event.target.value) || 0));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Banner reveal duration (ms)">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={4000}
+                        value={draftSettings.site.motion.bannerRevealDurationMs}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.motion.bannerRevealDurationMs = Math.max(0, Math.min(4000, Number(event.target.value) || 0));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Banner reveal distance (px)">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={80}
+                        value={draftSettings.site.motion.bannerRevealDistancePx}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.motion.bannerRevealDistancePx = Math.max(0, Math.min(80, Number(event.target.value) || 0));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Card hover scale">
+                      <Input
+                        type="number"
+                        min={1}
+                        max={1.2}
+                        step="0.01"
+                        value={draftSettings.site.motion.cardHoverScale}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.motion.cardHoverScale = Math.max(1, Math.min(1.2, Number(event.target.value) || 1));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                  </div>
+                </SectionCard>
+                ) : null}
+
                 {selectedPage.group === "home" ? (
                   <>
                     {isActiveSection("home-hero") ? (
@@ -1022,15 +1587,17 @@ export default function AdminSiteSandbox() {
                             className="border-slate-700 bg-slate-900 text-slate-50"
                           />
                         </FieldBlock>
-                        <FieldBlock label="Feature image">
-                          <Input
-                            value={draftSettings.homepage.hero.featureImage}
-                            onChange={(event) => updateDraft((draft) => {
-                              draft.homepage.hero.featureImage = event.target.value;
-                            })}
-                            className="border-slate-700 bg-slate-900 text-slate-50"
-                          />
-                        </FieldBlock>
+                        <ImageField
+                          label="Feature image"
+                          value={draftSettings.homepage.hero.featureImage}
+                          assets={assetLibrary}
+                          uploadTarget="homepage-feature"
+                          uploading={uploadingSiteImageTarget === "homepage-feature"}
+                          onUpload={uploadSiteImage}
+                          onChange={(value) => updateDraft((draft) => {
+                            draft.homepage.hero.featureImage = value;
+                          })}
+                        />
                         <FieldBlock label="Feature image alt">
                           <Input
                             value={draftSettings.homepage.hero.featureImageAlt}
@@ -1391,15 +1958,17 @@ export default function AdminSiteSandbox() {
                                   className="border-slate-700 bg-slate-950 text-slate-50"
                                 />
                               </FieldBlock>
-                              <FieldBlock label="Image">
-                                <Input
-                                  value={card.image}
-                                  onChange={(event) => updateDraft((draft) => {
-                                    draft.homepage.promo.cards[index].image = event.target.value;
-                                  })}
-                                  className="border-slate-700 bg-slate-950 text-slate-50"
-                                />
-                              </FieldBlock>
+                              <ImageField
+                                label="Image"
+                                value={card.image}
+                                assets={assetLibrary}
+                                uploadTarget={`home-promo-card-${index}`}
+                                uploading={uploadingSiteImageTarget === `home-promo-card-${index}`}
+                                onUpload={uploadSiteImage}
+                                onChange={(value) => updateDraft((draft) => {
+                                  draft.homepage.promo.cards[index].image = value;
+                                })}
+                              />
                               <FieldBlock label="Image alt">
                                 <Input
                                   value={card.imageAlt}
@@ -1549,17 +2118,61 @@ export default function AdminSiteSandbox() {
                       />
                     </FieldBlock>
 
-                    <FieldBlock label="Images" hint="one per line">
-                      <Textarea
-                        value={formatSimpleLines(selectedBanner.images)}
-                        onChange={(event) => updateDraft((draft) => {
-                          if (!selectedPage.bannerKey) return;
-                          draft.pages.products.banners[selectedPage.bannerKey].images = parseSimpleLines(event.target.value);
-                        })}
-                        rows={4}
-                        className="border-slate-700 bg-slate-900 text-slate-50"
-                      />
-                    </FieldBlock>
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium text-slate-200">Banner images</p>
+                          <p className="mt-1 text-xs text-slate-500">Ladda upp eller välj varje bannerbild direkt i buildern.</p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={() => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].images.push("");
+                          })}
+                        >
+                          <ImagePlus className="h-4 w-4" />
+                          Lägg till bild
+                        </Button>
+                      </div>
+                      {selectedBanner.images.length > 0 ? (
+                        <div className="grid gap-4 md:grid-cols-2">
+                          {selectedBanner.images.map((image, index) => (
+                            <div key={`${selectedPage.bannerKey}-image-${index}`} className="space-y-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-3">
+                              <div className="flex items-center justify-between gap-3">
+                                <p className="text-sm font-semibold text-white">Bild {index + 1}</p>
+                                <button
+                                  type="button"
+                                  onClick={() => updateDraft((draft) => {
+                                    if (!selectedPage.bannerKey) return;
+                                    draft.pages.products.banners[selectedPage.bannerKey].images.splice(index, 1);
+                                  })}
+                                  className="text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+                                >
+                                  Ta bort
+                                </button>
+                              </div>
+                              <ImageField
+                                label="Bild"
+                                value={image}
+                                assets={assetLibrary}
+                                uploadTarget={`products-banner-${selectedPage.bannerKey}-${index}`}
+                                uploading={uploadingSiteImageTarget === `products-banner-${selectedPage.bannerKey}-${index}`}
+                                onUpload={uploadSiteImage}
+                                onChange={(value) => updateDraft((draft) => {
+                                  if (!selectedPage.bannerKey) return;
+                                  draft.pages.products.banners[selectedPage.bannerKey].images[index] = value;
+                                })}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4 text-sm text-slate-400">
+                          Ingen bannerbild vald ännu. Lägg till minst en bild för att ge sidan en tydlig preview- och delningsyta.
+                        </div>
+                      )}
+                    </div>
                     <div className="grid gap-4 md:grid-cols-2">
                       <FieldBlock label="Primary CTA label">
                         <Input
@@ -1786,15 +2399,17 @@ export default function AdminSiteSandbox() {
                             className="border-slate-700 bg-slate-900 text-slate-50"
                           />
                         </FieldBlock>
-                        <FieldBlock label="Hero image URL">
-                          <Input
-                            value={draftSettings.pages.customerService.heroImage}
-                            onChange={(event) => updateDraft((draft) => {
-                              draft.pages.customerService.heroImage = event.target.value;
-                            })}
-                            className="border-slate-700 bg-slate-900 text-slate-50"
-                          />
-                        </FieldBlock>
+                        <ImageField
+                          label="Hero image"
+                          value={draftSettings.pages.customerService.heroImage}
+                          assets={assetLibrary}
+                          uploadTarget="customer-hero"
+                          uploading={uploadingSiteImageTarget === "customer-hero"}
+                          onUpload={uploadSiteImage}
+                          onChange={(value) => updateDraft((draft) => {
+                            draft.pages.customerService.heroImage = value;
+                          })}
+                        />
                         <FieldBlock label="Hero image alt">
                           <Input
                             value={draftSettings.pages.customerService.heroImageAlt}

@@ -15,6 +15,7 @@ const SITE_SOCIAL_PLATFORM_OPTIONS = ["instagram", "x", "tiktok", "youtube"];
 const siteLinkSchema = z.string().trim().min(1).max(320);
 const siteTextSchema = (max = 240) => z.string().trim().min(1).max(max);
 const optionalImageSchema = z.string().trim().max(500);
+const animationNumberSchema = (min, max) => z.number().int().min(min).max(max);
 
 const siteLinkItemSchema = z.object({
   label: siteTextSchema(80),
@@ -126,6 +127,13 @@ export const siteSettingsSchema = z.object({
       })).min(1).max(4),
       socialLinks: z.array(socialLinkSchema).min(1).max(6),
       copyright: siteTextSchema(120),
+    }),
+    motion: z.object({
+      heroRevealDurationMs: animationNumberSchema(0, 4000),
+      heroRevealStaggerMs: animationNumberSchema(0, 1500),
+      bannerRevealDurationMs: animationNumberSchema(0, 4000),
+      bannerRevealDistancePx: animationNumberSchema(0, 80),
+      cardHoverScale: z.number().min(1).max(1.2),
     }),
   }),
   homepage: z.object({

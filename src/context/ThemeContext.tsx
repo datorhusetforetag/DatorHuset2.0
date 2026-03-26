@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { getPreviewThemeOverride } from "@/lib/previewMode";
 
 type Theme = "light" | "dark";
 
@@ -21,16 +22,20 @@ const getPreferredTheme = (): Theme => {
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>(() => getPreferredTheme());
+  const previewThemeOverride = getPreviewThemeOverride();
+  const effectiveTheme = previewThemeOverride || theme;
 
   useEffect(() => {
     const root = document.documentElement;
     const body = document.body;
-    root.classList.toggle("dark", theme === "dark");
+    root.classList.toggle("dark", effectiveTheme === "dark");
     body.classList.remove("dark");
-    root.setAttribute("data-theme", theme);
-    root.style.colorScheme = theme;
-    localStorage.setItem("theme", theme);
-  }, [theme]);
+    root.setAttribute("data-theme", effectiveTheme);
+    root.style.colorScheme = effectiveTheme;
+    if (!previewThemeOverride) {
+      localStorage.setItem("theme", theme);
+    }
+  }, [effectiveTheme, previewThemeOverride, theme]);
 
   useEffect(() => {
     const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -46,11 +51,11 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
   const value = useMemo(
     () => ({
-      theme,
+      theme: effectiveTheme,
       setTheme: setThemeState,
       toggleTheme: () => setThemeState((prev) => (prev === "dark" ? "light" : "dark")),
     }),
-    [theme]
+    [effectiveTheme]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

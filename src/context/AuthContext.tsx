@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
+import { getPreviewAuthOverride } from '@/lib/previewMode';
 
 interface AuthContextType {
   session: Session | null;
@@ -19,6 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const previewAuthOverride = getPreviewAuthOverride();
 
   useEffect(() => {
     // Get initial session
@@ -106,8 +108,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const mockPreviewUser =
+    previewAuthOverride === 'logged-in'
+      ? {
+          id: 'preview-user',
+          email: 'preview@datorhuset.site',
+          user_metadata: {
+            username: 'Previewkund',
+            full_name: 'Previewkund',
+          },
+          app_metadata: {},
+        }
+      : null;
+  const effectiveSession = previewAuthOverride === 'logged-out' ? null : session;
+  const effectiveUser = previewAuthOverride === 'logged-out' ? null : user || mockPreviewUser;
+  const effectiveLoading = previewAuthOverride ? false : loading;
+
   return (
-    <AuthContext.Provider value={{ session, user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut }}>
+    <AuthContext.Provider value={{ session: effectiveSession, user: effectiveUser, loading: effectiveLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut }}>
       {children}
     </AuthContext.Provider>
   );

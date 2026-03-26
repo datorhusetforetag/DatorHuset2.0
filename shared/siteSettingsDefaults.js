@@ -1,4 +1,4 @@
-export const SITE_SETTINGS_VERSION = 4;
+export const SITE_SETTINGS_VERSION = 5;
 
 export const SITE_ICON_OPTIONS = [
   "monitor",
@@ -60,6 +60,13 @@ export const DEFAULT_SITE_SETTINGS = {
         { platform: "youtube", label: "YouTube", href: "https://www.youtube.com/@DatorHuset" },
       ],
       copyright: "©2026 DatorHuset UF. Alla rättigheter förbehållna.",
+    },
+    motion: {
+      heroRevealDurationMs: 720,
+      heroRevealStaggerMs: 120,
+      bannerRevealDurationMs: 680,
+      bannerRevealDistancePx: 18,
+      cardHoverScale: 1.03,
     },
   },
   homepage: {

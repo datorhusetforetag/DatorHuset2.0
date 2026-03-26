@@ -101,6 +101,29 @@ const CUSTOM_BUILD_DISCOVERY_TTL_MS = Math.max(
   60_000,
   Number(process.env.CUSTOM_BUILD_DISCOVERY_TTL_MS || 7 * 24 * 60 * 60 * 1000)
 );
+const BANKID_BRIDGE_BASE_URL = String(process.env.BANKID_BRIDGE_BASE_URL || "")
+  .trim()
+  .replace(/\/+$/, "");
+const BANKID_BRIDGE_API_KEY = String(process.env.BANKID_BRIDGE_API_KEY || "").trim();
+const BANKID_BRIDGE_START_PATH = `/${String(process.env.BANKID_BRIDGE_START_PATH || "api/bankid/start")
+  .trim()
+  .replace(/^\/+/, "")}`;
+const BANKID_BRIDGE_COLLECT_PATH = `/${String(process.env.BANKID_BRIDGE_COLLECT_PATH || "api/bankid/collect")
+  .trim()
+  .replace(/^\/+/, "")}`;
+const CUSTOM_BUILD_BANKID_REQUIRED = String(process.env.CUSTOM_BUILD_BANKID_REQUIRED || "0").trim() === "1";
+const CUSTOM_BUILD_BANKID_REQUEST_TIMEOUT_MS = Math.max(
+  3_000,
+  Number(process.env.CUSTOM_BUILD_BANKID_REQUEST_TIMEOUT_MS || 15_000)
+);
+const CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS = Math.max(
+  60_000,
+  Number(process.env.CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS || 15 * 60 * 1000)
+);
+const CUSTOM_BUILD_BANKID_SESSION_TTL_MS = Math.max(
+  CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS,
+  Number(process.env.CUSTOM_BUILD_BANKID_SESSION_TTL_MS || 20 * 60 * 1000)
+);
 const loadPrisjaktProductUrlMap = () => {
   try {
     const raw = fsSync.readFileSync(PRISJAKT_PRODUCT_MAP_FILE, "utf8");
@@ -4455,6 +4478,203 @@ const jsonError = (res, status, code, message, details = null) =>
     error: { code, message, details },
   });
 
+const customBuildBankIdSessions = new Map();
+const customBuildBankIdVerifications = new Map();
+
+const parseJsonResponseSafe = async (response) => {
+  const raw = await response.text();
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return { error: raw };
+  }
+};
+
+const cleanupCustomBuildBankIdState = () => {
+  const now = Date.now();
+  Array.from(customBuildBankIdSessions.entries()).forEach(([sessionId, session]) => {
+    const expiresAt = new Date(session?.expiresAt || 0).getTime();
+    if (!Number.isFinite(expiresAt) || expiresAt <= now) {
+      customBuildBankIdSessions.delete(sessionId);
+    }
+  });
+  Array.from(customBuildBankIdVerifications.entries()).forEach(([token, verification]) => {
+    const expiresAt = new Date(verification?.expiresAt || 0).getTime();
+    if (!Number.isFinite(expiresAt) || expiresAt <= now) {
+      customBuildBankIdVerifications.delete(token);
+    }
+  });
+};
+
+const sanitizePersonalNumber = (value) => {
+  const digits = sanitizeText(String(value || ""), 32).replace(/\D/g, "");
+  return digits.length === 10 || digits.length === 12 ? digits : "";
+};
+
+const maskPersonalNumber = (value) => {
+  const digits = sanitizePersonalNumber(value);
+  if (!digits) return "";
+  return `${"•".repeat(Math.max(0, digits.length - 4))}${digits.slice(-4)}`;
+};
+
+const buildBankIdLaunchUrl = (autoStartToken, redirectUrl = "") => {
+  const token = sanitizeText(autoStartToken, 200);
+  if (!token) return null;
+  const redirect = sanitizeText(redirectUrl, 500);
+  return `bankid:///?autostarttoken=${encodeURIComponent(token)}${
+    redirect ? `&redirect=${encodeURIComponent(redirect)}` : ""
+  }`;
+};
+
+const requestBankIdBridge = async (bridgePath, payload) => {
+  if (!BANKID_BRIDGE_BASE_URL) {
+    throw new Error("BANKID_NOT_CONFIGURED");
+  }
+
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  if (BANKID_BRIDGE_API_KEY) {
+    headers.Authorization = `Bearer ${BANKID_BRIDGE_API_KEY}`;
+  }
+
+  const response = await fetch(`${BANKID_BRIDGE_BASE_URL}${bridgePath}`, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload || {}),
+    signal: AbortSignal.timeout(CUSTOM_BUILD_BANKID_REQUEST_TIMEOUT_MS),
+  });
+  const parsed = await parseJsonResponseSafe(response);
+  if (!response.ok) {
+    const message =
+      sanitizeText(parsed?.error?.message || parsed?.error || parsed?.message, 180) ||
+      "BankID-bryggan svarade inte som förväntat.";
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
+  }
+  return parsed?.data || parsed;
+};
+
+const getCustomBuildBankIdSession = (sessionId) => {
+  cleanupCustomBuildBankIdState();
+  const normalizedId = sanitizeText(sessionId, 120);
+  if (!normalizedId) return null;
+  return customBuildBankIdSessions.get(normalizedId) || null;
+};
+
+const readCustomBuildBankIdVerification = (token) => {
+  cleanupCustomBuildBankIdState();
+  const normalizedToken = sanitizeText(token, 120);
+  if (!normalizedToken) return null;
+  return customBuildBankIdVerifications.get(normalizedToken) || null;
+};
+
+const deleteCustomBuildBankIdVerification = (token) => {
+  const normalizedToken = sanitizeText(token, 120);
+  if (!normalizedToken) return false;
+  return customBuildBankIdVerifications.delete(normalizedToken);
+};
+
+const createCustomBuildBankIdSession = async (personalNumber, origin = "") => {
+  const normalizedPersonalNumber = sanitizePersonalNumber(personalNumber);
+  if (!normalizedPersonalNumber) {
+    throw new Error("Ogiltigt personnummer.");
+  }
+
+  const payload = await requestBankIdBridge(BANKID_BRIDGE_START_PATH, {
+    personalNumber: normalizedPersonalNumber,
+  });
+  const orderRef = sanitizeText(payload?.orderRef || payload?.order_ref, 160);
+  if (!orderRef) {
+    throw new Error("BankID-starten returnerade ingen orderreferens.");
+  }
+
+  const autoStartToken = sanitizeText(payload?.autoStartToken || payload?.auto_start_token, 220);
+  const sessionId = crypto.randomUUID();
+  const session = {
+    id: sessionId,
+    orderRef,
+    status: "pending",
+    hintCode: sanitizeText(payload?.hintCode || payload?.hint_code, 120) || "outstandingTransaction",
+    autoStartToken,
+    launchUrl:
+      sanitizeText(payload?.launchUrl || payload?.launch_url, 500) ||
+      buildBankIdLaunchUrl(autoStartToken, origin || FRONTEND_URLS[0] || ""),
+    createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + CUSTOM_BUILD_BANKID_SESSION_TTL_MS).toISOString(),
+    personalNumberMasked: maskPersonalNumber(normalizedPersonalNumber),
+    verificationToken: null,
+    verifiedName: "",
+  };
+  customBuildBankIdSessions.set(sessionId, session);
+  return session;
+};
+
+const collectCustomBuildBankIdSession = async (sessionId) => {
+  const currentSession = getCustomBuildBankIdSession(sessionId);
+  if (!currentSession) {
+    throw new Error("BANKID_SESSION_NOT_FOUND");
+  }
+
+  if (currentSession.status === "complete" && currentSession.verificationToken) {
+    return {
+      session: currentSession,
+      verification: readCustomBuildBankIdVerification(currentSession.verificationToken),
+    };
+  }
+
+  const payload = await requestBankIdBridge(BANKID_BRIDGE_COLLECT_PATH, {
+    orderRef: currentSession.orderRef,
+  });
+  const status = sanitizeText(payload?.status, 40).toLowerCase() || "pending";
+  const hintCode = sanitizeText(payload?.hintCode || payload?.hint_code, 120) || currentSession.hintCode || "";
+
+  if (status === "complete") {
+    const completionData = payload?.completionData || payload?.completion_data || {};
+    const verifiedName = sanitizeText(
+      completionData?.user?.name || completionData?.name || currentSession.verifiedName,
+      120
+    );
+    const personalNumberMasked =
+      maskPersonalNumber(
+        completionData?.user?.personalNumber ||
+          completionData?.user?.personal_number ||
+          currentSession.personalNumberMasked
+      ) || currentSession.personalNumberMasked;
+    const verificationToken = crypto.randomUUID();
+    const verification = {
+      id: verificationToken,
+      provider: "bankid",
+      verifiedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS).toISOString(),
+      verifiedName,
+      personalNumberMasked,
+      orderRef: currentSession.orderRef,
+    };
+    customBuildBankIdVerifications.set(verificationToken, verification);
+    const nextSession = {
+      ...currentSession,
+      status: "complete",
+      hintCode,
+      verificationToken,
+      verifiedName,
+      personalNumberMasked,
+    };
+    customBuildBankIdSessions.set(sessionId, nextSession);
+    return { session: nextSession, verification };
+  }
+
+  const nextSession = {
+    ...currentSession,
+    status: status === "failed" ? "failed" : "pending",
+    hintCode,
+  };
+  customBuildBankIdSessions.set(sessionId, nextSession);
+  return { session: nextSession, verification: null };
+};
+
 const formatCurrency = (value) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
@@ -4496,9 +4716,54 @@ const logAdminAction = async (req, user, action, resourceType, resourceId, metad
 };
 
 const resolveSiteSettingsMode = (value) => (value === "live" ? "live" : "draft");
+const SITE_SETTINGS_HISTORY_LIMIT = 30;
+const SITE_SETTINGS_HISTORY_KEY = "site_settings_history";
+const SITE_SETTINGS_DRAFT_HISTORY_KEY = "site_settings_draft_history";
+const SITE_SETTINGS_ALLOWED_INTERNAL_PREFIXES = [
+  "/",
+  "/products",
+  "/custom-bygg",
+  "/service-reparation",
+  "/kundservice",
+  "/faq",
+  "/about",
+  "/privacy-policy",
+  "/terms-of-service",
+  "/computer/",
+  "/search",
+  "/cart",
+  "/checkout",
+  "/checkout-success",
+  "/account",
+  "/orders",
+  "/reset-password",
+];
+const SITE_SETTINGS_COPY_LIMITS = {
+  "homepage.hero.title": 70,
+  "homepage.hero.subtitle": 90,
+  "homepage.hero.featureTitle": 100,
+  "homepage.hero.secondaryTitle": 110,
+  "homepage.hero.secondaryDescription": 180,
+  "homepage.steps.title": 90,
+  "homepage.steps.description": 140,
+  "homepage.promo.title": 110,
+  "homepage.promo.description": 180,
+  "pages.products.banners.default.title": 100,
+  "pages.products.banners.budget.title": 100,
+  "pages.products.banners.best-selling.title": 100,
+  "pages.products.banners.price-performance.title": 100,
+  "pages.products.banners.toptier.title": 100,
+  "pages.serviceRepair.heroTitle": 100,
+  "pages.serviceRepair.heroDescription": 190,
+  "pages.customerService.heroTitle": 90,
+  "pages.customerService.heroDescription": 180,
+};
 
 const getSiteSettingsStorageKey = (mode = "live") =>
   mode === "draft" ? SITE_SETTINGS_DRAFT_KEY : SITE_SETTINGS_KEY;
+
+const getSiteSettingsHistoryStorageKey = (mode = "live") =>
+  mode === "draft" ? SITE_SETTINGS_DRAFT_HISTORY_KEY : SITE_SETTINGS_HISTORY_KEY;
 
 const readSiteSettingsValue = async (mode = "live") => {
   if (!supabase) {
@@ -4557,6 +4822,206 @@ const writeSiteSettings = async (value, mode = "live") => {
   }
 
   return normalizeSiteSettings(data?.value);
+};
+
+const readSiteSettingsHistory = async (mode = "live") => {
+  if (!supabase) {
+    return [];
+  }
+
+  const { data, error } = await supabase
+    .from("ui_settings")
+    .select("value")
+    .eq("key", getSiteSettingsHistoryStorageKey(mode))
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message || "Failed to read site settings history.");
+  }
+
+  const entries = Array.isArray(data?.value?.entries) ? data.value.entries : [];
+  return entries
+    .map((entry) => ({
+      id: sanitizeText(entry?.id, 80) || crypto.randomUUID(),
+      mode,
+      name: sanitizeText(entry?.name, 120) || "Namnlös version",
+      source: sanitizeText(entry?.source, 40) || "snapshot",
+      created_at: sanitizeText(entry?.created_at, 80) || new Date().toISOString(),
+      actor_id: sanitizeText(entry?.actor_id, 80) || null,
+      settings: normalizeSiteSettings(entry?.settings),
+    }))
+    .slice(0, SITE_SETTINGS_HISTORY_LIMIT);
+};
+
+const writeSiteSettingsHistory = async (entries, mode = "live") => {
+  if (!supabase) {
+    throw new Error("Supabase not configured.");
+  }
+
+  const payload = {
+    key: getSiteSettingsHistoryStorageKey(mode),
+    value: {
+      entries: entries.slice(0, SITE_SETTINGS_HISTORY_LIMIT),
+    },
+    updated_at: new Date(),
+  };
+
+  const { error } = await supabase.from("ui_settings").upsert([payload], { onConflict: "key" });
+  if (error) {
+    throw new Error(error.message || "Failed to update site settings history.");
+  }
+
+  return payload.value.entries;
+};
+
+const createSiteSettingsSnapshot = async ({
+  mode = "draft",
+  settings,
+  name = "",
+  source = "snapshot",
+  user = null,
+}) => {
+  const nextSettings = normalizeSiteSettings(settings);
+  const currentEntries = await readSiteSettingsHistory(mode);
+  const nextEntry = {
+    id: crypto.randomUUID(),
+    mode,
+    name: sanitizeText(name, 120) || `${mode === "draft" ? "Utkast" : "Live"} ${new Date().toLocaleString("sv-SE")}`,
+    source: sanitizeText(source, 40) || "snapshot",
+    created_at: new Date().toISOString(),
+    actor_id: sanitizeText(user?.id, 80) || null,
+    settings: nextSettings,
+  };
+  const nextEntries = [nextEntry, ...currentEntries].slice(0, SITE_SETTINGS_HISTORY_LIMIT);
+  await writeSiteSettingsHistory(nextEntries, mode);
+  return nextEntry;
+};
+
+const collectSiteSettingValues = (value, callback, path = []) => {
+  if (Array.isArray(value)) {
+    value.forEach((entry, index) => collectSiteSettingValues(entry, callback, [...path, String(index)]));
+    return;
+  }
+  if (value && typeof value === "object") {
+    Object.entries(value).forEach(([key, entry]) => collectSiteSettingValues(entry, callback, [...path, key]));
+    return;
+  }
+  callback(path.join("."), value);
+};
+
+const isAllowedSiteLink = (href) => {
+  const value = String(href || "").trim();
+  if (!value) return false;
+  if (value.startsWith("/")) {
+    return SITE_SETTINGS_ALLOWED_INTERNAL_PREFIXES.some((prefix) => value === prefix || value.startsWith(prefix));
+  }
+  return /^(https?:\/\/|mailto:|tel:)/i.test(value);
+};
+
+const assetPathExists = (assetUrl) => {
+  const value = String(assetUrl || "").trim();
+  if (!value) return false;
+  if (!value.startsWith("/")) return true;
+  if (value.startsWith("/storage/")) return true;
+  const relative = value.replace(/^\/+/, "");
+  const candidates = [
+    path.join(__dirname, "public", relative),
+    path.join(__dirname, relative),
+    path.join(__dirname, "dist", relative),
+  ];
+  return candidates.some((candidate) => fsSync.existsSync(candidate));
+};
+
+const validateSiteSettingsPayload = (settings) => {
+  const issues = [];
+  const nextSettings = normalizeSiteSettings(settings);
+  const pushIssue = (severity, pathKey, message, value = null) => {
+    issues.push({
+      severity,
+      path: pathKey,
+      message,
+      value,
+    });
+  };
+
+  collectSiteSettingValues(nextSettings, (pathKey, value) => {
+    if (typeof value !== "string") return;
+    const trimmed = value.trim();
+    if (pathKey.endsWith("Href") || pathKey.endsWith(".href")) {
+      if (!isAllowedSiteLink(trimmed)) {
+        pushIssue("error", pathKey, "Länken är tom, ogiltig eller pekar på en okänd route.", trimmed);
+      }
+      return;
+    }
+    if (pathKey.endsWith("Image") || pathKey.endsWith("logoUrl") || pathKey.endsWith(".image")) {
+      if (!trimmed) {
+        pushIssue("error", pathKey, "Bilden saknas.", trimmed);
+      } else if (!assetPathExists(trimmed)) {
+        pushIssue("warning", pathKey, "Bilden kunde inte verifieras på disk eller storage.", trimmed);
+      }
+      return;
+    }
+    if (pathKey.endsWith("Label") && !trimmed) {
+      pushIssue("error", pathKey, "CTA-texten är tom.", trimmed);
+      return;
+    }
+    const copyLimit = SITE_SETTINGS_COPY_LIMITS[pathKey];
+    if (copyLimit && trimmed.length > copyLimit) {
+      pushIssue("warning", pathKey, `Texten är längre än rekommenderat (${trimmed.length}/${copyLimit}).`, trimmed);
+    }
+  });
+
+  return {
+    ok: !issues.some((issue) => issue.severity === "error"),
+    issues,
+    settings: nextSettings,
+  };
+};
+
+const listKnownSiteImageAssets = async () => {
+  const candidates = new Map();
+  const collect = (value) => {
+    if (!value) return;
+    const normalized = sanitizeImageUrl(String(value)) || String(value).trim();
+    if (!normalized) return;
+    candidates.set(normalized, {
+      url: normalized,
+      source: normalized.startsWith("/storage/") || normalized.includes("/storage/v1/object/public/") ? "upload" : "preset",
+    });
+  };
+
+  const knownSettings = [DEFAULT_SITE_SETTINGS, await readSiteSettingsValue("live"), await readSiteSettingsValue("draft")];
+  knownSettings.forEach((settings) => {
+    collectSiteSettingValues(settings, (pathKey, value) => {
+      if (typeof value !== "string") return;
+      if (pathKey.endsWith("Image") || pathKey.endsWith("logoUrl") || pathKey.endsWith(".image")) {
+        collect(value);
+      }
+      if (pathKey.includes(".images.")) {
+        collect(value);
+      }
+    });
+  });
+
+  if (supabase) {
+    try {
+      const bucketName = await ensureProductImageBucketReady();
+      const { data } = await supabase.storage.from(bucketName).list("site-settings", {
+        limit: 100,
+        sortBy: { column: "created_at", order: "desc" },
+      });
+      (data || []).forEach((item) => {
+        if (!item?.name) return;
+        const objectPath = `site-settings/${item.name}`;
+        const publicUrlData = supabase.storage.from(bucketName).getPublicUrl(objectPath);
+        collect(publicUrlData?.data?.publicUrl || buildStoragePublicUrl(bucketName, objectPath));
+      });
+    } catch (error) {
+      console.warn("Could not list site-settings assets:", error);
+    }
+  }
+
+  return Array.from(candidates.values());
 };
 
 const resetSiteSettings = async (mode = "draft") => writeSiteSettings(DEFAULT_SITE_SETTINGS, mode);
@@ -4651,6 +5116,13 @@ const uploadListingImageSchema = z.object({
   data_base64: z.string().trim().min(16),
   listing_slug: z.string().trim().max(80).optional().nullable(),
   variant: z.enum(["base", "used"]).optional().default("base"),
+});
+
+const uploadSiteImageSchema = z.object({
+  file_name: z.string().trim().max(160).optional().nullable(),
+  mime_type: z.string().trim().max(80),
+  data_base64: z.string().trim().min(16),
+  target: z.string().trim().max(120).optional().nullable(),
 });
 
 const UPLOAD_IMAGE_MIME_TO_EXT = {
@@ -5399,6 +5871,106 @@ app.post("/api/service-request", async (req, res) => {
   }
 });
 
+app.get("/api/custom-build/verification/config", (req, res) => {
+  if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
+    return res.status(403).json({ error: "Origin not allowed" });
+  }
+
+  cleanupCustomBuildBankIdState();
+  return res.json({
+    ok: true,
+    verification: {
+      provider: "bankid",
+      bankid_required: CUSTOM_BUILD_BANKID_REQUIRED,
+      bankid_available: Boolean(BANKID_BRIDGE_BASE_URL),
+      message: BANKID_BRIDGE_BASE_URL
+        ? "BankID-verifiering är tillgänglig för offertförfrågan."
+        : CUSTOM_BUILD_BANKID_REQUIRED
+          ? "BankID-verifiering är aktiverad men inte konfigurerad på servern ännu."
+          : "BankID-verifiering är inte aktiverad på den här miljön.",
+    },
+  });
+});
+
+app.post("/api/custom-build/verification/bankid/start", async (req, res) => {
+  try {
+    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+    if (!BANKID_BRIDGE_BASE_URL) {
+      return jsonError(
+        res,
+        503,
+        "BANKID_NOT_CONFIGURED",
+        CUSTOM_BUILD_BANKID_REQUIRED
+          ? "BankID-verifiering är obligatorisk men inte konfigurerad på servern."
+          : "BankID-verifiering är inte tillgänglig just nu."
+      );
+    }
+
+    const personalNumber = sanitizePersonalNumber(req.body?.personal_number || req.body?.personalNumber);
+    if (!personalNumber) {
+      return jsonError(res, 400, "INVALID_PERSONAL_NUMBER", "Ange ett giltigt personnummer för BankID.");
+    }
+
+    const session = await createCustomBuildBankIdSession(personalNumber, req.headers.origin || FRONTEND_URLS[0] || "");
+    return res.json({
+      ok: true,
+      session_id: session.id,
+      status: session.status,
+      hint_code: session.hintCode,
+      launch_url: session.launchUrl,
+      personal_number_masked: session.personalNumberMasked,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Kunde inte starta BankID-verifieringen.";
+    const status = Number(error?.status) || 502;
+    return jsonError(res, status, "BANKID_START_FAILED", message);
+  }
+});
+
+app.get("/api/custom-build/verification/bankid/status", async (req, res) => {
+  try {
+    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+    if (!BANKID_BRIDGE_BASE_URL) {
+      return jsonError(res, 503, "BANKID_NOT_CONFIGURED", "BankID-verifiering är inte tillgänglig just nu.");
+    }
+
+    const sessionId = sanitizeText(String(req.query?.session_id || ""), 120);
+    if (!sessionId) {
+      return jsonError(res, 400, "INVALID_SESSION_ID", "Saknar session-id för BankID-verifieringen.");
+    }
+
+    const { session, verification } = await collectCustomBuildBankIdSession(sessionId);
+    return res.json({
+      ok: true,
+      session_id: session.id,
+      status: session.status,
+      hint_code: session.hintCode,
+      verification_token: verification?.id || session.verificationToken || null,
+      verified_name: verification?.verifiedName || session.verifiedName || null,
+      personal_number_masked: verification?.personalNumberMasked || session.personalNumberMasked || null,
+      launch_url: session.launchUrl || null,
+    });
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message === "BANKID_SESSION_NOT_FOUND"
+        ? "BankID-sessionen hittades inte eller har gått ut."
+        : error instanceof Error
+          ? error.message
+          : "Kunde inte läsa BankID-status.";
+    const code =
+      error instanceof Error && error.message === "BANKID_SESSION_NOT_FOUND"
+        ? "BANKID_SESSION_NOT_FOUND"
+        : "BANKID_STATUS_FAILED";
+    const status = code === "BANKID_SESSION_NOT_FOUND" ? 404 : Number(error?.status) || 502;
+    return jsonError(res, status, code, message);
+  }
+});
+
 /**
  * POST /api/offer-request
  */
@@ -5418,6 +5990,9 @@ app.post("/api/offer-request", async (req, res) => {
     const notes = sanitizeText(req.body?.notes, 2000);
     const totalPrice = Number(req.body?.totalPrice || 0);
     const shareUrl = sanitizeText(req.body?.shareUrl, 500);
+    const identityVerification = req.body?.identity_verification || null;
+    const verificationProvider = sanitizeText(identityVerification?.provider, 40).toLowerCase();
+    const verificationToken = sanitizeText(identityVerification?.verification_token, 120);
     const components = Array.isArray(req.body?.components) ? req.body.components : [];
     const componentLines = components
       .map((item) => ({
@@ -5435,6 +6010,23 @@ app.post("/api/offer-request", async (req, res) => {
     }
     if (phone && !swedishPhoneRegex.test(phone)) {
       return res.status(400).json({ error: "Invalid phone number" });
+    }
+    if (CUSTOM_BUILD_BANKID_REQUIRED && !BANKID_BRIDGE_BASE_URL) {
+      return res.status(503).json({ error: "BankID verification is not configured" });
+    }
+
+    const verificationRecord =
+      verificationProvider === "bankid" && verificationToken
+        ? readCustomBuildBankIdVerification(verificationToken)
+        : null;
+
+    if (CUSTOM_BUILD_BANKID_REQUIRED) {
+      if (verificationProvider !== "bankid" || !verificationToken) {
+        return res.status(400).json({ error: "BankID verification is required before sending the request" });
+      }
+      if (!verificationRecord) {
+        return res.status(400).json({ error: "BankID verification is missing, invalid or expired" });
+      }
     }
 
     const componentListHtml = componentLines.length
@@ -5454,6 +6046,13 @@ app.post("/api/offer-request", async (req, res) => {
         <p><strong>Telefon:</strong> ${escapeHtml(phone || "-")}</p>
         ${notes ? `<p><strong>Kommentar:</strong><br />${escapeHtml(notes).replace(/\n/g, "<br />")}</p>` : ""}
         <p><strong>Total:</strong> ${formatCurrency(totalPrice)}</p>
+        ${
+          verificationRecord
+            ? `<p><strong>Verifiering:</strong> BankID (${escapeHtml(
+                verificationRecord.verifiedName || "Verifierad kund"
+              )}${verificationRecord.personalNumberMasked ? `, ${escapeHtml(verificationRecord.personalNumberMasked)}` : ""})</p>`
+            : ""
+        }
         <p><strong>Valda komponenter:</strong></p>
         ${componentListHtml}
         ${shareUrl ? `<p><strong>Länk:</strong> <a href="${escapeHtml(shareUrl)}">${escapeHtml(shareUrl)}</a></p>` : ""}
@@ -5466,6 +6065,9 @@ app.post("/api/offer-request", async (req, res) => {
       html,
       replyTo: email,
     });
+    if (verificationRecord?.id) {
+      deleteCustomBuildBankIdVerification(verificationRecord.id);
+    }
 
     return res.json({ ok: true });
   } catch (error) {
@@ -5895,6 +6497,76 @@ app.post("/api/admin/v2/uploads/product-image", async (req, res) => {
   } catch (error) {
     console.error("Admin listing image upload error:", error);
     return jsonError(res, 500, "IMAGE_UPLOAD_FAILED", "Kunde inte ladda upp bild.");
+  }
+});
+
+app.post("/api/admin/v2/uploads/site-image", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const parsed = uploadSiteImageSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      const details = formatZodValidationError(parsed.error);
+      return jsonError(res, 400, "VALIDATION_FAILED", "Ogiltig payload för bilduppladdning.", details);
+    }
+
+    const mimeType = sanitizeText(parsed.data.mime_type, 80).toLowerCase();
+    const extension = UPLOAD_IMAGE_MIME_TO_EXT[mimeType];
+    if (!extension) {
+      return jsonError(res, 400, "UNSUPPORTED_IMAGE_TYPE", "Endast JPG, PNG, WEBP och AVIF stöds.");
+    }
+
+    const base64 = String(parsed.data.data_base64 || "").trim();
+    const cleanedBase64 = base64.includes(",") ? base64.split(",").pop() || "" : base64;
+    const binary = Buffer.from(cleanedBase64, "base64");
+    if (!binary.length || binary.length > MAX_UPLOAD_IMAGE_BYTES) {
+      return jsonError(res, 400, "IMAGE_TOO_LARGE", "Bilden är tom eller för stor.");
+    }
+
+    const bucketName = await ensureProductImageBucketReady();
+    const targetSlug = slugifyValue(parsed.data.target || "site-image") || "site-image";
+    const objectPath = `site-settings/${targetSlug}-${Date.now()}.${extension}`;
+    let { error: uploadError } = await supabase.storage.from(bucketName).upload(objectPath, binary, {
+      contentType: mimeType,
+      upsert: false,
+    });
+
+    if (uploadError && /bucket/i.test(String(uploadError.message || ""))) {
+      resolvedProductImageBucket = null;
+      const retryBucketName = await ensureProductImageBucketReady();
+      ({ error: uploadError } = await supabase.storage.from(retryBucketName).upload(objectPath, binary, {
+        contentType: mimeType,
+        upsert: false,
+      }));
+      if (!uploadError) {
+        resolvedProductImageBucket = retryBucketName;
+      }
+    }
+
+    if (uploadError) {
+      return jsonError(res, 500, "IMAGE_UPLOAD_FAILED", uploadError.message || "Kunde inte ladda upp bilden.");
+    }
+
+    const activeBucketName = resolvedProductImageBucket || bucketName;
+    const publicUrlData = supabase.storage.from(activeBucketName).getPublicUrl(objectPath);
+    const url = sanitizeImageUrl(publicUrlData?.data?.publicUrl) || buildStoragePublicUrl(activeBucketName, objectPath);
+
+    return res.status(201).json({
+      ok: true,
+      data: {
+        url,
+        bucket: activeBucketName,
+        path: objectPath,
+      },
+    });
+  } catch (error) {
+    console.error("Admin site image upload error:", error);
+    return jsonError(res, 500, "IMAGE_UPLOAD_FAILED", "Kunde inte ladda upp site-bild.");
   }
 });
 
@@ -6571,6 +7243,88 @@ app.get("/api/admin/v2/site-settings", async (req, res) => {
   }
 });
 
+app.get("/api/admin/v2/site-settings/history", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    const mode = resolveSiteSettingsMode(req.query?.mode);
+    const entries = await readSiteSettingsHistory(mode);
+    return res.json({ ok: true, mode, entries });
+  } catch (error) {
+    console.error("Admin site settings history error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_HISTORY_FAILED", "Kunde inte hämta versionshistorik.");
+  }
+});
+
+app.get("/api/admin/v2/site-settings/assets", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    const assets = await listKnownSiteImageAssets();
+    return res.json({ ok: true, assets });
+  } catch (error) {
+    console.error("Admin site settings assets error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_ASSETS_FAILED", "Kunde inte hämta site-bilder.");
+  }
+});
+
+app.post("/api/admin/v2/site-settings/validate", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    const settings =
+      req.body?.settings && typeof req.body.settings === "object"
+        ? req.body.settings
+        : await readSiteSettingsValue(resolveSiteSettingsMode(req.body?.mode || req.query?.mode));
+    const validation = validateSiteSettingsPayload(settings);
+    return res.json({ ok: true, validation });
+  } catch (error) {
+    console.error("Admin site settings validation error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_VALIDATE_FAILED", "Kunde inte validera site settings.");
+  }
+});
+
+app.post("/api/admin/v2/site-settings/snapshot", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+    const mode = resolveSiteSettingsMode(req.body?.mode || req.query?.mode);
+    const name = sanitizeText(req.body?.name, 120);
+    const settings = await readSiteSettingsValue(mode);
+    const entry = await createSiteSettingsSnapshot({
+      mode,
+      settings,
+      name,
+      source: "manual_snapshot",
+      user,
+    });
+    await logAdminAction(req, user, "site_settings_snapshot_v2", "ui_settings", getSiteSettingsHistoryStorageKey(mode), {
+      role,
+      mode,
+      snapshot_id: entry.id,
+      snapshot_name: entry.name,
+    });
+    return res.json({ ok: true, mode, entry });
+  } catch (error) {
+    console.error("Admin site settings snapshot error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_SNAPSHOT_FAILED", "Kunde inte skapa snapshot.");
+  }
+});
+
 app.put("/api/admin/v2/site-settings", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
@@ -6582,11 +7336,20 @@ app.put("/api/admin/v2/site-settings", async (req, res) => {
     if (!requireServiceRoleKey(res)) return;
 
     const mode = resolveSiteSettingsMode(req.body?.mode || req.query?.mode);
+    const snapshotName = sanitizeText(req.body?.snapshot_name, 120);
     const nextSettings = await writeSiteSettings(req.body?.settings, mode);
+    const snapshot = await createSiteSettingsSnapshot({
+      mode,
+      settings: nextSettings,
+      name: snapshotName || "",
+      source: "save",
+      user,
+    });
     await logAdminAction(req, user, "site_settings_update_v2", "ui_settings", getSiteSettingsStorageKey(mode), {
       role,
       mode,
       version: nextSettings.version,
+      snapshot_id: snapshot.id,
     });
     return res.json({ ok: true, mode, settings: nextSettings });
   } catch (error) {
@@ -6608,7 +7371,34 @@ app.post("/api/admin/v2/site-settings/publish", async (req, res) => {
     const { user, role } = access;
     if (!requireServiceRoleKey(res)) return;
 
+    const draft = await readSiteSettingsValue("draft");
+    const validation = validateSiteSettingsPayload(draft);
+    if (!validation.ok) {
+      return jsonError(
+        res,
+        400,
+        "SITE_SETTINGS_VALIDATION_FAILED",
+        "Draften innehåller blockerande fel och kan inte publiceras.",
+        validation.issues
+      );
+    }
+
+    const previousLive = await readSiteSettingsValue("live");
+    await createSiteSettingsSnapshot({
+      mode: "live",
+      settings: previousLive,
+      name: "Live innan publicering",
+      source: "pre_publish",
+      user,
+    });
     const settings = await publishDraftSiteSettings();
+    await createSiteSettingsSnapshot({
+      mode: "live",
+      settings: settings.live,
+      name: "Publicerad liveversion",
+      source: "publish",
+      user,
+    });
     await logAdminAction(req, user, "site_settings_publish_v2", "ui_settings", SITE_SETTINGS_KEY, {
       role,
       version: settings.live.version,
@@ -6632,6 +7422,13 @@ app.post("/api/admin/v2/site-settings/reset", async (req, res) => {
 
     const mode = resolveSiteSettingsMode(req.body?.mode || req.query?.mode);
     const settings = await resetSiteSettings(mode);
+    await createSiteSettingsSnapshot({
+      mode,
+      settings,
+      name: "Återställd till standard",
+      source: "reset",
+      user,
+    });
     await logAdminAction(req, user, "site_settings_reset_v2", "ui_settings", getSiteSettingsStorageKey(mode), {
       role,
       mode,
@@ -6658,6 +7455,13 @@ app.post("/api/admin/v2/site-settings/clone-live-to-draft", async (req, res) => 
     if (!requireServiceRoleKey(res)) return;
 
     const settings = await cloneLiveSettingsToDraft();
+    await createSiteSettingsSnapshot({
+      mode: "draft",
+      settings: settings.draft,
+      name: "Live kopierad till utkast",
+      source: "clone_live",
+      user,
+    });
     await logAdminAction(req, user, "site_settings_clone_live_to_draft_v2", "ui_settings", SITE_SETTINGS_DRAFT_KEY, {
       role,
       version: settings.draft.version,
@@ -6666,6 +7470,47 @@ app.post("/api/admin/v2/site-settings/clone-live-to-draft", async (req, res) => 
   } catch (error) {
     console.error("Admin site settings clone error:", error);
     return jsonError(res, 500, "SITE_SETTINGS_CLONE_FAILED", "Kunde inte kopiera live till utkast.");
+  }
+});
+
+app.post("/api/admin/v2/site-settings/rollback", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user, role } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const mode = resolveSiteSettingsMode(req.body?.mode || req.query?.mode);
+    const snapshotId = sanitizeText(req.body?.snapshot_id, 80);
+    if (!snapshotId) {
+      return jsonError(res, 400, "INVALID_SNAPSHOT_ID", "Ogiltigt snapshot-id.");
+    }
+    const entries = await readSiteSettingsHistory(mode);
+    const entry = entries.find((item) => item.id === snapshotId);
+    if (!entry) {
+      return jsonError(res, 404, "SNAPSHOT_NOT_FOUND", "Versionen hittades inte.");
+    }
+    const settings = await writeSiteSettings(entry.settings, mode);
+    await createSiteSettingsSnapshot({
+      mode,
+      settings,
+      name: `Rollback: ${entry.name}`,
+      source: "rollback",
+      user,
+    });
+    await logAdminAction(req, user, "site_settings_rollback_v2", "ui_settings", getSiteSettingsStorageKey(mode), {
+      role,
+      mode,
+      snapshot_id: entry.id,
+      snapshot_name: entry.name,
+    });
+    return res.json({ ok: true, mode, settings, entry });
+  } catch (error) {
+    console.error("Admin site settings rollback error:", error);
+    return jsonError(res, 500, "SITE_SETTINGS_ROLLBACK_FAILED", "Kunde inte återställa versionen.");
   }
 });
 

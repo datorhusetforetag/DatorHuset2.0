@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { SeoHead } from "@/components/SeoHead";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getProductIdByName, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
@@ -787,6 +788,13 @@ export default function ComputerDetails() {
       "@graph": [productSchema, breadcrumbSchema],
     };
   }, [availability.schema, resolvedComputer, detailImageCandidates, displayName, displayPrice, displaySpecs, reviewData]);
+  const seoBaseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.site";
+  const seoImage = (detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE).startsWith("http")
+    ? detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE
+    : new URL(detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE, seoBaseUrl).toString();
+  const seoDescription =
+    (merged.description?.trim() || "").slice(0, 160) ||
+    `${displaySpecs.cpu}, ${displaySpecs.gpu}, ${displaySpecs.ram}, ${displaySpecs.storage} ${displaySpecs.storagetype}`;
 
   const renderStars = (rating: number) => (
     <div className="flex items-center gap-1">
@@ -851,6 +859,13 @@ export default function ComputerDetails() {
   if (!computer && productsLoading) {
     return (
       <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+        <SeoHead
+          title={`${displayName} | DatorHuset`}
+          description={seoDescription}
+          image={seoImage}
+          url={`${seoBaseUrl}/computer/${resolvedComputer.id}`}
+          type="product"
+        />
         <Navbar />
         <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold mb-4">Laddar produkt...</h1>
@@ -881,6 +896,13 @@ export default function ComputerDetails() {
 
   return (
     <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+      <SeoHead
+        title={`${displayName} | DatorHuset`}
+        description={seoDescription}
+        image={seoImage}
+        url={`${seoBaseUrl}/computer/${resolvedComputer.id}`}
+        type="product"
+      />
       <Navbar />
       <script
         type="application/ld+json"
