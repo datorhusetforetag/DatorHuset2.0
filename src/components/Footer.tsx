@@ -41,7 +41,7 @@ export const Footer = () => {
 
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-500">Folj oss</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-500">Följ oss</p>
                 <div className="flex items-center gap-3">
                   {footer.socialLinks.map((item) => (
                     <a
@@ -49,7 +49,7 @@ export const Footer = () => {
                       href={item.href}
                       target="_blank"
                       rel="noreferrer"
-                      aria-label={`DatorHuset pa ${item.label}`}
+                      aria-label={`DatorHuset på ${item.label}`}
                       className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-700 text-gray-200 transition-colors hover:border-[#11667b] hover:text-[#11667b]"
                     >
                       {item.platform === "instagram" ? (

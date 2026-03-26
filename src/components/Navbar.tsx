@@ -106,7 +106,7 @@ export const Navbar = () => {
       >
         {searchState.correctedQuery && (
           <div className="border-b border-gray-200 px-4 py-2 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300">
-            Visar narmaste traffar for <span className="font-semibold">{searchInput}</span>. Menade du{" "}
+            Visar närmaste träffar för <span className="font-semibold">{searchInput}</span>. Menade du{" "}
             <button
               type="button"
               onMouseDown={() => handleSelectSearch(firstProduct?.id || "")}
@@ -122,7 +122,7 @@ export const Navbar = () => {
         {searchState.categories.length > 0 && (
           <div className="border-b border-gray-200 dark:border-gray-700">
             <p className="px-4 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-300">
-              Kategoriforslag
+              Kategoriförslag
             </p>
             <div className="px-2 pb-2">
               {searchState.categories.map((category) => (
@@ -243,7 +243,7 @@ export const Navbar = () => {
                   {showCartPreview && (
                     <div className="absolute right-0 z-50 mt-2 w-72 rounded border border-gray-200 bg-white p-4 text-gray-900 shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
                       {items.length === 0 ? (
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen ar tom.</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen är tom.</p>
                       ) : (
                         <>
                           <div className="space-y-2">
@@ -267,7 +267,7 @@ export const Navbar = () => {
                               onClick={() => navigate("/cart")}
                               className="flex-1 rounded border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
                             >
-                              Ga till kundvagn
+                              Gå till kundvagn
                             </button>
                             <button
                               onClick={() => navigate("/checkout")}
@@ -287,7 +287,7 @@ export const Navbar = () => {
             <div ref={navMenuDesktopRef} className="relative hidden lg:flex lg:order-2">
               <button
                 type="button"
-                aria-label="Oppna meny"
+                aria-label="Öppna meny"
                 onClick={() => setShowNavMenu((prev) => !prev)}
                 className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
               >
@@ -334,7 +334,7 @@ export const Navbar = () => {
               <div className="relative">
                 <button
                   type="button"
-                  aria-label="Oppna meny"
+                  aria-label="Öppna meny"
                   onClick={() => setShowNavMenu((prev) => !prev)}
                   className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
                 >

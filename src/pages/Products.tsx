@@ -146,8 +146,8 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     background: "bg-[#facc15]",
   },
   "price-performance": {
-    eyebrow: "Price-Performance",
-    title: "Price-Performance",
+    eyebrow: "Pris/prestanda",
+    title: "Pris/prestanda",
     description: "Byggen med starkast balans mellan pris och prestanda.",
     images: [pricePerformanceCategoryBanner],
     stickers: [
@@ -156,7 +156,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
         className: "bg-[#11667b] text-white",
       },
     ],
-    primaryLabel: "Se price-performance",
+    primaryLabel: "Se pris/prestanda",
     primaryHref: "/products?category=price-performance&clear_filters=1",
     secondaryLabel: "J\u00e4mf\u00f6r alternativ",
     secondaryHref: "/kundservice",
@@ -697,7 +697,7 @@ export default function Products() {
 
   const categoryLabel = (() => {
     if (activeCategory === "budget") return "Budgetv\u00e4nliga";
-    if (activeCategory === "price-performance") return "Price-Performance";
+    if (activeCategory === "price-performance") return "Pris/prestanda";
     if (activeCategory === "best-selling") return "Mest f\u00f6r pengarna";
     if (activeCategory === "toptier") return "B\u00e4sta prestanda";
     return "";

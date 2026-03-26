@@ -10,7 +10,7 @@ const initialFormState = {
   name: "",
   email: "",
   phone: "",
-  deviceType: "Stationar dator",
+  deviceType: "Stationär dator",
   brandModel: "",
   issueType: "Prestanda / lagg",
   urgency: "Inom 1-2 dagar",
@@ -53,7 +53,7 @@ export default function ServiceRepair() {
 
     if (!trimmedName) {
       setSubmitStatus("error");
-      setSubmitError("Ange ditt namn sa vi kan aterkomma.");
+      setSubmitError("Ange ditt namn så vi kan återkomma.");
       return;
     }
 
@@ -92,14 +92,14 @@ export default function ServiceRepair() {
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        throw new Error(data?.error || "Kunde inte skicka forfragan.");
+        throw new Error(data?.error || "Kunde inte skicka förfrågan.");
       }
 
       setSubmitStatus("sent");
       setFormData(initialFormState);
     } catch (error) {
       setSubmitStatus("error");
-      setSubmitError(error instanceof Error ? error.message : "Kunde inte skicka forfragan.");
+      setSubmitError(error instanceof Error ? error.message : "Kunde inte skicka förfrågan.");
     }
   };
 
@@ -164,7 +164,7 @@ export default function ServiceRepair() {
                       <input
                         id="service-name"
                         type="text"
-                        placeholder="For- och efternamn"
+                        placeholder="För- och efternamn"
                         value={formData.name}
                         onChange={updateField("name")}
                         className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
@@ -206,7 +206,7 @@ export default function ServiceRepair() {
                         onChange={updateField("deviceType")}
                         className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
                       >
-                        <option>Stationar dator</option>
+                        <option>Stationär dator</option>
                         <option>Gamingdator</option>
                         <option>Laptop</option>
                         <option>Komponent / tillbehor</option>
@@ -214,7 +214,7 @@ export default function ServiceRepair() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-sm font-semibold" htmlFor="service-brand">
-                        Marke / modell
+                        Märke / modell
                       </label>
                       <input
                         id="service-brand"
@@ -237,8 +237,8 @@ export default function ServiceRepair() {
                       >
                         <option>Prestanda / lagg</option>
                         <option>Startar inte</option>
-                        <option>Overhettning</option>
-                        <option>Skarm / grafik</option>
+                        <option>Överhettning</option>
+                        <option>Skärm / grafik</option>
                         <option>Uppgradering</option>
                         <option>Annat</option>
                       </select>
@@ -256,7 +256,7 @@ export default function ServiceRepair() {
                         <option>Akut idag</option>
                         <option>Inom 1-2 dagar</option>
                         <option>Denna vecka</option>
-                        <option>Ingen bradska</option>
+                        <option>Ingen brådska</option>
                       </select>
                     </div>
                     <div className="space-y-2">
@@ -266,7 +266,7 @@ export default function ServiceRepair() {
                       <input
                         id="service-serial"
                         type="text"
-                        placeholder="Om du har ett tillgangligt"
+                        placeholder="Om du har ett tillgängligt"
                         value={formData.serialNumber}
                         onChange={updateField("serialNumber")}
                         className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
@@ -280,7 +280,7 @@ export default function ServiceRepair() {
                     </label>
                     <textarea
                       id="service-notes"
-                      placeholder="Beskriv symptom, nar problemet uppstar och vad du redan testat."
+                      placeholder="Beskriv symptom, när problemet uppstår och vad du redan testat."
                       value={formData.notes}
                       onChange={updateField("notes")}
                       className="min-h-[160px] w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
@@ -290,7 +290,7 @@ export default function ServiceRepair() {
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm dark:border-gray-800">
                       <input type="checkbox" checked={formData.needsBackup} onChange={updateCheckbox("needsBackup")} className="h-4 w-4" />
-                      Jag vill diskutera backup / datasakerhet
+                      Jag vill diskutera backup / datasäkerhet
                     </label>
                     <label className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm dark:border-gray-800">
                       <input type="checkbox" checked={formData.wantsQuote} onChange={updateCheckbox("wantsQuote")} className="h-4 w-4" />
@@ -303,20 +303,20 @@ export default function ServiceRepair() {
                   ) : null}
                   {submitStatus === "sent" ? (
                     <div className="rounded-xl border border-emerald-400/30 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
-                      Din serviceforfragan ar skickad. Vi aterkommer sa snart vi kan.
+                      Din serviceförfrågan är skickad. Vi återkommer så snart vi kan.
                     </div>
                   ) : null}
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Genom att skicka formularet godkanner du att vi kontaktar dig om ditt arende.
+                      Genom att skicka formuläret godkänner du att vi kontaktar dig om ditt ärende.
                     </p>
                     <button
                       type="submit"
                       disabled={submitStatus === "sending"}
                       className="inline-flex items-center justify-center rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                      {submitStatus === "sending" ? "Skickar..." : "Skicka serviceforfragan"}
+                      {submitStatus === "sending" ? "Skickar..." : "Skicka serviceförfrågan"}
                     </button>
                   </div>
                 </form>
