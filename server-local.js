@@ -101,29 +101,6 @@ const CUSTOM_BUILD_DISCOVERY_TTL_MS = Math.max(
   60_000,
   Number(process.env.CUSTOM_BUILD_DISCOVERY_TTL_MS || 7 * 24 * 60 * 60 * 1000)
 );
-const BANKID_BRIDGE_BASE_URL = String(process.env.BANKID_BRIDGE_BASE_URL || "")
-  .trim()
-  .replace(/\/+$/, "");
-const BANKID_BRIDGE_API_KEY = String(process.env.BANKID_BRIDGE_API_KEY || "").trim();
-const BANKID_BRIDGE_START_PATH = `/${String(process.env.BANKID_BRIDGE_START_PATH || "api/bankid/start")
-  .trim()
-  .replace(/^\/+/, "")}`;
-const BANKID_BRIDGE_COLLECT_PATH = `/${String(process.env.BANKID_BRIDGE_COLLECT_PATH || "api/bankid/collect")
-  .trim()
-  .replace(/^\/+/, "")}`;
-const CUSTOM_BUILD_BANKID_REQUIRED = String(process.env.CUSTOM_BUILD_BANKID_REQUIRED || "0").trim() === "1";
-const CUSTOM_BUILD_BANKID_REQUEST_TIMEOUT_MS = Math.max(
-  3_000,
-  Number(process.env.CUSTOM_BUILD_BANKID_REQUEST_TIMEOUT_MS || 15_000)
-);
-const CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS = Math.max(
-  60_000,
-  Number(process.env.CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS || 15 * 60 * 1000)
-);
-const CUSTOM_BUILD_BANKID_SESSION_TTL_MS = Math.max(
-  CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS,
-  Number(process.env.CUSTOM_BUILD_BANKID_SESSION_TTL_MS || 20 * 60 * 1000)
-);
 const loadPrisjaktProductUrlMap = () => {
   try {
     const raw = fsSync.readFileSync(PRISJAKT_PRODUCT_MAP_FILE, "utf8");
@@ -4478,203 +4455,6 @@ const jsonError = (res, status, code, message, details = null) =>
     error: { code, message, details },
   });
 
-const customBuildBankIdSessions = new Map();
-const customBuildBankIdVerifications = new Map();
-
-const parseJsonResponseSafe = async (response) => {
-  const raw = await response.text();
-  if (!raw) return {};
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return { error: raw };
-  }
-};
-
-const cleanupCustomBuildBankIdState = () => {
-  const now = Date.now();
-  Array.from(customBuildBankIdSessions.entries()).forEach(([sessionId, session]) => {
-    const expiresAt = new Date(session?.expiresAt || 0).getTime();
-    if (!Number.isFinite(expiresAt) || expiresAt <= now) {
-      customBuildBankIdSessions.delete(sessionId);
-    }
-  });
-  Array.from(customBuildBankIdVerifications.entries()).forEach(([token, verification]) => {
-    const expiresAt = new Date(verification?.expiresAt || 0).getTime();
-    if (!Number.isFinite(expiresAt) || expiresAt <= now) {
-      customBuildBankIdVerifications.delete(token);
-    }
-  });
-};
-
-const sanitizePersonalNumber = (value) => {
-  const digits = sanitizeText(String(value || ""), 32).replace(/\D/g, "");
-  return digits.length === 10 || digits.length === 12 ? digits : "";
-};
-
-const maskPersonalNumber = (value) => {
-  const digits = sanitizePersonalNumber(value);
-  if (!digits) return "";
-  return `${"•".repeat(Math.max(0, digits.length - 4))}${digits.slice(-4)}`;
-};
-
-const buildBankIdLaunchUrl = (autoStartToken, redirectUrl = "") => {
-  const token = sanitizeText(autoStartToken, 200);
-  if (!token) return null;
-  const redirect = sanitizeText(redirectUrl, 500);
-  return `bankid:///?autostarttoken=${encodeURIComponent(token)}${
-    redirect ? `&redirect=${encodeURIComponent(redirect)}` : ""
-  }`;
-};
-
-const requestBankIdBridge = async (bridgePath, payload) => {
-  if (!BANKID_BRIDGE_BASE_URL) {
-    throw new Error("BANKID_NOT_CONFIGURED");
-  }
-
-  const headers = {
-    "Content-Type": "application/json",
-  };
-  if (BANKID_BRIDGE_API_KEY) {
-    headers.Authorization = `Bearer ${BANKID_BRIDGE_API_KEY}`;
-  }
-
-  const response = await fetch(`${BANKID_BRIDGE_BASE_URL}${bridgePath}`, {
-    method: "POST",
-    headers,
-    body: JSON.stringify(payload || {}),
-    signal: AbortSignal.timeout(CUSTOM_BUILD_BANKID_REQUEST_TIMEOUT_MS),
-  });
-  const parsed = await parseJsonResponseSafe(response);
-  if (!response.ok) {
-    const message =
-      sanitizeText(parsed?.error?.message || parsed?.error || parsed?.message, 180) ||
-      "BankID-bryggan svarade inte som förväntat.";
-    const error = new Error(message);
-    error.status = response.status;
-    throw error;
-  }
-  return parsed?.data || parsed;
-};
-
-const getCustomBuildBankIdSession = (sessionId) => {
-  cleanupCustomBuildBankIdState();
-  const normalizedId = sanitizeText(sessionId, 120);
-  if (!normalizedId) return null;
-  return customBuildBankIdSessions.get(normalizedId) || null;
-};
-
-const readCustomBuildBankIdVerification = (token) => {
-  cleanupCustomBuildBankIdState();
-  const normalizedToken = sanitizeText(token, 120);
-  if (!normalizedToken) return null;
-  return customBuildBankIdVerifications.get(normalizedToken) || null;
-};
-
-const deleteCustomBuildBankIdVerification = (token) => {
-  const normalizedToken = sanitizeText(token, 120);
-  if (!normalizedToken) return false;
-  return customBuildBankIdVerifications.delete(normalizedToken);
-};
-
-const createCustomBuildBankIdSession = async (personalNumber, origin = "") => {
-  const normalizedPersonalNumber = sanitizePersonalNumber(personalNumber);
-  if (!normalizedPersonalNumber) {
-    throw new Error("Ogiltigt personnummer.");
-  }
-
-  const payload = await requestBankIdBridge(BANKID_BRIDGE_START_PATH, {
-    personalNumber: normalizedPersonalNumber,
-  });
-  const orderRef = sanitizeText(payload?.orderRef || payload?.order_ref, 160);
-  if (!orderRef) {
-    throw new Error("BankID-starten returnerade ingen orderreferens.");
-  }
-
-  const autoStartToken = sanitizeText(payload?.autoStartToken || payload?.auto_start_token, 220);
-  const sessionId = crypto.randomUUID();
-  const session = {
-    id: sessionId,
-    orderRef,
-    status: "pending",
-    hintCode: sanitizeText(payload?.hintCode || payload?.hint_code, 120) || "outstandingTransaction",
-    autoStartToken,
-    launchUrl:
-      sanitizeText(payload?.launchUrl || payload?.launch_url, 500) ||
-      buildBankIdLaunchUrl(autoStartToken, origin || FRONTEND_URLS[0] || ""),
-    createdAt: new Date().toISOString(),
-    expiresAt: new Date(Date.now() + CUSTOM_BUILD_BANKID_SESSION_TTL_MS).toISOString(),
-    personalNumberMasked: maskPersonalNumber(normalizedPersonalNumber),
-    verificationToken: null,
-    verifiedName: "",
-  };
-  customBuildBankIdSessions.set(sessionId, session);
-  return session;
-};
-
-const collectCustomBuildBankIdSession = async (sessionId) => {
-  const currentSession = getCustomBuildBankIdSession(sessionId);
-  if (!currentSession) {
-    throw new Error("BANKID_SESSION_NOT_FOUND");
-  }
-
-  if (currentSession.status === "complete" && currentSession.verificationToken) {
-    return {
-      session: currentSession,
-      verification: readCustomBuildBankIdVerification(currentSession.verificationToken),
-    };
-  }
-
-  const payload = await requestBankIdBridge(BANKID_BRIDGE_COLLECT_PATH, {
-    orderRef: currentSession.orderRef,
-  });
-  const status = sanitizeText(payload?.status, 40).toLowerCase() || "pending";
-  const hintCode = sanitizeText(payload?.hintCode || payload?.hint_code, 120) || currentSession.hintCode || "";
-
-  if (status === "complete") {
-    const completionData = payload?.completionData || payload?.completion_data || {};
-    const verifiedName = sanitizeText(
-      completionData?.user?.name || completionData?.name || currentSession.verifiedName,
-      120
-    );
-    const personalNumberMasked =
-      maskPersonalNumber(
-        completionData?.user?.personalNumber ||
-          completionData?.user?.personal_number ||
-          currentSession.personalNumberMasked
-      ) || currentSession.personalNumberMasked;
-    const verificationToken = crypto.randomUUID();
-    const verification = {
-      id: verificationToken,
-      provider: "bankid",
-      verifiedAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + CUSTOM_BUILD_BANKID_VERIFICATION_TTL_MS).toISOString(),
-      verifiedName,
-      personalNumberMasked,
-      orderRef: currentSession.orderRef,
-    };
-    customBuildBankIdVerifications.set(verificationToken, verification);
-    const nextSession = {
-      ...currentSession,
-      status: "complete",
-      hintCode,
-      verificationToken,
-      verifiedName,
-      personalNumberMasked,
-    };
-    customBuildBankIdSessions.set(sessionId, nextSession);
-    return { session: nextSession, verification };
-  }
-
-  const nextSession = {
-    ...currentSession,
-    status: status === "failed" ? "failed" : "pending",
-    hintCode,
-  };
-  customBuildBankIdSessions.set(sessionId, nextSession);
-  return { session: nextSession, verification: null };
-};
-
 const formatCurrency = (value) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
@@ -5871,106 +5651,6 @@ app.post("/api/service-request", async (req, res) => {
   }
 });
 
-app.get("/api/custom-build/verification/config", (req, res) => {
-  if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
-    return res.status(403).json({ error: "Origin not allowed" });
-  }
-
-  cleanupCustomBuildBankIdState();
-  return res.json({
-    ok: true,
-    verification: {
-      provider: "bankid",
-      bankid_required: CUSTOM_BUILD_BANKID_REQUIRED,
-      bankid_available: Boolean(BANKID_BRIDGE_BASE_URL),
-      message: BANKID_BRIDGE_BASE_URL
-        ? "BankID-verifiering är tillgänglig för offertförfrågan."
-        : CUSTOM_BUILD_BANKID_REQUIRED
-          ? "BankID-verifiering är aktiverad men inte konfigurerad på servern ännu."
-          : "BankID-verifiering är inte aktiverad på den här miljön.",
-    },
-  });
-});
-
-app.post("/api/custom-build/verification/bankid/start", async (req, res) => {
-  try {
-    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
-      return res.status(403).json({ error: "Origin not allowed" });
-    }
-    if (!BANKID_BRIDGE_BASE_URL) {
-      return jsonError(
-        res,
-        503,
-        "BANKID_NOT_CONFIGURED",
-        CUSTOM_BUILD_BANKID_REQUIRED
-          ? "BankID-verifiering är obligatorisk men inte konfigurerad på servern."
-          : "BankID-verifiering är inte tillgänglig just nu."
-      );
-    }
-
-    const personalNumber = sanitizePersonalNumber(req.body?.personal_number || req.body?.personalNumber);
-    if (!personalNumber) {
-      return jsonError(res, 400, "INVALID_PERSONAL_NUMBER", "Ange ett giltigt personnummer för BankID.");
-    }
-
-    const session = await createCustomBuildBankIdSession(personalNumber, req.headers.origin || FRONTEND_URLS[0] || "");
-    return res.json({
-      ok: true,
-      session_id: session.id,
-      status: session.status,
-      hint_code: session.hintCode,
-      launch_url: session.launchUrl,
-      personal_number_masked: session.personalNumberMasked,
-    });
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Kunde inte starta BankID-verifieringen.";
-    const status = Number(error?.status) || 502;
-    return jsonError(res, status, "BANKID_START_FAILED", message);
-  }
-});
-
-app.get("/api/custom-build/verification/bankid/status", async (req, res) => {
-  try {
-    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
-      return res.status(403).json({ error: "Origin not allowed" });
-    }
-    if (!BANKID_BRIDGE_BASE_URL) {
-      return jsonError(res, 503, "BANKID_NOT_CONFIGURED", "BankID-verifiering är inte tillgänglig just nu.");
-    }
-
-    const sessionId = sanitizeText(String(req.query?.session_id || ""), 120);
-    if (!sessionId) {
-      return jsonError(res, 400, "INVALID_SESSION_ID", "Saknar session-id för BankID-verifieringen.");
-    }
-
-    const { session, verification } = await collectCustomBuildBankIdSession(sessionId);
-    return res.json({
-      ok: true,
-      session_id: session.id,
-      status: session.status,
-      hint_code: session.hintCode,
-      verification_token: verification?.id || session.verificationToken || null,
-      verified_name: verification?.verifiedName || session.verifiedName || null,
-      personal_number_masked: verification?.personalNumberMasked || session.personalNumberMasked || null,
-      launch_url: session.launchUrl || null,
-    });
-  } catch (error) {
-    const message =
-      error instanceof Error && error.message === "BANKID_SESSION_NOT_FOUND"
-        ? "BankID-sessionen hittades inte eller har gått ut."
-        : error instanceof Error
-          ? error.message
-          : "Kunde inte läsa BankID-status.";
-    const code =
-      error instanceof Error && error.message === "BANKID_SESSION_NOT_FOUND"
-        ? "BANKID_SESSION_NOT_FOUND"
-        : "BANKID_STATUS_FAILED";
-    const status = code === "BANKID_SESSION_NOT_FOUND" ? 404 : Number(error?.status) || 502;
-    return jsonError(res, status, code, message);
-  }
-});
-
 /**
  * POST /api/offer-request
  */
@@ -5990,9 +5670,6 @@ app.post("/api/offer-request", async (req, res) => {
     const notes = sanitizeText(req.body?.notes, 2000);
     const totalPrice = Number(req.body?.totalPrice || 0);
     const shareUrl = sanitizeText(req.body?.shareUrl, 500);
-    const identityVerification = req.body?.identity_verification || null;
-    const verificationProvider = sanitizeText(identityVerification?.provider, 40).toLowerCase();
-    const verificationToken = sanitizeText(identityVerification?.verification_token, 120);
     const components = Array.isArray(req.body?.components) ? req.body.components : [];
     const componentLines = components
       .map((item) => ({
@@ -6010,23 +5687,6 @@ app.post("/api/offer-request", async (req, res) => {
     }
     if (phone && !swedishPhoneRegex.test(phone)) {
       return res.status(400).json({ error: "Invalid phone number" });
-    }
-    if (CUSTOM_BUILD_BANKID_REQUIRED && !BANKID_BRIDGE_BASE_URL) {
-      return res.status(503).json({ error: "BankID verification is not configured" });
-    }
-
-    const verificationRecord =
-      verificationProvider === "bankid" && verificationToken
-        ? readCustomBuildBankIdVerification(verificationToken)
-        : null;
-
-    if (CUSTOM_BUILD_BANKID_REQUIRED) {
-      if (verificationProvider !== "bankid" || !verificationToken) {
-        return res.status(400).json({ error: "BankID verification is required before sending the request" });
-      }
-      if (!verificationRecord) {
-        return res.status(400).json({ error: "BankID verification is missing, invalid or expired" });
-      }
     }
 
     const componentListHtml = componentLines.length
@@ -6046,13 +5706,6 @@ app.post("/api/offer-request", async (req, res) => {
         <p><strong>Telefon:</strong> ${escapeHtml(phone || "-")}</p>
         ${notes ? `<p><strong>Kommentar:</strong><br />${escapeHtml(notes).replace(/\n/g, "<br />")}</p>` : ""}
         <p><strong>Total:</strong> ${formatCurrency(totalPrice)}</p>
-        ${
-          verificationRecord
-            ? `<p><strong>Verifiering:</strong> BankID (${escapeHtml(
-                verificationRecord.verifiedName || "Verifierad kund"
-              )}${verificationRecord.personalNumberMasked ? `, ${escapeHtml(verificationRecord.personalNumberMasked)}` : ""})</p>`
-            : ""
-        }
         <p><strong>Valda komponenter:</strong></p>
         ${componentListHtml}
         ${shareUrl ? `<p><strong>Länk:</strong> <a href="${escapeHtml(shareUrl)}">${escapeHtml(shareUrl)}</a></p>` : ""}
@@ -6065,9 +5718,6 @@ app.post("/api/offer-request", async (req, res) => {
       html,
       replyTo: email,
     });
-    if (verificationRecord?.id) {
-      deleteCustomBuildBankIdVerification(verificationRecord.id);
-    }
 
     return res.json({ ok: true });
   } catch (error) {
@@ -9083,13 +8733,280 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-const sendSpaIndex = (res) => {
+let spaIndexTemplateCache = null;
+
+const readSpaIndexTemplate = async () => {
+  if (spaIndexTemplateCache) return spaIndexTemplateCache;
+  spaIndexTemplateCache = await fs.readFile(path.join(distPath, "index.html"), "utf8");
+  return spaIndexTemplateCache;
+};
+
+const escapeHtmlAttribute = (value) =>
+  String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+const replaceHeadTag = (html, pattern, replacement) =>
+  pattern.test(html) ? html.replace(pattern, replacement) : html.replace("</head>", `  ${replacement}\n  </head>`);
+
+const resolveRequestOrigin = (req) => {
+  const forwardedProto = firstText(req.headers["x-forwarded-proto"]) || req.protocol || "https";
+  const forwardedHost = firstText(req.headers["x-forwarded-host"], req.headers.host);
+  if (forwardedHost) {
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+  try {
+    return new URL(FRONTEND_URLS[0] || "https://datorhuset.site").origin;
+  } catch {
+    return "https://datorhuset.site";
+  }
+};
+
+const absolutizeSiteUrl = (value, origin) => {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  try {
+    return new URL(raw.startsWith("/") ? raw : `/${raw}`, origin).toString();
+  } catch {
+    return raw;
+  }
+};
+
+const buildDefaultSpaMeta = (origin, requestUrl) => ({
+  title: "DatorHuset - Bygg Din Drömdator | Gaming PC & Professionella Datorer",
+  description:
+    "Högpresterande stationära datorer för gaming och professionellt bruk. Upptäck vårt sortiment av gaming PC, komponenter och expertservice.",
+  type: "website",
+  url: requestUrl || `${origin}/`,
+  image: `${origin}/og-datorhuset.png`,
+});
+
+const LEGACY_PRODUCT_PREVIEW_IMAGE_MAP = new Map([
+  ["2", "/products/newpc/chieftecvista_new.png"],
+  ["silver-speedster", "/products/newpc/chieftecvista_new.png"],
+  ["3", "/products/newpc/chieftecvisio_new.png"],
+  ["guld-inferno", "/products/newpc/chieftecvisio_new.png"],
+  ["5", "/products/newpc/chieftecvisio_new.png"],
+  ["glimmrande-guldigaspiken", "/products/newpc/chieftecvisio_new.png"],
+  ["7", "/products/newpc/cg530_new.png"],
+  ["platina-sleeper", "/products/newpc/cg530_new.png"],
+  ["9", "/products/newpc/cg530_new.png"],
+  ["platina-frostbyte", "/products/newpc/cg530_new.png"],
+  ["10", "/products/newpc/allblack-main.jpg"],
+  ["all-black-all-out", "/products/newpc/allblack-main.jpg"],
+  ["11", "/products/newpc/allwhite-1.jpg"],
+  ["all-white-all-out", "/products/newpc/allwhite-1.jpg"],
+]);
+
+const normalizePreviewLookupKey = (value) => {
+  if (value === null || value === undefined) return "";
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[\u2012-\u2015\u2212]/g, "-")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+};
+
+const resolveLegacyProductPreviewImage = (...keys) => {
+  for (const key of keys) {
+    const normalized = normalizePreviewLookupKey(key);
+    if (!normalized) continue;
+    const image = LEGACY_PRODUCT_PREVIEW_IMAGE_MAP.get(normalized);
+    if (image) return image;
+  }
+  return null;
+};
+
+const buildProductMetaDescription = (product) => {
+  const explicit = sanitizeText(product?.description, 220);
+  if (explicit) return explicit;
+  const generated = [
+    sanitizeText(product?.cpu, 80),
+    sanitizeText(product?.gpu, 80),
+    sanitizeText(product?.ram, 40),
+    [sanitizeText(product?.storage, 40), sanitizeText(product?.storage_type, 24)].filter(Boolean).join(" "),
+  ]
+    .filter(Boolean)
+    .join(", ");
+  return sanitizeText(generated, 220) || "Gamingdator från DatorHuset.";
+};
+
+const loadProductMetaByRoute = async (req, origin) => {
+  if (!supabase || !req.path.startsWith("/computer/")) return null;
+  const productKey = sanitizeText(decodeURIComponent(req.path.replace(/^\/computer\//, "")), 120);
+  if (!productKey) return null;
+  const selectFields = "id, name, slug, legacy_id, description, image_url, cpu, gpu, ram, storage, storage_type";
+  const isUuidLike = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(productKey);
+
+  let data = null;
+  let error = null;
+
+  if (isUuidLike) {
+    ({ data, error } = await supabase
+      .from("products")
+      .select(selectFields)
+      .eq("id", productKey)
+      .maybeSingle());
+  }
+
+  if (!data && !error) {
+    ({ data, error } = await supabase
+      .from("products")
+      .select(selectFields)
+      .or(`slug.eq.${productKey},legacy_id.eq.${productKey}`)
+      .limit(1)
+      .maybeSingle());
+  }
+
+  if (error || !data) {
+    if (error) {
+      console.warn("Dynamic product meta lookup failed:", error.message || error);
+    }
+    const legacyPreviewImage = resolveLegacyProductPreviewImage(productKey);
+    if (!legacyPreviewImage) return null;
+    return {
+      title: "Dator | DatorHuset",
+      description: "Gamingdator fran DatorHuset.",
+      type: "product",
+      url: `${origin}${req.originalUrl || req.url || req.path}`,
+      image: absolutizeSiteUrl(legacyPreviewImage, origin),
+    };
+  }
+
+  let configuredImagesValue = null;
+  try {
+    const { data: settingsData, error: settingsError } = await supabase
+      .from("ui_settings")
+      .select("value")
+      .eq("key", `product_images:${data.id}`)
+      .maybeSingle();
+    if (settingsError) {
+      console.warn("Dynamic product meta image lookup failed:", settingsError.message || settingsError);
+    } else {
+      configuredImagesValue = settingsData?.value ?? null;
+    }
+  } catch (settingsLookupError) {
+    console.warn("Dynamic product meta image lookup crashed:", settingsLookupError);
+  }
+
+  const imageCandidates = parseProductImagesSetting(configuredImagesValue, sanitizeImageUrl(data.image_url) || "")
+    .concat(resolveLegacyProductPreviewImage(data.legacy_id, data.slug, data.name, productKey) || "")
+    .filter(Boolean);
+  const imageUrl = absolutizeSiteUrl(imageCandidates[0] || "/og-datorhuset.png", origin);
+  return {
+    title: `${sanitizeText(data.name, 140) || "Dator"} | DatorHuset`,
+    description: buildProductMetaDescription(data),
+    type: "product",
+    url: `${origin}${req.originalUrl || req.url || req.path}`,
+    image: imageUrl,
+  };
+};
+
+const resolveSpaMeta = async (req) => {
+  const origin = resolveRequestOrigin(req);
+  const requestUrl = `${origin}${req.originalUrl || req.url || req.path || "/"}`;
+  const defaultMeta = buildDefaultSpaMeta(origin, requestUrl);
+  const routeMeta = await loadProductMetaByRoute(req, origin);
+  if (routeMeta) return routeMeta;
+  if (req.path.startsWith("/custom-bygg")) {
+    return {
+      ...defaultMeta,
+      title: "Custom bygg | DatorHuset",
+      description: "Bygg din dator steg för steg och skicka en offertförfrågan till DatorHuset.",
+      image: absolutizeSiteUrl("/products/newpc/allblack-main.jpg", origin),
+    };
+  }
+  if (req.path.startsWith("/products")) {
+    return {
+      ...defaultMeta,
+      title: "Produkter | DatorHuset",
+      description: "Gamingdatorer, färdiga byggen och utvalda prestandapaket från DatorHuset.",
+    };
+  }
+  return defaultMeta;
+};
+
+const injectSpaMeta = (html, meta) => {
+  const safeTitle = escapeHtmlAttribute(meta.title);
+  const safeDescription = escapeHtmlAttribute(meta.description);
+  const safeUrl = escapeHtmlAttribute(meta.url);
+  const safeImage = escapeHtmlAttribute(meta.image);
+  const safeType = escapeHtmlAttribute(meta.type || "website");
+
+  let nextHtml = html.replace(/<title>[^<]*<\/title>/i, `<title>${safeTitle}</title>`);
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,
+    `<meta name="description" content="${safeDescription}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i,
+    `<meta property="og:title" content="${safeTitle}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i,
+    `<meta property="og:description" content="${safeDescription}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+property="og:type"\s+content="[^"]*"\s*\/?>/i,
+    `<meta property="og:type" content="${safeType}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i,
+    `<meta property="og:url" content="${safeUrl}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/i,
+    `<meta property="og:image" content="${safeImage}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i,
+    `<meta name="twitter:title" content="${safeTitle}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i,
+    `<meta name="twitter:description" content="${safeDescription}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<meta\s+name="twitter:image"\s+content="[^"]*"\s*\/?>/i,
+    `<meta name="twitter:image" content="${safeImage}" />`,
+  );
+  nextHtml = replaceHeadTag(
+    nextHtml,
+    /<link\s+rel="canonical"\s+href="[^"]*"\s*\/?>/i,
+    `<link rel="canonical" href="${safeUrl}" />`,
+  );
+  return nextHtml;
+};
+
+const sendSpaIndex = async (req, res) => {
   res.set({
     "Cache-Control": "no-store, no-cache, must-revalidate",
     Pragma: "no-cache",
     Expires: "0",
   });
-  return res.sendFile(path.join(distPath, "index.html"));
+  try {
+    const template = await readSpaIndexTemplate();
+    const meta = await resolveSpaMeta(req);
+    return res.status(200).send(injectSpaMeta(template, meta));
+  } catch (error) {
+    console.error("SPA meta render failed:", error);
+    return res.sendFile(path.join(distPath, "index.html"));
+  }
 };
 
 // Serve built frontend
@@ -9120,7 +9037,7 @@ app.use((req, res, next) => {
     }
     return res.status(404).end();
   }
-  return sendSpaIndex(res);
+  return sendSpaIndex(req, res);
 });
 
 /**

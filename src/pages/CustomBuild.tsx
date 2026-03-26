@@ -190,14 +190,6 @@ type CatalogCategoryPricesResponse = {
 
 type CustomBuildPriceSource = "live-offer" | "seed" | "fallback" | "search" | "no-store";
 
-type OfferVerificationConfig = {
-  bankidRequired: boolean;
-  bankidAvailable: boolean;
-  message: string;
-};
-
-type BankIdVerificationStatus = "idle" | "starting" | "pending" | "complete" | "failed";
-
 
 type CategoryConfig = {
   key: CategoryKey;
@@ -3634,32 +3626,6 @@ const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
 };
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const normalizeApiBase = (value: string) => value.replace(/\/+$/, "");
-const DEFAULT_OFFER_VERIFICATION_CONFIG: OfferVerificationConfig = {
-  bankidRequired: false,
-  bankidAvailable: false,
-  message: "",
-};
-const normalizePersonalNumber = (value: string) => value.replace(/\D/g, "");
-const isValidPersonalNumber = (value: string) => {
-  const digits = normalizePersonalNumber(value);
-  return digits.length === 10 || digits.length === 12;
-};
-const getBankIdHintMessage = (hintCode: string) => {
-  switch (hintCode) {
-    case "outstandingTransaction":
-      return "Öppna BankID-appen och godkänn verifieringen.";
-    case "noClient":
-      return "BankID hittades inte på enheten. Öppna länken i en enhet med BankID installerat.";
-    case "started":
-      return "BankID har startats. Fortsätt i appen.";
-    case "userCancel":
-      return "Verifieringen avbröts i BankID.";
-    case "expiredTransaction":
-      return "BankID-sessionen gick ut. Starta verifieringen igen.";
-    default:
-      return hintCode ? `BankID-status: ${hintCode}` : "BankID väntar på godkännande.";
-  }
-};
 
 const initialOfferForm = {
   name: "",
@@ -3703,18 +3669,6 @@ export default function CustomBuild() {
   const [offerForm, setOfferForm] = useState(initialOfferForm);
   const [offerStatus, setOfferStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [offerError, setOfferError] = useState("");
-  const [offerVerificationConfig, setOfferVerificationConfig] = useState<OfferVerificationConfig>(
-    DEFAULT_OFFER_VERIFICATION_CONFIG,
-  );
-  const [offerVerificationLoading, setOfferVerificationLoading] = useState(false);
-  const [bankIdPersonalNumber, setBankIdPersonalNumber] = useState("");
-  const [bankIdStatus, setBankIdStatus] = useState<BankIdVerificationStatus>("idle");
-  const [bankIdSessionId, setBankIdSessionId] = useState("");
-  const [bankIdHintCode, setBankIdHintCode] = useState("");
-  const [bankIdLaunchUrl, setBankIdLaunchUrl] = useState("");
-  const [bankIdVerificationToken, setBankIdVerificationToken] = useState("");
-  const [bankIdVerifiedName, setBankIdVerifiedName] = useState("");
-  const bankIdPollingRef = useRef(false);
   const [activeCategory, setActiveCategory] = useState<CategoryKey>("cpu");
   const [activeBrand, setActiveBrand] = useState("Alla");
   const [searchTerm, setSearchTerm] = useState("");
@@ -4687,12 +4641,6 @@ export default function CustomBuild() {
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
   const selectedCount = Object.values(selected).filter(Boolean).length;
   const allComponentsSelected = selectedCount === CATEGORY_LIST.length;
-  const offerRequiresBankId = offerVerificationConfig.bankidRequired;
-  const offerSubmitDisabled =
-    offerStatus === "sending" ||
-    !allComponentsSelected ||
-    (offerRequiresBankId &&
-      (offerVerificationLoading || !offerVerificationConfig.bankidAvailable || !bankIdVerificationToken));
   const activeCategoryIndex = CATEGORY_LIST.findIndex((category) => category.key === activeCategory);
   const nextCategory = activeCategoryIndex >= 0 ? CATEGORY_LIST[activeCategoryIndex + 1] : null;
   const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
@@ -4926,121 +4874,6 @@ export default function CustomBuild() {
     setOfferForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const resetOfferVerification = () => {
-    setBankIdPersonalNumber("");
-    setBankIdStatus("idle");
-    setBankIdSessionId("");
-    setBankIdHintCode("");
-    setBankIdLaunchUrl("");
-    setBankIdVerificationToken("");
-    setBankIdVerifiedName("");
-    bankIdPollingRef.current = false;
-  };
-
-  const loadOfferVerificationConfig = async () => {
-    setOfferVerificationLoading(true);
-    try {
-      const response = await fetch(`${normalizedApiBase}/api/custom-build/verification/config`);
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data?.error?.message || data?.error || "Kunde inte läsa verifieringskraven.");
-      }
-      setOfferVerificationConfig({
-        bankidRequired: Boolean(data?.verification?.bankid_required),
-        bankidAvailable: Boolean(data?.verification?.bankid_available),
-        message: String(data?.verification?.message || ""),
-      });
-    } catch (error) {
-      setOfferVerificationConfig({
-        bankidRequired: false,
-        bankidAvailable: false,
-        message:
-          error instanceof Error ? error.message : "Kunde inte läsa verifieringskraven för offertförfrågan.",
-      });
-    } finally {
-      setOfferVerificationLoading(false);
-    }
-  };
-
-  const pollBankIdStatus = async () => {
-    if (!bankIdSessionId || bankIdPollingRef.current) return;
-    bankIdPollingRef.current = true;
-    try {
-      const response = await fetch(
-        `${normalizedApiBase}/api/custom-build/verification/bankid/status?session_id=${encodeURIComponent(bankIdSessionId)}`,
-      );
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data?.error?.message || data?.error || "Kunde inte läsa BankID-status.");
-      }
-
-      const nextStatus = String(data?.status || "pending") as BankIdVerificationStatus;
-      setBankIdStatus(nextStatus === "complete" ? "complete" : nextStatus === "failed" ? "failed" : "pending");
-      setBankIdHintCode(String(data?.hint_code || ""));
-      setBankIdLaunchUrl(String(data?.launch_url || ""));
-
-      if (nextStatus === "complete") {
-        setBankIdVerificationToken(String(data?.verification_token || ""));
-        setBankIdVerifiedName(String(data?.verified_name || ""));
-      }
-    } catch (error) {
-      setBankIdStatus("failed");
-      setOfferError(error instanceof Error ? error.message : "Kunde inte läsa BankID-status.");
-    } finally {
-      bankIdPollingRef.current = false;
-    }
-  };
-
-  const startBankIdVerification = async () => {
-    if (!offerVerificationConfig.bankidAvailable) {
-      setOfferError("BankID-verifiering är inte tillgänglig just nu.");
-      return;
-    }
-    if (!isValidPersonalNumber(bankIdPersonalNumber)) {
-      setOfferError("Ange ett giltigt personnummer för BankID.");
-      return;
-    }
-
-    setOfferError("");
-    setBankIdStatus("starting");
-    setBankIdVerificationToken("");
-    setBankIdVerifiedName("");
-
-    try {
-      const response = await fetch(`${normalizedApiBase}/api/custom-build/verification/bankid/start`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ personal_number: normalizePersonalNumber(bankIdPersonalNumber) }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(data?.error?.message || data?.error || "Kunde inte starta BankID-verifieringen.");
-      }
-
-      setBankIdSessionId(String(data?.session_id || ""));
-      setBankIdLaunchUrl(String(data?.launch_url || ""));
-      setBankIdHintCode(String(data?.hint_code || ""));
-      setBankIdStatus("pending");
-    } catch (error) {
-      setBankIdStatus("failed");
-      setOfferError(error instanceof Error ? error.message : "Kunde inte starta BankID-verifieringen.");
-    }
-  };
-
-  useEffect(() => {
-    if (!offerOpen) return;
-    void loadOfferVerificationConfig();
-  }, [normalizedApiBase, offerOpen]);
-
-  useEffect(() => {
-    if (!offerOpen || !bankIdSessionId || bankIdStatus !== "pending") return;
-    const intervalId = window.setInterval(() => {
-      void pollBankIdStatus();
-    }, 2500);
-    void pollBankIdStatus();
-    return () => window.clearInterval(intervalId);
-  }, [bankIdSessionId, bankIdStatus, normalizedApiBase, offerOpen]);
-
   const handleOfferSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setOfferError("");
@@ -5065,19 +4898,6 @@ export default function CustomBuild() {
       setOfferStatus("error");
       setOfferError("Ange en giltig e-postadress.");
       return;
-    }
-
-    if (offerVerificationConfig.bankidRequired) {
-      if (!offerVerificationConfig.bankidAvailable) {
-        setOfferStatus("error");
-        setOfferError("BankID-verifiering krävs just nu men är inte tillgänglig. Försök igen senare.");
-        return;
-      }
-      if (!bankIdVerificationToken) {
-        setOfferStatus("error");
-        setOfferError("Verifiera dig med BankID innan du skickar offertförfrågan.");
-        return;
-      }
     }
 
     const components = CATEGORY_LIST.map((category) => {
@@ -5115,12 +4935,6 @@ export default function CustomBuild() {
           totalPrice,
           components,
           shareUrl,
-          identity_verification: bankIdVerificationToken
-            ? {
-                provider: "bankid",
-                verification_token: bankIdVerificationToken,
-              }
-            : undefined,
         }),
       });
 
@@ -5131,7 +4945,6 @@ export default function CustomBuild() {
 
       setOfferStatus("sent");
       setOfferForm(initialOfferForm);
-      resetOfferVerification();
       if (timeoutId) {
         window.clearTimeout(timeoutId);
       }
@@ -5184,7 +4997,6 @@ export default function CustomBuild() {
           if (!open) {
             setOfferStatus("idle");
             setOfferError("");
-            resetOfferVerification();
           }
         }}
       >
@@ -5193,8 +5005,7 @@ export default function CustomBuild() {
             <DialogHeader>
               <DialogTitle>Offertförfrågan</DialogTitle>
               <DialogDescription className="text-gray-600 dark:text-gray-400">
-                Fyll i dina uppgifter så återkommer vi med offert och leveranstid. Om BankID är aktiverat på miljön
-                måste förfrågan verifieras innan den skickas.
+                Fyll i dina uppgifter så återkommer vi med offert och leveranstid.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleOfferSubmit} className="space-y-4">
@@ -5241,93 +5052,6 @@ export default function CustomBuild() {
                   className="min-h-[120px] w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-4 py-2 text-sm"
                 />
               </div>
-              {offerRequiresBankId ? (
-                <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">BankID-verifiering</p>
-                      <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">
-                        {offerVerificationLoading
-                          ? "Läser verifieringskravet..."
-                          : offerVerificationConfig.message || "Verifiera dig innan offertförfrågan skickas."}
-                      </p>
-                    </div>
-                    {bankIdVerificationToken ? (
-                      <span className="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
-                        Verifierad
-                      </span>
-                    ) : null}
-                  </div>
-
-                  {!offerVerificationConfig.bankidAvailable && !offerVerificationLoading ? (
-                    <p className="mt-3 text-sm text-red-600 dark:text-red-300">
-                      BankID krävs för den här förfrågan men är inte tillgängligt på servern ännu.
-                    </p>
-                  ) : null}
-
-                  {offerVerificationConfig.bankidAvailable ? (
-                    <div className="mt-4 space-y-3">
-                      <div className="space-y-2">
-                        <label className="text-sm font-semibold" htmlFor="offer-bankid-personal-number">
-                          Personnummer
-                        </label>
-                        <input
-                          id="offer-bankid-personal-number"
-                          type="text"
-                          inputMode="numeric"
-                          value={bankIdPersonalNumber}
-                          onChange={(event) => setBankIdPersonalNumber(event.target.value)}
-                          placeholder="ÅÅÅÅMMDDXXXX eller ÅÅMMDDXXXX"
-                          className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
-                        />
-                      </div>
-                      <div className="flex flex-wrap gap-3">
-                        <button
-                          type="button"
-                          onClick={() => void startBankIdVerification()}
-                          disabled={bankIdStatus === "starting" || offerVerificationLoading}
-                          className="rounded-lg border border-cyan-500/40 px-4 py-2 text-sm font-semibold text-cyan-700 transition hover:bg-cyan-500/10 disabled:cursor-not-allowed disabled:opacity-60 dark:text-cyan-300"
-                        >
-                          {bankIdStatus === "starting" ? "Startar BankID..." : "Starta BankID"}
-                        </button>
-                        {bankIdLaunchUrl ? (
-                          <a
-                            href={bankIdLaunchUrl}
-                            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-cyan-500 hover:text-cyan-700 dark:border-gray-700 dark:text-gray-100 dark:hover:text-cyan-300"
-                          >
-                            Öppna BankID
-                          </a>
-                        ) : null}
-                        {bankIdSessionId && bankIdStatus === "pending" ? (
-                          <button
-                            type="button"
-                            onClick={() => void pollBankIdStatus()}
-                            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-semibold text-gray-700 transition hover:border-cyan-500 hover:text-cyan-700 dark:border-gray-700 dark:text-gray-100 dark:hover:text-cyan-300"
-                          >
-                            Uppdatera status
-                          </button>
-                        ) : null}
-                      </div>
-                      {bankIdStatus !== "idle" ? (
-                        <div className="rounded-xl border border-gray-200/80 bg-white/70 px-3 py-3 text-sm text-gray-700 dark:border-gray-700 dark:bg-[#101926] dark:text-gray-200">
-                          <p className="font-semibold">
-                            {bankIdStatus === "complete"
-                              ? `Verifierad${bankIdVerifiedName ? ` som ${bankIdVerifiedName}` : ""}.`
-                              : bankIdStatus === "failed"
-                                ? "BankID-verifieringen misslyckades."
-                                : "BankID väntar på godkännande."}
-                          </p>
-                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                            {bankIdStatus === "complete"
-                              ? "Du kan nu skicka offertförfrågan."
-                              : getBankIdHintMessage(bankIdHintCode)}
-                          </p>
-                        </div>
-                      ) : null}
-                    </div>
-                  ) : null}
-                </div>
-              ) : null}
               {!allComponentsSelected ? (
                 <p className="text-sm text-amber-600">
                   Välj en komponent i varje kategori innan du kan skicka offertförfrågan.
@@ -5339,7 +5063,7 @@ export default function CustomBuild() {
               ) : null}
               <button
                 type="submit"
-                disabled={offerSubmitDisabled}
+                disabled={offerStatus === "sending" || !allComponentsSelected}
                 className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {offerStatus === "sending" ? "Skickar..." : "Skicka offertförfrågan"}
