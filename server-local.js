@@ -8823,6 +8823,57 @@ const resolveLegacyProductPreviewImage = (...keys) => {
   return null;
 };
 
+const STATIC_SPA_ROUTE_META = [
+  {
+    match: "/products",
+    title: "Produkter | DatorHuset",
+    description: "Gamingdatorer, färdiga byggen och utvalda prestandapaket från DatorHuset.",
+    image: "/products/newpc/allblack-main.jpg",
+  },
+  {
+    match: "/custom-bygg",
+    title: "Custom bygg | DatorHuset",
+    description: "Bygg din dator steg för steg och skicka en offertförfrågan till DatorHuset.",
+    image: "/products/newpc/allblack-main.jpg",
+  },
+  {
+    match: "/service-reparation",
+    title: `${DEFAULT_SITE_SETTINGS.pages.serviceRepair.heroTitle} | DatorHuset`,
+    description: DEFAULT_SITE_SETTINGS.pages.serviceRepair.heroDescription,
+    image: "/products/newpc/chieftecvisio_new.png",
+  },
+  {
+    match: "/kundservice",
+    title: `${DEFAULT_SITE_SETTINGS.pages.customerService.heroTitle} | DatorHuset`,
+    description: DEFAULT_SITE_SETTINGS.pages.customerService.heroDescription,
+    image: DEFAULT_SITE_SETTINGS.pages.customerService.heroImage || "/Datorhuset.png",
+  },
+  {
+    match: "/faq",
+    title: "Vanliga frågor och svar | DatorHuset",
+    description: "Svar på vanliga frågor om beställning, leverans, service, garanti och support hos DatorHuset.",
+    image: "/products/newpc/chieftecvista_new.png",
+  },
+  {
+    match: "/about",
+    title: "Om oss | DatorHuset",
+    description: "Läs mer om DatorHuset, vår bakgrund, våra värderingar och hur vi bygger datorer med tydlig service.",
+    image: "/products/newpc/allwhite-1.jpg",
+  },
+  {
+    match: "/privacy-policy",
+    title: "Integritetspolicy | DatorHuset",
+    description: "Läs hur DatorHuset behandlar personuppgifter, beställningsdata och kundinformation.",
+    image: "/products/newpc/cg530_new.png",
+  },
+  {
+    match: "/terms-of-service",
+    title: "Allmänna villkor | DatorHuset",
+    description: "Läs DatorHusets villkor för köp, leverans, service, reklamation och retur.",
+    image: "/products/newpc/chieftecvisio_new2.png",
+  },
+];
+
 const buildProductMetaDescription = (product) => {
   const explicit = sanitizeText(product?.description, 220);
   if (explicit) return explicit;
@@ -8914,6 +8965,17 @@ const resolveSpaMeta = async (req) => {
   const defaultMeta = buildDefaultSpaMeta(origin, requestUrl);
   const routeMeta = await loadProductMetaByRoute(req, origin);
   if (routeMeta) return routeMeta;
+  const staticMeta = STATIC_SPA_ROUTE_META.find((entry) =>
+    req.path === entry.match || req.path.startsWith(`${entry.match}/`)
+  );
+  if (staticMeta) {
+    return {
+      ...defaultMeta,
+      title: staticMeta.title,
+      description: staticMeta.description,
+      image: absolutizeSiteUrl(staticMeta.image, origin),
+    };
+  }
   if (req.path.startsWith("/custom-bygg")) {
     return {
       ...defaultMeta,
