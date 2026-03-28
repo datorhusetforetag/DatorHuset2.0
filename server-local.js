@@ -8801,6 +8801,23 @@ const LEGACY_PRODUCT_PREVIEW_IMAGE_MAP = new Map([
   ["all-white-all-out", "/products/newpc/allwhite-1.jpg"],
 ]);
 
+const LEGACY_PRODUCT_PREVIEW_BANNER_MAP = new Map([
+  ["2", "/og/products/silver-speedster.png"],
+  ["silver-speedster", "/og/products/silver-speedster.png"],
+  ["3", "/og/products/guld-inferno.png"],
+  ["guld-inferno", "/og/products/guld-inferno.png"],
+  ["5", "/og/products/glimmrande-guldigaspiken.png"],
+  ["glimmrande-guldigaspiken", "/og/products/glimmrande-guldigaspiken.png"],
+  ["7", "/og/products/platina-sleeper.png"],
+  ["platina-sleeper", "/og/products/platina-sleeper.png"],
+  ["9", "/og/products/platina-frostbyte.png"],
+  ["platina-frostbyte", "/og/products/platina-frostbyte.png"],
+  ["10", "/og/products/all-black-all-out.png"],
+  ["all-black-all-out", "/og/products/all-black-all-out.png"],
+  ["11", "/og/products/all-white-all-out.png"],
+  ["all-white-all-out", "/og/products/all-white-all-out.png"],
+]);
+
 const normalizePreviewLookupKey = (value) => {
   if (value === null || value === undefined) return "";
   return String(value)
@@ -8818,6 +8835,16 @@ const resolveLegacyProductPreviewImage = (...keys) => {
     const normalized = normalizePreviewLookupKey(key);
     if (!normalized) continue;
     const image = LEGACY_PRODUCT_PREVIEW_IMAGE_MAP.get(normalized);
+    if (image) return image;
+  }
+  return null;
+};
+
+const resolveLegacyProductPreviewBanner = (...keys) => {
+  for (const key of keys) {
+    const normalized = normalizePreviewLookupKey(key);
+    if (!normalized) continue;
+    const image = LEGACY_PRODUCT_PREVIEW_BANNER_MAP.get(normalized);
     if (image) return image;
   }
   return null;
@@ -8919,14 +8946,15 @@ const loadProductMetaByRoute = async (req, origin) => {
     if (error) {
       console.warn("Dynamic product meta lookup failed:", error.message || error);
     }
+    const legacyPreviewBanner = resolveLegacyProductPreviewBanner(productKey);
     const legacyPreviewImage = resolveLegacyProductPreviewImage(productKey);
-    if (!legacyPreviewImage) return null;
+    if (!legacyPreviewBanner && !legacyPreviewImage) return null;
     return {
       title: "Dator | DatorHuset",
       description: "Gamingdator fran DatorHuset.",
       type: "product",
       url: `${origin}${req.originalUrl || req.url || req.path}`,
-      image: absolutizeSiteUrl(legacyPreviewImage, origin),
+      image: absolutizeSiteUrl(legacyPreviewBanner || legacyPreviewImage, origin),
     };
   }
 
@@ -8949,7 +8977,8 @@ const loadProductMetaByRoute = async (req, origin) => {
   const imageCandidates = parseProductImagesSetting(configuredImagesValue, sanitizeImageUrl(data.image_url) || "")
     .concat(resolveLegacyProductPreviewImage(data.legacy_id, data.slug, data.name, productKey) || "")
     .filter(Boolean);
-  const imageUrl = absolutizeSiteUrl(imageCandidates[0] || "/og-datorhuset.png", origin);
+  const bannerImage = resolveLegacyProductPreviewBanner(data.legacy_id, data.slug, data.name, productKey);
+  const imageUrl = absolutizeSiteUrl(bannerImage || imageCandidates[0] || "/og-datorhuset.png", origin);
   return {
     title: `${sanitizeText(data.name, 140) || "Dator"} | DatorHuset`,
     description: buildProductMetaDescription(data),
