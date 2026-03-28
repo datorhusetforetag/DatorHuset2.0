@@ -85,6 +85,7 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         if (orientation !== "horizontal" || !api) return;
         const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
         if (Math.abs(dominantDelta) < 8) return;
+        event.stopPropagation();
         event.preventDefault();
         if (dominantDelta > 0) {
           api.scrollNext();

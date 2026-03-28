@@ -72,6 +72,7 @@ export const Hero = ({
     if (!container) return;
     const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
     if (Math.abs(dominantDelta) < 8) return;
+    event.stopPropagation();
     event.preventDefault();
     const cardWidth = 384 + 16;
     container.scrollBy({ left: dominantDelta > 0 ? cardWidth : -cardWidth, behavior: "smooth" });
@@ -147,8 +148,7 @@ export const Hero = ({
                   utm_campaign: "populara_kategorier",
                   utm_content: buildUtmContent(category.name),
                 })}
-                className="rounded-lg border border-gray-200 bg-white p-4 text-center transition-all hover:border-[#11667b] hover:shadow-lg hover:[transform:scale(var(--card-hover-scale))] dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800 sm:p-6"
-                style={{ ["--card-hover-scale" as string]: String(motion.cardHoverScale) }}
+                className="rounded-lg border border-gray-200 bg-white p-4 text-center transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800 sm:p-6"
               >
                 <SiteIcon icon={category.icon} className="mx-auto mb-3 h-8 w-8 text-yellow-500 sm:h-10 sm:w-10" />
                 <p className="line-clamp-2 text-sm font-medium text-gray-900 dark:text-gray-100">{category.name}</p>
@@ -162,18 +162,17 @@ export const Hero = ({
           <div className="relative">
             <div
               ref={carouselRef}
-              onWheel={handleCarouselWheel}
-              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-4 pr-4 no-scrollbar"
+              onWheelCapture={handleCarouselWheel}
+              className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth overscroll-x-contain overscroll-y-none pb-4 pr-4 no-scrollbar"
             >
               {featuredComputers.map((computer, index) => (
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}
-                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border border-gray-200 bg-white transition-all animate-in fade-in slide-in-from-bottom-4 hover:border-[#11667b] hover:shadow-lg hover:[transform:scale(var(--card-hover-scale))] dark:border-gray-700 dark:bg-gray-900 dark:hover:border-[#11667b] sm:w-80 md:w-96"
+                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border border-gray-200 bg-white transition-all animate-in fade-in slide-in-from-bottom-4 hover:border-[#11667b] hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:hover:border-[#11667b] sm:w-80 md:w-96"
                   style={{
                     animationDuration: `${motion.bannerRevealDurationMs}ms`,
                     animationDelay: `${index * motion.heroRevealStaggerMs}ms`,
-                    ["--card-hover-scale" as string]: String(motion.cardHoverScale),
                     ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
                   }}
                 >

@@ -27,7 +27,7 @@ export const ProductCard = ({ name, tier, price, salePrice, image, delay = 0 }: 
 
   return (
     <div 
-      className="group glass-card overflow-hidden hover:border-primary/30 transition-all duration-500 hover:scale-[1.02] hover:shadow-[0_0_40px_hsl(var(--primary)/0.15)] animate-fade-in"
+      className="group glass-card overflow-hidden hover:border-primary/30 transition-all duration-500 hover:shadow-[0_0_40px_hsl(var(--primary)/0.15)] animate-fade-in"
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Image container */}
@@ -35,7 +35,7 @@ export const ProductCard = ({ name, tier, price, salePrice, image, delay = 0 }: 
         <img
           src={image}
           alt={name}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+          className="w-full h-full object-cover"
           loading="lazy"
           decoding="async"
         />
