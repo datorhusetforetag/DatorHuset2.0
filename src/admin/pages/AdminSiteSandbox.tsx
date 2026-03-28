@@ -56,7 +56,7 @@ type PreviewPageDefinition = {
 
 type PreviewViewport = "desktop" | "tablet" | "mobile";
 type PreviewFrameState = "loading" | "ready" | "error";
-type TopMenuKey = "file" | "draft" | "json";
+type TopMenuKey = "file" | "draft" | "page" | "validation" | "history" | "json";
 type PreviewTheme = "light" | "dark";
 type PreviewAuth = "logged-out" | "logged-in";
 
@@ -444,7 +444,6 @@ export default function AdminSiteSandbox() {
   const [assetLibrary, setAssetLibrary] = useState<SiteSettingsAsset[]>([]);
   const [uploadingSiteImageTarget, setUploadingSiteImageTarget] = useState("");
   const [collapsedPanels, setCollapsedPanels] = useState({
-    pageSelector: false,
     sections: false,
   });
 
@@ -968,6 +967,9 @@ export default function AdminSiteSandbox() {
           {[
             { key: "file" as const, label: "File" },
             { key: "draft" as const, label: "Draft" },
+            { key: "page" as const, label: "Page selector" },
+            { key: "validation" as const, label: "Publish validation" },
+            { key: "history" as const, label: "Version history" },
             { key: "json" as const, label: "Advanced JSON" },
           ].map((menu) => (
             <button
@@ -975,13 +977,14 @@ export default function AdminSiteSandbox() {
               type="button"
               onClick={() => toggleTopMenu(menu.key)}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-sm transition",
+                "inline-flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm transition",
                 activeTopMenu === menu.key
                   ? "bg-slate-800 text-white"
                   : "text-slate-300 hover:bg-slate-900/70 hover:text-white",
               )}
             >
               {menu.label}
+              <ChevronDown className={cn("h-4 w-4 transition", activeTopMenu === menu.key ? "rotate-180" : "")} />
             </button>
           ))}
           <div className="ml-auto flex flex-wrap items-center gap-2 text-xs text-slate-400">
@@ -1046,6 +1049,166 @@ export default function AdminSiteSandbox() {
               </Button>
               <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
                 {draftIsDirty ? "Lokala osparade andringar." : "Lokalt synkad med sparad draft."}
+              </div>
+            </div>
+          </div>
+        ) : null}
+
+        {activeTopMenu === "page" ? (
+          <div className="space-y-4 border-t border-slate-800 bg-slate-950/45 p-4">
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-sm text-slate-300">
+              Valj vilken riktig route previewn och buildern ska styra.
+            </div>
+            <div className="grid gap-3 xl:grid-cols-2">
+              {PREVIEW_PAGES.map((page) => (
+                <button
+                  key={page.key}
+                  type="button"
+                  onClick={() => {
+                    setSelectedPageKey(page.key);
+                    setActiveTopMenu(null);
+                  }}
+                  className={cn(
+                    "w-full rounded-2xl border px-4 py-4 text-left transition",
+                    selectedPage.key === page.key
+                      ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+                      : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div>
+                      <p className="text-sm font-semibold">{page.label}</p>
+                      <p className="mt-1 text-xs leading-5 text-slate-400">{page.description}</p>
+                    </div>
+                    <LayoutTemplate className="mt-0.5 h-4 w-4 flex-shrink-0" />
+                  </div>
+                  <p className="mt-3 font-mono text-[11px] text-slate-500">{page.path}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : null}
+
+        {activeTopMenu === "validation" ? (
+          <div className="space-y-4 border-t border-slate-800 bg-slate-950/45 p-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <Button variant="secondary" onClick={() => void validateDraftSettings()} disabled={validating}>
+                <FileWarning className="h-4 w-4" />
+                {validating ? "Validerar..." : "Kor validering"}
+              </Button>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
+                {validation
+                  ? validation.ok
+                    ? "Inga blockerande fel hittades."
+                    : `${validation.issues.filter((issue) => issue.severity === "error").length} blockerande fel`
+                  : "Ingen validering kord annu."}
+              </div>
+            </div>
+            <div className="space-y-3">
+              {(validation?.issues || []).length === 0 ? (
+                <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-4 text-sm text-emerald-200">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Klart att publicera. Utkastet klarade de aktuella lank-, bild- och copy-kontrollerna.
+                  </div>
+                </div>
+              ) : (
+                <div className="grid gap-3 xl:grid-cols-2">
+                  {(validation?.issues || []).map((issue, index) => (
+                    <div
+                      key={`${issue.path}-${index}`}
+                      className={cn(
+                        "rounded-2xl border px-4 py-4 text-sm",
+                        issue.severity === "error"
+                          ? "border-rose-500/30 bg-rose-500/10 text-rose-100"
+                          : "border-amber-500/30 bg-amber-500/10 text-amber-100",
+                      )}
+                    >
+                      <p className="font-semibold">{issue.path}</p>
+                      <p className="mt-1">{issue.message}</p>
+                      {issue.value ? <p className="mt-2 break-all font-mono text-xs opacity-80">{issue.value}</p> : null}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : null}
+
+        {activeTopMenu === "history" ? (
+          <div className="space-y-4 border-t border-slate-800 bg-slate-950/45 p-4">
+            <div className="flex flex-wrap gap-3">
+              <Input
+                value={snapshotName}
+                onChange={(event) => setSnapshotName(event.target.value)}
+                placeholder="Namnge snapshot, till exempel Sommarkampanj v2"
+                className="border-slate-700 bg-slate-900 text-slate-50 xl:max-w-md"
+              />
+              <Button variant="secondary" onClick={() => void createNamedSnapshot()} disabled={!canMutate}>
+                <History className="h-4 w-4" />
+                Spara snapshot
+              </Button>
+              <Button variant="outline" onClick={() => void loadHistory()} disabled={historyLoading}>
+                <RefreshCcw className="h-4 w-4" />
+                {historyLoading ? "Laddar..." : "Ladda historik"}
+              </Button>
+              <Button variant="outline" onClick={() => void rollbackSnapshot()} disabled={!canMutate || !selectedSnapshotId}>
+                <RotateCcw className="h-4 w-4" />
+                Rollback
+              </Button>
+            </div>
+            <div className="grid gap-4 xl:grid-cols-[0.92fr,1.08fr]">
+              <div className="space-y-3">
+                {historyEntries.map((entry) => (
+                  <button
+                    key={entry.id}
+                    type="button"
+                    onClick={() => setSelectedSnapshotId(entry.id)}
+                    className={cn(
+                      "w-full rounded-2xl border px-4 py-4 text-left transition",
+                      selectedSnapshotId === entry.id
+                        ? "border-cyan-400/50 bg-cyan-400/12 text-white"
+                        : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
+                    )}
+                  >
+                    <p className="text-sm font-semibold">{entry.name}</p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{entry.source}</p>
+                    <p className="mt-2 text-xs text-slate-500">{new Date(entry.created_at).toLocaleString("sv-SE")}</p>
+                  </button>
+                ))}
+                {historyEntries.length === 0 ? (
+                  <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4 text-sm text-slate-400">
+                    Ingen historik annu. Spara ett namngivet snapshot eller ett utkast for att bygga versionsspar.
+                  </div>
+                ) : null}
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                {selectedSnapshot ? (
+                  <>
+                    <p className="text-sm font-semibold text-white">{selectedSnapshot.name}</p>
+                    <p className="mt-1 text-xs text-slate-400">
+                      {selectedSnapshot.source} - {new Date(selectedSnapshot.created_at).toLocaleString("sv-SE")}
+                    </p>
+                    <div className="mt-4 space-y-2">
+                      <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Andrade paths mot nuvarande utkast</p>
+                      {snapshotDiffLines.length > 0 ? (
+                        <div className="max-h-72 space-y-2 overflow-y-auto pr-2">
+                          {snapshotDiffLines.map((line) => (
+                            <div key={line} className="rounded-xl border border-slate-800 bg-slate-900/50 px-3 py-2 font-mono text-xs text-slate-200">
+                              {line}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-3 py-3 text-sm text-emerald-200">
+                          Den valda versionen matchar nuvarande utkast.
+                        </div>
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  <div className="text-sm text-slate-400">Valj en version for att se diff och kora rollback.</div>
+                )}
               </div>
             </div>
           </div>
@@ -1153,7 +1316,7 @@ export default function AdminSiteSandbox() {
         </div>
       </BuilderPanel>
 
-      <div className="grid gap-6 xl:grid-cols-2">
+      {false ? <div className="grid gap-6 xl:grid-cols-2">
         <BuilderPanel title="Publish validation" eyebrow="Safe checks before live">
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="secondary" onClick={() => void validateDraftSettings()} disabled={validating}>
@@ -1247,7 +1410,7 @@ export default function AdminSiteSandbox() {
                 <>
                   <p className="text-sm font-semibold text-white">{selectedSnapshot.name}</p>
                   <p className="mt-1 text-xs text-slate-400">
-                    {selectedSnapshot.source} • {new Date(selectedSnapshot.created_at).toLocaleString("sv-SE")}
+                    {selectedSnapshot.source} - {new Date(selectedSnapshot.created_at).toLocaleString("sv-SE")}
                   </p>
                   <div className="mt-4 space-y-2">
                     <p className="text-xs uppercase tracking-[0.18em] text-slate-500">Ändrade paths mot nuvarande utkast</p>
@@ -1272,7 +1435,34 @@ export default function AdminSiteSandbox() {
             </div>
           </div>
         </BuilderPanel>
-      </div>
+      </div> : null}
+
+      <CollapsibleBuilderPanel
+        title="Section navigator"
+        eyebrow="Page-scoped controls"
+        description="Jump between the editable areas for the active page."
+        collapsed={collapsedPanels.sections}
+        onToggle={() => togglePanel("sections")}
+      >
+        <div className="grid gap-3 xl:grid-cols-2">
+          {sectionLinks.map((section) => (
+            <button
+              key={section.id}
+              type="button"
+              onClick={() => setActiveSectionId(section.id)}
+              className={cn(
+                "w-full rounded-2xl border px-4 py-4 text-left transition",
+                isActiveSection(section.id)
+                  ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
+                  : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:text-white",
+              )}
+            >
+              <p className="text-sm font-semibold">{section.label}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-400">{section.description}</p>
+            </button>
+          ))}
+        </div>
+      </CollapsibleBuilderPanel>
 
       <BuilderPanel
         title={`${selectedPage.label} builder`}
@@ -1289,23 +1479,6 @@ export default function AdminSiteSandbox() {
             <div className="rounded-full border border-slate-700 bg-slate-950/80 px-3 py-1 text-xs uppercase tracking-[0.2em] text-slate-300">
               {selectedPage.path}
             </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {sectionLinks.map((section) => (
-              <button
-                key={section.id}
-                type="button"
-                onClick={() => setActiveSectionId(section.id)}
-                className={cn(
-                  "rounded-full border px-3 py-2 text-xs font-semibold transition",
-                  isActiveSection(section.id)
-                    ? "border-cyan-400/50 bg-cyan-400/12 text-white"
-                    : "border-slate-700 bg-slate-950/70 text-slate-300 hover:border-slate-500 hover:text-white",
-                )}
-              >
-                {section.label}
-              </button>
-            ))}
           </div>
         </div>
                 {isActiveSection("global-chrome") ? (
@@ -2071,7 +2244,7 @@ export default function AdminSiteSandbox() {
                     title="Product banner"
                     description="Buildern styr bara bannern for den kategori som visas i previewn."
                   >
-                    <div className="grid gap-4 md:grid-cols-2">
+                    {false ? <div className="grid gap-4 md:grid-cols-2">
                       <FieldBlock label="Eyebrow">
                         <Input
                           value={selectedBanner.eyebrow}
@@ -2092,8 +2265,178 @@ export default function AdminSiteSandbox() {
                           className="border-slate-700 bg-slate-900 text-slate-50"
                         />
                       </FieldBlock>
+                    </div> : null}
+                    <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-semibold text-white">{selectedPage.label}</p>
+                          <p className="mt-1 text-xs text-slate-400">
+                            Justera copy, CTA och bilder for bannern som visas i previewn.
+                          </p>
+                        </div>
+                        <div className="rounded-full border border-slate-700 bg-slate-950/80 px-3 py-1 text-xs uppercase tracking-[0.18em] text-slate-300">
+                          {selectedPage.path}
+                        </div>
+                      </div>
                     </div>
 
+                    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr),minmax(0,0.95fr)]">
+                      <div className="space-y-4">
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <FieldBlock label="Eyebrow">
+                            <Input
+                              value={selectedBanner.eyebrow}
+                              onChange={(event) => updateDraft((draft) => {
+                                if (!selectedPage.bannerKey) return;
+                                draft.pages.products.banners[selectedPage.bannerKey].eyebrow = event.target.value;
+                              })}
+                              className="border-slate-700 bg-slate-900 text-slate-50"
+                            />
+                          </FieldBlock>
+                          <FieldBlock label="Title">
+                            <Input
+                              value={selectedBanner.title}
+                              onChange={(event) => updateDraft((draft) => {
+                                if (!selectedPage.bannerKey) return;
+                                draft.pages.products.banners[selectedPage.bannerKey].title = event.target.value;
+                              })}
+                              className="border-slate-700 bg-slate-900 text-slate-50"
+                            />
+                          </FieldBlock>
+                        </div>
+
+                        <FieldBlock label="Description">
+                          <Textarea
+                            value={selectedBanner.description}
+                            onChange={(event) => updateDraft((draft) => {
+                              if (!selectedPage.bannerKey) return;
+                              draft.pages.products.banners[selectedPage.bannerKey].description = event.target.value;
+                            })}
+                            rows={4}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+
+                        <FieldBlock label="Stickers" hint="one per line">
+                          <Textarea
+                            value={formatSimpleLines(selectedBanner.stickers)}
+                            onChange={(event) => updateDraft((draft) => {
+                              if (!selectedPage.bannerKey) return;
+                              draft.pages.products.banners[selectedPage.bannerKey].stickers = parseSimpleLines(event.target.value);
+                            })}
+                            rows={4}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+
+                      <div className="space-y-4 rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
+                        <div>
+                          <p className="text-sm font-semibold text-white">CTA och routing</p>
+                          <p className="mt-1 text-xs text-slate-400">Hall ihop text och lankar for budgetflodet sa buildern blir lattare att skanna.</p>
+                        </div>
+                        <div className="grid gap-4 md:grid-cols-2">
+                          <FieldBlock label="Primary CTA label">
+                            <Input
+                              value={selectedBanner.primaryLabel}
+                              onChange={(event) => updateDraft((draft) => {
+                                if (!selectedPage.bannerKey) return;
+                                draft.pages.products.banners[selectedPage.bannerKey].primaryLabel = event.target.value;
+                              })}
+                              className="border-slate-700 bg-slate-900 text-slate-50"
+                            />
+                          </FieldBlock>
+                          <FieldBlock label="Primary CTA href">
+                            <Input
+                              value={selectedBanner.primaryHref}
+                              onChange={(event) => updateDraft((draft) => {
+                                if (!selectedPage.bannerKey) return;
+                                draft.pages.products.banners[selectedPage.bannerKey].primaryHref = event.target.value;
+                              })}
+                              className="border-slate-700 bg-slate-900 text-slate-50"
+                            />
+                          </FieldBlock>
+                          <FieldBlock label="Secondary CTA label">
+                            <Input
+                              value={selectedBanner.secondaryLabel}
+                              onChange={(event) => updateDraft((draft) => {
+                                if (!selectedPage.bannerKey) return;
+                                draft.pages.products.banners[selectedPage.bannerKey].secondaryLabel = event.target.value;
+                              })}
+                              className="border-slate-700 bg-slate-900 text-slate-50"
+                            />
+                          </FieldBlock>
+                          <FieldBlock label="Secondary CTA href">
+                            <Input
+                              value={selectedBanner.secondaryHref}
+                              onChange={(event) => updateDraft((draft) => {
+                                if (!selectedPage.bannerKey) return;
+                                draft.pages.products.banners[selectedPage.bannerKey].secondaryHref = event.target.value;
+                              })}
+                              className="border-slate-700 bg-slate-900 text-slate-50"
+                            />
+                          </FieldBlock>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                          <p className="text-sm font-medium text-slate-200">Banner images</p>
+                          <p className="mt-1 text-xs text-slate-500">Ladda upp eller valj varje bannerbild direkt i buildern.</p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={() => updateDraft((draft) => {
+                            if (!selectedPage.bannerKey) return;
+                            draft.pages.products.banners[selectedPage.bannerKey].images.push("");
+                          })}
+                        >
+                          <ImagePlus className="h-4 w-4" />
+                          Lagg till bild
+                        </Button>
+                      </div>
+                      {selectedBanner.images.length > 0 ? (
+                        <div className="grid gap-4 xl:grid-cols-2">
+                          {selectedBanner.images.map((image, index) => (
+                            <div key={`${selectedPage.bannerKey}-image-${index}`} className="space-y-3 rounded-2xl border border-slate-800 bg-slate-950/40 p-3">
+                              <div className="flex items-center justify-between gap-3">
+                                <p className="text-sm font-semibold text-white">Bild {index + 1}</p>
+                                <button
+                                  type="button"
+                                  onClick={() => updateDraft((draft) => {
+                                    if (!selectedPage.bannerKey) return;
+                                    draft.pages.products.banners[selectedPage.bannerKey].images.splice(index, 1);
+                                  })}
+                                  className="text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+                                >
+                                  Ta bort
+                                </button>
+                              </div>
+                              <ImageField
+                                label="Bild"
+                                value={image}
+                                assets={assetLibrary}
+                                uploadTarget={`products-banner-${selectedPage.bannerKey}-${index}`}
+                                uploading={uploadingSiteImageTarget === `products-banner-${selectedPage.bannerKey}-${index}`}
+                                onUpload={uploadSiteImage}
+                                onChange={(value) => updateDraft((draft) => {
+                                  if (!selectedPage.bannerKey) return;
+                                  draft.pages.products.banners[selectedPage.bannerKey].images[index] = value;
+                                })}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4 text-sm text-slate-400">
+                          Ingen bannerbild vald annu. Lagg till minst en bild for att ge sidan en tydlig preview- och delningsyta.
+                        </div>
+                      )}
+                    </div>
+
+                    {false ? <>
                     <FieldBlock label="Description">
                       <Textarea
                         value={selectedBanner.description}
@@ -2215,6 +2558,7 @@ export default function AdminSiteSandbox() {
                         />
                       </FieldBlock>
                     </div>
+                    </> : null}
                   </SectionCard>
                   ) : null
                 ) : null}
@@ -2580,66 +2924,6 @@ export default function AdminSiteSandbox() {
                 ) : null}
               </BuilderPanel>
 
-      <div className="grid gap-6 xl:grid-cols-2">
-        <CollapsibleBuilderPanel
-          title="Page selector"
-          eyebrow="Navigation"
-          description="Choose which real route the sandbox preview and builder should target."
-          collapsed={collapsedPanels.pageSelector}
-          onToggle={() => togglePanel("pageSelector")}
-        >
-          <div className="space-y-3">
-            {PREVIEW_PAGES.map((page) => (
-              <button
-                key={page.key}
-                type="button"
-                onClick={() => setSelectedPageKey(page.key)}
-                className={cn(
-                  "w-full rounded-2xl border px-4 py-4 text-left transition",
-                  selectedPage.key === page.key
-                    ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
-                    : "border-slate-800 bg-slate-950/60 text-slate-300 hover:border-slate-700 hover:text-white",
-                )}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-sm font-semibold">{page.label}</p>
-                    <p className="mt-1 text-xs leading-5 text-slate-400">{page.description}</p>
-                  </div>
-                  <LayoutTemplate className="mt-0.5 h-4 w-4 flex-shrink-0" />
-                </div>
-              </button>
-            ))}
-          </div>
-        </CollapsibleBuilderPanel>
-
-        <CollapsibleBuilderPanel
-          title="Section navigator"
-          eyebrow="Page-scoped controls"
-          description="Jump between the editable areas for the active page."
-          collapsed={collapsedPanels.sections}
-          onToggle={() => togglePanel("sections")}
-        >
-          <div className="space-y-3">
-            {sectionLinks.map((section) => (
-              <button
-                key={section.id}
-                type="button"
-                onClick={() => setActiveSectionId(section.id)}
-                className={cn(
-                  "w-full rounded-2xl border px-4 py-4 text-left transition",
-                  isActiveSection(section.id)
-                    ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
-                    : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:text-white",
-                )}
-              >
-                <p className="text-sm font-semibold">{section.label}</p>
-                <p className="mt-1 text-xs leading-5 text-slate-400">{section.description}</p>
-              </button>
-            ))}
-          </div>
-        </CollapsibleBuilderPanel>
-      </div>
     </div>
   );
 }
