@@ -1,6 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
@@ -67,16 +67,26 @@ export const Hero = ({
     container.scrollBy({ left: direction === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
   };
 
-  const handleCarouselWheel = (event: React.WheelEvent<HTMLDivElement>) => {
+  useEffect(() => {
     const container = carouselRef.current;
     if (!container) return;
-    const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
-    if (Math.abs(dominantDelta) < 8) return;
-    event.stopPropagation();
-    event.preventDefault();
-    const cardWidth = 384 + 16;
-    container.scrollBy({ left: dominantDelta > 0 ? cardWidth : -cardWidth, behavior: "smooth" });
-  };
+
+    const handleWheel = (event: WheelEvent) => {
+      if (container.scrollWidth <= container.clientWidth) return;
+      const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
+      if (Math.abs(dominantDelta) < 8) return;
+      event.stopPropagation();
+      event.preventDefault();
+      const cardWidth = 384 + 16;
+      container.scrollBy({ left: dominantDelta > 0 ? cardWidth : -cardWidth, behavior: "smooth" });
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: false });
+
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+    };
+  }, []);
 
   return (
     <section className="bg-white transition-colors dark:bg-background">
@@ -162,7 +172,6 @@ export const Hero = ({
           <div className="relative">
             <div
               ref={carouselRef}
-              onWheelCapture={handleCarouselWheel}
               className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth overscroll-x-contain overscroll-y-none pb-4 pr-4 no-scrollbar"
             >
               {featuredComputers.map((computer, index) => (

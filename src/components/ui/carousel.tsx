@@ -40,6 +40,7 @@ function useCarousel() {
 
 const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CarouselProps>(
   ({ orientation = "horizontal", opts, setApi, plugins, className, children, ...props }, ref) => {
+    const rootRef = React.useRef<HTMLDivElement | null>(null);
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
@@ -81,8 +82,12 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     );
 
     const handleWheel = React.useCallback(
-      (event: React.WheelEvent<HTMLDivElement>) => {
+      (event: WheelEvent) => {
         if (orientation !== "horizontal" || !api) return;
+        const rootNode = rootRef.current;
+        if (!rootNode) return;
+        const canScroll = api.canScrollPrev() || api.canScrollNext();
+        if (!canScroll && rootNode.scrollWidth <= rootNode.clientWidth) return;
         const dominantDelta = Math.abs(event.deltaY) >= Math.abs(event.deltaX) ? event.deltaY : event.deltaX;
         if (Math.abs(dominantDelta) < 8) return;
         event.stopPropagation();
@@ -118,6 +123,19 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
       };
     }, [api, onSelect]);
 
+    React.useEffect(() => {
+      const node = rootRef.current;
+      if (!node || orientation !== "horizontal") {
+        return;
+      }
+
+      node.addEventListener("wheel", handleWheel, { passive: false });
+
+      return () => {
+        node.removeEventListener("wheel", handleWheel);
+      };
+    }, [handleWheel, orientation]);
+
     return (
       <CarouselContext.Provider
         value={{
@@ -132,9 +150,15 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
         }}
       >
         <div
-          ref={ref}
+          ref={(node) => {
+            rootRef.current = node;
+            if (typeof ref === "function") {
+              ref(node);
+            } else if (ref) {
+              ref.current = node;
+            }
+          }}
           onKeyDownCapture={handleKeyDown}
-          onWheelCapture={handleWheel}
           className={cn("relative", className)}
           role="region"
           aria-roledescription="carousel"
