@@ -43,6 +43,7 @@ export default function Faq() {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >
@@ -50,7 +51,7 @@ export default function Faq() {
       <Navbar />
 
       <main className="flex-1">
-        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+        <section data-sandbox-id="faq-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
             <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
@@ -76,7 +77,7 @@ export default function Faq() {
           </div>
         </section>
 
-        <section className="container mx-auto max-w-4xl space-y-6 px-4 py-12">
+        <section data-sandbox-id="faq-items" className="container mx-auto max-w-4xl space-y-6 px-4 py-12">
           {pageSettings.items.map((item) => (
             <article
               key={item.question}

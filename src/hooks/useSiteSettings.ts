@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { createContext, createElement, useContext, useEffect, useMemo, useState } from "react";
 import { DEFAULT_SITE_SETTINGS, normalizeSiteSettings, type SiteSettings } from "@/lib/siteSettings";
 
 type SiteSettingsMode = "live" | "draft";
@@ -9,6 +9,7 @@ const cachedByMode: Record<SiteSettingsMode, SiteSettings> = {
 };
 
 const inflightByMode: Partial<Record<SiteSettingsMode, Promise<SiteSettings>>> = {};
+const SiteSettingsOverrideContext = createContext<{ settings: SiteSettings; mode: SiteSettingsMode } | null>(null);
 
 const getRequestedMode = (explicitMode?: SiteSettingsMode): SiteSettingsMode => {
   if (explicitMode) return explicitMode;
@@ -39,7 +40,25 @@ const loadSiteSettings = async (mode: SiteSettingsMode): Promise<SiteSettings> =
   return inflightByMode[mode] as Promise<SiteSettings>;
 };
 
+export const SiteSettingsProvider = ({
+  settings,
+  mode = "draft",
+  children,
+}: {
+  settings: SiteSettings;
+  mode?: SiteSettingsMode;
+  children: React.ReactNode;
+}) => {
+  const value = useMemo(() => ({ settings, mode }), [mode, settings]);
+  return createElement(SiteSettingsOverrideContext.Provider, { value }, children);
+};
+
 export const useSiteSettings = (explicitMode?: SiteSettingsMode) => {
+  const override = useContext(SiteSettingsOverrideContext);
+  if (override) {
+    return { settings: override.settings, loading: false, mode: override.mode };
+  }
+
   const mode = getRequestedMode(explicitMode);
   const [settings, setSettings] = useState<SiteSettings>(cachedByMode[mode]);
   const [loading, setLoading] = useState(true);

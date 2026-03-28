@@ -10,6 +10,7 @@ import { buildProductLookup } from "@/lib/productOverrides";
 import { buildSearchCatalog, buildSearchState } from "@/lib/siteSearch";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
+import { getPreviewPathOverride } from "@/lib/previewMode";
 
 export const Navbar = () => {
   const [searchInput, setSearchInput] = useState("");
@@ -36,7 +37,9 @@ export const Navbar = () => {
       }),
     [productLookup],
   );
-  const showBackButton = location.pathname !== "/";
+  const previewPathOverride = getPreviewPathOverride();
+  const effectivePathname = previewPathOverride ? previewPathOverride.split("?")[0] || "/" : location.pathname;
+  const shouldShowBackButton = effectivePathname !== "/";
   const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
   const navigation = settings.site.navigation;
   const theme = settings.site.theme;
@@ -194,7 +197,7 @@ export const Navbar = () => {
     ));
 
   return (
-    <nav className="sticky left-0 right-0 top-0 z-50 overflow-visible backdrop-blur supports-[backdrop-filter]:backdrop-blur">
+    <nav data-sandbox-id="global-chrome" className="sticky left-0 right-0 top-0 z-50 overflow-visible backdrop-blur supports-[backdrop-filter]:backdrop-blur">
       <div
         className="border-b shadow-sm"
         style={{
@@ -207,7 +210,7 @@ export const Navbar = () => {
           <div className="flex w-full flex-col gap-3 py-3 lg:h-20 lg:flex-row lg:items-center lg:gap-4">
             <div className="flex items-center justify-between gap-3 lg:contents">
               <div className="flex min-w-0 items-center gap-2 lg:order-1">
-                {showBackButton && (
+                {shouldShowBackButton && (
                   <button
                     type="button"
                     onClick={() => navigate(-1)}

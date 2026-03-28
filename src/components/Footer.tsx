@@ -19,6 +19,7 @@ export const Footer = () => {
 
   return (
     <footer
+      data-sandbox-id="global-footer"
       className="border-t"
       style={{
         borderColor: theme.cardBorderColorDark,

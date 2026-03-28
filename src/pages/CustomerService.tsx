@@ -56,13 +56,14 @@ export default function CustomerService() {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >
       <SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />
       <Navbar />
       <main className="flex-1">
-        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+        <section data-sandbox-id="customer-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
             <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
@@ -98,33 +99,35 @@ export default function CustomerService() {
         </section>
 
         <section className="container mx-auto max-w-5xl space-y-6 px-4 py-12">
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
-              <h2 className="text-lg font-semibold">{pageSettings.contactTitle}</h2>
-              <p>
-                E-post:{" "}
-                <a className="text-blue-600 dark:text-blue-400" href={`mailto:${pageSettings.contactEmail}`}>
-                  {pageSettings.contactEmail}
-                </a>
-              </p>
+          <div data-sandbox-id="customer-contact" className="space-y-4">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+                <h2 className="text-lg font-semibold">{pageSettings.contactTitle}</h2>
+                <p>
+                  E-post:{" "}
+                  <a className="text-blue-600 dark:text-blue-400" href={`mailto:${pageSettings.contactEmail}`}>
+                    {pageSettings.contactEmail}
+                  </a>
+                </p>
+              </div>
+              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+                <h2 className="text-lg font-semibold">{pageSettings.hoursTitle}</h2>
+                {pageSettings.hoursLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
+              </div>
             </div>
-            <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
-              <h2 className="text-lg font-semibold">{pageSettings.hoursTitle}</h2>
-              {pageSettings.hoursLines.map((line) => (
+
+            <div className="space-y-3 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+              <h2 className="text-lg font-semibold">{pageSettings.supportTitle}</h2>
+              {pageSettings.supportLines.map((line) => (
                 <p key={line}>{line}</p>
               ))}
             </div>
           </div>
 
-          <div className="space-y-3 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
-            <h2 className="text-lg font-semibold">{pageSettings.supportTitle}</h2>
-            {pageSettings.supportLines.map((line) => (
-              <p key={line}>{line}</p>
-            ))}
-          </div>
-
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+            <div data-sandbox-id="customer-issues" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.commonIssuesTitle}</h2>
               <ul className="space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
                 {pageSettings.commonIssues.map((issue) => (
@@ -134,7 +137,7 @@ export default function CustomerService() {
               <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.commonIssuesNote}</p>
             </div>
 
-            <div className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+            <div data-sandbox-id="customer-workflow" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.workflowTitle}</h2>
               <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
                 {pageSettings.workflowSteps.map((step) => (

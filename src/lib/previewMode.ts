@@ -17,3 +17,8 @@ export const getPreviewAuthOverride = (): PreviewAuthOverride => {
   const value = readParam("preview-auth");
   return value === "logged-out" || value === "logged-in" ? value : null;
 };
+
+export const getPreviewPathOverride = (): string | null => {
+  const value = readParam("preview-path");
+  return value || null;
+};

@@ -13,6 +13,7 @@ const Index = () => {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen bg-[var(--site-page-bg)] text-[var(--site-text-primary)] transition-colors dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >

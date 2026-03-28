@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {
   CheckCircle2,
   ChevronDown,
@@ -63,6 +63,17 @@ type PreviewFrameState = "loading" | "ready" | "error";
 type TopMenuKey = "file" | "draft" | "page" | "validation" | "history" | "json";
 type PreviewTheme = "light" | "dark";
 type PreviewAuth = "logged-out" | "logged-in";
+type InspectorMode = "content" | "design" | "json";
+
+type PreviewOverlayRect = {
+  id: string;
+  label: string;
+  description: string;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
 
 type SiteSettingsHistoryEntry = {
   id: string;
@@ -205,12 +216,10 @@ const formatSimpleLines = (items: string[]) => items.join("\n");
 const toDelimitedLines = (rows: string[][]) => rows.map((row) => row.join("|")).join("\n");
 
 const buildPreviewOrigin = () => {
+  if (typeof window === "undefined") return "";
+  if (import.meta.env.VITE_APP_MODE === "admin") return window.location.origin;
   const configured = String(import.meta.env.VITE_PUBLIC_SITE_URL || "").trim().replace(/\/+$/, "");
   if (configured) return configured;
-  if (typeof window === "undefined") return "";
-  if (window.location.hostname.startsWith("admin.")) {
-    return window.location.origin.replace("//admin.", "//");
-  }
   return window.location.origin;
 };
 
@@ -221,11 +230,16 @@ const buildPreviewUrl = (
   previewTheme: PreviewTheme,
   previewAuth: PreviewAuth,
 ) => {
-  const url = new URL(page.path, origin || window.location.origin);
-  url.searchParams.set("site-settings-mode", "draft");
+  const url = new URL("/site-sandbox/preview", origin || window.location.origin);
+  url.searchParams.set("page", page.key);
   url.searchParams.set("preview_ts", String(previewNonce));
   url.searchParams.set("preview-theme", previewTheme);
   url.searchParams.set("preview-auth", previewAuth);
+  url.searchParams.set("preview-path", page.path);
+  const publicPath = new URL(page.path, "https://datorhuset.site");
+  publicPath.searchParams.forEach((value, key) => {
+    url.searchParams.set(key, value);
+  });
   return url.toString();
 };
 
@@ -407,40 +421,6 @@ const BuilderPanel = ({
   </div>
 );
 
-const CollapsibleBuilderPanel = ({
-  title,
-  eyebrow,
-  description,
-  collapsed,
-  onToggle,
-  children,
-}: {
-  title: string;
-  eyebrow: string;
-  description?: string;
-  collapsed: boolean;
-  onToggle: () => void;
-  children: ReactNode;
-}) => (
-  <div className="overflow-hidden rounded-[28px] border border-slate-800 bg-[linear-gradient(180deg,rgba(15,23,42,0.96),rgba(2,6,23,0.96))]">
-    <button
-      type="button"
-      onClick={onToggle}
-      className="flex w-full items-start justify-between gap-4 px-5 py-4 text-left transition hover:bg-slate-900/30"
-    >
-      <div>
-        <p className="text-[11px] uppercase tracking-[0.28em] text-cyan-300/80">{eyebrow}</p>
-        <h3 className="mt-2 text-base font-semibold text-white">{title}</h3>
-        {description ? <p className="mt-1 text-sm text-slate-400">{description}</p> : null}
-      </div>
-      <span className="mt-1 rounded-xl border border-slate-700 bg-slate-950/70 p-2 text-slate-300">
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-      </span>
-    </button>
-    {!collapsed ? <div className="space-y-4 border-t border-slate-800 px-5 py-5">{children}</div> : null}
-  </div>
-);
-
 export default function AdminSiteSandbox() {
   const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =
     useOutletContext<AdminAccessContext>();
@@ -475,9 +455,11 @@ export default function AdminSiteSandbox() {
   const [validating, setValidating] = useState(false);
   const [assetLibrary, setAssetLibrary] = useState<SiteSettingsAsset[]>([]);
   const [uploadingSiteImageTarget, setUploadingSiteImageTarget] = useState("");
-  const [collapsedPanels, setCollapsedPanels] = useState({
-    sections: false,
-  });
+  const previewIframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [previewOverlays, setPreviewOverlays] = useState<PreviewOverlayRect[]>([]);
+  const [inspectorMode, setInspectorMode] = useState<InspectorMode>("content");
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; sectionId: string } | null>(null);
+  const [inspectorOpen, setInspectorOpen] = useState(true);
 
   const selectedPage = useMemo(
     () => PREVIEW_PAGES.find((page) => page.key === selectedPageKey) || PREVIEW_PAGES[0],
@@ -591,15 +573,12 @@ export default function AdminSiteSandbox() {
 
   const touchPreview = () => {
     setPreviewFrameState("loading");
+    setPreviewOverlays([]);
     setPreviewNonce(Date.now());
   };
 
   const toggleTopMenu = (menu: TopMenuKey) => {
     setActiveTopMenu((current) => (current === menu ? null : menu));
-  };
-
-  const togglePanel = (panel: keyof typeof collapsedPanels) => {
-    setCollapsedPanels((current) => ({ ...current, [panel]: !current[panel] }));
   };
 
   const updateDraft = (recipe: (draft: SiteSettings) => void) => {
@@ -1001,10 +980,87 @@ export default function AdminSiteSandbox() {
         ? "h-[1040px]"
         : "h-[820px]";
   const isActiveSection = (sectionId: string) => activeSectionId === sectionId;
+  const selectedSectionMeta = activeSection || sectionLinks[0] || null;
+
+  const syncPreviewOverlays = () => {
+    const iframe = previewIframeRef.current;
+    const doc = iframe?.contentDocument;
+    if (!iframe || !doc) {
+      setPreviewOverlays([]);
+      return;
+    }
+
+    const nextOverlays = sectionLinks
+      .map((section) => {
+        const element = doc.querySelector<HTMLElement>(`[data-sandbox-id="${section.id}"]`);
+        if (!element) return null;
+        const rect = element.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0) return null;
+        return {
+          id: section.id,
+          label: section.label,
+          description: section.description,
+          top: rect.top,
+          left: rect.left,
+          width: rect.width,
+          height: rect.height,
+        } satisfies PreviewOverlayRect;
+      })
+      .filter((value): value is PreviewOverlayRect => Boolean(value));
+
+    setPreviewOverlays(nextOverlays);
+  };
+
+  const pushPreviewSettings = () => {
+    const iframeWindow = previewIframeRef.current?.contentWindow;
+    if (!iframeWindow) return;
+    try {
+      window.sessionStorage.setItem("datorhuset_site_sandbox_preview_settings", JSON.stringify(draftSettings));
+    } catch {}
+    iframeWindow.postMessage({ type: "site-sandbox:update-preview-settings", settings: draftSettings }, window.location.origin);
+    window.setTimeout(syncPreviewOverlays, 50);
+  };
+
+  const selectSectionFromCanvas = (sectionId: string, nextMode: InspectorMode = "content") => {
+    setActiveSectionId(sectionId);
+    setInspectorMode(nextMode);
+    setInspectorOpen(true);
+    setActiveTopMenu(null);
+    setContextMenu(null);
+  };
 
   useEffect(() => {
     setPreviewFrameState("loading");
   }, [previewUrl, previewViewport]);
+
+  useEffect(() => {
+    pushPreviewSettings();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [draftSettings]);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data?.type === "site-sandbox:preview-ready" || event.data?.type === "site-sandbox:preview-rendered") {
+        pushPreviewSettings();
+        window.setTimeout(syncPreviewOverlays, 80);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    window.addEventListener("resize", syncPreviewOverlays);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      window.removeEventListener("resize", syncPreviewOverlays);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionLinks]);
+
+  useEffect(() => {
+    const closeMenu = () => setContextMenu(null);
+    window.addEventListener("click", closeMenu);
+    return () => window.removeEventListener("click", closeMenu);
+  }, []);
 
   if (loading) {
     return (
@@ -1026,7 +1082,7 @@ export default function AdminSiteSandbox() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10 xl:pr-[30rem] 2xl:pr-[32rem]">
       <div className="overflow-hidden rounded-[28px] border border-slate-800 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_20px_80px_rgba(2,6,23,0.35)]">
         <div className="flex flex-wrap items-center gap-1 border-b border-slate-800 px-3 py-2">
           {[
@@ -1312,9 +1368,57 @@ export default function AdminSiteSandbox() {
         </div>
       ) : null}
 
-      <BuilderPanel title="Live preview" eyebrow="Exact public render">
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr),auto] xl:items-start">
-          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
+      {contextMenu ? (
+        <div
+          className="fixed z-[120] w-56 rounded-2xl border border-slate-700 bg-slate-950/95 p-2 shadow-[0_24px_80px_rgba(2,6,23,0.55)]"
+          style={{ top: contextMenu.y + 8, left: contextMenu.x + 8 }}
+        >
+          <p className="px-3 py-2 text-[11px] uppercase tracking-[0.24em] text-slate-500">
+            {sectionLinks.find((section) => section.id === contextMenu.sectionId)?.label || "Section"}
+          </p>
+          <button
+            type="button"
+            onClick={() => selectSectionFromCanvas(contextMenu.sectionId, "content")}
+            className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800"
+          >
+            Edit content
+          </button>
+          <button
+            type="button"
+            onClick={() => selectSectionFromCanvas(contextMenu.sectionId, "design")}
+            className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800"
+          >
+            Edit design
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setActiveSectionId(contextMenu.sectionId);
+              setInspectorMode("json");
+              setInspectorOpen(true);
+              setActiveTopMenu("json");
+              setContextMenu(null);
+            }}
+            className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800"
+          >
+            Open JSON
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              touchPreview();
+              setContextMenu(null);
+            }}
+            className="w-full rounded-xl px-3 py-2 text-left text-sm text-slate-200 transition hover:bg-slate-800"
+          >
+            Reload preview
+          </button>
+        </div>
+      ) : null}
+
+      <BuilderPanel title="Visual Canvas" eyebrow="Preview is the builder">
+        <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
             <div className="flex items-center gap-3">
               <div className="rounded-xl border border-cyan-400/20 bg-cyan-400/10 p-2 text-cyan-200">
                 <Eye className="h-4 w-4" />
@@ -1322,17 +1426,9 @@ export default function AdminSiteSandbox() {
               <div>
                 <p className="text-sm font-semibold text-white">{selectedPage.label}</p>
                 <p className="mt-1 text-xs text-slate-400">{selectedPage.description}</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  {previewFrameState === "loading"
-                    ? "Preview is loading the real draft route."
-                    : previewFrameState === "error"
-                      ? "Iframe render failed. Use the File menu to open the preview in a new tab."
-                      : "Iframe is rendering the real public page with draft data."}
-                </p>
+                <p className="mt-1 text-xs text-slate-500">Hogerklicka pa markerade ytor i previewn for att valja hur du vill redigera dem.</p>
               </div>
             </div>
-          </div>
-          <div className="space-y-3">
             <div className="flex flex-wrap gap-2">
               <button type="button" onClick={() => setPreviewViewport("desktop")} className={previewViewportButtonClass("desktop")}>
                 Desktop
@@ -1343,15 +1439,11 @@ export default function AdminSiteSandbox() {
               <button type="button" onClick={() => setPreviewViewport("mobile")} className={previewViewportButtonClass("mobile")}>
                 Mobile
               </button>
-            </div>
-            <div className="flex flex-wrap gap-2">
               {(["light", "dark"] as PreviewTheme[]).map((theme) => (
                 <button key={theme} type="button" onClick={() => setPreviewTheme(theme)} className={previewModeButtonClass(theme === previewTheme)}>
-                  {theme === "light" ? "Ljust läge" : "Mörkt läge"}
+                  {theme === "light" ? "Ljust" : "Morkt"}
                 </button>
               ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
               {(["logged-out", "logged-in"] as PreviewAuth[]).map((authState) => (
                 <button key={authState} type="button" onClick={() => setPreviewAuth(authState)} className={previewModeButtonClass(authState === previewAuth)}>
                   {authState === "logged-in" ? "Inloggad" : "Utloggad"}
@@ -1359,24 +1451,113 @@ export default function AdminSiteSandbox() {
               ))}
             </div>
           </div>
-        </div>
 
-        <div className="rounded-[28px] border border-slate-800 bg-slate-950/60 p-3">
-          <div className="mb-3 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-xs text-slate-400">
-            <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
-            <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-            <span className="ml-3 truncate font-mono text-[11px] text-slate-300">{previewUrl}</span>
+          <div className="rounded-[28px] border border-slate-800 bg-slate-950/60 p-3">
+            <div className="mb-3 flex items-center gap-2 rounded-2xl border border-slate-800 bg-slate-900/60 px-4 py-3 text-xs text-slate-400">
+              <span className="h-2.5 w-2.5 rounded-full bg-rose-400" />
+              <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              <span className="ml-3 truncate font-mono text-[11px] text-slate-300">{previewUrl}</span>
+            </div>
+            <div className={cn("mx-auto transition-all", previewViewportShellClass)}>
+              <div className="relative overflow-hidden rounded-[24px] border border-slate-800 bg-white shadow-[0_24px_90px_rgba(2,6,23,0.45)]">
+                <iframe
+                  ref={previewIframeRef}
+                  key={`${previewUrl}-${previewViewport}`}
+                  title={`Preview ${selectedPage.label}`}
+                  src={previewUrl}
+                  onLoad={() => {
+                    setPreviewFrameState("ready");
+                    const frameWindow = previewIframeRef.current?.contentWindow;
+                    if (frameWindow) {
+                      frameWindow.onscroll = syncPreviewOverlays;
+                      frameWindow.onresize = syncPreviewOverlays;
+                    }
+                    window.setTimeout(() => {
+                      pushPreviewSettings();
+                      syncPreviewOverlays();
+                    }, 80);
+                  }}
+                  onError={() => setPreviewFrameState("error")}
+                  className={cn("w-full bg-white", previewViewportHeightClass)}
+                />
+                <div className="pointer-events-none absolute inset-0">
+                  {previewOverlays.map((overlay) => (
+                    <button
+                      key={overlay.id}
+                      type="button"
+                      onClick={() => selectSectionFromCanvas(overlay.id, "content")}
+                      onContextMenu={(event) => {
+                        event.preventDefault();
+                        setActiveSectionId(overlay.id);
+                        setContextMenu({ x: event.clientX, y: event.clientY, sectionId: overlay.id });
+                      }}
+                      className={cn(
+                        "pointer-events-auto absolute rounded-[18px] border transition-all",
+                        activeSectionId === overlay.id
+                          ? "border-cyan-400 bg-cyan-400/15 shadow-[0_0_0_1px_rgba(34,211,238,0.35)]"
+                          : "border-white/35 bg-cyan-400/8 hover:border-cyan-300 hover:bg-cyan-400/10",
+                      )}
+                      style={{
+                        top: overlay.top,
+                        left: overlay.left,
+                        width: overlay.width,
+                        height: overlay.height,
+                      }}
+                    >
+                      <span className="absolute left-3 top-3 rounded-full bg-slate-950/90 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-200">
+                        {overlay.label}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-          <div className={cn("overflow-hidden rounded-[24px] border border-slate-800 bg-white transition-all", previewViewportShellClass)}>
-            <iframe
-              key={`${previewUrl}-${previewViewport}`}
-              title={`Preview ${selectedPage.label}`}
-              src={previewUrl}
-              onLoad={() => setPreviewFrameState("ready")}
-              onError={() => setPreviewFrameState("error")}
-              className={cn("w-full bg-white", previewViewportHeightClass)}
-            />
+
+          <div className="rounded-2xl border border-slate-800 bg-slate-950/60 px-4 py-4">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Selected element</p>
+                <p className="mt-2 text-base font-semibold text-white">
+                  {selectedSectionMeta ? selectedSectionMeta.label : "Ingen sektion vald"}
+                </p>
+                <p className="mt-1 text-sm text-slate-400">
+                  {selectedSectionMeta ? selectedSectionMeta.description : "Valj en markerad yta i previewn for att redigera den."}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {sectionLinks.map((section) => (
+                    <button
+                      key={section.id}
+                      type="button"
+                      onClick={() => selectSectionFromCanvas(section.id, inspectorMode)}
+                      className={cn(
+                        "rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                        activeSectionId === section.id
+                          ? "border-cyan-400/50 bg-cyan-400/12 text-white"
+                          : "border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white",
+                      )}
+                    >
+                      {section.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-wrap justify-end gap-2">
+                <button type="button" onClick={() => setInspectorMode("content")} className={previewModeButtonClass(inspectorMode === "content")}>
+                  Content
+                </button>
+                <button type="button" onClick={() => setInspectorMode("design")} className={previewModeButtonClass(inspectorMode === "design")}>
+                  Design
+                </button>
+                <button type="button" onClick={() => setInspectorMode("json")} className={previewModeButtonClass(inspectorMode === "json")}>
+                  JSON
+                </button>
+                <button type="button" onClick={() => setInspectorOpen((current) => !current)} className={previewModeButtonClass(inspectorOpen)}>
+                  {inspectorOpen ? "Hide inspector" : "Show inspector"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </BuilderPanel>
@@ -1502,7 +1683,7 @@ export default function AdminSiteSandbox() {
         </BuilderPanel>
       </div> : null}
 
-      <CollapsibleBuilderPanel
+      {false ? <CollapsibleBuilderPanel
         title="Section navigator"
         eyebrow="Page-scoped controls"
         description="Jump between the editable areas for the active page."
@@ -1527,12 +1708,58 @@ export default function AdminSiteSandbox() {
             </button>
           ))}
         </div>
-      </CollapsibleBuilderPanel>
+      </CollapsibleBuilderPanel> : null}
 
-      <BuilderPanel
-        title={`${selectedPage.label} builder`}
-        eyebrow="Main function builder"
+      <div
+        className={cn(
+          "mt-6 xl:fixed xl:bottom-6 xl:right-6 xl:top-[9.5rem] xl:z-[90] xl:mt-0 xl:w-[28rem] 2xl:w-[30rem]",
+          inspectorOpen ? "xl:pointer-events-auto" : "xl:pointer-events-none",
+        )}
       >
+        <div
+          className={cn(
+            "overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_24px_90px_rgba(2,6,23,0.45)] transition duration-200",
+            inspectorOpen ? "opacity-100 xl:translate-x-0" : "opacity-0 xl:translate-x-[120%]",
+          )}
+        >
+          <div className="border-b border-slate-800 px-6 py-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.32em] text-cyan-300/80">
+                  {inspectorMode === "design" ? "Design controls" : inspectorMode === "json" ? "JSON handoff" : "Contextual editor"}
+                </p>
+                <h2 className="mt-2 text-xl font-semibold text-white">{selectedSectionMeta?.label || selectedPage.label} inspector</h2>
+                <p className="mt-2 text-sm text-slate-400">
+                  {activeSection ? `${activeSection.label}: ${activeSection.description}` : selectedPage.description}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setInspectorOpen(false)}
+                className="rounded-full border border-slate-700 bg-slate-950/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-slate-300 transition hover:border-slate-500 hover:text-white"
+              >
+                Hide
+              </button>
+            </div>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {sectionLinks.map((section) => (
+                <button
+                  key={section.id}
+                  type="button"
+                  onClick={() => selectSectionFromCanvas(section.id, inspectorMode)}
+                  className={cn(
+                    "rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+                    activeSectionId === section.id
+                      ? "border-cyan-400/50 bg-cyan-400/12 text-white"
+                      : "border-slate-700 text-slate-300 hover:border-slate-500 hover:text-white",
+                  )}
+                >
+                  {section.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div className="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto p-6">
         <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
@@ -1546,6 +1773,37 @@ export default function AdminSiteSandbox() {
             </div>
           </div>
         </div>
+                {inspectorMode === "json" ? (
+                <SectionCard
+                  id="section-json"
+                  title="Advanced JSON handoff"
+                  description="Hoppa till full JSON-redigering eller klistra in section-specifika andringar innan du sparar draft."
+                >
+                  <div className="flex flex-wrap gap-3">
+                    <Button variant="secondary" onClick={() => setActiveTopMenu("json")}>
+                      Open full JSON editor
+                    </Button>
+                    <Button variant="outline" onClick={() => setInspectorMode("content")}>
+                      Back to visual controls
+                    </Button>
+                  </div>
+                  <Textarea
+                    value={jsonDraft}
+                    onChange={(event) => setJsonDraft(event.target.value)}
+                    rows={16}
+                    className="border-slate-700 bg-slate-950 font-mono text-xs text-slate-50"
+                  />
+                  <div className="flex flex-wrap gap-3">
+                    <Button variant="outline" onClick={formatJsonDraft}>
+                      Format JSON
+                    </Button>
+                    <Button variant="secondary" onClick={applyJsonDraft}>
+                      Apply to preview
+                    </Button>
+                  </div>
+                </SectionCard>
+                ) : (
+                  <>
                 {isActiveSection("global-chrome") ? (
                 <SectionCard
                   id="global-chrome"
@@ -3492,7 +3750,11 @@ export default function AdminSiteSandbox() {
                     ) : null}
                   </>
                 ) : null}
-              </BuilderPanel>
+                  </>
+                )}
+          </div>
+        </div>
+      </div>
 
     </div>
   );

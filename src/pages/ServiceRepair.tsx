@@ -107,12 +107,13 @@ export default function ServiceRepair() {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >
       <Navbar />
       <main className="flex-1">
-        <section className="bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+        <section data-sandbox-id="service-hero" className="bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-10 pt-16 sm:pb-12 sm:pt-20 lg:pt-24">
             <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
             <h1 className="mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl">{pageSettings.heroTitle}</h1>
@@ -139,7 +140,7 @@ export default function ServiceRepair() {
 
         <section className="container mx-auto px-4 py-10 sm:py-12">
           <div className="mx-auto max-w-4xl">
-            <div className="space-y-3 text-center">
+            <div data-sandbox-id="service-flow" className="space-y-3 text-center">
               <h2 className="text-2xl font-bold sm:text-3xl">{pageSettings.flowTitle}</h2>
               <p className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.flowDescription}</p>
             </div>
@@ -156,7 +157,7 @@ export default function ServiceRepair() {
                 </Accordion>
               </div>
 
-              <div className="w-full max-w-3xl">
+              <div data-sandbox-id="service-form" className="w-full max-w-3xl">
                 <h2 className="mb-3 text-center text-2xl font-bold sm:text-3xl">{pageSettings.formTitle}</h2>
                 <p className="mb-6 text-center text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.formDescription}</p>
                 <form

@@ -759,13 +759,14 @@ export default function Products() {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)] flex flex-col"
     >
       <SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />
       <Navbar />
       <main className="flex-1">
-        <section className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
+        <section data-sandbox-id="products-banner" className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
           <div className="mx-auto w-full max-w-[1480px]">
             <div className={`overflow-hidden rounded-3xl border border-[#e4b700] text-gray-900 ${banner.background}`}>
               {activeCategory === "toptier" ? (

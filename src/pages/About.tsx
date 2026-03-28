@@ -13,12 +13,13 @@ export default function About() {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >
       <Navbar />
       <main className="flex-1">
-        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+        <section data-sandbox-id="about-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
             <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
@@ -61,7 +62,7 @@ export default function About() {
         </section>
 
         <section className="container mx-auto max-w-5xl space-y-10 px-4 py-12">
-          <div className="space-y-4">
+          <div data-sandbox-id="about-story" className="space-y-4">
             <h2 className="text-2xl font-bold">{pageSettings.storyTitle}</h2>
             {pageSettings.storyParagraphs.map((paragraph) => (
               <p key={paragraph} className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
@@ -70,7 +71,7 @@ export default function About() {
             ))}
           </div>
 
-          <div className="space-y-4">
+          <div data-sandbox-id="about-values" className="space-y-4">
             <h2 className="text-2xl font-bold">{pageSettings.valuesTitle}</h2>
             <div className="grid gap-4 md:grid-cols-3">
               {pageSettings.valueCards.map((card) => (
@@ -85,7 +86,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="space-y-4">
+          <div data-sandbox-id="about-gallery" className="space-y-4">
             <h2 className="text-2xl font-bold">{pageSettings.galleryTitle}</h2>
             <div className="grid gap-4 md:grid-cols-3">
               {pageSettings.galleryImages.map((image) => (
@@ -101,7 +102,7 @@ export default function About() {
             </div>
           </div>
 
-          <div className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)] md:p-8">
+          <div data-sandbox-id="about-promise" className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)] md:p-8">
             <h2 className="text-2xl font-bold">{pageSettings.promiseTitle}</h2>
             <ul className="mt-4 grid gap-3 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)] md:grid-cols-2">
               {pageSettings.promiseItems.map((item) => (
@@ -110,7 +111,7 @@ export default function About() {
             </ul>
           </div>
 
-          <div className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)] md:p-8">
+          <div data-sandbox-id="about-social" className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)] md:p-8">
             <h2 className="text-2xl font-bold">{pageSettings.socialTitle}</h2>
             <p className="mt-3 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.socialDescription}</p>
             <div className="mt-4 flex flex-wrap gap-3">

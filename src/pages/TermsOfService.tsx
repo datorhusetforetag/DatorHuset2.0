@@ -39,12 +39,13 @@ export default function TermsOfService() {
 
   return (
     <div
+      data-sandbox-id="global-theme"
       style={themeVars}
       className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >
       <Navbar />
       <main className="flex-1">
-        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+        <section data-sandbox-id="terms-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
             <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
@@ -70,7 +71,7 @@ export default function TermsOfService() {
           </div>
         </section>
 
-        <section className="container mx-auto max-w-5xl space-y-5 px-4 py-12">
+        <section data-sandbox-id="terms-body" className="container mx-auto max-w-5xl space-y-5 px-4 py-12">
           <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
             Senast uppdaterad: {pageSettings.updatedAt}
           </p>

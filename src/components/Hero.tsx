@@ -89,7 +89,7 @@ export const Hero = ({
   }, []);
 
   return (
-    <section className="bg-[var(--site-surface-bg)] transition-colors dark:bg-[var(--site-surface-bg-dark)]">
+    <section data-sandbox-id="home-hero" className="bg-[var(--site-surface-bg)] transition-colors dark:bg-[var(--site-surface-bg-dark)]">
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="mb-8 grid grid-cols-1 gap-4 sm:mb-12 sm:gap-6 md:grid-cols-3">
           <div
@@ -162,7 +162,7 @@ export const Hero = ({
           </div>
         </div>
 
-        <div className="mb-12">
+        <div className="mb-12" data-sandbox-id="home-categories">
           <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{settings.categoriesTitle}</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {settings.categories.map((category: SiteHeroCategory) => (
