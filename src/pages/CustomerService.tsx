@@ -3,10 +3,12 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 export default function CustomerService() {
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.customerService;
+  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
   const heroImage = pageSettings.heroImage?.trim() || "/Datorhuset.png";
   const heroImageAlt = pageSettings.heroImageAlt?.trim() || "DatorHuset logo";
 
@@ -53,34 +55,43 @@ export default function CustomerService() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50">
+    <div
+      style={themeVars}
+      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
+    >
       <SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />
       <Navbar />
       <main className="flex-1">
-        <section className="overflow-hidden bg-yellow-400">
+        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
             <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">{pageSettings.heroEyebrow}</p>
-                <h1 className="mt-4 text-4xl font-bold text-gray-900 lg:text-5xl">{pageSettings.heroTitle}</h1>
-                <p className="mt-4 max-w-2xl text-gray-800">{pageSettings.heroDescription}</p>
+                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
+                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
+                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
                 <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <Link
                     to={pageSettings.heroCtaHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-900 px-6 py-3 font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
+                    className="inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-opacity hover:opacity-90"
+                    style={{ borderColor: "var(--site-brand-text)", color: "var(--site-brand-text)" }}
                   >
                     {pageSettings.heroCtaLabel}
                   </Link>
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <img
-                  src={heroImage}
-                  alt={heroImageAlt}
-                  className="h-56 w-full max-w-md object-contain object-center sm:h-72 lg:h-80"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div
+                  className="flex w-full max-w-md items-center justify-center"
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                >
+                  <img
+                    src={heroImage}
+                    alt={heroImageAlt}
+                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -88,7 +99,7 @@ export default function CustomerService() {
 
         <section className="container mx-auto max-w-5xl space-y-6 px-4 py-12">
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+            <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.contactTitle}</h2>
               <p>
                 E-post:{" "}
@@ -97,7 +108,7 @@ export default function CustomerService() {
                 </a>
               </p>
             </div>
-            <div className="space-y-2 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+            <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.hoursTitle}</h2>
               {pageSettings.hoursLines.map((line) => (
                 <p key={line}>{line}</p>
@@ -105,7 +116,7 @@ export default function CustomerService() {
             </div>
           </div>
 
-          <div className="space-y-3 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+          <div className="space-y-3 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
             <h2 className="text-lg font-semibold">{pageSettings.supportTitle}</h2>
             {pageSettings.supportLines.map((line) => (
               <p key={line}>{line}</p>
@@ -113,26 +124,27 @@ export default function CustomerService() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div className="space-y-4 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+            <div className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.commonIssuesTitle}</h2>
-              <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+              <ul className="space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
                 {pageSettings.commonIssues.map((issue) => (
                   <li key={issue}>{issue}</li>
                 ))}
               </ul>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{pageSettings.commonIssuesNote}</p>
+              <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.commonIssuesNote}</p>
             </div>
 
-            <div className="space-y-4 rounded-xl border border-gray-200 p-6 dark:border-gray-800">
+            <div className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.workflowTitle}</h2>
-              <ol className="list-inside list-decimal space-y-2 text-sm text-gray-700 dark:text-gray-300">
+              <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
                 {pageSettings.workflowSteps.map((step) => (
                   <li key={step}>{step}</li>
                 ))}
               </ol>
               <Link
                 to={pageSettings.workflowCtaHref}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition-opacity hover:opacity-90"
+                style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
               >
                 {pageSettings.workflowCtaLabel}
               </Link>

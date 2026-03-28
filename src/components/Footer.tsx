@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, Youtube } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+
 const TikTokIcon = ({ className }: { className?: string }) => (
   <svg viewBox="0 0 24 24" className={className} aria-hidden>
     <path
@@ -13,10 +14,18 @@ const TikTokIcon = ({ className }: { className?: string }) => (
 export const Footer = () => {
   const { settings } = useSiteSettings();
   const footer = settings.site.footer;
+  const theme = settings.site.theme;
   const footerLogo = footer.logoUrl?.trim() || "/Datorhuset.png";
 
   return (
-    <footer className="border-t border-[#1a2636] bg-[#0f1824] text-gray-100">
+    <footer
+      className="border-t"
+      style={{
+        borderColor: theme.cardBorderColorDark,
+        backgroundColor: theme.pageBackgroundDark,
+        color: theme.textColorDark,
+      }}
+    >
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr_1fr]">
           <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
@@ -24,7 +33,12 @@ export const Footer = () => {
               <div key={column.title} className="space-y-2">
                 <h4 className="text-base font-semibold">{column.title}</h4>
                 {column.links.map((link) => (
-                  <Link key={`${column.title}-${link.href}`} to={link.href} className="block text-sm text-gray-200 transition-colors hover:text-[#11667b]">
+                  <Link
+                    key={`${column.title}-${link.href}`}
+                    to={link.href}
+                    className="block text-sm transition-opacity hover:opacity-85"
+                    style={{ color: theme.textColorDark }}
+                  >
                     {link.label}
                   </Link>
                 ))}
@@ -32,16 +46,23 @@ export const Footer = () => {
             ))}
           </div>
 
-          <div className="space-y-4 border-t border-[#1a2636] pt-4 lg:border-t-0 lg:pt-0">
+          <div className="space-y-4 border-t pt-4 lg:border-t-0 lg:pt-0" style={{ borderColor: theme.cardBorderColorDark }}>
             <div className="space-y-1">
               <h4 className="text-base font-semibold">{footer.supportTitle}</h4>
-              <p className="text-sm text-gray-200">{footer.supportEmail}</p>
-              <p className="text-sm text-gray-400">{footer.supportHours}</p>
+              <p className="text-sm">{footer.supportEmail}</p>
+              <p className="text-sm" style={{ color: theme.mutedTextColorDark }}>
+                {footer.supportHours}
+              </p>
             </div>
 
             <div className="flex items-center justify-between gap-4">
               <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.2em] text-gray-500">Följ oss</p>
+                <p
+                  className="mb-2 text-xs uppercase tracking-[0.2em]"
+                  style={{ color: theme.mutedTextColorDark }}
+                >
+                  Följ oss
+                </p>
                 <div className="flex items-center gap-3">
                   {footer.socialLinks.map((item) => (
                     <a
@@ -50,7 +71,8 @@ export const Footer = () => {
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`DatorHuset på ${item.label}`}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-700 text-gray-200 transition-colors hover:border-[#11667b] hover:text-[#11667b]"
+                      className="flex h-9 w-9 items-center justify-center rounded-full border transition-opacity hover:opacity-85"
+                      style={{ borderColor: theme.cardBorderColorDark }}
                     >
                       {item.platform === "instagram" ? (
                         <Instagram className="h-5 w-5" />
@@ -70,8 +92,10 @@ export const Footer = () => {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-[#1a2636] pt-4">
-          <p className="text-sm text-gray-400">{footer.copyright}</p>
+        <div className="mt-8 border-t pt-4" style={{ borderColor: theme.cardBorderColorDark }}>
+          <p className="text-sm" style={{ color: theme.mutedTextColorDark }}>
+            {footer.copyright}
+          </p>
         </div>
       </div>
     </footer>

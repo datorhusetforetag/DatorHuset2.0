@@ -5,12 +5,17 @@ import { HomePromoSplit } from "@/components/HomePromoSplit";
 import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 const Index = () => {
   const { settings } = useSiteSettings();
+  const themeVars = buildSiteThemeVars(settings.site.theme);
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 transition-colors dark:bg-background dark:text-gray-50">
+    <div
+      style={themeVars}
+      className="min-h-screen bg-[var(--site-page-bg)] text-[var(--site-text-primary)] transition-colors dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
+    >
       <SeoHead
         title={`${settings.homepage.hero.title} | DatorHuset`}
         description={settings.homepage.hero.secondaryDescription}

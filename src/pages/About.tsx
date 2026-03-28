@@ -1,163 +1,142 @@
-﻿import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { Instagram, Music2, Twitter, Youtube } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 export default function About() {
+  const { settings: siteSettings } = useSiteSettings();
+  const pageSettings = siteSettings.pages.about;
+  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
+  const socialLinks = siteSettings.site.footer.socialLinks;
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+    <div
+      style={themeVars}
+      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
+    >
       <Navbar />
       <main className="flex-1">
-        <section className="bg-yellow-400 overflow-hidden">
-          <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center">
+        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
+            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Om oss</p>
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">DatorHuset UF</h1>
-                <p className="text-gray-800 mt-4 max-w-2xl">
-                  Vi bygger och säljer stationära datorer för gaming, kreativa flöden och professionellt arbete.
-                </p>
-                <div className="mt-6 flex flex-col sm:flex-row gap-3">
+                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
+                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
+                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
+                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                   <Link
-                    to="/products"
-                    className="inline-flex items-center justify-center gap-2 bg-gray-900 text-white font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] transition-colors"
+                    to={pageSettings.primaryHref}
+                    className="inline-flex items-center justify-center gap-2 rounded-[var(--site-radius-lg)] px-6 py-3 font-semibold transition-opacity hover:opacity-90"
+                    style={{ backgroundColor: "var(--site-surface-bg)", color: "var(--site-text-primary)" }}
                   >
-                    Se våra datorer
+                    {pageSettings.primaryLabel}
                   </Link>
                   <Link
-                    to="/kundservice"
-                    className="inline-flex items-center justify-center gap-2 border border-gray-900 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                    to={pageSettings.secondaryHref}
+                    className="inline-flex items-center justify-center gap-2 rounded-[var(--site-radius-lg)] border px-6 py-3 font-semibold transition-opacity hover:opacity-90"
+                    style={{ borderColor: "var(--site-brand-text)", color: "var(--site-brand-text)" }}
                   >
-                    Kontakta oss
+                    {pageSettings.secondaryLabel}
                   </Link>
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                <img
-                  src="/Datorhuset.png"
-                  alt="DatorHuset logo"
-                  className="w-full max-w-md h-56 sm:h-72 lg:h-80 object-contain object-center"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div
+                  className="flex w-full max-w-md items-center justify-center"
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                >
+                  <img
+                    src={pageSettings.heroImage}
+                    alt={pageSettings.heroImageAlt}
+                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12 max-w-5xl space-y-10">
+        <section className="container mx-auto max-w-5xl space-y-10 px-4 py-12">
           <div className="space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Vår historia</h2>
-            <p className="text-gray-700 dark:text-gray-300">
-              DatorHuset startade som ett skolprojekt med en enkel idé: göra det lättare att hitta rätt dator
-              utan krångliga specifikationer. Vi byggde våra första datorer för vänner och klasskamrater,
-              och växte snabbt tack vare rekommendationer och tydlig service.
-            </p>
-            <p className="text-gray-700 dark:text-gray-300">
-              Idag hjälper vi kunder att välja, bygga och optimera datorer för gaming, kreativa flöden och
-              professionellt arbete. Vi tror på ärliga råd, tydliga priser och snabb återkoppling.
-            </p>
+            <h2 className="text-2xl font-bold">{pageSettings.storyTitle}</h2>
+            {pageSettings.storyParagraphs.map((paragraph) => (
+              <p key={paragraph} className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
+                {paragraph}
+              </p>
+            ))}
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-              <h3 className="text-lg font-semibold mb-2">Tydlighet</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Du ska alltid förstå vad du får, varför det passar dig och vad det kostar.
-              </p>
-            </div>
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-              <h3 className="text-lg font-semibold mb-2">Prestanda</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Vi fokuserar på rätt komponenter och optimal balans för ditt användningsområde.
-              </p>
-            </div>
-            <div className="rounded-xl border border-gray-200 dark:border-gray-800 p-6">
-              <h3 className="text-lg font-semibold mb-2">Service</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">
-                Snabba svar, tydliga offerter och uppföljning när du behöver oss.
-              </p>
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">{pageSettings.valuesTitle}</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              {pageSettings.valueCards.map((card) => (
+                <div
+                  key={card.title}
+                  className="rounded-[var(--site-radius-lg)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)]"
+                >
+                  <h3 className="mb-2 text-lg font-semibold">{card.title}</h3>
+                  <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{card.description}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <img
-              src="/products/newpc/allblack-main.jpg"
-              alt="DatorHuset premiumbygge"
-              className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/products/newpc/allwhite-1.jpg"
-              alt="DatorHuset gamingdator"
-              className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
-              loading="lazy"
-              decoding="async"
-            />
-            <img
-              src="/products/newpc/cg530_new.png"
-              alt="DatorHuset kompakt dator"
-              className="w-full h-56 object-cover rounded-xl border border-gray-200 dark:border-gray-800"
-              loading="lazy"
-              decoding="async"
-            />
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold">{pageSettings.galleryTitle}</h2>
+            <div className="grid gap-4 md:grid-cols-3">
+              {pageSettings.galleryImages.map((image) => (
+                <img
+                  key={image.url}
+                  src={image.url}
+                  alt={image.alt}
+                  className="h-56 w-full rounded-[var(--site-radius-lg)] border border-[var(--site-card-border)] object-cover dark:border-[var(--site-card-border-dark)]"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ))}
+            </div>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-8 space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Vårt löfte</h2>
-            <ul className="grid gap-3 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
-              <li>Personlig rådgivning anpassad efter dina behov</li>
-              <li>Tydliga offerter utan dolda kostnader</li>
-              <li>Snabb leverans och trygg support</li>
-              <li>Hjälp med uppgraderingar när du växer</li>
+          <div className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)] md:p-8">
+            <h2 className="text-2xl font-bold">{pageSettings.promiseTitle}</h2>
+            <ul className="mt-4 grid gap-3 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)] md:grid-cols-2">
+              {pageSettings.promiseItems.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
             </ul>
           </div>
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 p-6 md:p-8 space-y-4">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Folj oss</h2>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              Hall koll pa nya byggen, erbjudanden och uppdateringar.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <a
-                href="https://www.instagram.com/datorhuset_uf/"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
-              >
-                <Instagram className="w-4 h-4" />
-                Instagram
-              </a>
-              <a
-                href="https://x.com/DatorHuset_UF"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
-              >
-                <Twitter className="w-4 h-4" />
-                X (Twitter)
-              </a>
-              <a
-                href="https://www.tiktok.com/@datorhuset_uf?lang=en-GB"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
-              >
-                <Music2 className="w-4 h-4" />
-                TikTok
-              </a>
-              <a
-                href="https://www.youtube.com/@DatorHuset"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-gray-200 dark:border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 hover:text-[#11667b] hover:border-[#11667b] transition-colors dark:text-gray-200"
-              >
-                <Youtube className="w-4 h-4" />
-                YouTube
-              </a>
+
+          <div className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)] md:p-8">
+            <h2 className="text-2xl font-bold">{pageSettings.socialTitle}</h2>
+            <p className="mt-3 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.socialDescription}</p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
+                  style={{ borderColor: "var(--site-card-border)", color: "var(--site-text-primary)" }}
+                >
+                  {link.platform === "instagram" ? (
+                    <Instagram className="h-4 w-4" />
+                  ) : link.platform === "youtube" ? (
+                    <Youtube className="h-4 w-4" />
+                  ) : link.platform === "tiktok" ? (
+                    <Music2 className="h-4 w-4" />
+                  ) : (
+                    <Twitter className="h-4 w-4" />
+                  )}
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
-
         </section>
       </main>
       <Footer />

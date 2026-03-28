@@ -46,9 +46,51 @@ export type SitePromoCard = {
 
 export type SiteSocialPlatform = "instagram" | "x" | "tiktok" | "youtube";
 
+export type SiteTheme = {
+  primaryColor: string;
+  primaryTextColor: string;
+  accentColor: string;
+  accentTextColor: string;
+  pageBackground: string;
+  pageBackgroundDark: string;
+  surfaceBackground: string;
+  surfaceBackgroundDark: string;
+  mutedBackground: string;
+  mutedBackgroundDark: string;
+  cardBackground: string;
+  cardBackgroundDark: string;
+  cardBorderColor: string;
+  cardBorderColorDark: string;
+  textColor: string;
+  textColorDark: string;
+  mutedTextColor: string;
+  mutedTextColorDark: string;
+  heroImageFrameBackground: string;
+  sectionRadiusPx: number;
+  panelRadiusPx: number;
+  sectionPaddingY: number;
+  contentMaxWidthPx: number;
+};
+
+export type SiteFaqItem = {
+  question: string;
+  answer: string;
+};
+
+export type SiteImageWithAlt = {
+  url: string;
+  alt: string;
+};
+
+export type SiteAboutValueCard = {
+  title: string;
+  description: string;
+};
+
 export type SiteSettings = {
-  version: 5;
+  version: 6;
   site: {
+    theme: SiteTheme;
     navigation: {
       brandName: string;
       logoUrl: string;
@@ -172,6 +214,53 @@ export type SiteSettings = {
       workflowCtaLabel: string;
       workflowCtaHref: string;
     };
+    faq: {
+      heroEyebrow: string;
+      heroTitle: string;
+      heroDescription: string;
+      heroImage: string;
+      heroImageAlt: string;
+      items: SiteFaqItem[];
+    };
+    about: {
+      heroEyebrow: string;
+      heroTitle: string;
+      heroDescription: string;
+      heroImage: string;
+      heroImageAlt: string;
+      primaryLabel: string;
+      primaryHref: string;
+      secondaryLabel: string;
+      secondaryHref: string;
+      storyTitle: string;
+      storyParagraphs: string[];
+      valuesTitle: string;
+      valueCards: SiteAboutValueCard[];
+      galleryTitle: string;
+      galleryImages: SiteImageWithAlt[];
+      promiseTitle: string;
+      promiseItems: string[];
+      socialTitle: string;
+      socialDescription: string;
+    };
+    privacyPolicy: {
+      heroEyebrow: string;
+      heroTitle: string;
+      heroDescription: string;
+      heroImage: string;
+      heroImageAlt: string;
+      updatedAt: string;
+      bodyText: string;
+    };
+    termsOfService: {
+      heroEyebrow: string;
+      heroTitle: string;
+      heroDescription: string;
+      heroImage: string;
+      heroImageAlt: string;
+      updatedAt: string;
+      bodyText: string;
+    };
   };
 };
 
@@ -190,7 +279,7 @@ const deepMerge = <T,>(defaults: T, candidate: unknown): T => {
       const candidateValue = nextCandidate[key];
 
       if (key === "version") {
-        base[key] = 5;
+        base[key] = 6;
         continue;
       }
 

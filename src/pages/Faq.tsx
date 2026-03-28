@@ -1,75 +1,18 @@
-﻿import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
-
-const FAQ_ITEMS = [
-  {
-    question: "Hur lång leveranstid har ni?",
-    answer:
-      "Normalt 3–5 arbetsdagar för lagervaror. Special- eller custombyggen kan ta längre tid.",
-  },
-  {
-    question: "Vad innebär förbeställning?",
-    answer:
-      "Förbeställning betyder att vi inte har varan i lager just nu, men att vi kan bygga och leverera så snart delar finns.",
-  },
-  {
-    question: "Vilka betalmetoder accepterar ni?",
-    answer:
-      "Kort, PayPal, Google Pay och Klarna via vår betalningslösning.",
-  },
-  {
-    question: "Kan jag avbryta eller ändra min order?",
-    answer:
-      "Kontakta oss så snabbt som möjligt. Om ordern inte har skickats kan vi oftast justera den.",
-  },
-  {
-    question: "Hur fungerar service och reparation?",
-    answer:
-      "Beskriv problemet via kundservice så återkommer vi med offert, tidsplan och instruktioner.",
-  },
-  {
-    question: "Kan jag få rådgivning innan köp?",
-    answer:
-      "Absolut. Vi hjälper dig att välja rätt dator efter behov och budget.",
-  },
-  {
-    question: "Ingår Windows i era datorer?",
-    answer:
-      "Ja, våra färdigbyggda datorer levereras med operativsystem så att du kan starta direkt.",
-  },
-  {
-    question: "Hur fungerar garanti och reklamation?",
-    answer:
-      "Du kan reklamera ursprungliga fel enligt konsumentköplagen. Kontakta oss så hjälper vi dig vidare.",
-  },
-  {
-    question: "Kan jag ändra komponenter i en order?",
-    answer:
-      "I många fall går det att uppgradera komponenter innan produktionen startar.",
-  },
-  {
-    question: "Hur spårar jag min leverans?",
-    answer:
-      "När ordern skickas får du spårningsinformation via e-post.",
-  },
-  {
-    question: "Erbjuder ni företagslösningar?",
-    answer:
-      "Ja, vi erbjuder företagspaket med anpassade konfigurationer och tydliga villkor.",
-  },
-  {
-    question: "Vad kostar felsökning?",
-    answer:
-      "Vi ger alltid en tydlig offert innan arbete påbörjas.",
-  },
-];
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 export default function Faq() {
+  const { settings: siteSettings } = useSiteSettings();
+  const pageSettings = siteSettings.pages.faq;
+  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
+
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: FAQ_ITEMS.map((item) => ({
+    mainEntity: pageSettings.items.map((item) => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: {
@@ -99,39 +42,48 @@ export default function Faq() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+    <div
+      style={themeVars}
+      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
+    >
       <SeoJsonLd data={[faqSchema, breadcrumbSchema]} />
       <Navbar />
 
       <main className="flex-1">
-        <section className="bg-yellow-400 overflow-hidden">
-          <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center">
+        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
+            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">FAQ</p>
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Vanliga frågor och svar</h1>
-                <p className="text-gray-800 mt-4 max-w-2xl">
-                  Här hittar du svar på de vanligaste frågorna om beställning, leverans och service.
-                </p>
+                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
+                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
+                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
               </div>
               <div className="flex items-center justify-center">
-                <img
-                  src="/Datorhuset.png"
-                  alt="DatorHuset logo"
-                  className="w-full max-w-md h-56 sm:h-72 lg:h-80 object-contain object-center"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div
+                  className="flex w-full max-w-md items-center justify-center"
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                >
+                  <img
+                    src={pageSettings.heroImage}
+                    alt={pageSettings.heroImageAlt}
+                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12 max-w-4xl space-y-6">
-          {FAQ_ITEMS.map((item) => (
-            <article key={item.question}>
+        <section className="container mx-auto max-w-4xl space-y-6 px-4 py-12">
+          {pageSettings.items.map((item) => (
+            <article
+              key={item.question}
+              className="rounded-[var(--site-radius-lg)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] px-6 py-5 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)]"
+            >
               <h2 className="text-xl font-semibold">{item.question}</h2>
-              <p className="text-gray-600 dark:text-gray-300">{item.answer}</p>
+              <p className="mt-2 text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{item.answer}</p>
             </article>
           ))}
         </section>

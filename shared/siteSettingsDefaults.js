@@ -1,4 +1,4 @@
-export const SITE_SETTINGS_VERSION = 5;
+export const SITE_SETTINGS_VERSION = 6;
 
 export const SITE_ICON_OPTIONS = [
   "monitor",
@@ -15,6 +15,31 @@ export const SITE_ICON_OPTIONS = [
 export const DEFAULT_SITE_SETTINGS = {
   version: SITE_SETTINGS_VERSION,
   site: {
+    theme: {
+      primaryColor: "#facc15",
+      primaryTextColor: "#111827",
+      accentColor: "#11667b",
+      accentTextColor: "#ffffff",
+      pageBackground: "#ffffff",
+      pageBackgroundDark: "#0f1824",
+      surfaceBackground: "#ffffff",
+      surfaceBackgroundDark: "#111827",
+      mutedBackground: "#f5f6f8",
+      mutedBackgroundDark: "#111827",
+      cardBackground: "#ffffff",
+      cardBackgroundDark: "#0f1824",
+      cardBorderColor: "#e5e7eb",
+      cardBorderColorDark: "#1f2937",
+      textColor: "#111827",
+      textColorDark: "#f8fafc",
+      mutedTextColor: "#4b5563",
+      mutedTextColorDark: "#cbd5e1",
+      heroImageFrameBackground: "#ffffff",
+      sectionRadiusPx: 18,
+      panelRadiusPx: 28,
+      sectionPaddingY: 80,
+      contentMaxWidthPx: 1280,
+    },
     navigation: {
       brandName: "DatorHuset",
       logoUrl: "/Datorhuset.png",
@@ -298,6 +323,103 @@ export const DEFAULT_SITE_SETTINGS = {
       ],
       workflowCtaLabel: "Starta serviceärende",
       workflowCtaHref: "/service-reparation",
+    },
+    faq: {
+      heroEyebrow: "FAQ",
+      heroTitle: "Vanliga frÃ¥gor och svar",
+      heroDescription: "HÃ¤r hittar du svar pÃ¥ de vanligaste frÃ¥gorna om bestÃ¤llning, leverans och service.",
+      heroImage: "/Datorhuset.png",
+      heroImageAlt: "DatorHuset logo",
+      items: [
+        {
+          question: "Hur lÃ¥ng leveranstid har ni?",
+          answer: "Normalt 3-5 arbetsdagar fÃ¶r lagervaror. Special- eller custombyggen kan ta lÃ¤ngre tid.",
+        },
+        {
+          question: "Vad innebÃ¤r fÃ¶rbestÃ¤llning?",
+          answer: "FÃ¶rbestÃ¤llning betyder att vi inte har varan i lager just nu, men att vi kan bygga och leverera sÃ¥ snart delar finns.",
+        },
+        {
+          question: "Vilka betalmetoder accepterar ni?",
+          answer: "Kort, PayPal, Google Pay och Klarna via vÃ¥r betalningslÃ¶sning.",
+        },
+        {
+          question: "Kan jag avbryta eller Ã¤ndra min order?",
+          answer: "Kontakta oss sÃ¥ snabbt som mÃ¶jligt. Om ordern inte har skickats kan vi oftast justera den.",
+        },
+        {
+          question: "Hur fungerar service och reparation?",
+          answer: "Beskriv problemet via kundservice sÃ¥ Ã¥terkommer vi med offert, tidsplan och instruktioner.",
+        },
+        {
+          question: "Kan jag fÃ¥ rÃ¥dgivning innan kÃ¶p?",
+          answer: "Absolut. Vi hjÃ¤lper dig att vÃ¤lja rÃ¤tt dator efter behov och budget.",
+        },
+      ],
+    },
+    about: {
+      heroEyebrow: "Om oss",
+      heroTitle: "DatorHuset UF",
+      heroDescription: "Vi bygger och sÃ¤ljer stationÃ¤ra datorer fÃ¶r gaming, kreativa flÃ¶den och professionellt arbete.",
+      heroImage: "/Datorhuset.png",
+      heroImageAlt: "DatorHuset logo",
+      primaryLabel: "Se vÃ¥ra datorer",
+      primaryHref: "/products",
+      secondaryLabel: "Kontakta oss",
+      secondaryHref: "/kundservice",
+      storyTitle: "VÃ¥r historia",
+      storyParagraphs: [
+        "DatorHuset startade som ett skolprojekt med en enkel idÃ©: gÃ¶ra det lÃ¤ttare att hitta rÃ¤tt dator utan krÃ¥ngliga specifikationer.",
+        "Idag hjÃ¤lper vi kunder att vÃ¤lja, bygga och optimera datorer fÃ¶r gaming, kreativa flÃ¶den och professionellt arbete.",
+      ],
+      valuesTitle: "Det vi stÃ¥r fÃ¶r",
+      valueCards: [
+        {
+          title: "Tydlighet",
+          description: "Du ska alltid fÃ¶rstÃ¥ vad du fÃ¥r, varfÃ¶r det passar dig och vad det kostar.",
+        },
+        {
+          title: "Prestanda",
+          description: "Vi fokuserar pÃ¥ rÃ¤tt komponenter och optimal balans fÃ¶r ditt anvÃ¤ndningsomrÃ¥de.",
+        },
+        {
+          title: "Service",
+          description: "Snabba svar, tydliga offerter och uppfÃ¶ljning nÃ¤r du behÃ¶ver oss.",
+        },
+      ],
+      galleryTitle: "Byggen frÃ¥n oss",
+      galleryImages: [
+        { url: "/products/newpc/allblack-main.jpg", alt: "DatorHuset premiumbygge" },
+        { url: "/products/newpc/allwhite-1.jpg", alt: "DatorHuset gamingdator" },
+        { url: "/products/newpc/cg530_new.png", alt: "DatorHuset kompakt dator" },
+      ],
+      promiseTitle: "VÃ¥rt lÃ¶fte",
+      promiseItems: [
+        "Personlig rÃ¥dgivning anpassad efter dina behov",
+        "Tydliga offerter utan dolda kostnader",
+        "Snabb leverans och trygg support",
+        "HjÃ¤lp med uppgraderingar nÃ¤r du vÃ¤xer",
+      ],
+      socialTitle: "FÃ¶lj oss",
+      socialDescription: "HÃ¥ll koll pÃ¥ nya byggen, erbjudanden och uppdateringar.",
+    },
+    privacyPolicy: {
+      heroEyebrow: "Integritet",
+      heroTitle: "Integritetspolicy",
+      heroDescription: "LÃ¤s hur DatorHuset hanterar personuppgifter, bestÃ¤llningsdata och kundkommunikation.",
+      heroImage: "/Datorhuset.png",
+      heroImageAlt: "DatorHuset logo",
+      updatedAt: "2026-02-08",
+      bodyText: "",
+    },
+    termsOfService: {
+      heroEyebrow: "Villkor",
+      heroTitle: "AllmÃ¤nna villkor",
+      heroDescription: "LÃ¤s igenom vÃ¥ra villkor fÃ¶r kÃ¶p, leverans och service hos DatorHuset UF.",
+      heroImage: "/Datorhuset.png",
+      heroImageAlt: "DatorHuset logo",
+      updatedAt: "2026-02-08",
+      bodyText: "",
     },
   },
 };

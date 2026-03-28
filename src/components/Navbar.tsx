@@ -39,6 +39,7 @@ export const Navbar = () => {
   const showBackButton = location.pathname !== "/";
   const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
   const navigation = settings.site.navigation;
+  const theme = settings.site.theme;
   const navigationLogo = navigation.logoUrl?.trim() || "/Datorhuset.png";
 
   const searchState = useMemo(
@@ -194,7 +195,14 @@ export const Navbar = () => {
 
   return (
     <nav className="sticky left-0 right-0 top-0 z-50 overflow-visible backdrop-blur supports-[backdrop-filter]:backdrop-blur">
-      <div className="border-b border-gray-200 bg-white text-gray-900 shadow-sm dark:border-gray-800 dark:bg-background dark:text-white">
+      <div
+        className="border-b shadow-sm"
+        style={{
+          borderColor: theme.cardBorderColor,
+          backgroundColor: theme.surfaceBackground,
+          color: theme.textColor,
+        }}
+      >
         <div className="container mx-auto px-4">
           <div className="flex w-full flex-col gap-3 py-3 lg:h-20 lg:flex-row lg:items-center lg:gap-4">
             <div className="flex items-center justify-between gap-3 lg:contents">
@@ -204,14 +212,16 @@ export const Navbar = () => {
                     type="button"
                     onClick={() => navigate(-1)}
                     aria-label="Tillbaka"
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white lg:hidden"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border transition-opacity hover:opacity-85 lg:hidden"
+                    style={{ borderColor: theme.cardBorderColor, color: theme.textColor }}
                   >
                     <ArrowLeft className="h-4 w-4" />
                   </button>
                 )}
                 <Link
                   to="/"
-                  className="flex min-w-0 flex-shrink-0 items-center gap-2 text-base font-bold text-gray-900 dark:text-white sm:text-xl"
+                  className="flex min-w-0 flex-shrink-0 items-center gap-2 text-base font-bold sm:text-xl"
+                  style={{ color: theme.textColor }}
                 >
                   <img src={navigationLogo} alt={navigation.brandName} className="h-9 w-9 object-contain sm:h-12 sm:w-12" loading="eager" decoding="async" />
                   <span className="max-w-[140px] truncate font-[Orbitron] sm:max-w-none">{navigation.brandName}</span>
@@ -222,7 +232,8 @@ export const Navbar = () => {
                 {isAdmin && (
                   <a
                     href={navigation.adminPortalHref}
-                    className="hidden sm:inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
+                    className="hidden sm:inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition-opacity hover:opacity-85"
+                    style={{ borderColor: theme.cardBorderColor, color: theme.textColor }}
                   >
                     <ShieldCheck className="h-4 w-4" />
                     Admin
@@ -231,7 +242,11 @@ export const Navbar = () => {
                 <ThemeToggle />
                 <LoginButton />
                 <div className="relative" onMouseEnter={handleCartEnter} onMouseLeave={handleCartLeave}>
-                  <button onClick={() => navigate("/cart")} className="relative flex flex-col items-center text-gray-900 transition-colors hover:text-[#11667b] dark:text-white">
+                  <button
+                    onClick={() => navigate("/cart")}
+                    className="relative flex flex-col items-center transition-opacity hover:opacity-85"
+                    style={{ color: theme.textColor }}
+                  >
                     <ShoppingCart className="h-5 w-5" />
                     <span className="hidden text-[11px] sm:block">Kundvagn</span>
                     {totalItems > 0 && (
@@ -241,7 +256,14 @@ export const Navbar = () => {
                     )}
                   </button>
                   {showCartPreview && (
-                    <div className="absolute right-0 z-50 mt-2 w-72 rounded border border-gray-200 bg-white p-4 text-gray-900 shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+                    <div
+                      className="absolute right-0 z-50 mt-2 w-72 rounded border p-4 shadow-lg"
+                      style={{
+                        borderColor: theme.cardBorderColor,
+                        backgroundColor: theme.cardBackground,
+                        color: theme.textColor,
+                      }}
+                    >
                       {items.length === 0 ? (
                         <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen är tom.</p>
                       ) : (

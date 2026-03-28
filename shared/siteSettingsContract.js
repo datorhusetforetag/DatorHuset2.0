@@ -15,6 +15,7 @@ const SITE_SOCIAL_PLATFORM_OPTIONS = ["instagram", "x", "tiktok", "youtube"];
 const siteLinkSchema = z.string().trim().min(1).max(320);
 const siteTextSchema = (max = 240) => z.string().trim().min(1).max(max);
 const optionalImageSchema = z.string().trim().max(500);
+const colorSchema = z.string().trim().regex(/^#(?:[0-9a-fA-F]{3}){1,2}$/);
 const animationNumberSchema = (min, max) => z.number().int().min(min).max(max);
 
 const siteLinkItemSchema = z.object({
@@ -53,6 +54,32 @@ const socialLinkSchema = z.object({
   href: siteLinkSchema,
 });
 
+const themeSchema = z.object({
+  primaryColor: colorSchema,
+  primaryTextColor: colorSchema,
+  accentColor: colorSchema,
+  accentTextColor: colorSchema,
+  pageBackground: colorSchema,
+  pageBackgroundDark: colorSchema,
+  surfaceBackground: colorSchema,
+  surfaceBackgroundDark: colorSchema,
+  mutedBackground: colorSchema,
+  mutedBackgroundDark: colorSchema,
+  cardBackground: colorSchema,
+  cardBackgroundDark: colorSchema,
+  cardBorderColor: colorSchema,
+  cardBorderColorDark: colorSchema,
+  textColor: colorSchema,
+  textColorDark: colorSchema,
+  mutedTextColor: colorSchema,
+  mutedTextColorDark: colorSchema,
+  heroImageFrameBackground: colorSchema,
+  sectionRadiusPx: animationNumberSchema(0, 48),
+  panelRadiusPx: animationNumberSchema(0, 64),
+  sectionPaddingY: animationNumberSchema(24, 160),
+  contentMaxWidthPx: animationNumberSchema(960, 1680),
+});
+
 const productsBannerSchema = z.object({
   eyebrow: siteTextSchema(80),
   title: siteTextSchema(180),
@@ -69,6 +96,21 @@ const serviceRepairFlowItemSchema = z.object({
   value: siteTextSchema(40),
   title: siteTextSchema(120),
   body: siteTextSchema(320),
+});
+
+const faqItemSchema = z.object({
+  question: siteTextSchema(140),
+  answer: siteTextSchema(420),
+});
+
+const aboutValueCardSchema = z.object({
+  title: siteTextSchema(100),
+  description: siteTextSchema(220),
+});
+
+const imageWithAltSchema = z.object({
+  url: optionalImageSchema,
+  alt: siteTextSchema(160),
 });
 
 const deepMerge = (defaults, candidate) => {
@@ -108,6 +150,7 @@ const deepMerge = (defaults, candidate) => {
 export const siteSettingsSchema = z.object({
   version: z.literal(SITE_SETTINGS_VERSION).default(SITE_SETTINGS_VERSION),
   site: z.object({
+    theme: themeSchema,
     navigation: z.object({
       brandName: siteTextSchema(60),
       logoUrl: optionalImageSchema,
@@ -215,6 +258,53 @@ export const siteSettingsSchema = z.object({
       workflowSteps: z.array(siteTextSchema(140)).min(3).max(6),
       workflowCtaLabel: siteTextSchema(80),
       workflowCtaHref: siteLinkSchema,
+    }),
+    faq: z.object({
+      heroEyebrow: siteTextSchema(80),
+      heroTitle: siteTextSchema(160),
+      heroDescription: siteTextSchema(260),
+      heroImage: optionalImageSchema,
+      heroImageAlt: siteTextSchema(160),
+      items: z.array(faqItemSchema).min(3).max(16),
+    }),
+    about: z.object({
+      heroEyebrow: siteTextSchema(80),
+      heroTitle: siteTextSchema(160),
+      heroDescription: siteTextSchema(260),
+      heroImage: optionalImageSchema,
+      heroImageAlt: siteTextSchema(160),
+      primaryLabel: siteTextSchema(80),
+      primaryHref: siteLinkSchema,
+      secondaryLabel: siteTextSchema(80),
+      secondaryHref: siteLinkSchema,
+      storyTitle: siteTextSchema(120),
+      storyParagraphs: z.array(siteTextSchema(420)).min(1).max(5),
+      valuesTitle: siteTextSchema(120),
+      valueCards: z.array(aboutValueCardSchema).min(2).max(6),
+      galleryTitle: siteTextSchema(120),
+      galleryImages: z.array(imageWithAltSchema).min(1).max(6),
+      promiseTitle: siteTextSchema(120),
+      promiseItems: z.array(siteTextSchema(180)).min(2).max(8),
+      socialTitle: siteTextSchema(120),
+      socialDescription: siteTextSchema(220),
+    }),
+    privacyPolicy: z.object({
+      heroEyebrow: siteTextSchema(80),
+      heroTitle: siteTextSchema(160),
+      heroDescription: siteTextSchema(260),
+      heroImage: optionalImageSchema,
+      heroImageAlt: siteTextSchema(160),
+      updatedAt: siteTextSchema(40),
+      bodyText: z.string().trim().max(30000),
+    }),
+    termsOfService: z.object({
+      heroEyebrow: siteTextSchema(80),
+      heroTitle: siteTextSchema(160),
+      heroDescription: siteTextSchema(260),
+      heroImage: optionalImageSchema,
+      heroImageAlt: siteTextSchema(160),
+      updatedAt: siteTextSchema(40),
+      bodyText: z.string().trim().max(30000),
     }),
   }),
 });

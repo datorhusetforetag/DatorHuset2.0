@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 const initialFormState = {
   name: "",
@@ -26,6 +27,7 @@ export default function ServiceRepair() {
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.serviceRepair;
+  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
   const [formData, setFormData] = useState(initialFormState);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [submitError, setSubmitError] = useState("");
@@ -104,25 +106,30 @@ export default function ServiceRepair() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50">
+    <div
+      style={themeVars}
+      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
+    >
       <Navbar />
       <main className="flex-1">
-        <section className="bg-yellow-400">
+        <section className="bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
           <div className="container mx-auto px-4 pb-10 pt-16 sm:pb-12 sm:pt-20 lg:pt-24">
-            <p className="text-xs uppercase tracking-[0.35em] text-gray-700">{pageSettings.heroEyebrow}</p>
-            <h1 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">{pageSettings.heroTitle}</h1>
-            <p className="mt-4 max-w-2xl text-gray-800">{pageSettings.heroDescription}</p>
+            <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
+            <h1 className="mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl">{pageSettings.heroTitle}</h1>
+            <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
               <Link
                 to={pageSettings.primaryHref}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-3 font-semibold text-white transition-colors hover:bg-[#11667b]"
+                className="inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-opacity hover:opacity-90"
+                style={{ backgroundColor: "var(--site-surface-bg)", color: "var(--site-text-primary)" }}
               >
                 <Headset className="h-5 w-5" />
                 {pageSettings.primaryLabel}
               </Link>
               <Link
                 to={pageSettings.secondaryHref}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border border-gray-900 px-6 py-3 font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-opacity hover:opacity-90"
+                style={{ borderColor: "var(--site-brand-text)", color: "var(--site-brand-text)" }}
               >
                 {pageSettings.secondaryLabel}
               </Link>
@@ -134,16 +141,16 @@ export default function ServiceRepair() {
           <div className="mx-auto max-w-4xl">
             <div className="space-y-3 text-center">
               <h2 className="text-2xl font-bold sm:text-3xl">{pageSettings.flowTitle}</h2>
-              <p className="text-gray-600 dark:text-gray-300">{pageSettings.flowDescription}</p>
+              <p className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.flowDescription}</p>
             </div>
 
             <div className="mt-10 flex flex-col items-center gap-10">
-              <div className="w-full max-w-3xl rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900/60">
+              <div className="w-full max-w-3xl rounded-xl border bg-[var(--site-muted-bg)] dark:bg-[var(--site-card-bg-dark)]" style={{ borderColor: "var(--site-card-border)" }}>
                 <Accordion type="single" collapsible defaultValue={pageSettings.steps[0]?.value || "step-1"} className="w-full">
                   {pageSettings.steps.map((step) => (
-                    <AccordionItem key={step.value} value={step.value} className="border-gray-200 px-6 dark:border-gray-800">
-                      <AccordionTrigger className="text-left text-gray-900 dark:text-gray-100">{step.title}</AccordionTrigger>
-                      <AccordionContent className="text-gray-600 dark:text-gray-300">{step.body}</AccordionContent>
+                    <AccordionItem key={step.value} value={step.value} className="px-6" style={{ borderColor: "var(--site-card-border)" }}>
+                      <AccordionTrigger className="text-left">{step.title}</AccordionTrigger>
+                      <AccordionContent className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{step.body}</AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
@@ -151,10 +158,11 @@ export default function ServiceRepair() {
 
               <div className="w-full max-w-3xl">
                 <h2 className="mb-3 text-center text-2xl font-bold sm:text-3xl">{pageSettings.formTitle}</h2>
-                <p className="mb-6 text-center text-gray-600 dark:text-gray-300">{pageSettings.formDescription}</p>
+                <p className="mb-6 text-center text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.formDescription}</p>
                 <form
                   onSubmit={handleSubmit}
-                  className="space-y-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900 sm:p-6"
+                  className="space-y-4 rounded-2xl border bg-[var(--site-card-bg)] p-4 dark:bg-[var(--site-card-bg-dark)] sm:p-6"
+                  style={{ borderColor: "var(--site-card-border)" }}
                 >
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">

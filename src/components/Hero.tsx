@@ -89,26 +89,35 @@ export const Hero = ({
   }, []);
 
   return (
-    <section className="bg-white transition-colors dark:bg-background">
+    <section className="bg-[var(--site-surface-bg)] transition-colors dark:bg-[var(--site-surface-bg-dark)]">
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="mb-8 grid grid-cols-1 gap-4 sm:mb-12 sm:gap-6 md:grid-cols-3">
           <div
-            className="col-span-1 flex min-h-[230px] flex-col justify-between rounded-lg border border-yellow-500 bg-yellow-400 p-4 shadow-lg animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8 md:col-span-2"
+            className="col-span-1 flex min-h-[230px] flex-col justify-between rounded-lg border p-4 shadow-lg animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8 md:col-span-2"
             style={{
               animationDuration: `${motion.heroRevealDurationMs}ms`,
               ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+              borderColor: "var(--site-brand-bg)",
+              backgroundColor: "var(--site-brand-bg)",
+              color: "var(--site-brand-text)",
             }}
           >
             <div>
-              <h2 className="mb-3 text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">{settings.title}</h2>
-              <p className="mb-4 flex items-center gap-2 text-sm font-semibold text-gray-900 sm:text-base">
+              <h2 className="mb-3 text-3xl font-bold sm:text-4xl lg:text-5xl">{settings.title}</h2>
+              <p className="mb-4 flex items-center gap-2 text-sm font-semibold sm:text-base">
                 {settings.subtitle} <ChevronRight className="inline h-5 w-5" />
               </p>
             </div>
-            <div className="flex h-28 items-center justify-between overflow-hidden rounded-lg border border-yellow-500/40 bg-white/80 px-4 dark:border-gray-700 dark:bg-gray-800 sm:h-36 sm:px-6">
+            <div
+              className="flex h-28 items-center justify-between overflow-hidden rounded-lg border px-4 sm:h-36 sm:px-6"
+              style={{
+                borderColor: "color-mix(in srgb, var(--site-brand-text) 18%, transparent)",
+                backgroundColor: "var(--site-hero-frame-bg)",
+              }}
+            >
               <div className="relative z-10 pr-3">
-                <p className="text-sm uppercase tracking-[0.18em] text-gray-600 dark:text-gray-300">{settings.featureEyebrow}</p>
-                <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 sm:text-base">{settings.featureTitle}</p>
+                <p className="text-sm uppercase tracking-[0.18em] text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{settings.featureEyebrow}</p>
+                <p className="text-sm font-semibold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)] sm:text-base">{settings.featureTitle}</p>
               </div>
               <img
                 src={settings.featureImage}
@@ -121,20 +130,27 @@ export const Hero = ({
           </div>
 
           <div
-            className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-lg bg-gray-900 p-4 animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8"
+            className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-lg p-4 animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8"
             style={{
               animationDuration: `${motion.heroRevealDurationMs}ms`,
               animationDelay: `${motion.heroRevealStaggerMs}ms`,
               ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+              backgroundColor: "var(--site-accent-bg)",
+              color: "var(--site-accent-text)",
             }}
           >
             <div className="relative z-10">
-              <h2 className="mb-2 text-2xl font-bold text-white sm:text-3xl">{settings.secondaryTitle}</h2>
-              <p className="mb-4 text-sm text-white">{settings.secondaryDescription}</p>
-              <p className="text-sm font-semibold text-yellow-400">{settings.secondaryNote}</p>
+              <h2 className="mb-2 text-2xl font-bold sm:text-3xl">{settings.secondaryTitle}</h2>
+              <p className="mb-4 text-sm opacity-95">{settings.secondaryDescription}</p>
+              <p className="text-sm font-semibold" style={{ color: "var(--site-brand-bg)" }}>{settings.secondaryNote}</p>
             </div>
             <div className="relative z-10 flex gap-2">
-              <span className="rounded bg-yellow-400 px-3 py-1 text-sm font-bold text-gray-900">{settings.secondaryBadge}</span>
+              <span
+                className="rounded px-3 py-1 text-sm font-bold"
+                style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
+              >
+                {settings.secondaryBadge}
+              </span>
             </div>
             <img
               src={winMouseImage}
@@ -147,7 +163,7 @@ export const Hero = ({
         </div>
 
         <div className="mb-12">
-          <h3 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">{settings.categoriesTitle}</h3>
+          <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{settings.categoriesTitle}</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {settings.categories.map((category: SiteHeroCategory) => (
               <Link
@@ -158,17 +174,24 @@ export const Hero = ({
                   utm_campaign: "populara_kategorier",
                   utm_content: buildUtmContent(category.name),
                 })}
-                className="rounded-lg border border-gray-200 bg-white p-4 text-center transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:border-[#11667b] dark:hover:bg-gray-800 sm:p-6"
+                className="rounded-lg border p-4 text-center transition-all hover:shadow-lg sm:p-6"
+                style={{
+                  borderColor: "var(--site-card-border)",
+                  backgroundColor: "var(--site-card-bg)",
+                  color: "var(--site-text-primary)",
+                }}
               >
-                <SiteIcon icon={category.icon} className="mx-auto mb-3 h-8 w-8 text-yellow-500 sm:h-10 sm:w-10" />
-                <p className="line-clamp-2 text-sm font-medium text-gray-900 dark:text-gray-100">{category.name}</p>
+                <div className="mx-auto mb-3 h-8 w-8 sm:h-10 sm:w-10" style={{ color: "var(--site-brand-bg)" }}>
+                  <SiteIcon icon={category.icon} className="h-full w-full" />
+                </div>
+                <p className="line-clamp-2 text-sm font-medium">{category.name}</p>
               </Link>
             ))}
           </div>
         </div>
 
         <div className="relative mb-12">
-          <h3 className="mb-6 text-2xl font-bold text-gray-900 dark:text-gray-100">{settings.featuredTitle}</h3>
+          <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{settings.featuredTitle}</h3>
           <div className="relative">
             <div
               ref={carouselRef}
@@ -178,14 +201,17 @@ export const Hero = ({
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}
-                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border border-gray-200 bg-white transition-all animate-in fade-in slide-in-from-bottom-4 hover:border-[#11667b] hover:shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:hover:border-[#11667b] sm:w-80 md:w-96"
+                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border transition-all animate-in fade-in slide-in-from-bottom-4 hover:shadow-lg sm:w-80 md:w-96"
                   style={{
                     animationDuration: `${motion.bannerRevealDurationMs}ms`,
                     animationDelay: `${index * motion.heroRevealStaggerMs}ms`,
                     ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
+                    borderColor: "var(--site-card-border)",
+                    backgroundColor: "var(--site-card-bg)",
+                    color: "var(--site-text-primary)",
                   }}
                 >
-                  <div className="flex h-44 items-center justify-center bg-gray-100 dark:bg-gray-800 sm:h-52">
+                  <div className="flex h-44 items-center justify-center sm:h-52" style={{ backgroundColor: "var(--site-muted-bg)" }}>
                     <img
                       src={computer.image}
                       alt={computer.name}
@@ -198,35 +224,37 @@ export const Hero = ({
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="mb-2 line-clamp-2 text-sm font-semibold text-gray-900 hover:text-[#11667b] dark:text-gray-100 dark:hover:text-[#11667b]">
+                    <h4 className="mb-2 line-clamp-2 text-sm font-semibold">
                       {computer.name}
                     </h4>
-                    <div className="mb-4 space-y-1 border-t border-gray-100 pt-3 text-xs text-gray-600 dark:border-gray-800 dark:text-gray-300">
+                    <div className="mb-4 space-y-1 border-t pt-3 text-xs" style={{ borderColor: "var(--site-card-border)", color: "var(--site-text-muted)" }}>
                       <p className="line-clamp-2">{computer.cpu}</p>
                       <p className="line-clamp-2">{computer.gpu}</p>
                       <p className="line-clamp-2">{computer.ram}</p>
                     </div>
-                    <div className="mb-1 text-2xl font-bold text-gray-900 dark:text-gray-100">
+                    <div className="mb-1 text-2xl font-bold">
                       {computer.price.toLocaleString("sv-SE")} kr
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-300">{settings.featuredInventoryLabel}</p>
+                    <p className="text-xs" style={{ color: "var(--site-text-muted)" }}>{settings.featuredInventoryLabel}</p>
                   </div>
                 </Link>
               ))}
             </div>
             <button
               onClick={() => scrollByCards("left")}
-              className="absolute -left-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white p-2 shadow transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 md:flex"
+              className="absolute -left-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border p-2 shadow md:flex"
+              style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}
               aria-label="Scroll left"
             >
-              <ChevronLeft className="h-6 w-6 text-gray-900 dark:text-gray-100" />
+              <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={() => scrollByCards("right")}
-              className="absolute -right-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white p-2 shadow transition-colors hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-gray-800 md:flex"
+              className="absolute -right-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border p-2 shadow md:flex"
+              style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}
               aria-label="Scroll right"
             >
-              <ChevronRight className="h-6 w-6 text-gray-900 dark:text-gray-100" />
+              <ChevronRight className="h-6 w-6" />
             </button>
           </div>
         </div>

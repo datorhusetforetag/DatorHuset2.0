@@ -11,6 +11,7 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 import chieftecVistaBanner from "../../public/products/newpc/chieftecvista_new3.jpg";
 import chieftecVisioBanner from "../../public/products/newpc/chieftecvisio_new.png";
 import cg530Banner from "../../public/products/newpc/cg530_new4.jpg";
@@ -227,6 +228,7 @@ const PRODUCT_CATEGORY_TAGS: Record<string, string[]> = {
 
 export default function Products() {
   const { settings: siteSettings } = useSiteSettings();
+  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
   const motion = siteSettings.site.motion;
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
@@ -756,7 +758,10 @@ export default function Products() {
   const seoDescription = banner.description || "Gamingdatorer och färdiga byggen från DatorHuset.";
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0F1824] dark:text-gray-50 flex flex-col">
+    <div
+      style={themeVars}
+      className="min-h-screen bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)] flex flex-col"
+    >
       <SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />
       <Navbar />
       <main className="flex-1">

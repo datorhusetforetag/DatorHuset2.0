@@ -46,10 +46,14 @@ type PreviewPageDefinition = {
     | "products-price-performance"
     | "products-toptier"
     | "service-repair"
-    | "customer-service";
+    | "customer-service"
+    | "faq"
+    | "about"
+    | "privacy-policy"
+    | "terms-of-service";
   label: string;
   path: string;
-  group: "home" | "products" | "serviceRepair" | "customerService";
+  group: "home" | "products" | "serviceRepair" | "customerService" | "faq" | "about" | "privacyPolicy" | "termsOfService";
   bannerKey?: ProductsBannerKey;
   description: string;
 };
@@ -148,6 +152,34 @@ const PREVIEW_PAGES: PreviewPageDefinition[] = [
     path: "/kundservice",
     group: "customerService",
     description: "Hero, kontaktblock, vanliga arenden och arbetsflode.",
+  },
+  {
+    key: "faq",
+    label: "FAQ",
+    path: "/faq",
+    group: "faq",
+    description: "Hero och vanliga fragor med svar.",
+  },
+  {
+    key: "about",
+    label: "Om oss",
+    path: "/about",
+    group: "about",
+    description: "Hero, story, varderingar, galleri och social sektion.",
+  },
+  {
+    key: "privacy-policy",
+    label: "Integritetspolicy",
+    path: "/privacy-policy",
+    group: "privacyPolicy",
+    description: "Hero, uppdateringsdatum och hela policyn.",
+  },
+  {
+    key: "terms-of-service",
+    label: "Allmanna villkor",
+    path: "/terms-of-service",
+    group: "termsOfService",
+    description: "Hero, uppdateringsdatum och hela villkorstexten.",
   },
 ];
 
@@ -478,6 +510,7 @@ export default function AdminSiteSandbox() {
   const sectionLinks = useMemo(() => {
     const base = [
       { id: "global-chrome", label: "Global chrome", description: "Navigation, logo och footer." },
+      { id: "global-theme", label: "Theme system", description: "Farger, radier, spacing och maxbredd." },
       { id: "global-motion", label: "Motion", description: "Styr hero- och banneranimationer på hela sajten." },
     ];
     if (selectedPage.group === "home") {
@@ -498,6 +531,38 @@ export default function AdminSiteSandbox() {
         { id: "service-hero", label: "Hero", description: "Hero-copy och knappar." },
         { id: "service-flow", label: "Flode", description: "Stegen och introduktionen till processen." },
         { id: "service-form", label: "Formular", description: "Formulartitel och beskrivning." },
+      ];
+    }
+    if (selectedPage.group === "faq") {
+      return [
+        ...base,
+        { id: "faq-hero", label: "Hero", description: "Hero-copy och hero-bild." },
+        { id: "faq-items", label: "FAQ items", description: "Alla fragor och svar pa sidan." },
+      ];
+    }
+    if (selectedPage.group === "about") {
+      return [
+        ...base,
+        { id: "about-hero", label: "Hero", description: "Hero-copy, hero-bild och CTA-knappar." },
+        { id: "about-story", label: "Story", description: "Berattelsen om varumarket." },
+        { id: "about-values", label: "Varderingar", description: "Value cards och rubriker." },
+        { id: "about-gallery", label: "Galleri", description: "Galleri och bildtexter." },
+        { id: "about-promise", label: "Lofte", description: "Promise-sektionen." },
+        { id: "about-social", label: "Social", description: "Social CTA och introtext." },
+      ];
+    }
+    if (selectedPage.group === "privacyPolicy") {
+      return [
+        ...base,
+        { id: "privacy-hero", label: "Hero", description: "Hero-copy och hero-bild." },
+        { id: "privacy-body", label: "Policy text", description: "Hela integritetspolicyn och uppdateringsdatum." },
+      ];
+    }
+    if (selectedPage.group === "termsOfService") {
+      return [
+        ...base,
+        { id: "terms-hero", label: "Hero", description: "Hero-copy och hero-bild." },
+        { id: "terms-body", label: "Terms text", description: "Hela villkorstexten och uppdateringsdatum." },
       ];
     }
     return [
@@ -1644,6 +1709,195 @@ export default function AdminSiteSandbox() {
                       className="border-slate-700 bg-slate-900 text-slate-50"
                     />
                   </FieldBlock>
+                </SectionCard>
+                ) : null}
+
+                {isActiveSection("global-theme") ? (
+                <SectionCard
+                  id="global-theme"
+                  title="Theme system"
+                  description="Styr farger, kontrast, radier och layoutbredd for hela sajten."
+                >
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <FieldBlock label="Brand color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.primaryColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.primaryColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Brand text color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.primaryTextColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.primaryTextColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Accent color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.accentColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.accentColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Accent text color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.accentTextColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.accentTextColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Page background">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.pageBackground}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.pageBackground = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Page background dark">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.pageBackgroundDark}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.pageBackgroundDark = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Surface background">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.surfaceBackground}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.surfaceBackground = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Muted background">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.mutedBackground}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.mutedBackground = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Card background">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.cardBackground}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.cardBackground = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Card border color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.cardBorderColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.cardBorderColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Primary text color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.textColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.textColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Muted text color">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.mutedTextColor}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.mutedTextColor = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Hero image frame">
+                      <Input
+                        type="color"
+                        value={draftSettings.site.theme.heroImageFrameBackground}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.heroImageFrameBackground = event.target.value;
+                        })}
+                        className="h-12 border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Section radius (px)">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={48}
+                        value={draftSettings.site.theme.sectionRadiusPx}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.sectionRadiusPx = Math.max(0, Math.min(48, Number(event.target.value) || 0));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Panel radius (px)">
+                      <Input
+                        type="number"
+                        min={0}
+                        max={64}
+                        value={draftSettings.site.theme.panelRadiusPx}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.panelRadiusPx = Math.max(0, Math.min(64, Number(event.target.value) || 0));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Section padding Y (px)">
+                      <Input
+                        type="number"
+                        min={24}
+                        max={160}
+                        value={draftSettings.site.theme.sectionPaddingY}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.sectionPaddingY = Math.max(24, Math.min(160, Number(event.target.value) || 24));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                    <FieldBlock label="Content max width (px)">
+                      <Input
+                        type="number"
+                        min={960}
+                        max={1800}
+                        value={draftSettings.site.theme.contentMaxWidthPx}
+                        onChange={(event) => updateDraft((draft) => {
+                          draft.site.theme.contentMaxWidthPx = Math.max(960, Math.min(1800, Number(event.target.value) || 960));
+                        })}
+                        className="border-slate-700 bg-slate-900 text-slate-50"
+                      />
+                    </FieldBlock>
+                  </div>
                 </SectionCard>
                 ) : null}
 
@@ -2917,6 +3171,322 @@ export default function AdminSiteSandbox() {
                           rows={6}
                           className="border-slate-700 bg-slate-900 text-slate-50"
                         />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+                  </>
+                ) : null}
+
+                {selectedPage.group === "faq" ? (
+                  <>
+                    {isActiveSection("faq-hero") ? (
+                    <SectionCard id="faq-hero" title="FAQ hero">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Eyebrow">
+                          <Input
+                            value={draftSettings.pages.faq.heroEyebrow}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.faq.heroEyebrow = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input
+                            value={draftSettings.pages.faq.heroTitle}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.faq.heroTitle = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                        <ImageField
+                          label="Hero image"
+                          value={draftSettings.pages.faq.heroImage}
+                          assets={assetLibrary}
+                          uploadTarget="faq-hero"
+                          uploading={uploadingSiteImageTarget === "faq-hero"}
+                          onUpload={uploadSiteImage}
+                          onChange={(value) => updateDraft((draft) => {
+                            draft.pages.faq.heroImage = value;
+                          })}
+                        />
+                        <FieldBlock label="Hero image alt">
+                          <Input
+                            value={draftSettings.pages.faq.heroImageAlt}
+                            onChange={(event) => updateDraft((draft) => {
+                              draft.pages.faq.heroImageAlt = event.target.value;
+                            })}
+                            className="border-slate-700 bg-slate-900 text-slate-50"
+                          />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Description">
+                        <Textarea
+                          value={draftSettings.pages.faq.heroDescription}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.faq.heroDescription = event.target.value;
+                          })}
+                          rows={4}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("faq-items") ? (
+                    <SectionCard id="faq-items" title="FAQ items">
+                      <div className="space-y-4">
+                        {draftSettings.pages.faq.items.map((item, index) => (
+                          <div key={`${item.question}-${index}`} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                            <div className="mb-3 flex items-center justify-between">
+                              <p className="text-sm font-semibold text-white">Fraga {index + 1}</p>
+                              <button
+                                type="button"
+                                onClick={() => updateDraft((draft) => {
+                                  draft.pages.faq.items.splice(index, 1);
+                                })}
+                                className="text-xs font-semibold text-rose-300 transition hover:text-rose-200"
+                              >
+                                Ta bort
+                              </button>
+                            </div>
+                            <div className="space-y-4">
+                              <FieldBlock label="Question">
+                                <Input
+                                  value={item.question}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.pages.faq.items[index].question = event.target.value;
+                                  })}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                              <FieldBlock label="Answer">
+                                <Textarea
+                                  value={item.answer}
+                                  onChange={(event) => updateDraft((draft) => {
+                                    draft.pages.faq.items[index].answer = event.target.value;
+                                  })}
+                                  rows={4}
+                                  className="border-slate-700 bg-slate-950 text-slate-50"
+                                />
+                              </FieldBlock>
+                            </div>
+                          </div>
+                        ))}
+                        <Button
+                          variant="outline"
+                          onClick={() => updateDraft((draft) => {
+                            draft.pages.faq.items.push({ question: "Ny fraga", answer: "Nytt svar" });
+                          })}
+                        >
+                          Lagg till fraga
+                        </Button>
+                      </div>
+                    </SectionCard>
+                    ) : null}
+                  </>
+                ) : null}
+
+                {selectedPage.group === "about" ? (
+                  <>
+                    {isActiveSection("about-hero") ? (
+                    <SectionCard id="about-hero" title="About hero">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Eyebrow">
+                          <Input value={draftSettings.pages.about.heroEyebrow} onChange={(event) => updateDraft((draft) => { draft.pages.about.heroEyebrow = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input value={draftSettings.pages.about.heroTitle} onChange={(event) => updateDraft((draft) => { draft.pages.about.heroTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <ImageField
+                          label="Hero image"
+                          value={draftSettings.pages.about.heroImage}
+                          assets={assetLibrary}
+                          uploadTarget="about-hero"
+                          uploading={uploadingSiteImageTarget === "about-hero"}
+                          onUpload={uploadSiteImage}
+                          onChange={(value) => updateDraft((draft) => { draft.pages.about.heroImage = value; })}
+                        />
+                        <FieldBlock label="Hero image alt">
+                          <Input value={draftSettings.pages.about.heroImageAlt} onChange={(event) => updateDraft((draft) => { draft.pages.about.heroImageAlt = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Primary CTA label">
+                          <Input value={draftSettings.pages.about.primaryLabel} onChange={(event) => updateDraft((draft) => { draft.pages.about.primaryLabel = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Primary CTA href">
+                          <Input value={draftSettings.pages.about.primaryHref} onChange={(event) => updateDraft((draft) => { draft.pages.about.primaryHref = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary CTA label">
+                          <Input value={draftSettings.pages.about.secondaryLabel} onChange={(event) => updateDraft((draft) => { draft.pages.about.secondaryLabel = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Secondary CTA href">
+                          <Input value={draftSettings.pages.about.secondaryHref} onChange={(event) => updateDraft((draft) => { draft.pages.about.secondaryHref = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Description">
+                        <Textarea value={draftSettings.pages.about.heroDescription} onChange={(event) => updateDraft((draft) => { draft.pages.about.heroDescription = event.target.value; })} rows={4} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("about-story") ? (
+                    <SectionCard id="about-story" title="Story">
+                      <FieldBlock label="Story title">
+                        <Input value={draftSettings.pages.about.storyTitle} onChange={(event) => updateDraft((draft) => { draft.pages.about.storyTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                      <FieldBlock label="Story paragraphs" hint="one per line">
+                        <Textarea value={formatSimpleLines(draftSettings.pages.about.storyParagraphs)} onChange={(event) => updateDraft((draft) => { draft.pages.about.storyParagraphs = parseSimpleLines(event.target.value); })} rows={8} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("about-values") ? (
+                    <SectionCard id="about-values" title="Values">
+                      <FieldBlock label="Values title">
+                        <Input value={draftSettings.pages.about.valuesTitle} onChange={(event) => updateDraft((draft) => { draft.pages.about.valuesTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                      <FieldBlock label="Value cards" hint="title|description">
+                        <Textarea
+                          value={toDelimitedLines(draftSettings.pages.about.valueCards.map((card) => [card.title, card.description]))}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.about.valueCards = parseDelimitedLines(event.target.value, 2)
+                              .filter(([title, description]) => title && description)
+                              .map(([title, description]) => ({ title, description }));
+                          })}
+                          rows={8}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("about-gallery") ? (
+                    <SectionCard id="about-gallery" title="Gallery">
+                      <FieldBlock label="Gallery title">
+                        <Input value={draftSettings.pages.about.galleryTitle} onChange={(event) => updateDraft((draft) => { draft.pages.about.galleryTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                      <FieldBlock label="Gallery images" hint="url|alt">
+                        <Textarea
+                          value={toDelimitedLines(draftSettings.pages.about.galleryImages.map((image) => [image.url, image.alt]))}
+                          onChange={(event) => updateDraft((draft) => {
+                            draft.pages.about.galleryImages = parseDelimitedLines(event.target.value, 2)
+                              .filter(([url, alt]) => url && alt)
+                              .map(([url, alt]) => ({ url, alt }));
+                          })}
+                          rows={8}
+                          className="border-slate-700 bg-slate-900 text-slate-50"
+                        />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("about-promise") ? (
+                    <SectionCard id="about-promise" title="Promise">
+                      <FieldBlock label="Promise title">
+                        <Input value={draftSettings.pages.about.promiseTitle} onChange={(event) => updateDraft((draft) => { draft.pages.about.promiseTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                      <FieldBlock label="Promise items" hint="one per line">
+                        <Textarea value={formatSimpleLines(draftSettings.pages.about.promiseItems)} onChange={(event) => updateDraft((draft) => { draft.pages.about.promiseItems = parseSimpleLines(event.target.value); })} rows={8} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("about-social") ? (
+                    <SectionCard id="about-social" title="Social">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Social title">
+                          <Input value={draftSettings.pages.about.socialTitle} onChange={(event) => updateDraft((draft) => { draft.pages.about.socialTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Social description">
+                          <Textarea value={draftSettings.pages.about.socialDescription} onChange={(event) => updateDraft((draft) => { draft.pages.about.socialDescription = event.target.value; })} rows={4} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                      </div>
+                    </SectionCard>
+                    ) : null}
+                  </>
+                ) : null}
+
+                {selectedPage.group === "privacyPolicy" ? (
+                  <>
+                    {isActiveSection("privacy-hero") ? (
+                    <SectionCard id="privacy-hero" title="Privacy hero">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Eyebrow">
+                          <Input value={draftSettings.pages.privacyPolicy.heroEyebrow} onChange={(event) => updateDraft((draft) => { draft.pages.privacyPolicy.heroEyebrow = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input value={draftSettings.pages.privacyPolicy.heroTitle} onChange={(event) => updateDraft((draft) => { draft.pages.privacyPolicy.heroTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <ImageField
+                          label="Hero image"
+                          value={draftSettings.pages.privacyPolicy.heroImage}
+                          assets={assetLibrary}
+                          uploadTarget="privacy-hero"
+                          uploading={uploadingSiteImageTarget === "privacy-hero"}
+                          onUpload={uploadSiteImage}
+                          onChange={(value) => updateDraft((draft) => { draft.pages.privacyPolicy.heroImage = value; })}
+                        />
+                        <FieldBlock label="Hero image alt">
+                          <Input value={draftSettings.pages.privacyPolicy.heroImageAlt} onChange={(event) => updateDraft((draft) => { draft.pages.privacyPolicy.heroImageAlt = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Description">
+                        <Textarea value={draftSettings.pages.privacyPolicy.heroDescription} onChange={(event) => updateDraft((draft) => { draft.pages.privacyPolicy.heroDescription = event.target.value; })} rows={4} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("privacy-body") ? (
+                    <SectionCard id="privacy-body" title="Privacy body">
+                      <FieldBlock label="Updated at">
+                        <Input value={draftSettings.pages.privacyPolicy.updatedAt} onChange={(event) => updateDraft((draft) => { draft.pages.privacyPolicy.updatedAt = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                      <FieldBlock label="Policy body">
+                        <Textarea value={draftSettings.pages.privacyPolicy.bodyText} onChange={(event) => updateDraft((draft) => { draft.pages.privacyPolicy.bodyText = event.target.value; })} rows={18} className="border-slate-700 bg-slate-900 font-mono text-xs text-slate-50" />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+                  </>
+                ) : null}
+
+                {selectedPage.group === "termsOfService" ? (
+                  <>
+                    {isActiveSection("terms-hero") ? (
+                    <SectionCard id="terms-hero" title="Terms hero">
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <FieldBlock label="Eyebrow">
+                          <Input value={draftSettings.pages.termsOfService.heroEyebrow} onChange={(event) => updateDraft((draft) => { draft.pages.termsOfService.heroEyebrow = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <FieldBlock label="Title">
+                          <Input value={draftSettings.pages.termsOfService.heroTitle} onChange={(event) => updateDraft((draft) => { draft.pages.termsOfService.heroTitle = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                        <ImageField
+                          label="Hero image"
+                          value={draftSettings.pages.termsOfService.heroImage}
+                          assets={assetLibrary}
+                          uploadTarget="terms-hero"
+                          uploading={uploadingSiteImageTarget === "terms-hero"}
+                          onUpload={uploadSiteImage}
+                          onChange={(value) => updateDraft((draft) => { draft.pages.termsOfService.heroImage = value; })}
+                        />
+                        <FieldBlock label="Hero image alt">
+                          <Input value={draftSettings.pages.termsOfService.heroImageAlt} onChange={(event) => updateDraft((draft) => { draft.pages.termsOfService.heroImageAlt = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                        </FieldBlock>
+                      </div>
+                      <FieldBlock label="Description">
+                        <Textarea value={draftSettings.pages.termsOfService.heroDescription} onChange={(event) => updateDraft((draft) => { draft.pages.termsOfService.heroDescription = event.target.value; })} rows={4} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                    </SectionCard>
+                    ) : null}
+
+                    {isActiveSection("terms-body") ? (
+                    <SectionCard id="terms-body" title="Terms body">
+                      <FieldBlock label="Updated at">
+                        <Input value={draftSettings.pages.termsOfService.updatedAt} onChange={(event) => updateDraft((draft) => { draft.pages.termsOfService.updatedAt = event.target.value; })} className="border-slate-700 bg-slate-900 text-slate-50" />
+                      </FieldBlock>
+                      <FieldBlock label="Terms body">
+                        <Textarea value={draftSettings.pages.termsOfService.bodyText} onChange={(event) => updateDraft((draft) => { draft.pages.termsOfService.bodyText = event.target.value; })} rows={18} className="border-slate-700 bg-slate-900 font-mono text-xs text-slate-50" />
                       </FieldBlock>
                     </SectionCard>
                     ) : null}

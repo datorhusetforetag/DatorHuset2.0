@@ -1,5 +1,7 @@
-﻿import { Navbar } from "@/components/Navbar";
+import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
+import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 const privacyPolicyText = `Allmänna Villkor för DatorHuset (Köpvillkor)
 1. Parter och Allmänt
@@ -97,39 +99,58 @@ Om någon bestämmelse i dessa villkor skulle befinnas ogiltig eller inte verkst
 Tack för att du handlar hos DatorHuset! Vi uppskattar ditt förtroende. Har du några frågor om dessa villkor eller kring ditt köp är du alltid välkommen att kontakta oss. Vi hjälper gärna till och vill att du ska känna dig trygg med ditt köp. Vår målsättning är att du som kund ska vara nöjd, både med produkten och med köpupplevelsen.`;
 
 export default function PrivacyPolicy() {
+  const { settings: siteSettings } = useSiteSettings();
+  const pageSettings = siteSettings.pages.privacyPolicy;
+  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
+  const bodyText = pageSettings.bodyText?.trim() || privacyPolicyText;
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+    <div
+      style={themeVars}
+      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
+    >
       <Navbar />
       <main className="flex-1">
-        <section className="bg-yellow-400 overflow-hidden">
-          <div className="container mx-auto px-4 pt-16 sm:pt-24 pb-12">
-            <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] items-center">
+        <section className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
+          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
+            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
               <div>
-                <p className="text-xs uppercase tracking-[0.35em] text-gray-700">Integritet</p>
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 mt-4">Integritetspolicy</h1>
+                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
+                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
+                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
               </div>
               <div className="flex items-center justify-center">
-                <img
-                  src="/Datorhuset.png"
-                  alt="DatorHuset logo"
-                  className="w-full max-w-md h-56 sm:h-72 lg:h-80 object-contain object-center"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <div
+                  className="flex w-full max-w-md items-center justify-center"
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                >
+                  <img
+                    src={pageSettings.heroImage}
+                    alt={pageSettings.heroImageAlt}
+                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-12 max-w-5xl">
-          <pre className="whitespace-pre-wrap font-sans text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
-            {privacyPolicyText}
-          </pre>
+        <section className="container mx-auto max-w-5xl space-y-5 px-4 py-12">
+          <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
+            Senast uppdaterad: {pageSettings.updatedAt}
+          </p>
+          <div
+            className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)]"
+          >
+            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)] sm:text-base">
+              {bodyText}
+            </pre>
+          </div>
         </section>
       </main>
       <Footer />
     </div>
   );
 }
-
-
