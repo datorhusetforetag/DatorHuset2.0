@@ -30,7 +30,7 @@ export default function About() {
                   <Link
                     to={pageSettings.primaryHref}
                     className="inline-flex items-center justify-center gap-2 rounded-[var(--site-radius-lg)] px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-                    style={{ backgroundColor: "var(--site-surface-bg)", color: "var(--site-text-primary)" }}
+                    style={{ backgroundColor: "var(--site-surface-bg-current)", color: "var(--site-text-primary-current)" }}
                   >
                     {pageSettings.primaryLabel}
                   </Link>
@@ -46,7 +46,7 @@ export default function About() {
               <div className="flex items-center justify-center">
                 <div
                   className="flex w-full max-w-md items-center justify-center"
-                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg-current)", borderRadius: "var(--site-radius-xl)" }}
                 >
                   <img
                     src={pageSettings.heroImage}
@@ -122,7 +122,7 @@ export default function About() {
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-90"
-                  style={{ borderColor: "var(--site-card-border)", color: "var(--site-text-primary)" }}
+                  style={{ borderColor: "var(--site-card-border-current)", color: "var(--site-text-primary-current)" }}
                 >
                   {link.platform === "instagram" ? (
                     <Instagram className="h-4 w-4" />

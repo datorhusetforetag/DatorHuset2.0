@@ -83,7 +83,7 @@ export default function CustomerService() {
               <div className="flex items-center justify-center">
                 <div
                   className="flex w-full max-w-md items-center justify-center"
-                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg-current)", borderRadius: "var(--site-radius-xl)" }}
                 >
                   <img
                     src={heroImage}
@@ -101,7 +101,7 @@ export default function CustomerService() {
         <section className="container mx-auto max-w-5xl space-y-6 px-4 py-12">
           <div data-sandbox-id="customer-contact" className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
                 <h2 className="text-lg font-semibold">{pageSettings.contactTitle}</h2>
                 <p>
                   E-post:{" "}
@@ -110,7 +110,7 @@ export default function CustomerService() {
                   </a>
                 </p>
               </div>
-              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
                 <h2 className="text-lg font-semibold">{pageSettings.hoursTitle}</h2>
                 {pageSettings.hoursLines.map((line) => (
                   <p key={line}>{line}</p>
@@ -118,7 +118,7 @@ export default function CustomerService() {
               </div>
             </div>
 
-            <div className="space-y-3 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+            <div className="space-y-3 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.supportTitle}</h2>
               {pageSettings.supportLines.map((line) => (
                 <p key={line}>{line}</p>
@@ -127,7 +127,7 @@ export default function CustomerService() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div data-sandbox-id="customer-issues" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+            <div data-sandbox-id="customer-issues" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.commonIssuesTitle}</h2>
               <ul className="space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
                 {pageSettings.commonIssues.map((issue) => (
@@ -137,7 +137,7 @@ export default function CustomerService() {
               <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.commonIssuesNote}</p>
             </div>
 
-            <div data-sandbox-id="customer-workflow" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}>
+            <div data-sandbox-id="customer-workflow" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
               <h2 className="text-lg font-semibold">{pageSettings.workflowTitle}</h2>
               <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
                 {pageSettings.workflowSteps.map((step) => (

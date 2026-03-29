@@ -35,7 +35,7 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
             <div
               key={step.title}
               className="flex flex-col items-start gap-4 rounded-xl border px-6 py-8 text-left shadow-[0_20px_60px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] sm:items-center sm:px-8 sm:py-10 sm:text-center"
-              style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}
+              style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
             >
               {renderStepIcon(step.icon)}
               <h3 className="text-xl font-bold">{step.title}</h3>

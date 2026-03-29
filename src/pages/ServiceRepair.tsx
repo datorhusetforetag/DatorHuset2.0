@@ -122,7 +122,7 @@ export default function ServiceRepair() {
               <Link
                 to={pageSettings.primaryHref}
                 className="inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: "var(--site-surface-bg)", color: "var(--site-text-primary)" }}
+                style={{ backgroundColor: "var(--site-surface-bg-current)", color: "var(--site-text-primary-current)" }}
               >
                 <Headset className="h-5 w-5" />
                 {pageSettings.primaryLabel}
@@ -146,10 +146,10 @@ export default function ServiceRepair() {
             </div>
 
             <div className="mt-10 flex flex-col items-center gap-10">
-              <div className="w-full max-w-3xl rounded-xl border bg-[var(--site-muted-bg)] dark:bg-[var(--site-card-bg-dark)]" style={{ borderColor: "var(--site-card-border)" }}>
+              <div className="w-full max-w-3xl rounded-xl border bg-[var(--site-muted-bg)] dark:bg-[var(--site-card-bg-dark)]" style={{ borderColor: "var(--site-card-border-current)" }}>
                 <Accordion type="single" collapsible defaultValue={pageSettings.steps[0]?.value || "step-1"} className="w-full">
                   {pageSettings.steps.map((step) => (
-                    <AccordionItem key={step.value} value={step.value} className="px-6" style={{ borderColor: "var(--site-card-border)" }}>
+                    <AccordionItem key={step.value} value={step.value} className="px-6" style={{ borderColor: "var(--site-card-border-current)" }}>
                       <AccordionTrigger className="text-left">{step.title}</AccordionTrigger>
                       <AccordionContent className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{step.body}</AccordionContent>
                     </AccordionItem>
@@ -163,7 +163,7 @@ export default function ServiceRepair() {
                 <form
                   onSubmit={handleSubmit}
                   className="space-y-4 rounded-2xl border bg-[var(--site-card-bg)] p-4 dark:bg-[var(--site-card-bg-dark)] sm:p-6"
-                  style={{ borderColor: "var(--site-card-border)" }}
+                  style={{ borderColor: "var(--site-card-border-current)" }}
                 >
                   <div className="grid gap-4 md:grid-cols-2">
                     <div className="space-y-2">

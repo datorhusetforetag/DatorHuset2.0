@@ -10,7 +10,7 @@ const renderPromoCard = (card: SitePromoCard, campaign: string) => (
   <article
     key={`${campaign}-${card.title}`}
     className="relative flex min-h-[520px] flex-col overflow-hidden rounded-3xl border shadow-[0_20px_60px_rgba(0,0,0,0.08)] sm:min-h-[560px]"
-    style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}
+    style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
   >
     <div className="relative h-48 sm:h-56 lg:h-64">
       <img src={card.image} alt={card.imageAlt} className="h-full w-full object-cover" loading="lazy" decoding="async" />
@@ -49,7 +49,7 @@ const renderPromoCard = (card: SitePromoCard, campaign: string) => (
             utm_content: buildUtmContent(card.secondaryLabel),
           })}
           className="inline-flex w-full items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-opacity hover:opacity-90 sm:w-auto"
-          style={{ borderColor: "var(--site-accent-bg)", color: "var(--site-text-primary)" }}
+          style={{ borderColor: "var(--site-accent-bg)", color: "var(--site-text-primary-current)" }}
         >
           {card.secondaryLabel}
         </Link>

@@ -42,7 +42,6 @@ export const Navbar = () => {
   const shouldShowBackButton = effectivePathname !== "/";
   const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
   const navigation = settings.site.navigation;
-  const theme = settings.site.theme;
   const navigationLogo = navigation.logoUrl?.trim() || "/Datorhuset.png";
 
   const searchState = useMemo(
@@ -201,9 +200,9 @@ export const Navbar = () => {
       <div
         className="border-b shadow-sm"
         style={{
-          borderColor: theme.cardBorderColor,
-          backgroundColor: theme.surfaceBackground,
-          color: theme.textColor,
+          borderColor: "var(--site-card-border-current)",
+          backgroundColor: "var(--site-surface-bg-current)",
+          color: "var(--site-text-primary-current)",
         }}
       >
         <div className="container mx-auto px-4">
@@ -216,7 +215,7 @@ export const Navbar = () => {
                     onClick={() => navigate(-1)}
                     aria-label="Tillbaka"
                     className="inline-flex h-8 w-8 items-center justify-center rounded-full border transition-opacity hover:opacity-85 lg:hidden"
-                    style={{ borderColor: theme.cardBorderColor, color: theme.textColor }}
+                    style={{ borderColor: "var(--site-card-border-current)", color: "var(--site-text-primary-current)" }}
                   >
                     <ArrowLeft className="h-4 w-4" />
                   </button>
@@ -224,7 +223,7 @@ export const Navbar = () => {
                 <Link
                   to="/"
                   className="flex min-w-0 flex-shrink-0 items-center gap-2 text-base font-bold sm:text-xl"
-                  style={{ color: theme.textColor }}
+                  style={{ color: "var(--site-text-primary-current)" }}
                 >
                   <img src={navigationLogo} alt={navigation.brandName} className="h-9 w-9 object-contain sm:h-12 sm:w-12" loading="eager" decoding="async" />
                   <span className="max-w-[140px] truncate font-[Orbitron] sm:max-w-none">{navigation.brandName}</span>
@@ -236,7 +235,7 @@ export const Navbar = () => {
                   <a
                     href={navigation.adminPortalHref}
                     className="hidden sm:inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold transition-opacity hover:opacity-85"
-                    style={{ borderColor: theme.cardBorderColor, color: theme.textColor }}
+                    style={{ borderColor: "var(--site-card-border-current)", color: "var(--site-text-primary-current)" }}
                   >
                     <ShieldCheck className="h-4 w-4" />
                     Admin
@@ -248,7 +247,7 @@ export const Navbar = () => {
                   <button
                     onClick={() => navigate("/cart")}
                     className="relative flex flex-col items-center transition-opacity hover:opacity-85"
-                    style={{ color: theme.textColor }}
+                    style={{ color: "var(--site-text-primary-current)" }}
                   >
                     <ShoppingCart className="h-5 w-5" />
                     <span className="hidden text-[11px] sm:block">Kundvagn</span>
@@ -262,9 +261,9 @@ export const Navbar = () => {
                     <div
                       className="absolute right-0 z-50 mt-2 w-72 rounded border p-4 shadow-lg"
                       style={{
-                        borderColor: theme.cardBorderColor,
-                        backgroundColor: theme.cardBackground,
-                        color: theme.textColor,
+                        borderColor: "var(--site-card-border-current)",
+                        backgroundColor: "var(--site-card-bg-current)",
+                        color: "var(--site-text-primary-current)",
                       }}
                     >
                       {items.length === 0 ? (

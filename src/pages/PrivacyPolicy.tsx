@@ -123,7 +123,7 @@ export default function PrivacyPolicy() {
               <div className="flex items-center justify-center">
                 <div
                   className="flex w-full max-w-md items-center justify-center"
-                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg)", borderRadius: "var(--site-radius-xl)" }}
+                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg-current)", borderRadius: "var(--site-radius-xl)" }}
                 >
                   <img
                     src={pageSettings.heroImage}

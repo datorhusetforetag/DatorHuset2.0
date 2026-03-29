@@ -112,12 +112,12 @@ export const Hero = ({
               className="flex h-28 items-center justify-between overflow-hidden rounded-lg border px-4 sm:h-36 sm:px-6"
               style={{
                 borderColor: "color-mix(in srgb, var(--site-brand-text) 18%, transparent)",
-                backgroundColor: "var(--site-hero-frame-bg)",
+                backgroundColor: "var(--site-hero-frame-bg-current)",
               }}
             >
               <div className="relative z-10 pr-3">
-                <p className="text-sm uppercase tracking-[0.18em] text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{settings.featureEyebrow}</p>
-                <p className="text-sm font-semibold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)] sm:text-base">{settings.featureTitle}</p>
+                <p className="text-sm uppercase tracking-[0.18em]" style={{ color: "var(--site-text-muted-current)" }}>{settings.featureEyebrow}</p>
+                <p className="text-sm font-semibold sm:text-base" style={{ color: "var(--site-text-primary-current)" }}>{settings.featureTitle}</p>
               </div>
               <img
                 src={settings.featureImage}
@@ -176,9 +176,9 @@ export const Hero = ({
                 })}
                 className="rounded-lg border p-4 text-center transition-all hover:shadow-lg sm:p-6"
                 style={{
-                  borderColor: "var(--site-card-border)",
-                  backgroundColor: "var(--site-card-bg)",
-                  color: "var(--site-text-primary)",
+                  borderColor: "var(--site-card-border-current)",
+                  backgroundColor: "var(--site-card-bg-current)",
+                  color: "var(--site-text-primary-current)",
                 }}
               >
                 <div className="mx-auto mb-3 h-8 w-8 sm:h-10 sm:w-10" style={{ color: "var(--site-brand-bg)" }}>
@@ -206,12 +206,12 @@ export const Hero = ({
                     animationDuration: `${motion.bannerRevealDurationMs}ms`,
                     animationDelay: `${index * motion.heroRevealStaggerMs}ms`,
                     ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
-                    borderColor: "var(--site-card-border)",
-                    backgroundColor: "var(--site-card-bg)",
-                    color: "var(--site-text-primary)",
+                    borderColor: "var(--site-card-border-current)",
+                    backgroundColor: "var(--site-card-bg-current)",
+                    color: "var(--site-text-primary-current)",
                   }}
                 >
-                  <div className="flex h-44 items-center justify-center sm:h-52" style={{ backgroundColor: "var(--site-muted-bg)" }}>
+                  <div className="flex h-44 items-center justify-center sm:h-52" style={{ backgroundColor: "var(--site-muted-bg-current)" }}>
                     <img
                       src={computer.image}
                       alt={computer.name}
@@ -227,7 +227,7 @@ export const Hero = ({
                     <h4 className="mb-2 line-clamp-2 text-sm font-semibold">
                       {computer.name}
                     </h4>
-                    <div className="mb-4 space-y-1 border-t pt-3 text-xs" style={{ borderColor: "var(--site-card-border)", color: "var(--site-text-muted)" }}>
+                    <div className="mb-4 space-y-1 border-t pt-3 text-xs" style={{ borderColor: "var(--site-card-border-current)", color: "var(--site-text-muted-current)" }}>
                       <p className="line-clamp-2">{computer.cpu}</p>
                       <p className="line-clamp-2">{computer.gpu}</p>
                       <p className="line-clamp-2">{computer.ram}</p>
@@ -235,7 +235,7 @@ export const Hero = ({
                     <div className="mb-1 text-2xl font-bold">
                       {computer.price.toLocaleString("sv-SE")} kr
                     </div>
-                    <p className="text-xs" style={{ color: "var(--site-text-muted)" }}>{settings.featuredInventoryLabel}</p>
+                    <p className="text-xs" style={{ color: "var(--site-text-muted-current)" }}>{settings.featuredInventoryLabel}</p>
                   </div>
                 </Link>
               ))}
@@ -243,7 +243,7 @@ export const Hero = ({
             <button
               onClick={() => scrollByCards("left")}
               className="absolute -left-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border p-2 shadow md:flex"
-              style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}
+              style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
               aria-label="Scroll left"
             >
               <ChevronLeft className="h-6 w-6" />
@@ -251,7 +251,7 @@ export const Hero = ({
             <button
               onClick={() => scrollByCards("right")}
               className="absolute -right-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border p-2 shadow md:flex"
-              style={{ borderColor: "var(--site-card-border)", backgroundColor: "var(--site-card-bg)" }}
+              style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
               aria-label="Scroll right"
             >
               <ChevronRight className="h-6 w-6" />
