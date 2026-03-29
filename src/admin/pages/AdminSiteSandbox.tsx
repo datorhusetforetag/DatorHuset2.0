@@ -1712,17 +1712,17 @@ export default function AdminSiteSandbox() {
 
       <div
         className={cn(
-          "mt-6 xl:fixed xl:bottom-6 xl:right-6 xl:top-[9.5rem] xl:z-[90] xl:mt-0 xl:w-[28rem] 2xl:w-[30rem]",
+          "mt-6 xl:fixed xl:right-6 xl:top-1/2 xl:z-[90] xl:mt-0 xl:w-[28rem] xl:-translate-y-1/2 2xl:w-[30rem]",
           inspectorOpen ? "xl:pointer-events-auto" : "xl:pointer-events-none",
         )}
       >
         <div
           className={cn(
-            "overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_24px_90px_rgba(2,6,23,0.45)] transition duration-200",
+            "overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_24px_90px_rgba(2,6,23,0.45)] transition duration-200 xl:flex xl:max-h-[calc(100vh-2rem)] xl:flex-col",
             inspectorOpen ? "opacity-100 xl:translate-x-0" : "opacity-0 xl:translate-x-[120%]",
           )}
         >
-          <div className="border-b border-slate-800 px-6 py-5">
+          <div className="border-b border-slate-800 px-6 py-5 xl:flex-shrink-0">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.32em] text-cyan-300/80">
@@ -1759,7 +1759,7 @@ export default function AdminSiteSandbox() {
               ))}
             </div>
           </div>
-          <div className="max-h-[calc(100vh-12rem)] space-y-5 overflow-y-auto p-6">
+          <div className="space-y-5 overflow-y-auto p-6 xl:min-h-0 xl:flex-1">
         <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
