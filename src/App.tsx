@@ -9,6 +9,7 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { ConsentBanner } from "./components/ConsentBanner";
 import { AdminLayout } from "./admin/AdminLayout";
 import { AdminNotFound } from "./admin/AdminNotFound";
+import AdminSiteSandboxPreview from "./admin/pages/AdminSiteSandboxPreview.tsx";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
@@ -31,7 +32,6 @@ const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
 const AdminSiteSandbox = lazy(() => import("./admin/pages/AdminSiteSandbox.tsx"));
-const AdminSiteSandboxPreview = lazy(() => import("./admin/pages/AdminSiteSandboxPreview.tsx"));
 const queryClient = new QueryClient();
 const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
 

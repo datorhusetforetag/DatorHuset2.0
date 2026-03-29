@@ -446,6 +446,7 @@ export default function AdminSiteSandbox() {
   const [previewTheme, setPreviewTheme] = useState<PreviewTheme>("light");
   const [previewAuth, setPreviewAuth] = useState<PreviewAuth>("logged-out");
   const [previewFrameState, setPreviewFrameState] = useState<PreviewFrameState>("loading");
+  const [previewFrameMessage, setPreviewFrameMessage] = useState("Laddar live preview...");
   const [activeTopMenu, setActiveTopMenu] = useState<TopMenuKey | null>(null);
   const [historyEntries, setHistoryEntries] = useState<SiteSettingsHistoryEntry[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -1031,6 +1032,7 @@ export default function AdminSiteSandbox() {
 
   useEffect(() => {
     setPreviewFrameState("loading");
+    setPreviewFrameMessage("Laddar live preview...");
   }, [previewUrl, previewViewport]);
 
   useEffect(() => {
@@ -1041,7 +1043,14 @@ export default function AdminSiteSandbox() {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.origin !== window.location.origin) return;
-      if (event.data?.type === "site-sandbox:preview-ready" || event.data?.type === "site-sandbox:preview-rendered") {
+      if (event.data?.type === "site-sandbox:preview-ready") {
+        pushPreviewSettings();
+        window.setTimeout(syncPreviewOverlays, 80);
+        return;
+      }
+      if (event.data?.type === "site-sandbox:preview-rendered") {
+        setPreviewFrameState("ready");
+        setPreviewFrameMessage("");
         pushPreviewSettings();
         window.setTimeout(syncPreviewOverlays, 80);
       }
@@ -1055,6 +1064,15 @@ export default function AdminSiteSandbox() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sectionLinks]);
+
+  useEffect(() => {
+    if (previewFrameState !== "loading") return;
+    const timeout = window.setTimeout(() => {
+      setPreviewFrameState("error");
+      setPreviewFrameMessage("Previewn svarade inte i tid. Ladda om previewn eller öppna den i en ny flik.");
+    }, 12000);
+    return () => window.clearTimeout(timeout);
+  }, [previewFrameState, previewUrl]);
 
   useEffect(() => {
     const closeMenu = () => setContextMenu(null);
@@ -1082,7 +1100,7 @@ export default function AdminSiteSandbox() {
   }
 
   return (
-    <div className="space-y-6 pb-10 xl:pr-[30rem] 2xl:pr-[32rem]">
+    <div className="space-y-6 pb-10 xl:pr-[26rem] 2xl:pr-[28rem]">
       <div className="overflow-hidden rounded-[28px] border border-slate-800 bg-[linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_20px_80px_rgba(2,6,23,0.35)]">
         <div className="flex flex-wrap items-center gap-1 border-b border-slate-800 px-3 py-2">
           {[
@@ -1467,7 +1485,6 @@ export default function AdminSiteSandbox() {
                   title={`Preview ${selectedPage.label}`}
                   src={previewUrl}
                   onLoad={() => {
-                    setPreviewFrameState("ready");
                     const frameWindow = previewIframeRef.current?.contentWindow;
                     if (frameWindow) {
                       frameWindow.onscroll = syncPreviewOverlays;
@@ -1478,9 +1495,39 @@ export default function AdminSiteSandbox() {
                       syncPreviewOverlays();
                     }, 80);
                   }}
-                  onError={() => setPreviewFrameState("error")}
+                  onError={() => {
+                    setPreviewFrameState("error");
+                    setPreviewFrameMessage("Previewn kunde inte laddas. Försök ladda om eller öppna den i en ny flik.");
+                  }}
                   className={cn("w-full bg-white", previewViewportHeightClass)}
                 />
+                {previewFrameState !== "ready" ? (
+                  <div className="absolute inset-0 z-10 flex items-center justify-center bg-slate-950/30 backdrop-blur-sm">
+                    <div className="mx-6 max-w-md rounded-3xl border border-slate-700 bg-slate-950/92 px-6 py-5 text-center shadow-[0_24px_90px_rgba(2,6,23,0.55)]">
+                      <p className="text-sm font-semibold text-white">
+                        {previewFrameState === "error" ? "Previewn är inte redo" : "Laddar preview..."}
+                      </p>
+                      <p className="mt-2 text-sm leading-6 text-slate-300">
+                        {previewFrameMessage || "Vi väntar på att previewn ska renderas klart."}
+                      </p>
+                      <div className="mt-4 flex flex-wrap justify-center gap-3">
+                        <Button variant="outline" onClick={touchPreview}>
+                          <RefreshCcw className="h-4 w-4" />
+                          Reload preview
+                        </Button>
+                        <a
+                          href={previewUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:text-white"
+                        >
+                          <Globe className="h-4 w-4" />
+                          Open preview in new tab
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
                 <div className="pointer-events-none absolute inset-0">
                   {previewOverlays.map((overlay) => (
                     <button
@@ -1712,24 +1759,24 @@ export default function AdminSiteSandbox() {
 
       <div
         className={cn(
-          "mt-6 xl:fixed xl:right-6 xl:top-1/2 xl:z-[90] xl:mt-0 xl:w-[28rem] xl:-translate-y-1/2 2xl:w-[30rem]",
+          "mt-6 xl:fixed xl:right-5 xl:top-1/2 xl:z-[90] xl:mt-0 xl:w-[23rem] xl:-translate-y-1/2 2xl:w-[25rem]",
           inspectorOpen ? "xl:pointer-events-auto" : "xl:pointer-events-none",
         )}
       >
         <div
           className={cn(
-            "overflow-hidden rounded-[32px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_24px_90px_rgba(2,6,23,0.45)] transition duration-200 xl:flex xl:max-h-[calc(100vh-2rem)] xl:flex-col",
+            "overflow-hidden rounded-[28px] border border-slate-800 bg-[radial-gradient(circle_at_top_left,_rgba(34,211,238,0.12),_transparent_35%),linear-gradient(180deg,rgba(15,23,42,0.98),rgba(2,6,23,0.98))] shadow-[0_24px_90px_rgba(2,6,23,0.45)] transition duration-200 xl:flex xl:max-h-[calc(100vh-6rem)] xl:flex-col",
             inspectorOpen ? "opacity-100 xl:translate-x-0" : "opacity-0 xl:translate-x-[120%]",
           )}
         >
-          <div className="border-b border-slate-800 px-6 py-5 xl:flex-shrink-0">
+          <div className="border-b border-slate-800 px-5 py-4 xl:flex-shrink-0">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.32em] text-cyan-300/80">
                   {inspectorMode === "design" ? "Design controls" : inspectorMode === "json" ? "JSON handoff" : "Contextual editor"}
                 </p>
-                <h2 className="mt-2 text-xl font-semibold text-white">{selectedSectionMeta?.label || selectedPage.label} inspector</h2>
-                <p className="mt-2 text-sm text-slate-400">
+                <h2 className="mt-2 text-lg font-semibold text-white">{selectedSectionMeta?.label || selectedPage.label} inspector</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-400">
                   {activeSection ? `${activeSection.label}: ${activeSection.description}` : selectedPage.description}
                 </p>
               </div>
@@ -1759,7 +1806,7 @@ export default function AdminSiteSandbox() {
               ))}
             </div>
           </div>
-          <div className="space-y-5 overflow-y-auto p-6 xl:min-h-0 xl:flex-1">
+          <div className="space-y-4 overflow-y-auto overscroll-contain p-5 xl:min-h-0 xl:flex-1">
         <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
