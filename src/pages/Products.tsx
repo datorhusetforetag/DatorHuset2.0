@@ -771,7 +771,7 @@ export default function Products() {
             <div className={`overflow-hidden rounded-3xl border border-[#e4b700] text-gray-900 ${banner.background}`}>
               {activeCategory === "toptier" ? (
                 <div
-                  className="grid items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[0.82fr_1.1fr_0.82fr] lg:gap-8 lg:px-10 xl:px-12"
+                  className="grid min-h-[clamp(22rem,36vh,30rem)] items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[0.82fr_1.1fr_0.82fr] lg:gap-8 lg:px-10 xl:px-12"
                   style={{
                     animationDuration: `${motion.bannerRevealDurationMs}ms`,
                     ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
@@ -832,7 +832,7 @@ export default function Products() {
                 </div>
               ) : (
                 <div
-                  className="grid items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10 lg:px-10 xl:px-12"
+                  className="grid min-h-[clamp(22rem,34vh,28rem)] items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10 lg:px-10 xl:px-12"
                   style={{
                     animationDuration: `${motion.bannerRevealDurationMs}ms`,
                     ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
@@ -920,9 +920,9 @@ export default function Products() {
           </div>
         </div>
 
-        <div className="flex flex-col lg:flex-row flex-1 mt-4 sm:mt-6 pt-6 sm:pt-8 border-t border-gray-200 dark:border-[#1a2636] gap-6">
+        <div className="mt-4 flex min-h-[calc(100vh-14rem)] flex-1 flex-col gap-6 border-t border-gray-200 pt-6 sm:mt-6 sm:pt-8 dark:border-[#1a2636] lg:flex-row">
           <div
-            className={`w-full lg:max-w-xs bg-gray-50 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-800 lg:border-r lg:border-y-0 lg:border-l-0 rounded-2xl lg:rounded-none p-5 sm:p-6 space-y-8 h-fit lg:sticky lg:top-24 ${
+            className={`h-fit w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-8 dark:border-gray-800 dark:bg-gray-900/80 sm:p-6 lg:sticky lg:top-24 lg:min-h-[calc(100vh-12rem)] lg:max-w-xs lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r ${
               mobileFiltersOpen ? "block" : "hidden"
             } lg:block`}
           >
@@ -1155,7 +1155,7 @@ export default function Products() {
             </div>
           </div>
 
-          <div className="flex-1 p-4 sm:p-6 lg:p-10 bg-white dark:bg-[#0f1824]">
+          <div className="min-h-[calc(100vh-12rem)] flex-1 bg-white p-4 dark:bg-[#0f1824] sm:p-6 lg:p-10">
             {hasFilters && (
               <div className="sticky top-24 z-10 mb-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-[#0f1824]/95 backdrop-blur px-4 py-3">
                 <div className="flex flex-wrap items-center gap-3">
@@ -1193,7 +1193,7 @@ export default function Products() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 xl:auto-rows-fr">
                 {filteredProducts.map((card) => {
                   const { computer, useUsedVariant } = card;
                   const variant = getDisplayVariant(computer, useUsedVariant);
@@ -1233,9 +1233,9 @@ export default function Products() {
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
 
                   return (
-                    <Link key={cardKey} to={`/computer/${computer.id}`} className="group">
-                      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden hover:shadow-lg hover:border-[#11667b] dark:hover:border-[#11667b] transition-all min-h-[520px]">
-                        <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 h-72 sm:h-80 flex items-center justify-center group-hover:from-gray-200 group-hover:to-gray-300 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 transition-colors relative">
+                    <Link key={cardKey} to={`/computer/${computer.id}`} className="group h-full">
+                      <div className="flex h-full min-h-[clamp(32rem,58vh,42rem)] flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-[#11667b]">
+                        <div className="relative flex h-[clamp(16rem,30vh,20rem)] items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-gray-800 dark:to-gray-900 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 sm:h-[clamp(18rem,34vh,23rem)]">
                           <img
                             src={computer.image}
                             alt={displayName}
@@ -1265,7 +1265,7 @@ export default function Products() {
                           ) : null}
                           </div>
 
-                        <div className="p-4 pb-6">
+                        <div className="flex flex-1 flex-col p-4 pb-6">
                           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#11667b] dark:group-hover:text-[#11667b] transition-colors">
                             {displayName}
                           </h3>
@@ -1279,7 +1279,7 @@ export default function Products() {
                             <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
                           </div>
 
-                          <div className="text-sm text-gray-600 dark:text-gray-300 space-y-1 mb-4 border-t border-gray-100 dark:border-gray-800 pt-3">
+                          <div className="mb-auto space-y-1 border-t border-gray-100 pt-3 text-sm text-gray-600 dark:border-gray-800 dark:text-gray-300">
                             <p className="truncate">CPU: {variant.cpu}</p>
                             <p className="truncate">GPU: {variant.gpu}</p>
                             <p className="flex flex-wrap items-center gap-2">
@@ -1301,7 +1301,7 @@ export default function Products() {
                             </p>
                           </div>
 
-                          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          <div className="pt-5 text-2xl font-bold text-gray-900 dark:text-gray-100">
                             {displayPrice.toLocaleString("sv-SE")} kr
                           </div>
                         </div>
