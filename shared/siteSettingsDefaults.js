@@ -1,3 +1,5 @@
+import { repairMojibakeValue } from "./repairMojibake.js";
+
 export const SITE_SETTINGS_VERSION = 6;
 
 export const SITE_ICON_OPTIONS = [
@@ -12,7 +14,7 @@ export const SITE_ICON_OPTIONS = [
   "headset",
 ];
 
-export const DEFAULT_SITE_SETTINGS = {
+export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
   version: SITE_SETTINGS_VERSION,
   site: {
     theme: {
@@ -422,4 +424,4 @@ export const DEFAULT_SITE_SETTINGS = {
       bodyText: "",
     },
   },
-};
+});

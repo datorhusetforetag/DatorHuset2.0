@@ -4,6 +4,7 @@ import {
   SITE_ICON_OPTIONS,
   SITE_SETTINGS_VERSION,
 } from "./siteSettingsDefaults.js";
+import { repairMojibakeValue } from "./repairMojibake.js";
 
 export { DEFAULT_SITE_SETTINGS, SITE_ICON_OPTIONS, SITE_SETTINGS_VERSION };
 
@@ -310,7 +311,7 @@ export const siteSettingsSchema = z.object({
 });
 
 export const normalizeSiteSettings = (value) => {
-  const merged = deepMerge(DEFAULT_SITE_SETTINGS, value);
+  const merged = repairMojibakeValue(deepMerge(DEFAULT_SITE_SETTINGS, value));
   const result = siteSettingsSchema.safeParse(merged);
   if (result.success) {
     return result.data;
