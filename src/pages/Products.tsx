@@ -1156,44 +1156,45 @@ export default function Products() {
           </div>
 
           <div className="min-h-[calc(100vh-12rem)] flex-1 bg-white p-4 dark:bg-[#0f1824] sm:p-6 lg:p-10">
-            {hasFilters && (
-              <div className="sticky top-24 z-10 mb-6 rounded-lg border border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-[#0f1824]/95 backdrop-blur px-4 py-3">
-                <div className="flex flex-wrap items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Aktiva filter:</span>
-                  {activeFilters.map((filter) => (
-                    <span
-                      key={filter}
-                      className="rounded-full bg-gray-100 dark:bg-gray-800 px-3 py-1 text-xs font-semibold text-gray-700 dark:text-gray-200"
+            <div className="mx-auto w-full max-w-[1720px]">
+              {hasFilters && (
+                <div className="sticky top-24 z-10 mb-6 rounded-lg border border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-[#0f1824]/95">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Aktiva filter:</span>
+                    {activeFilters.map((filter) => (
+                      <span
+                        key={filter}
+                        className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                      >
+                        {filter}
+                      </span>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="text-xs font-semibold text-[#11667b] hover:text-[#0d4d5d]"
                     >
-                      {filter}
-                    </span>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={clearFilters}
-                    className="text-xs font-semibold text-[#11667b] hover:text-[#0d4d5d]"
-                  >
-                    Rensa filter
-                  </button>
+                      Rensa filter
+                    </button>
+                  </div>
                 </div>
+              )}
+              <div className="mb-6 sm:mb-8">
+                <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">{"Station\u00e4ra datorer"}</h2>
+                <p className="text-gray-600 dark:text-gray-300">
+                  Visar {filteredProducts.length} av {displayCards.length} produkter
+                </p>
               </div>
-            )}
-            <div className="mb-6 sm:mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">{"Station\u00e4ra datorer"}</h2>
-              <p className="text-gray-600 dark:text-gray-300">
-                Visar {filteredProducts.length} av {displayCards.length} produkter
-              </p>
-            </div>
 
-            {filteredProducts.length === 0 ? (
-              <div className="flex items-center justify-center h-96 bg-gray-50 dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-800">
-                <div className="text-center">
-                  <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Inga datorer hittades</p>
-                  <p className="text-gray-600 dark:text-gray-300">Prova att justera dina filter</p>
+              {filteredProducts.length === 0 ? (
+                <div className="flex h-96 items-center justify-center rounded border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+                  <div className="text-center">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Inga datorer hittades</p>
+                    <p className="text-gray-600 dark:text-gray-300">Prova att justera dina filter</p>
+                  </div>
                 </div>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 xl:auto-rows-fr">
+              ) : (
+                <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 xl:grid-cols-3">
                 {filteredProducts.map((card) => {
                   const { computer, useUsedVariant } = card;
                   const variant = getDisplayVariant(computer, useUsedVariant);
@@ -1233,9 +1234,9 @@ export default function Products() {
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
 
                   return (
-                    <Link key={cardKey} to={`/computer/${computer.id}`} className="group h-full">
-                      <div className="flex h-full min-h-[clamp(32rem,58vh,42rem)] flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-[#11667b]">
-                        <div className="relative flex h-[clamp(16rem,30vh,20rem)] items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-gray-800 dark:to-gray-900 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 sm:h-[clamp(18rem,34vh,23rem)]">
+                    <Link key={cardKey} to={`/computer/${computer.id}`} className="group flex h-full w-full max-w-[34rem]">
+                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-[#11667b] 2xl:min-h-[35rem]">
+                        <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-gray-800 dark:to-gray-900 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 sm:min-h-[18rem]">
                           <img
                             src={computer.image}
                             alt={displayName}
@@ -1309,8 +1310,9 @@ export default function Products() {
                     </Link>
                   );
                 })}
-              </div>
-            )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </main>
