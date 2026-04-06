@@ -559,6 +559,17 @@ export default function AdminProducts() {
     return baseMessage;
   };
 
+  const loadListingById = async (productId: string) => {
+    const response = await fetch(`${apiBase}/api/admin/v2/listings/${productId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(resolveApiErrorMessage(data, "Kunde inte hämta senaste listningsdata."));
+    }
+    return data?.data ? mapListingToCatalogItem(data.data) : null;
+  };
+
   const getValidationMessage = (error: any, fallback: string) => {
     const details = formatContractValidationError(error);
     const fieldErrors = details?.fieldErrors || {};
@@ -805,8 +816,6 @@ export default function AdminProducts() {
     setSavingId(item.id);
     setLocalError("");
     try {
-      const expectedUpdatedAt = toExpectedUpdatedAt(item.updated_at);
-      const eta = parseEta(item.eta_input, item.eta_note);
       const fps = normalizeFpsSandboxSettings(
         fpsByProduct[item.id] || item.fps || { version: 2, entries: [] }
       );
@@ -815,53 +824,70 @@ export default function AdminProducts() {
         throw new Error("Alla FPS-rader måste ha en grafik-text innan de kan sparas.");
       }
 
-      const listing = {
-        name: toTextValue(item.name),
-        slug: toTextValue(item.slug),
-        legacy_id: toTextValue(item.legacy_id),
-        description: toTextValue(item.description),
-        image_url: toTextValue(item.image_url),
-        images: dedupeImageUrls(Array.isArray(item.images) ? item.images : []),
-        price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
-        currency: "SEK",
-        cpu: toTextValue(item.cpu),
-        gpu: toTextValue(item.gpu),
-        ram: toTextValue(item.ram),
-        storage: toTextValue(item.storage),
-        storage_type: toTextValue(item.storage_type),
-        tier: toTextValue(item.tier),
-        tags: normalizeListingTags(item.tags),
-        motherboard: toTextValue(item.motherboard),
-        psu: toTextValue(item.psu),
-        case_name: toTextValue(item.case_name),
-        cpu_cooler: toTextValue(item.cpu_cooler),
-        os: toTextValue(item.os),
-        quantity_in_stock: Math.max(0, Math.round(Number(item.quantity_in_stock || 0))),
-        is_preorder: Boolean(item.is_preorder),
-        eta_days: eta.eta_days,
-        eta_note: toTextValue(eta.eta_note),
-        used_variant_enabled: Boolean(item.used_variant_enabled),
-        listing_group_id: toTextValue(item.listing_group_id),
-        expected_updated_at: expectedUpdatedAt,
+      const buildRequestPayload = (expectedUpdatedAt: string | null) => {
+        const eta = parseEta(item.eta_input, item.eta_note);
+        const listing = {
+          name: toTextValue(item.name),
+          slug: toTextValue(item.slug),
+          legacy_id: toTextValue(item.legacy_id),
+          description: toTextValue(item.description),
+          image_url: toTextValue(item.image_url),
+          images: dedupeImageUrls(Array.isArray(item.images) ? item.images : []),
+          price_cents: Math.max(0, Math.round(Number(item.price_cents || 0))),
+          currency: "SEK",
+          cpu: toTextValue(item.cpu),
+          gpu: toTextValue(item.gpu),
+          ram: toTextValue(item.ram),
+          storage: toTextValue(item.storage),
+          storage_type: toTextValue(item.storage_type),
+          tier: toTextValue(item.tier),
+          tags: normalizeListingTags(item.tags),
+          motherboard: toTextValue(item.motherboard),
+          psu: toTextValue(item.psu),
+          case_name: toTextValue(item.case_name),
+          cpu_cooler: toTextValue(item.cpu_cooler),
+          os: toTextValue(item.os),
+          quantity_in_stock: Math.max(0, Math.round(Number(item.quantity_in_stock || 0))),
+          is_preorder: Boolean(item.is_preorder),
+          eta_days: eta.eta_days,
+          eta_note: toTextValue(eta.eta_note),
+          used_variant_enabled: Boolean(item.used_variant_enabled),
+          listing_group_id: toTextValue(item.listing_group_id),
+          expected_updated_at: expectedUpdatedAt,
+        };
+
+        const requestPayload = {
+          listing,
+          fps,
+          used_parts: usedParts,
+          expected_updated_at: expectedUpdatedAt,
+        };
+        const parsedPayload = sharedUpdateListingRequestSchema.safeParse(requestPayload);
+        if (!parsedPayload.success) {
+          throw new Error(getValidationMessage(parsedPayload.error, "Ogiltig payload för listning."));
+        }
+        return parsedPayload.data;
       };
 
-      const requestPayload = {
-        listing,
-        fps,
-        used_parts: usedParts,
-        expected_updated_at: expectedUpdatedAt,
+      const submitSave = async (expectedUpdatedAt: string | null) => {
+        const response = await fetch(`${apiBase}/api/admin/v2/listings/${item.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+          body: JSON.stringify(buildRequestPayload(expectedUpdatedAt)),
+        });
+        const data = await response.json().catch(() => ({}));
+        return { response, data };
       };
-      const parsedPayload = sharedUpdateListingRequestSchema.safeParse(requestPayload);
-      if (!parsedPayload.success) {
-        throw new Error(getValidationMessage(parsedPayload.error, "Ogiltig payload för listning."));
+
+      let { response, data } = await submitSave(toExpectedUpdatedAt(item.updated_at));
+      if (!response.ok && data?.error?.code === "LISTING_VERSION_CONFLICT") {
+        const latest = await loadListingById(item.id);
+        const latestUpdatedAt = toExpectedUpdatedAt(latest?.updated_at);
+        if (!latestUpdatedAt) {
+          throw new Error("Listningen ändrades i bakgrunden men kunde inte synkas om automatiskt.");
+        }
+        ({ response, data } = await submitSave(latestUpdatedAt));
       }
-
-      const response = await fetch(`${apiBase}/api/admin/v2/listings/${item.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify(parsedPayload.data),
-      });
-      const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(resolveApiErrorMessage(data, "Kunde inte spara produkt."));
 
       const saved = data?.data ? mapListingToCatalogItem(data.data) : item;
