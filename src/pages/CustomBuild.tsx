@@ -3614,6 +3614,13 @@ const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
 const formatCurrencyPrice = (price: number, currency = "SEK") =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency }).format(price);
+const getLowestPricedStoreOfferValue = (offers: StoreOffer[]) => {
+  const pricedValues = firstArray(offers)
+    .filter((offer) => offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price))
+    .map((offer) => Number(offer.total_price ?? offer.price))
+    .filter((value) => Number.isFinite(value) && value > 0);
+  return pricedValues.length > 0 ? Math.min(...pricedValues) : null;
+};
 const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
   cpu: 2990,
   gpu: 6990,
@@ -4726,8 +4733,28 @@ export default function CustomBuild() {
       if (typeof cachedResult.image_url === "string" && cachedResult.image_url.trim()) {
         setImageUrlByItemId((prev) => ({
           ...prev,
-          [item.id]: cachedResult.image_url!.trim(),
+          [item.id]:
+            prev[item.id] ||
+            getResolvedComponentImage(categoryKey, item, null) ||
+            cachedResult.image_url!.trim(),
         }));
+      }
+      const cachedLowestPricedOffer = getLowestPricedStoreOfferValue(cachedOffers);
+      if (Number.isFinite(cachedLowestPricedOffer) && cachedLowestPricedOffer > 0) {
+        setLowestOfferPriceByItemId((prev) => ({
+          ...prev,
+          [item.id]: Math.max(0, Math.round(cachedLowestPricedOffer)),
+        }));
+        setPriceSourceByItemId((prev) => ({
+          ...prev,
+          [item.id]: "live-offer",
+        }));
+        setItemsWithoutStorePrice((prev) => {
+          if (!prev[item.id]) return prev;
+          const nextState = { ...prev };
+          delete nextState[item.id];
+          return nextState;
+        });
       }
       setStorePickerLoading(false);
       return;
@@ -4750,9 +4777,8 @@ export default function CustomBuild() {
         throw new Error(fallbackMessage);
       }
       const offers = Array.isArray(data?.offers) ? data.offers.filter((offer) => isDisplayableStoreOffer(offer)) : [];
-      const hasPricedOffer = offers.some(
-        (offer) => offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price)
-      );
+      const lowestPricedOffer = getLowestPricedStoreOfferValue(offers);
+      const hasPricedOffer = Number.isFinite(lowestPricedOffer) && Number(lowestPricedOffer) > 0;
       setStorePickerCache((prev) => ({
         ...prev,
         [cacheKey]: {
@@ -4765,7 +4791,10 @@ export default function CustomBuild() {
       if (typeof data?.image_url === "string" && data.image_url.trim()) {
         setImageUrlByItemId((prev) => ({
           ...prev,
-          [item.id]: data.image_url!.trim(),
+          [item.id]:
+            prev[item.id] ||
+            getResolvedComponentImage(categoryKey, item, null) ||
+            data.image_url!.trim(),
         }));
       }
       if (offers.length === 0) {
@@ -4773,6 +4802,12 @@ export default function CustomBuild() {
         setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
       } else {
+        if (hasPricedOffer) {
+          setLowestOfferPriceByItemId((prev) => ({
+            ...prev,
+            [item.id]: Math.max(0, Math.round(Number(lowestPricedOffer))),
+          }));
+        }
         setPriceSourceByItemId((prev) => ({
           ...prev,
           [item.id]: hasPricedOffer ? "live-offer" : "fallback",

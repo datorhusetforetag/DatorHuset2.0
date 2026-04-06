@@ -87,7 +87,7 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
-const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v4";
+const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v5";
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -4234,7 +4234,9 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
             forceRefresh: true,
             allowStale: false,
           })
-        : await getOrRefreshCatalogItemStoreOffers(item.id);
+        : await getOrRefreshCatalogItemStoreOffers(item.id, {
+            allowStale: false,
+          });
       let imageUrl = await resolveCatalogItemImageUrl(item, {
         response,
         offers: response?.offers,
@@ -4245,14 +4247,18 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
       const offers = Array.isArray(response?.offers)
         ? response.offers.filter((offer) => Boolean(offer?.product_url))
         : [];
-      const hasPricedOffer = offers.some((offer) =>
-        offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)
-      );
+      const pricedOfferValues = offers
+        .filter((offer) => offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price))
+        .map((offer) => Number(offer.total_price ?? offer.price))
+        .filter((value) => Number.isFinite(value) && value > 0);
+      const lowestPricedOffer = pricedOfferValues.length > 0 ? Math.min(...pricedOfferValues) : null;
+      const hasPricedOffer = Number.isFinite(lowestPricedOffer) && lowestPricedOffer > 0;
       return {
         item,
         response,
         offers,
         hasPricedOffer,
+        lowestPricedOffer,
         imageUrl: imageUrl || sanitizeImageUrl(response?.image_url) || null,
       };
     })
@@ -4285,7 +4291,11 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
     const response = entry?.response;
     return {
       item_id: entry.item.id,
-      lowest_price: Number.isFinite(response?.lowest_price) ? response.lowest_price : null,
+      lowest_price: entry?.hasPricedOffer
+        ? Math.max(0, Math.round(entry.lowestPricedOffer))
+        : Number.isFinite(response?.lowest_price)
+          ? response.lowest_price
+          : null,
       updated_at: response?.updated_at || null,
       image_url: entry?.imageUrl || sanitizeImageUrl(response?.image_url) || null,
       price_source: entry?.hasPricedOffer
