@@ -3753,7 +3753,7 @@ export default function CustomBuild() {
   const [imageUrlByItemId, setImageUrlByItemId] = useState<Record<string, string>>({});
   const [priceSourceByItemId, setPriceSourceByItemId] = useState<Record<string, CustomBuildPriceSource>>(() =>
     Object.fromEntries(
-      Object.keys(CUSTOM_BUILD_PRELOADED_PRICE_BY_ID).map((itemId) => [itemId, "seed" as CustomBuildPriceSource])
+      Object.keys(CUSTOM_BUILD_PRELOADED_PRICE_BY_ID).map((itemId) => [itemId, "fallback" as CustomBuildPriceSource])
     )
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
@@ -3915,7 +3915,7 @@ export default function CustomBuild() {
       return "no-store";
     }
     if (typeof CUSTOM_BUILD_PRELOADED_PRICE_BY_ID[item.id] === "number") {
-      return "seed";
+      return "fallback";
     }
     return "fallback";
   };
@@ -3926,7 +3926,7 @@ export default function CustomBuild() {
       case "live-offer":
         return "Live butik";
       case "seed":
-        return "Förladdat";
+        return "Cachad pris";
       case "search":
         return "Ingen butik";
       case "no-store":
@@ -5635,7 +5635,7 @@ export default function CustomBuild() {
                                     </p>
                                     {customBuildDebugEnabled ? (
                                       <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
-                                        {"Debug: Live butik = verifierad butikslänk med pris, Förladdat = preloadad prisfil, Reservpris = katalogpris eller aggregatorpris, Ingen butik = inga butiksträffar."}
+                                        {"Debug: Live butik = verifierad butikslänk med pris, Cachad pris = senast sparad eller lokal reservprisdata, Reservpris = katalogpris eller aggregatorpris, Ingen butik = inga butiksträffar."}
                                       </p>
                                     ) : null}
                                   </div>
@@ -5851,7 +5851,7 @@ export default function CustomBuild() {
         <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-gray-200">
           <p className="font-semibold text-gray-900 dark:text-gray-100">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
-            {"Källor: "}<span className="font-semibold">Live butik</span>{", "}<span className="font-semibold">Förladdat</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
+            {"Källor: "}<span className="font-semibold">Live butik</span>{", "}<span className="font-semibold">Cachad pris</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}
           </p>
         </div>
       ) : null}

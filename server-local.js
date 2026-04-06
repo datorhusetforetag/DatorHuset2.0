@@ -72,6 +72,8 @@ const CUSTOM_PRICE_REQUEST_TIMEOUT_MS = Math.max(
   3_000,
   Number(process.env.CUSTOM_PRICE_REQUEST_TIMEOUT_MS || 12_000)
 );
+const CUSTOM_PRICE_REFRESH_TIMEZONE =
+  String(process.env.CUSTOM_PRICE_REFRESH_TIMEZONE || "Europe/Stockholm").trim() || "Europe/Stockholm";
 const CUSTOM_PRICE_MAX_QUERY_LENGTH = 180;
 const CUSTOM_STORE_PRICE_CACHE_VERSION = "v3";
 const CUSTOM_PRICE_EMPTY_CACHE_TTL_MS = Math.max(
@@ -261,6 +263,45 @@ let customStorePriceCacheWriteChain = Promise.resolve();
 let customBuildProductCacheWriteChain = Promise.resolve();
 let customStorePriceSchedulerStarted = false;
 let customBuildProductSchedulerStarted = false;
+const customPriceRefreshTimeFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: CUSTOM_PRICE_REFRESH_TIMEZONE,
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hourCycle: "h23",
+});
+
+const getCustomPriceRefreshClockParts = (value = Date.now()) => {
+  const date = value instanceof Date ? value : new Date(value);
+  const parts = customPriceRefreshTimeFormatter.formatToParts(date);
+  const map = {};
+  parts.forEach((part) => {
+    if (part.type !== "literal") {
+      map[part.type] = part.value;
+    }
+  });
+  return {
+    year: map.year || "0000",
+    month: map.month || "00",
+    day: map.day || "00",
+    hour: map.hour || "00",
+    minute: map.minute || "00",
+    second: map.second || "00",
+  };
+};
+
+const getCustomPriceRefreshDateKey = (value = Date.now()) => {
+  const parts = getCustomPriceRefreshClockParts(value);
+  return `${parts.year}-${parts.month}-${parts.day}`;
+};
+
+const isCurrentCustomPriceRefreshWindow = (value = Date.now()) => {
+  const parts = getCustomPriceRefreshClockParts(value);
+  return parts.hour === "00" && Number(parts.minute) < 5;
+};
 
 const getCached = (key) => {
   const cached = responseCache.get(key);
@@ -3362,24 +3403,56 @@ const refreshTrackedStoreQueries = async () => {
   }
 };
 
+const getLatestCustomStorePriceCacheUpdatedAt = () => {
+  let latest = 0;
+  customStorePriceCache.forEach((entry) => {
+    if (Number.isFinite(entry?.updatedAt) && entry.updatedAt > latest) {
+      latest = entry.updatedAt;
+    }
+  });
+  return latest;
+};
+
 const startCustomStorePriceScheduler = async () => {
   if (customStorePriceSchedulerStarted) return;
   customStorePriceSchedulerStarted = true;
   await loadCustomStorePriceCacheFromDisk();
+  let lastRefreshDateKey = null;
+  const runRefresh = async (reason) => {
+    await refreshTrackedStoreQueries();
+    lastRefreshDateKey = getCustomPriceRefreshDateKey();
+    logStructured("info", "custom_price_refresh_completed", {
+      reason,
+      date_key: lastRefreshDateKey,
+      timezone: CUSTOM_PRICE_REFRESH_TIMEZONE,
+    });
+  };
+  const refreshIsDue = (() => {
+    const latestUpdatedAt = getLatestCustomStorePriceCacheUpdatedAt();
+    if (!Number.isFinite(latestUpdatedAt) || latestUpdatedAt <= 0) return true;
+    return getCustomPriceRefreshDateKey(latestUpdatedAt) !== getCustomPriceRefreshDateKey();
+  })();
   setTimeout(() => {
-    refreshTrackedStoreQueries().catch((error) => {
+    if (!refreshIsDue) {
+      lastRefreshDateKey = getCustomPriceRefreshDateKey(getLatestCustomStorePriceCacheUpdatedAt());
+      return;
+    }
+    runRefresh("startup").catch((error) => {
       logStructured("warn", "custom_price_initial_refresh_failed", {
         message: error instanceof Error ? error.message : "unknown_error",
       });
     });
   }, 10_000);
   const timer = setInterval(() => {
-    refreshTrackedStoreQueries().catch((error) => {
+    if (!isCurrentCustomPriceRefreshWindow() || lastRefreshDateKey === getCustomPriceRefreshDateKey()) {
+      return;
+    }
+    runRefresh("scheduled-midnight").catch((error) => {
       logStructured("warn", "custom_price_scheduled_refresh_failed", {
         message: error instanceof Error ? error.message : "unknown_error",
       });
     });
-  }, CUSTOM_PRICE_REFRESH_INTERVAL_MS);
+  }, 60_000);
   if (typeof timer?.unref === "function") {
     timer.unref();
   }
@@ -3633,6 +3706,7 @@ const loadCustomBuildProductCacheFromDisk = async () => {
         referenceLowestPrice: entry?.response?.reference_lowest_price,
         referenceSource: entry?.response?.reference_source,
         imageUrl: entry?.response?.image_url,
+        cachedLowestPrice: entry?.response?.lowest_price,
       });
       customBuildProductCache.set(key, {
         item_id: itemId,
@@ -3763,6 +3837,18 @@ const resolveCatalogItemImageUrl = async (item, options = {}) => {
   return null;
 };
 
+const getCatalogFallbackLowestPrice = (item, options = {}) => {
+  const cachedLowestPrice = Number(options?.cachedLowestPrice);
+  if (Number.isFinite(cachedLowestPrice) && cachedLowestPrice > 0) {
+    return Math.max(0, Math.round(cachedLowestPrice));
+  }
+  const itemPrice = Number(item?.price);
+  if (Number.isFinite(itemPrice) && itemPrice > 0) {
+    return Math.max(0, Math.round(itemPrice));
+  }
+  return null;
+};
+
 const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
   const hydratedOffers = hydrateCatalogStoreOffers(offers, item).map((offer) => ({
     ...offer,
@@ -3800,7 +3886,9 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
     ? validatedReferenceLowestPrice
     : Number.isFinite(availableLowestPrice)
       ? availableLowestPrice
-      : validatedReferenceLowestPrice;
+      : Number.isFinite(validatedReferenceLowestPrice)
+        ? validatedReferenceLowestPrice
+        : getCatalogFallbackLowestPrice(item, options);
   return {
     ok: true,
     item_id: item.id,
@@ -3934,6 +4022,7 @@ const getCachedCatalogItemStoreOffers = (itemId) => {
     referenceLowestPrice: cached?.response?.reference_lowest_price,
     referenceSource: cached?.response?.reference_source,
     imageUrl: cached?.response?.image_url,
+    cachedLowestPrice: cached?.response?.lowest_price,
   });
 };
 
@@ -3987,6 +4076,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
         referenceLowestPrice: refreshed?.referenceLowestPrice,
         referenceSource: refreshed?.referenceSource,
         imageUrl: refreshed?.imageUrl,
+        cachedLowestPrice: cached?.response?.lowest_price,
       });
       customBuildProductCache.set(cacheKey, {
         item_id: itemId,
@@ -4076,7 +4166,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
       image_url: entry?.imageUrl || sanitizeImageUrl(response?.image_url) || null,
       price_source: entry?.hasPricedOffer
         ? "live-offer"
-        : Number.isFinite(response?.reference_lowest_price)
+        : Number.isFinite(response?.lowest_price)
           ? "fallback"
           : response?.updated_at
             ? "no-store"
@@ -4095,6 +4185,7 @@ const startCustomBuildProductScheduler = async () => {
   if (customBuildProductSchedulerStarted) return;
   customBuildProductSchedulerStarted = true;
   await ensureCustomBuildProductCacheLoaded();
+  let lastRefreshDateKey = null;
   const refreshAll = async () => {
     const itemIds = CUSTOM_BUILD_CATALOG_ITEMS.map((item) => item.id);
     for (const itemId of itemIds) {
@@ -4109,20 +4200,55 @@ const startCustomBuildProductScheduler = async () => {
       }
     }
   };
+  const latestCatalogUpdatedAt = Array.from(customBuildProductCache.values()).reduce((latest, entry) => {
+    if (Number.isFinite(entry?.updatedAt) && entry.updatedAt > latest) {
+      return entry.updatedAt;
+    }
+    return latest;
+  }, 0);
+  const refreshIsDue =
+    !Number.isFinite(latestCatalogUpdatedAt) ||
+    latestCatalogUpdatedAt <= 0 ||
+    getCustomPriceRefreshDateKey(latestCatalogUpdatedAt) !== getCustomPriceRefreshDateKey();
   setTimeout(() => {
-    refreshAll().catch((error) => {
+    if (!refreshIsDue) {
+      lastRefreshDateKey = getCustomPriceRefreshDateKey(latestCatalogUpdatedAt);
+      return;
+    }
+    refreshAll()
+      .then(() => {
+        lastRefreshDateKey = getCustomPriceRefreshDateKey();
+        logStructured("info", "custom_build_product_refresh_completed", {
+          reason: "startup",
+          date_key: lastRefreshDateKey,
+          timezone: CUSTOM_PRICE_REFRESH_TIMEZONE,
+        });
+      })
+      .catch((error) => {
       logStructured("warn", "custom_build_product_initial_refresh_failed", {
         message: error instanceof Error ? error.message : "unknown_error",
       });
-    });
+      });
   }, 20_000);
   const timer = setInterval(() => {
-    refreshAll().catch((error) => {
-      logStructured("warn", "custom_build_product_scheduled_refresh_failed", {
-        message: error instanceof Error ? error.message : "unknown_error",
+    if (!isCurrentCustomPriceRefreshWindow() || lastRefreshDateKey === getCustomPriceRefreshDateKey()) {
+      return;
+    }
+    refreshAll()
+      .then(() => {
+        lastRefreshDateKey = getCustomPriceRefreshDateKey();
+        logStructured("info", "custom_build_product_refresh_completed", {
+          reason: "scheduled-midnight",
+          date_key: lastRefreshDateKey,
+          timezone: CUSTOM_PRICE_REFRESH_TIMEZONE,
+        });
+      })
+      .catch((error) => {
+        logStructured("warn", "custom_build_product_scheduled_refresh_failed", {
+          message: error instanceof Error ? error.message : "unknown_error",
+        });
       });
-    });
-  }, CUSTOM_PRICE_REFRESH_INTERVAL_MS);
+  }, 60_000);
   if (typeof timer?.unref === "function") {
     timer.unref();
   }
