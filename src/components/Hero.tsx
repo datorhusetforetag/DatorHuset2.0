@@ -1,16 +1,22 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { COMPUTERS } from "@/data/computers";
 import { useProducts } from "@/hooks/useProducts";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { resolveProductImage } from "@/lib/productImageResolver";
+import { getAllInventory } from "@/lib/supabaseServices";
 import { DEFAULT_SITE_SETTINGS, type SiteHeroCategory, type SiteSettings } from "@/lib/siteSettings";
 import { buildUtmContent, withUtm } from "@/lib/utm";
 import { SiteIcon } from "./SiteIcon";
 import winMouseImage from "../../images/WinMouse.png";
 
 const FALLBACK_IMAGE = "/Datorhuset.png";
+
+type InventoryEntry = {
+  product_id: string;
+  quantity_in_stock?: number | null;
+};
 
 type HeroProps = {
   settings?: SiteSettings["homepage"]["hero"];
@@ -23,10 +29,34 @@ export const Hero = ({
 }: HeroProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
   const { products } = useProducts();
+  const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
+  const featuredTitle =
+    settings.featuredTitle === "Senast visade produkter" ? "Mest populära datorer" : settings.featuredTitle;
+
+  useEffect(() => {
+    let active = true;
+    getAllInventory()
+      .then((items) => {
+        if (!active) return;
+        const nextInventoryMap: Record<string, InventoryEntry> = {};
+        items.forEach((item) => {
+          if (!item?.product_id) return;
+          nextInventoryMap[item.product_id] = item as InventoryEntry;
+        });
+        setInventoryMap(nextInventoryMap);
+      })
+      .catch((error) => {
+        console.error("Failed to load homepage inventory", error);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const featuredComputers = useMemo(
     () =>
-      COMPUTERS.slice(0, Math.max(settings.featuredCount, 0)).map((computer) => {
+      COMPUTERS.map((computer, index) => {
         const product =
           getProductFromLookup(productLookup, computer.name) ||
           getProductFromLookup(productLookup, computer.id);
@@ -44,6 +74,7 @@ export const Hero = ({
           product,
         );
         const image = resolveProductImage(product, computer.image) || FALLBACK_IMAGE;
+        const inStock = product?.id ? (inventoryMap[product.id]?.quantity_in_stock ?? 0) > 0 : false;
         return {
           ...computer,
           name: merged.name,
@@ -55,9 +86,18 @@ export const Hero = ({
           storagetype: merged.storagetype,
           tier: merged.tier,
           image,
+          inStock,
+          originalIndex: index,
         };
-      }),
-    [productLookup, settings.featuredCount],
+      })
+        .sort((a, b) => {
+          if (a.inStock !== b.inStock) {
+            return a.inStock ? -1 : 1;
+          }
+          return a.originalIndex - b.originalIndex;
+        })
+        .slice(0, Math.max(settings.featuredCount, 0)),
+    [inventoryMap, productLookup, settings.featuredCount],
   );
 
   const scrollByCards = (direction: "left" | "right") => {
@@ -191,7 +231,7 @@ export const Hero = ({
         </div>
 
         <div className="relative mb-12">
-          <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{settings.featuredTitle}</h3>
+          <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{featuredTitle}</h3>
           <div className="relative">
             <div
               ref={carouselRef}
