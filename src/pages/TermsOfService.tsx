@@ -14,7 +14,7 @@ Dessa villkor gäller för köp av produkter från DatorHuset UF till dig som ku
 Beställningar genomförs via vår webbplats. När du slutfört en beställning skickas en orderbekräftelse automatiskt till din e-postadress. Vi använder Stripe som betalningsleverantör och erbjuder bland annat kort, PayPal, Google Pay och Klarna. Alla priser visas i svenska kronor inklusive moms om inget annat anges.
 
 3. Leverans
-Vi erbjuder kostnadsfri upphämtning enligt överenskommelse eller frakt med PostNord inom Sverige. Leveranstid, kostnad och villkor framgår i kassan eller i orderbekräftelsen. Vid transportskador eller förlorad försändelse ska du kontakta oss så snart som möjligt.
+Vi erbjuder kostnadsfri upphämtning enligt överenskommelse eller frakt med DB Schenker till ombud inom Sverige. Leveranstid, kostnad och villkor framgår i kassan eller i orderbekräftelsen. Vid transportskador eller förlorad försändelse ska du kontakta oss så snart som möjligt.
 
 4. Ångerrätt
 Som konsument har du 14 dagars ångerrätt enligt distansavtalslagen. Meddela oss inom ångerfristen och returnera varan i väsentligen oförändrat skick. Kunden står normalt för returfrakten. Specialbeställda eller personligt anpassade varor kan undantas från ångerrätten enligt gällande lag.

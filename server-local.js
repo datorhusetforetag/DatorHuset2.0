@@ -432,7 +432,7 @@ const CHECKOUT_EXPIRES_IN_SECONDS = Math.min(
   Math.max(Number(process.env.CHECKOUT_EXPIRES_IN_SECONDS || 30 * 60), 30 * 60),
   24 * 60 * 60
 );
-const SHIPPING_COST_CENTS = 70000;
+const SHIPPING_COST_CENTS = 31500;
 const SERVICE_FEE_CENTS = 500;
 const STATUS_OPTIONS = new Set([
   "received",
@@ -5781,7 +5781,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
         price_data: {
           currency: "sek",
           product_data: {
-            name: "PostNord frakt",
+            name: "DB Schenker Fraktalternativ Ombud",
           },
           unit_amount: SHIPPING_COST_CENTS,
         },

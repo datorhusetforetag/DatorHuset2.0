@@ -60,7 +60,7 @@ export default function Checkout() {
   const fullName = `${firstName} ${lastName}`.trim();
   const requiresShipping = shippingMethod === "postnord";
   const serviceFeeCents = 500;
-  const shippingCostCents = requiresShipping ? 70000 : 0;
+  const shippingCostCents = requiresShipping ? 31500 : 0;
   const totalWithFees = totalPrice + serviceFeeCents + shippingCostCents;
 
   useEffect(() => {
@@ -219,16 +219,18 @@ export default function Checkout() {
                       <span className="text-gray-600 dark:text-gray-200">Serviceavgift:</span>
                       <span className="font-semibold text-gray-900 dark:text-gray-100">5 kr</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-200">Frakt:</span>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">Väljs i kassan</span>
-                    </div>
-                  </div>
-
                   <div className="flex justify-between">
-                    <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt (exkl. frakt):</span>
-                    <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{(totalPrice + serviceFeeCents) / 100} kr</span>
+                    <span className="text-gray-600 dark:text-gray-200">Frakt:</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                      {requiresShipping ? "315 kr" : "Ingen frakt vald"}
+                    </span>
                   </div>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt:</span>
+                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalWithFees / 100} kr</span>
+                </div>
                 </div>
               </div>
             </div>
@@ -405,7 +407,7 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">PostNord frakt (700 kr)</p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">DB Schenker Fraktalternativ Ombud (315 kr)</p>
                           <p className="text-sm text-gray-600 dark:text-gray-200">
                             Försäkrad och spårbar frakt. Leverans 1-3 vardagar efter att bygget är klart.
                           </p>
