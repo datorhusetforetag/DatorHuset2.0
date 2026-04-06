@@ -87,7 +87,7 @@ const CUSTOM_PRICE_TRACKED_QUERIES = (process.env.CUSTOM_PRICE_TRACKED_QUERIES |
 const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
-const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v3";
+const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v4";
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -301,6 +301,24 @@ const getCustomPriceRefreshDateKey = (value = Date.now()) => {
 const isCurrentCustomPriceRefreshWindow = (value = Date.now()) => {
   const parts = getCustomPriceRefreshClockParts(value);
   return parts.hour === "00" && Number(parts.minute) < 5;
+};
+
+const isCustomPriceRefreshDue = (updatedAt) => {
+  if (!Number.isFinite(updatedAt) || updatedAt <= 0) return true;
+  return getCustomPriceRefreshDateKey(updatedAt) !== getCustomPriceRefreshDateKey();
+};
+
+const getNextCustomPriceRefreshAt = (value = Date.now()) => {
+  const baseValue = value instanceof Date ? value.getTime() : Number(value);
+  const startValue = Number.isFinite(baseValue) ? baseValue : Date.now();
+  for (let minuteOffset = 1; minuteOffset <= 24 * 60 + 10; minuteOffset += 1) {
+    const candidate = startValue + minuteOffset * 60 * 1000;
+    const parts = getCustomPriceRefreshClockParts(candidate);
+    if (parts.hour === "00" && parts.minute === "00") {
+      return new Date(candidate).toISOString();
+    }
+  }
+  return new Date(startValue + CUSTOM_PRICE_REFRESH_INTERVAL_MS).toISOString();
 };
 
 const getCached = (key) => {
@@ -1233,10 +1251,54 @@ const getRamOfferValidationRequirements = (item) => {
     cl,
     speed,
     capacities,
+    requiresRgb: /\brgb\b/i.test(combined),
+    requiresWhite: /\b(vit|white)\b/i.test(combined),
+    requiresBlack: /\b(svart|black)\b/i.test(combined),
   };
 };
 
 const doesCatalogExactSpecMatchItem = (item, title, url = "") => {
+  if (getCustomBuildCategoryForItem(item) !== "ram") {
+    return true;
+  }
+  const requirements = getRamOfferValidationRequirements(item);
+  const normalizedTitle = normalizeStorePriceQueryKey(`${firstText(title)} ${String(url || "")}`);
+  if (!normalizedTitle) {
+    return false;
+  }
+  if (requirements.ddr && !normalizedTitle.includes(requirements.ddr)) {
+    return false;
+  }
+  if (requirements.cl && !normalizedTitle.includes(requirements.cl)) {
+    return false;
+  }
+  if (requirements.speed) {
+    const speedRegex = new RegExp(`\\b${requirements.speed}\\s*(?:mhz|mt\\/s|mts)?\\b`, "i");
+    if (!speedRegex.test(normalizedTitle)) {
+      return false;
+    }
+  }
+  if (requirements.requiresRgb && !/\brgb\b/i.test(normalizedTitle)) {
+    return false;
+  }
+  if (!requirements.requiresRgb && /\brgb\b/i.test(normalizedTitle)) {
+    return false;
+  }
+  if (requirements.requiresWhite && !/\b(vit|white)\b/i.test(normalizedTitle)) {
+    return false;
+  }
+  if (!requirements.requiresWhite && /\b(vit|white)\b/i.test(normalizedTitle)) {
+    return false;
+  }
+  if (requirements.requiresBlack && !/\b(svart|black)\b/i.test(normalizedTitle)) {
+    return false;
+  }
+  const missingCapacities = requirements.capacities.filter(
+    (capacity) => !doesCatalogTitleContainEquivalentStrongToken(normalizedTitle, capacity.toLowerCase())
+  );
+  if (missingCapacities.length > 0) {
+    return false;
+  }
   return true;
 };
 
@@ -3114,11 +3176,12 @@ const extractDirectProductOfferFromMarkdown = (markdown, source, productUrl, ite
   };
 };
 
-const fetchDirectProductOffer = async (item, source, discoveredOffer = null) => {
+const fetchDirectProductOffer = async (item, source, discoveredOffer = null, options = {}) => {
   const productUrl = normalizeOfferUrlForStore(
     firstText(discoveredOffer?.product_url),
     source.id
   );
+  const requireVerifiedPrice = Boolean(options?.requireVerifiedPrice);
   if (!productUrl) {
     return {
       store_id: source.id,
@@ -3166,7 +3229,11 @@ const fetchDirectProductOffer = async (item, source, discoveredOffer = null) => 
     if (jinaPageText) {
       const directMarkdownOffer = extractDirectProductOfferFromMarkdown(jinaPageText, source, productUrl, item);
       if (directMarkdownOffer) {
-        if (!Number.isFinite(directMarkdownOffer.price) && Number.isFinite(discoveredOffer?.total_price ?? discoveredOffer?.price)) {
+        if (
+          !requireVerifiedPrice &&
+          !Number.isFinite(directMarkdownOffer.price) &&
+          Number.isFinite(discoveredOffer?.total_price ?? discoveredOffer?.price)
+        ) {
           return {
             ...directMarkdownOffer,
             price: Math.max(0, Math.round(discoveredOffer.total_price ?? discoveredOffer.price)),
@@ -3179,6 +3246,19 @@ const fetchDirectProductOffer = async (item, source, discoveredOffer = null) => 
     }
 
     if (Number.isFinite(discoveredOffer?.total_price ?? discoveredOffer?.price)) {
+      if (requireVerifiedPrice) {
+        return {
+          store_id: source.id,
+          store: source.name,
+          status: "linked_no_price",
+          product_url: productUrl,
+          price: null,
+          total_price: null,
+          currency: "SEK",
+          shipping_price: null,
+          availability: null,
+        };
+      }
       const fallbackPrice = Math.max(0, Math.round(discoveredOffer.total_price ?? discoveredOffer.price));
       return {
         store_id: source.id,
@@ -3218,6 +3298,48 @@ const fetchDirectProductOffer = async (item, source, discoveredOffer = null) => 
       error: error instanceof Error ? error.message : "unknown_error",
     };
   }
+};
+
+const verifyCatalogStoreOffersAgainstProductPages = async (item, offers = []) => {
+  if (getCustomBuildCategoryForItem(item) !== "ram") {
+    return sortCatalogStoreOffers(firstArray(offers));
+  }
+
+  const verifiedOffers = await Promise.all(
+    firstArray(offers).map(async (offer) => {
+      const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
+      if (!source || !offer?.product_url) {
+        return offer;
+      }
+
+      try {
+        const verifiedOffer = await fetchDirectProductOffer(item, source, offer, {
+          requireVerifiedPrice: true,
+        });
+        if (!verifiedOffer) {
+          return offer;
+        }
+        return sanitizeCatalogStoreOffer(
+          {
+            ...offer,
+            ...verifiedOffer,
+            trusted_source:
+              verifiedOffer?.status === "available" && Number.isFinite(verifiedOffer?.total_price ?? verifiedOffer?.price)
+                ? "verified-page"
+                : firstText(offer?.trusted_source, verifiedOffer?.trusted_source, "verified-page"),
+          },
+          source,
+          item
+        );
+      } catch (error) {
+        return offer;
+      }
+    })
+  );
+
+  return sortCatalogStoreOffers(
+    verifiedOffers.filter((offer) => isCatalogStoreOfferUseful(offer))
+  );
 };
 
 const sanitizeStorePriceResponse = (query, offers, updatedAt) => {
@@ -3893,7 +4015,7 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
     ok: true,
     item_id: item.id,
     updated_at: new Date(updatedAt).toISOString(),
-    next_refresh_at: new Date(updatedAt + CUSTOM_PRICE_REFRESH_INTERVAL_MS).toISOString(),
+    next_refresh_at: getNextCustomPriceRefreshAt(updatedAt),
     lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
     reference_lowest_price: validatedReferenceLowestPrice,
     reference_source: validatedReferenceLowestPrice ? referenceSource : null,
@@ -3938,11 +4060,12 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
   if (komponentkollProduct?.product_url) {
     const komponentkollHtml = await fetchTextWithBrowserHeaders(komponentkollProduct.product_url).catch(() => null);
     if (komponentkollHtml) {
-      const offers = extractStoreOffersFromKomponentkollProductHtml(
+      let offers = extractStoreOffersFromKomponentkollProductHtml(
         komponentkollHtml,
         item,
         komponentkollProduct.product_url
       );
+      offers = await verifyCatalogStoreOffersAgainstProductPages(item, offers);
       const komponentkollReferenceFromPage = extractKomponentkollReferencePriceFromHtml(
         komponentkollHtml,
         item,
@@ -4039,9 +4162,11 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
   const cachedOffers = Array.isArray(cached?.response?.offers) ? cached.response.offers : [];
   const cachedOfferCount = countCatalogAvailableOffers(cachedOffers);
   const maxAge = cachedOfferCount > 0 ? CUSTOM_PRICE_CACHE_TTL_MS : CUSTOM_PRICE_EMPTY_CACHE_TTL_MS;
+  const refreshDue = isCustomPriceRefreshDue(cached?.updatedAt);
   const isCachedFresh =
     cached &&
     Number.isFinite(cached.updatedAt) &&
+    !refreshDue &&
     Date.now() - cached.updatedAt <= maxAge;
   if (
     cached &&
@@ -4051,7 +4176,7 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
     return getCachedCatalogItemStoreOffers(itemId) || cached.response;
   }
 
-  if (cached && !forceRefresh && allowStale) {
+  if (cached && !forceRefresh && allowStale && !refreshDue) {
     if (!customBuildProductRefreshInFlight.has(cacheKey)) {
       getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh: true, allowStale: false }).catch((error) => {
         logStructured("warn", "custom_build_product_background_refresh_failed", {
@@ -4104,13 +4229,12 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
   const items = getCustomBuildCatalogItemsByCategory(category);
   const entries = await Promise.all(
     items.map(async (item) => {
-      const cachedResponse = getCachedCatalogItemStoreOffers(item.id);
       const response = forceRefresh
         ? await getOrRefreshCatalogItemStoreOffers(item.id, {
             forceRefresh: true,
             allowStale: false,
           })
-        : cachedResponse || await getOrRefreshCatalogItemStoreOffers(item.id);
+        : await getOrRefreshCatalogItemStoreOffers(item.id);
       let imageUrl = await resolveCatalogItemImageUrl(item, {
         response,
         offers: response?.offers,
