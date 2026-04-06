@@ -226,6 +226,13 @@ const PRODUCT_CATEGORY_TAGS: Record<string, string[]> = {
   toptier: ["basta-prestanda"],
 };
 
+const STOCK_PRIORITY_ORDER = new Map<string, number>([
+  ["platina-curver", 0],
+  ["curver", 0],
+  ["guld-sparet", 1],
+  ["sparet", 1],
+]);
+
 export default function Products() {
   const { settings: siteSettings } = useSiteSettings();
   const themeVars = buildSiteThemeVars(siteSettings.site.theme);
@@ -552,6 +559,34 @@ export default function Products() {
     if (product?.name) return product.name;
     return useUsedVariant && computer.usedVariant ? toUsedName(computer.name) : computer.name;
   };
+  const getInventoryProductId = (computer: Computer, useUsedVariant: boolean) => {
+    const lookupKey =
+      useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name;
+    return (
+      productIdByName.get(normalizeProductKey(lookupKey)) ||
+      productIdByName.get(normalizeProductKey(computer.id)) ||
+      null
+    );
+  };
+  const getStockPriority = (computer: Computer, useUsedVariant: boolean) => {
+    const product = getProductForVariant(computer, useUsedVariant);
+    const candidates = [
+      product?.slug,
+      product?.name,
+      product?.legacy_id,
+      useUsedVariant ? computer.usedVariant?.productKey : null,
+      computer.name,
+      computer.id,
+    ];
+    for (const candidate of candidates) {
+      const normalized = normalizeProductKey(String(candidate || ""));
+      const priority = STOCK_PRIORITY_ORDER.get(normalized);
+      if (priority !== undefined) {
+        return priority;
+      }
+    }
+    return Number.MAX_SAFE_INTEGER;
+  };
   type DisplayCard = { computer: Computer; useUsedVariant: boolean };
   const displayCards = useMemo<DisplayCard[]>(() => {
     if (preset === "budget") {
@@ -640,39 +675,61 @@ export default function Products() {
   const hasMoreTiers = tierOptions.length > filterPreviewCount;
 
   const filteredProducts = useMemo(() => {
-    return displayCards.filter((card) => {
-      const variant = getDisplayVariant(card.computer, card.useUsedVariant);
-      const product = getProductForVariant(card.computer, card.useUsedVariant);
-      const displayPrice = variant.price;
-      const categoryMatch = (() => {
-        if (!activeCategory) return true;
-        if (activeCategory === "budget") {
-          return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Budget PC's");
-        }
-        if (activeCategory === "best-selling" || activeCategory === "price-performance") {
-          return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Best-Selling PC's");
-        }
-        if (activeCategory === "toptier") {
-          return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Toptier PC's");
-        }
-        return true;
-      })();
+    return displayCards
+      .map((card, index) => ({ card, index }))
+      .filter(({ card }) => {
+        const variant = getDisplayVariant(card.computer, card.useUsedVariant);
+        const product = getProductForVariant(card.computer, card.useUsedVariant);
+        const displayPrice = variant.price;
+        const categoryMatch = (() => {
+          if (!activeCategory) return true;
+          if (activeCategory === "budget") {
+            return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Budget PC's");
+          }
+          if (activeCategory === "best-selling" || activeCategory === "price-performance") {
+            return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Best-Selling PC's");
+          }
+          if (activeCategory === "toptier") {
+            return hasCategoryTag(product, activeCategory) || card.computer.classLabels?.includes("Toptier PC's");
+          }
+          return true;
+        })();
 
-      const withinPrice = displayPrice >= priceRange[0] && displayPrice <= priceRange[1];
-      const gpuMatch =
-        selectedGPUs.length === 0 ||
-        selectedGPUs.some((label) => gpuLabelMap.get(label)?.includes(variant.gpu));
-      const cpuMatch =
-        selectedCPUs.length === 0 ||
-        selectedCPUs.some((label) => cpuLabelMap.get(label)?.includes(variant.cpu));
-      const tierMatch =
-        selectedTiers.length === 0 ||
-        selectedTiers.some((label) => tierLabelMap.get(label)?.includes(variant.tier));
+        const withinPrice = displayPrice >= priceRange[0] && displayPrice <= priceRange[1];
+        const gpuMatch =
+          selectedGPUs.length === 0 ||
+          selectedGPUs.some((label) => gpuLabelMap.get(label)?.includes(variant.gpu));
+        const cpuMatch =
+          selectedCPUs.length === 0 ||
+          selectedCPUs.some((label) => cpuLabelMap.get(label)?.includes(variant.cpu));
+        const tierMatch =
+          selectedTiers.length === 0 ||
+          selectedTiers.some((label) => tierLabelMap.get(label)?.includes(variant.tier));
 
-      return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
-    });
+        return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
+      })
+      .sort((a, b) => {
+        const aInventoryId = getInventoryProductId(a.card.computer, a.card.useUsedVariant);
+        const bInventoryId = getInventoryProductId(b.card.computer, b.card.useUsedVariant);
+        const aInStock = aInventoryId ? (inventoryMap[aInventoryId]?.quantity_in_stock ?? 0) > 0 : false;
+        const bInStock = bInventoryId ? (inventoryMap[bInventoryId]?.quantity_in_stock ?? 0) > 0 : false;
+
+        if (aInStock !== bInStock) {
+          return aInStock ? -1 : 1;
+        }
+
+        const aPriority = getStockPriority(a.card.computer, a.card.useUsedVariant);
+        const bPriority = getStockPriority(b.card.computer, b.card.useUsedVariant);
+        if (aPriority !== bPriority) {
+          return aPriority - bPriority;
+        }
+
+        return a.index - b.index;
+      })
+      .map(({ card }) => card);
   }, [
     activeCategory,
+    inventoryMap,
     priceRange,
     selectedGPUs,
     selectedCPUs,

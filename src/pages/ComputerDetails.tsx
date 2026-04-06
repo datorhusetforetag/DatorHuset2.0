@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { getProductIdByName, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
+import { getProductIdByName, normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
@@ -21,7 +21,7 @@ import {
 import {
   sanitizeUsedPartsSettings,
 } from "@/lib/usedParts";
-import { checkStock } from "@/lib/supabaseServices";
+import { checkStock, getAllInventory } from "@/lib/supabaseServices";
 import fortniteImage from "../../images/fortnite.jpg";
 import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
 import gta5Image from "../../images/Gta 5.jpg";
@@ -82,6 +82,15 @@ const DLSS_MODE_LABELS: Record<string, string> = {
 type ProductImagesResponse = {
   images?: string[];
   image_url?: string | null;
+};
+
+type InventoryEntry = {
+  product_id: string;
+  quantity_in_stock: number;
+  is_preorder?: boolean | null;
+  allow_preorder?: boolean | null;
+  eta_days?: number | null;
+  eta_note?: string | null;
 };
 
 const toUsedName = (name: string) => {
@@ -251,6 +260,14 @@ const buildDefaultReviewData = (computer: Computer) => {
   };
 };
 
+const hashString = (value: string) => {
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  }
+  return hash;
+};
+
 export default function ComputerDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -280,6 +297,7 @@ export default function ComputerDetails() {
     etaDays: number | null;
     etaNote: string | null;
   } | null>(null);
+  const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
 
   const localComputer = COMPUTERS.find((c) => c.id === id);
   const supabaseOnlyProduct = localComputer ? null : getProductFromLookup(productLookup, id);
@@ -450,6 +468,28 @@ export default function ComputerDetails() {
       isMounted = false;
     };
   }, [activeProductId]);
+
+  useEffect(() => {
+    let active = true;
+    getAllInventory()
+      .then((items) => {
+        if (!active) return;
+        const nextMap: Record<string, InventoryEntry> = {};
+        items.forEach((item) => {
+          if (item?.product_id) {
+            nextMap[item.product_id] = item as InventoryEntry;
+          }
+        });
+        setInventoryMap(nextMap);
+      })
+      .catch((error) => {
+        console.warn("Failed to load inventory list", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (!activeProductId) {
@@ -809,10 +849,37 @@ export default function ComputerDetails() {
     </div>
   );
 
+  const localComputerKeys = useMemo(() => {
+    const keys = new Set<string>();
+    COMPUTERS.forEach((computerEntry) => {
+      [computerEntry.id, computerEntry.name, computerEntry.usedVariant?.productKey].forEach((value) => {
+        const normalized = normalizeProductKey(String(value || ""));
+        if (normalized) {
+          keys.add(normalized);
+        }
+      });
+    });
+    return keys;
+  }, []);
+
+  const supabaseOnlyComputers = useMemo(() => {
+    return products
+      .filter((product) => {
+        const lookupCandidates = [product.id, product.slug, product.legacy_id, product.name];
+        return !lookupCandidates.some((candidate) => {
+          const normalized = normalizeProductKey(String(candidate || ""));
+          return normalized ? localComputerKeys.has(normalized) : false;
+        });
+      })
+      .map((product) => buildComputerFromSupabaseProduct(product));
+  }, [localComputerKeys, products]);
+
   const enrichedComputers = useMemo(
     () =>
-      COMPUTERS.map((item) => {
-        const product = getProductFromLookup(productLookup, item.name);
+      [...COMPUTERS, ...supabaseOnlyComputers].map((item) => {
+        const product =
+          getProductFromLookup(productLookup, item.id) ||
+          getProductFromLookup(productLookup, item.name);
         const resolvedItemImage = resolveProductImage(product, DETAIL_FALLBACK_IMAGE) || DETAIL_FALLBACK_IMAGE;
         const mergedItem = mergeProductFields(
           {
@@ -841,7 +908,7 @@ export default function ComputerDetails() {
           tier: mergedItem.tier,
         };
       }),
-    [productLookup],
+    [productLookup, supabaseOnlyComputers],
   );
   const comparisonCandidates = enrichedComputers.filter((c) => c.id !== resolvedComputer.id);
   const sameTier = comparisonCandidates.filter((c) => c.tier === resolvedComputer.tier);
@@ -853,6 +920,24 @@ export default function ComputerDetails() {
     enrichedComputers.find((entry) => entry.id === resolvedComputer.id) ||
     ({ ...resolvedComputer, image: detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE, images: detailImageCandidates } as Computer);
   const comparisonItems = [currentComparisonItem, ...comparisonPool];
+  const popularItems = useMemo(() => {
+    return enrichedComputers
+      .filter((item) => item.id !== resolvedComputer.id)
+      .map((item) => {
+        const productId = getProductIdByName(item.name) || getProductIdByName(item.id) || null;
+        const inStock = productId ? (inventoryMap[productId]?.quantity_in_stock ?? 0) > 0 : false;
+        const randomRank = hashString(`${resolvedComputer.id}:${productId || item.id}:${item.name}`);
+        return { item, inStock, randomRank };
+      })
+      .sort((a, b) => {
+        if (a.inStock !== b.inStock) {
+          return a.inStock ? -1 : 1;
+        }
+        return a.randomRank - b.randomRank;
+      })
+      .slice(0, 4)
+      .map(({ item }) => item);
+  }, [enrichedComputers, inventoryMap, resolvedComputer.id]);
   const hasMultipleImages = detailImageCandidates.length > 1;
   const resolvedImage = detailImageCandidates[selectedImage] || detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
 
@@ -1373,9 +1458,9 @@ export default function ComputerDetails() {
 
         {/* Related */}
         <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">{"Andra som tittat p\u00e5 samma produkt tittar \u00e4ven p\u00e5:"}</h2>
+          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Mest populära</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {enrichedComputers.filter((c) => c.id !== resolvedComputer.id).slice(0, 4).map((related) => (
+            {popularItems.map((related) => (
               <button
                 key={related.id}
                 onClick={() => navigate(`/computer/${related.id}`)}
