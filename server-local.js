@@ -88,6 +88,11 @@ const CUSTOM_PRICE_CACHE_FILE = path.join(__dirname, "data", "custom-price-cache
 const CUSTOM_BUILD_PRODUCT_CACHE_FILE = path.join(__dirname, "data", "custom-build-product-cache.json");
 const PRISJAKT_PRODUCT_MAP_FILE = path.join(__dirname, "data", "prisjakt-product-map.json");
 const CUSTOM_BUILD_PRODUCT_CACHE_VERSION = "multi-source-v5";
+const CUSTOM_BUILD_PRODUCT_CACHE_COMPATIBLE_VERSIONS = new Set([
+  "multi-source-v3",
+  "multi-source-v4",
+  "multi-source-v5",
+]);
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -3806,22 +3811,24 @@ const loadCustomBuildProductCacheFromDisk = async () => {
     const raw = await fs.readFile(CUSTOM_BUILD_PRODUCT_CACHE_FILE, "utf8");
     const payload = raw ? JSON.parse(raw) : {};
     const payloadVersion = sanitizeText(String(payload?.version || ""), 40);
-    if (payloadVersion && payloadVersion !== CUSTOM_BUILD_PRODUCT_CACHE_VERSION) {
+    if (payloadVersion && !CUSTOM_BUILD_PRODUCT_CACHE_COMPATIBLE_VERSIONS.has(payloadVersion)) {
       return;
     }
     const entries = Array.isArray(payload?.entries) ? payload.entries : [];
     entries.forEach((entry) => {
       const rawKey = sanitizeText(String(entry?.key || ""), 240);
-      const expectedPrefix = `${CUSTOM_BUILD_PRODUCT_CACHE_VERSION}:`;
-      if (rawKey.includes(":") && !rawKey.startsWith(expectedPrefix)) {
+      const rawPrefix = rawKey.includes(":") ? rawKey.split(":")[0] : "";
+      if (
+        rawPrefix &&
+        !CUSTOM_BUILD_PRODUCT_CACHE_COMPATIBLE_VERSIONS.has(rawPrefix) &&
+        rawPrefix !== CUSTOM_BUILD_PRODUCT_CACHE_VERSION
+      ) {
         return;
       }
       const itemId = sanitizeText(String(entry?.item_id || ""), 120);
       const updatedAt = Number(entry?.updatedAt || Date.now());
       const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
-      const key = rawKey.startsWith(expectedPrefix)
-        ? rawKey
-        : buildCustomBuildProductCacheKey(itemId);
+      const key = buildCustomBuildProductCacheKey(itemId);
       if (!key || !itemId || !item || !entry?.response) return;
       const cachedOffers = Array.isArray(entry.response.offers) ? entry.response.offers : [];
       const response = sanitizeCatalogItemResponse(item, cachedOffers, Number.isFinite(updatedAt) ? updatedAt : Date.now(), {
@@ -4149,6 +4156,21 @@ const getCachedCatalogItemStoreOffers = (itemId) => {
   });
 };
 
+const buildCatalogEmergencyFallbackResponse = (item, cachedResponse = null, updatedAt = Date.now()) =>
+  sanitizeCatalogItemResponse(
+    item,
+    Array.isArray(cachedResponse?.offers) && cachedResponse.offers.length > 0
+      ? cachedResponse.offers
+      : buildCatalogFallbackStoreOffers(item, updatedAt),
+    updatedAt,
+    {
+      referenceLowestPrice: cachedResponse?.reference_lowest_price,
+      referenceSource: cachedResponse?.reference_source,
+      imageUrl: cachedResponse?.image_url,
+      cachedLowestPrice: cachedResponse?.lowest_price ?? item?.price,
+    }
+  );
+
 const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
   await ensureCustomBuildProductCacheLoaded();
   const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
@@ -4214,7 +4236,11 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
       if (cached?.response) {
         return getCachedCatalogItemStoreOffers(itemId) || cached.response;
       }
-      throw error;
+      logStructured("warn", "custom_build_product_refresh_failed_using_fallback", {
+        item_id: itemId,
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+      return buildCatalogEmergencyFallbackResponse(item, null, Date.now());
     }
   })().finally(() => {
     customBuildProductRefreshInFlight.delete(cacheKey);
@@ -4234,9 +4260,7 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
             forceRefresh: true,
             allowStale: false,
           })
-        : await getOrRefreshCatalogItemStoreOffers(item.id, {
-            allowStale: false,
-          });
+        : await getOrRefreshCatalogItemStoreOffers(item.id);
       let imageUrl = await resolveCatalogItemImageUrl(item, {
         response,
         offers: response?.offers,
