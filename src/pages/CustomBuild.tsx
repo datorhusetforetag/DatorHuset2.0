@@ -3615,7 +3615,7 @@ const formatPrice = (price: number) => price.toLocaleString("sv-SE");
 const formatCurrencyPrice = (price: number, currency = "SEK") =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency }).format(price);
 const getLowestPricedStoreOfferValue = (offers: StoreOffer[]) => {
-  const pricedValues = firstArray(offers)
+  const pricedValues = (Array.isArray(offers) ? offers : [])
     .filter((offer) => offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price))
     .map((offer) => Number(offer.total_price ?? offer.price))
     .filter((value) => Number.isFinite(value) && value > 0);
