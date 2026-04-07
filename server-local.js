@@ -2589,7 +2589,7 @@ const findBestPrisjaktProductForItem = async (item) => {
   return bestCandidate;
 };
 
-const extractStoreOffersFromPrisjaktProductHtml = (html) => {
+const extractStoreOffersFromPrisjaktProductHtml = (html, item = null) => {
   if (!html || typeof html !== "string") return [];
   const offersByStoreId = new Map();
   const offerRegex = /<a href="(https:\/\/www\.prisjakt\.nu\/go-to-shop\/[^"]+)"/gi;
@@ -2606,7 +2606,7 @@ const extractStoreOffersFromPrisjaktProductHtml = (html) => {
     const price = parseMoneyValue(
       decodeHtmlEntities(String(offerSegment.match(/data-test="PriceLabel"[^>]*>([^<]+)</i)?.[1] || ""))
     );
-    if (!storeId || !Number.isFinite(price) || !productUrl) {
+    if (!storeId || !isCatalogStoreAllowedForItem(item, storeId) || !Number.isFinite(price) || !productUrl) {
       match = offerRegex.exec(html);
       continue;
     }
@@ -2651,7 +2651,7 @@ const extractStoreOffersFromPrisjaktProductHtml = (html) => {
       : Number.isFinite(exclShippingPrice)
         ? exclShippingPrice
         : null;
-    if (!storeId || !source || !Number.isFinite(price)) {
+    if (!storeId || !isCatalogStoreAllowedForItem(item, storeId) || !source || !Number.isFinite(price)) {
       match = priceObjectRegex.exec(html);
       continue;
     }
@@ -2797,7 +2797,7 @@ const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = 
     const normalizedStoreId = normalizeKomponentkollStoreId(
       firstText(entry?.store?.name, entry?.store?.title, entry?.name)
     );
-    if (!normalizedStoreId) return;
+    if (!normalizedStoreId || !isCatalogStoreAllowedForItem(item, normalizedStoreId)) return;
     const source = CUSTOM_STORE_SOURCE_BY_ID[normalizedStoreId];
     if (!source) return;
     const price = parseMoneyValue(entry?.totalprice, entry?.price);
@@ -3306,16 +3306,25 @@ const fetchDirectProductOffer = async (item, source, discoveredOffer = null, opt
 };
 
 const verifyCatalogStoreOffersAgainstProductPages = async (item, offers = []) => {
-  if (getCustomBuildCategoryForItem(item) !== "ram") {
-    return sortCatalogStoreOffers(firstArray(offers));
+  const category = getCustomBuildCategoryForItem(item);
+  const filteredOffers = firstArray(offers).filter((offer) => isCatalogStoreAllowedForItem(item, offer?.store_id));
+  if (category !== "ram") {
+    return sortCatalogStoreOffers(filteredOffers);
   }
 
   const verifiedOffers = await Promise.all(
-    firstArray(offers).map(async (offer) => {
+    filteredOffers.map(async (offer) => {
       const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
       if (!source || !offer?.product_url) {
         return offer;
       }
+
+      const originalTrustedSource = firstText(offer?.trusted_source).toLowerCase();
+      const originalHasTrustedPrice =
+        (originalTrustedSource === "komponentkoll" || originalTrustedSource === "prisjakt") &&
+        offer?.status === "available" &&
+        Boolean(offer?.product_url) &&
+        Number.isFinite(offer?.total_price ?? offer?.price);
 
       try {
         const verifiedOffer = await fetchDirectProductOffer(item, source, offer, {
@@ -3324,7 +3333,7 @@ const verifyCatalogStoreOffersAgainstProductPages = async (item, offers = []) =>
         if (!verifiedOffer) {
           return offer;
         }
-        return sanitizeCatalogStoreOffer(
+        const normalizedVerifiedOffer = sanitizeCatalogStoreOffer(
           {
             ...offer,
             ...verifiedOffer,
@@ -3336,7 +3345,33 @@ const verifyCatalogStoreOffersAgainstProductPages = async (item, offers = []) =>
           source,
           item
         );
+        if (
+          originalHasTrustedPrice &&
+          normalizedVerifiedOffer &&
+          normalizedVerifiedOffer.status !== "available" &&
+          !Number.isFinite(normalizedVerifiedOffer.total_price ?? normalizedVerifiedOffer.price)
+        ) {
+          return sanitizeCatalogStoreOffer(
+            {
+              ...offer,
+              status: "available",
+            },
+            source,
+            item
+          );
+        }
+        return normalizedVerifiedOffer || offer;
       } catch (error) {
+        if (originalHasTrustedPrice) {
+          return sanitizeCatalogStoreOffer(
+            {
+              ...offer,
+              status: "available",
+            },
+            source,
+            item
+          );
+        }
         return offer;
       }
     })
@@ -3598,6 +3633,16 @@ const shouldBypassCatalogPriceRangeValidation = (item, trustedSource) => {
   return TRUSTED_CATALOG_REFERENCE_SOURCES.has(trustedSource);
 };
 
+const isCatalogStoreAllowedForItem = (item, storeId) => {
+  const normalizedStoreId = sanitizeText(String(storeId || ""), 80);
+  if (!normalizedStoreId) return false;
+  const category = getCustomBuildCategoryForItem(item);
+  if (category === "ram" && normalizedStoreId === "amazon-se") {
+    return false;
+  }
+  return Boolean(CUSTOM_STORE_SOURCE_BY_ID[normalizedStoreId]);
+};
+
 const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
   if (!item) return [];
   const directLinkStoreIds = Object.keys(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id] || {}).slice(0, 5);
@@ -3606,6 +3651,7 @@ const buildCatalogFallbackStoreOffers = (item, updatedAt) => {
   return directLinkStoreIds
     .map((storeId) => CURATED_CUSTOM_BUILD_STORE_SOURCES.find((source) => source.id === storeId))
     .filter(Boolean)
+    .filter((source) => isCatalogStoreAllowedForItem(item, source.id))
     .map((source) => {
       const directProductUrl = normalizeCatalogProductUrl(
         firstText(CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES[item.id]?.[source.id]),
@@ -3708,6 +3754,15 @@ const isCatalogStoreOfferUseful = (offer) =>
   Boolean(firstText(offer?.search_url)) ||
   Number.isFinite(offer?.total_price ?? offer?.price);
 
+const buildCatalogStoreSearchQueries = (item) =>
+  Array.from(
+    new Set(
+      [item?.name || "", ...firstArray(item?.searchTerms)]
+        .map((value) => sanitizeText(String(value || ""), CUSTOM_PRICE_MAX_QUERY_LENGTH))
+        .filter((value) => value.length >= 4)
+    )
+  ).slice(0, 3);
+
 const hydrateCatalogStoreOffers = (offers = [], item = null) => {
   const isBetterCatalogStoreOffer = (candidate, current) => {
     const rankFor = (offer) => {
@@ -3733,6 +3788,7 @@ const hydrateCatalogStoreOffers = (offers = [], item = null) => {
   offers.forEach((offer) => {
     const source = CURATED_CUSTOM_BUILD_STORE_SOURCES.find((entry) => entry.id === offer?.store_id);
     if (!source) return;
+    if (!isCatalogStoreAllowedForItem(item, source.id)) return;
     const normalizedOffer = sanitizeCatalogStoreOffer(offer, source, item);
     if (!isCatalogStoreOfferUseful(normalizedOffer)) return;
     const currentOffer = normalizedByStoreId.get(source.id);
@@ -3741,6 +3797,40 @@ const hydrateCatalogStoreOffers = (offers = [], item = null) => {
     }
   });
   return sortCatalogStoreOffers(Array.from(normalizedByStoreId.values()));
+};
+
+const fetchCatalogStoreOffersFromDirectSearch = async (item, referencePrice = null) => {
+  const searchQueries = buildCatalogStoreSearchQueries(item);
+  if (searchQueries.length === 0) return [];
+
+  const collectedOffers = [];
+  for (const query of searchQueries) {
+    const offers = (
+      await Promise.all(
+        CURATED_CUSTOM_BUILD_STORE_SOURCES.filter((source) => isCatalogStoreAllowedForItem(item, source.id)).map(
+          async (source) => {
+            const offer = await fetchStoreOfferForQuery(source, query, referencePrice).catch(() => null);
+            if (!offer) return null;
+            return sanitizeCatalogStoreOffer(
+              {
+                ...offer,
+                store_id: source.id,
+                trusted_source: "direct-search",
+              },
+              source,
+              item
+            );
+          }
+        )
+      )
+    ).filter((offer) => isCatalogStoreOfferUseful(offer));
+    collectedOffers.push(...offers);
+    if (countCatalogAvailableOffers(collectedOffers) >= 3) {
+      break;
+    }
+  }
+
+  return hydrateCatalogStoreOffers(collectedOffers, item);
 };
 
 const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], item = null) => {
@@ -4007,17 +4097,11 @@ const sanitizeCatalogItemResponse = (item, offers, updatedAt, options = {}) => {
   const availableLowestPrice = availableOfferPrices.length > 0
     ? Math.min(...availableOfferPrices)
     : null;
-  const lowestPrice = shouldPreferCatalogReferenceLowestPrice(
-    item,
-    availableLowestPrice,
-    validatedReferenceLowestPrice
-  )
-    ? validatedReferenceLowestPrice
-    : Number.isFinite(availableLowestPrice)
-      ? availableLowestPrice
-      : Number.isFinite(validatedReferenceLowestPrice)
-        ? validatedReferenceLowestPrice
-        : getCatalogFallbackLowestPrice(item, options);
+  const lowestPrice = Number.isFinite(availableLowestPrice)
+    ? availableLowestPrice
+    : Number.isFinite(validatedReferenceLowestPrice)
+      ? validatedReferenceLowestPrice
+      : getCatalogFallbackLowestPrice(item, options);
   return {
     ok: true,
     item_id: item.id,
@@ -4103,7 +4187,7 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
 
   const prisjaktProduct = await findBestPrisjaktProductForItem(item).catch(() => null);
   if (prisjaktProduct?.markdown) {
-    const offers = extractStoreOffersFromPrisjaktProductHtml(prisjaktProduct.markdown);
+    const offers = extractStoreOffersFromPrisjaktProductHtml(prisjaktProduct.markdown, item);
     if (offers.length > 0) {
       offerLists.push(offers);
       if (!Number.isFinite(referenceLowestPrice)) {
@@ -4123,6 +4207,25 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
     if (Number.isFinite(priceRunnerProduct?.lowest_price)) {
       referenceLowestPrice = priceRunnerProduct.lowest_price;
       referenceSource = "pricerunner";
+    }
+  }
+
+  if (countCatalogAvailableOffers(offerLists.flat()) === 0) {
+    const directSearchOffers = await fetchCatalogStoreOffersFromDirectSearch(
+      item,
+      Number.isFinite(referenceLowestPrice) && referenceLowestPrice > 0 ? referenceLowestPrice : item?.price
+    ).catch(() => []);
+    if (directSearchOffers.length > 0) {
+      offerLists.push(directSearchOffers);
+      if (!Number.isFinite(referenceLowestPrice)) {
+        const directSearchPrices = directSearchOffers
+          .map((offer) => offer?.total_price ?? offer?.price)
+          .filter((value) => Number.isFinite(value) && value > 0);
+        if (directSearchPrices.length > 0) {
+          referenceLowestPrice = Math.min(...directSearchPrices);
+          referenceSource = "direct-search";
+        }
+      }
     }
   }
 
@@ -4261,10 +4364,13 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
             allowStale: false,
           })
         : await getOrRefreshCatalogItemStoreOffers(item.id);
-      let imageUrl = await resolveCatalogItemImageUrl(item, {
-        response,
-        offers: response?.offers,
-      }).catch(() => null);
+      let imageUrl = sanitizeImageUrl(response?.image_url) || null;
+      if (!imageUrl) {
+        imageUrl = await resolveCatalogItemImageUrl(item, {
+          response,
+          offers: response?.offers,
+        }).catch(() => null);
+      }
       if (imageUrl) {
         setCachedCatalogItemImageUrl(item.id, imageUrl);
       }
@@ -4312,24 +4418,24 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
   }
 
   const results = entries.map((entry) => {
-    const response = entry?.response;
-    return {
-      item_id: entry.item.id,
-      lowest_price: entry?.hasPricedOffer
-        ? Math.max(0, Math.round(entry.lowestPricedOffer))
-        : Number.isFinite(response?.lowest_price)
-          ? response.lowest_price
-          : null,
-      updated_at: response?.updated_at || null,
-      image_url: entry?.imageUrl || sanitizeImageUrl(response?.image_url) || null,
-      price_source: entry?.hasPricedOffer
-        ? "live-offer"
-        : Number.isFinite(response?.lowest_price)
+      const response = entry?.response;
+      const responseLowestPrice =
+        Number.isFinite(response?.lowest_price) && Number(response.lowest_price) > 0
+          ? Math.max(0, Math.round(Number(response.lowest_price)))
+          : null;
+      return {
+        item_id: entry.item.id,
+        lowest_price: responseLowestPrice,
+        updated_at: response?.updated_at || null,
+        image_url: entry?.imageUrl || sanitizeImageUrl(response?.image_url) || null,
+        price_source: entry?.hasPricedOffer
+          ? "live-offer"
+          : responseLowestPrice
           ? "fallback"
           : response?.updated_at
             ? "no-store"
             : null,
-    };
+      };
   });
   return {
     ok: true,
@@ -6062,10 +6168,13 @@ const handleCatalogItemOffersRequest = async (req, res) => {
     const forceRefresh = String(req.query?.refresh || "").trim() === "1";
     const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
     const snapshot = await getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh });
-    const imageUrl = await resolveCatalogItemImageUrl(item, {
-      response: snapshot,
-      offers: snapshot?.offers,
-    }).catch(() => null);
+    let imageUrl = sanitizeImageUrl(snapshot?.image_url) || null;
+    if (!imageUrl) {
+      imageUrl = await resolveCatalogItemImageUrl(item, {
+        response: snapshot,
+        offers: snapshot?.offers,
+      }).catch(() => null);
+    }
     if (imageUrl) {
       setCachedCatalogItemImageUrl(itemId, imageUrl);
     }
