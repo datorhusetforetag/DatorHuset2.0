@@ -3765,6 +3765,7 @@ export default function CustomBuild() {
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
   const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
+  const liveRefreshAttemptedRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     try {
@@ -4046,6 +4047,65 @@ export default function CustomBuild() {
 
   const supportsStoreOffersForCategory = (_categoryKey: CategoryKey) => true;
 
+  const applyStoreOffersSnapshotToItem = (
+    item: ComponentItem,
+    categoryKey: CategoryKey,
+    data: CatalogItemOffersResponse
+  ) => {
+    const cacheKey = getStoreCacheKey(categoryKey, item.id);
+    const offers = Array.isArray(data?.offers) ? data.offers.filter((offer) => isDisplayableStoreOffer(offer)) : [];
+    const lowestPricedOffer = getLowestPricedStoreOfferValue(offers);
+    const hasPricedOffer = Number.isFinite(lowestPricedOffer) && Number(lowestPricedOffer) > 0;
+
+    setStorePickerCache((prev) => ({
+      ...prev,
+      [cacheKey]: {
+        ok: true,
+        item_id: item.id,
+        image_url: typeof data?.image_url === "string" ? data.image_url : null,
+        offers,
+      },
+    }));
+
+    if (typeof data?.image_url === "string" && data.image_url.trim()) {
+      setImageUrlByItemId((prev) => ({
+        ...prev,
+        [item.id]:
+          prev[item.id] ||
+          getResolvedComponentImage(categoryKey, item, null) ||
+          data.image_url!.trim(),
+      }));
+    }
+
+    if (hasPricedOffer) {
+      setLowestOfferPriceByItemId((prev) => ({
+        ...prev,
+        [item.id]: Math.max(0, Math.round(Number(lowestPricedOffer))),
+      }));
+    }
+
+    setPriceSourceByItemId((prev) => ({
+      ...prev,
+      [item.id]: hasPricedOffer ? "live-offer" : offers.length > 0 ? "fallback" : "no-store",
+    }));
+
+    setItemsWithoutStorePrice((prev) => {
+      if (hasPricedOffer) {
+        if (!prev[item.id]) return prev;
+        const nextState = { ...prev };
+        delete nextState[item.id];
+        return nextState;
+      }
+      if (offers.length === 0) {
+        return { ...prev, [item.id]: true };
+      }
+      if (!prev[item.id]) return prev;
+      const nextState = { ...prev };
+      delete nextState[item.id];
+      return nextState;
+    });
+  };
+
   useEffect(() => {
     if (!supportsStoreOffersForCategory(activeCategory)) return;
     const pendingItems = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
@@ -4109,6 +4169,28 @@ export default function CustomBuild() {
           });
           return nextState;
         });
+
+        const fallbackItemsToRefresh = pendingItems.filter((item) => {
+          const entry = nextEntries.find((candidate) => candidate?.item_id === item.id);
+          return entry?.price_source === "fallback" && !liveRefreshAttemptedRef.current.has(item.id);
+        });
+
+        for (const item of fallbackItemsToRefresh) {
+          if (isCancelled) break;
+          liveRefreshAttemptedRef.current.add(item.id);
+          try {
+            const detailEndpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
+              item.id
+            )}&refresh=1`;
+            const detailResponse = await fetch(detailEndpoint);
+            if (!detailResponse.ok) continue;
+            const detailData = (await detailResponse.json().catch(() => ({}))) as CatalogItemOffersResponse;
+            if (isCancelled || !detailData?.ok) continue;
+            applyStoreOffersSnapshotToItem(item, activeCategory, detailData);
+          } catch {
+            // Keep the existing fallback state on background refresh failures.
+          }
+        }
       } catch {
         // Keep cached or reference prices on temporary API issues.
       }
@@ -4779,48 +4861,9 @@ export default function CustomBuild() {
       const offers = Array.isArray(data?.offers) ? data.offers.filter((offer) => isDisplayableStoreOffer(offer)) : [];
       const lowestPricedOffer = getLowestPricedStoreOfferValue(offers);
       const hasPricedOffer = Number.isFinite(lowestPricedOffer) && Number(lowestPricedOffer) > 0;
-      setStorePickerCache((prev) => ({
-        ...prev,
-        [cacheKey]: {
-          ok: true,
-          item_id: item.id,
-          image_url: typeof data?.image_url === "string" ? data.image_url : null,
-          offers,
-        },
-      }));
-      if (typeof data?.image_url === "string" && data.image_url.trim()) {
-        setImageUrlByItemId((prev) => ({
-          ...prev,
-          [item.id]:
-            prev[item.id] ||
-            getResolvedComponentImage(categoryKey, item, null) ||
-            data.image_url!.trim(),
-        }));
-      }
+      applyStoreOffersSnapshotToItem(item, categoryKey, data);
       if (offers.length === 0) {
-        setItemsWithoutStorePrice((prev) => ({ ...prev, [item.id]: true }));
-        setPriceSourceByItemId((prev) => ({ ...prev, [item.id]: "no-store" }));
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
-      } else {
-        if (hasPricedOffer) {
-          setLowestOfferPriceByItemId((prev) => ({
-            ...prev,
-            [item.id]: Math.max(0, Math.round(Number(lowestPricedOffer))),
-          }));
-        }
-        setPriceSourceByItemId((prev) => ({
-          ...prev,
-          [item.id]: hasPricedOffer ? "live-offer" : "fallback",
-        }));
-        setItemsWithoutStorePrice((prev) => {
-          if (hasPricedOffer) {
-            if (!prev[item.id]) return prev;
-            const nextState = { ...prev };
-            delete nextState[item.id];
-            return nextState;
-          }
-          return { ...prev, [item.id]: true };
-        });
       }
     } catch (error) {
       setStorePickerError(
