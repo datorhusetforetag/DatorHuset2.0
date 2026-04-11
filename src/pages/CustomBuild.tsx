@@ -4175,22 +4175,29 @@ export default function CustomBuild() {
           return entry?.price_source === "fallback" && !liveRefreshAttemptedRef.current.has(item.id);
         });
 
-        for (const item of fallbackItemsToRefresh) {
-          if (isCancelled) break;
-          liveRefreshAttemptedRef.current.add(item.id);
-          try {
-            const detailEndpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
-              item.id
-            )}&refresh=1`;
-            const detailResponse = await fetch(detailEndpoint);
-            if (!detailResponse.ok) continue;
-            const detailData = (await detailResponse.json().catch(() => ({}))) as CatalogItemOffersResponse;
-            if (isCancelled || !detailData?.ok) continue;
-            applyStoreOffersSnapshotToItem(item, activeCategory, detailData);
-          } catch {
-            // Keep the existing fallback state on background refresh failures.
-          }
-        }
+        const refreshQueue = [...fallbackItemsToRefresh];
+        const workerCount = Math.min(4, refreshQueue.length);
+        await Promise.all(
+          Array.from({ length: workerCount }, async () => {
+            while (!isCancelled && refreshQueue.length > 0) {
+              const item = refreshQueue.shift();
+              if (!item) return;
+              liveRefreshAttemptedRef.current.add(item.id);
+              try {
+                const detailEndpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
+                  item.id
+                )}&refresh=1`;
+                const detailResponse = await fetch(detailEndpoint);
+                if (!detailResponse.ok) continue;
+                const detailData = (await detailResponse.json().catch(() => ({}))) as CatalogItemOffersResponse;
+                if (isCancelled || !detailData?.ok) continue;
+                applyStoreOffersSnapshotToItem(item, activeCategory, detailData);
+              } catch {
+                // Keep the existing fallback state on background refresh failures.
+              }
+            }
+          })
+        );
       } catch {
         // Keep cached or reference prices on temporary API issues.
       }

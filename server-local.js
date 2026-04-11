@@ -93,6 +93,14 @@ const CUSTOM_BUILD_PRODUCT_CACHE_COMPATIBLE_VERSIONS = new Set([
   "multi-source-v4",
   "multi-source-v5",
 ]);
+const CUSTOM_BUILD_PRODUCT_REFRESH_CONCURRENCY = Math.max(
+  2,
+  Number(process.env.CUSTOM_BUILD_PRODUCT_REFRESH_CONCURRENCY || 8)
+);
+const CUSTOM_BUILD_PRODUCT_STARTUP_REFRESH_DELAY_MS = Math.max(
+  1_000,
+  Number(process.env.CUSTOM_BUILD_PRODUCT_STARTUP_REFRESH_DELAY_MS || 2_000)
+);
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -259,6 +267,7 @@ const customStorePriceCache = new Map();
 const customStorePriceRefreshInFlight = new Map();
 const customBuildProductCache = new Map();
 const customBuildProductRefreshInFlight = new Map();
+const customBuildProductBatchRefreshInFlight = new Map();
 let customBuildProductCacheLoadPromise = null;
 const customBuildProductImageCache = new Map();
 const komponentkollCategoryCache = new Map();
@@ -2054,11 +2063,18 @@ const PRISJAKT_PRODUCT_URL_OVERRIDES = {
 };
 const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "ram-1": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
+  "ram-2": "https://komponentkoll.se/produkt/1005541-g-skill-32gb-2x16gb-ddr5-6400mhz-cl32-trident-z5-rgb-svart",
   "ram-12": "https://komponentkoll.se/produkt/119068-corsair-dominator-platinum-rgb",
+  "ram-17": "https://komponentkoll.se/produkt/1461817-corsair-vengeance-6000mhz-ddr5-16gb-2x8g",
   "ram-20": "https://komponentkoll.se/produkt/1461803-corsair-vengeance-rgb-ddr5-6000mhz-2x8gb-cl36-xmp-expo-cmh16gx5m2e6000z36",
   "ram-21": "https://komponentkoll.se/produkt/1373530-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-svart",
   "ram-22": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
   "ram-24": "https://komponentkoll.se/produkt/1382458-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-vit",
+  "ram-25": "https://komponentkoll.se/produkt/1401151-kingston-fury-beast-rgb-ddr5-6000mhz-32gb",
+  "ram-26": "https://komponentkoll.se/produkt/1379524-corsair-vengeance-rgb-ddr5-6000mhz-64gb",
+  "ram-27": "https://komponentkoll.se/produkt/1365299-kingston-fury-beast-64gb-2x32gb",
+  "ram-28": "https://komponentkoll.se/produkt/1005925-corsair-vengeance-64gb-2x32gb",
+  "ram-29": "https://komponentkoll.se/produkt/1365307-kingston-fury-beast-rgb-64gb-2x32gb",
   "gpu-6": "https://komponentkoll.se/produkt/1442023-pny-geforce-rtx-5060-8gb-oc",
   "gpu-10": "https://komponentkoll.se/produkt/1443086-xfx-swift-amd-radeon-rx-9060-xt-oc-gaming-vit",
   "gpu-14": "https://komponentkoll.se/produkt/1440663-gigabyte-geforce-rtx-5060-ti-aero-oc",
@@ -2087,6 +2103,15 @@ const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "mb-am4-msi-mag-b550m-mortar-wifi": "https://komponentkoll.se/produkt/119236-msi-mag-b550m-mortar-wifi",
   "psu-22": "https://komponentkoll.se/produkt/1441695-cooler-master-mwe-850w-gold-v3-atx-3-1",
 };
+const CUSTOM_BUILD_TRUSTED_KOMPONENTKOLL_PRICE_ITEM_IDS = new Set([
+  "ram-2",
+  "ram-17",
+  "ram-25",
+  "ram-26",
+  "ram-27",
+  "ram-28",
+  "ram-29",
+]);
 const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
   "cpu-am4-ryzen-3-3100": {
     inet: "https://www.inet.se/produkt/5303157/amd-ryzen-3-3100-3-6ghz-18mb",
@@ -2780,14 +2805,43 @@ const findBestKomponentkollProductForItem = async (item) => {
     }
   }
 
+  const siteSearchCandidates = await fetchKomponentkollProductUrlCandidates(item).catch(() => []);
+  for (const candidateUrl of siteSearchCandidates) {
+    const html = await fetchTextWithBrowserHeaders(candidateUrl).catch(() => null);
+    const product = extractNextDataScriptJson(html)?.props?.initialProps?.pageProps?.product;
+    const title = sanitizeText(String(product?.name || ""), 240);
+    const lowestPrice = parseMoneyValue(product?.lowestPrice?.amount, product?.lowestprice, product?.price);
+    const score = scoreCatalogSourceProductForItem(`${title} ${candidateUrl}`.trim(), item, lowestPrice);
+    if (score < 0) continue;
+    const productId = sanitizeText(String(product?.id || extractKomponentkollProductIdFromUrl(candidateUrl) || ""), 40);
+    const candidate = {
+      title,
+      lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
+      product_url: candidateUrl,
+      product_id: productId,
+      image_url: buildKomponentkollThumbnailUrl(productId),
+      score,
+    };
+    if (
+      !bestCandidate ||
+      candidate.score > bestCandidate.score ||
+      (candidate.score === bestCandidate.score &&
+        Number.isFinite(candidate.lowest_price) &&
+        (!Number.isFinite(bestCandidate.lowest_price) || candidate.lowest_price < bestCandidate.lowest_price))
+    ) {
+      bestCandidate = candidate;
+    }
+  }
+
   return bestCandidate;
 };
 
-const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = "") => {
+const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = "", options = {}) => {
   const nextData = extractNextDataScriptJson(html);
   const product = nextData?.props?.initialProps?.pageProps?.product;
   const productTitleForMatch = `${firstText(product?.name)} ${buildTitleFromProductUrl(sourceUrl)}`.trim();
-  if (!product || !doesCatalogTitleMatchItem(productTitleForMatch, item)) {
+  const trustPageMatch = options?.trustPageMatch === true;
+  if (!product || (!trustPageMatch && !doesCatalogTitleMatchItem(productTitleForMatch, item))) {
     return [];
   }
 
@@ -2809,7 +2863,7 @@ const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = 
       normalizedStoreId
     );
     const offerTitle = firstText(entry?.name, entry?.title, product?.name, source.name);
-    if (!matchesOfferToItemModel(normalizedStoreId, item, offerTitle, productUrl)) {
+    if (!trustPageMatch && !matchesOfferToItemModel(normalizedStoreId, item, offerTitle, productUrl)) {
       return;
     }
     const offer = sanitizeCatalogStoreOffer(
@@ -2839,11 +2893,12 @@ const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = 
   return sortCatalogStoreOffers(Array.from(offersByStoreId.values()));
 };
 
-const extractKomponentkollReferencePriceFromHtml = (html, item, sourceUrl = "") => {
+const extractKomponentkollReferencePriceFromHtml = (html, item, sourceUrl = "", options = {}) => {
   const nextData = extractNextDataScriptJson(html);
   const product = nextData?.props?.initialProps?.pageProps?.product;
   const productTitleForMatch = `${firstText(product?.name)} ${buildTitleFromProductUrl(sourceUrl)}`.trim();
-  if (!product || !doesCatalogTitleMatchItem(productTitleForMatch, item)) {
+  const trustPageMatch = options?.trustPageMatch === true;
+  if (!product || (!trustPageMatch && !doesCatalogTitleMatchItem(productTitleForMatch, item))) {
     return null;
   }
 
@@ -3305,10 +3360,10 @@ const fetchDirectProductOffer = async (item, source, discoveredOffer = null, opt
   }
 };
 
-const verifyCatalogStoreOffersAgainstProductPages = async (item, offers = []) => {
+const verifyCatalogStoreOffersAgainstProductPages = async (item, offers = [], options = {}) => {
   const category = getCustomBuildCategoryForItem(item);
   const filteredOffers = firstArray(offers).filter((offer) => isCatalogStoreAllowedForItem(item, offer?.store_id));
-  if (category !== "ram") {
+  if (category !== "ram" || options?.skipDirectVerification === true) {
     return sortCatalogStoreOffers(filteredOffers);
   }
 
@@ -3833,6 +3888,39 @@ const fetchCatalogStoreOffersFromDirectSearch = async (item, referencePrice = nu
   return hydrateCatalogStoreOffers(collectedOffers, item);
 };
 
+const getCatalogStoreOfferMergeRank = (offer) => {
+  if (offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)) return 0;
+  if (offer?.status === "linked_no_price" && offer?.product_url) return 1;
+  if (offer?.status === "search_only" && offer?.search_url) return 2;
+  if (offer?.status === "unavailable") return 3;
+  return 4;
+};
+
+const shouldReplaceCatalogOfferWithCached = (nextOffer, cachedOffer) => {
+  if (!cachedOffer) return false;
+  if (!nextOffer) return true;
+
+  const nextRank = getCatalogStoreOfferMergeRank(nextOffer);
+  const cachedRank = getCatalogStoreOfferMergeRank(cachedOffer);
+  if (cachedRank !== nextRank) {
+    return cachedRank < nextRank;
+  }
+
+  const nextPrice = Number.isFinite(nextOffer?.total_price ?? nextOffer?.price)
+    ? nextOffer.total_price ?? nextOffer.price
+    : Number.MAX_SAFE_INTEGER;
+  const cachedPrice = Number.isFinite(cachedOffer?.total_price ?? cachedOffer?.price)
+    ? cachedOffer.total_price ?? cachedOffer.price
+    : Number.MAX_SAFE_INTEGER;
+  if (cachedPrice !== nextPrice) {
+    return cachedPrice < nextPrice;
+  }
+
+  const nextUpdatedAt = Date.parse(firstText(nextOffer?.updated_at) || "") || 0;
+  const cachedUpdatedAt = Date.parse(firstText(cachedOffer?.updated_at) || "") || 0;
+  return cachedUpdatedAt > nextUpdatedAt;
+};
+
 const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], item = null) => {
   const nextByStoreId = new Map(
     hydrateCatalogStoreOffers(nextOffers, item).map((offer) => [offer.store_id, offer])
@@ -3843,22 +3931,10 @@ const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], i
 
   cachedByStoreId.forEach((cachedOffer, storeId) => {
     const nextOffer = nextByStoreId.get(storeId);
-    if (!nextOffer || !cachedOffer) {
+    if (!cachedOffer) {
       return;
     }
-
-    const nextHasUsefulData =
-      (nextOffer.status === "available" &&
-        Boolean(nextOffer.product_url) &&
-        Number.isFinite(nextOffer.total_price ?? nextOffer.price)) ||
-      (nextOffer.status === "linked_no_price" && Boolean(nextOffer.product_url));
-    const cachedHasUsefulData =
-      (cachedOffer.status === "available" &&
-        Boolean(cachedOffer.product_url) &&
-        Number.isFinite(cachedOffer.total_price ?? cachedOffer.price)) ||
-      (cachedOffer.status === "linked_no_price" && Boolean(cachedOffer.product_url));
-
-    if (!nextHasUsefulData && cachedHasUsefulData) {
+    if (shouldReplaceCatalogOfferWithCached(nextOffer, cachedOffer)) {
       nextByStoreId.set(storeId, cachedOffer);
     }
   });
@@ -3868,6 +3944,80 @@ const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], i
 
 const countCatalogAvailableOffers = (offers = []) =>
   offers.filter((offer) => offer?.status === "available" && Number.isFinite(offer?.total_price ?? offer?.price)).length;
+
+const isCatalogItemResponseRefreshDue = (response, updatedAt = null) => {
+  const updatedValue = Number.isFinite(updatedAt)
+    ? updatedAt
+    : Date.parse(firstText(response?.updated_at) || "") || 0;
+  return isCustomPriceRefreshDue(updatedValue);
+};
+
+const hasCatalogItemLiveOffers = (response) =>
+  countCatalogAvailableOffers(Array.isArray(response?.offers) ? response.offers : []) > 0;
+
+const mapAsyncWithConcurrency = async (items, concurrency, mapper) => {
+  const queue = Array.isArray(items) ? [...items] : [];
+  const workerCount = Math.max(1, Math.min(Number(concurrency) || 1, queue.length || 1));
+  const workers = Array.from({ length: workerCount }, async () => {
+    while (queue.length > 0) {
+      const nextItem = queue.shift();
+      if (nextItem === undefined) {
+        return;
+      }
+      await mapper(nextItem);
+    }
+  });
+  await Promise.all(workers);
+};
+
+const refreshCustomBuildProductItems = async (itemIds = [], options = {}) => {
+  await ensureCustomBuildProductCacheLoaded();
+  const uniqueItemIds = Array.from(
+    new Set(
+      firstArray(itemIds)
+        .map((value) => sanitizeText(String(value || ""), 120))
+        .filter((value) => Boolean(CUSTOM_BUILD_CATALOG_BY_ID[value]))
+    )
+  );
+  if (uniqueItemIds.length === 0) return;
+
+  const batchKey = sanitizeText(String(options?.batchKey || ""), 160) || null;
+  if (batchKey && customBuildProductBatchRefreshInFlight.has(batchKey)) {
+    return customBuildProductBatchRefreshInFlight.get(batchKey);
+  }
+
+  const batchPromise = (async () => {
+    await mapAsyncWithConcurrency(
+      uniqueItemIds,
+      CUSTOM_BUILD_PRODUCT_REFRESH_CONCURRENCY,
+      async (itemId) => {
+        try {
+          await getOrRefreshCatalogItemStoreOffers(itemId, {
+            forceRefresh: options?.forceRefresh !== false,
+            allowStale: false,
+            deferCacheSave: true,
+          });
+        } catch (error) {
+          logStructured("warn", "custom_build_product_batch_item_refresh_failed", {
+            reason: sanitizeText(String(options?.reason || "batch"), 80) || "batch",
+            item_id: itemId,
+            message: error instanceof Error ? error.message : "unknown_error",
+          });
+        }
+      }
+    );
+    await queueCustomBuildProductCacheSave();
+  })().finally(() => {
+    if (batchKey) {
+      customBuildProductBatchRefreshInFlight.delete(batchKey);
+    }
+  });
+
+  if (batchKey) {
+    customBuildProductBatchRefreshInFlight.set(batchKey, batchPromise);
+  }
+  return batchPromise;
+};
 
 const saveCustomBuildProductCacheToDisk = async () => {
   const payload = {
@@ -4128,25 +4278,21 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
         })
         .filter(Boolean)
     : [];
+  const offerLists = manualOffers.length > 0 ? [manualOffers] : [];
+  let referenceLowestPrice = null;
+  let referenceSource = null;
+  let priceRunnerProduct = null;
   if (manualOffers.length > 0) {
     const manualReferenceLowestPrice = manualOffers
       .map((offer) => offer?.total_price ?? offer?.price)
       .filter((value) => Number.isFinite(value) && value > 0);
-    const manualImageUrl = await resolveCatalogItemImageUrl(item, {
-      offers: manualOffers,
-    }).catch(() => null);
-    return {
-      offers: sortCatalogStoreOffers(manualOffers),
-      referenceLowestPrice: manualReferenceLowestPrice.length > 0 ? Math.min(...manualReferenceLowestPrice) : null,
-      referenceSource: manualReferenceLowestPrice.length > 0 ? "manual" : null,
-      imageUrl: manualImageUrl,
-    };
+    if (manualReferenceLowestPrice.length > 0) {
+      referenceLowestPrice = Math.min(...manualReferenceLowestPrice);
+      referenceSource = "manual";
+    }
   }
-  const offerLists = [];
-  let referenceLowestPrice = null;
-  let referenceSource = null;
-  let priceRunnerProduct = null;
 
+  const trustKomponentkollSourcePage = CUSTOM_BUILD_TRUSTED_KOMPONENTKOLL_PRICE_ITEM_IDS.has(item.id);
   const komponentkollProduct = await findBestKomponentkollProductForItem(item).catch(() => null);
   if (komponentkollProduct?.product_url) {
     const komponentkollHtml = await fetchTextWithBrowserHeaders(komponentkollProduct.product_url).catch(() => null);
@@ -4154,13 +4300,17 @@ const refreshCatalogItemStoreOffers = async (itemId) => {
       let offers = extractStoreOffersFromKomponentkollProductHtml(
         komponentkollHtml,
         item,
-        komponentkollProduct.product_url
+        komponentkollProduct.product_url,
+        { trustPageMatch: trustKomponentkollSourcePage }
       );
-      offers = await verifyCatalogStoreOffersAgainstProductPages(item, offers);
+      offers = await verifyCatalogStoreOffersAgainstProductPages(item, offers, {
+        skipDirectVerification: trustKomponentkollSourcePage,
+      });
       const komponentkollReferenceFromPage = extractKomponentkollReferencePriceFromHtml(
         komponentkollHtml,
         item,
-        komponentkollProduct.product_url
+        komponentkollProduct.product_url,
+        { trustPageMatch: trustKomponentkollSourcePage }
       );
       if (offers.length > 0) {
         offerLists.push(offers);
@@ -4333,7 +4483,9 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
         updatedAt: refreshedAt,
         response: nextResponse,
       });
-      queueCustomBuildProductCacheSave();
+      if (!options?.deferCacheSave) {
+        queueCustomBuildProductCacheSave();
+      }
       return nextResponse;
     } catch (error) {
       if (cached?.response) {
@@ -4356,16 +4508,35 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
 const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false) => {
   await ensureCustomBuildProductCacheLoaded();
   const items = getCustomBuildCatalogItemsByCategory(category);
+  const staleOrFallbackItemIds = [];
+  if (forceRefresh) {
+    await refreshCustomBuildProductItems(
+      items.map((item) => item.id),
+      {
+        forceRefresh: true,
+        batchKey: `force:${category}:${getCustomPriceRefreshDateKey()}`,
+        reason: `category-force:${category}`,
+      }
+    );
+  }
   const entries = await Promise.all(
     items.map(async (item) => {
-      const response = forceRefresh
-        ? await getOrRefreshCatalogItemStoreOffers(item.id, {
-            forceRefresh: true,
-            allowStale: false,
-          })
-        : await getOrRefreshCatalogItemStoreOffers(item.id);
+      const rawCachedEntry = customBuildProductCache.get(buildCustomBuildProductCacheKey(item.id));
+      const cachedResponse = getCachedCatalogItemStoreOffers(item.id);
+      const response =
+        cachedResponse ||
+        buildCatalogEmergencyFallbackResponse(item, rawCachedEntry?.response || null, rawCachedEntry?.updatedAt || Date.now());
+      if (!forceRefresh) {
+        const needsRefresh =
+          !cachedResponse ||
+          isCatalogItemResponseRefreshDue(response, rawCachedEntry?.updatedAt) ||
+          !hasCatalogItemLiveOffers(response);
+        if (needsRefresh) {
+          staleOrFallbackItemIds.push(item.id);
+        }
+      }
       let imageUrl = sanitizeImageUrl(response?.image_url) || null;
-      if (!imageUrl) {
+      if (!imageUrl && forceRefresh) {
         imageUrl = await resolveCatalogItemImageUrl(item, {
           response,
           offers: response?.offers,
@@ -4394,26 +4565,28 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
     })
   );
 
-  const usedImageUrls = new Set();
-  for (const entry of entries) {
-    const needsAlternativeImage = !entry?.imageUrl || usedImageUrls.has(entry.imageUrl);
-    if (!needsAlternativeImage) {
-      usedImageUrls.add(entry.imageUrl);
-      continue;
-    }
-    const alternativeImageUrl = await resolveCatalogItemImageUrl(entry.item, {
-      response: entry.response,
-      offers: entry.offers,
-      imageUrl: entry.imageUrl,
-      preferAlternateSources: true,
-      excludeImageUrls: [entry.imageUrl, ...Array.from(usedImageUrls)].filter(Boolean),
-    }).catch(() => null);
-    if (alternativeImageUrl) {
-      entry.imageUrl = alternativeImageUrl;
-      setCachedCatalogItemImageUrl(entry.item.id, alternativeImageUrl);
-    }
-    if (entry.imageUrl) {
-      usedImageUrls.add(entry.imageUrl);
+  if (forceRefresh) {
+    const usedImageUrls = new Set();
+    for (const entry of entries) {
+      const needsAlternativeImage = !entry?.imageUrl || usedImageUrls.has(entry.imageUrl);
+      if (!needsAlternativeImage) {
+        usedImageUrls.add(entry.imageUrl);
+        continue;
+      }
+      const alternativeImageUrl = await resolveCatalogItemImageUrl(entry.item, {
+        response: entry.response,
+        offers: entry.offers,
+        imageUrl: entry.imageUrl,
+        preferAlternateSources: true,
+        excludeImageUrls: [entry.imageUrl, ...Array.from(usedImageUrls)].filter(Boolean),
+      }).catch(() => null);
+      if (alternativeImageUrl) {
+        entry.imageUrl = alternativeImageUrl;
+        setCachedCatalogItemImageUrl(entry.item.id, alternativeImageUrl);
+      }
+      if (entry.imageUrl) {
+        usedImageUrls.add(entry.imageUrl);
+      }
     }
   }
 
@@ -4437,6 +4610,20 @@ const buildCatalogCategoryPriceResponse = async (category, forceRefresh = false)
             : null,
       };
   });
+
+  if (!forceRefresh && staleOrFallbackItemIds.length > 0) {
+    refreshCustomBuildProductItems(staleOrFallbackItemIds, {
+      forceRefresh: true,
+      batchKey: `category:${category}:${getCustomPriceRefreshDateKey()}`,
+      reason: `category-background:${category}`,
+    }).catch((error) => {
+      logStructured("warn", "custom_build_category_background_refresh_failed", {
+        category,
+        count: staleOrFallbackItemIds.length,
+        message: error instanceof Error ? error.message : "unknown_error",
+      });
+    });
+  }
   return {
     ok: true,
     category,
@@ -4451,18 +4638,14 @@ const startCustomBuildProductScheduler = async () => {
   await ensureCustomBuildProductCacheLoaded();
   let lastRefreshDateKey = null;
   const refreshAll = async () => {
-    const itemIds = CUSTOM_BUILD_CATALOG_ITEMS.map((item) => item.id);
-    for (const itemId of itemIds) {
-      try {
-        await getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh: true });
-        await new Promise((resolve) => setTimeout(resolve, 1200));
-      } catch (error) {
-        logStructured("warn", "custom_build_product_refresh_failed", {
-          item_id: itemId,
-          message: error instanceof Error ? error.message : "unknown_error",
-        });
+    await refreshCustomBuildProductItems(
+      CUSTOM_BUILD_CATALOG_ITEMS.map((item) => item.id),
+      {
+        forceRefresh: true,
+        batchKey: `all:${getCustomPriceRefreshDateKey()}`,
+        reason: "scheduler",
       }
-    }
+    );
   };
   const latestCatalogUpdatedAt = Array.from(customBuildProductCache.values()).reduce((latest, entry) => {
     if (Number.isFinite(entry?.updatedAt) && entry.updatedAt > latest) {
@@ -4493,7 +4676,7 @@ const startCustomBuildProductScheduler = async () => {
         message: error instanceof Error ? error.message : "unknown_error",
       });
       });
-  }, 20_000);
+  }, CUSTOM_BUILD_PRODUCT_STARTUP_REFRESH_DELAY_MS);
   const timer = setInterval(() => {
     if (!isCurrentCustomPriceRefreshWindow() || lastRefreshDateKey === getCustomPriceRefreshDateKey()) {
       return;
