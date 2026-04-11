@@ -5866,7 +5866,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
         return res.status(400).json({ error: "Invalid city" });
       }
     } else {
-      safeAddress = safeAddress || "Upphämtning i Rinkeby Centrum";
+          safeAddress = safeAddress || "Upphämtning i Spånga";
       safePostalCode = safePostalCode || "";
       safeCity = safeCity || "";
     }

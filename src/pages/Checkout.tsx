@@ -391,9 +391,9 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">Upphämtning i Rinkeby Centrum (gratis)</p>
+                              <p className="font-semibold text-gray-900 dark:text-gray-100">Upphämtning i Spånga (gratis)</p>
                           <p className="text-sm text-gray-600 dark:text-gray-200">
-                            Hämta upp din dator i Rinkeby Centrum efter att bygget är klart.
+                                Hämta upp din dator i Spånga efter att bygget är klart.
                           </p>
                         </div>
                       </label>

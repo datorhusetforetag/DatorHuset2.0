@@ -8,7 +8,7 @@ const privacyPolicyText = `Allmänna Villkor för DatorHuset (Köpvillkor)
 
 Dessa allmänna villkor ("Villkoren") gäller för alla köp som görs av konsumenten ("Kunden") via DatorHuset's webbutik. Säljaren är DatorHuset (nedan kallad "vi" eller "DatorHuset"). Genom att genomföra ett köp hos oss godkänner Kunden Villkoren. Kunden måste vara minst 18 år gammal eller ha målsmans godkännande för att få handla hos DatorHuset.
 
-Kontaktuppgifter: För frågor gällande beställningar når du oss via e-post [ange e-postadress] eller telefon [ange telefonnummer]. DatorHuset är baserat i Rinkeby, Stockholm.
+        Kontaktuppgifter: För frågor gällande beställningar når du oss via e-post support@datorhuset.site. DatorHuset är baserat i Spånga, Stockholm.
 
 2. Priser och Betalning
 
@@ -34,7 +34,7 @@ När du slutfört din betalning får du en orderbekräftelse via e-post. Kontrol
 
 Kunden kan välja mellan avhämtning (upphämtning) på plats eller leverans med DB Schenker till ombud. Nedan följer villkor för båda leveransalternativen:
 
-Avhämtning (Kostnadsfri): Du kan välja att hämta varan kostnadsfritt vid Rinkeby Centrum i Stockholm vid en förbestämd tid. Efter att din order är färdigbehandlad kontaktar vi dig för att avtala en tid och exakt plats för upphämtning. Vid avhämtning måste giltig legitimation och orderbekräftelse uppvisas. Om ombud hämtar ut varan åt dig krävs skriftlig fullmakt samt legitimation för både dig och ombudet. Observera att ordern måste vara betald i förväg; ingen betalning hanteras vid avhämtning.
+        Avhämtning (Kostnadsfri): Du kan välja att hämta varan kostnadsfritt vid Spånga i Stockholm vid en förbestämd tid. Efter att din order är färdigbehandlad kontaktar vi dig för att avtala en tid och exakt plats för upphämtning. Vid avhämtning måste giltig legitimation och orderbekräftelse uppvisas. Om ombud hämtar ut varan åt dig krävs skriftlig fullmakt samt legitimation för både dig och ombudet. Observera att ordern måste vara betald i förväg; ingen betalning hanteras vid avhämtning.
 
 DB Schenker Fraktalternativ Ombud: Vi erbjuder säker leverans via DB Schenker till ombud för en fast fraktkostnad om 315 kr. Detta fraktalternativ är spårbart och försäkrat upp till 25 000 kr. Försändelsen levereras normalt till ditt närmaste DB Schenker-ombud och måste kvitteras med giltig legitimation av mottagaren. Leveranstiden är vanligtvis 1-3 arbetsdagar från det att vi skickar paketet (inom Sverige). Vi strävar efter att expediera din order så snart som möjligt; normal hanteringstid innan utskick är 1-3 arbetsdagar. Skulle försändelsen bli försenad meddelar vi dig snarast möjligt.
 
