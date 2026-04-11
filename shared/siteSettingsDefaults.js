@@ -58,7 +58,7 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
     footer: {
       supportTitle: "Kundservice",
       supportEmail: "support@datorhuset.site",
-      supportHours: "Svarstider 11:00-15:00",
+      supportHours: "Svarstider 11:00-3:00",
       logoUrl: "/Datorhuset.png",
       columns: [
         {
