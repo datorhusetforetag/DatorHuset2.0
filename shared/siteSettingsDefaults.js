@@ -44,10 +44,10 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
     },
     navigation: {
       brandName: "DatorHuset",
-      logoUrl: "/Datorhuset.png",
+      logoUrl: "/datorhuset-mark-small.png",
       menuLabel: "Meny",
       searchPlaceholder: "Sök bland produkter, komponenter och kategorier",
-      adminPortalHref: "https://admin.datorhuset.site",
+      adminPortalHref: "https://admin.datorhuset.se",
       menuItems: [
         { label: "Alla produkter", href: "/products" },
         { label: "Custom Bygg", href: "/custom-bygg" },
@@ -57,9 +57,9 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
     },
     footer: {
       supportTitle: "Kundservice",
-      supportEmail: "support@datorhuset.site",
+      supportEmail: "support@datorhuset.se",
       supportHours: "Svarstider 11:00-3:00",
-      logoUrl: "/Datorhuset.png",
+      logoUrl: "/datorhuset-mark-small.png",
       columns: [
         {
           title: "Kontakta oss",
@@ -67,6 +67,7 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
             { label: "FAQ", href: "/faq" },
             { label: "Kundservice / Kontaktuppgifter", href: "/kundservice" },
             { label: "Om oss", href: "/about" },
+            { label: "Ångerrätt och returer", href: "/angerratt-och-returer" },
             { label: "Integritetspolicy", href: "/privacy-policy" },
             { label: "Allmänna villkor", href: "/terms-of-service" },
           ],
@@ -299,7 +300,7 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
       heroCtaLabel: "Se FAQ",
       heroCtaHref: "/faq",
       contactTitle: "Kontaktuppgifter",
-      contactEmail: "support@datorhuset.site",
+      contactEmail: "support@datorhuset.se",
       hoursTitle: "Öppettider",
       hoursLines: ["Svarstider på mejl: 11:00 - 03:00", "Vi svarar på mejl både under vardagar och helger."],
       supportTitle: "Supportärenden",

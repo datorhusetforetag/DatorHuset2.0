@@ -28,6 +28,7 @@ const ServiceRepair = lazy(() => import("./pages/ServiceRepair.tsx"));
 const About = lazy(() => import("./pages/About.tsx"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
+const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy.tsx"));
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
@@ -83,6 +84,7 @@ const App = () => (
                   <Route path="/about" element={<About />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/angerratt-och-returer" element={<ReturnPolicy />} />
                   {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                   <Route path="*" element={<NotFound />} />
                 </>
