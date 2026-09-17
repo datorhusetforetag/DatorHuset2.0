@@ -1,6 +1,6 @@
 /**
  * EXPRESS SERVER FOR STRIPE INTEGRATION
- * Deployable to Render/Railway/etc.
+ * Körs på Render.
  */
 
 import express from "express";
@@ -23,6 +23,8 @@ import {
   CUSTOM_BUILD_STORE_SOURCES as CUSTOM_BUILD_ALLOWED_STORE_SOURCES,
   getCustomBuildCatalogItemsByCategory,
 } from "./src/data/customBuildCatalog.js";
+import { CUSTOM_BUILD_PRELOADED_PRICE_BY_ID } from "./src/data/customBuildPreloadedPrices.js";
+import * as pricing from "./server/pricing/index.mjs";
 import {
   ADMIN_DLSS_FSR_MODE_OPTIONS,
   ADMIN_FPS_GAME_OPTIONS,
@@ -433,6 +435,10 @@ if (!HAS_SERVICE_ROLE_KEY) {
   );
 }
 
+// Prissystemet skriver med service-rollen. Utan klient faller det tillbaka på
+// katalogens listpriser i stället för att visa tomma rutor.
+pricing.store.configure(supabase);
+
 const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8080";
 const MAX_LINE_ITEMS = 50;
 const MAX_QUANTITY = 10;
@@ -454,12 +460,19 @@ const STATUS_OPTIONS = new Set([
   "building",
   "postbuild",
   "ready",
+  "shipped",
+  "delivered",
   "cancel_requested",
   "pending",
+  "paid",
   "in_progress",
   "finished",
   "completed",
 ]);
+
+// Fraktbolag vi accepterar i spårningsfältet. Håll i synk med CARRIER_LABELS
+// i src/lib/orderStatus.ts.
+const CARRIER_OPTIONS = new Set(["schenker", "postnord", "dhl", "budbee", "instabox", "other"]);
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
 const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
@@ -473,19 +486,74 @@ const DEFAULT_BUILD_CHECKLIST = [
 ];
 
 const STATUS_LABELS = {
-  received: "Beställning mottagen",
-  ordering: "Beställning mottagen",
-  building: "Bygger/Produktion",
-  postbuild: "Post-bygg justeringar",
-  ready: "Redo att hämta/frakta!",
-  pending: "Beställning mottagen",
-  in_progress: "Bygger/Produktion",
-  finished: "Redo att hämta/frakta!",
-  completed: "Redo att hämta/frakta!",
-  cancel_requested: "Beställning mottagen",
+  received: "Betald",
+  ordering: "Betald",
+  paid: "Betald",
+  building: "Bygger",
+  postbuild: "Post-bygg",
+  ready: "Klar för leverans",
+  shipped: "Skickad",
+  delivered: "Levererad",
+  pending: "Betald",
+  in_progress: "Bygger",
+  finished: "Klar för leverans",
+  completed: "Levererad",
+  cancel_requested: "Betald",
 };
 const READY_MESSAGE =
   "DatorHuset kommer ringa dig angående när och vart du kan hämta upp datorn. Vi kommer ringa dig och skicka ett mejl.";
+const SHIPPED_MESSAGE =
+  "Din dator är på väg. Använd spårningsnumret nedan för att följa paketet.";
+const DELIVERED_MESSAGE =
+  "Din dator är levererad. Hör av dig till oss om något inte stämmer så löser vi det.";
+
+const resolveStatusMessage = (status) => {
+  if (status === "ready" || status === "finished") return READY_MESSAGE;
+  if (status === "shipped") return SHIPPED_MESSAGE;
+  if (status === "delivered" || status === "completed") return DELIVERED_MESSAGE;
+  return STATUS_LABELS[status] || null;
+};
+
+/**
+ * Plockar ut fraktuppgifterna ur ett statusbyte.
+ *
+ * Fälten skrivs bara när de skickas med, så att en vanlig statusändring inte
+ * råkar nolla ett spårningsnummer som redan ligger på ordern. Tidsstämplarna
+ * sätts automatiskt när ordern går in i shipped respektive delivered.
+ */
+const buildTrackingPatch = (body, nextStatus) => {
+  const values = {};
+
+  if (body?.carrier !== undefined) {
+    const carrier = sanitizeText(body.carrier, 32).toLowerCase();
+    if (carrier && !CARRIER_OPTIONS.has(carrier)) {
+      return { error: "Okänt fraktbolag." };
+    }
+    values.shipping_carrier = carrier || null;
+  }
+
+  if (body?.tracking_number !== undefined) {
+    const trackingNumber = sanitizeText(body.tracking_number, 64);
+    values.tracking_number = trackingNumber || null;
+  }
+
+  if (body?.tracking_url !== undefined) {
+    const trackingUrl = sanitizeText(body.tracking_url, 500);
+    if (trackingUrl && !/^https:\/\//i.test(trackingUrl)) {
+      return { error: "Spårningslänken måste börja med https://" };
+    }
+    values.tracking_url = trackingUrl || null;
+  }
+
+  if (nextStatus === "shipped") {
+    values.shipped_at = new Date();
+  }
+  if (nextStatus === "delivered" || nextStatus === "completed") {
+    values.delivered_at = new Date();
+  }
+
+  return { values };
+};
 const DEFAULT_FPS_SETTINGS = { dlssMultiplier: 1.2, frameGenMultiplier: 1.15 };
 const EMPTY_FPS_SETTINGS = { version: 2, entries: [] };
 const FPS_GRAPHICS_PRESETS = ["Low", "Medium", "High", "Ultra", "Ultra + Raytracing/Pathtracing"];
@@ -827,16 +895,16 @@ const SMTP_HOST = process.env.SMTP_HOST;
 const SMTP_PORT = Number(process.env.SMTP_PORT || 0);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
-const SMTP_FROM = process.env.SMTP_FROM || "DatorHuset <no-reply@datorhuset.site>";
+const SMTP_FROM = process.env.SMTP_FROM || "DatorHuset <no-reply@datorhuset.se>";
 const SUPPORT_SMTP_HOST = process.env.SUPPORT_SMTP_HOST || SMTP_HOST;
 const SUPPORT_SMTP_PORT = Number(process.env.SUPPORT_SMTP_PORT || SMTP_PORT || 0);
 const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER;
 const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
-const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.site>";
-const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "support@datorhuset.site";
-const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "support@datorhuset.site";
+const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.se>";
+const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "support@datorhuset.se";
+const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "support@datorhuset.se";
 const ORDER_CANCEL_TO =
-  process.env.ORDER_CANCEL_TO || "support@datorhuset.site,datorhuset.foretag@gmail.com";
+  process.env.ORDER_CANCEL_TO || "support@datorhuset.se,datorhuset.foretag@gmail.com";
 const DEFAULT_EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
 const SUPPORT_EMAIL_ENABLED = Boolean(
   SUPPORT_SMTP_HOST && SUPPORT_SMTP_PORT && SUPPORT_SMTP_USER && SUPPORT_SMTP_PASS
@@ -1316,6 +1384,16 @@ const doesCatalogExactSpecMatchItem = (item, title, url = "") => {
   return true;
 };
 
+const doesCatalogOfferTextMatchItem = (item, offerTitle, offerUrl = "") => {
+  const matchText = [firstText(offerTitle), buildTitleFromProductUrl(offerUrl), String(offerUrl || "")]
+    .filter(Boolean)
+    .join(" ");
+  if (!matchText) {
+    return false;
+  }
+  return doesCatalogTitleMatchItem(matchText, item) && doesCatalogExactSpecMatchItem(item, matchText, offerUrl);
+};
+
 const getOfferModelTokensForItem = (item) =>
   Array.from(
     new Set(
@@ -1378,12 +1456,43 @@ const matchesOfferToQueryModel = (sourceId, queryModelTokens, offerTitle, offerU
 };
 
 const matchesOfferToItemModel = (sourceId, item, offerTitle, offerUrl) => {
-  if (!doesCatalogExactSpecMatchItem(item, offerTitle, offerUrl)) {
+  if (!doesCatalogOfferTextMatchItem(item, offerTitle, offerUrl)) {
     return false;
   }
   const modelTokens = getOfferModelTokensForItem(item);
   const requiredMatches = getRequiredModelTokenMatchesForItem(item, modelTokens);
   return matchesOfferToQueryModel(sourceId, modelTokens, offerTitle, offerUrl, requiredMatches);
+};
+
+const buildKomponentkollProductMatchText = (product, productUrl = "") => {
+  if (!product || typeof product !== "object") return "";
+  const ramSpeed = Number(product?.ram_speed);
+  const ramCl = Number(product?.ram_cl);
+  const ramSize = Number(product?.ram_size);
+  const ramSticks = Number(product?.ram_sticks);
+  const perStickCapacity =
+    Number.isFinite(ramSize) && Number.isFinite(ramSticks) && ramSize > 0 && ramSticks > 0 && ramSize % ramSticks === 0
+      ? `${ramSticks}x${ramSize / ramSticks}GB`
+      : "";
+  return [
+    firstText(product?.manufacturer),
+    firstText(product?.name),
+    sanitizeText(String(product?.uri || "").replace(/[-_]+/g, " "), 320),
+    firstText(product?.ram_type),
+    Number.isFinite(ramSpeed) && ramSpeed > 0 ? `${ramSpeed}MHz` : "",
+    Number.isFinite(ramCl) && ramCl > 0 ? `CL${ramCl}` : "",
+    Number.isFinite(ramSize) && ramSize > 0 ? `${ramSize}GB` : "",
+    perStickCapacity,
+    buildTitleFromProductUrl(productUrl),
+  ]
+    .filter(Boolean)
+    .join(" ");
+};
+
+const doesKomponentkollProductMatchItem = (item, product, productUrl = "") => {
+  const matchText = buildKomponentkollProductMatchText(product, productUrl);
+  if (!matchText) return false;
+  return doesCatalogTitleMatchItem(matchText, item) && doesCatalogExactSpecMatchItem(item, matchText, productUrl);
 };
 
 const isLikelyPrebuiltOrBundleOffer = (title, url) => {
@@ -1773,7 +1882,7 @@ const extractAmazonOfferFromSearchHtml = (html, query, referencePrice = null) =>
   };
 };
 
-const extractStoreOfferFromJinaSearch = (markdown, source, query, referencePrice = null, searchUrl = null) => {
+const extractStoreOfferFromJinaSearch = (markdown, source, query, referencePrice = null, searchUrl = null, item = null) => {
   if (!markdown || typeof markdown !== "string") return null;
   const urlCandidates = collectJinaProductUrlCandidates(markdown, source, searchUrl);
   if (urlCandidates.length === 0) return null;
@@ -1797,13 +1906,16 @@ const extractStoreOfferFromJinaSearch = (markdown, source, query, referencePrice
       snippetIndex >= 0
         ? markdown.slice(Math.max(0, snippetIndex - 420), Math.min(markdown.length, snippetIndex + 2600))
         : markdown;
-    const titleFromLabel = firstText(candidate.label);
-    const titleFromUrl = buildTitleFromProductUrl(normalizedUrl);
-    if (isLikelyPrebuiltOrBundleOffer(titleFromLabel || titleFromUrl, normalizedUrl)) return;
-    if (!matchesOfferToQueryModel(source.id, modelTokens, titleFromLabel || titleFromUrl, normalizedUrl)) {
-      return;
-    }
-    const titleScore = scoreTitleAgainstQuery(
+      const titleFromLabel = firstText(candidate.label);
+      const titleFromUrl = buildTitleFromProductUrl(normalizedUrl);
+      if (isLikelyPrebuiltOrBundleOffer(titleFromLabel || titleFromUrl, normalizedUrl)) return;
+      const isExactItemMatch = item
+        ? matchesOfferToItemModel(source.id, item, titleFromLabel || titleFromUrl, normalizedUrl)
+        : matchesOfferToQueryModel(source.id, modelTokens, titleFromLabel || titleFromUrl, normalizedUrl);
+      if (!isExactItemMatch) {
+        return;
+      }
+      const titleScore = scoreTitleAgainstQuery(
       [titleFromLabel, titleFromUrl, snippet.slice(0, 240)].filter(Boolean).join(" "),
       queryTokens
     );
@@ -2063,18 +2175,13 @@ const PRISJAKT_PRODUCT_URL_OVERRIDES = {
 };
 const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "ram-1": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
-  "ram-2": "https://komponentkoll.se/produkt/1005541-g-skill-32gb-2x16gb-ddr5-6400mhz-cl32-trident-z5-rgb-svart",
   "ram-12": "https://komponentkoll.se/produkt/119068-corsair-dominator-platinum-rgb",
-  "ram-17": "https://komponentkoll.se/produkt/1461817-corsair-vengeance-6000mhz-ddr5-16gb-2x8g",
   "ram-20": "https://komponentkoll.se/produkt/1461803-corsair-vengeance-rgb-ddr5-6000mhz-2x8gb-cl36-xmp-expo-cmh16gx5m2e6000z36",
   "ram-21": "https://komponentkoll.se/produkt/1373530-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-svart",
   "ram-22": "https://komponentkoll.se/produkt/1383239-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-amd-expo",
   "ram-24": "https://komponentkoll.se/produkt/1382458-corsair-32gb-2x16gb-ddr5-6000mhz-cl36-vengeance-rgb-vit",
   "ram-25": "https://komponentkoll.se/produkt/1401151-kingston-fury-beast-rgb-ddr5-6000mhz-32gb",
-  "ram-26": "https://komponentkoll.se/produkt/1379524-corsair-vengeance-rgb-ddr5-6000mhz-64gb",
-  "ram-27": "https://komponentkoll.se/produkt/1365299-kingston-fury-beast-64gb-2x32gb",
-  "ram-28": "https://komponentkoll.se/produkt/1005925-corsair-vengeance-64gb-2x32gb",
-  "ram-29": "https://komponentkoll.se/produkt/1365307-kingston-fury-beast-rgb-64gb-2x32gb",
+  "ram-28": "https://komponentkoll.se/produkt/1304318-corsair-vengeance-64b-2-kit-ddr5-5200mhz-cl40-white-64gb-5-200mhz-ddr5-sdram-dimm-288-pin",
   "gpu-6": "https://komponentkoll.se/produkt/1442023-pny-geforce-rtx-5060-8gb-oc",
   "gpu-10": "https://komponentkoll.se/produkt/1443086-xfx-swift-amd-radeon-rx-9060-xt-oc-gaming-vit",
   "gpu-14": "https://komponentkoll.se/produkt/1440663-gigabyte-geforce-rtx-5060-ti-aero-oc",
@@ -2104,13 +2211,8 @@ const CUSTOM_BUILD_KOMPONENTKOLL_PRODUCT_URL_OVERRIDES = {
   "psu-22": "https://komponentkoll.se/produkt/1441695-cooler-master-mwe-850w-gold-v3-atx-3-1",
 };
 const CUSTOM_BUILD_TRUSTED_KOMPONENTKOLL_PRICE_ITEM_IDS = new Set([
-  "ram-2",
-  "ram-17",
   "ram-25",
-  "ram-26",
-  "ram-27",
   "ram-28",
-  "ram-29",
 ]);
 const CUSTOM_BUILD_STORE_PRODUCT_URL_OVERRIDES = {
   "cpu-am4-ryzen-3-3100": {
@@ -2778,11 +2880,14 @@ const findBestKomponentkollProductForItem = async (item) => {
     const title = sanitizeText(String(product?.name || ""), 240);
     const uriTitle = sanitizeText(String(product?.uri || "").replace(/[-_]+/g, " "), 280);
     const lowestPrice = parseMoneyValue(product?.price, product?.lowestPrice?.amount);
-    const score = scoreCatalogSourceProductForItem(`${title} ${uriTitle}`.trim(), item, lowestPrice);
-    if (score < 0) continue;
     const productUrl = firstText(product?.uri)
       ? `https://komponentkoll.se/produkt/${sanitizeText(String(product.uri), 240)}`
       : null;
+    if (!doesKomponentkollProductMatchItem(item, product, productUrl)) {
+      continue;
+    }
+    const score = scoreCatalogSourceProductForItem(`${title} ${uriTitle}`.trim(), item, lowestPrice);
+    if (score < 0) continue;
     const candidate = {
       title,
       lowest_price: Number.isFinite(lowestPrice) ? Math.max(0, Math.round(lowestPrice)) : null,
@@ -2809,6 +2914,9 @@ const findBestKomponentkollProductForItem = async (item) => {
   for (const candidateUrl of siteSearchCandidates) {
     const html = await fetchTextWithBrowserHeaders(candidateUrl).catch(() => null);
     const product = extractNextDataScriptJson(html)?.props?.initialProps?.pageProps?.product;
+    if (!doesKomponentkollProductMatchItem(item, product, candidateUrl)) {
+      continue;
+    }
     const title = sanitizeText(String(product?.name || ""), 240);
     const lowestPrice = parseMoneyValue(product?.lowestPrice?.amount, product?.lowestprice, product?.price);
     const score = scoreCatalogSourceProductForItem(`${title} ${candidateUrl}`.trim(), item, lowestPrice);
@@ -2839,11 +2947,10 @@ const findBestKomponentkollProductForItem = async (item) => {
 const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = "", options = {}) => {
   const nextData = extractNextDataScriptJson(html);
   const product = nextData?.props?.initialProps?.pageProps?.product;
-  const productTitleForMatch = `${firstText(product?.name)} ${buildTitleFromProductUrl(sourceUrl)}`.trim();
-  const trustPageMatch = options?.trustPageMatch === true;
-  if (!product || (!trustPageMatch && !doesCatalogTitleMatchItem(productTitleForMatch, item))) {
+  if (!product || !doesKomponentkollProductMatchItem(item, product, sourceUrl)) {
     return [];
   }
+  const trustPageMatch = options?.trustPageMatch === true;
 
   const rawPrices = Array.isArray(product?.prices) ? product.prices : [];
   const offersByStoreId = new Map();
@@ -2896,9 +3003,7 @@ const extractStoreOffersFromKomponentkollProductHtml = (html, item, sourceUrl = 
 const extractKomponentkollReferencePriceFromHtml = (html, item, sourceUrl = "", options = {}) => {
   const nextData = extractNextDataScriptJson(html);
   const product = nextData?.props?.initialProps?.pageProps?.product;
-  const productTitleForMatch = `${firstText(product?.name)} ${buildTitleFromProductUrl(sourceUrl)}`.trim();
-  const trustPageMatch = options?.trustPageMatch === true;
-  if (!product || (!trustPageMatch && !doesCatalogTitleMatchItem(productTitleForMatch, item))) {
+  if (!product || !doesKomponentkollProductMatchItem(item, product, sourceUrl)) {
     return null;
   }
 
@@ -3009,9 +3114,9 @@ const findBestPriceRunnerProductForItem = async (item) => {
   }
 
   return bestCandidate;
-};
+  };
 
-const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referencePrice = null) => {
+const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referencePrice = null, item = null) => {
   if (!markdown || typeof markdown !== "string") return null;
   const queryTokens = tokenizeForSearchMatch(query);
   const modelTokens = extractModelTokensFromQuery(query);
@@ -3041,7 +3146,9 @@ const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referenc
       continue;
     }
     const combinedTitle = `${title} ${snippet.slice(0, 200)} ${normalizedUrl}`;
-    const modelMatch = matchesOfferToQueryModel(source.id, modelTokens, combinedTitle, normalizedUrl);
+    const modelMatch = item
+      ? matchesOfferToItemModel(source.id, item, combinedTitle, normalizedUrl)
+      : matchesOfferToQueryModel(source.id, modelTokens, combinedTitle, normalizedUrl);
     const titleScore = scoreTitleAgainstQuery(combinedTitle, queryTokens);
     const prices = extractPriceCandidatesFromText(snippet);
     const pickedPrice = pickBestPriceCandidate(prices, snippet, referencePrice);
@@ -3086,7 +3193,7 @@ const extractStoreOfferFromDuckDuckGoSearch = (markdown, source, query, referenc
   return rankedCandidates[0];
 };
 
-const fetchStoreOfferForQuery = async (source, query, referencePrice = null) => {
+const fetchStoreOfferForQuery = async (source, query, referencePrice = null, item = null) => {
   const searchUrl = source.buildSearchUrl(query);
   const modelTokens = extractModelTokensFromQuery(query);
   let html = "";
@@ -3118,7 +3225,11 @@ const fetchStoreOfferForQuery = async (source, query, referencePrice = null) => 
         .filter((offer) => offer.price >= 50 && offer.price <= 400_000)
         .filter((offer) => isOfferWithinReferencePrice(offer.price, referencePrice))
         .filter((offer) => !isLikelyPrebuiltOrBundleOffer(offer.title, offer.product_url))
-        .filter((offer) => matchesOfferToQueryModel(source.id, modelTokens, offer.title, offer.product_url))
+        .filter((offer) =>
+          item
+            ? matchesOfferToItemModel(source.id, item, offer.title, offer.product_url)
+            : matchesOfferToQueryModel(source.id, modelTokens, offer.title, offer.product_url)
+        )
         .filter((offer) => (offer.product_url ? isLikelyProductUrlForStore(offer.product_url, source.id) : false));
       if (normalizedFromJsonLd.length > 0) {
         return {
@@ -3135,7 +3246,8 @@ const fetchStoreOfferForQuery = async (source, query, referencePrice = null) => 
         source,
         query,
         referencePrice,
-        searchUrl
+        searchUrl,
+        item
       );
       if (jinaOffer) {
         return jinaOffer;
@@ -3148,7 +3260,8 @@ const fetchStoreOfferForQuery = async (source, query, referencePrice = null) => 
         duckDuckGoSearchText,
         source,
         query,
-        referencePrice
+        referencePrice,
+        item
       );
       if (duckDuckGoOffer) {
         return duckDuckGoOffer;
@@ -3204,7 +3317,7 @@ const extractDirectProductOfferFromMarkdown = (markdown, source, productUrl, ite
   if (!markdown || !source || !productUrl || !item) return null;
   if (isLikelyPrebuiltOrBundleOffer(item.name, productUrl)) return null;
   const title = buildTitleFromProductUrl(productUrl);
-  if (!matchesOfferToItemModel(source.id, item, title || item.name, productUrl)) {
+  if (!matchesOfferToItemModel(source.id, item, title, productUrl)) {
     return null;
   }
   const prices = extractPriceCandidatesFromText(markdown);
@@ -3764,6 +3877,7 @@ const sanitizeCatalogStoreOffer = (offer, source, item = null) => {
   return {
     store_id: sanitizeText(String(offer?.store_id || source?.id || ""), 80),
     store: firstText(offer?.store, source?.name) || source?.name || "Unknown",
+    title: firstText(offer?.title) || null,
     status: effectiveStatus,
     trusted_source: trustedSource || null,
     product_url: productUrl,
@@ -3860,18 +3974,37 @@ const fetchCatalogStoreOffersFromDirectSearch = async (item, referencePrice = nu
 
   const collectedOffers = [];
   for (const query of searchQueries) {
-    const offers = (
+    const discoveredOffers = (
       await Promise.all(
         CURATED_CUSTOM_BUILD_STORE_SOURCES.filter((source) => isCatalogStoreAllowedForItem(item, source.id)).map(
           async (source) => {
-            const offer = await fetchStoreOfferForQuery(source, query, referencePrice).catch(() => null);
+            const offer = await fetchStoreOfferForQuery(source, query, referencePrice, item).catch(() => null);
             if (!offer) return null;
+            const matchUrl = firstText(offer?.product_url, offer?.search_url);
+            if (!matchesOfferToItemModel(source.id, item, offer?.title, matchUrl)) {
+              return null;
+            }
+            const verifiedOffer = await fetchDirectProductOffer(item, source, offer, {
+              requireVerifiedPrice: getCustomBuildCategoryForItem(item) === "ram",
+            }).catch(() => null);
+            const normalizedOfferPayload =
+              verifiedOffer && (verifiedOffer?.product_url || verifiedOffer?.search_url)
+                ? {
+                    ...offer,
+                    ...verifiedOffer,
+                    store_id: source.id,
+                    trusted_source:
+                      verifiedOffer?.status === "available" && Number.isFinite(verifiedOffer?.total_price ?? verifiedOffer?.price)
+                        ? "verified-page"
+                        : "direct-search",
+                  }
+                : {
+                    ...offer,
+                    store_id: source.id,
+                    trusted_source: "direct-search",
+                  };
             return sanitizeCatalogStoreOffer(
-              {
-                ...offer,
-                store_id: source.id,
-                trusted_source: "direct-search",
-              },
+              normalizedOfferPayload,
               source,
               item
             );
@@ -3879,7 +4012,7 @@ const fetchCatalogStoreOffersFromDirectSearch = async (item, referencePrice = nu
         )
       )
     ).filter((offer) => isCatalogStoreOfferUseful(offer));
-    collectedOffers.push(...offers);
+    collectedOffers.push(...discoveredOffers);
     if (countCatalogAvailableOffers(collectedOffers) >= 3) {
       break;
     }
@@ -3896,6 +4029,25 @@ const getCatalogStoreOfferMergeRank = (offer) => {
   return 4;
 };
 
+const getCatalogStoreOfferSourceTrustRank = (offer) => {
+  const source = firstText(offer?.trusted_source, offer?.source).toLowerCase();
+  if (source === "manual") return 0;
+  if (source === "verified-page") return 1;
+  if (source === "komponentkoll" || source === "prisjakt" || source === "pricerunner") return 2;
+  if (source === "direct-search") return 3;
+  return 4;
+};
+
+const isCachedCatalogOfferCompatibleWithItem = (offer, item) => {
+  if (!offer || !item) return false;
+  if (getCustomBuildCategoryForItem(item) !== "ram") return true;
+  const sourceId = sanitizeText(String(offer?.store_id || ""), 40).toLowerCase();
+  const offerUrl = firstText(offer?.product_url, offer?.search_url);
+  const offerTitle = [firstText(offer?.title), buildTitleFromProductUrl(offerUrl)].filter(Boolean).join(" ");
+  if (!offerTitle && !offerUrl) return true;
+  return matchesOfferToItemModel(sourceId, item, offerTitle, offerUrl);
+};
+
 const shouldReplaceCatalogOfferWithCached = (nextOffer, cachedOffer) => {
   if (!cachedOffer) return false;
   if (!nextOffer) return true;
@@ -3904,6 +4056,12 @@ const shouldReplaceCatalogOfferWithCached = (nextOffer, cachedOffer) => {
   const cachedRank = getCatalogStoreOfferMergeRank(cachedOffer);
   if (cachedRank !== nextRank) {
     return cachedRank < nextRank;
+  }
+
+  const nextSourceRank = getCatalogStoreOfferSourceTrustRank(nextOffer);
+  const cachedSourceRank = getCatalogStoreOfferSourceTrustRank(cachedOffer);
+  if (cachedSourceRank !== nextSourceRank) {
+    return cachedSourceRank < nextSourceRank;
   }
 
   const nextPrice = Number.isFinite(nextOffer?.total_price ?? nextOffer?.price)
@@ -3932,6 +4090,9 @@ const mergeCatalogStoreOffersWithCached = (nextOffers = [], cachedOffers = [], i
   cachedByStoreId.forEach((cachedOffer, storeId) => {
     const nextOffer = nextByStoreId.get(storeId);
     if (!cachedOffer) {
+      return;
+    }
+    if (!isCachedCatalogOfferCompatibleWithItem(cachedOffer, item)) {
       return;
     }
     if (shouldReplaceCatalogOfferWithCached(nextOffer, cachedOffer)) {
@@ -4211,6 +4372,10 @@ const getCatalogFallbackLowestPrice = (item, options = {}) => {
   if (Number.isFinite(cachedLowestPrice) && cachedLowestPrice > 0) {
     return Math.max(0, Math.round(cachedLowestPrice));
   }
+  const preloadedPrice = Number(CUSTOM_BUILD_PRELOADED_PRICE_BY_ID?.[item?.id]);
+  if (Number.isFinite(preloadedPrice) && preloadedPrice > 0) {
+    return Math.max(0, Math.round(preloadedPrice));
+  }
   const itemPrice = Number(item?.price);
   if (Number.isFinite(itemPrice) && itemPrice > 0) {
     return Math.max(0, Math.round(itemPrice));
@@ -4476,7 +4641,6 @@ const getOrRefreshCatalogItemStoreOffers = async (itemId, options = {}) => {
         referenceLowestPrice: refreshed?.referenceLowestPrice,
         referenceSource: refreshed?.referenceSource,
         imageUrl: refreshed?.imageUrl,
-        cachedLowestPrice: cached?.response?.lowest_price,
       });
       customBuildProductCache.set(cacheKey, {
         item_id: itemId,
@@ -5965,7 +6129,7 @@ const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
     <div style="background:#f4f7fb;padding:24px;">
       <div style="max-width:640px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e5e7eb;">
         <div style="padding:24px;background:linear-gradient(135deg,#0f1824 0%,#11667b 100%);color:#ffffff;">
-          <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" style="height:32px;display:block;" />
+          <img src="https://datorhuset.se/Datorhuset.png" alt="DatorHuset" style="height:32px;display:block;" />
           <h1 style="margin:12px 0 4px;font-size:22px;font-weight:700;">${headline}</h1>
           <p style="margin:0;color:#dbe9ee;">${intro}</p>
         </div>
@@ -5992,7 +6156,7 @@ const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
           <p style="margin:0;color:#6b7280;">Har du frågor? Svara på det här mailet så hjälper vi dig.</p>
         </div>
         <div style="padding:16px 24px;background:#0f1824;color:#d1d5db;font-size:12px;text-align:center;">
-          <p style="margin:0 0 6px;">Behöver du hjälp? Kontakta oss på support@datorhuset.site</p>
+          <p style="margin:0 0 6px;">Behöver du hjälp? Kontakta oss på support@datorhuset.se</p>
           <p style="margin:0;">DatorHuset – Byggda för spel, skapande och vardag.</p>
         </div>
       </div>
@@ -6348,9 +6512,11 @@ const handleCatalogItemOffersRequest = async (req, res) => {
     if (!itemId || !CUSTOM_BUILD_CATALOG_BY_ID[itemId]) {
       return jsonError(res, 400, "INVALID_ITEM_ID", "Ogiltig katalogprodukt.");
     }
-    const forceRefresh = String(req.query?.refresh || "").trim() === "1";
     const item = CUSTOM_BUILD_CATALOG_BY_ID[itemId];
-    const snapshot = await getOrRefreshCatalogItemStoreOffers(itemId, { forceRefresh });
+    const snapshot = await pricing.buildItemOffersResponse(item);
+
+    // Bilden kommer i första hand från butiksflödet. Saknas den där används
+    // katalogens egen bildupplösning som tidigare.
     let imageUrl = sanitizeImageUrl(snapshot?.image_url) || null;
     if (!imageUrl) {
       imageUrl = await resolveCatalogItemImageUrl(item, {
@@ -6363,7 +6529,7 @@ const handleCatalogItemOffersRequest = async (req, res) => {
     }
     return res.json({
       ...snapshot,
-      image_url: imageUrl || sanitizeImageUrl(snapshot?.image_url) || null,
+      image_url: imageUrl || null,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Kunde inte hämta produktens butikspriser.";
@@ -6380,8 +6546,8 @@ const handleCatalogCategoryPricesRequest = async (req, res) => {
     if (!category || !CUSTOM_BUILD_SUPPORTED_CATEGORIES.has(category)) {
       return jsonError(res, 400, "INVALID_CATEGORY", "Ogiltig kategori.");
     }
-    const forceRefresh = String(req.query?.refresh || "").trim() === "1";
-    const response = await buildCatalogCategoryPriceResponse(category, forceRefresh);
+    const items = getCustomBuildCatalogItemsByCategory(category);
+    const response = await pricing.buildCategoryPriceResponse(category, items);
     return res.json(response);
   } catch (error) {
     const message = error instanceof Error ? error.message : "Kunde inte hämta kategoripriser.";
@@ -6391,6 +6557,47 @@ const handleCatalogCategoryPricesRequest = async (req, res) => {
 
 app.get("/api/custom-build/catalog-offers", handleCatalogItemOffersRequest);
 app.get("/api/custom-build/catalog-prices", handleCatalogCategoryPricesRequest);
+
+/**
+ * GET /api/admin/pricing/status
+ * Visar när priserna senast uppdaterades och vilka källor som svarar.
+ */
+app.get("/api/admin/pricing/status", async (req, res) => {
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    return res.json(await pricing.getPricingStatus());
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Kunde inte hämta prisstatus.";
+    return jsonError(res, 500, "PRICING_STATUS_FAILED", message);
+  }
+});
+
+/**
+ * POST /api/admin/pricing/refresh
+ * Kör en uppdatering direkt i stället för att vänta på dygnsschemat.
+ */
+app.post("/api/admin/pricing/refresh", async (req, res) => {
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    // Svara direkt - en full körning tar längre tid än en HTTP-förfrågan bör.
+    res.json({ ok: true, started: true });
+
+    pricing
+      .runRefresh(CUSTOM_BUILD_CATALOG_ITEMS, { reason: "admin-manual", logger: logStructured })
+      .catch((error) => {
+        logStructured("warn", "pricing_manual_refresh_failed", {
+          message: error instanceof Error ? error.message : "unknown_error",
+        });
+      });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Kunde inte starta prisuppdatering.";
+    return jsonError(res, 500, "PRICING_REFRESH_FAILED", message);
+  }
+});
 
 /**
  * GET /api/addresses
@@ -7355,10 +7562,20 @@ app.patch("/api/admin/v2/orders/:orderId/byggstatus", async (req, res) => {
       }
     }
 
-    const statusMessage = nextStatus === "ready" ? READY_MESSAGE : STATUS_LABELS[nextStatus] || null;
+    const statusMessage = resolveStatusMessage(nextStatus);
+    const trackingPatch = buildTrackingPatch(req.body, nextStatus);
+    if (trackingPatch.error) {
+      return jsonError(res, 400, "INVALID_TRACKING", trackingPatch.error);
+    }
+
     const { data, error } = await supabase
       .from("orders")
-      .update({ status: nextStatus, status_message: statusMessage, updated_at: new Date() })
+      .update({
+        status: nextStatus,
+        status_message: statusMessage,
+        ...trackingPatch.values,
+        updated_at: new Date(),
+      })
       .eq("id", orderId)
       .select()
       .single();
@@ -8958,7 +9175,7 @@ app.post("/api/account-delete/request", async (req, res) => {
               <table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="max-width:640px;background:#ffffff;border-radius:16px;overflow:hidden;">
                 <tr>
                   <td style="padding:28px 32px;background:linear-gradient(135deg,#0f1824 0%,#1c2c3f 100%);">
-                    <img src="https://datorhuset.site/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
+                    <img src="https://datorhuset.se/Datorhuset.png" alt="DatorHuset" width="140" style="display:block;margin-bottom:16px;" />
                     <p style="margin:0;color:#facc15;letter-spacing:6px;font-size:11px;text-transform:uppercase;">Kontosäkerhet</p>
                     <h1 style="margin:8px 0 0;color:#ffffff;font-size:26px;">Bekräfta borttagning av konto</h1>
                   </td>
@@ -9098,9 +9315,19 @@ app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
       .eq("id", orderId)
       .single();
 
+    const trackingPatch = buildTrackingPatch(req.body, nextStatus);
+    if (trackingPatch.error) {
+      return res.status(400).json({ error: trackingPatch.error });
+    }
+
     const { data, error } = await supabase
       .from("orders")
-      .update({ status: nextStatus, updated_at: new Date() })
+      .update({
+        status: nextStatus,
+        status_message: resolveStatusMessage(nextStatus),
+        ...trackingPatch.values,
+        updated_at: new Date(),
+      })
       .eq("id", orderId)
       .select(
         `
@@ -9138,10 +9365,7 @@ app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
 
     if (data?.customer_email) {
       const statusLabel = STATUS_LABELS[nextStatus] || STATUS_LABELS.received;
-      const statusNote =
-        nextStatus === "ready" || nextStatus === "finished" || nextStatus === "completed"
-          ? READY_MESSAGE
-          : statusLabel;
+      const statusNote = resolveStatusMessage(nextStatus) || statusLabel;
       await sendEmail({
         to: data.customer_email,
         subject: `Uppdatering om din order hos DatorHuset`,
@@ -9334,9 +9558,9 @@ const resolveRequestOrigin = (req) => {
     return `${forwardedProto}://${forwardedHost}`;
   }
   try {
-    return new URL(FRONTEND_URLS[0] || "https://datorhuset.site").origin;
+    return new URL(FRONTEND_URLS[0] || "https://datorhuset.se").origin;
   } catch {
-    return "https://datorhuset.site";
+    return "https://datorhuset.se";
   }
 };
 
@@ -9950,16 +10174,10 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Stripe API Server running on http://localhost:${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
-  startCustomStorePriceScheduler().catch((error) => {
-    logStructured("warn", "custom_price_scheduler_start_failed", {
-      message: error instanceof Error ? error.message : "unknown_error",
-    });
-  });
-  startCustomBuildProductScheduler().catch((error) => {
-    logStructured("warn", "custom_build_product_scheduler_start_failed", {
-      message: error instanceof Error ? error.message : "unknown_error",
-    });
-  });
+  // Prisuppdateringen. Till skillnad från de gamla schemaläggarna håller den
+  // sitt "senast körd" i Supabase, så en omstart av Render-instansen inte
+  // nollställer dygnsräkningen.
+  pricing.startScheduler(() => CUSTOM_BUILD_CATALOG_ITEMS, { logger: logStructured });
 });
 
 

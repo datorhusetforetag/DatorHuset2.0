@@ -24,6 +24,7 @@ import {
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
+import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CUSTOM_BUILD_CATALOG_ITEMS } from "@/data/customBuildCatalog.js";
 import { CUSTOM_BUILD_PRELOADED_PRICE_BY_ID } from "@/data/customBuildPreloadedPrices.js";
@@ -4045,6 +4046,14 @@ export default function CustomBuild() {
     [items]
   );
 
+  // Samma härledning som för chassin, men sorterad efter moderkortens
+  // ordning. Referensen fanns i filtret för moderkort utan att variabeln
+  // någonsin deklarerats, vilket kraschade vyn så fort man valde kategorin.
+  const motherboardFormFactorOptions = useMemo(
+    () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getItemFormFactorFilterValue(item)).filter(Boolean))), MOTHERBOARD_FORM_FACTOR_OPTIONS),
+    [items]
+  );
+
   const supportsStoreOffersForCategory = (_categoryKey: CategoryKey) => true;
 
   const applyStoreOffersSnapshotToItem = (
@@ -5071,7 +5080,7 @@ export default function CustomBuild() {
         title="Custom bygg | DatorHuset"
         description="Bygg din dator steg för steg och skicka en verifierad offertförfrågan till DatorHuset."
         image="/products/newpc/allblack-main.jpg"
-        url={typeof window !== "undefined" ? window.location.href : "https://datorhuset.site/custom-bygg"}
+        url={typeof window !== "undefined" ? window.location.href : "https://datorhuset.se/custom-bygg"}
         type="website"
       />
       <Navbar />
@@ -5306,7 +5315,7 @@ export default function CustomBuild() {
                         {"F\u00e5 r\u00e5dgivning"}
                       </Link>
                       <a
-                        href="https://datorhuset.site/service-reparation"
+                        href="https://datorhuset.se/service-reparation"
                         className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#11667b] px-4 py-2 font-semibold text-white transition-colors hover:bg-[#0d4d5d]"
                       >
                         Mejla oss
@@ -5464,7 +5473,7 @@ export default function CustomBuild() {
                         {activeCategory === "motherboard" ? (
                           <>
                             {renderToggleChipGroup("Tillverkare", motherboardManufacturerOptions, motherboardManufacturerFilters, (option) => toggleArrayFilter(option, setMotherboardManufacturerFilters))}
-                            {renderToggleChipGroup("Formfaktor", MOTHERBOARD_FORM_FACTOR_OPTIONS.filter((option) => formFactorFilterOptions.includes(option)), formFactorFilters, (option) => toggleArrayFilter(option, setFormFactorFilters))}
+                            {renderToggleChipGroup("Formfaktor", MOTHERBOARD_FORM_FACTOR_OPTIONS.filter((option) => motherboardFormFactorOptions.includes(option)), formFactorFilters, (option) => toggleArrayFilter(option, setFormFactorFilters))}
                             {renderToggleChipGroup("Socket", socketFilterOptions, socketFilters, (option) => toggleArrayFilter(option, setSocketFilters))}
                             {renderToggleChipGroup("Chipset", chipsetFilterOptions, chipsetFilters, (option) => toggleArrayFilter(option, setChipsetFilters))}
                             {renderToggleChipGroup("Minnestyp", MOTHERBOARD_RAM_TYPE_OPTIONS.filter((option) => ramTypeFilterOptions.includes(option)), ramTypeFilters, (option) => toggleArrayFilter(option, setRamTypeFilters))}
@@ -5789,6 +5798,11 @@ export default function CustomBuild() {
                                     Välj komponenten direkt för att fortsätta till nästa steg.
                                   </div>
                                 )}
+                                {/* Måste stå intill priserna, inte bara i en policy.
+                                    Se AffiliateDisclosure för varför. */}
+                                {showStorePanel ? (
+                                  <AffiliateDisclosure className="mt-4" />
+                                ) : null}
                                 <div className="mt-4 flex justify-end">
                                   <button
                                     type="button"
