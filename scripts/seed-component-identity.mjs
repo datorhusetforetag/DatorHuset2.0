@@ -31,7 +31,7 @@ import {
   getCustomBuildCatalogItemsByCategory,
 } from "../src/data/customBuildCatalog.js";
 import * as pricing from "../server/pricing/index.mjs";
-import { matchOffer, extractModelTokens, DEFAULT_REJECT_TOKENS } from "../server/pricing/match.mjs";
+import { matchOffer, extractModelTokens, DEFAULT_REJECT_TOKENS, buildSearchQuery } from "../server/pricing/match.mjs";
 import webhallen from "../server/pricing/sources/webhallen.mjs";
 
 const args = process.argv.slice(2);
@@ -114,7 +114,7 @@ const buildIdentity = (item) => ({
 const enrichFromWebhallen = async (item, identity) => {
   let rows = [];
   try {
-    rows = await webhallen.search(item.name);
+    rows = await webhallen.search(buildSearchQuery(item.name));
   } catch (error) {
     return { status: "sökfel", detail: error.message };
   }

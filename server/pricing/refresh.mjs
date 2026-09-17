@@ -11,7 +11,7 @@
  * uppdatering, oavsett vad klockan är och hur många gånger processen startat om.
  */
 
-import { matchOffer, pickBestPerStore } from "./match.mjs";
+import { matchOffer, pickBestPerStore, buildSearchQuery } from "./match.mjs";
 import * as store from "./store.mjs";
 import webhallen from "./sources/webhallen.mjs";
 import { streamFeed, COMPONENT_CATEGORY_FILTER } from "./sources/feed.mjs";
@@ -98,7 +98,9 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
     await Promise.all(
       batch.map(async (item) => {
         const identity = identities.get(item.id);
-        const query = identity?.model || item.name;
+        // Sök brett, matcha strikt. Hela namnet används fortfarande när
+        // kandidaterna vägs mot varandra i matchOffer.
+        const query = buildSearchQuery(identity?.model || item.name);
         try {
           const rows = await source.search(query);
           for (const row of rows) {

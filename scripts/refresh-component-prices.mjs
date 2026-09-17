@@ -19,7 +19,7 @@ import {
   getCustomBuildCatalogItemsByCategory,
 } from "../src/data/customBuildCatalog.js";
 import * as pricing from "../server/pricing/index.mjs";
-import { matchOffer, pickBestPerStore } from "../server/pricing/match.mjs";
+import { matchOffer, pickBestPerStore, buildSearchQuery } from "../server/pricing/match.mjs";
 import webhallen from "../server/pricing/sources/webhallen.mjs";
 
 const args = process.argv.slice(2);
@@ -82,7 +82,7 @@ if (flag("dry")) {
     const identity = identities.get(item.id);
     let rows = [];
     try {
-      rows = await webhallen.search(identity?.model || item.name);
+      rows = await webhallen.search(buildSearchQuery(identity?.model || item.name));
     } catch (error) {
       console.log(`  ${item.name}\n    API-fel: ${error.message}`);
       continue;

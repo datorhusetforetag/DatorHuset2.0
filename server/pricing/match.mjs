@@ -130,6 +130,36 @@ const SIGNIFICANT_SUFFIXES = [
   "white",
 ];
 
+/**
+ * Kortar ned ett katalognamn till något en butiks sökruta klarar.
+ *
+ * Katalogen skriver ut hela specifikationen - "G.Skill Trident Z5 Neo RGB
+ * 32GB (2x16GB) DDR5 6400MHz CL32". Skickas det rakt in i en sökruta blir
+ * svaret noll träffar, vilket såg ut som att matchningen missade när det
+ * i själva verket var sökningen som aldrig gav något att matcha mot.
+ *
+ * Kvar blir tillverkare, produktnamn och de tal som identifierar varianten.
+ * Själva matchningen sker ändå mot hela namnet efteråt, så en bredare
+ * sökning gör inte träffarna lösare - den ger bara matchningen något att
+ * arbeta med.
+ */
+export const buildSearchQuery = (name) => {
+  let text = String(name ?? "");
+
+  // "(2x16GB)" och liknande upprepar bara det som redan står i namnet.
+  text = text.replace(/\([^)]*\)/g, " ");
+  // Latenstider, XMP/EXPO-profiler och liknande hjälper aldrig en sökruta.
+  text = text.replace(/\bCL\d+\b/gi, " ");
+  text = text.replace(/\b(?:AMD\s+)?EXPO\b/gi, " ");
+  text = text.replace(/\bIntel\s+XMP(?:\s+[\d.]+)?\b/gi, " ");
+  text = text.replace(/\s+/g, " ").trim();
+
+  const words = text.split(" ").filter(Boolean);
+  // Sex ord räcker för tillverkare, serie och variant. Fler ord gör bara
+  // sökningen snävare än butikens egen produkttitel.
+  return words.slice(0, 6).join(" ");
+};
+
 export const normalizeText = (value) =>
   String(value ?? "")
     .toLowerCase()
