@@ -4,9 +4,14 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { getUserOrders, requestOrderCancel } from "@/lib/supabaseServices";
-import { getOrderStatusInfo, ORDER_STATUS_STEPS } from "@/lib/orderStatus";
+import {
+  CARRIER_LABELS,
+  getOrderStatusInfo,
+  ORDER_STATUS_STEPS,
+  resolveTrackingUrl,
+} from "@/lib/orderStatus";
 import { resolveProductImage } from "@/lib/productImageResolver";
-import { Clock, Package, ReceiptText } from "lucide-react";
+import { Clock, ExternalLink, Package, ReceiptText, Truck } from "lucide-react";
 
 type OrderItem = {
   id: string;
@@ -29,6 +34,11 @@ type Order = {
   status?: string;
   order_items?: OrderItem[];
   receipt_url?: string;
+  shipping_carrier?: string | null;
+  tracking_number?: string | null;
+  tracking_url?: string | null;
+  shipped_at?: string | null;
+  delivered_at?: string | null;
 };
 
 export default function Orders() {
@@ -156,6 +166,18 @@ export default function Orders() {
                   ? order.id.slice(0, 8)
                   : String(order.order_number);
 
+              const trackingUrl = resolveTrackingUrl({
+                carrier: order.shipping_carrier,
+                trackingNumber: order.tracking_number,
+                trackingUrl: order.tracking_url,
+              });
+              const carrierLabel = order.shipping_carrier
+                ? CARRIER_LABELS[order.shipping_carrier] || order.shipping_carrier
+                : null;
+              // Panelen visas så fort det finns ett spårningsnummer, även om
+              // statusen inte hunnit bytas till "Skickad" ännu.
+              const showTracking = Boolean(order.tracking_number || trackingUrl);
+
               return (
                 <div
                   key={order.id}
@@ -242,6 +264,44 @@ export default function Orders() {
                         <Clock className="w-4 h-4 text-[#11667b]" />
                         <span>Uppskattad tid kvar: {statusInfo.eta}</span>
                       </div>
+                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                        {statusInfo.description}
+                      </p>
+
+                      {showTracking && (
+                        <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] p-4">
+                          <div className="flex items-center gap-2">
+                            <Truck className="w-4 h-4 text-[#11667b]" />
+                            <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
+                              Spårning
+                            </p>
+                          </div>
+                          {carrierLabel && (
+                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{carrierLabel}</p>
+                          )}
+                          {order.tracking_number && (
+                            <p className="mt-1 font-mono text-sm text-gray-900 dark:text-gray-100 break-all">
+                              {order.tracking_number}
+                            </p>
+                          )}
+                          {trackingUrl && (
+                            <a
+                              href={trackingUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+                            >
+                              Följ paketet
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                          {order.delivered_at && (
+                            <p className="mt-3 text-sm text-emerald-600">
+                              Levererad {new Date(order.delivered_at).toLocaleDateString("sv-SE")}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -290,7 +350,9 @@ export default function Orders() {
                     </div>
                   )}
 
-                  {stage === ORDER_STATUS_STEPS.length && (
+                  {/* Gäller steget "Klar för leverans" - det är då vi ringer.
+                      Efter det talar spårningspanelen för sig själv. */}
+                  {rawStatus === "ready" && (
                     <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
                       DatorHuset kontaktar dig om upphämtning och leverans. Vi ringer och skickar mejl.
                     </div>

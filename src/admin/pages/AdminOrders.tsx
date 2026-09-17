@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Wrench } from "lucide-react";
+import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Truck, Wrench } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
-import { getOrderStatusInfo, ORDER_STATUS_FLOW } from "@/lib/orderStatus";
+import {
+  CARRIER_LABELS,
+  getOrderStatusInfo,
+  ORDER_STATUS_FLOW,
+  resolveTrackingUrl,
+  SHIPPING_STATUSES,
+} from "@/lib/orderStatus";
 
 type OrderItem = {
   id: string;
@@ -16,6 +22,112 @@ type BuildChecklistItem = {
   label: string;
   done: boolean;
 };
+
+type TrackingFieldsProps = {
+  order: Order;
+  disabled: boolean;
+  onSave: (tracking: { carrier: string | null; tracking_number: string | null }) => void;
+};
+
+/**
+ * Fraktbolag och spårningsnummer för en order.
+ *
+ * Har egen lokal state så att den som skriver i fälten inte tappar det som
+ * skrivits varje gång listan hämtas om. Sparas först när man trycker Spara,
+ * och skickas då med samma statusvärde som ordern redan har - det här är
+ * inte ett statusbyte.
+ */
+function TrackingFields({ order, disabled, onSave }: TrackingFieldsProps) {
+  const [carrier, setCarrier] = useState(order.shipping_carrier || "");
+  const [trackingNumber, setTrackingNumber] = useState(order.tracking_number || "");
+
+  // Följ med när ordern uppdateras utifrån, t.ex. efter en omladdning.
+  useEffect(() => {
+    setCarrier(order.shipping_carrier || "");
+    setTrackingNumber(order.tracking_number || "");
+  }, [order.shipping_carrier, order.tracking_number]);
+
+  const dirty =
+    carrier !== (order.shipping_carrier || "") ||
+    trackingNumber.trim() !== (order.tracking_number || "");
+
+  const previewUrl = resolveTrackingUrl({
+    carrier,
+    trackingNumber,
+    trackingUrl: order.tracking_url,
+  });
+
+  return (
+    <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+      <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
+        <Truck className="h-4 w-4 text-[#11667b]" />
+        Frakt och spårning
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3">
+        <label className="flex flex-col gap-1">
+          <span className="text-xs text-slate-400">Fraktbolag</span>
+          <select
+            value={carrier}
+            onChange={(event) => setCarrier(event.target.value)}
+            disabled={disabled}
+            className="rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 text-sm text-slate-100"
+          >
+            <option value="">Inget valt</option>
+            {Object.entries(CARRIER_LABELS).map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="flex flex-col gap-1">
+          <span className="text-xs text-slate-400">Spårningsnummer</span>
+          <input
+            type="text"
+            value={trackingNumber}
+            onChange={(event) => setTrackingNumber(event.target.value)}
+            disabled={disabled}
+            placeholder="t.ex. 12345678901"
+            className="w-56 rounded-lg border border-slate-700/60 bg-slate-950/60 px-3 py-2 font-mono text-sm text-slate-100"
+          />
+        </label>
+
+        <button
+          type="button"
+          disabled={disabled || !dirty}
+          onClick={() =>
+            onSave({
+              carrier: carrier || null,
+              tracking_number: trackingNumber.trim() || null,
+            })
+          }
+          className="rounded-lg border border-[#11667b] px-4 py-2 text-sm font-semibold text-[#11667b] transition-colors hover:bg-[#11667b] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#11667b]"
+        >
+          Spara frakt
+        </button>
+      </div>
+
+      {previewUrl && (
+        <a
+          href={previewUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 inline-block text-xs text-slate-400 underline-offset-4 hover:text-slate-200 hover:underline"
+        >
+          {previewUrl}
+        </a>
+      )}
+
+      {!carrier && trackingNumber.trim() && (
+        <p className="mt-3 text-xs text-amber-400">
+          Välj fraktbolag också – utan det kan kunden inte få någon spårningslänk.
+        </p>
+      )}
+    </div>
+  );
+}
 
 type Order = {
   id: string;
@@ -32,6 +144,11 @@ type Order = {
   customer_city?: string | null;
   receipt_url?: string | null;
   receipt_number?: string | null;
+  shipping_carrier?: string | null;
+  tracking_number?: string | null;
+  tracking_url?: string | null;
+  shipped_at?: string | null;
+  delivered_at?: string | null;
   build_checklist?: BuildChecklistItem[] | null;
   order_items?: OrderItem[];
 };
@@ -112,7 +229,11 @@ export default function AdminOrders() {
     }
   };
 
-  const handleStatusChange = async (order: Order, status: string) => {
+  const handleStatusChange = async (
+    order: Order,
+    status: string,
+    tracking?: { carrier?: string | null; tracking_number?: string | null },
+  ) => {
     if (!token || !isAdmin) return;
     if (!canMutate) {
       setLocalError("Du har läsbehörighet och kan inte uppdatera byggstatus.");
@@ -126,7 +247,13 @@ export default function AdminOrders() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status, expected_updated_at: order.updated_at || null }),
+        body: JSON.stringify({
+          status,
+          expected_updated_at: order.updated_at || null,
+          // Skickas bara med när fraktfälten faktiskt ändrats, så att ett
+          // vanligt statusbyte inte nollar ett sparat spårningsnummer.
+          ...(tracking || {}),
+        }),
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
@@ -357,6 +484,20 @@ export default function AdminOrders() {
                 </select>
                 {savingOrder === order.id ? <span className="text-xs text-slate-500">Sparar...</span> : null}
               </div>
+
+              {/* Fraktfälten visas när ordern är på väg ut, eller när det
+                  redan finns ett nummer sparat på den. */}
+              {(SHIPPING_STATUSES.has(statusInfo.value) ||
+                statusInfo.value === "ready" ||
+                order.tracking_number) && (
+                <TrackingFields
+                  order={order}
+                  disabled={!canMutate || savingOrder === order.id}
+                  onSave={(tracking) =>
+                    void handleStatusChange(order, statusInfo.value, tracking)
+                  }
+                />
+              )}
 
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
                 <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
