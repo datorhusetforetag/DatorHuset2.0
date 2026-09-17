@@ -30,13 +30,13 @@ export default function Faq() {
         "@type": "ListItem",
         position: 1,
         name: "Hem",
-        item: "https://datorhuset.site/",
+        item: "https://datorhuset.se/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "FAQ",
-        item: "https://datorhuset.site/faq",
+        item: "https://datorhuset.se/faq",
       },
     ],
   };

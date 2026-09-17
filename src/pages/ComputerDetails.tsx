@@ -759,7 +759,7 @@ export default function ComputerDetails() {
     return inventoryStatus.etaNote || (inventoryStatus.etaDays ? `ETA ${inventoryStatus.etaDays} dagar` : null);
   }, [inventoryStatus]);
   const structuredData = useMemo(() => {
-    const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.site";
+    const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.se";
     const imageUrls = (detailImageCandidates.length
       ? detailImageCandidates
       : [DETAIL_FALLBACK_IMAGE]
@@ -828,7 +828,7 @@ export default function ComputerDetails() {
       "@graph": [productSchema, breadcrumbSchema],
     };
   }, [availability.schema, resolvedComputer, detailImageCandidates, displayName, displayPrice, displaySpecs, reviewData]);
-  const seoBaseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.site";
+  const seoBaseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.se";
   const seoImage = (detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE).startsWith("http")
     ? detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE
     : new URL(detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE, seoBaseUrl).toString();

@@ -29,7 +29,7 @@ Vi ansvarar inte för indirekta skador, utebliven vinst eller dataförlust om in
 Svensk lag tillämpas på dessa villkor. Om en tvist inte kan lösas direkt med oss kan du som konsument vända dig till ARN eller använda EU:s ODR-plattform. Tvister kan i sista hand prövas av svensk allmän domstol.
 
 8. Kontakt
-Har du frågor om villkoren eller ditt köp når du oss via support@datorhuset.site.`;
+Har du frågor om villkoren eller ditt köp når du oss via support@datorhuset.se.`;
 
 export default function TermsOfService() {
   const { settings: siteSettings } = useSiteSettings();

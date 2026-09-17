@@ -13,4 +13,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://datorhuset.site/sitemap.xml
+Sitemap: https://datorhuset.se/sitemap.xml

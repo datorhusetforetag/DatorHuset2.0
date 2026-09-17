@@ -21,7 +21,7 @@ const Index = () => {
         title={`${settings.homepage.hero.title} | DatorHuset`}
         description={settings.homepage.hero.secondaryDescription}
         image={settings.homepage.hero.featureImage}
-        url="https://datorhuset.site/"
+        url="https://datorhuset.se/"
         type="website"
       />
       <Navbar />

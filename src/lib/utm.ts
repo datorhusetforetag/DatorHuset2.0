@@ -18,7 +18,7 @@ export const withUtm = (href: string, params: UtmParams) => {
     const base =
       typeof window !== "undefined" && window.location?.origin
         ? window.location.origin
-        : "https://datorhuset.site";
+        : "https://datorhuset.se";
     const url = new URL(href, base);
     Object.entries(params).forEach(([key, value]) => {
       if (!value) return;

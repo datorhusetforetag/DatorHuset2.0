@@ -8,7 +8,7 @@ const privacyPolicyText = `Allmänna Villkor för DatorHuset (Köpvillkor)
 
 Dessa allmänna villkor ("Villkoren") gäller för alla köp som görs av konsumenten ("Kunden") via DatorHuset's webbutik. Säljaren är DatorHuset (nedan kallad "vi" eller "DatorHuset"). Genom att genomföra ett köp hos oss godkänner Kunden Villkoren. Kunden måste vara minst 18 år gammal eller ha målsmans godkännande för att få handla hos DatorHuset.
 
-        Kontaktuppgifter: För frågor gällande beställningar når du oss via e-post support@datorhuset.site. DatorHuset är baserat i Spånga, Stockholm.
+        Kontaktuppgifter: För frågor gällande beställningar når du oss via e-post support@datorhuset.se. DatorHuset är baserat i Spånga, Stockholm.
 
 2. Priser och Betalning
 

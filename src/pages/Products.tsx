@@ -810,7 +810,7 @@ export default function Products() {
   const primarySticker = banner.stickers?.[0];
   const secondaryStickers = banner.stickers?.slice(1, 3) ?? [];
   const seoUrl =
-    typeof window !== "undefined" ? window.location.href : `https://datorhuset.site${activeCategory ? `/products?category=${activeCategory}` : "/products"}`;
+    typeof window !== "undefined" ? window.location.href : `https://datorhuset.se${activeCategory ? `/products?category=${activeCategory}` : "/products"}`;
   const seoTitle = `${banner.title} | DatorHuset`;
   const seoDescription = banner.description || "Gamingdatorer och färdiga byggen från DatorHuset.";
 

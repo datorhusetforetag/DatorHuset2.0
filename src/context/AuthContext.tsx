@@ -47,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     const redirectTo =
       import.meta.env.VITE_APP_MODE === 'admin'
-        ? 'https://admin.datorhuset.site'
+        ? 'https://admin.datorhuset.se'
         : window.location.origin;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -112,7 +112,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     previewAuthOverride === 'logged-in'
       ? {
           id: 'preview-user',
-          email: 'preview@datorhuset.site',
+          email: 'preview@datorhuset.se',
           user_metadata: {
             username: 'Previewkund',
             full_name: 'Previewkund',

@@ -4,3 +4,14 @@ dist
 .env.local
 env
 .vercel
+
+# Loggar och tillfälliga filer från lokal körning
+*.log
+tmp-*
+_*.mjs
+
+# Claude Code-inställningar (personliga, hör inte hemma i repot)
+.claude/
+
+# Cachefiler som skrivs om vid varje prisuppdatering
+data/custom-price-cache.json

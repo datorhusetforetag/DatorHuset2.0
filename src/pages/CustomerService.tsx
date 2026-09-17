@@ -16,8 +16,8 @@ export default function CustomerService() {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     name: "DatorHuset",
-    url: "https://datorhuset.site/",
-    image: "https://datorhuset.site/Datorhuset.png",
+    url: "https://datorhuset.se/",
+    image: "https://datorhuset.se/Datorhuset.png",
     email: pageSettings.contactEmail,
     address: {
       "@type": "PostalAddress",
@@ -43,13 +43,13 @@ export default function CustomerService() {
         "@type": "ListItem",
         position: 1,
         name: "Hem",
-        item: "https://datorhuset.site/",
+        item: "https://datorhuset.se/",
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "Kundservice",
-        item: "https://datorhuset.site/kundservice",
+        item: "https://datorhuset.se/kundservice",
       },
     ],
   };
