@@ -130,10 +130,34 @@ const loadPrisjaktProductUrlMap = () => {
 const PRISJAKT_PRODUCT_URL_MAP = loadPrisjaktProductUrlMap();
 
 const RAW_FRONTEND_URL = process.env.FRONTEND_URL || "";
-const FRONTEND_URLS = (process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
-  .split(",")
-  .map((url) => url.trim())
-  .filter(Boolean);
+
+/**
+ * Domänerna sajten faktiskt körs på.
+ *
+ * De ligger i koden och inte bara i FRONTEND_URLS, för att en glömd eller
+ * felstavad miljövariabel annars tar ner hela butiken på den domän kunderna
+ * använder. Adresserna är våra egna och ändras inte, så det finns inget att
+ * vinna på att göra dem konfigurerbara.
+ *
+ * FRONTEND_URLS finns kvar och läggs till - den behövs för localhost under
+ * utveckling och för eventuella nya domäner.
+ */
+const BUILT_IN_FRONTEND_URLS = [
+  "https://datorhuset.se",
+  "https://www.datorhuset.se",
+  "https://datorhuset.site",
+  "https://www.datorhuset.site",
+];
+
+const FRONTEND_URLS = Array.from(
+  new Set([
+    ...BUILT_IN_FRONTEND_URLS,
+    ...(process.env.FRONTEND_URLS || RAW_FRONTEND_URL || "http://localhost:8080")
+      .split(",")
+      .map((url) => url.trim())
+      .filter(Boolean),
+  ]),
+);
 const normalizeOrigin = (value) => {
   try {
     return new URL(String(value || "").trim()).origin;
