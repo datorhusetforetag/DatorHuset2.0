@@ -1,96 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+  DatorHuset design tokens.
+
+  Färgerna kommer från BRAND.md – cyan #3FD9F5 och plommon #B26BDE mot
+  märkessvart #0C0D14. Mörkt läge är husets egentliga röst; ljust läge är
+  samma palett nedtonad så att cyan och plommon håller kontrast mot vitt.
+*/
+
 @layer base {
   :root {
+    /* Ljus yta – cyan och plommon i sina mörkare varianter, annars syns de inte mot vitt */
     --background: 0 0% 100%;
-    --foreground: 222 47% 7%;
+    --foreground: 232 25% 6%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 7%;
+    --card-foreground: 232 25% 6%;
+
+    --surface: 240 24% 96%;
+    --surface-foreground: 232 25% 6%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 7%;
+    --popover-foreground: 232 25% 6%;
 
-    --primary: 45 100% 50%;
-    --primary-foreground: 222 47% 5%;
+    --primary: 190 76% 44%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 7%;
+    --secondary: 279 54% 37%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 20% 35%;
+    --muted: 240 20% 95%;
+    --muted-foreground: 232 12% 38%;
 
-    --accent: 48 100% 50%;
-    --accent-foreground: 222 47% 7%;
+    --accent: 273 64% 77%;
+    --accent-foreground: 232 25% 6%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 72% 46%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214 31% 91%;
-    --input: 214 31% 91%;
-    --ring: 45 100% 50%;
+    --success: 152 58% 34%;
+    --success-foreground: 0 0% 100%;
 
+    --border: 240 16% 88%;
+    --input: 240 16% 88%;
+    --ring: 190 76% 44%;
+
+    /* Radieskala. Dessa två läses av tailwind.config.ts – utan dem blir
+       varje rounded-* i appen border-radius: 0. */
+    --radius: 0.75rem;
     --radius-sm: 0.5rem;
     --radius-lg: 1rem;
+    --radius-pill: 9999px;
 
-    /* Custom tokens */
-    --gold: 45 100% 50%;
-    --silver: 220 10% 70%;
-    --platinum: 270 60% 60%;
-    --sale: 0 84% 60%;
+    /* Märkesfärger, råa – för ytor som inte ska följa ljus/mörkt */
+    --brand-cyan: 189 90% 60%;
+    --brand-cyan-deep: 190 76% 44%;
+    --brand-plum: 277 64% 65%;
+    --brand-plum-strong: 272 70% 59%;
+    --brand-plum-light: 273 64% 77%;
+    --brand-plum-deep: 279 54% 37%;
+    --brand-black: 232 25% 6%;
+    --brand-black-plum: 281 53% 9%;
+    --brand-chassis: 240 5% 15%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 50%, hsl(0 0% 100%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(210 40% 98% / 0.8) 0%, hsl(210 40% 95% / 0.9) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(55 100% 60%) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(45 100% 50% / 0.15) 0%, transparent 70%);
+    /* Nivåer – ersätter guld/silver/platina med husets egen skala */
+    --tier-start: 190 76% 44%;
+    --tier-core: 277 64% 65%;
+    --tier-elite: 272 70% 59%;
+    --sale: 0 72% 46%;
 
-    --shadow-glow: 0 0 30px hsl(45 100% 50% / 0.3);
-    --shadow-card: 0 8px 24px hsl(0 0% 0% / 0.08);
+    --gradient-hero: radial-gradient(
+        120% 120% at 15% 0%,
+        hsl(var(--brand-cyan) / 0.14) 0%,
+        transparent 55%
+      ),
+      radial-gradient(100% 100% at 85% 10%, hsl(var(--brand-plum) / 0.12) 0%, transparent 60%),
+      linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(240 24% 97%) 100%);
+    --gradient-card: linear-gradient(160deg, hsl(0 0% 100%) 0%, hsl(240 24% 97%) 100%);
+    --gradient-primary: linear-gradient(120deg, hsl(var(--brand-cyan-deep)) 0%, hsl(var(--brand-plum-deep)) 100%);
+    --gradient-seam: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--brand-cyan) / 0.5) 35%,
+      hsl(var(--brand-plum) / 0.5) 65%,
+      transparent 100%
+    );
+
+    --shadow-card: 0 1px 2px hsl(232 25% 6% / 0.06), 0 8px 24px hsl(232 25% 6% / 0.08);
+    --shadow-lifted: 0 2px 4px hsl(232 25% 6% / 0.08), 0 16px 40px hsl(232 25% 6% / 0.12);
+    --shadow-glow: 0 0 0 1px hsl(var(--brand-cyan-deep) / 0.35), 0 8px 32px hsl(var(--brand-cyan-deep) / 0.22);
+
+    --header-height: 4rem;
   }
 
   .dark {
-    --background: 215 40% 12%;
-    --foreground: 210 40% 98%;
+    /* Mörk yta – husets egentliga röst */
+    --background: 232 25% 6%;
+    --foreground: 240 24% 96%;
 
-    --card: 215 36% 16%;
-    --card-foreground: 210 40% 98%;
+    --card: 240 10% 13%;
+    --card-foreground: 240 24% 96%;
 
-    --popover: 215 36% 16%;
-    --popover-foreground: 210 40% 98%;
+    --surface: 240 5% 15%;
+    --surface-foreground: 240 24% 96%;
 
-    --primary: 180 100% 50%;
-    --primary-foreground: 222 47% 5%;
+    --popover: 240 10% 11%;
+    --popover-foreground: 240 24% 96%;
 
-    --secondary: 215 28% 20%;
-    --secondary-foreground: 210 40% 98%;
+    --primary: 189 90% 60%;
+    --primary-foreground: 232 25% 6%;
 
-    --muted: 215 20% 18%;
-    --muted-foreground: 215 16% 65%;
+    --secondary: 277 64% 65%;
+    --secondary-foreground: 232 25% 6%;
 
-    --accent: 180 80% 40%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 240 8% 18%;
+    --muted-foreground: 240 12% 68%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --accent: 272 70% 59%;
+    --accent-foreground: 240 24% 96%;
 
-    --border: 215 20% 24%;
-    --input: 215 20% 24%;
-    --ring: 180 100% 50%;
+    --destructive: 0 72% 58%;
+    --destructive-foreground: 240 24% 96%;
 
-    --gold: 45 100% 50%;
-    --silver: 220 10% 70%;
-    --platinum: 270 60% 60%;
-    --sale: 0 84% 60%;
+    --success: 152 52% 50%;
+    --success-foreground: 232 25% 6%;
 
-    --gradient-hero: linear-gradient(135deg, hsl(215 40% 12%) 0%, hsl(215 36% 16%) 50%, hsl(215 40% 12%) 100%);
-    --gradient-card: linear-gradient(135deg, hsl(215 36% 18% / 0.8) 0%, hsl(215 36% 14% / 0.9) 100%);
-    --gradient-primary: linear-gradient(135deg, hsl(180 100% 50%) 0%, hsl(200 100% 50%) 100%);
-    --gradient-glow: radial-gradient(ellipse at center, hsl(180 100% 50% / 0.15) 0%, transparent 70%);
+    --border: 240 10% 20%;
+    --input: 240 10% 20%;
+    --ring: 189 90% 60%;
 
-    --shadow-glow: 0 0 30px hsl(180 100% 50% / 0.3);
-    --shadow-card: 0 8px 32px hsl(0 0% 0% / 0.3);
+    --tier-start: 189 90% 60%;
+    --tier-core: 277 64% 65%;
+    --tier-elite: 272 70% 59%;
+    --sale: 0 72% 58%;
+
+    --gradient-hero: radial-gradient(
+        120% 120% at 15% 0%,
+        hsl(var(--brand-cyan) / 0.18) 0%,
+        transparent 55%
+      ),
+      radial-gradient(100% 100% at 85% 10%, hsl(var(--brand-plum) / 0.16) 0%, transparent 60%),
+      linear-gradient(180deg, hsl(var(--brand-black-plum)) 0%, hsl(var(--brand-black)) 100%);
+    --gradient-card: linear-gradient(160deg, hsl(240 10% 15%) 0%, hsl(240 12% 11%) 100%);
+    --gradient-primary: linear-gradient(120deg, hsl(var(--brand-cyan)) 0%, hsl(var(--brand-plum)) 100%);
+
+    --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.4), 0 8px 24px hsl(0 0% 0% / 0.35);
+    --shadow-lifted: 0 2px 4px hsl(0 0% 0% / 0.5), 0 16px 40px hsl(0 0% 0% / 0.45);
+    --shadow-glow: 0 0 0 1px hsl(var(--brand-cyan) / 0.4), 0 8px 32px hsl(var(--brand-cyan) / 0.25);
   }
 }
 
@@ -99,81 +159,213 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans antialiased transition-colors duration-300 overflow-x-hidden;
+    @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  #root {
-    @apply overflow-x-hidden;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Orbitron', sans-serif;
+    letter-spacing: -0.01em;
   }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', 'Inter', sans-serif;
+  /* Orbitron är bred – stora rubriker behöver dras ihop för att inte spreta */
+  h1 {
+    letter-spacing: -0.03em;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.25);
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer components {
-  .glass-card {
-    @apply bg-card/60 backdrop-blur-xl border border-border/50 rounded-xl;
+  /* Ytor ------------------------------------------------------------- */
+
+  .surface-card {
+    @apply bg-card text-card-foreground border border-border rounded-lg;
     box-shadow: var(--shadow-card);
   }
 
-  .glow-text {
-    text-shadow: 0 0 20px hsl(var(--primary) / 0.5);
+  .glass-card {
+    @apply bg-card/70 backdrop-blur-xl border border-border/60 rounded-lg;
+    box-shadow: var(--shadow-card);
   }
 
-  .glow-border {
-    box-shadow: 0 0 20px hsl(var(--primary) / 0.3), inset 0 0 20px hsl(var(--primary) / 0.1);
+  /* Starforges kortkänsla: bilden lyfter, ramen tänds i cyan, kortet stiger. */
+  .product-card {
+    @apply surface-card overflow-hidden;
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.35s ease;
   }
 
-  .tier-platinum {
-    @apply bg-gradient-to-r from-purple-500 to-purple-400 text-white;
+  .product-card:hover {
+    @apply border-primary/50;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lifted);
+  }
+
+  /* Skarven – den ljusa linjen från logotypen, återanvänd som avdelare */
+  .brand-seam {
+    height: 1px;
+    background: var(--gradient-seam);
+    border: 0;
+  }
+
+  /* Nivåer ----------------------------------------------------------- */
+
+  .tier-start {
+    background: hsl(var(--tier-start) / 0.16);
+    color: hsl(var(--tier-start));
+    border: 1px solid hsl(var(--tier-start) / 0.4);
+  }
+
+  .tier-core {
+    background: hsl(var(--tier-core) / 0.16);
+    color: hsl(var(--tier-core));
+    border: 1px solid hsl(var(--tier-core) / 0.4);
+  }
+
+  .tier-elite {
+    background: hsl(var(--tier-elite) / 0.18);
+    color: hsl(var(--tier-elite));
+    border: 1px solid hsl(var(--tier-elite) / 0.45);
+  }
+
+  /* Bakåtkompatibla alias – gamla namn finns kvar i data och i äldre vyer.
+     Skrivs ut i klartext, inte med @apply, så de inte beror på i vilken
+     ordning Tailwind råkar lägga ut klasserna i samma lager. */
+  .tier-silver {
+    background: hsl(var(--tier-start) / 0.16);
+    color: hsl(var(--tier-start));
+    border: 1px solid hsl(var(--tier-start) / 0.4);
   }
 
   .tier-gold {
-    @apply bg-gradient-to-r from-yellow-500 to-amber-400 text-black;
+    background: hsl(var(--tier-core) / 0.16);
+    color: hsl(var(--tier-core));
+    border: 1px solid hsl(var(--tier-core) / 0.4);
   }
 
-  .tier-silver {
-    @apply bg-gradient-to-r from-slate-400 to-slate-300 text-black;
+  .tier-platinum {
+    background: hsl(var(--tier-elite) / 0.18);
+    color: hsl(var(--tier-elite));
+    border: 1px solid hsl(var(--tier-elite) / 0.45);
   }
 
-  .animated-gradient {
-    background: linear-gradient(-45deg, hsl(222 47% 8%), hsl(240 50% 12%), hsl(270 50% 10%), hsl(222 47% 8%));
-    background-size: 400% 400%;
-    animation: gradient-shift 15s ease infinite;
+  .badge-sale {
+    background: hsl(var(--sale));
+    color: hsl(0 0% 100%);
+    @apply px-2 py-1 text-xs font-bold rounded-sm;
   }
 
+  /* Sektionsrytm ----------------------------------------------------- */
+
+  .section {
+    @apply py-16 md:py-24;
+  }
+
+  .section-tight {
+    @apply py-10 md:py-14;
+  }
+
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.28em] text-primary;
+  }
+
+  .section-title {
+    @apply font-display text-3xl md:text-4xl font-bold text-foreground;
+  }
+
+  .section-lede {
+    @apply text-base text-muted-foreground max-w-2xl;
+  }
+
+  .hero-surface {
+    background: var(--gradient-hero);
+  }
 }
 
 @layer utilities {
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500;
+    background: var(--gradient-primary);
+    @apply bg-clip-text text-transparent;
+  }
+
+  .glow-text {
+    text-shadow: 0 0 24px hsl(var(--primary) / 0.45);
+  }
+
+  .glow-border {
+    box-shadow: var(--shadow-glow);
   }
 
   .no-scrollbar {
     scrollbar-width: none;
   }
+
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
-}
 
-@keyframes gradient-shift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  /* Vågrät snap-rad – Starforges karusellkänsla utan extra bibliotek */
+  .snap-row {
+    @apply flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar;
+    scroll-padding-inline: 1rem;
+  }
+
+  .snap-row > * {
+    @apply snap-start shrink-0;
+  }
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 @keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .animate-float {

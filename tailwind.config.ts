@@ -16,12 +16,14 @@ export default {
       none: "0px",
       sm: "var(--radius-sm)",
       DEFAULT: "var(--radius-sm)",
-      md: "var(--radius-sm)",
+      md: "var(--radius)",
       lg: "var(--radius-lg)",
-      xl: "var(--radius-lg)",
-      "2xl": "var(--radius-lg)",
-      "3xl": "var(--radius-lg)",
-      full: "var(--radius-lg)",
+      xl: "calc(var(--radius-lg) * 1.5)",
+      "2xl": "calc(var(--radius-lg) * 2)",
+      "3xl": "calc(var(--radius-lg) * 3)",
+      pill: "var(--radius-pill)",
+      // `full` måste vara en riktig cirkel – avatarer och prickar använder den.
+      full: "var(--radius-pill)",
     },
     extend: {
       fontFamily: {
@@ -62,9 +64,31 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        gold: "hsl(var(--gold))",
-        silver: "hsl(var(--silver))",
-        platinum: "hsl(var(--platinum))",
+        surface: {
+          DEFAULT: "hsl(var(--surface))",
+          foreground: "hsl(var(--surface-foreground))",
+        },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        // Märkesfärger, oberoende av ljus/mörkt läge
+        brand: {
+          cyan: "hsl(var(--brand-cyan))",
+          "cyan-deep": "hsl(var(--brand-cyan-deep))",
+          plum: "hsl(var(--brand-plum))",
+          "plum-strong": "hsl(var(--brand-plum-strong))",
+          "plum-light": "hsl(var(--brand-plum-light))",
+          "plum-deep": "hsl(var(--brand-plum-deep))",
+          black: "hsl(var(--brand-black))",
+          "black-plum": "hsl(var(--brand-black-plum))",
+          chassis: "hsl(var(--brand-chassis))",
+        },
+        tier: {
+          start: "hsl(var(--tier-start))",
+          core: "hsl(var(--tier-core))",
+          elite: "hsl(var(--tier-elite))",
+        },
         sale: "hsl(var(--sale))",
       },
       keyframes: {
