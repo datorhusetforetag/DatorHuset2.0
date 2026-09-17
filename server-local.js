@@ -406,7 +406,16 @@ app.use(cors({
     if (isAllowedOrigin(origin)) {
       return callback(null, true);
     }
-    return callback(new Error("Not allowed by CORS"));
+    // Skicka inte ett Error hit. Express behandlar det som en krasch och
+    // svarar 500 "Internal server error", vilket ser ut som att endpointen
+    // är trasig i stället för att avsändaren inte står på listan. Neka i
+    // stället utan CORS-huvuden och logga vilken origin det gällde - det
+    // är enda sättet att se att FRONTEND_URLS saknar en adress.
+    logStructured("warn", "cors_origin_rejected", {
+      origin,
+      allowed: ALLOWED_FRONTEND_ORIGINS.join(","),
+    });
+    return callback(null, false);
   },
   credentials: true,
 }));
@@ -10174,6 +10183,10 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Stripe API Server running on http://localhost:${PORT}`);
   console.log(`Frontend URL: ${FRONTEND_URL}`);
+  // Skriv ut vilka origins som faktiskt släpps in. Utan den här raden går
+  // det inte att se från utsidan om FRONTEND_URLS nått fram till servern,
+  // och en saknad adress visar sig bara som att sidan slutar fungera.
+  console.log(`Allowed origins (${ALLOWED_FRONTEND_ORIGINS.length}): ${ALLOWED_FRONTEND_ORIGINS.join(", ")}`);
   // Prisuppdateringen. Till skillnad från de gamla schemaläggarna håller den
   // sitt "senast körd" i Supabase, så en omstart av Render-instansen inte
   // nollställer dygnsräkningen.
