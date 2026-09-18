@@ -1,6 +1,7 @@
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/siteSettings";
 import { SiteIcon } from "./SiteIcon";
 import { Reveal } from "./Reveal";
+import { CountUp } from "./CountUp";
 
 type StepsSectionProps = {
   settings?: SiteSettings["homepage"]["steps"];
@@ -73,9 +74,12 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
                   </span>
 
                   <span className="min-w-0 flex-1">
-                    <span className="block font-display text-lg font-bold leading-snug tracking-tight sm:text-xl">
+                    <CountUp
+                      delay={index * 90}
+                      className="block font-display text-lg font-bold leading-snug tracking-tight sm:text-xl"
+                    >
                       {step.title}
-                    </span>
+                    </CountUp>
                     {step.description && (
                       <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">
                         {step.description}
