@@ -32,17 +32,17 @@ När du slutfört din betalning får du en orderbekräftelse via e-post. Kontrol
 
 4. Leveransalternativ
 
-Kunden kan välja mellan avhämtning (upphämtning) på plats eller leverans med DB Schenker till ombud. Nedan följer villkor för båda leveransalternativen:
+Kunden kan välja mellan avhämtning (upphämtning) på plats eller leverans med PostNord till ombud. Nedan följer villkor för båda leveransalternativen:
 
         Avhämtning (Kostnadsfri): Du kan välja att hämta varan kostnadsfritt vid Spånga i Stockholm vid en förbestämd tid. Efter att din order är färdigbehandlad kontaktar vi dig för att avtala en tid och exakt plats för upphämtning. Vid avhämtning måste giltig legitimation och orderbekräftelse uppvisas. Om ombud hämtar ut varan åt dig krävs skriftlig fullmakt samt legitimation för både dig och ombudet. Observera att ordern måste vara betald i förväg; ingen betalning hanteras vid avhämtning.
 
-DB Schenker Fraktalternativ Ombud: Vi erbjuder säker leverans via DB Schenker till ombud för en fast fraktkostnad om 315 kr. Detta fraktalternativ är spårbart och försäkrat upp till 25 000 kr. Försändelsen levereras normalt till ditt närmaste DB Schenker-ombud och måste kvitteras med giltig legitimation av mottagaren. Leveranstiden är vanligtvis 1-3 arbetsdagar från det att vi skickar paketet (inom Sverige). Vi strävar efter att expediera din order så snart som möjligt; normal hanteringstid innan utskick är 1-3 arbetsdagar. Skulle försändelsen bli försenad meddelar vi dig snarast möjligt.
+PostNord Standardpaket till ombud: Vi erbjuder spårbar leverans med PostNord till ombud (Service Point) för en fast fraktkostnad om 315 kr. Försändelsen levereras till ditt närmaste ombud och hämtas ut mot giltig legitimation. Leveranstiden är normalt 1-2 vardagar från det att vi skickar paketet. Till vissa orter och mer avlägsna postnummer kan det ta 2-3 vardagar. Vardagar räknas i regel som leveransdagar; i vissa storstadsområden förekommer även lördagsutlämning beroende på tjänst och ort. Vi strävar efter att expediera din order så snart som möjligt; normal hanteringstid innan utskick är 1-3 arbetsdagar. Skulle försändelsen bli försenad meddelar vi dig snarast möjligt.
 
 Leveransbegränsningar: I nuläget levererar vi enbart inom Sverige. Om du önskar leverans utanför Sverige, vänligen kontakta oss innan köp för att undersöka möjligheterna.
 
 Outlöst försändelse: Paket som levereras till ombud ligger normalt kvar i 7-14 dagar (beroende på transportörens regler) för avhämtning. Om du inte hämtar ut ditt paket i tid och det går i retur till oss, förbehåller vi oss rätten att debitera dig för faktiska kostnader för frakt och retur. Outlöst paket räknas inte som utnyttjande av ångerrätt (se Ångerrätt nedan); du måste aktivt meddela oss om du ångrar köpet. Vi kontaktar dig om vi mottar en retur på grund av outlöst försändelse för att göra upp om eventuellt återköp minus kostnader eller om ny utkörning (mot ny fraktavgift).
 
-Leveransansvar: Vi står för transportrisken tills paketet har överlämnats till dig. Det innebär att om varan skadas eller kommer bort under transporten till dig, skickar vi en ny vara (om möjligt) eller ersätter dig för köpet. Kontrollera alltid paketets yttre innan du kvitterar hos ombudet. Transportskador: Om emballaget är synbart skadat vid utlämning bör du anmäla detta direkt hos ombudet eller transportören och kontakta oss snarast möjligt. Dokumentera skadan gärna med fotografier. Dold transportskada (skada som upptäcks först efter att du öppnat paketet) bör anmälas till oss och DB Schenker så snart som möjligt efter mottagandet.
+Leveransansvar: Vi står för transportrisken tills paketet har överlämnats till dig. Det innebär att om varan skadas eller kommer bort under transporten till dig, skickar vi en ny vara (om möjligt) eller ersätter dig för köpet. Kontrollera alltid paketets yttre innan du kvitterar hos ombudet. Transportskador: Om emballaget är synbart skadat vid utlämning bör du anmäla detta direkt hos ombudet eller transportören och kontakta oss snarast möjligt. Dokumentera skadan gärna med fotografier. Dold transportskada (skada som upptäcks först efter att du öppnat paketet) bör anmälas till oss och PostNord så snart som möjligt efter mottagandet.
 
 5. Ångerrätt (Öppet köp)
 
@@ -68,7 +68,7 @@ För att reklamera en vara, kontakta oss via e-post och beskriv problemet. Bifog
 
 Garanti: Om en särskild garanti erbjuds för produkten framgår det av produktbeskrivningen eller medföljande handlingar. Om ingen uttrycklig garanti anges, gäller enbart reklamationsrätten enligt lag. Eventuella tillverkargarantier på enskilda komponenter (t.ex. grafikkort, processor) kan gälla utöver vår reklamationsrätt; vi hjälper gärna till att förmedla garantiservice hos tillverkaren i den mån det är möjligt. Notera att garanti och reklamationsrätt är skilda saker - garanti kan ge extra rättigheter under en viss tid, men påverkar inte dina lagstadgade rättigheter att reklamera varor som är felaktiga.
 
-Transportskador vid leverans: Skulle produkten vara skadad vid mottagandet (transportskada) ska detta rapporteras omedelbart enligt avsnitt 4 ovan. Sådana skador hanteras som reklamation gentemot transportören, men kontakta också oss så att vi kan hjälpa till och påbörja ett ersättningsärende. Vid transportskador ersätter vi dig med en ny vara eller full återbetalning, och hanterar ersättningen med DB Schenker inom ramen för försäkringen.
+Transportskador vid leverans: Skulle produkten vara skadad vid mottagandet (transportskada) ska detta rapporteras omedelbart enligt avsnitt 4 ovan. Sådana skador hanteras som reklamation gentemot transportören, men kontakta också oss så att vi kan hjälpa till och påbörja ett ersättningsärende. Vid transportskador ersätter vi dig med en ny vara eller full återbetalning, och hanterar ersättningen med PostNord.
 
 7. Ansvar och Begränsningar
 
@@ -80,7 +80,7 @@ Force Majeure: DatorHuset förbehåller sig rätten att frias från påföljd f�
 
 8. Personuppgifter och Sekretess
 
-När du handlar hos DatorHuset behandlar vi dina personuppgifter i enlighet med gällande dataskyddslagar (GDPR). De uppgifter du lämnar (såsom namn, adress, kontaktinformation och betalningsuppgifter) används endast för att administrera din order, leverera varan och ge dig service. Vi vidtar lämpliga säkerhetsåtgärder för att skydda dina personuppgifter. Vi delar endast nödvändiga uppgifter med våra betalnings- och leveranspartners (t.ex. Stripe/Paypal/Klarna för betalning och DB Schenker för frakt) för att kunna genomföra köpet. Mer information om vår hantering av personuppgifter finns i vår Integritetspolicy [länk eller hänvisning om sådan finns].
+När du handlar hos DatorHuset behandlar vi dina personuppgifter i enlighet med gällande dataskyddslagar (GDPR). De uppgifter du lämnar (såsom namn, adress, kontaktinformation och betalningsuppgifter) används endast för att administrera din order, leverera varan och ge dig service. Vi vidtar lämpliga säkerhetsåtgärder för att skydda dina personuppgifter. Vi delar endast nödvändiga uppgifter med våra betalnings- och leveranspartners (t.ex. Stripe/PayPal/Klarna för betalning och PostNord för frakt) för att kunna genomföra köpet. Mer information om vår hantering av personuppgifter finns i vår Integritetspolicy [länk eller hänvisning om sådan finns].
 
 9. Tillämplig lag och Tvistlösning
 

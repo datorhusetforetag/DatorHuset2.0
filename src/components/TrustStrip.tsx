@@ -108,11 +108,11 @@ export const TrustStrip = () => {
       <div className="container mx-auto px-4 py-12 sm:py-14">
         <div className="flex flex-col gap-6">
           {/* Betalning ---------------------------------------------- */}
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-center">
             <h2 className="text-sm font-semibold text-foreground/80">
               Säker betalning med:
             </h2>
-            <ul className="flex flex-wrap items-center gap-2.5">
+            <ul className="flex flex-wrap items-center justify-center gap-2.5">
               {PAYMENT_MARKS.map((item) => (
                 <Chip key={item.title} title={item.title}>
                   {item.mark}
@@ -122,11 +122,11 @@ export const TrustStrip = () => {
           </div>
 
           {/* Leverans ------------------------------------------------ */}
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-center">
             <h2 className="text-sm font-semibold text-foreground/80">
               Vi levererar med:
             </h2>
-            <ul className="flex flex-wrap items-center gap-2.5">
+            <ul className="flex flex-wrap items-center justify-center gap-2.5">
               <Chip title="PostNord">
                 <PostNordMark />
               </Chip>
@@ -139,7 +139,7 @@ export const TrustStrip = () => {
           </div>
         </div>
 
-        <p className="mt-6 text-xs text-muted-foreground">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           Betalningen hanteras av Stripe. Vi ser aldrig dina kortuppgifter.
         </p>
       </div>

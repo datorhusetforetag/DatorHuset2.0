@@ -409,7 +409,7 @@ export default function Checkout() {
                         <div>
                           <p className="font-semibold text-gray-900 dark:text-gray-100">PostNord till ombud (315 kr)</p>
                           <p className="text-sm text-gray-600 dark:text-gray-200">
-                            Försäkrad och spårbar frakt. Leverans 1-3 vardagar efter att bygget är klart.
+                            Spårbar frakt till ombud. Leverans 1-2 vardagar efter att bygget är klart.
                           </p>
                         </div>
                       </label>
