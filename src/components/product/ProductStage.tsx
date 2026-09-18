@@ -53,7 +53,10 @@ export const ProductStage = ({
   };
 
   return (
-    <div className="product-stage">
+    /* Duktypen skrivs ut på scenen så att skuggorna kan skilja sig åt.
+       I studio står datorn på ett bord med riktat ljus; i aura svävar
+       den i luften och har bara en mjuk skugga under sig. */
+    <div className="product-stage" data-backdrop={art.backdrop.kind ?? "aura"}>
       <ProductBackdrop art={art} seedKey={seedKey} />
 
       {note && <span className="product-stage__note">{note}</span>}
@@ -61,6 +64,15 @@ export const ProductStage = ({
       <div className="product-stage__subject">
         {floating ? (
           <>
+            {/* Två skuggor, inte en.
+                Kontaktskuggan är den mörka fläcken precis där chassit
+                möter bordet - den är det som gör att datorn STÅR på
+                ytan i stället för att sväva över den. Slagskuggan är
+                den långa, ljusare som faller åt höger, bort från
+                ljuset i skivan. Bara den ena av dem ser fel ut: bara
+                kontaktskugga ger ett föremål utan ljuskälla, bara
+                slagskugga ger ett föremål som inte rör marken. */}
+            <span aria-hidden="true" className="product-stage__cast" />
             <img
               src={art.cutout}
               alt={alt}

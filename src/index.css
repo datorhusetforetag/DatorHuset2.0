@@ -1512,6 +1512,73 @@
   animation: stage-shadow 7s ease-in-out infinite;
 }
 
+/*
+ * I studio står datorn på ett bord, och då ska skuggan bete sig som en
+ * skugga på ett bord: tät och smal precis vid foten, inte en mjuk
+ * fläck som i luften. Den lyfter också mindre när datorn rör sig - ett
+ * föremål som vilar mot en yta släpper inte kontakten.
+ */
+.product-stage[data-backdrop="studio"] .product-stage__shadow {
+  bottom: -1.1rem;
+  height: 1.6rem;
+  width: 46%;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.78) 0%, rgb(0 0 0 / 0.25) 62%, transparent 100%);
+  filter: blur(5px);
+  animation: stage-contact 7s ease-in-out infinite;
+}
+
+/*
+ * Slagskuggan.
+ *
+ * Ljuset i skivan sitter uppe till vänster, så skuggan faller nedåt
+ * höger. Den är bredare, plattare och mycket ljusare än kontaktskuggan,
+ * och den skevas i sidled för att antyda vinkeln - en skugga som ligger
+ * rakt under ett föremål betyder ljus rakt ovanifrån, vilket inte är
+ * det som händer här.
+ */
+.product-stage__cast {
+  display: none;
+}
+
+.product-stage[data-backdrop="studio"] .product-stage__cast {
+  display: block;
+  position: absolute;
+  bottom: -1.6rem;
+  left: 50%;
+  z-index: 0;
+  height: 3.5rem;
+  width: 96%;
+  transform: translateX(-42%) skewX(-22deg);
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.42) 0%, transparent 100%);
+  filter: blur(16px);
+  animation: stage-cast 7s ease-in-out infinite;
+}
+
+@keyframes stage-contact {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateX(-50%) scale(0.95);
+    opacity: 0.8;
+  }
+}
+
+@keyframes stage-cast {
+  0%,
+  100% {
+    transform: translateX(-42%) skewX(-22deg) scale(1);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translateX(-42%) skewX(-22deg) scale(1.05);
+    opacity: 0.72;
+  }
+}
+
 @keyframes stage-shadow {
   0%,
   100% {
@@ -1696,8 +1763,16 @@
 @media (prefers-reduced-motion: reduce) {
   .product-stage__cutout,
   .product-stage__shadow,
+  .product-stage__cast,
   .product-backdrop__motes circle {
     animation: none;
+  }
+
+  /* Skevningen ligger i animationens transform, så utan animation
+     måste den skrivas ut igen - annars rätar slagskuggan upp sig och
+     ljuset ser plötsligt ut att komma rakt uppifrån. */
+  .product-stage[data-backdrop="studio"] .product-stage__cast {
+    transform: translateX(-42%) skewX(-22deg);
   }
 }
 
@@ -1758,18 +1833,62 @@
   }
 }
 
-/* Golvet. Övergången mot fonden är mjuk och inte en linje - i en studio
-   är den en rundad övergång (en hålkäl), inte ett hörn. */
+/*
+ * Bordet.
+ *
+ * Det låg tidigare som en dimma: hela överkanten var bortmaskad så att
+ * ytan tonade in, och då blev det inte ett bord utan bara ett mörker
+ * nedtill. Datorn såg ut att hänga framför fonden i stället för att stå
+ * på något.
+ *
+ * Nu är det en yta med en kant. Övergången är fortfarande mjuk - i en
+ * studio är hörnet mellan fond och bord rundat, inte skarpt - men den
+ * är kort nog att ögat läser den som en horisont.
+ *
+ * Höjden är vald efter var datorn faktiskt står. Med scenens
+ * indrag och urklippets maxhöjd hamnar chassits fot kring 74% av
+ * scenen, så bordet börjar strax ovanför det. Blir de två värdena
+ * osynkade står datorn antingen i luften eller halvvägs ned i bordet.
+ */
 .product-backdrop__ground {
   position: absolute;
-  inset: 72% 0 0 0;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
-  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
+  inset: 71% 0 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 5%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 5%);
 }
 
+/* Kanten där bordet möter fonden fångar ljuset, precis som en
+   bordsskiva gör. Utan den ser ytan ut att börja i ingenting. */
+.product-backdrop__ground::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(255 255 255 / 0.16) 30%,
+    rgb(255 255 255 / 0.22) 52%,
+    transparent 92%
+  );
+}
+
+/* Bordsytan mörknar framåt, mot betraktaren. Ett bord med jämn ton
+   över hela djupet läses som en vägg. */
+.product-backdrop__ground::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.45) 100%);
+}
+
+/* Ljuset från skivan som spiller ned på bordsskivan bakom datorn. */
 .product-backdrop__spill {
   position: absolute;
   inset: 0;
+  z-index: 1;
 }
 
 .product-backdrop__vignette {
