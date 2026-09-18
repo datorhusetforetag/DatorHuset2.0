@@ -29,7 +29,7 @@ type Blob = {
 
 const BLOBS: Blob[] = [
   {
-    color: "63, 217, 245",
+    color: "198, 150, 235",
     className: "left-[-12%] top-[-8%] h-[52vw] w-[52vw]",
     style: { animation: "drift-a 38s ease-in-out infinite" },
   },
@@ -47,11 +47,11 @@ const BLOBS: Blob[] = [
 
 /** Strimmorna: vänsterposition, längd, varvtid och fördröjning. */
 const STREAKS = [
-  { left: "12%", height: "22vh", duration: "14s", delay: "0s", color: "63, 217, 245" },
+  { left: "12%", height: "22vh", duration: "14s", delay: "0s", color: "198, 150, 235" },
   { left: "27%", height: "16vh", duration: "19s", delay: "4s", color: "178, 107, 222" },
-  { left: "54%", height: "26vh", duration: "16s", delay: "8s", color: "63, 217, 245" },
+  { left: "54%", height: "26vh", duration: "16s", delay: "8s", color: "198, 150, 235" },
   { left: "71%", height: "18vh", duration: "22s", delay: "2s", color: "178, 107, 222" },
-  { left: "88%", height: "20vh", duration: "17s", delay: "11s", color: "63, 217, 245" },
+  { left: "88%", height: "20vh", duration: "17s", delay: "11s", color: "198, 150, 235" },
 ];
 
 export const AmbientBackground = () => {

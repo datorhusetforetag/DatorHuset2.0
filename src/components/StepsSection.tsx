@@ -11,12 +11,13 @@ type StepsSectionProps = {
  *
  * Det här är sidans brytpunkt. Resten av startsidan är centrerad rubrik
  * följd av ett rutnät, och fyra sådana i rad gör att ögat slutar titta.
- * Därför ligger den här som ett mörkt band tvärs över hela sidan, med
- * rubriken vänsterställd i en smal spalt och punkterna staplade i en
- * bredare - inte som ett rutnät alls.
+ * Därför står rubriken vänsterställd i en smal spalt och punkterna
+ * staplade i en bredare - inte som ett rutnät alls.
  *
- * Bandet är mörkt i både ljust och mörkt läge, precis som sidfoten, så
- * färgerna är satta som fasta värden i stället för tokens.
+ * Brytningen ligger i formen, inte i kulören. Avsnittet har ingen egen
+ * bakgrund utan ligger på samma genomgående duk som resten av sidan.
+ * Ett eget mörkt band här delade sidan i två lila, och två lila är
+ * sämre än ett.
  *
  * Varje punkt har sin egen kulör och ett stort blekt nummer, så raden
  * blir läsbar i ett svep i stället för en grå vägg.
@@ -27,34 +28,26 @@ const ACCENTS = ["#3FD9F5", "#B26BDE", "#E3A567", "#7FD98F"];
 
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
   return (
-    <section
-      data-sandbox-id="home-steps"
-      className="relative border-y border-white/10 text-[#E8E4F0]"
-      style={{
-        backgroundColor: "#140B1D",
-        backgroundImage:
-          "radial-gradient(90% 70% at 15% 0%, rgba(110, 43, 146, 0.45) 0%, transparent 65%), radial-gradient(70% 60% at 95% 100%, rgba(63, 217, 245, 0.12) 0%, transparent 60%)",
-      }}
-    >
+    <section data-sandbox-id="home-steps" className="relative text-foreground">
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
           {/* Rubriken står kvar medan punkterna rullar förbi */}
           <Reveal className="lg:sticky lg:top-28 lg:self-start">
             {settings.eyebrow && (
-              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#A99FC0]">
+              <p className="eyebrow">
                 {settings.eyebrow}
               </p>
             )}
             <h2 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
               {settings.title}
             </h2>
-            <p className="mt-5 max-w-md text-base leading-relaxed text-[#A99FC0]">
+            <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
               {settings.description}
             </p>
           </Reveal>
 
           {/* Punkterna: staplade, skilda av hårfina linjer */}
-          <ul className="divide-y divide-white/10 border-t border-white/10">
+          <ul className="divide-y divide-foreground/10 border-t border-foreground/10">
             {settings.items.map((step, index) => {
               const accent = ACCENTS[index % ACCENTS.length];
               return (
@@ -84,7 +77,7 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
                       {step.title}
                     </span>
                     {step.description && (
-                      <span className="mt-1.5 block text-sm leading-relaxed text-[#A99FC0]">
+                      <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">
                         {step.description}
                       </span>
                     )}

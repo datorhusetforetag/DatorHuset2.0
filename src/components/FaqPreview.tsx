@@ -104,8 +104,9 @@ const FlowField = () => (
         </mask>
       </defs>
 
-      {/* Plommon underst, cyan en aning förskjuten ovanpå. Två lager som
-          inte ligger i fas ger djup; ett enda ser platt ut. */}
+      {/* Två lager lila, det ljusare en aning förskjutet ovanpå. Ligger
+          de inte i fas ger de djup; ett enda lager ser platt ut. Båda ur
+          samma familj - en andra kulör här delade duken i två. */}
       <g mask="url(#faq-flow-mask)">
         <g
           stroke="#B26BDE"
@@ -119,15 +120,15 @@ const FlowField = () => (
           ))}
         </g>
         <g
-          stroke="#3FD9F5"
+          stroke="#D9B8F0"
           strokeWidth="2"
           strokeLinecap="round"
           strokeDasharray="0.1 9"
-          opacity="0.16"
+          opacity="0.2"
           transform="translate(5, -7)"
         >
           {FLOW_FIELD.map((d, index) => (
-            <path key={`cyan-${index}`} d={d} />
+            <path key={`plum-light-${index}`} d={d} />
           ))}
         </g>
       </g>
