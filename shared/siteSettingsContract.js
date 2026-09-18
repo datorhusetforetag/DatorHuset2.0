@@ -170,6 +170,10 @@ export const siteSettingsSchema = z.object({
         links: z.array(siteLinkItemSchema).min(1).max(6),
       })).min(1).max(4),
       socialLinks: z.array(socialLinkSchema).min(1).max(6),
+      // Villkorslänkarna ligger i sidfotens nedre rad, skilda från
+      // kolumnerna ovanför. Valfri, så att tidigare sparade inställningar
+      // utan fältet fortsätter validera.
+      legalLinks: z.array(siteLinkItemSchema).max(6).optional(),
       copyright: siteTextSchema(120),
     }),
     motion: z.object({

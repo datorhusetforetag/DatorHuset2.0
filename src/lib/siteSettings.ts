@@ -114,6 +114,8 @@ export type SiteSettings = {
         label: string;
         href: string;
       }>;
+      /** Villkorslänkarna i sidfotens nedre rad. Valfri för äldre sparade lägen. */
+      legalLinks?: SiteLinkItem[];
       copyright: string;
     };
     motion: {

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Instagram, Twitter, Youtube } from "lucide-react";
+import { Wordmark } from "./Wordmark";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const TikTokIcon = ({ className }: { className?: string }) => (
@@ -11,92 +12,141 @@ const TikTokIcon = ({ className }: { className?: string }) => (
   </svg>
 );
 
+/**
+ * Sidfoten.
+ *
+ * Bakgrunden är ett djupt plommonsvart med ett ljus som stiger underifrån,
+ * samma uppbyggnad som Starforge använder. Rubrikerna är versala och
+ * glesa, länkarna cyan - vår färg i stället för deras gröna.
+ *
+ * Villkorslänkarna ligger i nedre raden och inte i kolumnerna, så
+ * kolumnerna får handla om vad besökaren vill göra.
+ */
 export const Footer = () => {
   const { settings } = useSiteSettings();
   const footer = settings.site.footer;
-  const theme = settings.site.theme;
   const footerLogo = footer.logoUrl?.trim() || "/datorhuset-mark-small.png";
+  const legalLinks = footer.legalLinks ?? [];
 
   return (
     <footer
       data-sandbox-id="global-footer"
-      className="border-t"
+      className="relative overflow-hidden border-t border-white/10 text-[#E8E4F0]"
       style={{
-        borderColor: theme.cardBorderColorDark,
-        backgroundColor: theme.pageBackgroundDark,
-        color: theme.textColorDark,
+        // Basen är nästan svart med en dragning åt plommon. Ljuset stiger
+        // underifrån i mitten och tonar ut mot kanterna.
+        backgroundColor: "#140B1D",
+        backgroundImage:
+          "radial-gradient(120% 90% at 50% 120%, rgba(110, 43, 146, 0.55) 0%, rgba(110, 43, 146, 0.18) 45%, transparent 72%), radial-gradient(80% 60% at 85% 0%, rgba(63, 217, 245, 0.08) 0%, transparent 60%)",
       }}
     >
-      <div className="container mx-auto px-4 py-6 sm:py-8">
-        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr_1fr]">
-          <div className="grid gap-6 sm:grid-cols-2 lg:col-span-2">
-            {footer.columns.map((column) => (
-              <div key={column.title} className="space-y-2">
-                <h4 className="text-base font-semibold">{column.title}</h4>
-                {column.links.map((link) => (
-                  <Link
-                    key={`${column.title}-${link.href}`}
-                    to={link.href}
-                    className="link-underline inline-block text-sm transition-opacity hover:opacity-85"
-                    style={{ color: theme.textColorDark }}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-4 border-t pt-4 lg:border-t-0 lg:pt-0" style={{ borderColor: theme.cardBorderColorDark }}>
-            <div className="space-y-1">
-              <h4 className="text-base font-semibold">{footer.supportTitle}</h4>
-              <p className="text-sm">{footer.supportEmail}</p>
-              <p className="text-sm" style={{ color: theme.mutedTextColorDark }}>
-                {footer.supportHours}
+      <div className="container relative mx-auto px-4 py-14 sm:py-16">
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_repeat(3,minmax(0,0.85fr))]">
+          {/* Märket ------------------------------------------------- */}
+          <div className="flex flex-col items-start gap-4">
+            <img
+              src={footerLogo}
+              alt="DatorHuset"
+              className="h-16 w-16 object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+            <div>
+              <Wordmark
+                name={settings.site.navigation.brandName}
+                className="font-display text-xl font-bold tracking-tight"
+              />
+              <p className="mt-2 max-w-[24ch] text-sm leading-relaxed text-[#A99FC0]">
+                Datorer byggda för hand i Spånga, Stockholm.
               </p>
             </div>
+          </div>
 
-            <div className="flex items-center justify-between gap-4">
-              <div>
-                <p
-                  className="mb-2 text-xs uppercase tracking-[0.2em]"
-                  style={{ color: theme.mutedTextColorDark }}
-                >
-                  Följ oss
-                </p>
-                <div className="flex items-center gap-3">
-                  {footer.socialLinks.map((item) => (
-                    <a
-                      key={`${item.platform}-${item.href}`}
-                      href={item.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={`DatorHuset på ${item.label}`}
-                      className="flex h-9 w-9 items-center justify-center rounded-full border transition-opacity hover:opacity-85"
-                      style={{ borderColor: theme.cardBorderColorDark }}
+          {/* Länkkolumner ------------------------------------------- */}
+          {footer.columns.map((column) => (
+            <nav key={column.title} aria-label={column.title}>
+              <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A99FC0]">
+                {column.title}
+              </h2>
+              <ul className="mt-5 space-y-3">
+                {column.links.map((link) => (
+                  <li key={`${column.title}-${link.href}`}>
+                    <Link
+                      to={link.href}
+                      className="text-sm text-[#3FD9F5] transition-colors hover:text-white"
                     >
-                      {item.platform === "instagram" ? (
-                        <Instagram className="h-5 w-5" />
-                      ) : item.platform === "youtube" ? (
-                        <Youtube className="h-5 w-5" />
-                      ) : item.platform === "tiktok" ? (
-                        <TikTokIcon className="h-5 w-5" />
-                      ) : (
-                        <Twitter className="h-5 w-5" />
-                      )}
-                    </a>
-                  ))}
-                </div>
-              </div>
-              <img src={footerLogo} alt="DatorHuset logo" className="h-12 w-12 object-contain" loading="lazy" decoding="async" />
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          {/* Kontakt och sociala kanaler ---------------------------- */}
+          <div>
+            <h2 className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A99FC0]">
+              {footer.supportTitle}
+            </h2>
+            <ul className="mt-5 space-y-3">
+              <li>
+                <a
+                  href={`mailto:${footer.supportEmail}`}
+                  className="text-sm text-[#3FD9F5] transition-colors hover:text-white"
+                >
+                  {footer.supportEmail}
+                </a>
+              </li>
+              <li className="text-sm text-[#A99FC0]">{footer.supportHours}</li>
+            </ul>
+
+            <h2 className="mt-8 text-[11px] font-semibold uppercase tracking-[0.22em] text-[#A99FC0]">
+              Följ oss
+            </h2>
+            <div className="mt-4 flex items-center gap-3">
+              {footer.socialLinks.map((item) => (
+                <a
+                  key={`${item.platform}-${item.href}`}
+                  href={item.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`DatorHuset på ${item.label}`}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-[#E8E4F0] transition-colors hover:border-[#3FD9F5] hover:text-[#3FD9F5]"
+                >
+                  {item.platform === "instagram" ? (
+                    <Instagram className="h-[18px] w-[18px]" />
+                  ) : item.platform === "youtube" ? (
+                    <Youtube className="h-[18px] w-[18px]" />
+                  ) : item.platform === "tiktok" ? (
+                    <TikTokIcon className="h-[18px] w-[18px]" />
+                  ) : (
+                    <Twitter className="h-[18px] w-[18px]" />
+                  )}
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-8 border-t pt-4" style={{ borderColor: theme.cardBorderColorDark }}>
-          <p className="text-sm" style={{ color: theme.mutedTextColorDark }}>
-            {footer.copyright}
-          </p>
+        {/* Nedre rad ------------------------------------------------ */}
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-[#A99FC0]">{footer.copyright}</p>
+          {legalLinks.length > 0 && (
+            <nav aria-label="Villkor">
+              <ul className="flex flex-wrap items-center gap-x-6 gap-y-2">
+                {legalLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      to={link.href}
+                      className="text-sm text-[#3FD9F5] transition-colors hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </div>
       </div>
     </footer>

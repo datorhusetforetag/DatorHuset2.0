@@ -85,8 +85,8 @@
     --gradient-seam: linear-gradient(
       90deg,
       transparent 0%,
-      hsl(var(--brand-cyan) / 0.5) 35%,
-      hsl(var(--brand-plum) / 0.5) 65%,
+      hsl(var(--brand-cyan) / 0.85) 35%,
+      hsl(var(--brand-plum) / 0.85) 65%,
       transparent 100%
     );
 
@@ -98,18 +98,25 @@
   }
 
   .dark {
-    /* Mörk yta – husets egentliga röst */
-    --background: 232 25% 6%;
-    --foreground: 240 24% 96%;
+    /*
+     * Mörk yta – ett djupt plommonlila, inte svart.
+     *
+     * Starforge lägger hela sajten på en mörklila duk i stället för på
+     * svart, och det är därför deras sidor hänger ihop. Kulören ger också
+     * cyanen och plommonet något att vila mot: mot rent svart skär de,
+     * mot lila sitter de i samma familj.
+     */
+    --background: 255 40% 10%;
+    --foreground: 260 25% 95%;
 
-    --card: 240 10% 13%;
-    --card-foreground: 240 24% 96%;
+    --card: 256 30% 15%;
+    --card-foreground: 260 25% 95%;
 
-    --surface: 240 5% 15%;
-    --surface-foreground: 240 24% 96%;
+    --surface: 256 28% 17%;
+    --surface-foreground: 260 25% 95%;
 
-    --popover: 240 10% 11%;
-    --popover-foreground: 240 24% 96%;
+    --popover: 256 32% 13%;
+    --popover-foreground: 260 25% 95%;
 
     --primary: 189 90% 60%;
     --primary-foreground: 232 25% 6%;
@@ -117,8 +124,8 @@
     --secondary: 277 64% 65%;
     --secondary-foreground: 232 25% 6%;
 
-    --muted: 240 8% 18%;
-    --muted-foreground: 240 12% 68%;
+    --muted: 256 24% 21%;
+    --muted-foreground: 258 18% 72%;
 
     --accent: 272 70% 59%;
     --accent-foreground: 240 24% 96%;
@@ -129,8 +136,8 @@
     --success: 152 52% 50%;
     --success-foreground: 232 25% 6%;
 
-    --border: 240 10% 20%;
-    --input: 240 10% 20%;
+    --border: 256 20% 24%;
+    --input: 256 20% 24%;
     --ring: 189 90% 60%;
 
     --tier-start: 189 90% 60%;
@@ -167,6 +174,36 @@
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', sans-serif;
     transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /*
+   * Sidans duk.
+   *
+   * Ljusen ligger på omslaget runt hela sidan, inte på varje sektion, och
+   * är fästa mot fönstret (background-attachment: fixed). Då står de
+   * stilla medan innehållet rullar förbi - samma känsla som Starforge har.
+   *
+   * Sektionerna ovanpå är genomskinliga, så det här är det enda som
+   * färgar bakgrunden.
+   */
+  .dark [data-sandbox-id="global-theme"] {
+    background-image:
+      radial-gradient(85% 55% at 12% 4%, hsl(var(--brand-cyan) / 0.14) 0%, transparent 58%),
+      radial-gradient(75% 50% at 88% 22%, hsl(var(--brand-plum) / 0.2) 0%, transparent 60%),
+      radial-gradient(90% 60% at 50% 100%, hsl(var(--brand-plum-deep) / 0.26) 0%, transparent 62%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  /* Samma uppbyggnad i ljust läge, men kraftigare - kulör mot vitt
+     försvinner långt innan den syns. */
+  :root:not(.dark) [data-sandbox-id="global-theme"] {
+    background-image:
+      radial-gradient(85% 55% at 12% 4%, hsl(var(--brand-cyan) / 0.2) 0%, transparent 58%),
+      radial-gradient(75% 50% at 88% 22%, hsl(var(--brand-plum) / 0.16) 0%, transparent 60%),
+      radial-gradient(90% 60% at 50% 100%, hsl(var(--brand-plum-light) / 0.18) 0%, transparent 62%);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
   }
 
   h1,
@@ -317,36 +354,28 @@
   /* Djup i ytorna --------------------------------------------------- */
 
   /*
-   * Starforge lägger aldrig en platt färg över en hel sektion. Bakgrunden
-   * har alltid en svag lutning eller ett ljus som faller in från ett hörn,
-   * så att sektionerna skiljer sig åt utan synliga linjer mellan dem.
+   * En genomgående duk i stället för band.
+   *
+   * Starforge målar aldrig sektion för sektion. Hela sidan ligger på en
+   * enda mörklila yta med några stora ljus i, och eftersom ljusen är
+   * fästa mot fönstret och inte mot innehållet glider de förbi när man
+   * rullar. Det är det som gör att sidan känns som ett rum och inte som
+   * en trave rutor.
+   *
+   * Sektionerna nedan är därför genomskinliga. De finns kvar som
+   * hållpunkter för positionering, men målar ingenting själva.
    */
-  .section-surface {
-    position: relative;
-    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--surface) / 0.5) 100%);
-  }
-
+  .section-surface,
   .section-surface-alt {
     position: relative;
-    background: radial-gradient(
-        90% 70% at 80% 0%,
-        hsl(var(--brand-plum) / 0.09) 0%,
-        transparent 60%
-      ),
-      radial-gradient(70% 60% at 10% 100%, hsl(var(--brand-cyan) / 0.07) 0%, transparent 65%),
-      hsl(var(--surface) / 0.35);
+    background: transparent;
   }
 
-  /* Tunn ljusrand i överkanten, som skarven i logotypen. Skiljer sektioner
-     åt utan att rita en hård linje. */
+  /* Ingen skarv längre - poängen med en genomgående duk är att det inte
+     finns några gränser att rita. Klassen lämnas tom så att den kan sitta
+     kvar i markup utan att göra något. */
   .section-seam-top::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    top: 0;
-    height: 1px;
-    background: var(--gradient-seam);
-    pointer-events: none;
+    content: none;
   }
 
   /* Hovring --------------------------------------------------------- */
@@ -363,9 +392,9 @@
 
   .card-lift:hover {
     transform: translateY(-6px);
-    border-color: hsl(var(--primary) / 0.55);
-    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.25), 0 18px 45px hsl(var(--brand-black) / 0.55),
-      0 0 45px hsl(var(--primary) / 0.16);
+    border-color: hsl(var(--primary) / 0.8);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.45), 0 18px 45px hsl(var(--brand-black) / 0.55),
+      0 0 38px hsl(var(--primary) / 0.32);
   }
 
   /* Bilden ligger i en egen ram med overflow:hidden så att zoomen

@@ -8,6 +8,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup } from "@/lib/productOverrides";
 import { buildSearchCatalog, buildSearchState } from "@/lib/siteSearch";
+import { Wordmark } from "./Wordmark";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 import { getPreviewPathOverride } from "@/lib/previewMode";
@@ -226,7 +227,10 @@ export const Navbar = () => {
                   style={{ color: "var(--site-text-primary-current)" }}
                 >
                   <img src={navigationLogo} alt={navigation.brandName} className="h-9 w-9 object-contain sm:h-12 sm:w-12" loading="eager" decoding="async" />
-                  <span className="max-w-[140px] truncate font-[Orbitron] sm:max-w-none">{navigation.brandName}</span>
+                  <Wordmark
+                    name={navigation.brandName}
+                    className="max-w-[140px] truncate font-[Orbitron] sm:max-w-none"
+                  />
                 </Link>
               </div>
 

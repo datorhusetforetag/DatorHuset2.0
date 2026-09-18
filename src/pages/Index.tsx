@@ -2,6 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { StepsSection } from "@/components/StepsSection";
 import { HomePromoSplit } from "@/components/HomePromoSplit";
+import { TierSection } from "@/components/TierSection";
 import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -27,6 +28,7 @@ const Index = () => {
       <Navbar />
       <main className="pt-0">
         <Hero settings={settings.homepage.hero} motion={settings.site.motion} />
+        <TierSection />
         <StepsSection settings={settings.homepage.steps} />
         <HomePromoSplit settings={settings.homepage.promo} />
       </main>
