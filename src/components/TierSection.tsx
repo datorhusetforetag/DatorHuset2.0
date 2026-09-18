@@ -133,7 +133,7 @@ export const TierSection = () => {
           </div>
 
           {/* Panelen: svag ram, nästan genomskinlig botten */}
-          <div className="overflow-hidden rounded-lg border border-white/10 bg-white/[0.03] backdrop-blur-sm">
+          <div className="overflow-hidden rounded-lg border border-foreground/10 bg-foreground/[0.03] backdrop-blur-sm">
             <div className="p-8 sm:p-10">
               <p
                 className="text-xs font-semibold uppercase tracking-[0.28em]"
@@ -153,7 +153,7 @@ export const TierSection = () => {
                     style={{ color: active.accent }}
                   >
                     {spec}
-                    <span className="ml-2 text-white/20 last:hidden">/</span>
+                    <span className="ml-2 text-foreground/25 last:hidden">/</span>
                   </li>
                 ))}
               </ul>
@@ -164,17 +164,17 @@ export const TierSection = () => {
             </div>
 
             {/* Två celler i en delad rad, som hos dem */}
-            <div className="grid grid-cols-2 border-t border-white/10">
+            <div className="grid grid-cols-2 border-t border-foreground/10">
               <Link
                 to={active.href}
-                className="border-r border-white/10 px-4 py-5 text-center text-sm font-semibold transition-colors hover:bg-white/[0.06]"
+                className="border-r border-foreground/10 px-4 py-5 text-center text-sm font-semibold transition-colors hover:bg-foreground/[0.06]"
                 style={{ color: active.accent }}
               >
                 Se {active.name}-datorer
               </Link>
               <Link
                 to={active.compareHref}
-                className="px-4 py-5 text-center text-sm font-semibold text-muted-foreground transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                className="px-4 py-5 text-center text-sm font-semibold text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
               >
                 Jämför alla nivåer
               </Link>
@@ -192,10 +192,10 @@ export const TierSection = () => {
                 type="button"
                 onClick={() => setActiveId(tier.id)}
                 aria-pressed={isActive}
-                className="group flex items-center gap-4 border-b-2 border-foreground/20 pb-4 pr-6 text-left transition-colors hover:border-foreground/50"
+                className="group flex min-h-[44px] items-center gap-3 border-b-2 border-foreground/20 pb-4 pr-4 text-left transition-colors hover:border-foreground/50 sm:gap-4 sm:pr-6"
                 style={isActive ? { borderColor: tier.accent } : undefined}
               >
-                <span className="relative block h-16 w-16 shrink-0 sm:h-20 sm:w-20">
+                <span className="relative block h-14 w-14 shrink-0 sm:h-20 sm:w-20">
                   <span
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 transition-opacity duration-300"
@@ -214,7 +214,7 @@ export const TierSection = () => {
                   />
                 </span>
                 <span
-                  className="font-display text-base font-bold leading-tight tracking-tight transition-colors sm:text-lg"
+                  className="font-display text-sm font-bold leading-tight tracking-tight transition-colors sm:text-lg"
                   style={{ color: isActive ? tier.accent : "hsl(var(--muted-foreground))" }}
                 >
                   {tier.name}

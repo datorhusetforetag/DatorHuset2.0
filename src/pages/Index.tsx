@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { StepsSection } from "@/components/StepsSection";
 import { HomePromoSplit } from "@/components/HomePromoSplit";
 import { TierSection } from "@/components/TierSection";
+import { WhySection } from "@/components/WhySection";
 import { AmbientBackground } from "@/components/AmbientBackground";
 import { FaqPreview } from "@/components/FaqPreview";
 import { TrustStrip } from "@/components/TrustStrip";
@@ -32,6 +33,7 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10 pt-0">
         <Hero />
+        <WhySection />
         <TierSection />
         <StepsSection settings={settings.homepage.steps} />
         <HomePromoSplit settings={settings.homepage.promo} />

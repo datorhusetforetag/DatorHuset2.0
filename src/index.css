@@ -696,6 +696,37 @@
   }
 }
 
+/* Toningen över karusellbilden ---------------------------------------
+ *
+ * På en telefon går rubriken tvärs över hela bredden. En toning som
+ * bara mörknar vänsterkanten lämnar då andra halvan av rubriken
+ * liggande på ett ljust foto, och den blir omöjlig att läsa.
+ *
+ * Därför mörknar den underifrån på små skärmar, där texten sitter, och
+ * först från 640px och uppåt går den i sidled som förlagan gör.
+ */
+.hero-scrim {
+  background: linear-gradient(
+    180deg,
+    rgba(8, 5, 13, 0.55) 0%,
+    rgba(8, 5, 13, 0.75) 35%,
+    rgba(8, 5, 13, 0.92) 100%
+  );
+}
+
+@media (min-width: 640px) {
+  .hero-scrim {
+    background: linear-gradient(
+      90deg,
+      rgba(8, 5, 13, 0.95) 0%,
+      rgba(8, 5, 13, 0.86) 30%,
+      rgba(8, 5, 13, 0.55) 55%,
+      rgba(8, 5, 13, 0.15) 80%,
+      rgba(8, 5, 13, 0.3) 100%
+    );
+  }
+}
+
 /* Karusellen överst -------------------------------------------------
  *
  * Bilden kryper långsamt inåt medan den ligger uppe. Zoomen är en

@@ -227,15 +227,14 @@ export const Hero = () => {
         }}
       />
 
-      {/* Toningen som håller vänsterhalvan mörk nog för vit text */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0"
-        style={{
-          background:
-            "linear-gradient(90deg, rgba(8,5,13,0.95) 0%, rgba(8,5,13,0.86) 30%, rgba(8,5,13,0.55) 55%, rgba(8,5,13,0.15) 80%, rgba(8,5,13,0.3) 100%)",
-        }}
-      />
+      {/*
+        Toningen som håller texten läsbar. Den ligger i CSS och inte här,
+        för den måste vändas på en telefon: i liggande format står texten i
+        vänstra halvan och toningen går i sidled, men på en telefon går
+        texten tvärs över hela bredden och en toning från vänster lämnar
+        då högra halvan av rubriken liggande på ett ljust foto.
+      */}
+      <div aria-hidden="true" className="hero-scrim absolute inset-0" />
       {/* Hjässa och fot mörknas så navbar, pilar och streck håller */}
       <div
         aria-hidden="true"
@@ -309,7 +308,7 @@ export const Hero = () => {
         tiden går, så man ser att bilden är på väg att bytas och hinner
         stanna kvar - i stället för att den bara byter.
       */}
-      <div className="absolute inset-x-0 bottom-7 z-20 flex justify-center gap-2.5 px-4">
+      <div className="absolute inset-x-0 bottom-4 z-20 flex justify-center gap-2.5 px-4 sm:bottom-6">
         {SLIDES.map((item, dotIndex) => {
           const isActive = dotIndex === index;
           return (
@@ -319,7 +318,7 @@ export const Hero = () => {
               onClick={() => go(dotIndex)}
               aria-label={`Visa ${item.eyebrow}`}
               aria-current={isActive ? "true" : undefined}
-              className="group flex h-6 w-12 shrink-0 items-center sm:w-16"
+              className="group flex h-11 w-12 shrink-0 items-center sm:w-16"
             >
               <span className="relative block h-[3px] w-full overflow-hidden rounded-full bg-white/25 transition-colors group-hover:bg-white/45">
                 <span
