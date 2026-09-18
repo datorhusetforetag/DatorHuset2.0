@@ -1347,3 +1347,203 @@
     transition: none;
   }
 }
+
+/* Produktscenen ----------------------------------------------------
+ *
+ * Se src/components/product/ProductStage.tsx för resonemanget. Kort:
+ * våra produktbilder är fotografier med egen bakgrund, inte frilagda
+ * renderingar, så datorn kan inte sväva av sig själv. Scenen byggs runt
+ * den i stället - ljus bakom, raster under, och en mask som tonar ut
+ * fotots ytterkant så att rektangeln löses upp.
+ */
+
+.product-stage {
+  --stage-accent: #3fd9f5;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 20rem;
+  padding: 2rem 1.5rem 2.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--foreground) / 0.08);
+  background:
+    radial-gradient(120% 90% at 50% 0%, hsl(var(--foreground) / 0.05) 0%, transparent 65%),
+    hsl(var(--background) / 0.55);
+}
+
+@media (min-width: 640px) {
+  .product-stage {
+    min-height: 26rem;
+    padding: 3rem 2.5rem 3.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-stage {
+    min-height: 32rem;
+  }
+}
+
+/* Ljuset bakom datorn, i nivåns kulör. */
+.product-stage__glow {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: radial-gradient(
+    46% 42% at 50% 46%,
+    color-mix(in srgb, var(--stage-accent) 30%, transparent) 0%,
+    color-mix(in srgb, var(--stage-accent) 10%, transparent) 42%,
+    transparent 72%
+  );
+}
+
+/* Rastret ger scenen ett golv. Det tonas ut uppåt så att det inte
+   läses som ett mönster utan som djup. */
+.product-stage__grid {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(
+      90deg,
+      hsl(var(--foreground) / 0.05) 0 1px,
+      transparent 1px 64px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      hsl(var(--foreground) / 0.05) 0 1px,
+      transparent 1px 64px
+    );
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 88%, #000 0%, transparent 78%);
+  mask-image: radial-gradient(70% 60% at 50% 88%, #000 0%, transparent 78%);
+}
+
+.product-stage__frame {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+/*
+ * Masken: fotot är helt ogenomskinligt ända ut i kanten och slutar
+ * därför tvärt mot scenen. Här tonas de yttersta procenten ut så att
+ * kanten smälter in.
+ *
+ * Två raka masker läggs över varandra - en vågrät och en lodrät - i
+ * stället för en rund. En rund mask hade ätit in i hörnen på ett
+ * stående chassi och kapat toppen av det.
+ *
+ * Måtten är medvetet försiktiga. Tas mer bort börjar motivet blekna,
+ * och en dator vars sidopanel försvinner i dimma ser trasig ut, inte
+ * svävande.
+ */
+.product-stage__image {
+  position: relative;
+  z-index: 1;
+  max-height: 15rem;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  -webkit-mask-image:
+    linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%);
+  mask-composite: intersect;
+  filter: drop-shadow(0 24px 40px hsl(var(--brand-black) / 0.55));
+  animation: stage-rise 0.45s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+@media (min-width: 640px) {
+  .product-stage__image {
+    max-height: 20rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-stage__image {
+    max-height: 24rem;
+  }
+}
+
+@keyframes stage-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Skuggan mot underlaget. Det är den som gör att datorn står i rummet
+   i stället för att ligga på ytan. */
+.product-stage__floor {
+  position: absolute;
+  bottom: -1.25rem;
+  left: 50%;
+  z-index: 0;
+  height: 2.5rem;
+  width: 60%;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: radial-gradient(
+    closest-side,
+    hsl(var(--brand-black) / 0.5) 0%,
+    transparent 100%
+  );
+  filter: blur(6px);
+}
+
+.product-stage__note {
+  position: absolute;
+  left: 1rem;
+  top: 1rem;
+  z-index: 2;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--foreground) / 0.12);
+  background: hsl(var(--background) / 0.75);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.product-stage__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: inline-flex;
+  height: 2.5rem;
+  width: 2.5rem;
+  transform: translateY(-50%);
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--foreground) / 0.15);
+  background: hsl(var(--background) / 0.8);
+  color: hsl(var(--foreground));
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.product-stage__arrow:hover {
+  border-color: var(--stage-accent);
+  background: hsl(var(--background));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-stage__image {
+    animation: none;
+  }
+}

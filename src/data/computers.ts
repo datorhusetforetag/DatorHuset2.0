@@ -23,6 +23,46 @@ export interface ComputerVariant {
   productKey?: string;
 }
 
+/**
+ * En uppgraderad version av samma dator - mer minne, större disk.
+ *
+ * VIKTIGT: productKey pekar ut en RIKTIG produkt i Supabase, den som
+ * faktiskt hamnar i varukorgen om man väljer kortet. Priset läses
+ * därifrån och skrivs aldrig här.
+ *
+ * Det är med flit. Varukorgen tar ett produkt-id och ett antal - den
+ * har ingen plats för "grundpris plus 1 200 kr för extra minne". Ett
+ * pristillägg skrivet här hade alltså visats på sidan men aldrig
+ * följt med till kassan, och kunden hade debiterats grundpriset. Ett
+ * pris på skärmen som inte är det som dras är det värsta en butik kan
+ * visa, så uppgraderingen är en egen produkt eller ingenting.
+ *
+ * Så här lägger du till en:
+ *
+ *   1. Skapa produkten i adminläget, till exempel
+ *      "Silver-Speedster - 64GB".
+ *   2. Lägg till raden här:
+ *
+ *        upgrades: [
+ *          { productKey: "Silver-Speedster - 64GB",
+ *            group: "ram",
+ *            label: "64GB DDR4",
+ *            summary: "Dubbelt minne" },
+ *        ],
+ *
+ * Hittas ingen produkt med den nyckeln visas kortet inte alls, så en
+ * felstavad nyckel ger en saknad valmöjlighet - aldrig ett trasigt köp.
+ */
+export type ComputerUpgrade = {
+  /** Namnet på produkten i Supabase. Priset hämtas därifrån. */
+  productKey: string;
+  group: "ram" | "storage" | "other";
+  /** Kort etikett på kortet, till exempel "64GB DDR5". */
+  label: string;
+  /** En rad under etiketten. */
+  summary?: string;
+};
+
 export interface Computer {
   id: string;
   name: string;
@@ -55,6 +95,8 @@ export interface Computer {
    * Sätt use: "workstation" på de maskiner som ska ligga där.
    */
   use?: "gaming" | "workstation";
+  /** Uppgraderade utföranden av samma dator. Se ComputerUpgrade. */
+  upgrades?: ComputerUpgrade[];
 }
 
 export const COMPUTERS: Computer[] = [

@@ -10,16 +10,14 @@ import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/
 import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
 import {
   buildDefaultFpsSandboxSettings,
-  computeSandboxFps,
-  findSandboxEntry,
-  getSandboxGames,
-  getSandboxGraphics,
-  getSandboxResolutions,
   normalizeFpsSandboxSettings,
 } from "@/lib/fpsSandbox";
 import {
   sanitizeUsedPartsSettings,
 } from "@/lib/usedParts";
+import { FpsPanel } from "@/components/product/FpsPanel";
+import { ProductStage } from "@/components/product/ProductStage";
+import { ProductVariants } from "@/components/product/ProductVariants";
 import { checkStock, getAllInventory } from "@/lib/supabaseServices";
 import fortniteImage from "../../images/fortnite.jpg";
 import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
@@ -38,6 +36,21 @@ const GAME_IMAGES: Record<string, string> = {
 };
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
+
+/*
+ * Kul\u00f6r per niv\u00e5, samma fyra som niv\u00e5avsnittet p\u00e5 startsidan och
+ * kategorierna p\u00e5 produktlistan. Nycklarna \u00e4r de svenska namn som
+ * faktiskt st\u00e5r i datan - Brons finns inte i sortimentet idag men
+ * ligger med s\u00e5 att niv\u00e5n inte tappar sin kul\u00f6r om den tillkommer.
+ */
+const TIER_ACCENTS: Record<string, string> = {
+  Brons: "#E3A567",
+  Silver: "#CBD3E1",
+  Guld: "#E3A567",
+  Platina: "#B26BDE",
+  Diamant: "#3FD9F5",
+  default: "#3FD9F5",
+};
 
 const buildComputerFromSupabaseProduct = (product: SupabaseProduct): Computer => {
   const normalizedImage = normalizeProductImagePath(product.image_url || "") || DETAIL_FALLBACK_IMAGE;
@@ -71,12 +84,6 @@ const DEFAULT_PRODUCT_INFO = [
   },
 ];
 const DETAIL_FALLBACK_IMAGE = "/Datorhuset.png";
-const DISABLED_FEATURE_TOOLTIP = "funktion ej implementerad i spelet";
-const DLSS_MODE_LABELS: Record<string, string> = {
-  quality: "Quality",
-  balanced: "Balanced",
-  performance: "Performance",
-};
 
 type ProductImagesResponse = {
   images?: string[];
@@ -275,6 +282,8 @@ export default function ComputerDetails() {
   const { addToCart } = useCart();
   const [addingToCart, setAddingToCart] = useState(false);
   const [useUsedVariant, setUseUsedVariant] = useState(false);
+  /* Vald uppgradering, eller null för grundmaskinen. Se variantOptions. */
+  const [selectedUpgradeId, setSelectedUpgradeId] = useState<string | null>(null);
   const [usedVariantEnabled, setUsedVariantEnabled] = useState<boolean | null>(null);
   const [usedPartsFromApi, setUsedPartsFromApi] = useState<Record<string, boolean> | null>(null);
   const [usedPartsConfigured, setUsedPartsConfigured] = useState<boolean>(false);
@@ -283,12 +292,18 @@ export default function ComputerDetails() {
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
   const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSandboxSettings());
-  const gameList = useMemo(() => getSandboxGames(fpsSettings), [fpsSettings]);
-  const [selectedGame, setSelectedGame] = useState("");
-  const [selectedResolution, setSelectedResolution] = useState("");
-  const [selectedPreset, setSelectedPreset] = useState("");
-  const [dlssOn, setDlssOn] = useState(false);
-  const [frameGenOn, setFrameGenOn] = useState(false);
+  /*
+   * Sant först när servern svarat med den här maskinens egna värden.
+   *
+   * Utgångsvärdet ovan är en generisk tabell som är identisk för alla
+   * datorer - den finns för adminvyns skull. Visades den för kunden
+   * skulle en Silver-Speedster och ett 5080-bygge påstå samma
+   * bildfrekvens, vilket inte bara är fel utan ett påstående om en
+   * produkt. Servern räknar om tabellen per maskin
+   * (FPS_REPORT_PROFILE_FACTORS i server-local.js), så raden ritas
+   * först när det svaret kommit. Uteblir svaret ritas ingenting.
+   */
+  const [fpsLoaded, setFpsLoaded] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
   const [inventoryStatus, setInventoryStatus] = useState<{
     inStock: boolean;
@@ -325,7 +340,41 @@ export default function ComputerDetails() {
   const usedProductId = localComputer?.usedVariant?.productKey
     ? getProductIdByName(localComputer.usedVariant.productKey)
     : null;
-  const activeProductId = useUsedVariant && usedProductId ? usedProductId : baseProductId;
+  /*
+   * Uppgraderingarna: samma dator med mer minne eller större disk.
+   *
+   * Varje uppgradering pekar ut en riktig produkt, och priset läses ur
+   * den. Hittas ingen produkt med nyckeln hoppas kortet över - en
+   * felstavad nyckel ska ge en saknad valmöjlighet, aldrig ett köp till
+   * fel pris. Se ComputerUpgrade i src/data/computers.ts.
+   */
+  const upgradeVariants = useMemo(() => {
+    const declared = localComputer?.upgrades ?? [];
+    return declared.flatMap((upgrade) => {
+      const product = getProductFromLookup(productLookup, upgrade.productKey);
+      if (!product?.id) return [];
+      return [
+        {
+          id: `upgrade:${upgrade.productKey}`,
+          productId: product.id,
+          label: upgrade.label,
+          detail: upgrade.summary,
+          price:
+            typeof product.price_cents === "number" ? product.price_cents / 100 : 0,
+        },
+      ];
+    });
+  }, [localComputer, productLookup]);
+
+  const selectedUpgrade =
+    upgradeVariants.find((variant) => variant.id === selectedUpgradeId) || null;
+
+  /* Uppgraderingen vinner över nytt/begagnat: den är en egen produkt. */
+  const activeProductId = selectedUpgrade
+    ? selectedUpgrade.productId
+    : useUsedVariant && usedProductId
+      ? usedProductId
+      : baseProductId;
 
   const fallbackComputerImages = useMemo(() => {
     return Array.from(
@@ -448,6 +497,9 @@ export default function ComputerDetails() {
       getProductFromLookup(productLookup, resolvedComputer.name) ||
       getProductFromLookup(productLookup, resolvedComputer.id);
   useEffect(() => {
+    /* Byter man utförande är den gamla maskinens siffror inte längre
+       sanna, så raden döljs tills svaret för den nya kommit. */
+    setFpsLoaded(false);
     if (!activeProductId) return;
     let isMounted = true;
     const loadFps = async () => {
@@ -457,6 +509,7 @@ export default function ComputerDetails() {
         const data = await response.json();
         if (isMounted && data?.fps) {
           setFpsSettings(normalizeFpsSandboxSettings(data.fps));
+          setFpsLoaded(true);
         }
       } catch (error) {
         console.error("Failed to load FPS settings", error);
@@ -551,76 +604,6 @@ export default function ComputerDetails() {
     };
   }, [activeProductId]);
 
-  useEffect(() => {
-    if (!gameList.length) return;
-    if (!gameList.includes(selectedGame)) {
-      setSelectedGame(gameList[0]);
-    }
-  }, [gameList, selectedGame]);
-
-  const visibleResolutions = useMemo(
-    () => (selectedGame ? getSandboxResolutions(fpsSettings, selectedGame) : []),
-    [fpsSettings, selectedGame]
-  );
-
-  useEffect(() => {
-    if (!visibleResolutions.length) {
-      if (selectedResolution !== "") {
-        setSelectedResolution("");
-      }
-      return;
-    }
-    if (!visibleResolutions.includes(selectedResolution)) {
-      setSelectedResolution(visibleResolutions[0]);
-    }
-  }, [selectedResolution, visibleResolutions]);
-
-  const activeResolution = visibleResolutions.includes(selectedResolution)
-    ? selectedResolution
-    : visibleResolutions[0] || "";
-  const visiblePresets = useMemo(
-    () => (selectedGame && activeResolution ? getSandboxGraphics(fpsSettings, selectedGame, activeResolution) : []),
-    [activeResolution, fpsSettings, selectedGame]
-  );
-
-  useEffect(() => {
-    if (!visiblePresets.length) {
-      if (selectedPreset !== "") {
-        setSelectedPreset("");
-      }
-      return;
-    }
-    if (!visiblePresets.includes(selectedPreset)) {
-      setSelectedPreset(visiblePresets[0]);
-    }
-  }, [selectedPreset, visiblePresets]);
-
-  const activePreset = visiblePresets.includes(selectedPreset) ? selectedPreset : visiblePresets[0] || "";
-  const activeFpsEntry = findSandboxEntry(fpsSettings, selectedGame, activeResolution, activePreset);
-  const supports = {
-    dlss: Boolean(activeFpsEntry?.supportsDlssFsr),
-    frameGen: Boolean(activeFpsEntry?.supportsFrameGeneration),
-  };
-  useEffect(() => {
-    if (!supports.dlss && dlssOn) setDlssOn(false);
-    if (!supports.frameGen && frameGenOn) setFrameGenOn(false);
-  }, [supports, dlssOn, frameGenOn]);
-  const averageFps = computeSandboxFps(activeFpsEntry, {
-    dlssFsrOn: dlssOn,
-    frameGenerationOn: frameGenOn,
-  });
-  const dlssTooltipText = !supports.dlss
-    ? DISABLED_FEATURE_TOOLTIP
-    : activeFpsEntry?.dlssFsrMode
-      ? `Läge: ${DLSS_MODE_LABELS[activeFpsEntry.dlssFsrMode] || activeFpsEntry.dlssFsrMode}`
-      : "";
-  const frameGenTooltipText = !supports.frameGen ? DISABLED_FEATURE_TOOLTIP : "";
-  const hasFpsData =
-    gameList.length > 0 &&
-    visibleResolutions.length > 0 &&
-    visiblePresets.length > 0 &&
-    Boolean(activeFpsEntry);
-
   const merged = mergeProductFields(
     {
       name: fallbackName,
@@ -650,6 +633,94 @@ export default function ComputerDetails() {
     cpuCooler: merged.cpuCooler,
     os: osValue,
   };
+  /*
+   * Sidans kulör kommer från nivån maskinen tillhör, samma fyra som
+   * nivåavsnittet på startsidan och kategorierna på produktlistan. En
+   * Diamant-dator lyser alltså cyan hela vägen från startsidan hit.
+   */
+  const accent = TIER_ACCENTS[displaySpecs.tier] ?? TIER_ACCENTS.default;
+
+  /*
+   * Korten för utförande. Priserna läses ur respektive produkt och inte
+   * ur den valda, så alla kort visar sitt eget pris samtidigt.
+   */
+  const variantOptions = useMemo(() => {
+    const baseProduct =
+      getProductFromLookup(productLookup, baseProductId) ||
+      getProductFromLookup(productLookup, resolvedComputer.name);
+    const basePrice =
+      typeof baseProduct?.price_cents === "number"
+        ? baseProduct.price_cents / 100
+        : resolvedComputer.price;
+
+    const options = [
+      {
+        id: "base",
+        label: "Nya delar",
+        detail: "Allt fabriksnytt",
+        price: basePrice,
+      },
+    ];
+
+    if (hasUsedVariant && resolvedComputer.usedVariant) {
+      const usedProduct =
+        (usedProductId ? getProductFromLookup(productLookup, usedProductId) : null) ||
+        (resolvedComputer.usedVariant.productKey
+          ? getProductFromLookup(productLookup, resolvedComputer.usedVariant.productKey)
+          : null);
+      const usedPrice =
+        typeof usedProduct?.price_cents === "number"
+          ? usedProduct.price_cents / 100
+          : resolvedComputer.usedVariant.price;
+
+      options.push({
+        id: "used",
+        label: "Begagnade delar",
+        detail: "Utvalda begagnade komponenter",
+        price: usedPrice,
+        /* Jämförpriset visas bara när det begagnade faktiskt är
+           billigare - komponenten döljer det annars. */
+        comparePrice: basePrice,
+      } as (typeof options)[number] & { comparePrice: number });
+    }
+
+    upgradeVariants.forEach((variant) => {
+      options.push({
+        id: variant.id,
+        label: variant.label,
+        detail: variant.detail,
+        price: variant.price,
+      });
+    });
+
+    return options;
+  }, [
+    baseProductId,
+    hasUsedVariant,
+    productLookup,
+    resolvedComputer,
+    upgradeVariants,
+    usedProductId,
+  ]);
+
+  const selectedVariantId = selectedUpgradeId ?? (useUsedVariant ? "used" : "base");
+
+  const selectVariant = (nextId: string) => {
+    if (nextId === "base") {
+      setSelectedUpgradeId(null);
+      setUseUsedVariant(false);
+      return;
+    }
+    if (nextId === "used") {
+      setSelectedUpgradeId(null);
+      setUseUsedVariant(true);
+      return;
+    }
+    /* En uppgradering är en egen produkt, så nytt/begagnat nollställs. */
+    setSelectedUpgradeId(nextId);
+    setUseUsedVariant(false);
+  };
+
   const baseUsedParts = (resolvedComputer as Computer & { usedParts?: DetailUsedPartsSource }).usedParts || null;
   const fallbackUsedParts = toUsedPartsSettings(useUsedVariant ? activeVariant?.usedParts : baseUsedParts);
   const usedParts = useMemo(
@@ -1009,175 +1080,179 @@ export default function ComputerDetails() {
           </ol>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
-          {/* Left: image area */}
-          <div className="bg-foreground/[0.05] rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-foreground/10">
-            <div className="relative w-full aspect-[4/3] bg-foreground/[0.06] rounded-xl border border-foreground/10 overflow-hidden">
-              <div className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 shadow-sm backdrop-blur dark:bg-black/70 dark:text-foreground">
-                Ungefärligt hur bygget ska se ut som
-              </div>
-              <img
-                src={resolvedImage}
-                alt={displayName}
-                className="w-full h-full object-cover"
-                loading="eager"
-                decoding="async"
-                draggable={false}
-                data-image-index={String(selectedImage)}
-                onError={(e) => {
-                  const currentIndex = Number(e.currentTarget.dataset.imageIndex || "0");
-                  const nextIndex = currentIndex + 1;
-                  if (nextIndex < detailImageCandidates.length) {
-                    setSelectedImage(nextIndex);
-                    e.currentTarget.dataset.imageIndex = String(nextIndex);
-                    return;
-                  }
-                  e.currentTarget.src = DETAIL_FALLBACK_IMAGE;
-                }}
-              />
-              {hasMultipleImages && (
-                <>
-                  <button
-                    onClick={() =>
-                      setSelectedImage(
-                        (prev) => (prev - 1 + detailImageCandidates.length) % detailImageCandidates.length
-                      )
-                    }
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-background/70 transition-colors dark:bg-background/90 dark:text-foreground"
-                    aria-label="Föregående bild"
-                  >
-                    <ChevronLeft className="w-5 h-5 mx-auto" />
-                  </button>
-                  <button
-                    onClick={() => setSelectedImage((prev) => (prev + 1) % detailImageCandidates.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-background/70 transition-colors dark:bg-background/90 dark:text-foreground"
-                    aria-label="Nästa bild"
-                  >
-                    <ChevronRight className="w-5 h-5 mx-auto" />
-                  </button>
-                </>
-              )}
-            </div>
-            <div className="flex gap-3 justify-center flex-wrap">
-              {detailImageCandidates.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(i)}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border-2 transition-all duration-200 ${selectedImage === i ? "border-[#22d3ee] ring-4 ring-[#22d3ee]/55 shadow-[0_0_24px_rgba(34,211,238,0.7)] scale-105" : "border-foreground/20"} bg-background/70 overflow-hidden`}
-                  aria-label={`Vy ${i + 1}`}
-                >
-                  <img
-                    src={img}
-                    alt={`${displayName} vy ${i + 1}`}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                    decoding="async"
-                    onError={(e) => {
-                      e.currentTarget.src = DETAIL_FALLBACK_IMAGE;
-                    }}
-                  />
-                </button>
-              ))}
-            </div>
+        {/* Scenen och panelen ------------------------------------------
+            Förlagans uppdelning: datorn stor till vänster, allt man
+            behöver för att bestämma sig samlat till höger.
+
+            Scenen står klistrad medan panelen rullar. Panelen är den
+            långa av de två - utförande, specifikationer, antal, köp -
+            och utan det hade man rullat förbi datorn efter en halv
+            skärm och sedan läst resten bredvid en tom yta. */}
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-12">
+          <div className="lg:sticky lg:top-24">
+            <ProductStage
+              images={detailImageCandidates}
+              index={selectedImage}
+              onIndexChange={setSelectedImage}
+              alt={displayName}
+              accent={accent}
+              note="Ungefärligt utseende"
+              fallbackImage={DETAIL_FALLBACK_IMAGE}
+            />
           </div>
 
-          {/* Right: info/buy box */}
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">{displayName}</h1>
-              <p className="text-muted-foreground text-sm">
-                {displaySpecs.cpu}, {displaySpecs.gpu}, {displaySpecs.ram}, {displaySpecs.storage}{" "}
-                {displaySpecs.storagetype}
+          <div className="space-y-8">
+            <div>
+              <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
+                {displayName}
+              </h1>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {[displaySpecs.tier, displaySpecs.gpu].filter(Boolean).join(" · ")}
               </p>
             </div>
 
-            <div className="text-3xl sm:text-4xl font-bold text-foreground">
-              {displayPrice.toLocaleString("sv-SE")} kr
-            </div>
-            <div className="text-sm text-muted-foreground">Exkl. moms</div>
-            <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
-              {!showPreorderLabel && (
-                <span className={`rounded-full px-3 py-1 ${availability.className}`}>{availability.label}</span>
-              )}
-              {etaLabel && (
-                <span className="rounded-full px-3 py-1 bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground">
-                  {etaLabel}
+            <div>
+              <div className="flex flex-wrap items-baseline gap-3">
+                <span
+                  className="font-display text-3xl font-bold tabular-nums sm:text-4xl"
+                  style={{ color: accent }}
+                >
+                  {displayPrice.toLocaleString("sv-SE")} kr
                 </span>
-              )}
-              {showPreorderLabel && (
-                <span className="relative group">
-                  <span className="rounded-full px-3 py-1 bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary">
-                    F&ouml;rbest&auml;ll
+                <span className="text-xs text-muted-foreground">Exkl. moms</span>
+              </div>
+
+              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
+                {!showPreorderLabel && (
+                  <span className={`rounded-full px-3 py-1 ${availability.className}`}>
+                    {availability.label}
                   </span>
-                  <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                    F&ouml;rbest&auml;ll varan och f&aring; den inom 2 veckor d&aring; varan &auml;r slut p&aring; lager.
+                )}
+                {etaLabel && (
+                  <span className="rounded-full bg-foreground/[0.06] px-3 py-1 text-muted-foreground">
+                    {etaLabel}
                   </span>
-                </span>
-              )}
+                )}
+                {showPreorderLabel && (
+                  <span
+                    className="rounded-full px-3 py-1"
+                    style={{ backgroundColor: `${accent}1F`, color: accent }}
+                    title="Förbeställ varan och få den inom 2 veckor då varan är slut på lager."
+                  >
+                    Förbeställ
+                  </span>
+                )}
+              </div>
             </div>
 
-            {hasUsedVariant && (
-              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-muted-foreground">
-                <span className={useUsedVariant ? "text-muted-foreground" : "text-foreground"}>Nya delar</span>
+            {/* Utförandena. Var en vippknapp nedtryckt i brödtexten
+                förut, så att det inte syntes att priset ändrades. */}
+            <ProductVariants
+              options={variantOptions}
+              selectedId={selectedVariantId}
+              onSelect={selectVariant}
+              accent={accent}
+            />
+
+            {/* Nyckelspecifikationerna: de fyra som avgör köpet, framme
+                direkt. Resten ligger kvar längre ned - länken hoppar
+                dit i stället för att upprepa dem här. */}
+            <div>
+              <div className="flex items-baseline justify-between gap-4">
+                <h2 className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                  Nyckelspecifikationer
+                </h2>
+                <a
+                  href="#alla-specs"
+                  className="text-xs font-semibold transition-opacity hover:opacity-80"
+                  style={{ color: accent }}
+                >
+                  Visa alla specs
+                </a>
+              </div>
+
+              <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-5 border-t border-foreground/10 pt-5 sm:grid-cols-2">
+                {[
+                  { label: "Grafikkort", value: displaySpecs.gpu },
+                  { label: "Processor", value: displaySpecs.cpu },
+                  { label: "Minne", value: displaySpecs.ram },
+                  {
+                    label: "Lagring",
+                    value: `${displaySpecs.storage} ${displaySpecs.storagetype}`.trim(),
+                  },
+                ]
+                  .filter((row) => Boolean(String(row.value || "").trim()))
+                  .map((row) => (
+                    <div key={row.label}>
+                      <dt className="text-xs text-muted-foreground">{row.label}</dt>
+                      <dd className="mt-1 text-sm font-semibold leading-snug text-foreground">
+                        {row.value}
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+            </div>
+
+            {/* Köpet */}
+            <div className="border-t border-foreground/10 pt-7">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="inline-flex items-center rounded-sm border border-foreground/15">
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                    aria-label="Minska antal"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="min-w-[3rem] text-center text-base font-bold tabular-nums">
+                    {quantity}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                    aria-label="Öka antal"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+
                 <button
                   type="button"
-                  role="switch"
-                  aria-checked={useUsedVariant}
-                  onClick={() => setUseUsedVariant((prev) => !prev)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    useUsedVariant ? "bg-primary" : "bg-foreground/[0.08] dark:bg-foreground/[0.06]"
-                  }`}
+                  onClick={handleAddToCart}
+                  disabled={addingToCart || !activeProductId}
+                  className="btn-primary w-full flex-1 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  <span className="sr-only">V\u00e4xla begagnade delar</span>
-                  <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-background/70 shadow transition-transform ${
-                      useUsedVariant ? "translate-x-5" : "translate-x-1"
-                    }`}
-                  />
-                </button>
-                <span className={useUsedVariant ? "text-foreground" : "text-muted-foreground"}>
-                  Begagnade delar
-                </span>
-              </div>
-            )}
-
-            <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-row sm:items-center sm:gap-6">
-              <div className="flex items-center border border-foreground/10 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-3 hover:bg-foreground/[0.06] transition-colors"
-                  aria-label="Minska antal"
-                >
-                  <Minus className="w-4 h-4" />
-                </button>
-                <span className="px-6 py-3 text-lg font-semibold">{quantity}</span>
-                <button
-                  onClick={() => setQuantity(quantity + 1)}
-                  className="px-4 py-3 hover:bg-foreground/[0.06] transition-colors"
-                  aria-label="?ka antal"
-                >
-                  <Plus className="w-4 h-4" />
+                  <ShoppingCart className="h-5 w-5" />
+                  {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
                 </button>
               </div>
-              <button
-                onClick={handleAddToCart}
-                disabled={addingToCart || !activeProductId}
-                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary hover:text-white disabled:bg-foreground/[0.08] dark:disabled:bg-foreground/[0.08] text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
-              </button>
-            </div>
 
-            <div className="bg-foreground/[0.06] border border-foreground/10 rounded-lg p-4 text-sm text-muted-foreground">
-              <p>Beräknad leverans: 1-2 arbetsdagar</p>
-              <p>Byggtid: i lager 1-2 dagar, förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade delar) 1-2 veckor.</p>
+              <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
+                Beräknad leverans 1-2 arbetsdagar. Byggtid: i lager 1-2 dagar,
+                förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade
+                delar) 1-2 veckor.
+              </p>
             </div>
           </div>
         </div>
 
+        {/* FPS-raden ligger under båda spalterna och inte inuti panelen.
+            Den vill vara bred - sex spel bredvid varandra läses i ett
+            svep, staplade i en smal spalt blir de en lista man rullar
+            förbi. */}
+        {fpsLoaded && (
+          <div className="mt-12">
+            <FpsPanel settings={fpsSettings} accent={accent} gameImages={GAME_IMAGES} />
+          </div>
+        )}
+
         {/* Tabs */}
-        <div className="mt-10 sm:mt-12 bg-foreground/[0.06] border border-foreground/10 rounded-2xl p-4 sm:p-6">
+        <div
+          id="alla-specs"
+          className="mt-10 sm:mt-12 scroll-mt-24 bg-foreground/[0.06] border border-foreground/10 rounded-2xl p-4 sm:p-6"
+        >
           <div className="flex gap-6 border-b border-foreground/10 pb-4 mb-6 text-sm font-semibold text-muted-foreground">
             <span className="text-foreground">Produktinfo</span>
             <span>Specifikationer</span>
@@ -1264,138 +1339,6 @@ export default function ComputerDetails() {
             </Link>
           </div>
         </div>
-
-        {/* FPS estimator */}
-        <div className="mt-12 bg-foreground/[0.06] border border-foreground/10 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
-            <div className="space-y-4">
-              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Uppskattad FPS</h2>
-              <div className="space-y-3">
-                <label className="text-sm text-muted-foreground" htmlFor="game">Välj spel</label>
-                <select
-                  id="game"
-                  value={selectedGame}
-                  onChange={(e) => setSelectedGame(e.target.value)}
-                  disabled={gameList.length === 0}
-                  className="w-full bg-background/70 border border-foreground/10 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-emerald-500"
-                >
-                  {gameList.length ? (
-                    gameList.map((game) => (
-                      <option key={game} value={game}>{game}</option>
-                    ))
-                  ) : (
-                    <option value="">Inga spel tillgängliga</option>
-                  )}
-                </select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground" htmlFor="res">Upplösning</label>
-                  <select
-                    id="res"
-                    value={activeResolution}
-                    onChange={(e) => setSelectedResolution(e.target.value)}
-                    disabled={visibleResolutions.length === 0}
-                    className="w-full bg-background/70 border border-foreground/10 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-emerald-500"
-                  >
-                    {visibleResolutions.length ? (
-                      visibleResolutions.map((res) => (
-                        <option key={res} value={res}>{res}</option>
-                      ))
-                    ) : (
-                      <option value="">Ingen upplösning</option>
-                    )}
-                  </select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm text-muted-foreground" htmlFor="preset">Grafik</label>
-                  <select
-                    id="preset"
-                    value={activePreset}
-                    onChange={(e) => setSelectedPreset(e.target.value)}
-                    disabled={visiblePresets.length === 0}
-                    className="w-full bg-background/70 border border-foreground/10 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-emerald-500"
-                  >
-                    {visiblePresets.length ? (
-                      visiblePresets.map((preset) => (
-                        <option key={preset} value={preset}>{preset}</option>
-                      ))
-                    ) : (
-                      <option value="">Ingen grafikprofil</option>
-                    )}
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 flex-wrap">
-                <span className="relative group">
-                  <button
-                    onClick={() => setDlssOn((v) => !v)}
-                    disabled={!supports.dlss}
-                    className={`px-4 py-2 rounded-lg border ${
-                      dlssOn
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
-                        : "border-foreground/20 bg-background/70"
-                    } text-sm font-semibold ${!supports.dlss ? "opacity-40 cursor-not-allowed" : ""}`}
-                  >
-                    DLSS / FSR {dlssOn ? "On" : "Off"}
-                  </button>
-                  {dlssTooltipText ? (
-                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                      {dlssTooltipText}
-                    </span>
-                  ) : null}
-                </span>
-                <span className="relative group">
-                  <button
-                    onClick={() => setFrameGenOn((v) => !v)}
-                    disabled={!supports.frameGen}
-                    className={`px-4 py-2 rounded-lg border ${
-                      frameGenOn
-                        ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
-                        : "border-foreground/20 bg-background/70"
-                    } text-sm font-semibold ${!supports.frameGen ? "opacity-40 cursor-not-allowed" : ""}`}
-                  >
-                    Frame generation {frameGenOn ? "On" : "Off"}
-                  </button>
-                  {frameGenTooltipText ? (
-                    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                      {frameGenTooltipText}
-                    </span>
-                  ) : null}
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-background/70 border border-foreground/10 rounded-xl p-6 flex flex-col gap-4">
-              <div className="flex items-center gap-4">
-                <div className="w-28 h-28 bg-foreground/[0.06] border border-foreground/10 rounded-lg overflow-hidden">
-                  {GAME_IMAGES[selectedGame] ? (
-                    <img
-                      src={GAME_IMAGES[selectedGame]}
-                      alt={selectedGame}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-center text-sm text-muted-foreground">
-                      {selectedGame}
-                    </div>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <p className="text-muted-foreground text-sm">{activeResolution} {"\u00d7"} {activePreset}</p>
-                  <p className="text-3xl font-bold text-foreground">{hasFpsData ? `${averageFps} FPS` : "-"}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {hasFpsData ? "Beräknat med vald konfiguration" : "Inga FPS-variabler finns för den här produkten ännu"}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
 
         {/* Comparison */}
         <div className="mt-12">
