@@ -572,45 +572,6 @@
   }
 }
 
-/* Datorn som lutar efter pekaren ------------------------------------
- *
- * Utslaget kommer in som två tal mellan -1 och 1 och räknas om till
- * grader här. Gradtalen är små med flit: sex och åtta grader räcker
- * för att bilden ska läsas som ett föremål med djup. Mer än så och
- * den börjar se ut som om den ramlar.
- *
- * Övergången är kort. Utan den hackar lutningen mellan varje avläst
- * pekarläge; blir den lång släpar bilden efter handen i stället.
- */
-.tier-tilt {
-  transform: perspective(1100px)
-    rotateX(calc(var(--tilt-y, 0) * -6deg))
-    rotateY(calc(var(--tilt-x, 0) * 8deg))
-    translate3d(calc(var(--tilt-x, 0) * 12px), calc(var(--tilt-y, 0) * 8px), 0);
-  transition: transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
-  transform-style: preserve-3d;
-  will-change: transform;
-}
-
-/* Ljuset bakom flyttar sig hälften så mycket, så det inte ser ut att
-   sitta fast i datorn. */
-.tier-glow {
-  transform: translate3d(calc(var(--tilt-x, 0) * 6px), calc(var(--tilt-y, 0) * 4px), 0);
-  /* Båda i samma deklaration - en transition-klass från Tailwind här
-     hade skrivit över den andra i stället för att läggas till. */
-  transition:
-    transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
-    background 500ms ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .tier-tilt,
-  .tier-glow {
-    transform: none;
-    transition: none;
-  }
-}
-
 /* Punktrastret längst bak ------------------------------------------
  *
  * En prickmatris i stället för ännu ett suddigt ljusfält. De mjuka
