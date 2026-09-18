@@ -29,7 +29,7 @@ export const AffiliateDisclosure = ({
   if (variant === "inline") {
     return (
       <p
-        className={`text-[11px] leading-relaxed text-gray-500 dark:text-gray-400 ${className}`}
+        className={`text-[11px] leading-relaxed text-muted-foreground ${className}`}
       >
         {TEXT}
       </p>
@@ -38,18 +38,18 @@ export const AffiliateDisclosure = ({
 
   return (
     <div
-      className={`flex gap-3 rounded-lg border border-gray-200 bg-gray-50/70 p-4 dark:border-gray-800 dark:bg-[#111926] ${className}`}
+      className={`flex gap-3 rounded-lg border border-gray-200 bg-gray-50/70 p-4 dark:border-foreground/10 dark:bg-[#111926] ${className}`}
     >
       <Info
-        className="mt-0.5 h-4 w-4 shrink-0 text-gray-500 dark:text-gray-400"
+        className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground"
         strokeWidth={1.75}
         aria-hidden="true"
       />
       <div>
-        <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">
+        <p className="text-xs font-semibold text-foreground">
           Om våra butikslänkar
         </p>
-        <p className="mt-1 text-xs leading-relaxed text-gray-600 dark:text-gray-300">{TEXT}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{TEXT}</p>
       </div>
     </div>
   );

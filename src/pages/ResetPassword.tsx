@@ -1,7 +1,6 @@
+import { PageShell } from "@/components/PageShell";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { supabase } from "@/lib/supabaseClient";
 
 type ResetStatus = "idle" | "saving" | "saved" | "error";
@@ -53,24 +52,23 @@ export default function ResetPassword() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-      <Navbar />
+    <PageShell>
       <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-        <div className="max-w-xl mx-auto rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
-          <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">
+        <div className="max-w-xl mx-auto rounded-2xl border border-foreground/10 bg-background/70 p-6">
+          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
             Reset your password
           </p>
           <h1 className="text-2xl font-bold mt-3">Skapa ett nytt losenord</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             Valt losenord uppdateras direkt nar du sparar.
           </p>
 
           {!sessionReady && (
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-6">Verifierar lank...</p>
+            <p className="text-sm text-muted-foreground mt-6">Verifierar lank...</p>
           )}
 
           {sessionReady && !hasSession && (
-            <div className="mt-6 text-sm text-gray-600 dark:text-gray-300 space-y-3">
+            <div className="mt-6 text-sm text-muted-foreground space-y-3">
               <p>Den har lankens session har gatt ut.</p>
               <Link to="/account" className="text-primary font-semibold hover:text-secondary">
                 Be om en ny losenordslank
@@ -80,22 +78,22 @@ export default function ResetPassword() {
 
           {sessionReady && hasSession && (
             <div className="mt-6 space-y-4">
-              <label className="text-xs text-gray-600 dark:text-gray-300">
+              <label className="text-xs text-muted-foreground">
                 Nytt losenord
                 <input
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                 />
               </label>
-              <label className="text-xs text-gray-600 dark:text-gray-300">
+              <label className="text-xs text-muted-foreground">
                 Upprepa losenord
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                 />
               </label>
 
@@ -119,7 +117,6 @@ export default function ResetPassword() {
           )}
         </div>
       </main>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

@@ -1,24 +1,33 @@
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { Reveal } from "@/components/Reveal";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { buildSiteThemeVars } from "@/lib/siteTheme";
 
+/**
+ * Vanliga frågor.
+ *
+ * Frågorna är fällbara här precis som i smakprovet på startsidan. Sex
+ * uppslagna svar på rad blir en textvägg man skummar förbi; hopfällda
+ * blir de en innehållsförteckning man kan välja ur.
+ */
 export default function Faq() {
-  const { settings: siteSettings } = useSiteSettings();
-  const pageSettings = siteSettings.pages.faq;
-  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
+  const { settings } = useSiteSettings();
+  const page = settings.pages.faq;
 
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: pageSettings.items.map((item) => ({
+    mainEntity: page.items.map((item) => ({
       "@type": "Question",
       name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
   };
 
@@ -26,71 +35,55 @@ export default function Faq() {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
     itemListElement: [
-      {
-        "@type": "ListItem",
-        position: 1,
-        name: "Hem",
-        item: "https://datorhuset.se/",
-      },
-      {
-        "@type": "ListItem",
-        position: 2,
-        name: "FAQ",
-        item: "https://datorhuset.se/faq",
-      },
+      { "@type": "ListItem", position: 1, name: "Hem", item: "https://datorhuset.se/" },
+      { "@type": "ListItem", position: 2, name: "FAQ", item: "https://datorhuset.se/faq" },
     ],
   };
 
   return (
-    <div
-      data-sandbox-id="global-theme"
-      style={themeVars}
-      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
-    >
-      <SeoJsonLd data={[faqSchema, breadcrumbSchema]} />
-      <Navbar />
+    <PageShell head={<SeoJsonLd data={[faqSchema, breadcrumbSchema]} />}>
+      <PageHero
+        sandboxId="faq-hero"
+        eyebrow={page.heroEyebrow}
+        title={page.heroTitle}
+        lede={page.heroDescription}
+      />
 
-      <main className="flex-1">
-        <section data-sandbox-id="faq-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
-          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
-            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
-                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
-                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
-              </div>
-              <div className="flex items-center justify-center">
-                <div
-                  className="flex w-full max-w-md items-center justify-center"
-                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg-current)", borderRadius: "var(--site-radius-xl)" }}
+      <section data-sandbox-id="faq-items" className="relative">
+        <div className="container mx-auto max-w-4xl px-4 pb-24">
+          <Reveal>
+            <Accordion type="single" collapsible className="flex flex-col gap-4">
+              {page.items.map((item) => (
+                <AccordionItem
+                  key={item.question}
+                  value={item.question}
+                  className="overflow-hidden rounded-lg border border-foreground/10 bg-background/70 transition-colors hover:border-primary/40 data-[state=open]:border-primary/40"
                 >
-                  <img
-                    src={pageSettings.heroImage}
-                    alt={pageSettings.heroImageAlt}
-                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+                  <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold hover:no-underline sm:px-6 [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-primary">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-5 pb-6 pr-12 text-sm leading-relaxed text-muted-foreground sm:px-6">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </Reveal>
 
-        <section data-sandbox-id="faq-items" className="container mx-auto max-w-4xl space-y-6 px-4 py-12">
-          {pageSettings.items.map((item) => (
-            <article
-              key={item.question}
-              className="rounded-[var(--site-radius-lg)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] px-6 py-5 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)]"
-            >
-              <h2 className="text-xl font-semibold">{item.question}</h2>
-              <p className="mt-2 text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{item.answer}</p>
-            </article>
-          ))}
-        </section>
-      </main>
-
-      <Footer />
-    </div>
+          <Reveal delay={90} className="mt-12 rounded-lg border border-foreground/10 bg-background/70 p-8 text-center">
+            <h2 className="font-display text-xl font-bold text-foreground">
+              Hittade du inte svaret?
+            </h2>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+              Skriv till oss så återkommer vi. Vi svarar hellre på en fråga för
+              mycket än att du beställer fel dator.
+            </p>
+            <a href="/kundservice" className="btn-primary mt-6">
+              Kontakta kundservice
+            </a>
+          </Reveal>
+        </div>
+      </section>
+    </PageShell>
   );
 }

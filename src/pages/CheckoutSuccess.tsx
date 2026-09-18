@@ -1,7 +1,6 @@
-﻿import { useSearchParams, useNavigate } from "react-router-dom";
+﻿import { PageShell } from "@/components/PageShell";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { CheckCircle, Loader } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -74,16 +73,14 @@ export default function CheckoutSuccess() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex flex-col">
-        <Navbar />
+    <PageShell>
         <div className="flex-1 pt-16 sm:pt-24 flex items-center justify-center">
           <div className="text-center">
             <Loader className="w-12 h-12 text-primary animate-spin mx-auto mb-4" />
             <p className="text-gray-600">Bearbetar din betalning...</p>
           </div>
         </div>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
@@ -91,8 +88,7 @@ export default function CheckoutSuccess() {
   const statusLabel = orderStatus === "received" ? "Order mottagen" : orderStatus || "Betalad";
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
+    <PageShell>
       <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-lg border border-green-200">
@@ -159,7 +155,6 @@ export default function CheckoutSuccess() {
           </div>
         </div>
       </div>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

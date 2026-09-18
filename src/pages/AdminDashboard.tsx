@@ -269,12 +269,12 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
+    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-foreground flex flex-col">
       <Navbar />
       <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-10">
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
-            <p className="text-sm uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Adminpanel</p>
+            <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">Adminpanel</p>
             <h1 className="text-3xl font-bold">Order & lager</h1>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={loadAdminData}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg border border-foreground/20 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary transition-colors"
             >
               <RefreshCcw className="w-4 h-4" />
               Uppdatera
@@ -297,25 +297,25 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {loading && <p className="text-sm text-gray-600 dark:text-gray-300">Laddar adminpanel...</p>}
+        {loading && <p className="text-sm text-muted-foreground">Laddar adminpanel...</p>}
         {!loading && error && <p className="text-sm text-red-500 mb-6">{error}</p>}
 
         {!loading && !isAdmin && !error && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
-            <p className="text-sm text-gray-600 dark:text-gray-300">Du saknar behörighet för att se adminpanelen.</p>
+          <div className="rounded-xl border border-foreground/10 bg-background/70 p-6">
+            <p className="text-sm text-muted-foreground">Du saknar behörighet för att se adminpanelen.</p>
           </div>
         )}
 
         {!loading && isAdmin && (
           <div className="space-y-10">
-            <section className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <section className="rounded-2xl border border-foreground/10 bg-background/70 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <PackageSearch className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">Beställningar</h2>
               </div>
 
               {ordersWithChecklist.length === 0 && (
-                <p className="text-sm text-gray-600 dark:text-gray-300">Inga ordrar hittades.</p>
+                <p className="text-sm text-muted-foreground">Inga ordrar hittades.</p>
               )}
 
               <div className="space-y-6">
@@ -325,23 +325,23 @@ export default function AdminDashboard() {
                     ? new Date(order.created_at).toLocaleDateString("sv-SE")
                     : "Okänt datum";
                   return (
-                    <div key={order.id} className="rounded-xl border border-gray-200 dark:border-gray-800 p-5">
+                    <div key={order.id} className="rounded-xl border border-foreground/10 p-5">
                       <div className="flex flex-wrap items-start justify-between gap-4">
                         <div>
-                          <p className="text-sm text-gray-500 dark:text-gray-400">
+                          <p className="text-sm text-muted-foreground">
                             Order #{order.order_number ?? order.id.slice(0, 8)}
                           </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
+                          <p className="text-sm text-muted-foreground">Beställd: {orderDate}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-sm text-gray-500 dark:text-gray-400">Totalt</p>
+                          <p className="text-sm text-muted-foreground">Totalt</p>
                           <p className="text-lg font-semibold">{formatCurrency(totalValue)}</p>
                         </div>
                       </div>
 
                       <div className="mt-4 grid gap-4 md:grid-cols-2">
-                        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">{order.customer_name || "Okänt namn"}</p>
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          <p className="font-semibold text-foreground">{order.customer_name || "Okänt namn"}</p>
                           <p>{order.customer_email}</p>
                           <p>{order.customer_phone}</p>
                           <p>{order.customer_address}</p>
@@ -349,7 +349,7 @@ export default function AdminDashboard() {
                             {order.customer_postal_code} {order.customer_city}
                           </p>
                         </div>
-                        <div className="space-y-2 text-sm text-gray-600 dark:text-gray-300">
+                        <div className="space-y-2 text-sm text-muted-foreground">
                           {order.receipt_url && (
                             <a
                               href={order.receipt_url}
@@ -362,8 +362,8 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="mt-4">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Produkter</p>
-                        <div className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+                        <p className="text-sm font-semibold text-foreground mb-2">Produkter</p>
+                        <div className="space-y-1 text-sm text-muted-foreground">
                           {order.order_items?.map((item) => (
                             <div key={item.id} className="flex justify-between">
                               <span>{item.product?.name || "Produkt"} x{item.quantity}</span>
@@ -378,11 +378,11 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="mt-4 flex flex-wrap items-center gap-3">
-                        <label className="text-sm font-semibold text-gray-900 dark:text-gray-100">Status</label>
+                        <label className="text-sm font-semibold text-foreground">Status</label>
                         <select
                           value={order.status || "received"}
                           onChange={(event) => handleStatusChange(order.id, event.target.value)}
-                          className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                          className="rounded-lg border border-foreground/10 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
                         >
                           {STATUS_OPTIONS.map((option) => (
                             <option key={option.value} value={option.value}>
@@ -396,12 +396,12 @@ export default function AdminDashboard() {
                       </div>
 
                       <div className="mt-5">
-                        <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Byggchecklista</p>
+                        <p className="text-sm font-semibold text-foreground mb-2">Byggchecklista</p>
                         <div className="grid gap-2 sm:grid-cols-2">
                           {order.build_checklist?.map((item) => (
                             <label
                               key={item.id}
-                              className="flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800 px-3 py-2 text-sm text-gray-600 dark:text-gray-300"
+                              className="flex items-center gap-2 rounded-lg border border-foreground/10 px-3 py-2 text-sm text-muted-foreground"
                             >
                               <input
                                 type="checkbox"
@@ -420,61 +420,61 @@ export default function AdminDashboard() {
               </div>
             </section>
 
-            <section className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <section className="rounded-2xl border border-foreground/10 bg-background/70 p-6">
               <h2 className="text-xl font-semibold mb-6">Lager & förbeställningar</h2>
               {inventory.length === 0 && (
-                <p className="text-sm text-gray-600 dark:text-gray-300">Ingen lagerdata hittades.</p>
+                <p className="text-sm text-muted-foreground">Ingen lagerdata hittades.</p>
               )}
               <div className="space-y-4">
                 {inventory.map((item) => (
                   <div
                     key={item.product_id}
-                    className="rounded-xl border border-gray-200 dark:border-gray-800 p-4 grid gap-4 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))_auto]"
+                    className="rounded-xl border border-foreground/10 p-4 grid gap-4 lg:grid-cols-[1.2fr_repeat(4,minmax(0,1fr))_auto]"
                   >
                     <div>
-                      <p className="font-semibold text-gray-900 dark:text-gray-100">
+                      <p className="font-semibold text-foreground">
                         {item.product?.name || item.product_id}
                       </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{item.product_id}</p>
+                      <p className="text-xs text-muted-foreground">{item.product_id}</p>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400">Antal i lager</label>
+                      <label className="text-xs text-muted-foreground">Antal i lager</label>
                       <input
                         type="number"
                         min="0"
                         value={item.quantity_in_stock ?? 0}
                         onChange={(event) => handleInventoryChange(item.product_id, "quantity_in_stock", event.target.value)}
-                        className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-lg border border-foreground/10 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400">Förbeställning</label>
+                      <label className="text-xs text-muted-foreground">Förbeställning</label>
                       <select
                         value={item.is_preorder ? "true" : "false"}
                         onChange={(event) => handleInventoryChange(item.product_id, "is_preorder", event.target.value === "true")}
-                        className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-lg border border-foreground/10 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
                       >
                         <option value="false">Nej</option>
                         <option value="true">Ja</option>
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400">ETA (dagar)</label>
+                      <label className="text-xs text-muted-foreground">ETA (dagar)</label>
                       <input
                         type="number"
                         min="0"
                         value={item.eta_days ?? ""}
                         onChange={(event) => handleInventoryChange(item.product_id, "eta_days", event.target.value)}
-                        className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-lg border border-foreground/10 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-500 dark:text-gray-400">ETA-notis</label>
+                      <label className="text-xs text-muted-foreground">ETA-notis</label>
                       <input
                         type="text"
                         value={item.eta_note ?? ""}
                         onChange={(event) => handleInventoryChange(item.product_id, "eta_note", event.target.value)}
-                        className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                        className="mt-1 w-full rounded-lg border border-foreground/10 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
                         placeholder="Ex: Leverans v.12"
                       />
                     </div>

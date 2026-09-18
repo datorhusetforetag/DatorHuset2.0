@@ -1,7 +1,6 @@
-﻿import { useEffect, useState } from "react";
+﻿import { PageShell } from "@/components/PageShell";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { getUserOrders, requestOrderCancel } from "@/lib/supabaseServices";
 import {
@@ -101,12 +100,11 @@ export default function Orders() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
+    <PageShell>
         <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="max-w-xl mx-auto text-center space-y-4">
             <h1 className="text-3xl font-bold">Logga in för att se dina beställningar</h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-muted-foreground">
               Dina ordrar, kvitton och byggstatus finns i kontot.
             </p>
             <Link
@@ -117,32 +115,30 @@ export default function Orders() {
             </Link>
           </div>
         </main>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-      <Navbar />
+    <PageShell>
       <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
         <div className="flex flex-col gap-3 mb-8">
-          <p className="text-sm uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Mina beställningar</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">Mina beställningar</p>
           <h1 className="text-3xl font-bold">Din orderöversikt</h1>
-          <p className="text-sm text-gray-600 dark:text-gray-300">
+          <p className="text-sm text-muted-foreground">
             Se status, ETA och kvitton för alla dina byggen.
           </p>
         </div>
 
         <div className="space-y-6">
             {loadingOrders && (
-              <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar order...</p>
+              <p className="text-sm text-muted-foreground">Hämtar order...</p>
             )}
             {orderError && (
               <p className="text-sm text-red-500">{orderError}</p>
             )}
             {!loadingOrders && !orderError && orders.length === 0 && (
-              <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
+              <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6 text-sm text-muted-foreground">
                 Du har inga registrerade ordrar ännu.
               </div>
             )}
@@ -181,28 +177,28 @@ export default function Orders() {
               return (
                 <div
                   key={order.id}
-                  className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6"
+                  className="rounded-2xl border border-foreground/10 bg-background/70 p-6"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Order</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Order</p>
                       <p className="text-lg font-semibold mt-2">#{orderNumber}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
+                      <p className="text-sm text-muted-foreground">Beställd: {orderDate}</p>
                     </div>
                     <div className="text-right">
                       <span className="inline-flex items-center justify-center rounded-full border border-primary bg-primary/15 px-3 py-1 text-xs font-semibold text-primary-foreground dark:text-primary">
                         {statusInfo.label}
                       </span>
-                      <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">ETA: {statusInfo.eta}</p>
+                      <p className="text-sm text-muted-foreground mt-2">ETA: {statusInfo.eta}</p>
                       <p className="text-lg font-semibold mt-2">{total.toLocaleString("sv-SE")} kr</p>
                     </div>
                   </div>
 
                   <div className="mt-4 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-                    <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Produkt</p>
+                    <div className="rounded-xl border border-foreground/10 bg-background/60 p-4">
+                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Produkt</p>
                       {items.length === 0 && (
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Inga produkter kopplade till ordern.</p>
+                        <p className="text-sm text-muted-foreground">Inga produkter kopplade till ordern.</p>
                       )}
                       <div className="space-y-4">
                         {items.map((item) => {
@@ -214,9 +210,9 @@ export default function Orders() {
                           return (
                             <div
                               key={item.id}
-                              className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-[#101a27] p-4"
+                              className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-foreground/10 bg-white/80 dark:bg-[#101a27] p-4"
                             >
-                              <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-gray-200 dark:bg-gray-800">
+                              <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-gray-200 dark:bg-foreground/[0.06]">
                                 {imageSrc ? (
                                   <img
                                     src={imageSrc}
@@ -230,12 +226,12 @@ export default function Orders() {
                                 )}
                               </div>
                               <div className="flex-1">
-                                <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                                <p className="text-base font-semibold text-foreground">
                                   {item.product?.name || "Produkt"}
                                 </p>
-                                <p className="text-sm text-gray-500 dark:text-gray-400">Antal: {item.quantity}</p>
+                                <p className="text-sm text-muted-foreground">Antal: {item.quantity}</p>
                               </div>
-                              <div className="text-base font-semibold text-gray-900 dark:text-gray-100 sm:ml-auto">
+                              <div className="text-base font-semibold text-foreground sm:ml-auto">
                                 {itemTotal} kr
                               </div>
                             </div>
@@ -244,8 +240,8 @@ export default function Orders() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#101a27] p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400 mb-3">Status</p>
+                    <div className="rounded-xl border border-foreground/10 bg-white dark:bg-[#101a27] p-4">
+                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Status</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {ORDER_STATUS_STEPS.map((label, index) => (
                           <span
@@ -253,34 +249,34 @@ export default function Orders() {
                             className={`inline-flex min-h-[34px] items-center justify-center rounded-full px-3 text-xs font-semibold border text-center ${
                               stage >= index + 1
                                 ? "border-primary bg-primary/20 text-primary-foreground dark:text-primary"
-                                : "border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
+                                : "border-foreground/10 text-muted-foreground"
                             }`}
                           >
                             {label}
                           </span>
                         ))}
                       </div>
-                      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
+                      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4 text-primary" />
                         <span>Uppskattad tid kvar: {statusInfo.eta}</span>
                       </div>
-                      <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                      <p className="mt-2 text-sm text-muted-foreground">
                         {statusInfo.description}
                       </p>
 
                       {showTracking && (
-                        <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] p-4">
+                        <div className="mt-4 rounded-lg border border-foreground/10 bg-background/60 p-4">
                           <div className="flex items-center gap-2">
                             <Truck className="w-4 h-4 text-primary" />
-                            <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
+                            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                               Spårning
                             </p>
                           </div>
                           {carrierLabel && (
-                            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">{carrierLabel}</p>
+                            <p className="mt-2 text-sm text-muted-foreground">{carrierLabel}</p>
                           )}
                           {order.tracking_number && (
-                            <p className="mt-1 font-mono text-sm text-gray-900 dark:text-gray-100 break-all">
+                            <p className="mt-1 font-mono text-sm text-foreground break-all">
                               {order.tracking_number}
                             </p>
                           )}
@@ -305,7 +301,7 @@ export default function Orders() {
                     </div>
                   </div>
 
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-600 dark:text-gray-300">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Package className="w-4 h-4 text-primary" />
                       <span>Vi uppdaterar statusen manuellt under bygget.</span>
@@ -324,14 +320,14 @@ export default function Orders() {
                   </div>
 
                   {(canCancel || cancelSuccess[order.id] || cancelError[order.id]) && (
-                    <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] px-4 py-3 text-sm">
+                    <div className="mt-4 rounded-lg border border-foreground/10 bg-background/60 px-4 py-3 text-sm">
                       {cancelSuccess[order.id] ? (
                         <p className="text-emerald-600">
                           Avbokningsförfrågan skickad. Vi återkommer via e-post.
                         </p>
                       ) : (
                         <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-gray-600 dark:text-gray-300">
+                          <p className="text-muted-foreground">
                             Du kan avbryta ordern innan produktionen har startat.
                           </p>
                           <button
@@ -363,8 +359,8 @@ export default function Orders() {
         </div>
 
         <div className="mt-10 grid gap-6 lg:grid-cols-2">
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
-            <p className="font-semibold text-gray-900 dark:text-gray-100">Behov av hjälp?</p>
+          <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6 text-sm text-muted-foreground">
+            <p className="font-semibold text-foreground">Behov av hjälp?</p>
             <p className="mt-3">
               Har du frågor om leverans, uppgraderingar eller garanti? Kontakta oss så svarar vi snabbt.
             </p>
@@ -376,8 +372,8 @@ export default function Orders() {
             </Link>
           </div>
 
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 text-sm text-gray-600 dark:text-gray-300">
-            <p className="font-semibold text-gray-900 dark:text-gray-100">Bra att veta</p>
+          <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6 text-sm text-muted-foreground">
+            <p className="font-semibold text-foreground">Bra att veta</p>
             <ul className="mt-3 space-y-2">
               <li>Vi skickar mejl när bygget är klart.</li>
               <li>Byggtiden varierar beroende på komponenter.</li>
@@ -386,7 +382,6 @@ export default function Orders() {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

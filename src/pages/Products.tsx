@@ -1,9 +1,10 @@
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { Reveal } from "@/components/Reveal";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
@@ -11,7 +12,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
-import { buildSiteThemeVars } from "@/lib/siteTheme";
 import chieftecVistaBanner from "../../public/products/newpc/chieftecvista_new3.jpg";
 import chieftecVisioBanner from "../../public/products/newpc/chieftecvisio_new.png";
 import cg530Banner from "../../public/products/newpc/cg530_new4.jpg";
@@ -235,7 +235,6 @@ const STOCK_PRIORITY_ORDER = new Map<string, number>([
 
 export default function Products() {
   const { settings: siteSettings } = useSiteSettings();
-  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
   const motion = siteSettings.site.motion;
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
@@ -815,14 +814,7 @@ export default function Products() {
   const seoDescription = banner.description || "Gamingdatorer och färdiga byggen från DatorHuset.";
 
   return (
-    <div
-      data-sandbox-id="global-theme"
-      style={themeVars}
-      className="min-h-screen bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)] flex flex-col"
-    >
-      <SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />
-      <Navbar />
-      <main className="flex-1">
+    <PageShell head={<SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />}>
         <section data-sandbox-id="products-banner" className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
           <div className="mx-auto w-full max-w-[1480px]">
             <div className={`overflow-hidden rounded-3xl border border-[#e4b700] text-gray-900 ${banner.background}`}>
@@ -958,10 +950,10 @@ export default function Products() {
             <button
               type="button"
               onClick={() => setMobileFiltersOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-foreground/10 dark:bg-background dark:text-foreground"
             >
               Filter
-              <span className="text-xs text-gray-500 dark:text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 {mobileFiltersOpen ? "D\u00f6lj" : "Visa"}
               </span>
             </button>
@@ -979,15 +971,15 @@ export default function Products() {
 
         <div className="mt-4 flex min-h-[calc(100vh-14rem)] flex-1 flex-col gap-6 border-t border-gray-200 pt-6 sm:mt-6 sm:pt-8 dark:border-[#1a2636] lg:flex-row">
           <div
-            className={`h-fit w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-8 dark:border-gray-800 dark:bg-gray-900/80 sm:p-6 lg:sticky lg:top-24 lg:min-h-[calc(100vh-12rem)] lg:max-w-xs lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r ${
+            className={`h-fit w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-8 dark:border-foreground/10 dark:bg-background/80 sm:p-6 lg:sticky lg:top-24 lg:min-h-[calc(100vh-12rem)] lg:max-w-xs lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r ${
               mobileFiltersOpen ? "block" : "hidden"
             } lg:block`}
           >
             <div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-6">Filter</h2>
+              <h2 className="text-lg font-bold text-foreground mb-6">Filter</h2>
 
               <div className="mb-8">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">Pris</h3>
+                <h3 className="font-semibold text-foreground mb-4">Pris</h3>
                 <div className="space-y-2">
                   <input
                     type="range"
@@ -997,7 +989,7 @@ export default function Products() {
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
                     className="w-full accent-primary"
                   />
-                  <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
+                  <div className="flex justify-between text-sm text-muted-foreground">
                     <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
                     <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>
                   </div>
@@ -1005,22 +997,22 @@ export default function Products() {
               </div>
 
               <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Skick</h3>
-                <label className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200">
+                <h3 className="font-semibold text-foreground">Skick</h3>
+                <label className="flex items-center cursor-pointer gap-3 text-sm text-foreground">
                   <input
                     type="checkbox"
                     checked={showUsedOnly}
                     onChange={() => setShowUsedOnly((prev) => !prev)}
-                    className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                    className="w-4 h-4 text-primary rounded border-foreground/20"
                   />
                   <span>Begagnade datorer</span>
                 </label>
               </div>
 
-              <hr className="my-6 border-gray-200 dark:border-gray-800" />
+              <hr className="my-6 border-foreground/10" />
 
               <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Grafikkort</h3>
+                <h3 className="font-semibold text-foreground">Grafikkort</h3>
                 <div
                   className={`transition-all duration-300 ${
                     showAllGpus
@@ -1032,13 +1024,13 @@ export default function Products() {
                     {visibleGpus.map((option) => (
                       <label
                         key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
                       >
                         <input
                           type="checkbox"
                           checked={selectedGPUs.includes(option.label)}
                           onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
-                          className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                          className="w-4 h-4 text-primary rounded border-foreground/20"
                         />
                         <span>{option.label}</span>
                       </label>
@@ -1053,13 +1045,13 @@ export default function Products() {
                       {extraGpus.map((option) => (
                         <label
                           key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                          className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
                         >
                           <input
                             type="checkbox"
                             checked={selectedGPUs.includes(option.label)}
                             onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
-                            className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                            className="w-4 h-4 text-primary rounded border-foreground/20"
                           />
                           <span>{option.label}</span>
                         </label>
@@ -1071,7 +1063,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={() => setShowAllGpus((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground"
                     aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
                   >
                     {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1079,10 +1071,10 @@ export default function Products() {
                 )}
               </div>
 
-              <hr className="my-6 border-gray-200 dark:border-gray-800" />
+              <hr className="my-6 border-foreground/10" />
 
               <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Processor</h3>
+                <h3 className="font-semibold text-foreground">Processor</h3>
                 <div
                   className={`transition-all duration-300 ${
                     showAllCpus
@@ -1094,13 +1086,13 @@ export default function Products() {
                     {visibleCpus.map((option) => (
                       <label
                         key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
                       >
                         <input
                           type="checkbox"
                           checked={selectedCPUs.includes(option.label)}
                           onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
-                          className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                          className="w-4 h-4 text-primary rounded border-foreground/20"
                         />
                         <span>{option.label}</span>
                       </label>
@@ -1115,13 +1107,13 @@ export default function Products() {
                       {extraCpus.map((option) => (
                         <label
                           key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                          className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
                         >
                           <input
                             type="checkbox"
                             checked={selectedCPUs.includes(option.label)}
                             onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
-                            className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                            className="w-4 h-4 text-primary rounded border-foreground/20"
                           />
                           <span>{option.label}</span>
                         </label>
@@ -1133,7 +1125,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={() => setShowAllCpus((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground"
                     aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
                   >
                     {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1141,10 +1133,10 @@ export default function Products() {
                 )}
               </div>
 
-              <hr className="my-6 border-gray-200 dark:border-gray-800" />
+              <hr className="my-6 border-foreground/10" />
 
               <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">Kategori</h3>
+                <h3 className="font-semibold text-foreground">Kategori</h3>
                 <div
                   className={`transition-all duration-300 ${
                     showAllTiers
@@ -1156,13 +1148,13 @@ export default function Products() {
                     {visibleTiers.map((option) => (
                       <label
                         key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                        className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
                       >
                         <input
                           type="checkbox"
                           checked={selectedTiers.includes(option.label)}
                           onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                          className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                          className="w-4 h-4 text-primary rounded border-foreground/20"
                         />
                         <span className="capitalize">{option.label}</span>
                       </label>
@@ -1177,13 +1169,13 @@ export default function Products() {
                       {extraTiers.map((option) => (
                         <label
                           key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-gray-700 dark:text-gray-200"
+                          className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
                         >
                           <input
                             type="checkbox"
                             checked={selectedTiers.includes(option.label)}
                             onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                            className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
+                            className="w-4 h-4 text-primary rounded border-foreground/20"
                           />
                           <span className="capitalize">{option.label}</span>
                         </label>
@@ -1195,7 +1187,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={() => setShowAllTiers((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground"
                     aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
                   >
                     {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1205,23 +1197,23 @@ export default function Products() {
 
               <button
                 onClick={clearFilters}
-                className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded font-medium transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-gray-100"
+                className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded font-medium transition-colors dark:bg-foreground/[0.06] dark:hover:bg-foreground/[0.09] dark:text-foreground"
               >
                 Rensa filter
               </button>
             </div>
           </div>
 
-          <div className="min-h-[calc(100vh-12rem)] flex-1 bg-white p-4 dark:bg-[#0f1824] sm:p-6 lg:p-10">
+          <div className="min-h-[calc(100vh-12rem)] flex-1 p-4 sm:p-6 lg:p-10">
             <div className="mx-auto w-full max-w-[1720px]">
               {hasFilters && (
-                <div className="sticky top-24 z-10 mb-6 rounded-lg border border-gray-200 bg-white/95 px-4 py-3 backdrop-blur dark:border-gray-800 dark:bg-[#0f1824]/95">
+                <div className="sticky top-24 z-10 mb-6 rounded-lg border border-foreground/10 bg-background/90 px-4 py-3 backdrop-blur">
                   <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">Aktiva filter:</span>
+                    <span className="text-sm font-semibold text-foreground">Aktiva filter:</span>
                     {activeFilters.map((filter) => (
                       <span
                         key={filter}
-                        className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                        className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground"
                       >
                         {filter}
                       </span>
@@ -1237,17 +1229,17 @@ export default function Products() {
                 </div>
               )}
               <div className="mb-6 sm:mb-8">
-                <h2 className="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-100 sm:text-3xl">{"Station\u00e4ra datorer"}</h2>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">{"Station\u00e4ra datorer"}</h2>
+                <p className="text-muted-foreground">
                   Visar {filteredProducts.length} av {displayCards.length} produkter
                 </p>
               </div>
 
               {filteredProducts.length === 0 ? (
-                <div className="flex h-96 items-center justify-center rounded border border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-gray-900">
+                <div className="flex h-96 items-center justify-center rounded border border-gray-200 bg-gray-50 dark:border-foreground/10 dark:bg-background">
                   <div className="text-center">
-                    <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">Inga datorer hittades</p>
-                    <p className="text-gray-600 dark:text-gray-300">Prova att justera dina filter</p>
+                    <p className="text-lg font-semibold text-foreground">Inga datorer hittades</p>
+                    <p className="text-muted-foreground">Prova att justera dina filter</p>
                   </div>
                 </div>
               ) : (
@@ -1277,7 +1269,7 @@ export default function Products() {
                     ? "Slut i lager"
                     : "Slut i lager";
                   const badgeTone = !hasInventory || inventoryLoading
-                    ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                    ? "bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground"
                     : inStock
                     ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
                     : canPreorder
@@ -1292,8 +1284,8 @@ export default function Products() {
 
                   return (
                     <Link key={cardKey} to={`/computer/${computer.id}`} className="group flex h-full w-full max-w-[34rem]">
-                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-secondary hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-secondary 2xl:min-h-[35rem]">
-                        <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-gray-800 dark:to-gray-900 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 sm:min-h-[18rem]">
+                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-secondary hover:shadow-lg dark:border-foreground/10 dark:bg-background dark:hover:border-secondary 2xl:min-h-[35rem]">
+                        <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-background dark:to-background dark:group-hover:from-foreground/[0.08] dark:group-hover:to-background sm:min-h-[18rem]">
                           <img
                             src={computer.image}
                             alt={displayName}
@@ -1324,7 +1316,7 @@ export default function Products() {
                           </div>
 
                         <div className="flex flex-1 flex-col p-4 pb-6">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-primary dark:group-hover:text-primary transition-colors">
+                          <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary dark:group-hover:text-primary transition-colors">
                             {displayName}
                           </h3>
 
@@ -1334,10 +1326,10 @@ export default function Products() {
                                 <Star key={index} className="w-4 h-4 fill-current" />
                               ))}
                             </div>
-                            <span className="ml-2 text-xs text-gray-600 dark:text-gray-300">({computer.reviews})</span>
+                            <span className="ml-2 text-xs text-muted-foreground">({computer.reviews})</span>
                           </div>
 
-                          <div className="mb-auto space-y-1 border-t border-gray-100 pt-3 text-sm text-gray-600 dark:border-gray-800 dark:text-gray-300">
+                          <div className="mb-auto space-y-1 border-t border-gray-100 pt-3 text-sm text-gray-600 dark:border-foreground/10 dark:text-muted-foreground">
                             <p className="truncate">CPU: {variant.cpu}</p>
                             <p className="truncate">GPU: {variant.gpu}</p>
                             <p className="flex flex-wrap items-center gap-2">
@@ -1359,7 +1351,7 @@ export default function Products() {
                             </p>
                           </div>
 
-                          <div className="pt-5 text-2xl font-bold text-gray-900 dark:text-gray-100">
+                          <div className="pt-5 text-2xl font-bold text-foreground">
                             {displayPrice.toLocaleString("sv-SE")} kr
                           </div>
                         </div>
@@ -1372,8 +1364,6 @@ export default function Products() {
             </div>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

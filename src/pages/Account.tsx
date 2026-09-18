@@ -1,7 +1,6 @@
+import { PageShell } from "@/components/PageShell";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/lib/supabaseClient";
 import { decodeUnicodeEscapes } from "@/lib/textUtils";
@@ -311,12 +310,11 @@ export default function Account() {
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
+    <PageShell>
         <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="max-w-xl mx-auto text-center space-y-4">
             <h1 className="text-3xl font-bold">Logga in för att se ditt konto</h1>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-muted-foreground">
               För att hantera dina uppgifter och beställningar behöver du vara inloggad.
             </p>
             <Link
@@ -327,21 +325,19 @@ export default function Account() {
             </Link>
           </div>
         </main>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-      <Navbar />
+    <PageShell>
       <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
         <div className="flex flex-col gap-3 mb-8">
-          <p className="text-sm uppercase tracking-[0.3em] text-gray-500 dark:text-gray-400">Mitt konto</p>
+          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">Mitt konto</p>
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold">Hej {profileName}</h1>
-              <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">
+              <p className="text-sm text-muted-foreground mt-2">
                 Hantera uppgifter, adresser och dina beställningar.
               </p>
             </div>
@@ -356,13 +352,13 @@ export default function Account() {
 
         <div className="grid items-start gap-8 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <User className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">Mina uppgifter</h2>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
-                <label className="text-xs text-gray-600 dark:text-gray-300">
+                <label className="text-xs text-muted-foreground">
                   Fullständigt namn
                   <input
                     type="text"
@@ -370,10 +366,10 @@ export default function Account() {
                     onChange={(event) =>
                       setProfileForm((prev) => ({ ...prev, full_name: event.target.value }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                 </label>
-                <label className="text-xs text-gray-600 dark:text-gray-300">
+                <label className="text-xs text-muted-foreground">
                   Användarnamn
                   <input
                     type="text"
@@ -381,10 +377,10 @@ export default function Account() {
                     onChange={(event) =>
                       setProfileForm((prev) => ({ ...prev, username: event.target.value }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                 </label>
-                <label className="text-xs text-gray-600 dark:text-gray-300">
+                <label className="text-xs text-muted-foreground">
                   Telefonnummer
                   <input
                     type="tel"
@@ -392,16 +388,16 @@ export default function Account() {
                     onChange={(event) =>
                       setProfileForm((prev) => ({ ...prev, phone: event.target.value }))
                     }
-                    className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                 </label>
-                <label className="text-xs text-gray-600 dark:text-gray-300">
+                <label className="text-xs text-muted-foreground">
                   E-post
                   <input
                     type="email"
                     value={user.email || ""}
                     disabled
-                    className="mt-1 w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-[#101a27] px-3 py-2 text-sm text-gray-500 dark:text-gray-400"
+                    className="mt-1 w-full rounded-lg border border-foreground/10 bg-gray-100 dark:bg-[#101a27] px-3 py-2 text-sm text-muted-foreground"
                   />
                 </label>
               </div>
@@ -429,12 +425,12 @@ export default function Account() {
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <KeyRound className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">Lösenord</h2>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 För att byta lösenord skickar vi en säker länk till din e-post.
               </p>
               <button
@@ -455,17 +451,17 @@ export default function Account() {
                   Kunde inte skicka länken just nu. Försök igen senare.
                 </p>
               )}
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
+              <p className="text-xs text-muted-foreground mt-3">
                 Tips: Kontrollera skräppost om du inte ser mejlet direkt.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6">
               <div className="flex items-center gap-3 mb-3">
                 <Package className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">{ordersLabel}</h2>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 Följ status, kvitton och leveransinfo för dina beställningar.
               </p>
               <Link
@@ -479,19 +475,19 @@ export default function Account() {
           </div>
 
           <div className="space-y-6">
-            <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
+            <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <MapPin className="w-5 h-5 text-primary" />
                 <div>
                   <h2 className="text-xl font-semibold">Sparade adresser</h2>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Hanterar leverans- och fakturaadresser.</p>
+                  <p className="text-xs text-muted-foreground">Hanterar leverans- och fakturaadresser.</p>
                 </div>
               </div>
 
               {defaultAddress ? (
-                <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4 text-sm text-gray-600 dark:text-gray-300">
-                  <p className="text-xs uppercase tracking-[0.3em] text-gray-400 dark:text-gray-500">Standardadress</p>
-                  <p className="font-semibold text-gray-900 dark:text-gray-100 mt-2">
+                <div className="rounded-lg border border-foreground/10 p-4 text-sm text-muted-foreground">
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Standardadress</p>
+                  <p className="font-semibold text-foreground mt-2">
                     {defaultAddress.full_name || profileName}
                   </p>
                   <p>{defaultAddress.address_line1}</p>
@@ -499,35 +495,35 @@ export default function Account() {
                   <p>{defaultAddress.country || "SE"}</p>
                 </div>
               ) : (
-                <p className="text-sm text-gray-600 dark:text-gray-300">Ingen adress sparad ännu.</p>
+                <p className="text-sm text-muted-foreground">Ingen adress sparad ännu.</p>
               )}
 
               <div className="mt-5">
                 {loadingAddresses && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Hämtar adresser...</p>
+                  <p className="text-sm text-muted-foreground">Hämtar adresser...</p>
                 )}
                 {addressError && <p className="text-sm text-red-500">{addressError}</p>}
                 {addressSuccess && <p className="text-sm text-green-600">{addressSuccess}</p>}
                 {!loadingAddresses && addresses.length === 0 && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300">Du har inte lagt till någon adress ännu.</p>
+                  <p className="text-sm text-muted-foreground">Du har inte lagt till någon adress ännu.</p>
                 )}
                 <div className="space-y-3 mt-3">
                   {addresses.map((address) => (
                     <div
                       key={address.id}
-                      className="rounded-lg border border-gray-200 dark:border-gray-800 p-3 flex flex-col gap-2"
+                      className="rounded-lg border border-foreground/10 p-3 flex flex-col gap-2"
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <p className="font-semibold text-gray-900 dark:text-gray-100">
+                        <p className="font-semibold text-foreground">
                           {address.label || address.address_line1}
                         </p>
                         {address.is_default && (
                           <span className="text-xs rounded-full bg-primary/15 text-primary px-2 py-1">Standard</span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{address.full_name}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{address.address_line1}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-300">{address.postal_code} {address.city}</p>
+                      <p className="text-sm text-muted-foreground">{address.full_name}</p>
+                      <p className="text-sm text-muted-foreground">{address.address_line1}</p>
+                      <p className="text-sm text-muted-foreground">{address.postal_code} {address.city}</p>
                       <div className="flex flex-wrap gap-3 text-sm font-semibold text-primary">
                         {!address.is_default && (
                           <button type="button" onClick={() => handleSetDefault(address.id)}>
@@ -544,7 +540,7 @@ export default function Account() {
               </div>
 
               <form
-                className="mt-6 border-t border-gray-200 dark:border-gray-800 pt-4"
+                className="mt-6 border-t border-foreground/10 pt-4"
                 onSubmit={(event) => {
                   event.preventDefault();
                   handleAddressSave();
@@ -557,14 +553,14 @@ export default function Account() {
                     placeholder="Adressnamn (t.ex. Hemma)"
                     value={addressForm.label}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, label: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                   <input
                     type="text"
                     placeholder="För- och efternamn"
                     value={addressForm.full_name}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, full_name: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                   {addressFormErrors.full_name && (
                     <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.full_name}</p>
@@ -575,14 +571,14 @@ export default function Account() {
                     placeholder="Mobilnummer (valfritt)"
                     value={addressForm.phone}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, phone: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                   <input
                     type="text"
                     placeholder="Adress"
                     value={addressForm.address_line1}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, address_line1: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                   {addressFormErrors.phone && (
                     <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.phone}</p>
@@ -596,7 +592,7 @@ export default function Account() {
                     placeholder="Postnummer"
                     value={addressForm.postal_code}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, postal_code: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                   {addressFormErrors.postal_code && (
                     <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.postal_code}</p>
@@ -607,13 +603,13 @@ export default function Account() {
                     placeholder="Postort"
                     value={addressForm.city}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, city: event.target.value }))}
-                    className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                    className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                   />
                   {addressFormErrors.city && (
                     <p className="text-xs text-red-500 md:col-span-2">{addressFormErrors.city}</p>
                   )}
                 </div>
-                <label className="mt-4 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                <label className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                   <input
                     type="checkbox"
                     checked={addressForm.is_default}
@@ -632,12 +628,12 @@ export default function Account() {
               </form>
             </div>
 
-            <div className="rounded-2xl border border-red-200 dark:border-red-900 bg-white dark:bg-gray-900 p-6">
+            <div className="rounded-2xl border border-red-200 dark:border-red-900 bg-background/70 p-6">
               <div className="flex items-center gap-3 mb-3">
                 <Trash2 className="w-5 h-5 text-red-500" />
                 <h2 className="text-xl font-semibold">Radera konto</h2>
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-300">
+              <p className="text-sm text-muted-foreground">
                 Detta tar bort ditt konto och din tillgång till tjänsten. Du får en verifieringskod via e-post innan radering.
               </p>
               <div className="mt-4 grid gap-3">
@@ -646,7 +642,7 @@ export default function Account() {
                   value={deletePassword}
                   onChange={(event) => setDeletePassword(event.target.value)}
                   placeholder="Ange ditt lösenord"
-                  className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                  className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                 />
                 <button
                   type="button"
@@ -663,7 +659,7 @@ export default function Account() {
                       value={deleteCode}
                       onChange={(event) => setDeleteCode(event.target.value)}
                       placeholder="Verifieringskod från e-post"
-                      className="w-full rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] px-3 py-2 text-sm"
+                      className="w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
                     />
                     <button
                       type="button"
@@ -686,8 +682,7 @@ export default function Account() {
           </div>
         </div>
       </main>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 

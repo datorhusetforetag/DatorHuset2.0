@@ -104,12 +104,12 @@ export const Navbar = () => {
 
     return (
       <div
-        className={`absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white text-gray-900 shadow-lg z-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-50 ${
+        className={`absolute left-0 right-0 top-full mt-2 overflow-hidden rounded-xl border border-gray-200 bg-white text-gray-900 shadow-lg z-50 dark:border-foreground/20 dark:bg-foreground/[0.06] dark:text-foreground ${
           isMobile ? "max-h-[70vh] overflow-y-auto" : ""
         }`}
       >
         {searchState.correctedQuery && (
-          <div className="border-b border-gray-200 px-4 py-2 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300">
+          <div className="border-b border-gray-200 px-4 py-2 text-xs text-gray-600 dark:border-foreground/20 dark:text-muted-foreground">
             Visar närmaste träffar för <span className="font-semibold">{searchInput}</span>. Menade du{" "}
             <button
               type="button"
@@ -124,8 +124,8 @@ export const Navbar = () => {
         )}
 
         {searchState.categories.length > 0 && (
-          <div className="border-b border-gray-200 dark:border-gray-700">
-            <p className="px-4 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-300">
+          <div className="border-b border-foreground/10">
+            <p className="px-4 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-muted-foreground">
               Kategoriförslag
             </p>
             <div className="px-2 pb-2">
@@ -133,10 +133,10 @@ export const Navbar = () => {
                 <button
                   key={category.id}
                   onMouseDown={() => handleSelectCategory(category.path)}
-                  className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="w-full rounded-lg px-3 py-2 text-left hover:bg-gray-50 dark:hover:bg-foreground/[0.09]"
                 >
-                  <span className="block text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</span>
-                  <span className="block text-xs text-gray-600 dark:text-gray-300">{category.description}</span>
+                  <span className="block text-sm font-semibold text-foreground">{category.label}</span>
+                  <span className="block text-xs text-muted-foreground">{category.description}</span>
                 </button>
               ))}
             </div>
@@ -145,7 +145,7 @@ export const Navbar = () => {
 
         {searchState.products.length > 0 && (
           <div>
-            <p className="px-4 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-gray-300">
+            <p className="px-4 pb-2 pt-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500 dark:text-muted-foreground">
               Produkter
             </p>
             <div className="pb-2">
@@ -153,25 +153,25 @@ export const Navbar = () => {
                 <button
                   key={result.id}
                   onMouseDown={() => handleSelectSearch(result.id)}
-                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-foreground/[0.09]"
                 >
                   {result.image ? (
                     <img
                       src={result.image}
                       alt={result.name}
-                      className="h-12 w-12 rounded-md bg-gray-100 object-cover dark:bg-gray-900"
+                      className="h-12 w-12 rounded-md bg-gray-100 object-cover dark:bg-background"
                       loading="lazy"
                       decoding="async"
                     />
                   ) : (
-                    <div className="h-12 w-12 rounded-md bg-gray-100 dark:bg-gray-900" />
+                    <div className="h-12 w-12 rounded-md bg-foreground/[0.06]" />
                   )}
                   <div className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-semibold text-gray-900 dark:text-gray-100">{result.name}</span>
-                    <span className="block truncate text-xs text-gray-600 dark:text-gray-300">
+                    <span className="block truncate text-sm font-semibold text-foreground">{result.name}</span>
+                    <span className="block truncate text-xs text-muted-foreground">
                       {result.cpu} | {result.gpu} | {result.ram}
                     </span>
-                    <span className="block text-sm font-bold text-gray-900 dark:text-gray-100">
+                    <span className="block text-sm font-bold text-foreground">
                       {result.price.toLocaleString("sv-SE")} kr
                     </span>
                   </div>
@@ -271,29 +271,29 @@ export const Navbar = () => {
                       }}
                     >
                       {items.length === 0 ? (
-                        <p className="text-sm text-gray-600 dark:text-gray-300">Kundvagnen är tom.</p>
+                        <p className="text-sm text-muted-foreground">Kundvagnen är tom.</p>
                       ) : (
                         <>
                           <div className="space-y-2">
                             {items.map((item) => (
                               <div key={item.id} className="flex justify-between text-sm">
-                                <span className="truncate pr-2 text-gray-700 dark:text-gray-200">
+                                <span className="truncate pr-2 text-foreground">
                                   {item.product?.name || "Produkt"} x{item.quantity}
                                 </span>
-                                <span className="font-semibold text-gray-900 dark:text-gray-100">
+                                <span className="font-semibold text-foreground">
                                   {((item.product?.price_cents || 0) * item.quantity / 100).toLocaleString("sv-SE")} kr
                                 </span>
                               </div>
                             ))}
                           </div>
-                          <div className="mt-3 flex justify-between text-sm font-semibold text-gray-900 dark:text-gray-100">
+                          <div className="mt-3 flex justify-between text-sm font-semibold text-foreground">
                             <span>Totalt</span>
                             <span>{(totalPrice / 100).toLocaleString("sv-SE")} kr</span>
                           </div>
                           <div className="mt-3 flex gap-2">
                             <button
                               onClick={() => navigate("/cart")}
-                              className="flex-1 rounded border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50 dark:border-gray-700 dark:text-gray-100 dark:hover:bg-gray-800"
+                              className="flex-1 rounded border border-gray-200 px-3 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-gray-50 dark:border-foreground/20 dark:text-foreground dark:hover:bg-foreground/[0.09]"
                             >
                               Gå till kundvagn
                             </button>
@@ -317,13 +317,13 @@ export const Navbar = () => {
                 type="button"
                 aria-label="Öppna meny"
                 onClick={() => setShowNavMenu((prev) => !prev)}
-                className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-white"
+                className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-white"
               >
                 <Menu className="h-5 w-5" />
                 <span className="text-sm font-semibold">{navigation.menuLabel}</span>
               </button>
               {showNavMenu && (
-                <div className="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+                <div className="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg dark:border-foreground/20 dark:bg-background dark:text-foreground">
                   {renderMenuLinks()}
                 </div>
               )}
@@ -350,7 +350,7 @@ export const Navbar = () => {
                       if (searchState.categories[0]) handleSelectCategory(searchState.categories[0].path);
                     }
                   }}
-                  className="h-12 w-full rounded-lg border-2 border-primary pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:focus:border-primary"
+                  className="h-12 w-full rounded-lg border-2 border-primary pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-primary focus:outline-none dark:border-foreground/20 dark:bg-foreground/[0.06] dark:text-foreground dark:placeholder:text-muted-foreground dark:focus:border-primary"
                 />
                 {renderSearchDropdown(false)}
               </div>
@@ -364,13 +364,13 @@ export const Navbar = () => {
                   type="button"
                   aria-label="Öppna meny"
                   onClick={() => setShowNavMenu((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-white"
+                  className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-white"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="text-sm font-semibold">{navigation.menuLabel}</span>
                 </button>
                 {showNavMenu && (
-                  <div className="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100">
+                  <div className="absolute left-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-lg border border-gray-200 bg-white text-gray-900 shadow-lg dark:border-foreground/20 dark:bg-background dark:text-foreground">
                     {renderMenuLinks()}
                   </div>
                 )}
@@ -396,7 +396,7 @@ export const Navbar = () => {
                       if (searchState.categories[0]) handleSelectCategory(searchState.categories[0].path);
                     }
                   }}
-                  className="h-11 w-full rounded-lg border-2 border-primary pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300"
+                  className="h-11 w-full rounded-lg border-2 border-primary pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-primary focus:outline-none dark:border-foreground/20 dark:bg-foreground/[0.06] dark:text-foreground dark:placeholder:text-muted-foreground"
                 />
                 {renderSearchDropdown(true)}
               </div>
@@ -404,7 +404,7 @@ export const Navbar = () => {
               {isAdmin && (
                 <a
                   href={navigation.adminPortalHref}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-white"
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-white"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Admin

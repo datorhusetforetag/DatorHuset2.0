@@ -1,16 +1,13 @@
 import { Link } from "react-router-dom";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { Reveal } from "@/components/Reveal";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 export default function CustomerService() {
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.customerService;
-  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
-  const heroImage = pageSettings.heroImage?.trim() || "/Datorhuset.png";
-  const heroImageAlt = pageSettings.heroImageAlt?.trim() || "DatorHuset logo";
 
   const localBusinessSchema = {
     "@context": "https://schema.org",
@@ -55,107 +52,122 @@ export default function CustomerService() {
   };
 
   return (
-    <div
-      data-sandbox-id="global-theme"
-      style={themeVars}
-      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
-    >
-      <SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />
-      <Navbar />
-      <main className="flex-1">
-        <section data-sandbox-id="customer-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
-          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
-            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
-                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
-                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-                  <Link
-                    to={pageSettings.heroCtaHref}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-                    style={{ borderColor: "var(--site-brand-text)", color: "var(--site-brand-text)" }}
-                  >
-                    {pageSettings.heroCtaLabel}
-                  </Link>
-                </div>
-              </div>
-              <div className="flex items-center justify-center">
-                <div
-                  className="flex w-full max-w-md items-center justify-center"
-                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg-current)", borderRadius: "var(--site-radius-xl)" }}
-                >
-                  <img
-                    src={heroImage}
-                    alt={heroImageAlt}
-                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+    <PageShell head={<SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />}>
+      <PageHero
+        sandboxId="customer-hero"
+        eyebrow={pageSettings.heroEyebrow}
+        title={pageSettings.heroTitle}
+        lede={pageSettings.heroDescription}
+        actions={
+          <>
+            <a href={`mailto:${pageSettings.contactEmail}`} className="btn-primary">
+              Mejla oss
+            </a>
+            <Link to="/faq" className="btn-secondary">
+              Läs vanliga frågor
+            </Link>
+          </>
+        }
+      />
 
-        <section className="container mx-auto max-w-5xl space-y-6 px-4 py-12">
-          <div data-sandbox-id="customer-contact" className="space-y-4">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
-                <h2 className="text-lg font-semibold">{pageSettings.contactTitle}</h2>
-                <p>
-                  E-post:{" "}
-                  <a className="text-blue-600 dark:text-blue-400" href={`mailto:${pageSettings.contactEmail}`}>
-                    {pageSettings.contactEmail}
-                  </a>
-                </p>
-              </div>
-              <div className="space-y-2 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
-                <h2 className="text-lg font-semibold">{pageSettings.hoursTitle}</h2>
+      {/* Kontaktuppgifterna först. Den som letar hit vill veta hur man
+          når oss, inte läsa om vår process. */}
+      <section data-sandbox-id="customer-contact" className="relative">
+        <div className="container mx-auto max-w-5xl px-4 pb-16">
+          <div className="grid gap-5 md:grid-cols-2">
+            <Reveal className="rounded-lg border border-foreground/10 bg-background/70 p-7">
+              <h2 className="font-display text-lg font-bold text-foreground">
+                {pageSettings.contactTitle}
+              </h2>
+              <p className="mt-3 text-sm text-muted-foreground">
+                E-post:{" "}
+                <a
+                  className="link-underline font-semibold text-primary"
+                  href={`mailto:${pageSettings.contactEmail}`}
+                >
+                  {pageSettings.contactEmail}
+                </a>
+              </p>
+            </Reveal>
+
+            <Reveal delay={90} className="rounded-lg border border-foreground/10 bg-background/70 p-7">
+              <h2 className="font-display text-lg font-bold text-foreground">
+                {pageSettings.hoursTitle}
+              </h2>
+              <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                 {pageSettings.hoursLines.map((line) => (
                   <p key={line}>{line}</p>
                 ))}
               </div>
-            </div>
+            </Reveal>
+          </div>
 
-            <div className="space-y-3 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
-              <h2 className="text-lg font-semibold">{pageSettings.supportTitle}</h2>
+          <Reveal delay={140} className="mt-5 rounded-lg border border-foreground/10 bg-background/70 p-7">
+            <h2 className="font-display text-lg font-bold text-foreground">
+              {pageSettings.supportTitle}
+            </h2>
+            <div className="mt-3 space-y-2 text-sm leading-relaxed text-muted-foreground">
               {pageSettings.supportLines.map((line) => (
                 <p key={line}>{line}</p>
               ))}
             </div>
-          </div>
+          </Reveal>
+        </div>
+      </section>
 
-          <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-            <div data-sandbox-id="customer-issues" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
-              <h2 className="text-lg font-semibold">{pageSettings.commonIssuesTitle}</h2>
-              <ul className="space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
+      {/* Vanliga ärenden som lista, gången som numrerade steg - samma
+          form som punkterna i "Hur DatorHuset kör". */}
+      <section className="relative">
+        <div className="container mx-auto max-w-5xl px-4 pb-24">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1fr]">
+            <Reveal sandboxId="customer-issues">
+              <h2 className="section-title text-2xl sm:text-3xl">
+                {pageSettings.commonIssuesTitle}
+              </h2>
+              <ul className="mt-6 divide-y divide-foreground/10 border-t border-foreground/10">
                 {pageSettings.commonIssues.map((issue) => (
-                  <li key={issue}>{issue}</li>
+                  <li
+                    key={issue}
+                    className="flex items-start gap-3 py-4 text-sm leading-relaxed text-muted-foreground"
+                  >
+                    <span aria-hidden="true" className="mt-[3px] text-primary">
+                      &#8250;
+                    </span>
+                    {issue}
+                  </li>
                 ))}
               </ul>
-              <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.commonIssuesNote}</p>
-            </div>
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                {pageSettings.commonIssuesNote}
+              </p>
+            </Reveal>
 
-            <div data-sandbox-id="customer-workflow" className="space-y-4 rounded-xl border p-6" style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}>
-              <h2 className="text-lg font-semibold">{pageSettings.workflowTitle}</h2>
-              <ol className="list-inside list-decimal space-y-2 text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
-                {pageSettings.workflowSteps.map((step) => (
-                  <li key={step}>{step}</li>
+            <Reveal delay={110} sandboxId="customer-workflow">
+              <h2 className="section-title text-2xl sm:text-3xl">
+                {pageSettings.workflowTitle}
+              </h2>
+              <ol className="mt-6 space-y-5">
+                {pageSettings.workflowSteps.map((step, index) => (
+                  <li key={step} className="flex items-start gap-4">
+                    <span
+                      aria-hidden="true"
+                      className="font-display text-xl font-bold leading-none tabular-nums text-primary/50"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-sm leading-relaxed text-muted-foreground">
+                      {step}
+                    </span>
+                  </li>
                 ))}
               </ol>
-              <Link
-                to={pageSettings.workflowCtaHref}
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
-              >
+              <Link to={pageSettings.workflowCtaHref} className="btn-primary mt-8">
                 {pageSettings.workflowCtaLabel}
               </Link>
-            </div>
+            </Reveal>
           </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+        </div>
+      </section>
+    </PageShell>
   );
 }

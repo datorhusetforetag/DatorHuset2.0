@@ -1,11 +1,11 @@
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { Reveal } from "@/components/Reveal";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { Headset } from "lucide-react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 const initialFormState = {
   name: "",
@@ -27,7 +27,6 @@ export default function ServiceRepair() {
   const apiBase = import.meta.env.VITE_API_BASE_URL || "";
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.serviceRepair;
-  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
   const [formData, setFormData] = useState(initialFormState);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [submitError, setSubmitError] = useState("");
@@ -106,43 +105,30 @@ export default function ServiceRepair() {
   };
 
   return (
-    <div
-      data-sandbox-id="global-theme"
-      style={themeVars}
-      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
-    >
-      <Navbar />
-      <main className="flex-1">
-        <section data-sandbox-id="service-hero" className="bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
-          <div className="container mx-auto px-4 pb-10 pt-16 sm:pb-12 sm:pt-20 lg:pt-24">
-            <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
-            <h1 className="mt-4 text-3xl font-bold sm:text-4xl lg:text-5xl">{pageSettings.heroTitle}</h1>
-            <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-              <Link
-                to={pageSettings.primaryHref}
-                className="inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-                style={{ backgroundColor: "var(--site-surface-bg-current)", color: "var(--site-text-primary-current)" }}
-              >
-                <Headset className="h-5 w-5" />
-                {pageSettings.primaryLabel}
-              </Link>
-              <Link
-                to={pageSettings.secondaryHref}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border px-6 py-3 font-semibold transition-opacity hover:opacity-90"
-                style={{ borderColor: "var(--site-brand-text)", color: "var(--site-brand-text)" }}
-              >
-                {pageSettings.secondaryLabel}
-              </Link>
-            </div>
-          </div>
-        </section>
+    <PageShell>
+      <PageHero
+        sandboxId="service-hero"
+        eyebrow={pageSettings.heroEyebrow}
+        title={pageSettings.heroTitle}
+        lede={pageSettings.heroDescription}
+        actions={
+          <>
+            <Link to={pageSettings.primaryHref} className="btn-primary">
+              <Headset className="h-4 w-4" />
+              {pageSettings.primaryLabel}
+            </Link>
+            <Link to={pageSettings.secondaryHref} className="btn-secondary">
+              {pageSettings.secondaryLabel}
+            </Link>
+          </>
+        }
+      />
 
         <section className="container mx-auto px-4 py-10 sm:py-12">
           <div className="mx-auto max-w-4xl">
             <div data-sandbox-id="service-flow" className="space-y-3 text-center">
               <h2 className="text-2xl font-bold sm:text-3xl">{pageSettings.flowTitle}</h2>
-              <p className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.flowDescription}</p>
+              <p className="text-muted-foreground">{pageSettings.flowDescription}</p>
             </div>
 
             <div className="mt-10 flex flex-col items-center gap-10">
@@ -151,7 +137,7 @@ export default function ServiceRepair() {
                   {pageSettings.steps.map((step) => (
                     <AccordionItem key={step.value} value={step.value} className="px-6" style={{ borderColor: "var(--site-card-border-current)" }}>
                       <AccordionTrigger className="text-left">{step.title}</AccordionTrigger>
-                      <AccordionContent className="text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{step.body}</AccordionContent>
+                      <AccordionContent className="text-muted-foreground">{step.body}</AccordionContent>
                     </AccordionItem>
                   ))}
                 </Accordion>
@@ -159,7 +145,7 @@ export default function ServiceRepair() {
 
               <div data-sandbox-id="service-form" className="w-full max-w-3xl">
                 <h2 className="mb-3 text-center text-2xl font-bold sm:text-3xl">{pageSettings.formTitle}</h2>
-                <p className="mb-6 text-center text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{pageSettings.formDescription}</p>
+                <p className="mb-6 text-center text-muted-foreground">{pageSettings.formDescription}</p>
                 <form
                   onSubmit={handleSubmit}
                   className="space-y-4 rounded-2xl border bg-[var(--site-card-bg)] p-4 dark:bg-[var(--site-card-bg-dark)] sm:p-6"
@@ -176,7 +162,7 @@ export default function ServiceRepair() {
                         placeholder="För- och efternamn"
                         value={formData.name}
                         onChange={updateField("name")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       />
                     </div>
                     <div className="space-y-2">
@@ -189,7 +175,7 @@ export default function ServiceRepair() {
                         placeholder="namn@exempel.se"
                         value={formData.email}
                         onChange={updateField("email")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       />
                     </div>
                     <div className="space-y-2">
@@ -202,7 +188,7 @@ export default function ServiceRepair() {
                         placeholder="07X-XXX XX XX"
                         value={formData.phone}
                         onChange={updateField("phone")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       />
                     </div>
                     <div className="space-y-2">
@@ -213,7 +199,7 @@ export default function ServiceRepair() {
                         id="service-device"
                         value={formData.deviceType}
                         onChange={updateField("deviceType")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       >
                         <option>Stationär dator</option>
                         <option>Gamingdator</option>
@@ -231,7 +217,7 @@ export default function ServiceRepair() {
                         placeholder="Exempel: ASUS TUF / Egna delar"
                         value={formData.brandModel}
                         onChange={updateField("brandModel")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       />
                     </div>
                     <div className="space-y-2">
@@ -242,7 +228,7 @@ export default function ServiceRepair() {
                         id="service-issue"
                         value={formData.issueType}
                         onChange={updateField("issueType")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       >
                         <option>Prestanda / lagg</option>
                         <option>Startar inte</option>
@@ -260,7 +246,7 @@ export default function ServiceRepair() {
                         id="service-urgency"
                         value={formData.urgency}
                         onChange={updateField("urgency")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       >
                         <option>Akut idag</option>
                         <option>Inom 1-2 dagar</option>
@@ -278,7 +264,7 @@ export default function ServiceRepair() {
                         placeholder="Om du har ett tillgängligt"
                         value={formData.serialNumber}
                         onChange={updateField("serialNumber")}
-                        className="w-full rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                        className="field"
                       />
                     </div>
                   </div>
@@ -292,16 +278,16 @@ export default function ServiceRepair() {
                       placeholder="Beskriv symptom, när problemet uppstår och vad du redan testat."
                       value={formData.notes}
                       onChange={updateField("notes")}
-                      className="min-h-[160px] w-full rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm dark:border-gray-700 dark:bg-[#0f1824]"
+                      className="field min-h-[160px]"
                     />
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
-                    <label className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm dark:border-gray-800">
+                    <label className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm dark:border-foreground/10">
                       <input type="checkbox" checked={formData.needsBackup} onChange={updateCheckbox("needsBackup")} className="h-4 w-4" />
                       Jag vill diskutera backup / datasäkerhet
                     </label>
-                    <label className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm dark:border-gray-800">
+                    <label className="flex items-center gap-3 rounded-xl border border-gray-200 px-4 py-3 text-sm dark:border-foreground/10">
                       <input type="checkbox" checked={formData.wantsQuote} onChange={updateCheckbox("wantsQuote")} className="h-4 w-4" />
                       Jag vill ha offert innan arbete startar
                     </label>
@@ -317,7 +303,7 @@ export default function ServiceRepair() {
                   ) : null}
 
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       Genom att skicka formuläret godkänner du att vi kontaktar dig om ditt ärende.
                     </p>
                     <button
@@ -333,8 +319,6 @@ export default function ServiceRepair() {
             </div>
           </div>
         </section>
-      </main>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

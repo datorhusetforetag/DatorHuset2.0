@@ -27,6 +27,12 @@ type RevealProps = {
   from?: "up" | "down" | "none";
   as?: ElementType;
   className?: string;
+  /**
+   * Adminlägets krok i sidan. Reveal sprider inte vidare okända
+   * attribut, och ett data-sandbox-id skrivet rakt på den hade fallit
+   * bort tyst - sektionen gick då inte längre att redigera därifrån.
+   */
+  sandboxId?: string;
 };
 
 export const Reveal = ({
@@ -35,6 +41,7 @@ export const Reveal = ({
   from = "up",
   as: Tag = "div",
   className = "",
+  sandboxId,
 }: RevealProps) => {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -85,6 +92,7 @@ export const Reveal = ({
     <Tag
       ref={ref as never}
       className={`reveal reveal-${from} ${className}`}
+      data-sandbox-id={sandboxId}
       data-visible={visible || undefined}
       data-settled={settled || undefined}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}

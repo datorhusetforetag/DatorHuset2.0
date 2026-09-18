@@ -1,9 +1,8 @@
+import { PageShell } from "@/components/PageShell";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CalendarClock, PackageCheck, RotateCcw, ShieldCheck, Wrench } from "lucide-react";
 
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 
@@ -74,18 +73,19 @@ export default function ReturnPolicy() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <SeoHead
-        title="Ångerrätt och returer – DatorHuset"
-        description="14 dagars ångerrätt, 3 års reklamationsrätt och hur du går till väga för att returnera en dator köpt hos DatorHuset."
-        url={`${SITE_URL}/angerratt-och-returer`}
-      />
-      <SeoJsonLd data={breadcrumbSchema} />
-
-      <Navbar />
-
-      <main className="flex-1 pt-16 sm:pt-24">
-        <section className="hero-surface border-b border-border">
+    <PageShell
+      head={
+        <>
+          <SeoHead
+          title="Ångerrätt och returer – DatorHuset"
+          description="14 dagars ångerrätt, 3 års reklamationsrätt och hur du går till väga för att returnera en dator köpt hos DatorHuset."
+          url={`${SITE_URL}/angerratt-och-returer`}
+        />
+        <SeoJsonLd data={breadcrumbSchema} />
+        </>
+      }
+    >
+        <section className="relative">
           <div className="container mx-auto px-4 py-14 md:py-20">
             <p className="eyebrow">Köpvillkor</p>
             <h1 className="section-title mt-3 text-4xl md:text-5xl">
@@ -106,7 +106,7 @@ export default function ReturnPolicy() {
         </section>
 
         {/* Nyckeltal ---------------------------------------------------- */}
-        <section className="section-tight border-b border-border">
+        <section className="relative">
           <div className="container mx-auto px-4">
             <ul className="grid gap-4 sm:grid-cols-3">
               {KEY_FACTS.map((fact) => (
@@ -351,9 +351,6 @@ export default function ReturnPolicy() {
             </aside>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+    </PageShell>
   );
 }

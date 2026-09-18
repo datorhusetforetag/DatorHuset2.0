@@ -1,7 +1,7 @@
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { Reveal } from "@/components/Reveal";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
-import { buildSiteThemeVars } from "@/lib/siteTheme";
 
 const termsOfServiceText = `Allmänna villkor för DatorHuset
 
@@ -34,57 +34,32 @@ Har du frågor om villkoren eller ditt köp når du oss via support@datorhuset.s
 export default function TermsOfService() {
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.termsOfService;
-  const themeVars = buildSiteThemeVars(siteSettings.site.theme);
   const bodyText = pageSettings.bodyText?.trim() || termsOfServiceText;
 
   return (
-    <div
-      data-sandbox-id="global-theme"
-      style={themeVars}
-      className="min-h-screen flex flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
-    >
-      <Navbar />
-      <main className="flex-1">
-        <section data-sandbox-id="terms-hero" className="overflow-hidden bg-[var(--site-brand-bg)] text-[var(--site-brand-text)]">
-          <div className="container mx-auto px-4 pb-12 pt-16 sm:pt-24">
-            <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-              <div>
-                <p className="text-xs uppercase tracking-[0.35em] opacity-70">{pageSettings.heroEyebrow}</p>
-                <h1 className="mt-4 text-4xl font-bold lg:text-5xl">{pageSettings.heroTitle}</h1>
-                <p className="mt-4 max-w-2xl opacity-85">{pageSettings.heroDescription}</p>
-              </div>
-              <div className="flex items-center justify-center">
-                <div
-                  className="flex w-full max-w-md items-center justify-center"
-                  style={{ minHeight: "20rem", backgroundColor: "var(--site-hero-frame-bg-current)", borderRadius: "var(--site-radius-xl)" }}
-                >
-                  <img
-                    src={pageSettings.heroImage}
-                    alt={pageSettings.heroImageAlt}
-                    className="h-56 w-full object-contain object-center sm:h-72 lg:h-80"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+    <PageShell>
+      <PageHero
+        sandboxId="terms-hero"
+        eyebrow={pageSettings.heroEyebrow}
+        title={pageSettings.heroTitle}
+        lede={pageSettings.heroDescription}
+      />
 
-        <section data-sandbox-id="terms-body" className="container mx-auto max-w-5xl space-y-5 px-4 py-12">
-          <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">
-            Senast uppdaterad: {pageSettings.updatedAt}
-          </p>
-          <div
-            className="rounded-[var(--site-radius-xl)] border border-[var(--site-card-border)] bg-[var(--site-card-bg)] p-6 dark:border-[var(--site-card-border-dark)] dark:bg-[var(--site-card-bg-dark)]"
-          >
-            <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)] sm:text-base">
-              {bodyText}
-            </pre>
-          </div>
-        </section>
-      </main>
-      <Footer />
-    </div>
+      <section data-sandbox-id="terms-body" className="relative">
+        <div className="container mx-auto max-w-4xl px-4 pb-24">
+          <Reveal>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+              Senast uppdaterad: {pageSettings.updatedAt}
+            </p>
+
+            {/* Villkorstext är lång och läses under tvång. Smalare spalt
+                och mer luft är det enda som gör den uthärdlig. */}
+            <div className="mt-6 rounded-lg border border-foreground/10 bg-background/70 p-7 sm:p-10">
+              <pre className="prose-page whitespace-pre-wrap font-sans">{bodyText}</pre>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </PageShell>
   );
 }

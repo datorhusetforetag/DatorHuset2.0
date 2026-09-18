@@ -44,7 +44,7 @@ export function LoginButton() {
   }, [resendCooldown]);
 
   if (loading) {
-    return <div className="text-gray-600 text-sm dark:text-gray-300">Laddar...</div>;
+    return <div className="text-gray-600 text-sm dark:text-muted-foreground">Laddar...</div>;
   }
 
   const handleEmailLogin = async () => {
@@ -125,17 +125,17 @@ export function LoginButton() {
         </button>
 
         {showDropdown && (
-          <div className="absolute top-full right-0 mt-2 w-52 rounded-lg border border-gray-200 bg-white shadow-lg z-50 dark:border-gray-700 dark:bg-gray-900">
-            <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-              <p className="text-xs text-gray-500 dark:text-gray-400">Inloggad som</p>
-              <p className="font-semibold text-gray-900 dark:text-gray-100 truncate">{displayName}</p>
+          <div className="absolute top-full right-0 mt-2 w-52 rounded-lg border border-gray-200 bg-white shadow-lg z-50 dark:border-foreground/20 dark:bg-background">
+            <div className="p-4 border-b border-foreground/10">
+              <p className="text-xs text-muted-foreground">Inloggad som</p>
+              <p className="font-semibold text-foreground truncate">{displayName}</p>
             </div>
             <button
               onClick={() => {
                 setShowDropdown(false);
                 navigate("/account");
               }}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-gray-100 dark:hover:bg-gray-800"
+              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-foreground dark:hover:bg-foreground/[0.09]"
             >
               Mina uppgifter
             </button>
@@ -144,7 +144,7 @@ export function LoginButton() {
                 setShowDropdown(false);
                 navigate("/orders");
               }}
-              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-gray-100 dark:hover:bg-gray-800"
+              className="w-full text-left px-4 py-3 hover:bg-gray-50 flex items-center gap-2 text-gray-900 font-semibold transition-colors dark:text-foreground dark:hover:bg-foreground/[0.09]"
             >
               {ordersLabel}
             </button>
@@ -174,7 +174,7 @@ export function LoginButton() {
           Logga in
         </button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:max-w-md lg:w-[33vw] lg:max-w-[33vw] bg-white dark:bg-[#0f1824]">
+      <SheetContent side="right" className="w-full sm:max-w-md lg:w-[33vw] lg:max-w-[33vw] bg-background">
         <SheetHeader className="text-left">
           <div className="flex items-center gap-3">
             <img
@@ -229,64 +229,64 @@ export function LoginButton() {
           </button>
 
           <div className="flex items-center gap-3 text-xs text-gray-400">
-            <span className="flex-1 h-px bg-gray-200 dark:bg-gray-800" />
+            <span className="flex-1 h-px bg-gray-200 dark:bg-foreground/[0.06]" />
             eller med e-post
-            <span className="flex-1 h-px bg-gray-200 dark:bg-gray-800" />
+            <span className="flex-1 h-px bg-gray-200 dark:bg-foreground/[0.06]" />
           </div>
 
           <div className="flex gap-2">
             <button
               onClick={() => setMode("login")}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold border ${mode === "login" ? "border-emerald-500 text-emerald-600" : "border-gray-200 text-gray-600 dark:border-gray-800 dark:text-gray-300"}`}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold border ${mode === "login" ? "border-emerald-500 text-emerald-600" : "border-gray-200 text-gray-600 dark:border-foreground/10 dark:text-muted-foreground"}`}
             >
               Logga in
             </button>
             <button
               onClick={() => setMode("signup")}
-              className={`flex-1 py-2 rounded-lg text-sm font-semibold border ${mode === "signup" ? "border-emerald-500 text-emerald-600" : "border-gray-200 text-gray-600 dark:border-gray-800 dark:text-gray-300"}`}
+              className={`flex-1 py-2 rounded-lg text-sm font-semibold border ${mode === "signup" ? "border-emerald-500 text-emerald-600" : "border-gray-200 text-gray-600 dark:border-foreground/10 dark:text-muted-foreground"}`}
             >
               Skapa konto
             </button>
           </div>
 
           {mode === "signup" && (
-            <label className="block text-sm text-gray-700 dark:text-gray-300">
+            <label className="block text-sm text-muted-foreground">
               Användarnamn
-              <div className="mt-2 flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2">
+              <div className="mt-2 flex items-center gap-2 rounded-lg border border-foreground/10 bg-background/70 px-3 py-2">
                 <User className="w-4 h-4 text-gray-400" />
                 <input
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Ex. DatorHuset"
-                  className="w-full bg-transparent outline-none text-gray-900 dark:text-gray-100 text-sm"
+                  className="w-full bg-transparent outline-none text-foreground text-sm"
                 />
               </div>
             </label>
           )}
 
-          <label className="block text-sm text-gray-700 dark:text-gray-300">
+          <label className="block text-sm text-muted-foreground">
             E-post
-            <div className="mt-2 flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2">
+            <div className="mt-2 flex items-center gap-2 rounded-lg border border-foreground/10 bg-background/70 px-3 py-2">
               <Mail className="w-4 h-4 text-gray-400" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="din@mail.se"
-                className="w-full bg-transparent outline-none text-gray-900 dark:text-gray-100 text-sm"
+                className="w-full bg-transparent outline-none text-foreground text-sm"
               />
             </div>
           </label>
 
-          <label className="block text-sm text-gray-700 dark:text-gray-300">
+          <label className="block text-sm text-muted-foreground">
             Lösenord
-            <div className="mt-2 flex items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 px-3 py-2">
+            <div className="mt-2 flex items-center gap-2 rounded-lg border border-foreground/10 bg-background/70 px-3 py-2">
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Minst 6 tecken"
-                className="w-full bg-transparent outline-none text-gray-900 dark:text-gray-100 text-sm"
+                className="w-full bg-transparent outline-none text-foreground text-sm"
               />
             </div>
           </label>
@@ -330,7 +330,7 @@ export function LoginButton() {
             </button>
           )}
 
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-xs text-muted-foreground">
             {mode === "login" ? "Saknar konto? Skapa ett konto för att spara ordrar." : "Har du redan konto? Logga in ovan."}
           </div>
         </div>

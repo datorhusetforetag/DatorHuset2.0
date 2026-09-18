@@ -1,7 +1,6 @@
-﻿import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
+﻿import { PageShell } from "@/components/PageShell";
+import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
@@ -729,7 +728,7 @@ export default function ComputerDetails() {
     if (!inventoryStatus) {
       return {
         label: "Kontrollerar lager",
-        className: "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200",
+        className: "bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground",
         schema: "https://schema.org/InStock",
       };
     }
@@ -841,7 +840,7 @@ export default function ComputerDetails() {
       {Array.from({ length: 5 }).map((_, index) => (
         <span
           key={index}
-          className={index < rating ? "text-primary" : "text-gray-300 dark:text-gray-600"}
+          className={index < rating ? "text-primary" : "text-gray-300 dark:text-muted-foreground"}
         >
           {"\u2605"}
         </span>
@@ -943,27 +942,17 @@ export default function ComputerDetails() {
 
   if (!computer && productsLoading) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <SeoHead
-          title={`${displayName} | DatorHuset`}
-          description={seoDescription}
-          image={seoImage}
-          url={`${seoBaseUrl}/computer/${resolvedComputer.id}`}
-          type="product"
-        />
-        <Navbar />
+    <PageShell>
         <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold mb-4">Laddar produkt...</h1>
         </div>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
   if (!computer) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
+    <PageShell>
         <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
           <h1 className="text-2xl font-bold mb-4">Datorn hittades inte</h1>
           <button
@@ -974,42 +963,33 @@ export default function ComputerDetails() {
             Tillbaka till produkter
           </button>
         </div>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-      <SeoHead
-        title={`${displayName} | DatorHuset`}
-        description={seoDescription}
-        image={seoImage}
-        url={`${seoBaseUrl}/computer/${resolvedComputer.id}`}
-        type="product"
-      />
-      <Navbar />
+    <PageShell>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <div className="flex-1 container mx-auto px-4 py-6 sm:py-10 lg:py-16 pb-24 lg:pb-16">
         {/* Breadcrumb */}
-        <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-500 dark:text-gray-400 gap-2 mb-6 sm:mb-8">
-          <button className="hover:text-gray-800 dark:hover:text-gray-200" onClick={() => navigate("/")}>Hem</button>
+        <div className="flex flex-wrap items-center text-xs sm:text-sm text-muted-foreground gap-2 mb-6 sm:mb-8">
+          <button className="hover:text-gray-800 dark:hover:text-foreground" onClick={() => navigate("/")}>Hem</button>
           <span>/</span>
           <span>Datorer & Surfplattor</span>
           <span>/</span>
           <span>Gamingdatorer stationära</span>
           <span>/</span>
-          <span className="text-gray-900 dark:text-white font-semibold">{displayName}</span>
+          <span className="text-foreground font-semibold">{displayName}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
           {/* Left: image area */}
-          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-gray-200 dark:border-gray-800">
-            <div className="relative w-full aspect-[4/3] bg-gray-200 dark:bg-[#0f1824] rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-              <div className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 shadow-sm backdrop-blur dark:bg-black/70 dark:text-gray-100">
+          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-background dark:to-background rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-foreground/10">
+            <div className="relative w-full aspect-[4/3] bg-foreground/[0.06] rounded-xl border border-foreground/10 overflow-hidden">
+              <div className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 shadow-sm backdrop-blur dark:bg-black/70 dark:text-foreground">
                 Ungefärligt hur bygget ska se ut som
               </div>
               <img
@@ -1039,14 +1019,14 @@ export default function ComputerDetails() {
                         (prev) => (prev - 1 + detailImageCandidates.length) % detailImageCandidates.length
                       )
                     }
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-background/90 dark:text-foreground"
                     aria-label="Föregående bild"
                   >
                     <ChevronLeft className="w-5 h-5 mx-auto" />
                   </button>
                   <button
                     onClick={() => setSelectedImage((prev) => (prev + 1) % detailImageCandidates.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-gray-900/90 dark:text-gray-100"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-background/90 dark:text-foreground"
                     aria-label="Nästa bild"
                   >
                     <ChevronRight className="w-5 h-5 mx-auto" />
@@ -1059,7 +1039,7 @@ export default function ComputerDetails() {
                 <button
                   key={i}
                   onClick={() => setSelectedImage(i)}
-                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border-2 transition-all duration-200 ${selectedImage === i ? "border-[#22d3ee] ring-4 ring-[#22d3ee]/55 shadow-[0_0_24px_rgba(34,211,238,0.7)] scale-105" : "border-gray-300 dark:border-gray-700"} bg-white dark:bg-gray-900 overflow-hidden`}
+                  className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg border-2 transition-all duration-200 ${selectedImage === i ? "border-[#22d3ee] ring-4 ring-[#22d3ee]/55 shadow-[0_0_24px_rgba(34,211,238,0.7)] scale-105" : "border-foreground/20"} bg-background/70 overflow-hidden`}
                   aria-label={`Vy ${i + 1}`}
                 >
                   <img
@@ -1080,23 +1060,23 @@ export default function ComputerDetails() {
           {/* Right: info/buy box */}
           <div className="space-y-6">
             <div className="space-y-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">{displayName}</h1>
-              <p className="text-gray-600 dark:text-gray-300 text-sm">
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">{displayName}</h1>
+              <p className="text-muted-foreground text-sm">
                 {displaySpecs.cpu}, {displaySpecs.gpu}, {displaySpecs.ram}, {displaySpecs.storage}{" "}
                 {displaySpecs.storagetype}
               </p>
             </div>
 
-            <div className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">
+            <div className="text-3xl sm:text-4xl font-bold text-foreground">
               {displayPrice.toLocaleString("sv-SE")} kr
             </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">Exkl. moms</div>
+            <div className="text-sm text-muted-foreground">Exkl. moms</div>
             <div className="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-semibold">
               {!showPreorderLabel && (
                 <span className={`rounded-full px-3 py-1 ${availability.className}`}>{availability.label}</span>
               )}
               {etaLabel && (
-                <span className="rounded-full px-3 py-1 bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200">
+                <span className="rounded-full px-3 py-1 bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground">
                   {etaLabel}
                 </span>
               )}
@@ -1113,15 +1093,15 @@ export default function ComputerDetails() {
             </div>
 
             {hasUsedVariant && (
-              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-gray-600 dark:text-gray-300">
-                <span className={useUsedVariant ? "text-gray-500" : "text-gray-900 dark:text-white"}>Nya delar</span>
+              <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-muted-foreground">
+                <span className={useUsedVariant ? "text-gray-500" : "text-foreground"}>Nya delar</span>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={useUsedVariant}
                   onClick={() => setUseUsedVariant((prev) => !prev)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    useUsedVariant ? "bg-primary" : "bg-gray-300 dark:bg-gray-700"
+                    useUsedVariant ? "bg-primary" : "bg-gray-300 dark:bg-foreground/[0.06]"
                   }`}
                 >
                   <span className="sr-only">V\u00e4xla begagnade delar</span>
@@ -1131,17 +1111,17 @@ export default function ComputerDetails() {
                     }`}
                   />
                 </button>
-                <span className={useUsedVariant ? "text-gray-900 dark:text-white" : "text-gray-500"}>
+                <span className={useUsedVariant ? "text-foreground" : "text-gray-500"}>
                   Begagnade delar
                 </span>
               </div>
             )}
 
             <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-3 sm:flex sm:flex-row sm:items-center sm:gap-6">
-              <div className="flex items-center border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+              <div className="flex items-center border border-foreground/10 rounded-lg overflow-hidden">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="px-4 py-3 hover:bg-foreground/[0.06] transition-colors"
                   aria-label="Minska antal"
                 >
                   <Minus className="w-4 h-4" />
@@ -1149,7 +1129,7 @@ export default function ComputerDetails() {
                 <span className="px-6 py-3 text-lg font-semibold">{quantity}</span>
                 <button
                   onClick={() => setQuantity(quantity + 1)}
-                  className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="px-4 py-3 hover:bg-foreground/[0.06] transition-colors"
                   aria-label="?ka antal"
                 >
                   <Plus className="w-4 h-4" />
@@ -1158,14 +1138,14 @@ export default function ComputerDetails() {
               <button
                 onClick={handleAddToCart}
                 disabled={addingToCart || !activeProductId}
-                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary hover:text-white disabled:bg-gray-300 dark:disabled:bg-foreground/[0.08] text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
               </button>
             </div>
 
-            <div className="bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-4 text-sm text-gray-700 dark:text-gray-300">
+            <div className="bg-foreground/[0.06] border border-foreground/10 rounded-lg p-4 text-sm text-muted-foreground">
               <p>Beräknad leverans: 1-2 arbetsdagar</p>
               <p>Byggtid: i lager 1-2 dagar, förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade delar) 1-2 veckor.</p>
             </div>
@@ -1173,17 +1153,17 @@ export default function ComputerDetails() {
         </div>
 
         {/* Tabs */}
-        <div className="mt-10 sm:mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-6">
-          <div className="flex gap-6 border-b border-gray-200 dark:border-gray-800 pb-4 mb-6 text-sm font-semibold text-gray-600 dark:text-gray-300">
-            <span className="text-gray-900 dark:text-white">Produktinfo</span>
+        <div className="mt-10 sm:mt-12 bg-foreground/[0.06] border border-foreground/10 rounded-2xl p-4 sm:p-6">
+          <div className="flex gap-6 border-b border-foreground/10 pb-4 mb-6 text-sm font-semibold text-muted-foreground">
+            <span className="text-foreground">Produktinfo</span>
             <span>Specifikationer</span>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-gray-700 dark:text-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-foreground">
             <div className="space-y-4">
               {productInfoSections.map((section) => (
                 <div key={section.title} className="space-y-2">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">{section.title}</h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{section.body}</p>
+                  <h3 className="text-lg font-bold text-foreground">{section.title}</h3>
+                  <p className="text-sm text-muted-foreground">{section.body}</p>
                 </div>
               ))}
             </div>
@@ -1193,10 +1173,10 @@ export default function ComputerDetails() {
                 return (
                 <div
                   key={row.label}
-                  className={`flex justify-between ${index < specRows.length - 1 ? "border-b border-gray-200 dark:border-gray-800 pb-2" : ""}`}
+                  className={`flex justify-between ${index < specRows.length - 1 ? "border-b border-foreground/10 pb-2" : ""}`}
                 >
                   <span>{row.label}</span>
-                  <span className="font-semibold text-gray-900 dark:text-white text-right">
+                  <span className="font-semibold text-foreground text-right">
                     {row.tooltip ? (
                       <span className="relative inline-flex items-center justify-end gap-1 group">
                         <span>{row.value}</span>
@@ -1217,9 +1197,9 @@ export default function ComputerDetails() {
               );
               })}
               {resolvedComputer.bundleIncludes?.length ? (
-                <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#0f1824] p-3">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-2">Ingår i paketet</p>
-                  <ul className="space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                <div className="mt-4 rounded-lg border border-foreground/10 bg-background/70 p-3">
+                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">Ingår i paketet</p>
+                  <ul className="space-y-1 text-sm text-muted-foreground">
                     {resolvedComputer.bundleIncludes.map((item) => (
                       <li key={item}>{item}</li>
                     ))}
@@ -1231,23 +1211,23 @@ export default function ComputerDetails() {
         </div>
 
         {/* Warranty */}
-        <div className="mt-10 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 sm:p-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Garanti & returer</h2>
-          <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-gray-700 dark:text-gray-300">
+        <div className="mt-10 rounded-2xl border border-foreground/10 bg-background/70 p-4 sm:p-6">
+          <h2 className="text-2xl font-bold text-foreground">Garanti & returer</h2>
+          <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-muted-foreground">
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">3 års reklamationsrätt</p>
+              <p className="font-semibold text-foreground">3 års reklamationsrätt</p>
               <p>Du har rätt att reklamera och skicka tillbaka varan om ett ursprungligt fel upptäcks.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">14 dagars öppet köp vid frakt!</p>
+              <p className="font-semibold text-foreground">14 dagars öppet köp vid frakt!</p>
               <p>Testa i lugn och ro. Returnera om den inte passar dina behov.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">Trygg support</p>
+              <p className="font-semibold text-foreground">Trygg support</p>
               <p>Vi hjälper dig med felsökning och uppgraderingar när du vill.</p>
             </div>
             <div className="space-y-2">
-              <p className="font-semibold text-gray-900 dark:text-white">Snabb återkoppling</p>
+              <p className="font-semibold text-foreground">Snabb återkoppling</p>
               <p>Kontakta oss så återkommer vi med nästa steg och tidsplan.</p>
             </div>
           </div>
@@ -1262,18 +1242,18 @@ export default function ComputerDetails() {
         </div>
 
         {/* FPS estimator */}
-        <div className="mt-12 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg">
+        <div className="mt-12 bg-foreground/[0.06] border border-foreground/10 rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
             <div className="space-y-4">
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Uppskattad FPS</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Uppskattad FPS</h2>
               <div className="space-y-3">
-                <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="game">Välj spel</label>
+                <label className="text-sm text-muted-foreground" htmlFor="game">Välj spel</label>
                 <select
                   id="game"
                   value={selectedGame}
                   onChange={(e) => setSelectedGame(e.target.value)}
                   disabled={gameList.length === 0}
-                  className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                  className="w-full bg-background/70 border border-foreground/10 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-emerald-500"
                 >
                   {gameList.length ? (
                     gameList.map((game) => (
@@ -1286,13 +1266,13 @@ export default function ComputerDetails() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="res">Upplösning</label>
+                  <label className="text-sm text-muted-foreground" htmlFor="res">Upplösning</label>
                   <select
                     id="res"
                     value={activeResolution}
                     onChange={(e) => setSelectedResolution(e.target.value)}
                     disabled={visibleResolutions.length === 0}
-                    className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-background/70 border border-foreground/10 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-emerald-500"
                   >
                     {visibleResolutions.length ? (
                       visibleResolutions.map((res) => (
@@ -1304,13 +1284,13 @@ export default function ComputerDetails() {
                   </select>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm text-gray-700 dark:text-gray-300" htmlFor="preset">Grafik</label>
+                  <label className="text-sm text-muted-foreground" htmlFor="preset">Grafik</label>
                   <select
                     id="preset"
                     value={activePreset}
                     onChange={(e) => setSelectedPreset(e.target.value)}
                     disabled={visiblePresets.length === 0}
-                    className="w-full bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full bg-background/70 border border-foreground/10 rounded-lg px-4 py-3 text-foreground focus:outline-none focus:border-emerald-500"
                   >
                     {visiblePresets.length ? (
                       visiblePresets.map((preset) => (
@@ -1331,7 +1311,7 @@ export default function ComputerDetails() {
                     className={`px-4 py-2 rounded-lg border ${
                       dlssOn
                         ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
-                        : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                        : "border-foreground/20 bg-background/70"
                     } text-sm font-semibold ${!supports.dlss ? "opacity-40 cursor-not-allowed" : ""}`}
                   >
                     DLSS / FSR {dlssOn ? "On" : "Off"}
@@ -1349,7 +1329,7 @@ export default function ComputerDetails() {
                     className={`px-4 py-2 rounded-lg border ${
                       frameGenOn
                         ? "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30"
-                        : "border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0f1824]"
+                        : "border-foreground/20 bg-background/70"
                     } text-sm font-semibold ${!supports.frameGen ? "opacity-40 cursor-not-allowed" : ""}`}
                   >
                     Frame generation {frameGenOn ? "On" : "Off"}
@@ -1363,9 +1343,9 @@ export default function ComputerDetails() {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#0f1824] border border-gray-200 dark:border-gray-800 rounded-xl p-6 flex flex-col gap-4">
+            <div className="bg-background/70 border border-foreground/10 rounded-xl p-6 flex flex-col gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-28 h-28 bg-gray-100 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
+                <div className="w-28 h-28 bg-foreground/[0.06] border border-foreground/10 rounded-lg overflow-hidden">
                   {GAME_IMAGES[selectedGame] ? (
                     <img
                       src={GAME_IMAGES[selectedGame]}
@@ -1375,15 +1355,15 @@ export default function ComputerDetails() {
                       decoding="async"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center text-center text-sm text-gray-700 dark:text-gray-300">
+                    <div className="w-full h-full flex items-center justify-center text-center text-sm text-muted-foreground">
                       {selectedGame}
                     </div>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">{activeResolution} {"\u00d7"} {activePreset}</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{hasFpsData ? `${averageFps} FPS` : "-"}</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                  <p className="text-muted-foreground text-sm">{activeResolution} {"\u00d7"} {activePreset}</p>
+                  <p className="text-3xl font-bold text-foreground">{hasFpsData ? `${averageFps} FPS` : "-"}</p>
+                  <p className="text-xs text-muted-foreground">
                     {hasFpsData ? "Beräknat med vald konfiguration" : "Inga FPS-variabler finns för den här produkten ännu"}
                   </p>
                 </div>
@@ -1396,16 +1376,16 @@ export default function ComputerDetails() {
         {/* Comparison */}
         <div className="mt-12">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">{"J\u00e4mf\u00f6r liknande datorer"}</h2>
-            <span className="text-xs sm:text-sm text-gray-600 dark:text-gray-300">{"2\u20133 alternativ med liknande niv\u00e5"}</span>
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">{"J\u00e4mf\u00f6r liknande datorer"}</h2>
+            <span className="text-xs sm:text-sm text-muted-foreground">{"2\u20133 alternativ med liknande niv\u00e5"}</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {comparisonItems.map((item) => (
               <div
                 key={item.id}
-                className="rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 space-y-4"
+                className="rounded-xl border border-foreground/10 bg-background/70 p-4 space-y-4"
               >
-                <div className="h-52 sm:h-56 md:h-32 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800">
+                <div className="h-52 sm:h-56 md:h-32 rounded-lg overflow-hidden border border-foreground/10">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -1415,12 +1395,12 @@ export default function ComputerDetails() {
                   />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{item.name}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300">
+                  <h3 className="text-lg font-semibold text-foreground">{item.name}</h3>
+                  <p className="text-sm text-muted-foreground">
                     {item.price.toLocaleString("sv-SE")} kr
                   </p>
                 </div>
-                <div className="text-sm text-gray-700 dark:text-gray-300 space-y-1 border-t border-gray-200 dark:border-gray-800 pt-3">
+                <div className="text-sm text-muted-foreground space-y-1 border-t border-foreground/10 pt-3">
                   <p>CPU: {item.cpu}</p>
                   <p>GPU: {item.gpu}</p>
                   <p className="flex flex-wrap items-center gap-2">
@@ -1445,7 +1425,7 @@ export default function ComputerDetails() {
                   to={`/computer/${item.id}`}
                   className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     item.id === resolvedComputer.id
-                      ? "bg-gray-200 text-gray-700 cursor-default dark:bg-gray-800 dark:text-gray-300"
+                      ? "bg-gray-200 text-gray-700 cursor-default dark:bg-foreground/[0.06] dark:text-muted-foreground"
                       : "bg-primary text-primary-foreground hover:bg-secondary hover:text-white"
                   }`}
                 >
@@ -1457,16 +1437,16 @@ export default function ComputerDetails() {
         </div>
 
         {/* Related */}
-        <div className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
-          <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">Mest populära</h2>
+        <div className="mt-12 border-t border-foreground/10 pt-10">
+          <h2 className="text-2xl font-bold mb-6 text-foreground">Mest populära</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {popularItems.map((related) => (
               <button
                 key={related.id}
                 onClick={() => navigate(`/computer/${related.id}`)}
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
+                className="bg-background/70 border border-foreground/10 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
               >
-                <div className="h-28 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center text-3xl text-gray-400 overflow-hidden">
+                <div className="h-28 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-background dark:to-background flex items-center justify-center text-3xl text-gray-400 overflow-hidden">
                   <img
                     src={related.image}
                     alt={related.name}
@@ -1476,16 +1456,15 @@ export default function ComputerDetails() {
                   />
                 </div>
                 <div className="p-4 space-y-2">
-                  <h3 className="font-semibold text-gray-900 dark:text-white text-sm line-clamp-2">{related.name}</h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">{related.price.toLocaleString("sv-SE")} kr</p>
+                  <h3 className="font-semibold text-foreground text-sm line-clamp-2">{related.name}</h3>
+                  <p className="text-sm text-muted-foreground">{related.price.toLocaleString("sv-SE")} kr</p>
                 </div>
               </button>
             ))}
           </div>
         </div>
       </div>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 

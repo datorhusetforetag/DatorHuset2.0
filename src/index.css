@@ -346,6 +346,69 @@
     @apply text-xs font-semibold uppercase tracking-[0.28em] text-primary;
   }
 
+  /* Knappar ---------------------------------------------------------
+   *
+   * Undersidorna skrev tidigare ut sina knappar för hand, var och en
+   * med sin egen kombination av radie, kulör och tyngd. De två här är
+   * samma par som startsidan använder: en fylld och en med bara ram.
+   */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm bg-primary px-6 py-3
+      text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm border border-foreground/25
+      bg-foreground/[0.04] px-6 py-3 text-sm font-semibold text-foreground transition-colors
+      hover:border-primary/60 hover:bg-foreground/[0.08];
+  }
+
+  /* Formulärfält ----------------------------------------------------
+   *
+   * Service, kassa och konto skrev alla ut samma långa klassträng för
+   * varje fält, hårdkodad till vitt och grått. Nio kopior i en enda fil
+   * på servicesidan. Nu står den på ett ställe och följer temat.
+   *
+   * Fokusringen är med på riktigt: den som tabbar sig genom ett
+   * formulär måste kunna se var markören står.
+   */
+  .field {
+    @apply w-full rounded-sm border border-foreground/20 bg-background/70 px-4 py-2.5 text-sm
+      text-foreground placeholder:text-muted-foreground transition-colors
+      focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/25;
+  }
+
+  /* Brödtext på villkorssidorna --------------------------------------
+   *
+   * Integritetspolicyn och köpvillkoren är långa texter som ingen läser
+   * frivilligt. Det enda som hjälper är luft och en radlängd som ögat
+   * orkar följa, så styckena får eget avstånd och rubrikerna tydliga
+   * nivåer i stället för att allt ligger i en klump.
+   */
+  .prose-page {
+    @apply text-base leading-relaxed text-muted-foreground;
+  }
+
+  .prose-page h2 {
+    @apply font-display text-xl font-bold text-foreground mt-10 mb-3 first:mt-0;
+  }
+
+  .prose-page h3 {
+    @apply font-display text-base font-bold text-foreground mt-7 mb-2;
+  }
+
+  .prose-page p + p {
+    @apply mt-4;
+  }
+
+  .prose-page ul {
+    @apply mt-4 space-y-2 pl-5 list-disc marker:text-primary;
+  }
+
+  .prose-page a {
+    @apply text-primary underline underline-offset-4 hover:text-foreground;
+  }
+
   .section-title {
     @apply font-display text-3xl md:text-4xl font-bold text-foreground;
   }

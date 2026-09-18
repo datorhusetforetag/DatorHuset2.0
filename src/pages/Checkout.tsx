@@ -1,5 +1,4 @@
-﻿import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
+﻿import { PageShell } from "@/components/PageShell";
 import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -120,23 +119,20 @@ export default function Checkout() {
 
   if (cartLoading) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
+    <PageShell>
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-          <div className="text-center text-gray-600 dark:text-gray-200">Laddar kundvagn...</div>
+          <div className="text-center text-gray-600 dark:text-foreground">Laddar kundvagn...</div>
         </div>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
+    <PageShell>
         <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Din kundvagn är tom</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-4">Din kundvagn är tom</h1>
             <button
               onClick={() => navigate("/products")}
               className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
@@ -145,32 +141,30 @@ export default function Checkout() {
             </button>
           </div>
         </div>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-        <Navbar />
+    <PageShell>
         <div className="flex-1 pt-16 sm:pt-24">
           <div className="container mx-auto px-4 py-12">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Kassa</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">Kassa</h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
-                <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
+                <div className="bg-foreground/[0.04] p-6 rounded-lg border border-foreground/10">
                   <div className="rounded-lg border border-primary/60 bg-primary/10 p-5 dark:border-primary/40 dark:bg-[#1a2533]">
-                    <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Logga in för att slutföra köpet</h2>
-                    <p className="text-sm text-gray-700 dark:text-gray-200 mb-4">
+                    <h2 className="text-xl font-bold text-foreground mb-2">Logga in för att slutföra köpet</h2>
+                    <p className="text-sm text-foreground mb-4">
                       Du kan lägga produkter i kundvagnen utan konto. För att gå vidare till betalning behöver du logga in.
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
                       <LoginButton />
                       <button
                         onClick={() => navigate('/cart')}
-                        className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                        className="px-4 py-2 border border-foreground/20 text-foreground font-semibold rounded hover:bg-foreground/[0.06] transition-colors"
                       >
                         Tillbaka till kundvagn
                       </button>
@@ -180,10 +174,10 @@ export default function Checkout() {
               </div>
 
               <div>
-                <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800 lg:sticky lg:top-24">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Ordersammanfattning</h2>
+                <div className="bg-foreground/[0.04] p-6 rounded-lg border border-foreground/10 lg:sticky lg:top-24">
+                  <h2 className="text-xl font-bold text-foreground mb-6">Ordersammanfattning</h2>
 
-                  <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                  <div className="space-y-3 mb-6 pb-6 border-b border-foreground/10">
                     {items.map((item) => {
                       const imageSrc = resolveProductImage(item.product);
                       return (
@@ -193,16 +187,16 @@ export default function Checkout() {
                               <img
                                 src={imageSrc}
                                 alt={item.product?.name || "Produkt"}
-                                className="h-12 w-12 rounded object-cover border border-gray-200 dark:border-gray-700"
+                                className="h-12 w-12 rounded object-cover border border-foreground/10"
                                 loading="lazy"
                                 decoding="async"
                               />
                             ) : null}
-                            <span className="text-gray-600 dark:text-gray-200 truncate">
+                            <span className="text-gray-600 dark:text-foreground truncate">
                               {item.product?.name} x{item.quantity}
                             </span>
                           </div>
-                          <span className="font-semibold text-gray-900 dark:text-gray-100">
+                          <span className="font-semibold text-foreground">
                             {((item.product?.price_cents || 0) * item.quantity) / 100} kr
                           </span>
                         </div>
@@ -210,34 +204,33 @@ export default function Checkout() {
                     })}
                   </div>
 
-                  <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                  <div className="space-y-3 mb-6 pb-6 border-b border-foreground/10">
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-200">Delsumma:</span>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">{totalPrice / 100} kr</span>
+                      <span className="text-gray-600 dark:text-foreground">Delsumma:</span>
+                      <span className="font-semibold text-foreground">{totalPrice / 100} kr</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-200">Serviceavgift:</span>
-                      <span className="font-semibold text-gray-900 dark:text-gray-100">5 kr</span>
+                      <span className="text-gray-600 dark:text-foreground">Serviceavgift:</span>
+                      <span className="font-semibold text-foreground">5 kr</span>
                     </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-200">Frakt:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">
+                    <span className="text-gray-600 dark:text-foreground">Frakt:</span>
+                    <span className="font-semibold text-foreground">
                       {requiresShipping ? "315 kr" : "Ingen frakt vald"}
                     </span>
                   </div>
                 </div>
 
                 <div className="flex justify-between">
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt:</span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalWithFees / 100} kr</span>
+                  <span className="text-lg font-bold text-foreground">Totalt:</span>
+                  <span className="text-2xl font-bold text-foreground">{totalWithFees / 100} kr</span>
                 </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <Footer />
-      </div>
+    </PageShell>
     );
   }
 
@@ -364,24 +357,23 @@ export default function Checkout() {
     acceptedTermsOfService;
 
   return (
-    <div className="min-h-screen bg-white text-gray-900 dark:bg-[#0f1824] dark:text-gray-50 flex flex-col">
-      <Navbar />
+    <PageShell>
       <div className="flex-1 pt-16 sm:pt-24">
         <div className="container mx-auto px-4 py-12">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-8">Kassa</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">Kassa</h1>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2">
-              <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Leveransuppgifter</h2>
+              <div className="bg-foreground/[0.04] p-6 rounded-lg border border-foreground/10">
+                <h2 className="text-xl font-bold text-foreground mb-6">Leveransuppgifter</h2>
 
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Leveranssätt</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-200 mt-1">Vi skickar endast inom Sverige.</p>
+                  <div className="rounded-lg border border-foreground/10 bg-white dark:bg-[#101a27] p-4">
+                    <h3 className="text-base font-semibold text-foreground">Leveranssätt</h3>
+                    <p className="text-sm text-gray-600 dark:text-foreground mt-1">Vi skickar endast inom Sverige.</p>
                     <div className="mt-4 space-y-3">
-                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <label className="flex items-start gap-3 rounded-lg border border-foreground/10 p-3">
                         <input
                           type="radio"
                           name="shippingMethod"
@@ -391,13 +383,13 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                              <p className="font-semibold text-gray-900 dark:text-gray-100">Upphämtning i Spånga (gratis)</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-200">
+                              <p className="font-semibold text-foreground">Upphämtning i Spånga (gratis)</p>
+                          <p className="text-sm text-gray-600 dark:text-foreground">
                                 Hämta upp din dator i Spånga efter att bygget är klart.
                           </p>
                         </div>
                       </label>
-                      <label className="flex items-start gap-3 rounded-lg border border-gray-200 dark:border-gray-700 p-3">
+                      <label className="flex items-start gap-3 rounded-lg border border-foreground/10 p-3">
                         <input
                           type="radio"
                           name="shippingMethod"
@@ -407,8 +399,8 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">PostNord till ombud (315 kr)</p>
-                          <p className="text-sm text-gray-600 dark:text-gray-200">
+                          <p className="font-semibold text-foreground">PostNord till ombud (315 kr)</p>
+                          <p className="text-sm text-gray-600 dark:text-foreground">
                             Spårbar frakt till ombud. Leverans 1-2 vardagar efter att bygget är klart.
                           </p>
                         </div>
@@ -418,7 +410,7 @@ export default function Checkout() {
 
                   {requiresShipping && addresses.length > 0 && (
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <label className="block text-sm font-semibold text-foreground mb-2">
                         {"Sparade adresser"}
                       </label>
                       <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
@@ -430,7 +422,7 @@ export default function Checkout() {
                             const selected = addresses.find((item) => item.id === nextId);
                             if (selected) applyAddress(selected);
                           }}
-                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
+                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground border-foreground/20"
                         >
                           <option value="">Välj adress...</option>
                           {addresses.map((saved) => (
@@ -441,13 +433,13 @@ export default function Checkout() {
                           ))}
                         </select>
                         {loadingAddresses && (
-                          <span className="text-xs text-gray-500 dark:text-gray-300">Hämtar adresser...</span>
+                          <span className="text-xs text-gray-500 dark:text-muted-foreground">Hämtar adresser...</span>
                         )}
                       </div>
                     </div>
                   )}
                   <div>
-                    <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    <label className="block text-sm font-semibold text-foreground mb-2">
                       {"E-postadress"}
                     </label>
                     <input
@@ -459,8 +451,8 @@ export default function Checkout() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
                       aria-invalid={Boolean(errors.email)}
-                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                        errors.email ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                        errors.email ? "border-red-400" : "border-foreground/20"
                       }`}
                     />
                     {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
@@ -468,7 +460,7 @@ export default function Checkout() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <label className="block text-sm font-semibold text-foreground mb-2">
                         Förnamn
                       </label>
                       <input
@@ -479,14 +471,14 @@ export default function Checkout() {
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Jan"
                         aria-invalid={Boolean(errors.firstName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                          errors.firstName ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                          errors.firstName ? "border-red-400" : "border-foreground/20"
                         }`}
                       />
                       {errors.firstName && <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>}
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <label className="block text-sm font-semibold text-foreground mb-2">
                         {"Efternamn"}
                       </label>
                       <input
@@ -497,8 +489,8 @@ export default function Checkout() {
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Svensson"
                         aria-invalid={Boolean(errors.lastName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                          errors.lastName ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                          errors.lastName ? "border-red-400" : "border-foreground/20"
                         }`}
                       />
                       {errors.lastName && <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>}
@@ -507,7 +499,7 @@ export default function Checkout() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                      <label className="block text-sm font-semibold text-foreground mb-2">
                         {"Mobil nr"}
                       </label>
                       <input
@@ -520,19 +512,19 @@ export default function Checkout() {
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="07x xxx xx xx"
                         aria-invalid={Boolean(errors.phone)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                          errors.phone ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                          errors.phone ? "border-red-400" : "border-foreground/20"
                         }`}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
-                      <p className="text-xs text-gray-500 dark:text-gray-300 mt-1">Ex: 07x xxx xx xx</p>
+                      <p className="text-xs text-gray-500 dark:text-muted-foreground mt-1">Ex: 07x xxx xx xx</p>
                     </div>
                   </div>
 
                   {requiresShipping && (
                     <>
                       <div>
-                        <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                        <label className="block text-sm font-semibold text-foreground mb-2">
                           {"Adress"}
                         </label>
                         <input
@@ -543,8 +535,8 @@ export default function Checkout() {
                           onChange={(e) => setAddress(e.target.value)}
                           placeholder="Gatan 1"
                           aria-invalid={Boolean(errors.address)}
-                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                            errors.address ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                            errors.address ? "border-red-400" : "border-foreground/20"
                           }`}
                         />
                         {errors.address && <p className="text-xs text-red-500 mt-1">{errors.address}</p>}
@@ -552,7 +544,7 @@ export default function Checkout() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                          <label className="block text-sm font-semibold text-foreground mb-2">
                             {"Postnummer"}
                           </label>
                           <input
@@ -565,14 +557,14 @@ export default function Checkout() {
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="123 45"
                             aria-invalid={Boolean(errors.postalCode)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                              errors.postalCode ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                              errors.postalCode ? "border-red-400" : "border-foreground/20"
                             }`}
                           />
                           {errors.postalCode && <p className="text-xs text-red-500 mt-1">{errors.postalCode}</p>}
                         </div>
                         <div>
-                          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                          <label className="block text-sm font-semibold text-foreground mb-2">
                             {"Postort"}
                           </label>
                           <input
@@ -584,22 +576,22 @@ export default function Checkout() {
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Stockholm"
                             aria-invalid={Boolean(errors.city)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
-                              errors.city ? "border-red-400" : "border-gray-300 dark:border-gray-700"
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                              errors.city ? "border-red-400" : "border-foreground/20"
                             }`}
                           />
                           {errors.city && <p className="text-xs text-red-500 mt-1">{errors.city}</p>}
                         </div>
                       </div>
 
-                      <div className="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#101a27] p-4">
-                        <h3 className="text-base font-semibold text-gray-900 dark:text-gray-100">Lägg till fraktinformation</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-200 mt-1">
+                      <div className="mt-6 rounded-lg border border-foreground/10 bg-white dark:bg-[#101a27] p-4">
+                        <h3 className="text-base font-semibold text-foreground">Lägg till fraktinformation</h3>
+                        <p className="text-sm text-gray-600 dark:text-foreground mt-1">
                           Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
                         </p>
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            <label className="block text-sm font-semibold text-foreground mb-2">
                               Portkod (valfritt)
                             </label>
                             <input
@@ -607,11 +599,11 @@ export default function Checkout() {
                               value={doorCode}
                               onChange={(e) => setDoorCode(e.target.value)}
                               placeholder="1234"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground border-foreground/20"
                             />
                           </div>
                           <div>
-                            <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            <label className="block text-sm font-semibold text-foreground mb-2">
                               Önskad leveranstid (valfritt)
                             </label>
                             <input
@@ -619,19 +611,19 @@ export default function Checkout() {
                               value={deliveryTime}
                               onChange={(e) => setDeliveryTime(e.target.value)}
                               placeholder="Vardagar 17-20"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground border-foreground/20"
                             />
                           </div>
                         </div>
                         <div className="mt-4">
-                          <label className="block text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                          <label className="block text-sm font-semibold text-foreground mb-2">
                             Leveransinstruktioner (valfritt)
                           </label>
                           <textarea
                             value={deliveryInstructions}
                             onChange={(e) => setDeliveryInstructions(e.target.value)}
                             placeholder="Lämna vid dörren / ring vid leverans / våning osv."
-                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
+                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground border-foreground/20"
                           />
                         </div>
                       </div>
@@ -643,10 +635,10 @@ export default function Checkout() {
 
             {/* Order Summary */}
             <div>
-              <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800 lg:sticky lg:top-24">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6">Ordersammanfattning</h2>
+              <div className="bg-foreground/[0.04] p-6 rounded-lg border border-foreground/10 lg:sticky lg:top-24">
+                <h2 className="text-xl font-bold text-foreground mb-6">Ordersammanfattning</h2>
 
-                <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="space-y-3 mb-6 pb-6 border-b border-foreground/10">
                   {items.map((item) => {
                     const imageSrc = resolveProductImage(item.product);
                     return (
@@ -656,16 +648,16 @@ export default function Checkout() {
                             <img
                               src={imageSrc}
                               alt={item.product?.name || "Produkt"}
-                              className="h-12 w-12 rounded object-cover border border-gray-200 dark:border-gray-700"
+                              className="h-12 w-12 rounded object-cover border border-foreground/10"
                               loading="lazy"
                               decoding="async"
                             />
                           ) : null}
-                          <span className="text-gray-600 dark:text-gray-200 truncate">
+                          <span className="text-gray-600 dark:text-foreground truncate">
                             {item.product?.name} x{item.quantity}
                           </span>
                         </div>
-                        <span className="font-semibold text-gray-900 dark:text-gray-100">
+                        <span className="font-semibold text-foreground">
                           {((item.product?.price_cents || 0) * item.quantity) / 100} kr
                         </span>
                       </div>
@@ -673,32 +665,32 @@ export default function Checkout() {
                   })}
                 </div>
 
-                <div className="space-y-3 mb-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                <div className="space-y-3 mb-6 pb-6 border-b border-foreground/10">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-200">Delsumma:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">{totalPrice / 100} kr</span>
+                    <span className="text-gray-600 dark:text-foreground">Delsumma:</span>
+                    <span className="font-semibold text-foreground">{totalPrice / 100} kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-200">Frakt:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">Väljs i kassan</span>
+                    <span className="text-gray-600 dark:text-foreground">Frakt:</span>
+                    <span className="font-semibold text-foreground">Väljs i kassan</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-200">Serviceavgift:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">5 kr</span>
+                    <span className="text-gray-600 dark:text-foreground">Serviceavgift:</span>
+                    <span className="font-semibold text-foreground">5 kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-200">Skatt:</span>
-                    <span className="font-semibold text-gray-900 dark:text-gray-100">Inkluderad</span>
+                    <span className="text-gray-600 dark:text-foreground">Skatt:</span>
+                    <span className="font-semibold text-foreground">Inkluderad</span>
                   </div>
                 </div>
 
                 <div className="flex justify-between mb-6">
-                  <span className="text-lg font-bold text-gray-900 dark:text-gray-100">Totalt:</span>
-                  <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{totalWithFees / 100} kr</span>
+                  <span className="text-lg font-bold text-foreground">Totalt:</span>
+                  <span className="text-2xl font-bold text-foreground">{totalWithFees / 100} kr</span>
                 </div>
 
-                <div className="mb-5 space-y-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-gray-700 dark:bg-[#101a27]">
-                  <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
+                <div className="mb-5 space-y-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-foreground/20 dark:bg-[#101a27]">
+                  <label className="flex items-start gap-2 text-sm text-foreground">
                     <input
                       type="checkbox"
                       checked={acceptedPrivacyPolicy}
@@ -718,7 +710,7 @@ export default function Checkout() {
                       .
                     </span>
                   </label>
-                  <label className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-200">
+                  <label className="flex items-start gap-2 text-sm text-foreground">
                     <input
                       type="checkbox"
                       checked={acceptedTermsOfService}
@@ -756,7 +748,7 @@ export default function Checkout() {
 
                 <button
                   onClick={() => navigate("/cart")}
-                  className="w-full mt-3 px-4 py-3 border border-gray-300 dark:border-gray-700 text-gray-900 dark:text-gray-100 font-semibold rounded hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  className="w-full mt-3 px-4 py-3 border border-foreground/20 text-foreground font-semibold rounded hover:bg-foreground/[0.06] transition-colors"
                 >
                   Tillbaka till kundvagn
                 </button>
@@ -765,8 +757,7 @@ export default function Checkout() {
           </div>
         </div>
       </div>
-      <Footer />
-    </div>
+    </PageShell>
   );
 }
 
