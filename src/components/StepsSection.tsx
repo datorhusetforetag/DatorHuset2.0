@@ -23,7 +23,7 @@ const renderStepIcon = (icon: SiteStepItem["icon"]) => {
 
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
   return (
-    <section data-sandbox-id="home-steps" className="bg-[var(--site-muted-bg)] text-[var(--site-text-primary)] transition-colors dark:bg-[var(--site-muted-bg-dark)] dark:text-[var(--site-text-primary-dark)]">
+    <section data-sandbox-id="home-steps" className="section-surface-alt section-seam-top relative text-foreground transition-colors">
       <div className="container mx-auto flex flex-col items-center px-4 py-12 text-center sm:py-16 lg:py-20">
         <div className="mb-8 sm:mb-10">
           <h2 className="mb-3 text-2xl font-bold sm:text-3xl lg:text-4xl">{settings.title}</h2>
@@ -47,7 +47,7 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
         <div className="mt-12 flex flex-col gap-3 sm:flex-row">
           <Link
             to={settings.primaryHref}
-            className="w-full rounded-lg px-8 py-3 text-center font-semibold transition-opacity hover:opacity-90 sm:w-auto"
+            className="btn-glow w-full rounded-lg px-8 py-3 text-center font-semibold transition-opacity hover:opacity-90 sm:w-auto"
             style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
           >
             {settings.primaryLabel}

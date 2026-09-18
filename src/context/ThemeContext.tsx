@@ -11,13 +11,24 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+/*
+ * Mörkt är sajtens grundläge.
+ *
+ * Märket är byggt för mörk bakgrund - cyan och plommon mot märkessvart -
+ * och komponentbilder läser bättre mot mörkt. Ljust läge finns kvar och
+ * fungerar, men är inte längre det man möts av.
+ *
+ * Ett sparat val vinner alltid. Systemets inställning används inte som
+ * utgångspunkt: en besökare med ljust systemtema ska ändå se sajten som
+ * den är tänkt tills hen själv väljer annat.
+ */
 const getPreferredTheme = (): Theme => {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
 
   const stored = localStorage.getItem("theme");
   if (stored === "light" || stored === "dark") return stored;
 
-  return "light";
+  return "dark";
 };
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {

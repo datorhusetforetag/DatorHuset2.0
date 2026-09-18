@@ -313,6 +313,142 @@
   .hero-surface {
     background: var(--gradient-hero);
   }
+
+  /* Djup i ytorna --------------------------------------------------- */
+
+  /*
+   * Starforge lägger aldrig en platt färg över en hel sektion. Bakgrunden
+   * har alltid en svag lutning eller ett ljus som faller in från ett hörn,
+   * så att sektionerna skiljer sig åt utan synliga linjer mellan dem.
+   */
+  .section-surface {
+    position: relative;
+    background: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--surface) / 0.5) 100%);
+  }
+
+  .section-surface-alt {
+    position: relative;
+    background: radial-gradient(
+        90% 70% at 80% 0%,
+        hsl(var(--brand-plum) / 0.09) 0%,
+        transparent 60%
+      ),
+      radial-gradient(70% 60% at 10% 100%, hsl(var(--brand-cyan) / 0.07) 0%, transparent 65%),
+      hsl(var(--surface) / 0.35);
+  }
+
+  /* Tunn ljusrand i överkanten, som skarven i logotypen. Skiljer sektioner
+     åt utan att rita en hård linje. */
+  .section-seam-top::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 0;
+    height: 1px;
+    background: var(--gradient-seam);
+    pointer-events: none;
+  }
+
+  /* Hovring --------------------------------------------------------- */
+
+  /*
+   * Kortet lyfter, ramen tänds i cyan och ett svagt ljus lägger sig
+   * bakom det. Bilden zoomar samtidigt en aning innanför sin ram.
+   */
+  .card-lift {
+    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1), border-color 0.3s ease;
+    will-change: transform;
+  }
+
+  .card-lift:hover {
+    transform: translateY(-6px);
+    border-color: hsl(var(--primary) / 0.55);
+    box-shadow: 0 0 0 1px hsl(var(--primary) / 0.25), 0 18px 45px hsl(var(--brand-black) / 0.55),
+      0 0 45px hsl(var(--primary) / 0.16);
+  }
+
+  /* Bilden ligger i en egen ram med overflow:hidden så att zoomen
+     beskärs i stället för att tränga ut ur kortet. */
+  .media-zoom {
+    overflow: hidden;
+  }
+
+  .media-zoom img {
+    transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .card-lift:hover .media-zoom img,
+  .media-zoom:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Knapp som tänds vid hovring. */
+  .btn-glow {
+    transition: box-shadow 0.28s ease, transform 0.28s ease, background-color 0.28s ease;
+  }
+
+  .btn-glow:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 22px hsl(var(--primary) / 0.32);
+  }
+
+  /* Länk som får en linje att växa fram under sig. */
+  .link-underline {
+    position: relative;
+  }
+
+  .link-underline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -2px;
+    height: 1px;
+    width: 0;
+    background: hsl(var(--primary));
+    transition: width 0.28s ease;
+  }
+
+  .link-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Karusell -------------------------------------------------------- */
+
+  .carousel-dots {
+    @apply flex items-center justify-center gap-2;
+  }
+
+  .carousel-dot {
+    height: 6px;
+    width: 6px;
+    border-radius: var(--radius-pill);
+    background: hsl(var(--foreground) / 0.25);
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  /* Den aktiva pricken växer till ett streck i stället för att bara
+     byta färg - lättare att se var i raden man är. */
+  .carousel-dot[data-active="true"] {
+    width: 22px;
+    background: hsl(var(--primary));
+  }
+
+  .carousel-arrow {
+    @apply inline-flex items-center justify-center rounded-full border border-border bg-card/80 backdrop-blur;
+    transition: border-color 0.25s ease, background-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .carousel-arrow:hover {
+    @apply border-primary bg-card;
+    transform: scale(1.06);
+  }
+
+  .carousel-arrow:disabled {
+    opacity: 0.35;
+    cursor: default;
+    transform: none;
+  }
 }
 
 @layer utilities {

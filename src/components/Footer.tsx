@@ -37,7 +37,7 @@ export const Footer = () => {
                   <Link
                     key={`${column.title}-${link.href}`}
                     to={link.href}
-                    className="block text-sm transition-opacity hover:opacity-85"
+                    className="link-underline inline-block text-sm transition-opacity hover:opacity-85"
                     style={{ color: theme.textColorDark }}
                   >
                     {link.label}

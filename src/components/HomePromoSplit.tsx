@@ -36,7 +36,7 @@ const renderPromoCard = (card: SitePromoCard, campaign: string) => (
             utm_campaign: campaign,
             utm_content: buildUtmContent(card.primaryLabel),
           })}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-opacity hover:opacity-90 sm:w-auto"
+          className="btn-glow inline-flex w-full items-center justify-center gap-2 rounded-lg px-6 py-3 font-semibold transition-opacity hover:opacity-90 sm:w-auto"
           style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
         >
           {card.primaryLabel}
@@ -60,7 +60,7 @@ const renderPromoCard = (card: SitePromoCard, campaign: string) => (
 
 export const HomePromoSplit = ({ settings = DEFAULT_SITE_SETTINGS.homepage.promo }: HomePromoSplitProps) => {
   return (
-    <section data-sandbox-id="home-promo" className="bg-[var(--site-muted-bg)] text-[var(--site-text-primary)] dark:bg-[var(--site-muted-bg-dark)] dark:text-[var(--site-text-primary-dark)]">
+    <section data-sandbox-id="home-promo" className="section-surface section-seam-top relative text-foreground">
       <div className="container mx-auto px-4 py-12 sm:py-16 lg:py-20">
         <div className="mb-10 text-center">
           <p className="text-xs uppercase tracking-[0.4em] text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{settings.eyebrow}</p>

@@ -189,7 +189,7 @@ export const Navbar = () => {
         key={`${item.label}-${item.href}`}
         to={item.href}
         onClick={() => setShowNavMenu(false)}
-        className="block px-4 py-3 text-sm font-semibold hover:bg-gray-50 dark:hover:bg-gray-800"
+        className="block border-l-2 border-transparent px-4 py-3 text-sm font-semibold transition-colors hover:border-primary hover:bg-primary/10 hover:text-primary"
       >
         {item.label}
       </Link>

@@ -28,6 +28,10 @@ export const Hero = ({
   motion = DEFAULT_SITE_SETTINGS.site.motion,
 }: HeroProps) => {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [activeCard, setActiveCard] = useState(0);
+  const [autoplayPaused, setAutoplayPaused] = useState(false);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
   const { products } = useProducts();
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
@@ -105,6 +109,65 @@ export const Hero = ({
     if (!container) return;
     const cardWidth = 384 + 16;
     container.scrollBy({ left: direction === "left" ? -cardWidth : cardWidth, behavior: "smooth" });
+    // Rör besökaren karusellen själv ska den sluta rulla vidare av sig själv.
+    setAutoplayPaused(true);
+  };
+
+  /**
+   * Håller reda på vilket kort som är i sikte, så prickarna under
+   * karusellen visar var man är. Läses ur scrollpositionen i stället för
+   * att räknas fram, eftersom besökaren också kan svepa och skrolla.
+   */
+  useEffect(() => {
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const cardWidth = 384 + 16;
+      const index = Math.round(container.scrollLeft / cardWidth);
+      setActiveCard(index);
+      setAtStart(container.scrollLeft <= 4);
+      setAtEnd(container.scrollLeft + container.clientWidth >= container.scrollWidth - 4);
+    };
+
+    handleScroll();
+    container.addEventListener("scroll", handleScroll, { passive: true });
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [featuredComputers.length]);
+
+  /**
+   * Karusellen rullar vidare av sig själv tills besökaren rör den.
+   *
+   * Pausas vid hovring, vid beröring och när fliken ligger i bakgrunden -
+   * en karusell som byter kort medan någon läser är mest irriterande.
+   * Respekterar också prefers-reduced-motion.
+   */
+  useEffect(() => {
+    if (autoplayPaused) return;
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    const container = carouselRef.current;
+    if (!container) return;
+
+    const timer = window.setInterval(() => {
+      if (document.hidden) return;
+      const cardWidth = 384 + 16;
+      const reachedEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 4;
+      container.scrollTo({
+        left: reachedEnd ? 0 : container.scrollLeft + cardWidth,
+        behavior: "smooth",
+      });
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, [autoplayPaused, featuredComputers.length]);
+
+  const scrollToCard = (index: number) => {
+    const container = carouselRef.current;
+    if (!container) return;
+    container.scrollTo({ left: index * (384 + 16), behavior: "smooth" });
+    setAutoplayPaused(true);
   };
 
   useEffect(() => {
@@ -129,7 +192,7 @@ export const Hero = ({
   }, []);
 
   return (
-    <section data-sandbox-id="home-hero" className="bg-[var(--site-surface-bg)] transition-colors dark:bg-[var(--site-surface-bg-dark)]">
+    <section data-sandbox-id="home-hero" className="section-surface transition-colors">
       <div className="container mx-auto px-4 py-6 sm:py-8">
         <div className="mb-8 grid grid-cols-1 gap-4 sm:mb-12 sm:gap-6 md:grid-cols-3">
           <div
@@ -186,7 +249,7 @@ export const Hero = ({
             </div>
             <div className="relative z-10 flex gap-2">
               <span
-                className="rounded px-3 py-1 text-sm font-bold"
+                className="btn-glow rounded px-3 py-1 text-sm font-bold"
                 style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
               >
                 {settings.secondaryBadge}
@@ -232,7 +295,12 @@ export const Hero = ({
 
         <div className="relative mb-12">
           <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{featuredTitle}</h3>
-          <div className="relative">
+          <div
+            className="relative"
+            onMouseEnter={() => setAutoplayPaused(true)}
+            onMouseLeave={() => setAutoplayPaused(false)}
+            onTouchStart={() => setAutoplayPaused(true)}
+          >
             <div
               ref={carouselRef}
               className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth overscroll-x-contain overscroll-y-none pb-4 pr-4 no-scrollbar"
@@ -241,7 +309,7 @@ export const Hero = ({
                 <Link
                   key={computer.id}
                   to={`/computer/${computer.id}`}
-                  className="w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border transition-all animate-in fade-in slide-in-from-bottom-4 hover:shadow-lg sm:w-80 md:w-96"
+                  className="card-lift w-72 flex-shrink-0 snap-start overflow-hidden rounded-lg border animate-in fade-in slide-in-from-bottom-4 sm:w-80 md:w-96"
                   style={{
                     animationDuration: `${motion.bannerRevealDurationMs}ms`,
                     animationDelay: `${index * motion.heroRevealStaggerMs}ms`,
@@ -251,7 +319,7 @@ export const Hero = ({
                     color: "var(--site-text-primary-current)",
                   }}
                 >
-                  <div className="flex h-44 items-center justify-center sm:h-52" style={{ backgroundColor: "var(--site-muted-bg-current)" }}>
+                  <div className="media-zoom flex h-44 items-center justify-center sm:h-52" style={{ backgroundColor: "var(--site-muted-bg-current)" }}>
                     <img
                       src={computer.image}
                       alt={computer.name}
@@ -282,21 +350,39 @@ export const Hero = ({
             </div>
             <button
               onClick={() => scrollByCards("left")}
-              className="absolute -left-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border p-2 shadow md:flex"
-              style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
-              aria-label="Scroll left"
+              disabled={atStart}
+              className="carousel-arrow absolute -left-14 top-1/2 hidden -translate-y-1/2 p-2 md:flex"
+              aria-label="Föregående"
             >
               <ChevronLeft className="h-6 w-6" />
             </button>
             <button
               onClick={() => scrollByCards("right")}
-              className="absolute -right-14 top-1/2 hidden -translate-y-1/2 items-center justify-center rounded-full border p-2 shadow md:flex"
-              style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
-              aria-label="Scroll right"
+              disabled={atEnd}
+              className="carousel-arrow absolute -right-14 top-1/2 hidden -translate-y-1/2 p-2 md:flex"
+              aria-label="Nästa"
             >
               <ChevronRight className="h-6 w-6" />
             </button>
           </div>
+
+          {/* Prickar som visar var i raden man är. Klickbara, och med
+              riktiga knappar så att de går att nå med tangentbord. */}
+          {featuredComputers.length > 1 && (
+            <div className="carousel-dots mt-5">
+              {featuredComputers.map((computer, index) => (
+                <button
+                  key={`dot-${computer.id}`}
+                  type="button"
+                  onClick={() => scrollToCard(index)}
+                  data-active={index === activeCard}
+                  className="carousel-dot"
+                  aria-label={`Gå till ${computer.name}`}
+                  aria-current={index === activeCard ? "true" : undefined}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>
