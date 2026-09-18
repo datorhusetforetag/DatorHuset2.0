@@ -6301,7 +6301,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
         price_data: {
           currency: "sek",
           product_data: {
-            name: "DB Schenker Fraktalternativ Ombud",
+            name: "Frakt med PostNord till ombud",
           },
           unit_amount: SHIPPING_COST_CENTS,
         },

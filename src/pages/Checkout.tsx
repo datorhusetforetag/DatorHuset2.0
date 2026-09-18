@@ -407,7 +407,7 @@ export default function Checkout() {
                           className="mt-1"
                         />
                         <div>
-                          <p className="font-semibold text-gray-900 dark:text-gray-100">DB Schenker Fraktalternativ Ombud (315 kr)</p>
+                          <p className="font-semibold text-gray-900 dark:text-gray-100">PostNord till ombud (315 kr)</p>
                           <p className="text-sm text-gray-600 dark:text-gray-200">
                             Försäkrad och spårbar frakt. Leverans 1-3 vardagar efter att bygget är klart.
                           </p>

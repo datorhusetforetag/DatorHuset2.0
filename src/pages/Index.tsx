@@ -4,6 +4,7 @@ import { StepsSection } from "@/components/StepsSection";
 import { HomePromoSplit } from "@/components/HomePromoSplit";
 import { TierSection } from "@/components/TierSection";
 import { AmbientBackground } from "@/components/AmbientBackground";
+import { TrustStrip } from "@/components/TrustStrip";
 import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -33,6 +34,7 @@ const Index = () => {
         <TierSection />
         <StepsSection settings={settings.homepage.steps} />
         <HomePromoSplit settings={settings.homepage.promo} />
+        <TrustStrip />
       </main>
       <Footer />
     </div>
