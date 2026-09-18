@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { Reveal } from "./Reveal";
 
 import bronzeTier from "../../images/bronze tier.png";
 import silverTier from "../../images/silver tier.png";
@@ -95,17 +96,17 @@ export const TierSection = () => {
   return (
     <section data-sandbox-id="home-tiers" className="section-surface-alt relative">
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
-        <div className="mb-14 text-center">
+        <Reveal className="mb-14 text-center">
           <p className="eyebrow">Våra nivåer</p>
-          <h2 className="section-title mt-3">Fyra steg, en dator som passar</h2>
+          <h2 className="section-title mt-3 text-4xl sm:text-5xl lg:text-6xl">Fyra steg, en dator som passar</h2>
           <p className="section-lede mx-auto mt-4 text-center">
             Alla byggs för hand, testas och levereras körklara. Skillnaden är hur
             långt du vill gå.
           </p>
-        </div>
+        </Reveal>
 
         {/* Datorn står fritt, panelen ligger bredvid ------------------- */}
-        <div className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-4">
+        <Reveal delay={80} className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-4">
           <div className="relative flex min-h-[320px] items-center justify-center sm:min-h-[420px]">
             <div
               aria-hidden="true"
@@ -173,10 +174,10 @@ export const TierSection = () => {
               </Link>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Förhandsraden: bild och etikett, ingen ruta ----------------- */}
-        <div className="mt-16 grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
+        <Reveal delay={160} className="mt-16 grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
           {TIERS.map((tier) => {
             const isActive = tier.id === active.id;
             return (
@@ -215,7 +216,7 @@ export const TierSection = () => {
               </button>
             );
           })}
-        </div>
+        </Reveal>
       </div>
     </section>
   );

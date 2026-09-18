@@ -1,5 +1,6 @@
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/siteSettings";
 import { SiteIcon } from "./SiteIcon";
+import { Reveal } from "./Reveal";
 
 type StepsSectionProps = {
   settings?: SiteSettings["homepage"]["steps"];
@@ -8,55 +9,90 @@ type StepsSectionProps = {
 /**
  * "Hur DatorHuset kör" - vad som gäller när man handlar här.
  *
- * Formen är hämtad från Starforges motsvarande ruta: liten versal rad,
- * rubrik, kort text, och sedan en rad små fyrkanter med varsin ikon och
- * en kort etikett. Fyrkanterna är avsiktligt små och ordknappa - de ska
- * gå att läsa i ett svep, inte läsas igenom.
+ * Det här är sidans brytpunkt. Resten av startsidan är centrerad rubrik
+ * följd av ett rutnät, och fyra sådana i rad gör att ögat slutar titta.
+ * Därför ligger den här som ett mörkt band tvärs över hela sidan, med
+ * rubriken vänsterställd i en smal spalt och punkterna staplade i en
+ * bredare - inte som ett rutnät alls.
  *
- * Varje punkt har sin egen kulör så raden inte blir en grå vägg. Det är
- * också deras grepp: fyra ikoner i fyra olika färger.
+ * Bandet är mörkt i både ljust och mörkt läge, precis som sidfoten, så
+ * färgerna är satta som fasta värden i stället för tokens.
+ *
+ * Varje punkt har sin egen kulör och ett stort blekt nummer, så raden
+ * blir läsbar i ett svep i stället för en grå vägg.
  */
 
-/** Kulör per position i raden, i samma ordning som punkterna står. */
+/** Kulör per position i listan, i samma ordning som punkterna står. */
 const ACCENTS = ["#3FD9F5", "#B26BDE", "#E3A567", "#7FD98F"];
 
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
   return (
-    <section data-sandbox-id="home-steps" className="section-surface-alt relative text-foreground">
-      <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center sm:py-28 lg:py-32">
-        <div className="max-w-2xl">
-          {settings.eyebrow && <p className="eyebrow">{settings.eyebrow}</p>}
-          <h2 className="section-title mt-3 text-3xl sm:text-4xl">{settings.title}</h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            {settings.description}
-          </p>
-        </div>
+    <section
+      data-sandbox-id="home-steps"
+      className="relative border-y border-white/10 text-[#E8E4F0]"
+      style={{
+        backgroundColor: "#140B1D",
+        backgroundImage:
+          "radial-gradient(90% 70% at 15% 0%, rgba(110, 43, 146, 0.45) 0%, transparent 65%), radial-gradient(70% 60% at 95% 100%, rgba(63, 217, 245, 0.12) 0%, transparent 60%)",
+      }}
+    >
+      <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
+          {/* Rubriken står kvar medan punkterna rullar förbi */}
+          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            {settings.eyebrow && (
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#A99FC0]">
+                {settings.eyebrow}
+              </p>
+            )}
+            <h2 className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
+              {settings.title}
+            </h2>
+            <p className="mt-5 max-w-md text-base leading-relaxed text-[#A99FC0]">
+              {settings.description}
+            </p>
+          </Reveal>
 
-        <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-4 sm:gap-5 md:grid-cols-4">
-          {settings.items.map((step, index) => {
-            const accent = ACCENTS[index % ACCENTS.length];
-            return (
-              <div
-                key={step.title}
-                className="card-lift flex flex-col items-center gap-3 rounded-lg border border-border bg-card/60 px-4 py-6 text-center"
-              >
-                <span
-                  className="flex h-11 w-11 items-center justify-center rounded-xl"
-                  style={{ backgroundColor: `${accent}1F`, color: accent }}
+          {/* Punkterna: staplade, skilda av hårfina linjer */}
+          <ul className="divide-y divide-white/10 border-t border-white/10">
+            {settings.items.map((step, index) => {
+              const accent = ACCENTS[index % ACCENTS.length];
+              return (
+                <Reveal
+                  as="li"
+                  key={step.title}
+                  delay={index * 90}
+                  className="group flex items-start gap-5 py-7 sm:gap-7 sm:py-8"
                 >
-                  <SiteIcon icon={step.icon} className="h-[22px] w-[22px]" />
-                </span>
-                <span className="text-sm font-semibold leading-snug text-foreground">
-                  {step.title}
-                </span>
-                {step.description && (
-                  <span className="text-xs leading-snug text-muted-foreground">
-                    {step.description}
+                  <span
+                    aria-hidden="true"
+                    className="select-none font-display text-3xl font-bold leading-none tabular-nums opacity-30 transition-opacity duration-300 group-hover:opacity-70 sm:text-4xl"
+                    style={{ color: accent }}
+                  >
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                )}
-              </div>
-            );
-          })}
+
+                  <span
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-transform duration-300 group-hover:-translate-y-0.5"
+                    style={{ backgroundColor: `${accent}1F`, color: accent }}
+                  >
+                    <SiteIcon icon={step.icon} className="h-[22px] w-[22px]" />
+                  </span>
+
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-display text-lg font-bold leading-snug tracking-tight sm:text-xl">
+                      {step.title}
+                    </span>
+                    {step.description && (
+                      <span className="mt-1.5 block text-sm leading-relaxed text-[#A99FC0]">
+                        {step.description}
+                      </span>
+                    )}
+                  </span>
+                </Reveal>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </section>

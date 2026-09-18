@@ -16,6 +16,8 @@
  * strukturen är densamma.
  */
 
+import { Reveal } from "./Reveal";
+
 /** Vit platta som märket ligger på, som i förlagan. */
 const Chip = ({ children, title }: { children: React.ReactNode; title: string }) => (
   <li
@@ -106,7 +108,7 @@ export const TrustStrip = () => {
       className="relative z-10 border-t border-white/10"
     >
       <div className="container mx-auto px-4 py-12 sm:py-14">
-        <div className="flex flex-col gap-6">
+        <Reveal className="flex flex-col gap-6">
           {/* Betalning ---------------------------------------------- */}
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-3 text-center">
             <h2 className="text-sm font-semibold text-foreground/80">
@@ -137,7 +139,7 @@ export const TrustStrip = () => {
               </Chip>
             </ul>
           </div>
-        </div>
+        </Reveal>
 
         <p className="mt-6 text-center text-xs text-muted-foreground">
           Betalningen hanteras av Stripe. Vi ser aldrig dina kortuppgifter.

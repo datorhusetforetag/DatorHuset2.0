@@ -442,6 +442,53 @@
     width: 100%;
   }
 
+  /* Inrullning ------------------------------------------------------ */
+
+  /*
+   * Hör ihop med <Reveal>. Utgångsläget är osynligt och en bit förskjutet;
+   * data-visible sätts när elementet rullats in och allt går tillbaka till
+   * noll.
+   *
+   * Endast opacity och transform ändras, så inrullningen kostar ingenting
+   * i layout. Kurvan är samma som korten använder, så sidan rör sig likadant
+   * överallt.
+   */
+  .reveal {
+    opacity: 0;
+    transition:
+      opacity 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal-up {
+    transform: translate3d(0, 28px, 0);
+  }
+
+  .reveal-down {
+    transform: translate3d(0, -20px, 0);
+  }
+
+  .reveal-none {
+    transform: none;
+  }
+
+  .reveal[data-visible] {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Mindre rörelse: innehållet ligger synligt direkt, ingen förskjutning
+     och ingen fördröjning som håller det gömt. */
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+      transition-delay: 0ms !important;
+    }
+  }
+
   /* Karusell -------------------------------------------------------- */
 
   .carousel-dots {
