@@ -23,11 +23,18 @@ import { useAuth } from "@/context/AuthContext";
 import { getPreviewPathOverride } from "@/lib/previewMode";
 
 /**
- * Sidhuvudet, i två våningar.
+ * Sidhuvudet: en rad.
  *
- * Förlagan är Starforge Systems: en smal kulörad remsa överst med ett
- * meddelande och några små länkar, och under den en mörk rad med
- * logotypen till vänster, menyn i mitten och ikonerna till höger.
+ * Formen är Starforge Systems - logotypen till vänster, menyn i mitten,
+ * ikonerna till höger.
+ *
+ * Deras huvud har också en kulörad remsa överst med ett erbjudande. Den
+ * fanns här ett tag och är borttagen igen. En sådan remsa är till för
+ * att ropa ut något som är nytt just nu, och har man inget att ropa ut
+ * blir den en rad som alltid står där och säger samma sak - alltså
+ * något ögat slutar se efter andra besöket, men som ändå tar plats
+ * överst på varje sida. Vill du ha tillbaka den när det finns en riktig
+ * kampanj att visa ligger den i historiken.
  *
  * VAD SOM ÄNDRADES OCH VARFÖR
  *
@@ -52,9 +59,8 @@ import { getPreviewPathOverride } from "@/lib/previewMode";
  * bara klick hade känts trögt med mus. Varje knapp har aria-expanded,
  * så en skärmläsare vet om menyn står öppen.
  *
- * TVÅ VÅNINGAR, INTE TRE. Remsan och raden är allt. Den gamla
- * mobilvyn hade dessutom en tredje rad med sökfältet, vilket åt upp en
- * fjärdedel av skärmen innan innehållet ens börjat.
+ * EN RAD. Den gamla mobilvyn hade tre: logotyp, sökfält och meny, och
+ * åt upp en fjärdedel av skärmen innan innehållet ens börjat.
  */
 
 /* ------------------------------------------------------------------ *
@@ -116,21 +122,6 @@ const NAV: NavEntry[] = [
       { label: "Integritetspolicy", href: "/privacy-policy" },
     ],
   },
-];
-
-/* Remsan överst. Inget nytt löfte - båda påståendena står redan på
-   startsidan och i villkoren. */
-const PROMO = {
-  headline: "Byggd för hand i Spånga",
-  body: "Varje dator monteras och provkörs innan den lämnar oss.",
-  ctaLabel: "SE VÅRA DATORER",
-  ctaHref: "/products?clear_filters=1",
-};
-
-const UTILITY_LINKS: NavLeaf[] = [
-  { label: "Kundservice", href: "/kundservice" },
-  { label: "Vanliga frågor", href: "/faq" },
-  { label: "Service", href: "/service-reparation" },
 ];
 
 /* ------------------------------------------------------------------ *
@@ -453,36 +444,6 @@ export const Navbar = () => {
       data-sandbox-id="global-chrome"
       className="sticky left-0 right-0 top-0 z-50"
     >
-      {/* Remsan ------------------------------------------------------ */}
-      <div className="site-promo-bar">
-        <div className="container mx-auto flex items-center gap-4 px-4 py-2">
-          {/* Meddelandet mitt i, länkarna till höger. På telefon får
-              bara meddelandet plats, och det är rätt prioritering. */}
-          <p className="site-promo-bar__message">
-            <span className="font-bold">{PROMO.headline}</span>
-            <span className="hidden opacity-80 sm:inline">{PROMO.body}</span>
-            <Link to={PROMO.ctaHref} className="site-promo-bar__cta">
-              {PROMO.ctaLabel}
-              <span aria-hidden="true">›</span>
-            </Link>
-          </p>
-
-          <div className="ml-auto hidden shrink-0 items-center gap-6 lg:flex">
-            {isAdmin && (
-              <a href={navigation.adminPortalHref} className="site-promo-bar__link">
-                <ShieldCheck aria-hidden="true" className="h-3.5 w-3.5" />
-                Admin
-              </a>
-            )}
-            {UTILITY_LINKS.map((link) => (
-              <Link key={link.href} to={link.href} className="site-promo-bar__link">
-                {link.label}
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Raden ------------------------------------------------------- */}
       <div className="site-nav-bar">
         <div className="container mx-auto px-4">
@@ -580,6 +541,21 @@ export const Navbar = () => {
 
             {/* Höger: ikonerna */}
             <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
+              {/* Adminlänken bodde i remsan som togs bort. Den hör inte
+                  hemma i menyn - den är inte en sida i butiken - så den
+                  ligger som en ikon här, och bara för den som är
+                  inloggad som admin. */}
+              {isAdmin && (
+                <a
+                  href={navigation.adminPortalHref}
+                  aria-label="Adminpanelen"
+                  title="Adminpanelen"
+                  className="site-nav-bar__icon hidden sm:inline-flex"
+                >
+                  <ShieldCheck className="h-5 w-5" />
+                </a>
+              )}
+
               <button
                 type="button"
                 onClick={() => setSearchOpen((prev) => !prev)}
