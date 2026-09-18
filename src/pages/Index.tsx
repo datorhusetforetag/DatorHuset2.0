@@ -27,7 +27,7 @@ const Index = () => {
       />
       <Navbar />
       <main className="pt-0">
-        <Hero settings={settings.homepage.hero} motion={settings.site.motion} />
+        <Hero />
         <TierSection />
         <StepsSection settings={settings.homepage.steps} />
         <HomePromoSplit settings={settings.homepage.promo} />
