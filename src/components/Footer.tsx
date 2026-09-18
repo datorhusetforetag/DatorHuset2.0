@@ -31,7 +31,7 @@ export const Footer = () => {
   return (
     <footer
       data-sandbox-id="global-footer"
-      className="relative overflow-hidden border-t border-white/10 text-[#E8E4F0]"
+      className="relative z-10 overflow-hidden border-t border-white/10 text-[#E8E4F0]"
       style={{
         // Basen är nästan svart med en dragning åt plommon. Ljuset stiger
         // underifrån i mitten och tonar ut mot kanterna.

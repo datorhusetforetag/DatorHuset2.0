@@ -513,6 +513,68 @@
   }
 }
 
+/* Ambient ------------------------------------------------------------
+ *
+ * Ljusen driver långsamt över ytan så att bakgrunden lever utan att
+ * dra till sig blicken. Bara transform och opacity animeras - båda
+ * hanteras av grafikkortet och tvingar aldrig om layouten. Att i stället
+ * animera background-position på en stor gradient hade målat om hela
+ * ytan varje bildruta.
+ */
+@keyframes drift-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(6%, -4%, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-4%, 5%, 0) scale(0.94);
+  }
+}
+
+@keyframes drift-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    transform: translate3d(-7%, 4%, 0) scale(1.15);
+  }
+  75% {
+    transform: translate3d(5%, -5%, 0) scale(0.92);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+/* Ljusstrimma som faller uppifrån och ned, som Starforges smala streck. */
+@keyframes streak-fall {
+  0% {
+    transform: translate3d(0, -110%, 0);
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  88% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(0, 110%, 0);
+    opacity: 0;
+  }
+}
+
 @keyframes float {
   0%,
   100% {

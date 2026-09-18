@@ -3,6 +3,7 @@ import { Hero } from "@/components/Hero";
 import { StepsSection } from "@/components/StepsSection";
 import { HomePromoSplit } from "@/components/HomePromoSplit";
 import { TierSection } from "@/components/TierSection";
+import { AmbientBackground } from "@/components/AmbientBackground";
 import { Footer } from "@/components/Footer";
 import { SeoHead } from "@/components/SeoHead";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -25,8 +26,9 @@ const Index = () => {
         url="https://datorhuset.se/"
         type="website"
       />
+      <AmbientBackground />
       <Navbar />
-      <main className="pt-0">
+      <main className="relative z-10 pt-0">
         <Hero />
         <TierSection />
         <StepsSection settings={settings.homepage.steps} />
