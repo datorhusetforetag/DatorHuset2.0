@@ -113,11 +113,17 @@ export const TierSection = () => {
           <div className="grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:p-14">
             {/* Datorn svävar över sitt eget ljus */}
             <div className="relative flex min-h-[260px] items-center justify-center sm:min-h-[340px]">
+              {/*
+                Ljuset måste tona ut helt innan rutan tar slut. Låg det
+                med centrum i underkanten kapades nedre halvan av
+                gradienten av divens egen kant, och det syntes som en rak
+                linje tvärs över golvet.
+              */}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-x-6 bottom-6 h-32 transition-all duration-500"
+                className="pointer-events-none absolute inset-0 transition-all duration-500"
                 style={{
-                  background: `radial-gradient(60% 100% at 50% 100%, rgba(${active.glow}, 0.5) 0%, rgba(${active.glow}, 0.16) 45%, transparent 72%)`,
+                  background: `radial-gradient(42% 30% at 50% 76%, rgba(${active.glow}, 0.5) 0%, rgba(${active.glow}, 0.18) 42%, transparent 70%)`,
                 }}
               />
               <img
@@ -199,7 +205,7 @@ export const TierSection = () => {
                     className="pointer-events-none absolute inset-0 transition-opacity duration-300"
                     style={{
                       opacity: isActive ? 0.9 : 0.35,
-                      background: `radial-gradient(55% 55% at 50% 65%, rgba(${tier.glow}, 0.55) 0%, transparent 70%)`,
+                      background: `radial-gradient(42% 32% at 50% 76%, rgba(${tier.glow}, 0.6) 0%, transparent 70%)`,
                     }}
                   />
                   <img

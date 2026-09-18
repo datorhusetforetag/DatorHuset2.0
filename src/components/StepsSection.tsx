@@ -1,64 +1,62 @@
-import { Link } from "react-router-dom";
-import { DEFAULT_SITE_SETTINGS, type SiteSettings, type SiteStepItem } from "@/lib/siteSettings";
+import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/siteSettings";
 import { SiteIcon } from "./SiteIcon";
 
 type StepsSectionProps = {
   settings?: SiteSettings["homepage"]["steps"];
 };
 
-const renderStepIcon = (icon: SiteStepItem["icon"]) => {
-  if (icon === "refresh-euro") {
-    return (
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:text-primary">
-        <SiteIcon icon={icon} className="h-7 w-7" />
-      </div>
-    );
-  }
-  return (
-    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:text-primary">
-      <SiteIcon icon={icon} className="h-7 w-7" />
-    </div>
-  );
-};
+/**
+ * "Hur DatorHuset kör" - vad som gäller när man handlar här.
+ *
+ * Formen är hämtad från Starforges motsvarande ruta: liten versal rad,
+ * rubrik, kort text, och sedan en rad små fyrkanter med varsin ikon och
+ * en kort etikett. Fyrkanterna är avsiktligt små och ordknappa - de ska
+ * gå att läsa i ett svep, inte läsas igenom.
+ *
+ * Varje punkt har sin egen kulör så raden inte blir en grå vägg. Det är
+ * också deras grepp: fyra ikoner i fyra olika färger.
+ */
+
+/** Kulör per position i raden, i samma ordning som punkterna står. */
+const ACCENTS = ["#3FD9F5", "#B26BDE", "#E3A567", "#7FD98F"];
 
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
   return (
-    <section data-sandbox-id="home-steps" className="section-surface-alt section-seam-top relative text-foreground transition-colors">
+    <section data-sandbox-id="home-steps" className="section-surface-alt relative text-foreground">
       <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center sm:py-28 lg:py-32">
-        <div className="mb-8 sm:mb-10">
-          <h2 className="mb-3 text-2xl font-bold sm:text-3xl lg:text-4xl">{settings.title}</h2>
-          <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)] sm:text-base">{settings.description}</p>
+        <div className="max-w-2xl">
+          {settings.eyebrow && <p className="eyebrow">{settings.eyebrow}</p>}
+          <h2 className="section-title mt-3 text-3xl sm:text-4xl">{settings.title}</h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            {settings.description}
+          </p>
         </div>
 
-        <div className="grid w-full max-w-6xl grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3">
-          {settings.items.map((step) => (
-            <div
-              key={step.title}
-              className="flex flex-col items-start gap-4 rounded-xl border px-6 py-8 text-left shadow-[0_20px_60px_rgba(0,0,0,0.05)] dark:shadow-[0_10px_30px_rgba(0,0,0,0.25)] sm:items-center sm:px-8 sm:py-10 sm:text-center"
-              style={{ borderColor: "var(--site-card-border-current)", backgroundColor: "var(--site-card-bg-current)" }}
-            >
-              {renderStepIcon(step.icon)}
-              <h3 className="text-xl font-bold">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)]">{step.description}</p>
-            </div>
-          ))}
-        </div>
-
-        <div className="mt-12 flex flex-col gap-3 sm:flex-row">
-          <Link
-            to={settings.primaryHref}
-            className="btn-glow w-full rounded-lg px-8 py-3 text-center font-semibold transition-opacity hover:opacity-90 sm:w-auto"
-            style={{ backgroundColor: "var(--site-brand-bg)", color: "var(--site-brand-text)" }}
-          >
-            {settings.primaryLabel}
-          </Link>
-          <Link
-            to={settings.secondaryHref}
-            className="w-full rounded-lg px-8 py-3 text-center font-semibold transition-opacity hover:opacity-90 sm:w-auto"
-            style={{ backgroundColor: "var(--site-accent-bg)", color: "var(--site-accent-text)" }}
-          >
-            {settings.secondaryLabel}
-          </Link>
+        <div className="mt-12 grid w-full max-w-3xl grid-cols-2 gap-4 sm:gap-5 md:grid-cols-4">
+          {settings.items.map((step, index) => {
+            const accent = ACCENTS[index % ACCENTS.length];
+            return (
+              <div
+                key={step.title}
+                className="card-lift flex flex-col items-center gap-3 rounded-lg border border-border bg-card/60 px-4 py-6 text-center"
+              >
+                <span
+                  className="flex h-11 w-11 items-center justify-center rounded-xl"
+                  style={{ backgroundColor: `${accent}1F`, color: accent }}
+                >
+                  <SiteIcon icon={step.icon} className="h-[22px] w-[22px]" />
+                </span>
+                <span className="text-sm font-semibold leading-snug text-foreground">
+                  {step.title}
+                </span>
+                {step.description && (
+                  <span className="text-xs leading-snug text-muted-foreground">
+                    {step.description}
+                  </span>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

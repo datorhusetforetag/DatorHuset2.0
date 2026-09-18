@@ -136,28 +136,34 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
       featuredInventoryLabel: "I lager",
     },
     steps: {
-      title: "Att köpa en riktigt bra dator har aldrig varit så lätt",
-      description: "Så här köper du din dator via vår tjänst",
+      eyebrow: "Så kör vi",
+      title: "Hur DatorHuset kör",
+      description:
+        "Varje dator byggs för hand, testas och packas av oss. Handlar du här ska det kännas tryggt hela vägen - före, under och efter köpet.",
       primaryLabel: "Köp din dator",
       primaryHref: "/products",
       secondaryLabel: "Gör en custom bygg",
       secondaryHref: "/custom-bygg",
       items: [
         {
-          title: "1. Gör en preorder",
-          description: "Hitta ett brett utbud av datorer eller skicka in ett custom-bygge du vill ha.",
-          icon: "monitor",
-        },
-        {
-          title: "2. Vi bygger och packar din dator",
-          description:
-            "Vi köper komponenterna och bygger datorn. Byggtiden varierar från 3 dagar till några veckor beroende på om du beställer en helt ny dator, en dator med begagnade komponenter eller en custom-bygg. Se FAQ för mer information.",
-          icon: "package",
-        },
-        {
-          title: "3. Leverans/hämta upp",
-          description: "Datorn är byggd och klar. Hämta upp den eller välj fraktalternativ.",
+          title: "14 dagars ångerrätt",
+          description: "Vid frakt",
           icon: "refresh-euro",
+        },
+        {
+          title: "Reklamera inom 3 år",
+          description: "Enligt konsumentköplagen",
+          icon: "shield",
+        },
+        {
+          title: "Byggda av proffs",
+          description: "För hand, i Spånga",
+          icon: "hammer",
+        },
+        {
+          title: "Bästa priserna",
+          description: "På marknaden",
+          icon: "badge-percent",
         },
       ],
     },

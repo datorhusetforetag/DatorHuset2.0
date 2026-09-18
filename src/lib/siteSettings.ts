@@ -145,6 +145,8 @@ export type SiteSettings = {
       featuredInventoryLabel: string;
     };
     steps: {
+      /** Liten versal rad över rubriken. Valfri. */
+      eyebrow?: string;
       title: string;
       description: string;
       primaryLabel: string;

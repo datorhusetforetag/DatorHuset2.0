@@ -203,6 +203,9 @@ export const siteSettingsSchema = z.object({
       featuredInventoryLabel: siteTextSchema(40),
     }),
     steps: z.object({
+      // Liten versal rad över rubriken. Valfri, så att tidigare sparade
+      // inställningar utan fältet fortsätter validera.
+      eyebrow: siteTextSchema(80).optional(),
       title: siteTextSchema(160),
       description: siteTextSchema(220),
       primaryLabel: siteTextSchema(80),
