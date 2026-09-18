@@ -51,15 +51,10 @@ export const Footer = () => {
               loading="lazy"
               decoding="async"
             />
-            <div>
-              <Wordmark
-                name={settings.site.navigation.brandName}
-                className="font-display text-xl font-bold tracking-tight"
-              />
-              <p className="mt-2 max-w-[24ch] text-sm leading-relaxed text-[#A99FC0]">
-                Datorer byggda för hand i Spånga, Stockholm.
-              </p>
-            </div>
+            <Wordmark
+              name={settings.site.navigation.brandName}
+              className="font-display text-xl font-bold tracking-tight"
+            />
           </div>
 
           {/* Länkkolumner ------------------------------------------- */}
