@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from "react";
+
 import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/siteSettings";
 import { SiteIcon } from "./SiteIcon";
 import { Reveal } from "./Reveal";
@@ -27,7 +29,53 @@ type StepsSectionProps = {
 /** Kulör per position i listan, i samma ordning som punkterna står. */
 const ACCENTS = ["#3FD9F5", "#B26BDE", "#E3A567", "#7FD98F"];
 
+/*
+ * Uppräkningen: alla tal stannar samtidigt.
+ *
+ * Tidigare styrdes längden av talets storlek, så fjortonde räknade i
+ * knappt tre sekunder medan trean var framme efter en. Raderna kom
+ * dessutom in förskjutna. Resultatet var att "Reklamera inom 3 år" stod
+ * stilla och väntade i över en sekund medan "14 dagars ångerrätt"
+ * fortfarande räknade - två rader bredvid varandra där den ena är klar
+ * och den andra inte läses som att något hakat upp sig.
+ *
+ * Nu får varje rad en längd som är den gemensamma sluttiden minus dess
+ * egen förskjutning. Rad ett räknar hela tiden, rad två något kortare,
+ * och eftersom rad två också börjar senare landar de på samma bildruta.
+ * Trean räknar alltså långsammare än förut, vilket är hela poängen.
+ *
+ * Starten kommer utifrån, gemensam för hela listan. Med var sin
+ * observatör startade raderna några tiotals millisekunder isär, och då
+ * håller uträkningen inte.
+ */
+const COUNT_UP_FINISH_MS = 2700;
+const COUNT_UP_STAGGER_MS = 90;
+
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
+  const listRef = useRef<HTMLUListElement | null>(null);
+  const [counting, setCounting] = useState(false);
+
+  useEffect(() => {
+    const node = listRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") {
+      setCounting(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setCounting(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section data-sandbox-id="home-steps" className="relative text-foreground">
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
@@ -48,7 +96,10 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
           </Reveal>
 
           {/* Punkterna: staplade, skilda av hårfina linjer */}
-          <ul className="divide-y divide-foreground/10 border-t border-foreground/10">
+          <ul
+            ref={listRef}
+            className="divide-y divide-foreground/10 border-t border-foreground/10"
+          >
             {settings.items.map((step, index) => {
               const accent = ACCENTS[index % ACCENTS.length];
               return (
@@ -75,7 +126,9 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
 
                   <span className="min-w-0 flex-1">
                     <CountUp
-                      delay={index * 90}
+                      start={counting}
+                      delay={index * COUNT_UP_STAGGER_MS}
+                      duration={COUNT_UP_FINISH_MS - index * COUNT_UP_STAGGER_MS}
                       className="block font-display text-lg font-bold leading-snug tracking-tight sm:text-xl"
                     >
                       {step.title}

@@ -257,6 +257,21 @@ export default function Products() {
   const [searchParams] = useSearchParams();
   const activeCategory = searchParams.get("category")?.toLowerCase() || "";
   const shouldClearFilters = searchParams.get("clear_filters") === "1";
+
+  /*
+   * Navigeringens två ingångar till sortimentet.
+   *
+   *   ?stock=in-stock   maskiner som står på hyllan
+   *   ?stock=preorder   maskiner som byggs när delarna kommer in
+   *   ?use=gaming       speldatorer
+   *   ?use=workstation  arbetsstationer
+   *
+   * Lagerstatusen kommer från Supabase och inte från listan i koden, så
+   * den är sann i stunden - men den hämtas efter att sidan ritats. Se
+   * stockMatch längre ned för vad som händer under tiden.
+   */
+  const stockFilter = searchParams.get("stock")?.toLowerCase() || "";
+  const useFilter = searchParams.get("use")?.toLowerCase() || "";
   const hasAppliedCategory = useRef(false);
   const hasAppliedQueryFilters = useRef(false);
   const [priceRange, setPriceRange] = useState([0, DEFAULT_PRODUCTS_PRICE_MAX]);
@@ -723,7 +738,30 @@ export default function Products() {
           selectedTiers.length === 0 ||
           selectedTiers.some((label) => tierLabelMap.get(label)?.includes(variant.tier));
 
-        return categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch;
+        /* Lagerstatus.
+         *
+         * Medan lagret hämtas filtrerar vi inte bort någonting. Annars
+         * hade "Redo att skickas" blinkat tom i en halv sekund innan
+         * svaret kom, och en tom sida som sedan fylls är svårare att
+         * förstå än en full sida som krymper. */
+        const stockMatch = (() => {
+          if (!stockFilter || inventoryLoading) return true;
+          const inventoryId = getInventoryProductId(card.computer, card.useUsedVariant);
+          const inventory = inventoryId ? inventoryMap[inventoryId] : undefined;
+          const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
+          const canPreorder = Boolean(inventory?.is_preorder ?? inventory?.allow_preorder);
+          if (stockFilter === "in-stock") return inStock;
+          if (stockFilter === "preorder") return !inStock && canPreorder;
+          return true;
+        })();
+
+        /* Utan use-fält räknas maskinen som speldator. Se kommentaren
+           vid fältet i src/data/computers.ts. */
+        const useMatch = !useFilter || (card.computer.use ?? "gaming") === useFilter;
+
+        return (
+          categoryMatch && withinPrice && gpuMatch && cpuMatch && tierMatch && stockMatch && useMatch
+        );
       })
       .sort((a, b) => {
         const aInventoryId = getInventoryProductId(a.card.computer, a.card.useUsedVariant);
@@ -747,6 +785,9 @@ export default function Products() {
   }, [
     activeCategory,
     inventoryMap,
+    inventoryLoading,
+    stockFilter,
+    useFilter,
     priceRange,
     selectedGPUs,
     selectedCPUs,
@@ -822,6 +863,63 @@ export default function Products() {
           }))
         : fallbackBanner.stickers,
   };
+
+  /*
+   * Rubriken när man kommit hit via navigeringen.
+   *
+   * Utan det här hade "Redo att skickas" landat på en sida vars
+   * banderoll säger "Topplistan" - alltså något annat än det man
+   * klickade på, vilket får sidan att kännas som att den inte lyssnade.
+   *
+   * Texterna är inte nya löften. Leveranstiden står redan i FAQ:n
+   * ("normalt 3-5 arbetsdagar för lagervaror") och definitionen av
+   * förbeställning likaså.
+   */
+  const navView = (() => {
+    if (!stockFilter && !useFilter) return null;
+
+    const noun =
+      useFilter === "workstation"
+        ? "arbetsstationer"
+        : useFilter === "gaming"
+          ? "speldatorer"
+          : "datorer";
+
+    if (stockFilter === "in-stock") {
+      return {
+        eyebrow: "Redo att skickas",
+        title: `Färdiga ${noun} på hyllan`,
+        description:
+          "Står färdigbyggda hos oss och skickas normalt inom 3-5 arbetsdagar.",
+      };
+    }
+
+    if (stockFilter === "preorder") {
+      return {
+        eyebrow: "Preorder",
+        title: `Förbeställ ${noun}`,
+        description:
+          "Inte i lager just nu. Vi bygger och levererar så snart delarna finns - hör av dig om du vill ha en tidsuppskattning först.",
+      };
+    }
+
+    return {
+      eyebrow: useFilter === "workstation" ? "Workstation" : "Gaming",
+      title: useFilter === "workstation" ? "Arbetsstationer" : "Speldatorer",
+      description:
+        useFilter === "workstation"
+          ? "Byggda för arbete som tar tid: rendering, kompilering och annat som får gå på natten."
+          : "Byggda för spel, handmonterade och provkörda innan de packas.",
+    };
+  })();
+
+  if (navView) {
+    banner.eyebrow = navView.eyebrow;
+    banner.title = navView.title;
+    banner.description = navView.description;
+    banner.stickers = undefined;
+  }
+
   const bannerAccent = CATEGORY_ACCENTS[bannerKey] ?? BANNER_ACCENTS.buy;
   const leadBannerImage = banner.images[0];
   const secondaryBannerImage = banner.images[1];
@@ -853,39 +951,20 @@ export default function Products() {
               </Link>
             </>
           }
-          aside={
-            <div className="relative flex items-center justify-center">
-              {/* Datorn står fritt med ett ljus bakom sig, precis som
-                  nivåerna på startsidan. Ingen ram, ingen platta. */}
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background: `radial-gradient(48% 42% at 52% 54%, ${bannerAccent}40 0%, transparent 72%)`,
-                }}
-              />
-              <img
-                src={leadBannerImage}
-                alt=""
-                aria-hidden="true"
-                className="relative max-h-[220px] w-auto object-contain sm:max-h-[300px] lg:max-h-[340px]"
-                loading="eager"
-                decoding="async"
-                style={{ filter: "drop-shadow(0 26px 44px rgba(0, 0, 0, 0.5))" }}
-              />
-              {secondaryBannerImage ? (
-                <img
-                  src={secondaryBannerImage}
-                  alt=""
-                  aria-hidden="true"
-                  className="absolute -right-4 bottom-0 hidden max-h-[150px] w-auto object-contain opacity-90 lg:block"
-                  loading="lazy"
-                  decoding="async"
-                  style={{ filter: "drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55))" }}
-                />
-              ) : null}
-            </div>
-          }
+          /*
+           * Ingen produktbild bredvid rubriken.
+           *
+           * Tanken var att datorn skulle stå fritt i rummet som på
+           * startsidan. Men bilderna är fotograferade i en miljö och
+           * inte frilagda - de har egen bakgrund och eget ljus - så
+           * mot banderollens foto blev det bara en rektangel klistrad
+           * ovanpå en annan bild. En skugga gör inte en fyrkant
+           * svävande, den gör den till en fyrkant med skugga.
+           *
+           * Rubriken får hela bredden i stället, och banderollens eget
+           * foto syns i stället för att skymmas. Datorerna finns
+           * några hundra pixlar längre ned, ordentligt presenterade.
+           */
         />
 
         <div className="container mx-auto px-4 lg:hidden mt-4 sm:mt-6">
@@ -1179,10 +1258,37 @@ export default function Products() {
               </div>
 
               {filteredProducts.length === 0 ? (
-                <div className="flex h-96 items-center justify-center rounded border border-foreground/10 bg-foreground/[0.04] dark:border-foreground/10 dark:bg-background">
-                  <div className="text-center">
-                    <p className="text-lg font-semibold text-foreground">Inga datorer hittades</p>
-                    <p className="text-muted-foreground">Prova att justera dina filter</p>
+                /* Tomma läget säger vad som faktiskt hände. "Prova att
+                   justera dina filter" är fel svar när man klickat på
+                   Workstation i menyn och det inte finns några - då är
+                   det inte filtren som är i vägen, det är sortimentet,
+                   och då ska sidan säga det och peka vidare. */
+                <div className="flex min-h-[20rem] flex-col items-center justify-center rounded-lg border border-foreground/10 bg-foreground/[0.04] px-6 py-16 text-center">
+                  <p className="font-display text-lg font-bold text-foreground">
+                    {useFilter === "workstation"
+                      ? "Inga arbetsstationer just nu"
+                      : stockFilter === "in-stock"
+                        ? "Inget färdigbyggt på hyllan just nu"
+                        : stockFilter === "preorder"
+                          ? "Inget att förbeställa just nu"
+                          : "Inga datorer hittades"}
+                  </p>
+                  <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+                    {useFilter === "workstation"
+                      ? "Vi bygger dem på beställning. Beskriv vad maskinen ska göra så sätter vi ihop ett förslag."
+                      : stockFilter
+                        ? "Sortimentet ändras löpande. Titta på hela listan, eller bygg en egen precis som du vill ha den."
+                        : "Prova att justera dina filter."}
+                  </p>
+                  <div className="mt-8 flex flex-wrap justify-center gap-3">
+                    {(stockFilter || useFilter) && (
+                      <Link to="/products?clear_filters=1" className="btn-primary">
+                        Se alla datorer
+                      </Link>
+                    )}
+                    <Link to="/custom-bygg" className="btn-secondary">
+                      Bygg din egen
+                    </Link>
                   </div>
                 </div>
               ) : (

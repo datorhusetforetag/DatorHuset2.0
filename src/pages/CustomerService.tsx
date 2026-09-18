@@ -81,8 +81,11 @@ export default function CustomerService() {
 
       {/* Kontaktuppgifterna först. Den som letar hit vill veta hur man
           når oss, inte läsa om vår process. */}
+      {/* Luft under banderollen. Avsnittet hade bara padding nedåt, så
+          korten klistrade sig i underkanten på banderollen medan alla
+          andra sidor andas där. */}
       <section data-sandbox-id="customer-contact" className="relative">
-        <div className="container mx-auto max-w-5xl px-4 pb-16">
+        <div className="container mx-auto max-w-5xl px-4 pb-16 pt-16 sm:pt-20">
           <div className="grid gap-5 md:grid-cols-2">
             <Reveal className="rounded-lg border border-foreground/10 bg-background/70 p-7">
               <h2 className="font-display text-lg font-bold text-foreground">

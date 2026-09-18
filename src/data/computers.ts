@@ -41,6 +41,20 @@ export interface Computer {
   bundleIncludes?: string[];
   usedVariant?: ComputerVariant;
   usedVariantEnabled?: boolean;
+  /**
+   * Vad maskinen är byggd för. Styr "Gaming datorer" och "Workstation"
+   * i navigeringen (/products?use=gaming respektive ?use=workstation).
+   *
+   * Utelämnad betyder "gaming", eftersom allt vi byggt hittills är
+   * speldatorer. Det är därför Workstation-vyn är tom tills någon
+   * faktiskt märker upp en maskin här - och tom är rätt svar. En
+   * workstation-sida som visar speldatorer påstår något som inte är
+   * sant, och det är värre än en sida som säger att det inte finns
+   * några ännu.
+   *
+   * Sätt use: "workstation" på de maskiner som ska ligga där.
+   */
+  use?: "gaming" | "workstation";
 }
 
 export const COMPUTERS: Computer[] = [

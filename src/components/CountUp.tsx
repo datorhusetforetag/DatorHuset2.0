@@ -28,6 +28,18 @@ type CountUpProps = {
   delay?: number;
   /** Hur länge räkningen pågår, i ms. Räknas annars ut ur talet. */
   duration?: number;
+  /**
+   * Startsignal utifrån.
+   *
+   * Utelämnad håller komponenten koll själv, med en egen observatör.
+   * Det duger för en ensam siffra, men inte för flera som ska stanna
+   * samtidigt: varje observatör utlöses när just dess rad kommit in i
+   * bild, och rad två passerar tröskeln några tiotals millisekunder
+   * efter rad ett. Med en gemensam signal från föräldern startar de på
+   * exakt samma bildruta, och då - och bara då - går det att räkna ut
+   * en längd som får dem att stanna tillsammans.
+   */
+  start?: boolean;
   className?: string;
 };
 
@@ -71,10 +83,19 @@ const parse = (text: string) => {
   };
 };
 
+/* Mindre rörelse, eller en webbläsare utan observatör: talet står
+   färdigt direkt. En siffra som hoppar är precis sådant den
+   inställningen finns till för. */
+const shouldSkipAnimation = () =>
+  typeof window === "undefined" ||
+  typeof IntersectionObserver === "undefined" ||
+  (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
+
 export const CountUp = ({
   children,
   delay = 0,
   duration,
+  start,
   className,
 }: CountUpProps) => {
   const ref = useRef<HTMLSpanElement | null>(null);
@@ -84,28 +105,29 @@ export const CountUp = ({
   const span = duration ?? durationFor(target);
 
   const [value, setValue] = useState(0);
-  const [started, setStarted] = useState(false);
+  const [selfStarted, setSelfStarted] = useState(false);
+  const [skip, setSkip] = useState(false);
+
+  /* Föräldern bestämmer när start är satt, annars gör vi det själva. */
+  const controlled = start !== undefined;
+  const started = controlled ? Boolean(start) : selfStarted;
 
   useEffect(() => {
     const node = ref.current;
     if (!node || !parsed) return;
 
-    // Utan stöd, eller om besökaren bett om mindre rörelse, står talet
-    // färdigt direkt. En siffra som hoppar är precis sådant den
-    // inställningen finns till för.
-    const reduced =
-      typeof window !== "undefined" &&
-      (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
-
-    if (reduced || typeof IntersectionObserver === "undefined") {
+    if (shouldSkipAnimation()) {
+      setSkip(true);
       setValue(target);
       return;
     }
 
+    if (controlled) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries.some((entry) => entry.isIntersecting)) {
-          setStarted(true);
+          setSelfStarted(true);
           observer.disconnect();
         }
       },
@@ -114,10 +136,10 @@ export const CountUp = ({
 
     observer.observe(node);
     return () => observer.disconnect();
-  }, [parsed, target]);
+  }, [parsed, target, controlled]);
 
   useEffect(() => {
-    if (!started || !parsed) return;
+    if (!started || !parsed || skip) return;
 
     let frame = 0;
     let start = 0;
@@ -139,7 +161,7 @@ export const CountUp = ({
 
     frame = window.requestAnimationFrame(step);
     return () => window.cancelAnimationFrame(frame);
-  }, [started, parsed, target, delay, span]);
+  }, [started, parsed, target, delay, span, skip]);
 
   if (!parsed) return <span className={className}>{children}</span>;
 

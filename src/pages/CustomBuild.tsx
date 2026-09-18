@@ -5184,26 +5184,9 @@ export default function CustomBuild() {
               </Link>
             </>
           }
-          aside={
-            <div className="relative flex items-center justify-center">
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{
-                  background: `radial-gradient(46% 42% at 50% 54%, ${PAGE_BANNERS.customBuild.accent}3D 0%, transparent 72%)`,
-                }}
-              />
-              <img
-                src="/products/newpc/allblack-main.jpg"
-                alt=""
-                aria-hidden="true"
-                className="relative max-h-[240px] w-auto object-contain lg:max-h-[320px]"
-                loading="eager"
-                decoding="async"
-                style={{ filter: "drop-shadow(0 28px 46px rgba(0, 0, 0, 0.55))" }}
-              />
-            </div>
-          }
+          /* Ingen produktbild bredvid rubriken - se samma kommentar i
+             Products.tsx. Fotot var inte frilagt, så det låg som en
+             vit rektangel ovanpå banderollens egen bild. */
         />
 
         <section id="bygg" className="bg-foreground/[0.04] text-foreground dark:bg-background dark:text-foreground">
