@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { DEFAULT_SITE_SETTINGS, type SitePromoCard, type SiteSettings } from "@/lib/siteSettings";
 import { buildUtmContent, withUtm } from "@/lib/utm";
 import { Reveal } from "./Reveal";
+import { ComponentCluster, type ClusterKind } from "./ComponentCluster";
 
 type HomePromoSplitProps = {
   settings?: SiteSettings["homepage"]["promo"];
@@ -37,49 +38,21 @@ const PromoBand = ({
   /** Jämna band har bilden till vänster, udda till höger. */
   flipped,
   accent,
+  cluster,
 }: {
   card: SitePromoCard;
   campaign: string;
   flipped: boolean;
   accent: string;
+  cluster: ClusterKind;
 }) => {
-  /*
-   * Två sorters bild kan ligga här, och de tål inte samma behandling.
-   *
-   * En frilagd rendering ska stå fritt mot fältet med en skugga under,
-   * som i förlagan. Ett vanligt foto har en bakgrund med sig - rum,
-   * skrivbord, vad som helst - och står det fritt ser det ut som en
-   * urklippt bild klistrad på ytan. Det behöver en ram för att läsas
-   * som ett foto.
-   *
-   * PNG används i praktiken bara för det frilagda här, så filändelsen
-   * räcker som skiljelinje. Väljer någon en annan bild i adminläget
-   * hamnar den automatiskt i rätt behandling.
-   */
-  const isCutout = card.image.toLowerCase().endsWith(".png");
-
   return (
   <Reveal className="overflow-hidden rounded-2xl border border-foreground/10 bg-foreground/[0.04]">
     <div className="grid items-center gap-8 p-8 sm:p-10 lg:grid-cols-2 lg:gap-12 lg:p-14">
-      {/* Bilden. order styr sidan på breda skärmar; på en telefon
-          ligger den alltid överst, där den gör mest nytta. */}
+      {/* Högen med delar. order styr sidan på breda skärmar; på en
+          telefon ligger den alltid överst, där den gör mest nytta. */}
       <div className={flipped ? "lg:order-2" : undefined}>
-        <img
-          src={card.image}
-          alt={card.imageAlt}
-          className={
-            isCutout
-              ? "mx-auto h-48 w-auto max-w-full object-contain sm:h-60 lg:h-72"
-              : "mx-auto h-48 w-full rounded-xl object-cover sm:h-60 lg:h-72"
-          }
-          loading="lazy"
-          decoding="async"
-          style={
-            isCutout
-              ? { filter: "drop-shadow(0 24px 40px rgba(0, 0, 0, 0.5))" }
-              : undefined
-          }
-        />
+        <ComponentCluster kind={cluster} />
       </div>
 
       <div className={flipped ? "lg:order-1" : undefined}>
@@ -134,6 +107,7 @@ export const HomePromoSplit = ({ settings = DEFAULT_SITE_SETTINGS.homepage.promo
               campaign={index === 0 ? "service_reparation" : "custom_bygg"}
               flipped={index % 2 === 1}
               accent={ACCENTS[index % ACCENTS.length]}
+              cluster={index === 0 ? "service" : "build"}
             />
           ))}
         </div>

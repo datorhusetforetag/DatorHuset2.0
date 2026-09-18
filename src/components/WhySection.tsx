@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { MapPin, ShieldCheck, Wrench } from "lucide-react";
 
 import { Reveal } from "./Reveal";
-import fallbackShowcase from "../../images/hero/build-showcase.jpg";
+import showcase from "../../images/why-datorhuset.webp";
 
 /**
  * "Varför DatorHuset" - texten till vänster, bygget till höger.
@@ -21,17 +20,14 @@ import fallbackShowcase from "../../images/hero/build-showcase.jpg";
  * frilagd rendering med genomskinlig bakgrund vill inte beskäras - den
  * ska stå i rummet.
  *
- * OM BILDEN:
+ * BILDEN ÄR EN PLATSHÅLLARE och föreställer inte en av våra datorer.
+ * Byt filen images/why-datorhuset.webp mot en egen rendering så följer
+ * resten med; filnamnet är det enda som behöver ligga kvar.
  *
- * Renderingen läses från public/ och inte som en import. En import som
- * pekar på en fil som inte finns stoppar hela bygget, och den här filen
- * lägger du dit själv. Saknas den byter vi till stockfotot i stället, så
- * sidan aldrig visar en trasig bild.
- *
- * Lägg din egen fil här:  public/why-datorhuset.png
+ * Filnamnet är avsiktligt utan å, ä och ö. Windows, Git och Linux är
+ * inte överens om hur sådana tecken kodas i filnamn, och en import som
+ * fungerar här kan sluta hitta filen när Render bygger projektet.
  */
-
-const SHOWCASE_SRC = "/why-datorhuset.png";
 
 const MARKS = [
   {
@@ -51,11 +47,7 @@ const MARKS = [
   },
 ];
 
-export const WhySection = () => {
-  const [src, setSrc] = useState(SHOWCASE_SRC);
-  const isFallback = src !== SHOWCASE_SRC;
-
-  return (
+export const WhySection = () => (
     <section data-sandbox-id="home-why" className="relative">
       <div className="container mx-auto px-4 py-20 sm:py-24 lg:py-28">
         <div className="grid items-center gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
@@ -115,14 +107,9 @@ export const WhySection = () => {
                 }}
               />
               <img
-                src={src}
-                onError={() => setSrc(fallbackShowcase)}
+                src={showcase}
                 alt="Speldator byggd av DatorHuset, med sidopanel i glas"
-                className={
-                  isFallback
-                    ? "relative max-h-[560px] w-full rounded-2xl object-cover"
-                    : "relative max-h-[560px] w-auto object-contain"
-                }
+                className="relative max-h-[560px] w-auto object-contain"
                 loading="lazy"
                 decoding="async"
                 style={{ filter: "drop-shadow(0 30px 55px rgba(0, 0, 0, 0.55))" }}
@@ -132,7 +119,6 @@ export const WhySection = () => {
         </div>
       </div>
     </section>
-  );
-};
+);
 
 export default WhySection;
