@@ -33,10 +33,10 @@ const Index = () => {
       <Navbar />
       <main className="relative z-10 pt-0">
         <Hero />
-        <WhySection />
         <TierSection />
         <StepsSection settings={settings.homepage.steps} />
         <HomePromoSplit settings={settings.homepage.promo} />
+        <WhySection />
         <FaqPreview />
         <TrustStrip />
       </main>
