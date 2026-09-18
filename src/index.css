@@ -560,6 +560,42 @@
   }
 }
 
+/* Vågfältet bakom vanliga frågor ------------------------------------
+ *
+ * Fältet är ritat större än sin ruta och glider långsamt i sidled.
+ * Rörelsen är knappt märkbar med flit - syns den tydligt drar den
+ * blicken från frågorna, som är det man kom hit för att läsa.
+ *
+ * Bara transform animeras, så grafikkortet sköter det och layouten
+ * räknas aldrig om.
+ */
+.flow-field {
+  /* Egen kompositlager, annars ritas fältet om i processorn. */
+  will-change: transform;
+  animation: flow-drift 48s ease-in-out infinite alternate;
+}
+
+/*
+ * Bara förflyttning, ingen skalning. Skalas ett fält med nära hundra
+ * kurvor om måste webbläsaren rita om vektorerna vid varje bildruta för
+ * att hålla dem skarpa. Flyttas det bara kan grafikkortet skjuta en
+ * färdigritad yta i sidled i stället.
+ */
+@keyframes flow-drift {
+  from {
+    transform: translate3d(-53%, -50%, 0);
+  }
+  to {
+    transform: translate3d(-47%, -50%, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flow-field {
+    animation: none;
+  }
+}
+
 /* Karusellen överst -------------------------------------------------
  *
  * Bilden kryper långsamt inåt medan den ligger uppe. Zoomen är en
