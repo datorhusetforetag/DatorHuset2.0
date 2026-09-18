@@ -478,6 +478,11 @@
     transform: none;
   }
 
+  /* Toningen är över - lämna tillbaka lagret till webbläsaren. */
+  .reveal[data-settled] {
+    will-change: auto;
+  }
+
   /* Mindre rörelse: innehållet ligger synligt direkt, ingen förskjutning
      och ingen fördröjning som håller det gömt. */
   @media (prefers-reduced-motion: reduce) {

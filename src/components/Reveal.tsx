@@ -38,6 +38,7 @@ export const Reveal = ({
 }: RevealProps) => {
   const ref = useRef<HTMLElement | null>(null);
   const [visible, setVisible] = useState(false);
+  const [settled, setSettled] = useState(false);
 
   useEffect(() => {
     const node = ref.current;
@@ -64,11 +65,28 @@ export const Reveal = ({
     return () => observer.disconnect();
   }, []);
 
+  /*
+   * will-change ger elementet ett eget lager hos grafikkortet. Det är
+   * rätt medan det tonar in, men blir dyrt om det ligger kvar: allt
+   * som sedan ändrar storlek inuti - ett utfällt svar till exempel -
+   * tvingar om hela lagret vid varje bildruta, och rörelsen hackar.
+   *
+   * Så det släpps när toningen är över. Fördröjningen är toningens
+   * längd plus den egna fördröjningen, med lite marginal.
+   */
+  useEffect(() => {
+    if (!visible) return;
+
+    const timer = window.setTimeout(() => setSettled(true), delay + 800);
+    return () => window.clearTimeout(timer);
+  }, [visible, delay]);
+
   return (
     <Tag
       ref={ref as never}
       className={`reveal reveal-${from} ${className}`}
       data-visible={visible || undefined}
+      data-settled={settled || undefined}
       style={delay ? { transitionDelay: `${delay}ms` } : undefined}
     >
       {children}

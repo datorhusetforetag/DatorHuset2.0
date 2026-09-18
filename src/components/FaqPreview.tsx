@@ -69,49 +69,67 @@ const buildFlowField = () => {
 
 const FLOW_FIELD = buildFlowField();
 
+/*
+ * Två saker här är gjorda för att fältet inte ska räknas om medan ett
+ * svar fälls ut.
+ *
+ * Höjden är satt i pixlar och bredden i vw, inte i procent av rutan.
+ * Rutan växer nämligen med avsnittet när ett svar öppnas, och hade
+ * fältet följt med hade webbläsaren fått rita om alla kurvor på nytt
+ * vid varje bildruta för att hålla dem skarpa. Nu ändrar det aldrig
+ * storlek av att något under det växer.
+ *
+ * Uttoningen mot kanterna ligger inuti SVG:n i stället för som en
+ * mask i CSS, av samma skäl: masken i CSS är satt i procent av en ruta
+ * som ändrar sig, den här lever i SVG:ns eget rutnät och står stilla.
+ */
 const FlowField = () => (
   <div
     aria-hidden="true"
     className="pointer-events-none absolute inset-0 overflow-hidden opacity-40 dark:opacity-75"
-    style={{
-      // Mönstret tonar ut mot kanterna så det inte slutar tvärt i en rak
-      // linje mot avsnittet ovanför och under.
-      maskImage:
-        "radial-gradient(75% 65% at 50% 50%, black 30%, transparent 78%)",
-      WebkitMaskImage:
-        "radial-gradient(75% 65% at 50% 50%, black 30%, transparent 78%)",
-    }}
   >
     <svg
-      className="flow-field absolute left-1/2 top-1/2 h-[135%] w-[135%] -translate-x-1/2 -translate-y-1/2"
+      className="flow-field absolute left-1/2 top-1/2 h-[1100px] w-[180vw] -translate-x-1/2 -translate-y-1/2"
       viewBox={`0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}`}
       preserveAspectRatio="xMidYMid slice"
       fill="none"
     >
+      <defs>
+        <radialGradient id="faq-flow-fade" cx="50%" cy="50%" r="62%">
+          <stop offset="30%" stopColor="white" stopOpacity="1" />
+          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        </radialGradient>
+        <mask id="faq-flow-mask">
+          <rect x="0" y="0" width="100%" height="100%" fill="url(#faq-flow-fade)" />
+        </mask>
+      </defs>
+
       {/* Plommon underst, cyan en aning förskjuten ovanpå. Två lager som
           inte ligger i fas ger djup; ett enda ser platt ut. */}
-      <g
-        stroke="#B26BDE"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeDasharray="0.1 9"
-        opacity="0.55"
-      >
-        {FLOW_FIELD.map((d, index) => (
-          <path key={`plum-${index}`} d={d} />
-        ))}
-      </g>
-      <g
-        stroke="#3FD9F5"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeDasharray="0.1 9"
-        opacity="0.16"
-        transform="translate(5, -7)"
-      >
-        {FLOW_FIELD.map((d, index) => (
-          <path key={`cyan-${index}`} d={d} />
-        ))}
+      <g mask="url(#faq-flow-mask)">
+        <g
+          stroke="#B26BDE"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray="0.1 9"
+          opacity="0.55"
+        >
+          {FLOW_FIELD.map((d, index) => (
+            <path key={`plum-${index}`} d={d} />
+          ))}
+        </g>
+        <g
+          stroke="#3FD9F5"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeDasharray="0.1 9"
+          opacity="0.16"
+          transform="translate(5, -7)"
+        >
+          {FLOW_FIELD.map((d, index) => (
+            <path key={`cyan-${index}`} d={d} />
+          ))}
+        </g>
       </g>
     </svg>
   </div>
@@ -155,7 +173,7 @@ export const FaqPreview = () => {
               <AccordionItem
                 key={item.question}
                 value={item.question}
-                className="overflow-hidden rounded-lg border border-foreground/10 bg-foreground/[0.04] backdrop-blur-sm transition-colors hover:border-primary/40 data-[state=open]:border-primary/40"
+                className="overflow-hidden rounded-lg border border-foreground/10 bg-background/70 transition-colors hover:border-primary/40 data-[state=open]:border-primary/40"
               >
                 <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold hover:no-underline sm:px-6 [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-primary">
                   {item.question}

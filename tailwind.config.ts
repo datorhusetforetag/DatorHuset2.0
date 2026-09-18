@@ -92,13 +92,16 @@ export default {
         sale: "hsl(var(--sale))",
       },
       keyframes: {
+        // Opaciteten följer med höjden. Ett svar som bara växer fram ser
+        // trögt ut även när det går fort; tonas det samtidigt in läser
+        // ögat rörelsen som snabbare än den är.
         "accordion-down": {
-          from: { height: "0" },
-          to: { height: "var(--radix-accordion-content-height)" },
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-accordion-content-height)", opacity: "1" },
         },
         "accordion-up": {
-          from: { height: "var(--radix-accordion-content-height)" },
-          to: { height: "0" },
+          from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
         },
         "fade-in": {
           "0%": { opacity: "0", transform: "translateY(20px)" },
@@ -114,8 +117,10 @@ export default {
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        // Snabbt igång och mjukt i mål. Stängningen är kortare än
+        // öppningen - det man vill bort från ska försvinna direkt.
+        "accordion-down": "accordion-down 0.22s cubic-bezier(0.33, 1, 0.68, 1)",
+        "accordion-up": "accordion-up 0.16s cubic-bezier(0.65, 0, 0.35, 1)",
         "fade-in": "fade-in 0.6s ease-out forwards",
         "scale-in": "scale-in 0.4s ease-out forwards",
         "slide-up": "slide-up 0.5s ease-out forwards",
