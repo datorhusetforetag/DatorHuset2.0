@@ -13,8 +13,14 @@ import diamondTier from "../../images/diamond tier.png";
  * Det som gör deras variant luftig är att nästan ingenting är inramat.
  * Datorn står fritt på sidans bakgrund - ingen kortram, ingen egen yta -
  * och bara textsidan har en svag panel. Förhandsbilderna under är inte
- * heller rutor, utan bild plus etikett, där den valda markeras med ett
- * streck under.
+ * heller rutor, utan bild plus etikett.
+ *
+ * Strecket under går genom hela raden och inte bara under den valda.
+ * Syns det bara under en av dem ser de andra tre ut som bilder, inte
+ * som något man kan klicka på. Den valda tar sin kulör, de övriga
+ * ligger svagt tonade. Mellanrummet mellan dem är satt som padding
+ * inuti knappen i stället för som gap, så strecken möts och bildar en
+ * enda obruten linje tvärs över.
  *
  * Knapparna ligger som två celler i en delad rad längst ned i panelen,
  * skilda av en linje, i stället för som fristående knappar.
@@ -177,7 +183,7 @@ export const TierSection = () => {
         </Reveal>
 
         {/* Förhandsraden: bild och etikett, ingen ruta ----------------- */}
-        <Reveal delay={160} className="mt-16 grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
+        <Reveal delay={160} className="mt-16 grid grid-cols-2 gap-x-0 gap-y-8 lg:grid-cols-4">
           {TIERS.map((tier) => {
             const isActive = tier.id === active.id;
             return (
@@ -186,8 +192,8 @@ export const TierSection = () => {
                 type="button"
                 onClick={() => setActiveId(tier.id)}
                 aria-pressed={isActive}
-                className="group flex items-center gap-4 border-b-2 pb-4 text-left transition-colors"
-                style={{ borderColor: isActive ? tier.accent : "transparent" }}
+                className="group flex items-center gap-4 border-b-2 border-foreground/20 pb-4 pr-6 text-left transition-colors hover:border-foreground/50"
+                style={isActive ? { borderColor: tier.accent } : undefined}
               >
                 <span className="relative block h-16 w-16 shrink-0 sm:h-20 sm:w-20">
                   <span
