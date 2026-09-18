@@ -31,15 +31,24 @@ type CountUpProps = {
   className?: string;
 };
 
-/** Snabbt i början, mjukt i mål. Linjär uppräkning ser mekanisk ut. */
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+/*
+ * Mjukt i mål, men inte tvärbromsande. En kubisk kurva lägger nästan
+ * hela rörelsen i första tredjedelen och kryper sedan i mål - talet ser
+ * ut att vara framme långt innan tiden gått, och resten av uppräkningen
+ * märks inte. Den kvadratiska fördelar rörelsen jämnare över tiden.
+ */
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 2);
 
 /*
  * Längden följer talets storlek. Samma tid för alla ser fel ut åt båda
  * håll: en trea hinner fram efter halva tiden och står sedan stilla
  * resten, medan en fjorton rusar förbi om tiden kortas för allas skull.
+ *
+ * Tiderna här är satta efter när talet syns landa, inte efter vad som
+ * står i koden. Med rundningen och kurvan inräknad är fjortonde framme
+ * efter dryga två sekunder och trean efter knappt en.
  */
-const durationFor = (target: number) => Math.min(1200, 420 + target * 50);
+const durationFor = (target: number) => Math.min(2800, 1000 + target * 120);
 
 /*
  * Uppdelningen görs en gång per text och inte vid varje omritning.
