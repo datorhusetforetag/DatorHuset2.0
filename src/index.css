@@ -572,6 +572,70 @@
   }
 }
 
+/* Datorn som lutar efter pekaren ------------------------------------
+ *
+ * Utslaget kommer in som två tal mellan -1 och 1 och räknas om till
+ * grader här. Gradtalen är små med flit: sex och åtta grader räcker
+ * för att bilden ska läsas som ett föremål med djup. Mer än så och
+ * den börjar se ut som om den ramlar.
+ *
+ * Övergången är kort. Utan den hackar lutningen mellan varje avläst
+ * pekarläge; blir den lång släpar bilden efter handen i stället.
+ */
+.tier-tilt {
+  transform: perspective(1100px)
+    rotateX(calc(var(--tilt-y, 0) * -6deg))
+    rotateY(calc(var(--tilt-x, 0) * 8deg))
+    translate3d(calc(var(--tilt-x, 0) * 12px), calc(var(--tilt-y, 0) * 8px), 0);
+  transition: transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Ljuset bakom flyttar sig hälften så mycket, så det inte ser ut att
+   sitta fast i datorn. */
+.tier-glow {
+  transform: translate3d(calc(var(--tilt-x, 0) * 6px), calc(var(--tilt-y, 0) * 4px), 0);
+  /* Båda i samma deklaration - en transition-klass från Tailwind här
+     hade skrivit över den andra i stället för att läggas till. */
+  transition:
+    transform 260ms cubic-bezier(0.22, 0.61, 0.36, 1),
+    background 500ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tier-tilt,
+  .tier-glow {
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Punktrastret längst bak ------------------------------------------
+ *
+ * En prickmatris i stället för ännu ett suddigt ljusfält. De mjuka
+ * fälten har ingen kant och ingen struktur, och en yta helt utan
+ * struktur går inte att bedöma avstånd i - det är därför en bakgrund
+ * som bara består av sådana ser platt ut hur många man än lägger på.
+ * Rastret ger ögat något att mäta mot, och känns dessutom mer som
+ * hårdvara än en tonad fläck gör.
+ *
+ * Prickarna tonar ut mot kanterna så rastret inte slutar i en rak
+ * linje mot fönsterkanten.
+ */
+.ambient-grid {
+  background-image: radial-gradient(hsl(var(--brand-plum) / 0.34) 1px, transparent 1px);
+  background-size: 38px 38px;
+  mask-image: radial-gradient(70% 60% at 50% 42%, black 0%, transparent 82%);
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 42%, black 0%, transparent 82%);
+  will-change: transform;
+}
+
+/* Mot vitt försvinner kulören långt innan den syns. */
+:root:not(.dark) .ambient-grid {
+  background-image: radial-gradient(hsl(var(--brand-plum) / 0.24) 1px, transparent 1px);
+}
+
 /* Vågfältet bakom vanliga frågor ------------------------------------
  *
  * Fältet är ritat större än sin ruta och glider långsamt i sidled.

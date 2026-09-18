@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Reveal } from "./Reveal";
 
@@ -95,9 +95,76 @@ const TIERS: Tier[] = [
   },
 ];
 
+/*
+ * Datorn lutar en aning efter pekaren.
+ *
+ * Det är sidans enda riktiga produktbild, och den stod alldeles stilla.
+ * Lutar den svagt åt det håll man för muspekaren läses den som ett
+ * föremål som står i rummet i stället för som en utklippt bild.
+ *
+ * Utslaget skrivs som två tal på elementet och räknas om till grader i
+ * CSS. Att i stället sätta hela transform-strängen här hade betytt en
+ * omritning av React-trädet vid varje musrörelse.
+ *
+ * Rör man inte pekaren alls händer ingenting, och pekskärmar skickar
+ * aldrig de här händelserna - då står den bara still, som förut.
+ */
+const useTilt = () => {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const frame = useRef(0);
+  const reduced = useRef(false);
+
+  useEffect(() => {
+    reduced.current =
+      typeof window !== "undefined" &&
+      (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false);
+  }, []);
+
+  const set = (x: number, y: number) => {
+    const node = ref.current;
+    if (!node) return;
+    node.style.setProperty("--tilt-x", x.toFixed(3));
+    node.style.setProperty("--tilt-y", y.toFixed(3));
+  };
+
+  const onPointerMove = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (reduced.current || frame.current) return;
+    const node = ref.current;
+    if (!node) return;
+
+    const box = node.getBoundingClientRect();
+    // -1 i ena kanten, +1 i den andra, 0 mitt i.
+    const x = ((event.clientX - box.left) / box.width) * 2 - 1;
+    const y = ((event.clientY - box.top) / box.height) * 2 - 1;
+
+    frame.current = window.requestAnimationFrame(() => {
+      frame.current = 0;
+      set(x, y);
+    });
+  }, []);
+
+  const onPointerLeave = useCallback(() => {
+    if (frame.current) {
+      window.cancelAnimationFrame(frame.current);
+      frame.current = 0;
+    }
+    set(0, 0);
+  }, []);
+
+  useEffect(
+    () => () => {
+      if (frame.current) window.cancelAnimationFrame(frame.current);
+    },
+    [],
+  );
+
+  return { ref, onPointerMove, onPointerLeave };
+};
+
 export const TierSection = () => {
   const [activeId, setActiveId] = useState(TIERS[1].id);
   const active = TIERS.find((tier) => tier.id === activeId) ?? TIERS[0];
+  const tilt = useTilt();
 
   return (
     <section data-sandbox-id="home-tiers" className="section-surface-alt relative">
@@ -113,23 +180,37 @@ export const TierSection = () => {
 
         {/* Datorn står fritt, panelen ligger bredvid ------------------- */}
         <Reveal delay={80} className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-4">
-          <div className="relative flex min-h-[320px] items-center justify-center sm:min-h-[420px]">
+          <div
+            ref={tilt.ref}
+            onPointerMove={tilt.onPointerMove}
+            onPointerLeave={tilt.onPointerLeave}
+            className="tier-stage relative flex min-h-[320px] items-center justify-center sm:min-h-[420px]"
+          >
+            {/* Ljuset bakom följer med en aning, annars ser datorn ut att
+                glida loss från sin egen skugga. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 transition-all duration-500"
+              className="tier-glow pointer-events-none absolute inset-0"
               style={{
                 background: `radial-gradient(40% 28% at 50% 74%, rgba(${active.glow}, 0.45) 0%, rgba(${active.glow}, 0.15) 42%, transparent 70%)`,
               }}
             />
-            <img
-              key={active.id}
-              src={active.image}
-              alt={`${active.name}-datorn`}
-              loading="lazy"
-              decoding="async"
-              className="relative max-h-[420px] w-auto animate-in fade-in zoom-in-95 object-contain duration-500"
-              style={{ filter: `drop-shadow(0 28px 44px rgba(${active.glow}, 0.4))` }}
-            />
+            {/*
+              Lutningen sitter på en egen ruta. Inflygningen nedan sätter
+              också transform, och två som skriver på samma egenskap tar
+              ut varandra.
+            */}
+            <div className="tier-tilt relative">
+              <img
+                key={active.id}
+                src={active.image}
+                alt={`${active.name}-datorn`}
+                loading="lazy"
+                decoding="async"
+                className="max-h-[420px] w-auto animate-in fade-in zoom-in-95 object-contain duration-500"
+                style={{ filter: `drop-shadow(0 28px 44px rgba(${active.glow}, 0.4))` }}
+              />
+            </div>
           </div>
 
           {/* Panelen: svag ram, nästan genomskinlig botten */}
