@@ -24,7 +24,7 @@ const renderStepIcon = (icon: SiteStepItem["icon"]) => {
 export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }: StepsSectionProps) => {
   return (
     <section data-sandbox-id="home-steps" className="section-surface-alt section-seam-top relative text-foreground transition-colors">
-      <div className="container mx-auto flex flex-col items-center px-4 py-12 text-center sm:py-16 lg:py-20">
+      <div className="container mx-auto flex flex-col items-center px-4 py-20 text-center sm:py-28 lg:py-32">
         <div className="mb-8 sm:mb-10">
           <h2 className="mb-3 text-2xl font-bold sm:text-3xl lg:text-4xl">{settings.title}</h2>
           <p className="text-sm text-[var(--site-text-muted)] dark:text-[var(--site-text-muted-dark)] sm:text-base">{settings.description}</p>

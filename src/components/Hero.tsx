@@ -16,7 +16,7 @@ export const Hero = ({
 }: HeroProps) => {
   return (
     <section data-sandbox-id="home-hero" className="section-surface transition-colors">
-      <div className="container mx-auto px-4 py-6 sm:py-8">
+      <div className="container mx-auto px-4 py-16 sm:py-24 lg:py-28">
         <div className="mb-8 grid grid-cols-1 gap-4 sm:mb-12 sm:gap-6 md:grid-cols-3">
           <div
             className="col-span-1 flex min-h-[230px] flex-col justify-between rounded-lg border p-4 shadow-lg animate-in fade-in slide-in-from-bottom-4 sm:min-h-[320px] sm:p-6 lg:p-8 md:col-span-2"

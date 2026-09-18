@@ -77,7 +77,7 @@ const TIERS: Tier[] = [
 export const TierSection = () => {
   return (
     <section data-sandbox-id="home-tiers" className="section-surface-alt section-seam-top relative">
-      <div className="container mx-auto px-4 py-16 sm:py-20">
+      <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
         <div className="mb-12 text-center">
           <p className="eyebrow">Våra nivåer</p>
           <h2 className="section-title mt-3">Fyra steg, en dator som passar</h2>
