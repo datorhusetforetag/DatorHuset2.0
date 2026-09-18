@@ -1,8 +1,5 @@
 import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
-import { DEFAULT_SITE_SETTINGS, type SiteHeroCategory, type SiteSettings } from "@/lib/siteSettings";
-import { buildUtmContent, withUtm } from "@/lib/utm";
-import { SiteIcon } from "./SiteIcon";
+import { DEFAULT_SITE_SETTINGS, type SiteSettings } from "@/lib/siteSettings";
 import winMouseImage from "../../images/WinMouse.png";
 
 type HeroProps = {
@@ -87,35 +84,6 @@ export const Hero = ({
             />
           </div>
         </div>
-
-        <div className="mb-12" data-sandbox-id="home-categories">
-          <h3 className="mb-6 text-2xl font-bold text-[var(--site-text-primary)] dark:text-[var(--site-text-primary-dark)]">{settings.categoriesTitle}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {settings.categories.map((category: SiteHeroCategory) => (
-              <Link
-                key={category.name}
-                to={withUtm(category.href, {
-                  utm_source: "homepage",
-                  utm_medium: "category_card",
-                  utm_campaign: "populara_kategorier",
-                  utm_content: buildUtmContent(category.name),
-                })}
-                className="rounded-lg border p-4 text-center transition-all hover:shadow-lg sm:p-6"
-                style={{
-                  borderColor: "var(--site-card-border-current)",
-                  backgroundColor: "var(--site-card-bg-current)",
-                  color: "var(--site-text-primary-current)",
-                }}
-              >
-                <div className="mx-auto mb-3 h-8 w-8 sm:h-10 sm:w-10" style={{ color: "var(--site-brand-bg)" }}>
-                  <SiteIcon icon={category.icon} className="h-full w-full" />
-                </div>
-                <p className="line-clamp-2 text-sm font-medium">{category.name}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-
       </div>
     </section>
   );

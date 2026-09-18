@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
 
 import bronzeTier from "../../images/bronze tier.png";
 import silverTier from "../../images/silver tier.png";
@@ -6,16 +8,16 @@ import platinumTier from "../../images/platinum tier.png";
 import diamondTier from "../../images/diamond tier.png";
 
 /**
- * De fyra nivåerna vi säljer.
+ * De fyra nivåerna, visade som Starforge visar sina paket: en stor ruta
+ * med den valda nivån, och en rad små förhandsbilder under som byter
+ * vilken som visas.
  *
- * Bilderna är frilagda PNG:er och ligger ovanpå ett eget ljus i stället
- * för i en kortram - samma grepp som Starforge använder för sina datorer.
- * Utan ram tar bilden hela uppmärksamheten, och ljuset under gör att den
- * ser ut att sväva i stället för att flyta omkring löst.
+ * Poängen med formen är att en nivå får hela ytan i stället för en
+ * fjärdedel. Datorn syns, texten får plats, och de andra tre finns kvar
+ * inom räckhåll utan att konkurrera om uppmärksamheten.
  *
- * Varje nivå har en egen kulör på ljuset: brons och silver i sina egna
- * metallfärger, platina i plommon och diamant i cyan. Trappan slutar
- * alltså i märkets två färger.
+ * Bilderna är frilagda PNG:er som ligger ovanpå sitt eget ljus, inte i en
+ * kortram - det är det som får dem att sväva.
  */
 
 type Tier = {
@@ -23,11 +25,12 @@ type Tier = {
   name: string;
   tagline: string;
   description: string;
+  specs: string[];
   image: string;
   href: string;
   /** Kulören på ljuset bakom datorn, som RGB utan alfa. */
   glow: string;
-  /** Färg på nivånamnet. */
+  /** Färg på nivånamn och accenter. */
   accent: string;
 };
 
@@ -36,7 +39,9 @@ const TIERS: Tier[] = [
     id: "bronze",
     name: "Bronze",
     tagline: "Kom igång",
-    description: "Spelar det du spelar idag, i 1080p, utan att kosta en förmögenhet.",
+    description:
+      "Första riktiga speldatorn. Klarar det du spelar idag i 1080p utan att du behöver tömma sparkontot.",
+    specs: ["1080p", "Nybörjarvänlig", "Lägst pris"],
     image: bronzeTier,
     href: "/products?category=budget&clear_filters=1",
     glow: "205, 127, 50",
@@ -46,7 +51,9 @@ const TIERS: Tier[] = [
     id: "silver",
     name: "Silver",
     tagline: "Mest dator för pengarna",
-    description: "Den nivå de flesta landar på. Hög bildfrekvens i 1440p med marginal kvar.",
+    description:
+      "Den nivå de flesta landar på. Hög bildfrekvens i 1440p, och marginal kvar till nästa generations spel.",
+    specs: ["1440p", "Populärast", "Bra balans"],
     image: silverTier,
     href: "/products?category=price-performance&clear_filters=1",
     glow: "186, 196, 214",
@@ -56,7 +63,9 @@ const TIERS: Tier[] = [
     id: "platinum",
     name: "Platinum",
     tagline: "Byggd för att hålla",
-    description: "Komponenter med luft kvar - 1440p på ultra idag, och några år till.",
+    description:
+      "Komponenter med luft kvar. Ultra i 1440p idag, och kraft nog att stå sig i flera år framåt.",
+    specs: ["1440p ultra", "Framtidssäker", "Tyst gång"],
     image: platinumTier,
     href: "/products?category=best-selling&clear_filters=1",
     glow: "178, 107, 222",
@@ -66,7 +75,9 @@ const TIERS: Tier[] = [
     id: "diamond",
     name: "Diamond",
     tagline: "Utan kompromisser",
-    description: "Det bästa vi bygger. 4K, raytracing och allt påslaget.",
+    description:
+      "Det bästa vi bygger. 4K, raytracing och allt påslaget - utan att något behöver stängas av.",
+    specs: ["4K", "Raytracing", "Toppklass"],
     image: diamondTier,
     href: "/products?category=toptier&clear_filters=1",
     glow: "63, 217, 245",
@@ -75,8 +86,11 @@ const TIERS: Tier[] = [
 ];
 
 export const TierSection = () => {
+  const [activeId, setActiveId] = useState(TIERS[1].id);
+  const active = TIERS.find((tier) => tier.id === activeId) ?? TIERS[0];
+
   return (
-    <section data-sandbox-id="home-tiers" className="section-surface-alt section-seam-top relative">
+    <section data-sandbox-id="home-tiers" className="section-surface-alt relative">
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
         <div className="mb-12 text-center">
           <p className="eyebrow">Våra nivåer</p>
@@ -87,58 +101,135 @@ export const TierSection = () => {
           </p>
         </div>
 
-        <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-4">
-          {TIERS.map((tier) => (
-            <Link
-              key={tier.id}
-              to={tier.href}
-              className="group flex flex-col items-center text-center"
-            >
-              {/* Bilden svävar över sitt eget ljus. Ingen ram - ljuset är
-                  det enda som håller ihop den mot bakgrunden. */}
-              <div className="relative flex h-52 w-full items-end justify-center">
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute inset-x-0 bottom-0 h-32 transition-opacity duration-500 group-hover:opacity-100"
-                  style={{
-                    opacity: 0.55,
-                    background: `radial-gradient(60% 100% at 50% 100%, rgba(${tier.glow}, 0.55) 0%, rgba(${tier.glow}, 0.18) 45%, transparent 72%)`,
-                  }}
-                />
-                <img
-                  src={tier.image}
-                  alt={`${tier.name}-datorn`}
-                  loading="lazy"
-                  decoding="async"
-                  className="relative max-h-52 w-auto object-contain transition-transform duration-500 ease-out group-hover:-translate-y-2 group-hover:scale-[1.04]"
-                  style={{
-                    filter: `drop-shadow(0 18px 28px rgba(${tier.glow}, 0.32))`,
-                  }}
-                />
-              </div>
+        {/* Den stora rutan ---------------------------------------------- */}
+        <div
+          className="surface-card relative overflow-hidden"
+          style={{
+            // Ljuset i rutan följer den valda nivåns kulör, så hela panelen
+            // byter stämning och inte bara bilden.
+            backgroundImage: `radial-gradient(75% 90% at 22% 55%, rgba(${active.glow}, 0.22) 0%, transparent 62%)`,
+          }}
+        >
+          <div className="grid items-center gap-8 p-6 sm:p-10 lg:grid-cols-[1.05fr_1fr] lg:gap-12 lg:p-14">
+            {/* Datorn svävar över sitt eget ljus */}
+            <div className="relative flex min-h-[260px] items-center justify-center sm:min-h-[340px]">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-x-6 bottom-6 h-32 transition-all duration-500"
+                style={{
+                  background: `radial-gradient(60% 100% at 50% 100%, rgba(${active.glow}, 0.5) 0%, rgba(${active.glow}, 0.16) 45%, transparent 72%)`,
+                }}
+              />
+              <img
+                key={active.id}
+                src={active.image}
+                alt={`${active.name}-datorn`}
+                loading="lazy"
+                decoding="async"
+                className="relative max-h-[340px] w-auto animate-in fade-in zoom-in-95 object-contain duration-500"
+                style={{ filter: `drop-shadow(0 22px 34px rgba(${active.glow}, 0.35))` }}
+              />
+            </div>
 
+            {/* Texten */}
+            <div className="text-center lg:text-left">
               <p
-                className="mt-6 font-display text-xl font-bold tracking-tight"
-                style={{ color: tier.accent }}
+                className="text-xs font-semibold uppercase tracking-[0.28em]"
+                style={{ color: active.accent }}
               >
-                {tier.name}
+                {active.tagline}
               </p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                {tier.tagline}
-              </p>
-              <p className="mt-3 max-w-[30ch] text-sm leading-relaxed text-muted-foreground">
-                {tier.description}
+              <h3
+                className="mt-3 font-display text-4xl font-bold tracking-tight sm:text-5xl"
+                style={{ color: active.accent }}
+              >
+                {active.name}
+              </h3>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+                {active.description}
               </p>
 
-              <span
-                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold transition-transform duration-300 group-hover:translate-x-1"
-                style={{ color: tier.accent }}
+              <ul className="mt-6 flex flex-wrap justify-center gap-2 lg:justify-start">
+                {active.specs.map((spec) => (
+                  <li
+                    key={spec}
+                    className="rounded-pill border px-3 py-1 text-xs font-semibold"
+                    style={{
+                      borderColor: `rgba(${active.glow}, 0.45)`,
+                      color: active.accent,
+                      backgroundColor: `rgba(${active.glow}, 0.1)`,
+                    }}
+                  >
+                    {spec}
+                  </li>
+                ))}
+              </ul>
+
+              <Link
+                to={active.href}
+                className="btn-glow mt-8 inline-flex items-center gap-2 rounded-sm px-6 py-3 text-sm font-semibold transition-colors"
+                style={{ backgroundColor: active.accent, color: "#14101F" }}
               >
-                Se datorer
-                <span aria-hidden="true">→</span>
-              </span>
-            </Link>
-          ))}
+                Se {active.name}-datorer
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Förhandsraden ------------------------------------------------ */}
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+          {TIERS.map((tier) => {
+            const isActive = tier.id === active.id;
+            return (
+              <button
+                key={tier.id}
+                type="button"
+                onClick={() => setActiveId(tier.id)}
+                aria-pressed={isActive}
+                className="group relative flex items-center gap-3 rounded-lg border bg-card/40 p-3 text-left transition-all duration-300 hover:bg-card/70 sm:flex-col sm:items-center sm:text-center"
+                style={{
+                  borderColor: isActive ? `rgba(${tier.glow}, 0.6)` : "hsl(var(--border))",
+                  boxShadow: isActive ? `0 0 26px rgba(${tier.glow}, 0.22)` : "none",
+                }}
+              >
+                <div className="relative h-14 w-14 shrink-0 sm:h-20 sm:w-20">
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+                    style={{
+                      opacity: isActive ? 0.9 : 0.35,
+                      background: `radial-gradient(55% 55% at 50% 65%, rgba(${tier.glow}, 0.55) 0%, transparent 70%)`,
+                    }}
+                  />
+                  <img
+                    src={tier.image}
+                    alt=""
+                    aria-hidden="true"
+                    loading="lazy"
+                    decoding="async"
+                    className="relative h-full w-full object-contain transition-transform duration-300 group-hover:-translate-y-0.5"
+                  />
+                </div>
+                <span
+                  className="font-display text-sm font-bold tracking-tight transition-colors sm:mt-1"
+                  style={{ color: isActive ? tier.accent : "hsl(var(--muted-foreground))" }}
+                >
+                  {tier.name}
+                </span>
+
+                {/* Understrykning på den valda, som hos Starforge */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-x-3 bottom-0 h-0.5 rounded-pill transition-all duration-300"
+                  style={{
+                    backgroundColor: tier.accent,
+                    opacity: isActive ? 1 : 0,
+                  }}
+                />
+              </button>
+            );
+          })}
         </div>
       </div>
     </section>
