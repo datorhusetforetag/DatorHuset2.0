@@ -44,7 +44,7 @@ export default function SearchResults() {
           <button
             type="button"
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 mb-6 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:hover:border-[#11667b]"
+            className="inline-flex items-center gap-2 mb-6 rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary dark:border-gray-700 dark:hover:border-secondary"
           >
             <ArrowLeft className="h-4 w-4" />
             Tillbaka
@@ -59,7 +59,7 @@ export default function SearchResults() {
                 value={searchQuery}
                 onChange={(event) => setSearchQuery(event.target.value)}
                 placeholder="Sök efter dator, grafikkort, processor eller kategori"
-                className="h-12 w-full rounded-xl border-2 border-yellow-400 bg-white pl-12 pr-4 text-sm outline-none focus:border-yellow-500 dark:border-gray-600 dark:bg-gray-900"
+                className="h-12 w-full rounded-xl border-2 border-primary bg-white pl-12 pr-4 text-sm outline-none focus:border-primary dark:border-gray-600 dark:bg-gray-900"
                 autoFocus
               />
             </div>
@@ -70,7 +70,7 @@ export default function SearchResults() {
               Visar närmaste träffar för <span className="font-semibold">{searchQuery}</span>. Menade du{" "}
               <button
                 type="button"
-                className="font-semibold text-[#11667b] hover:underline"
+                className="font-semibold text-primary hover:underline"
                 onClick={() => setSearchQuery(searchState.correctedQuery || "")}
               >
                 {searchState.correctedQuery}
@@ -89,7 +89,7 @@ export default function SearchResults() {
                   <Link
                     key={category.id}
                     to={category.path}
-                    className="rounded-xl border border-gray-200 bg-white p-4 hover:border-[#11667b] hover:shadow-sm dark:border-gray-700 dark:bg-gray-900"
+                    className="rounded-xl border border-gray-200 bg-white p-4 hover:border-secondary hover:shadow-sm dark:border-gray-700 dark:bg-gray-900"
                   >
                     <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{category.label}</p>
                     <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">{category.description}</p>
@@ -124,7 +124,7 @@ export default function SearchResults() {
                     <Link
                       key={result.id}
                       to={`/computer/${result.id}`}
-                      className="overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-[#11667b] hover:shadow-md dark:border-gray-700 dark:bg-gray-900"
+                      className="overflow-hidden rounded-xl border border-gray-200 bg-white transition hover:border-secondary hover:shadow-md dark:border-gray-700 dark:bg-gray-900"
                     >
                       <div className="h-44 bg-gray-100 dark:bg-gray-800">
                         {result.image ? (

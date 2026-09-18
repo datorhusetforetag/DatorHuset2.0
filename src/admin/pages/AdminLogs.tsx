@@ -156,7 +156,7 @@ export default function AdminLogs() {
   if (!isAdmin) {
     return (
       <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8 text-slate-200 shadow-xl">
-        <div className="flex items-center gap-3 text-yellow-200">
+        <div className="flex items-center gap-3 text-primary">
           <ShieldAlert className="h-5 w-5" />
           <p className="text-sm uppercase tracking-[0.3em]">Adminpanel</p>
         </div>
@@ -167,7 +167,7 @@ export default function AdminLogs() {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+          className="mt-6 inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
         >
           Logga in
         </button>
@@ -190,7 +190,7 @@ export default function AdminLogs() {
             <button
               type="button"
               onClick={exportLogs}
-              className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-xs font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
               disabled={exporting}
             >
               <Download className="h-4 w-4" />
@@ -199,7 +199,7 @@ export default function AdminLogs() {
             <button
               type="button"
               onClick={loadLogs}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-xs font-semibold text-slate-200 hover:border-[#11667b] hover:text-[#11667b]"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-xs font-semibold text-slate-200 hover:border-secondary hover:text-primary"
             >
               <RefreshCcw className="h-4 w-4" />
               {loadingLogs ? "Uppdaterar..." : "Uppdatera"}

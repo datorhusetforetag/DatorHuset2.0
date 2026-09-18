@@ -281,7 +281,7 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={handleExportCsv}
-              className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold px-4 py-2 hover:bg-[#11667b] hover:text-white transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground font-semibold px-4 py-2 hover:bg-secondary hover:text-white transition-colors"
             >
               <Download className="w-4 h-4" />
               Exportera CSV
@@ -289,7 +289,7 @@ export default function AdminDashboard() {
             <button
               type="button"
               onClick={loadAdminData}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b] transition-colors"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 dark:border-gray-700 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary transition-colors"
             >
               <RefreshCcw className="w-4 h-4" />
               Uppdatera
@@ -310,7 +310,7 @@ export default function AdminDashboard() {
           <div className="space-y-10">
             <section className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-6">
-                <PackageSearch className="w-5 h-5 text-[#11667b]" />
+                <PackageSearch className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">Beställningar</h2>
               </div>
 
@@ -353,7 +353,7 @@ export default function AdminDashboard() {
                           {order.receipt_url && (
                             <a
                               href={order.receipt_url}
-                              className="text-[#11667b] font-semibold hover:text-[#0d4d5d]"
+                              className="text-primary font-semibold hover:text-secondary"
                             >
                               Visa kvitto
                             </a>
@@ -407,7 +407,7 @@ export default function AdminDashboard() {
                                 type="checkbox"
                                 checked={item.done}
                                 onChange={() => handleChecklistToggle(order, item.id)}
-                                className="h-4 w-4 text-yellow-400"
+                                className="h-4 w-4 text-primary"
                               />
                               <span className={item.done ? "line-through text-gray-400" : ""}>{item.label}</span>
                             </label>
@@ -482,7 +482,7 @@ export default function AdminDashboard() {
                       <button
                         type="button"
                         onClick={() => handleInventorySave(item)}
-                        className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold px-4 py-2 hover:bg-[#11667b] hover:text-white transition-colors"
+                        className="inline-flex items-center gap-2 rounded-lg bg-primary text-primary-foreground font-semibold px-4 py-2 hover:bg-secondary hover:text-white transition-colors"
                         disabled={savingInventory === item.product_id}
                       >
                         <Check className="w-4 h-4" />

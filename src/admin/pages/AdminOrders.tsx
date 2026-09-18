@@ -60,7 +60,7 @@ function TrackingFields({ order, disabled, onSave }: TrackingFieldsProps) {
   return (
     <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
       <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
-        <Truck className="h-4 w-4 text-[#11667b]" />
+        <Truck className="h-4 w-4 text-primary" />
         Frakt och spårning
       </div>
 
@@ -103,7 +103,7 @@ function TrackingFields({ order, disabled, onSave }: TrackingFieldsProps) {
               tracking_number: trackingNumber.trim() || null,
             })
           }
-          className="rounded-lg border border-[#11667b] px-4 py-2 text-sm font-semibold text-[#11667b] transition-colors hover:bg-[#11667b] hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-[#11667b]"
+          className="rounded-lg border border-secondary px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-secondary hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-primary"
         >
           Spara frakt
         </button>
@@ -321,7 +321,7 @@ export default function AdminOrders() {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-4 inline-flex items-center justify-center rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+          className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
         >
           Logga in med Google
         </button>
@@ -341,7 +341,7 @@ export default function AdminOrders() {
           <button
             type="button"
             onClick={handleExportCsv}
-            className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
           >
             <Download className="h-4 w-4" />
             Exportera CSV
@@ -349,7 +349,7 @@ export default function AdminOrders() {
           <button
             type="button"
             onClick={() => void loadOrders()}
-            className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b]"
+            className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary"
           >
             <RefreshCcw className="h-4 w-4" />
             Uppdatera
@@ -382,7 +382,7 @@ export default function AdminOrders() {
         <button
           type="button"
           onClick={() => void loadOrders()}
-          className="rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-[#11667b] hover:text-[#11667b]"
+          className="rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold text-slate-100 hover:border-secondary hover:text-primary"
         >
           Filtrera
         </button>
@@ -395,7 +395,7 @@ export default function AdminOrders() {
           <p>{error}</p>
         </div>
       )}
-      {isAdmin && !canMutate && <p className="text-sm text-yellow-300">Du har läsbehörighet (readonly).</p>}
+      {isAdmin && !canMutate && <p className="text-sm text-primary">Du har läsbehörighet (readonly).</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingOrders && <p className="text-sm text-slate-400">Laddar beställningar...</p>}
 
@@ -422,7 +422,7 @@ export default function AdminOrders() {
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Totalt</p>
                   <p className="text-lg font-semibold text-white">{formatCurrency(total)}</p>
                   <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-xs text-slate-200">
-                    <Wrench className="h-3.5 w-3.5 text-[#11667b]" />
+                    <Wrench className="h-3.5 w-3.5 text-primary" />
                     {statusInfo.label}
                   </div>
                 </div>
@@ -501,7 +501,7 @@ export default function AdminOrders() {
 
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
                 <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
-                  <CheckCircle2 className="h-4 w-4 text-[#11667b]" />
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
                   Byggchecklista
                 </div>
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

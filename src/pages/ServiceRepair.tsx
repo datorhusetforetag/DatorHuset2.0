@@ -323,7 +323,7 @@ export default function ServiceRepair() {
                     <button
                       type="submit"
                       disabled={submitStatus === "sending"}
-                      className="inline-flex items-center justify-center rounded-lg bg-yellow-400 px-6 py-3 font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center justify-center rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       {submitStatus === "sending" ? "Skickar..." : "Skicka serviceförfrågan"}
                     </button>

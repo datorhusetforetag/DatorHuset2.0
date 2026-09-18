@@ -133,7 +133,7 @@ export default function AdminInventory() {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-4 inline-flex items-center justify-center rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+          className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
         >
           Logga in med Google
         </button>
@@ -152,7 +152,7 @@ export default function AdminInventory() {
         <button
           type="button"
           onClick={loadInventory}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b]"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary"
         >
           <RefreshCcw className="h-4 w-4" />
           Uppdatera
@@ -255,7 +255,7 @@ export default function AdminInventory() {
                 <button
                   type="button"
                   onClick={() => handleSave(item)}
-                  className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white disabled:opacity-70"
                   disabled={savingId === item.product_id}
                 >
                   <Save className="h-4 w-4" />

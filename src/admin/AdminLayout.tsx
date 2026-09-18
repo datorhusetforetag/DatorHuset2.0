@@ -29,12 +29,12 @@ export const AdminLayout = () => {
             <button
               type="button"
               onClick={() => setNavOpen(true)}
-              className="inline-flex items-center justify-center rounded-lg border border-slate-700/60 bg-slate-900/60 p-2 text-slate-200 hover:border-[#11667b] hover:text-[#11667b] lg:hidden"
+              className="inline-flex items-center justify-center rounded-lg border border-slate-700/60 bg-slate-900/60 p-2 text-slate-200 hover:border-secondary hover:text-primary lg:hidden"
               aria-label="Öppna meny"
             >
               <Menu className="h-5 w-5" />
             </button>
-            <img src="/datorhuset.jpg" alt="DatorHuset" className="h-10 w-10 rounded-full border border-slate-700/60" />
+            <img src="/datorhuset-round.png" alt="DatorHuset" className="h-10 w-10 rounded-full border border-slate-700/60" />
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-slate-400">DatorHuset</p>
               <h1 className="text-lg font-semibold text-white">Adminportal</h1>
@@ -43,7 +43,7 @@ export const AdminLayout = () => {
 
           <div className="flex items-center gap-3 text-sm">
             <div className="hidden items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/60 px-3 py-1 lg:flex">
-              <ShieldCheck className="h-4 w-4 text-[#11667b]" />
+              <ShieldCheck className="h-4 w-4 text-primary" />
               <span>{displayName}</span>
               {role ? <span className="text-[10px] uppercase tracking-[0.15em] text-slate-400">({role})</span> : null}
             </div>
@@ -51,7 +51,7 @@ export const AdminLayout = () => {
               <button
                 type="button"
                 onClick={signOut}
-                className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-xs font-semibold hover:border-[#11667b] hover:text-[#11667b]"
+                className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-xs font-semibold hover:border-secondary hover:text-primary"
               >
                 <LogOut className="h-4 w-4" />
                 Logga ut
@@ -60,7 +60,7 @@ export const AdminLayout = () => {
               <button
                 type="button"
                 onClick={signInWithGoogle}
-                className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-3 py-2 text-xs font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
               >
                 <LogIn className="h-4 w-4" />
                 Logga in
@@ -82,7 +82,7 @@ export const AdminLayout = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
                       isActive
-                        ? "bg-[#11667b]/20 text-[#9dd4e0]"
+                        ? "bg-secondary/20 text-[#9dd4e0]"
                         : "text-slate-200 hover:bg-slate-800/70 hover:text-white"
                     }`
                   }
@@ -111,7 +111,7 @@ export const AdminLayout = () => {
           <aside className="relative z-10 h-full w-72 border-r border-slate-800 bg-[#0f1824] px-4 py-6">
             <div className="mb-6 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <img src="/datorhuset.jpg" alt="DatorHuset" className="h-9 w-9 rounded-full border border-slate-700/60" />
+                <img src="/datorhuset-round.png" alt="DatorHuset" className="h-9 w-9 rounded-full border border-slate-700/60" />
                 <span className="text-sm font-semibold">Adminportal</span>
               </div>
               <button type="button" onClick={() => setNavOpen(false)} className="text-slate-400 hover:text-white">
@@ -127,7 +127,7 @@ export const AdminLayout = () => {
                   className={({ isActive }) =>
                     `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-semibold transition-colors ${
                       isActive
-                        ? "bg-[#11667b]/20 text-[#9dd4e0]"
+                        ? "bg-secondary/20 text-[#9dd4e0]"
                         : "text-slate-200 hover:bg-slate-800/70 hover:text-white"
                     }`
                   }

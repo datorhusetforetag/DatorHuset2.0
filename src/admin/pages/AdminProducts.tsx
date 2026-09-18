@@ -1427,7 +1427,7 @@ export default function AdminProducts() {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-4 inline-flex items-center justify-center rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+          className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
         >
           Logga in med Google
         </button>
@@ -1446,7 +1446,7 @@ export default function AdminProducts() {
         <button
           type="button"
           onClick={() => void loadItems()}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b]"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary"
         >
           <RefreshCcw className="h-4 w-4" />
           Uppdatera
@@ -1455,7 +1455,7 @@ export default function AdminProducts() {
 
       {loading && <p className="text-sm text-slate-400">Verifierar åtkomst...</p>}
       {!loading && error && <p className="text-sm text-red-400">{error}</p>}
-      {isAdmin && !canMutate && <p className="text-sm text-yellow-300">Du har läsbehörighet (readonly).</p>}
+      {isAdmin && !canMutate && <p className="text-sm text-primary">Du har läsbehörighet (readonly).</p>}
       {localError && <p className="text-sm text-red-400">{localError}</p>}
       {loadingItems && <p className="text-sm text-slate-400">Laddar produkter...</p>}
 
@@ -1860,7 +1860,7 @@ export default function AdminProducts() {
           ))}
         </div>
 
-        <button type="button" onClick={createListing} disabled={creating || !canMutate} className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70">
+        <button type="button" onClick={createListing} disabled={creating || !canMutate} className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white disabled:opacity-70">
           <Save className="h-4 w-4" /> {creating ? "Skapar..." : "Skapa produkt"}
         </button>
       </section>
@@ -1874,7 +1874,7 @@ export default function AdminProducts() {
         {visibleGroupedItems.map((group) => (
           <div key={group.id} className="space-y-4">
             {group.items.length > 1 ? (
-              <div className="rounded-xl border border-[#11667b]/40 bg-[#11667b]/10 px-4 py-2 text-xs text-slate-200">
+              <div className="rounded-xl border border-secondary/40 bg-secondary/10 px-4 py-2 text-xs text-slate-200">
                 Samma datorgrupp: basvariant + begagnad variant
               </div>
             ) : null}
@@ -1896,14 +1896,14 @@ export default function AdminProducts() {
                       Basvariant
                     </span>
                   ) : variantRole === "used" ? (
-                    <span className="rounded-full border border-yellow-400/40 bg-yellow-400/10 px-2 py-0.5 text-[11px] font-semibold text-yellow-200">
+                    <span className="rounded-full border border-primary/40 bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
                       Begagnad variant
                     </span>
                   ) : null}
                 </div>
                 <p className="truncate text-xs text-slate-500">{item.id}</p>
                 {dirtyProductIds[item.id] ? (
-                  <p className="text-xs text-yellow-300">Osparade ändringar</p>
+                  <p className="text-xs text-primary">Osparade ändringar</p>
                 ) : lastSavedByProduct[item.id] ? (
                   <p className="text-xs text-slate-400">
                     Senast sparad {new Date(lastSavedByProduct[item.id]).toLocaleTimeString("sv-SE")}
@@ -1916,7 +1916,7 @@ export default function AdminProducts() {
                     type="button"
                     onClick={() => void createUsedVariantFromExisting(item)}
                     disabled={Boolean(creatingUsedVariantByProduct[item.id]) || !canMutate}
-                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-sm font-semibold text-slate-100 hover:border-[#11667b] hover:text-[#22d3ee] disabled:opacity-60"
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-sm font-semibold text-slate-100 hover:border-secondary hover:text-[#22d3ee] disabled:opacity-60"
                   >
                     <Plus className="h-4 w-4" />
                     {creatingUsedVariantByProduct[item.id] ? "Skapar..." : "Skapa begagnad variant"}
@@ -1926,7 +1926,7 @@ export default function AdminProducts() {
                   type="button"
                   onClick={() => void saveItem(item)}
                   disabled={savingId === item.id || !canMutate}
-                  className="inline-flex items-center gap-2 rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white disabled:opacity-70"
+                  className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white disabled:opacity-70"
                 >
                   <Save className="h-4 w-4" /> {savingId === item.id ? "Sparar..." : "Spara"}
                 </button>
@@ -2172,7 +2172,7 @@ export default function AdminProducts() {
                 {!usedPartsByProduct[item.id] ? (
                   <button type="button" onClick={() => void loadUsedParts(item.id)} disabled={usedPartsLoadingByProduct[item.id]} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">{usedPartsLoadingByProduct[item.id] ? "Laddar..." : "Ladda"}</button>
                 ) : (
-                  <button type="button" onClick={() => void saveUsedParts(item.id)} disabled={usedPartsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{usedPartsSavingByProduct[item.id] ? "Sparar..." : "Spara taggar"}</button>
+                  <button type="button" onClick={() => void saveUsedParts(item.id)} disabled={usedPartsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-70">{usedPartsSavingByProduct[item.id] ? "Sparar..." : "Spara taggar"}</button>
                 )}
               </div>
               {usedPartsByProduct[item.id] ? (
@@ -2231,7 +2231,7 @@ export default function AdminProducts() {
                         markProductDirty(item.id);
                         setFpsByProduct((prev) => ({ ...prev, [item.id]: normalizeFpsSandboxSettings({ version: 2, entries: [...(prev[item.id]?.entries || []), makeNewFpsEntry()] }) }));
                       }} disabled={!canMutate} className="rounded-lg border border-slate-700/60 px-3 py-1 text-xs text-slate-100 disabled:opacity-70">Lägg till</button>
-                      <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-yellow-400 px-3 py-1 text-xs font-semibold text-slate-900 disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
+                      <button type="button" onClick={() => void saveFps(item.id)} disabled={fpsSavingByProduct[item.id] || !canMutate} className="rounded-lg bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground disabled:opacity-70">{fpsSavingByProduct[item.id] ? "Sparar..." : "Spara FPS"}</button>
                     </div>
                   )}
                   {(fpsByProduct[item.id]?.entries || []).map((entry, index) => (

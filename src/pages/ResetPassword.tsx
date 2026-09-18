@@ -72,7 +72,7 @@ export default function ResetPassword() {
           {sessionReady && !hasSession && (
             <div className="mt-6 text-sm text-gray-600 dark:text-gray-300 space-y-3">
               <p>Den har lankens session har gatt ut.</p>
-              <Link to="/account" className="text-[#11667b] font-semibold hover:text-[#0d4d5d]">
+              <Link to="/account" className="text-primary font-semibold hover:text-secondary">
                 Be om en ny losenordslank
               </Link>
             </div>
@@ -111,7 +111,7 @@ export default function ResetPassword() {
                 type="button"
                 onClick={handleSubmit}
                 disabled={status === "saving"}
-                className="w-full mt-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
+                className="w-full mt-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white disabled:opacity-60 transition-colors"
               >
                 {status === "saving" ? "Sparar..." : "Spara nytt losenord"}
               </button>

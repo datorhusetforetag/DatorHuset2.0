@@ -96,7 +96,7 @@ export default function AdminBuild() {
         <button
           type="button"
           onClick={signInWithGoogle}
-          className="mt-4 inline-flex items-center justify-center rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-slate-900 hover:bg-[#11667b] hover:text-white"
+          className="mt-4 inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white"
         >
           Logga in med Google
         </button>
@@ -115,7 +115,7 @@ export default function AdminBuild() {
         <button
           type="button"
           onClick={loadOrders}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-[#11667b] hover:text-[#11667b]"
+          className="inline-flex items-center gap-2 rounded-lg border border-slate-700/60 px-4 py-2 text-sm font-semibold hover:border-secondary hover:text-primary"
         >
           <RefreshCcw className="h-4 w-4" />
           Uppdatera
@@ -150,7 +150,7 @@ export default function AdminBuild() {
                   <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Totalt</p>
                   <p className="text-lg font-semibold text-white">{formatCurrency(total)}</p>
                   <div className="mt-2 flex items-center justify-end gap-2">
-                    <Wrench className="h-4 w-4 text-[#11667b]" />
+                    <Wrench className="h-4 w-4 text-primary" />
                     <span className="text-sm text-slate-300">{statusInfo.label}</span>
                   </div>
                 </div>
@@ -174,7 +174,7 @@ export default function AdminBuild() {
 
               <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-xs text-slate-400">
                 <div className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[#11667b]" />
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
                   <span>ETA: {statusInfo.eta}</span>
                 </div>
               </div>

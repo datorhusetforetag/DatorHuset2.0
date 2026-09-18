@@ -2,7 +2,9 @@
 import { Computer } from "@/data/computers";
 import { SupabaseProduct } from "@/hooks/useProducts";
 import { getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { resolveProductImage } from "@/lib/productImageResolver";
+import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
+
+const SEARCH_FALLBACK_IMAGE = "/Datorhuset.png";
 
 export type SearchCatalogItem = {
   id: string;
@@ -63,13 +65,6 @@ const CATEGORY_SUGGESTIONS: CategorySuggestion[] = [
     description: "Prisvärda byggen med stark prestanda",
     path: "/products?preset=budget",
     keywords: ["budget", "billig", "prisvärd", "entry", "starter"],
-  },
-  {
-    id: "paket",
-    label: "Paket",
-    description: "Dator + tillbehör i ett paket",
-    path: "/products?category=paket&clear_filters=1",
-    keywords: ["paket", "bundle", "tillbehör", "komplett"],
   },
   {
     id: "toptier",
@@ -142,7 +137,10 @@ export const buildSearchCatalog = ({
       ram: merged.ram,
       tier: merged.tier,
       searchableTier: tierToSearchLabel(merged.tier),
-      image: resolveProductImage(product, computer.image) || computer.image,
+      image:
+        resolveProductImage(product, computer.image) ||
+        normalizeProductImagePath(computer.image) ||
+        SEARCH_FALLBACK_IMAGE,
     };
   });
 

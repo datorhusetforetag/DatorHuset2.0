@@ -321,7 +321,7 @@ export default function Account() {
             </p>
             <Link
               to="/"
-              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
             >
               Tillbaka till startsidan
             </Link>
@@ -347,7 +347,7 @@ export default function Account() {
             </div>
               <Link
                 to="/orders"
-                className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
+                className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-primary text-primary dark:text-primary font-semibold hover:bg-secondary hover:text-white hover:border-secondary transition-colors"
               >
               {ordersLabel}
               </Link>
@@ -358,7 +358,7 @@ export default function Account() {
           <div className="flex flex-col gap-6">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
-                <User className="w-5 h-5 text-[#11667b]" />
+                <User className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">Mina uppgifter</h2>
               </div>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -416,7 +416,7 @@ export default function Account() {
                   type="button"
                   onClick={handleProfileSave}
                   disabled={profileStatus === "saving"}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
+                  className="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-secondary hover:text-white disabled:opacity-60 transition-colors"
                 >
                   {profileStatus === "saving" ? "Sparar..." : "Uppdatera information"}
                 </button>
@@ -431,7 +431,7 @@ export default function Account() {
 
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
-                <KeyRound className="w-5 h-5 text-[#11667b]" />
+                <KeyRound className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">Lösenord</h2>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -441,7 +441,7 @@ export default function Account() {
                 type="button"
                 onClick={handlePasswordReset}
                 disabled={resetStatus === "sending"}
-                className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg border border-yellow-400 text-gray-900 font-semibold bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
+                className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg border border-primary text-primary-foreground font-semibold bg-primary hover:bg-secondary hover:text-white disabled:opacity-60 transition-colors"
               >
                 {resetStatus === "sending" ? "Skickar..." : "Skicka lösenordslänk"}
               </button>
@@ -462,7 +462,7 @@ export default function Account() {
 
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-3">
-                <Package className="w-5 h-5 text-[#11667b]" />
+                <Package className="w-5 h-5 text-primary" />
                 <h2 className="text-xl font-semibold">{ordersLabel}</h2>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">
@@ -470,7 +470,7 @@ export default function Account() {
               </p>
               <Link
                 to="/orders"
-                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+                className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-secondary"
               >
                 Öppna orderöversikt
               </Link>
@@ -481,7 +481,7 @@ export default function Account() {
           <div className="space-y-6">
             <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6">
               <div className="flex items-center gap-3 mb-4">
-                <MapPin className="w-5 h-5 text-[#11667b]" />
+                <MapPin className="w-5 h-5 text-primary" />
                 <div>
                   <h2 className="text-xl font-semibold">Sparade adresser</h2>
                   <p className="text-xs text-gray-500 dark:text-gray-400">Hanterar leverans- och fakturaadresser.</p>
@@ -522,13 +522,13 @@ export default function Account() {
                           {address.label || address.address_line1}
                         </p>
                         {address.is_default && (
-                          <span className="text-xs rounded-full bg-yellow-100 text-yellow-800 px-2 py-1">Standard</span>
+                          <span className="text-xs rounded-full bg-primary/15 text-primary px-2 py-1">Standard</span>
                         )}
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-300">{address.full_name}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-300">{address.address_line1}</p>
                       <p className="text-sm text-gray-600 dark:text-gray-300">{address.postal_code} {address.city}</p>
-                      <div className="flex flex-wrap gap-3 text-sm font-semibold text-[#11667b]">
+                      <div className="flex flex-wrap gap-3 text-sm font-semibold text-primary">
                         {!address.is_default && (
                           <button type="button" onClick={() => handleSetDefault(address.id)}>
                             Sätt som standard
@@ -618,14 +618,14 @@ export default function Account() {
                     type="checkbox"
                     checked={addressForm.is_default}
                     onChange={(event) => setAddressForm((prev) => ({ ...prev, is_default: event.target.checked }))}
-                    className="w-4 h-4 text-yellow-400"
+                    className="w-4 h-4 text-primary"
                   />
                   Sätt som standardadress
                 </label>
                 <button
                   type="submit"
                   disabled={savingAddress}
-                  className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-yellow-400 text-gray-900 font-semibold hover:bg-[#11667b] hover:text-white disabled:opacity-60 transition-colors"
+                  className="mt-4 inline-flex items-center justify-center px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold hover:bg-secondary hover:text-white disabled:opacity-60 transition-colors"
                 >
                   {savingAddress ? "Sparar..." : "Spara adress"}
                 </button>

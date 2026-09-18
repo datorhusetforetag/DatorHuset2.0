@@ -42,7 +42,7 @@ export const Navbar = () => {
   const shouldShowBackButton = effectivePathname !== "/";
   const isAdmin = Boolean(user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin);
   const navigation = settings.site.navigation;
-  const navigationLogo = navigation.logoUrl?.trim() || "/Datorhuset.png";
+  const navigationLogo = navigation.logoUrl?.trim() || "/datorhuset-mark-small.png";
 
   const searchState = useMemo(
     () =>
@@ -113,7 +113,7 @@ export const Navbar = () => {
             <button
               type="button"
               onMouseDown={() => handleSelectSearch(firstProduct?.id || "")}
-              className="font-semibold text-[#11667b] hover:underline"
+              className="font-semibold text-primary hover:underline"
               disabled={!firstProduct}
             >
               {searchState.correctedQuery}
@@ -295,7 +295,7 @@ export const Navbar = () => {
                             </button>
                             <button
                               onClick={() => navigate("/checkout")}
-                              className="flex-1 rounded bg-yellow-500 px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#11667b]"
+                              className="flex-1 rounded bg-primary px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-secondary"
                             >
                               Kassa
                             </button>
@@ -313,7 +313,7 @@ export const Navbar = () => {
                 type="button"
                 aria-label="Öppna meny"
                 onClick={() => setShowNavMenu((prev) => !prev)}
-                className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
+                className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-white"
               >
                 <Menu className="h-5 w-5" />
                 <span className="text-sm font-semibold">{navigation.menuLabel}</span>
@@ -327,7 +327,7 @@ export const Navbar = () => {
 
             <div className="mx-8 hidden max-w-2xl flex-1 lg:order-3 lg:flex">
               <div ref={desktopSearchRef} className="relative w-full">
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-yellow-300" />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400 dark:text-primary" />
                 <input
                   type="text"
                   placeholder={navigation.searchPlaceholder}
@@ -346,7 +346,7 @@ export const Navbar = () => {
                       if (searchState.categories[0]) handleSelectCategory(searchState.categories[0].path);
                     }
                   }}
-                  className="h-12 w-full rounded-lg border-2 border-yellow-400 pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-yellow-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:focus:border-yellow-400"
+                  className="h-12 w-full rounded-lg border-2 border-primary pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300 dark:focus:border-primary"
                 />
                 {renderSearchDropdown(false)}
               </div>
@@ -360,7 +360,7 @@ export const Navbar = () => {
                   type="button"
                   aria-label="Öppna meny"
                   onClick={() => setShowNavMenu((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
+                  className="flex items-center gap-2 rounded-md border border-gray-200 px-3 py-2 text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-white"
                 >
                   <Menu className="h-5 w-5" />
                   <span className="text-sm font-semibold">{navigation.menuLabel}</span>
@@ -373,7 +373,7 @@ export const Navbar = () => {
               </div>
 
               <div ref={mobileSearchRef} className="relative min-w-0 flex-1">
-                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-yellow-400" />
+                <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-primary" />
                 <input
                   type="text"
                   placeholder={navigation.searchPlaceholder}
@@ -392,7 +392,7 @@ export const Navbar = () => {
                       if (searchState.categories[0]) handleSelectCategory(searchState.categories[0].path);
                     }
                   }}
-                  className="h-11 w-full rounded-lg border-2 border-yellow-400 pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-yellow-500 focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300"
+                  className="h-11 w-full rounded-lg border-2 border-primary pl-11 pr-4 text-sm text-gray-900 transition-all placeholder:text-gray-500 focus:border-primary focus:outline-none dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder:text-gray-300"
                 />
                 {renderSearchDropdown(true)}
               </div>
@@ -400,7 +400,7 @@ export const Navbar = () => {
               {isAdmin && (
                 <a
                   href={navigation.adminPortalHref}
-                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-white"
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-3 py-2 text-xs font-semibold text-gray-900 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-white"
                 >
                   <ShieldCheck className="h-4 w-4" />
                   Admin

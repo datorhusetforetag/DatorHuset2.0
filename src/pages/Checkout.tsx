@@ -139,7 +139,7 @@ export default function Checkout() {
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">Din kundvagn är tom</h1>
             <button
               onClick={() => navigate("/products")}
-              className="px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
+              className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
             >
               Fortsätt handla
             </button>
@@ -161,7 +161,7 @@ export default function Checkout() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-800">
-                  <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-5 dark:border-yellow-600/40 dark:bg-[#1a2533]">
+                  <div className="rounded-lg border border-primary/60 bg-primary/10 p-5 dark:border-primary/40 dark:bg-[#1a2533]">
                     <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">Logga in för att slutföra köpet</h2>
                     <p className="text-sm text-gray-700 dark:text-gray-200 mb-4">
                       Du kan lägga produkter i kundvagnen utan konto. För att gå vidare till betalning behöver du logga in.
@@ -430,7 +430,7 @@ export default function Checkout() {
                             const selected = addresses.find((item) => item.id === nextId);
                             if (selected) applyAddress(selected);
                           }}
-                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
+                          className="w-full sm:max-w-xs px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 border-gray-300 dark:border-gray-700"
                         >
                           <option value="">Välj adress...</option>
                           {addresses.map((saved) => (
@@ -459,7 +459,7 @@ export default function Checkout() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
                       aria-invalid={Boolean(errors.email)}
-                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                         errors.email ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                       }`}
                     />
@@ -479,7 +479,7 @@ export default function Checkout() {
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Jan"
                         aria-invalid={Boolean(errors.firstName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                           errors.firstName ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                         }`}
                       />
@@ -497,7 +497,7 @@ export default function Checkout() {
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Svensson"
                         aria-invalid={Boolean(errors.lastName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                           errors.lastName ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                         }`}
                       />
@@ -520,7 +520,7 @@ export default function Checkout() {
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="07x xxx xx xx"
                         aria-invalid={Boolean(errors.phone)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                           errors.phone ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                         }`}
                       />
@@ -543,7 +543,7 @@ export default function Checkout() {
                           onChange={(e) => setAddress(e.target.value)}
                           placeholder="Gatan 1"
                           aria-invalid={Boolean(errors.address)}
-                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                             errors.address ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                           }`}
                         />
@@ -565,7 +565,7 @@ export default function Checkout() {
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="123 45"
                             aria-invalid={Boolean(errors.postalCode)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                               errors.postalCode ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                             }`}
                           />
@@ -584,7 +584,7 @@ export default function Checkout() {
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Stockholm"
                             aria-invalid={Boolean(errors.city)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 ${
                               errors.city ? "border-red-400" : "border-gray-300 dark:border-gray-700"
                             }`}
                           />
@@ -607,7 +607,7 @@ export default function Checkout() {
                               value={doorCode}
                               onChange={(e) => setDoorCode(e.target.value)}
                               placeholder="1234"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                             />
                           </div>
                           <div>
@@ -619,7 +619,7 @@ export default function Checkout() {
                               value={deliveryTime}
                               onChange={(e) => setDeliveryTime(e.target.value)}
                               placeholder="Vardagar 17-20"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                             />
                           </div>
                         </div>
@@ -631,7 +631,7 @@ export default function Checkout() {
                             value={deliveryInstructions}
                             onChange={(e) => setDeliveryInstructions(e.target.value)}
                             placeholder="Lämna vid dörren / ring vid leverans / våning osv."
-                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-yellow-400 bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
+                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-primary bg-white dark:bg-[#0f1824] text-gray-900 dark:text-gray-100 placeholder:text-gray-500 dark:placeholder:text-gray-400 border-gray-300 dark:border-gray-700"
                           />
                         </div>
                       </div>
@@ -711,7 +711,7 @@ export default function Checkout() {
                         href="/privacy-policy"
                         target="_blank"
                         rel="noreferrer"
-                        className="font-semibold text-[#11667b] hover:underline"
+                        className="font-semibold text-primary hover:underline"
                       >
                         Integritetspolicy
                       </a>
@@ -731,7 +731,7 @@ export default function Checkout() {
                         href="/terms-of-service"
                         target="_blank"
                         rel="noreferrer"
-                        className="font-semibold text-[#11667b] hover:underline"
+                        className="font-semibold text-primary hover:underline"
                       >
                         Allmänna villkor
                       </a>
@@ -739,7 +739,7 @@ export default function Checkout() {
                     </span>
                   </label>
                   {requiresShipping && (
-                    <p className="rounded-lg border border-yellow-300/70 bg-yellow-50 px-3 py-2 text-xs text-gray-700 dark:border-yellow-700/50 dark:bg-yellow-900/20 dark:text-yellow-100">
+                    <p className="rounded-lg border border-primary/60 bg-primary/10 px-3 py-2 text-xs text-gray-700 dark:border-primary/40 dark:bg-primary/10 dark:text-primary">
                       Vid frakt demonterar vi grafikkortet för säker transport. Du får en videoguide för montering när varan levereras. Vid frågor är du välkommen att mejla oss.
                     </p>
                   )}
@@ -748,7 +748,7 @@ export default function Checkout() {
                 <button
                   onClick={handleCheckout}
                   disabled={loading || !isFormValid}
-                  className="w-full px-4 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-primary text-primary-foreground font-bold rounded hover:bg-secondary hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   {loading ? "Bearbetar..." : "Gå till betalning"}

@@ -4663,7 +4663,7 @@ export default function CustomBuild() {
               onClick={() => onToggle(option)}
               className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                 isActive(option)
-                  ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10 dark:!text-white"
+                  ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
                   : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-[#101926] dark:text-gray-200"
               }`}
             >
@@ -4693,7 +4693,7 @@ export default function CustomBuild() {
               onClick={() => onToggle(option)}
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                 selectedOptions.includes(option)
-                  ? "bg-yellow-400 text-gray-900 dark:bg-yellow-400/15 dark:!text-white"
+                  ? "bg-primary text-primary-foreground dark:bg-primary/15 dark:!text-white"
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-[#101926] dark:text-gray-200 dark:hover:bg-[#162234]"
               }`}
             >
@@ -4731,7 +4731,7 @@ export default function CustomBuild() {
           step={step}
           value={range[1]}
           onChange={(event) => onChange([bounds.min, Number(event.target.value)])}
-          className="h-1 w-full accent-yellow-400"
+          className="h-1 w-full accent-primary"
         />
       </div>
     );
@@ -5158,7 +5158,7 @@ export default function CustomBuild() {
               <button
                 type="submit"
                 disabled={offerStatus === "sending" || !allComponentsSelected}
-                className="w-full rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                className="w-full rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground hover:bg-secondary hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
               >
                 {offerStatus === "sending" ? "Skickar..." : "Skicka offertförfrågan"}
               </button>
@@ -5171,7 +5171,7 @@ export default function CustomBuild() {
           <div className="container mx-auto px-4 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
             <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
               <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-yellow-300">Custom bygg</p>
+                <p className="text-xs uppercase tracking-[0.4em] text-primary">Custom bygg</p>
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4">Bygg din drömdator, din väg</h1>
                 <p className="text-gray-300 mt-4 max-w-xl">
                   Välj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar
@@ -5180,13 +5180,13 @@ export default function CustomBuild() {
                 <div className="mt-8 flex flex-col sm:flex-row gap-3">
                   <Link
                     to="/custom-bygg#bygg"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white transition-colors"
                   >
                     Börja bygga
                   </Link>
                   <Link
                     to="/products"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-primary text-primary font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:border-secondary hover:text-white transition-colors"
                   >
                     Se färdiga datorer
                   </Link>
@@ -5200,7 +5200,7 @@ export default function CustomBuild() {
                   loading="lazy"
                   decoding="async"
                 />
-                <div className="absolute -bottom-5 left-6 bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
+                <div className="absolute -bottom-5 left-6 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
                   Komplett montering & test ingår
                 </div>
               </div>
@@ -5227,7 +5227,7 @@ export default function CustomBuild() {
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen((prev) => !prev)}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
               >
                 Komponenter
                 <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -5254,7 +5254,7 @@ export default function CustomBuild() {
                                 onClick={() => handleCategorySelect(category.key)}
                                 className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
                                   isActive
-                                    ? "border-yellow-400 bg-yellow-50 dark:bg-yellow-400/10"
+                                    ? "border-primary bg-primary/10 dark:bg-primary/10"
                                     : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-800 dark:bg-[#0f1824]/60 dark:hover:border-gray-700"
                                 }`}
                               >
@@ -5262,7 +5262,7 @@ export default function CustomBuild() {
                                   <span
                                     className={`mt-1 rounded-lg p-2 ${
                                       isActive
-                                        ? "bg-yellow-400 text-gray-900"
+                                        ? "bg-primary text-primary-foreground"
                                         : "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200"
                                     }`}
                                   >
@@ -5310,13 +5310,13 @@ export default function CustomBuild() {
                     <div className="mt-4 flex flex-wrap gap-3">
                       <Link
                         to="/kundservice"
-                        className="inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+                        className="inline-flex items-center justify-center gap-2 border border-primary text-primary dark:text-primary font-semibold px-4 py-2 rounded-lg hover:bg-secondary hover:border-secondary hover:text-white transition-colors"
                       >
                         {"F\u00e5 r\u00e5dgivning"}
                       </Link>
                       <a
                         href="https://datorhuset.se/service-reparation"
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#11667b] px-4 py-2 font-semibold text-white transition-colors hover:bg-[#0d4d5d]"
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-secondary px-4 py-2 font-semibold text-white transition-colors hover:bg-secondary"
                       >
                         Mejla oss
                       </a>
@@ -5342,7 +5342,7 @@ export default function CustomBuild() {
                         placeholder="Sök komponent..."
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
-                        className="w-full sm:w-60 rounded-lg bg-white border border-gray-300 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-yellow-400 focus:outline-none dark:bg-[#0f1824] dark:border-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
+                        className="w-full sm:w-60 rounded-lg bg-white border border-gray-300 px-4 py-2 text-sm text-gray-900 placeholder:text-gray-500 focus:border-primary focus:outline-none dark:bg-[#0f1824] dark:border-gray-800 dark:text-gray-100 dark:placeholder:text-gray-500"
                       />
                     </div>
                   </div>
@@ -5358,7 +5358,7 @@ export default function CustomBuild() {
                         onChange={(event) =>
                           setPriceRange([priceRange[0], parseInt(event.target.value)])
                         }
-                        className="h-1 w-full max-w-[260px] accent-yellow-400"
+                        className="h-1 w-full max-w-[260px] accent-primary"
                       />
                       <div className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400">
                         <label htmlFor="custom-price-max" className="sr-only">
@@ -5378,7 +5378,7 @@ export default function CustomBuild() {
                               : priceBounds.max;
                             setPriceRange([priceRange[0], clamped]);
                           }}
-                          className="w-20 rounded-md border border-gray-300 bg-white px-2 py-1 text-right text-xs text-gray-900 focus:border-yellow-400 focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
+                          className="w-20 rounded-md border border-gray-300 bg-white px-2 py-1 text-right text-xs text-gray-900 focus:border-primary focus:outline-none dark:border-gray-700 dark:bg-[#0f1824] dark:text-gray-100"
                         />
                         <span>kr</span>
                       </div>
@@ -5456,7 +5456,7 @@ export default function CustomBuild() {
                         <button
                           type="button"
                           onClick={clearAdvancedFilters}
-                          className="text-xs font-semibold text-gray-500 transition-colors hover:text-[#11667b] dark:text-gray-400 dark:hover:text-white"
+                          className="text-xs font-semibold text-gray-500 transition-colors hover:text-primary dark:text-gray-400 dark:hover:text-white"
                         >
                           Rensa filter
                         </button>
@@ -5546,7 +5546,7 @@ export default function CustomBuild() {
                           onClick={() => toggleSortForCategory(sortButton.key, sortButton.direction)}
                           className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                             isActive
-                              ? "border-yellow-400 bg-yellow-50 text-gray-900 dark:bg-yellow-400/10 dark:!text-white"
+                              ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
                               : "border-gray-200 bg-gray-50 text-gray-700 hover:border-gray-300 dark:border-gray-800 dark:bg-[#101926] dark:text-gray-200"
                           }`}
                         >
@@ -5585,7 +5585,7 @@ export default function CustomBuild() {
                       <div
                         key={item.id}
                         className={`rounded-2xl border bg-white p-3 shadow-sm transition-colors dark:bg-gray-900/80 sm:p-4 ${
-                          isSelected ? "border-yellow-400 ring-1 ring-yellow-300/30" : "border-gray-200 dark:border-gray-800"
+                          isSelected ? "border-primary ring-1 ring-primary/30" : "border-gray-200 dark:border-gray-800"
                         }`}
                       >
                         <div className="grid items-center gap-3 grid-cols-[72px_minmax(0,1fr)_auto] sm:grid-cols-[96px_minmax(0,1fr)_auto] md:grid-cols-[160px_minmax(0,1fr)_auto] sm:gap-4">
@@ -5621,7 +5621,7 @@ export default function CustomBuild() {
                                 <h4 className="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100 sm:mt-2 sm:text-lg">{item.name}</h4>
                               </div>
                               {item.highlight ? (
-                                <span className="text-[10px] font-semibold bg-yellow-400 text-gray-900 px-2 py-0.5 rounded-full sm:text-xs sm:px-3 sm:py-1">
+                                <span className="text-[10px] font-semibold bg-primary text-primary-foreground px-2 py-0.5 rounded-full sm:text-xs sm:px-3 sm:py-1">
                                   {item.highlight}
                                 </span>
                               ) : null}
@@ -5663,8 +5663,8 @@ export default function CustomBuild() {
                               }}
                               className={`min-w-[84px] rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:min-w-[96px] sm:px-5 sm:py-2 sm:text-sm ${
                                 isSelected
-                                  ? "bg-yellow-400 text-gray-900"
-                                  : "border border-yellow-400 text-yellow-700 dark:text-yellow-300 hover:bg-[#11667b] hover:text-white hover:border-[#11667b]"
+                                  ? "bg-primary text-primary-foreground"
+                                  : "border border-primary text-primary dark:text-primary hover:bg-secondary hover:text-white hover:border-secondary"
                               }`}
                             >
                               {isSelected ? "Vald" : "Välj"}
@@ -5689,7 +5689,7 @@ export default function CustomBuild() {
                                       href={item.selectedProductUrl}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-gray-200"
                                     >
                                       Produktsida
                                     </a>
@@ -5736,7 +5736,7 @@ export default function CustomBuild() {
                                   <button
                                     type="button"
                                     onClick={handleStorePickerClose}
-                                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-gray-200"
                                   >
                                     Stäng
                                   </button>
@@ -5771,7 +5771,7 @@ export default function CustomBuild() {
                                             href={offer.product_url || "#"}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-700 dark:text-gray-200"
+                                            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-secondary hover:text-primary dark:border-gray-700 dark:text-gray-200"
                                           >
                                             Till butik
                                           </a>
@@ -5784,7 +5784,7 @@ export default function CustomBuild() {
                                           type="button"
                                           disabled={!canSelectStoreOffer(offer)}
                                           onClick={() => selectComponentAndAdvance(activeCategory, item, offer)}
-                                          className="rounded-lg bg-yellow-400 px-2.5 py-1.5 text-xs font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                          className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                                         >
                                           Välj
                                         </button>
@@ -5808,7 +5808,7 @@ export default function CustomBuild() {
                                     type="button"
                                     onClick={handleSelectWithoutStore}
                                     disabled={!isExpanded}
-                                    className="rounded-lg bg-yellow-400 px-4 py-2 text-sm font-semibold text-gray-900 transition-colors hover:bg-[#11667b] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                                   >
                                     Välj utan butik
                                   </button>
@@ -5861,7 +5861,7 @@ export default function CustomBuild() {
                       type="button"
                       onClick={() => setOfferOpen(true)}
                       disabled={!allComponentsSelected}
-                      className="mt-4 w-full bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                      className="mt-4 w-full bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                     >
                       Skicka offertförfrågan
                     </button>
@@ -5871,7 +5871,7 @@ export default function CustomBuild() {
                     <button
                       type="button"
                       onClick={handleShareBuild}
-                      className="mt-3 w-full border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-6 py-3 rounded-lg hover:bg-[#11667b] hover:text-white hover:border-[#11667b] transition-colors"
+                      className="mt-3 w-full border border-primary text-primary dark:text-primary font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white hover:border-secondary transition-colors"
                     >
                       Spara build
                     </button>
@@ -5904,7 +5904,7 @@ export default function CustomBuild() {
             return next;
           });
         }}
-        className="sm:hidden fixed top-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400 text-gray-900 shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
+        className="sm:hidden fixed top-4 right-4 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
         aria-label="Komponenter"
       >
         <Menu className="h-5 w-5" />
@@ -5913,7 +5913,7 @@ export default function CustomBuild() {
         <button
           type="button"
           onClick={handleNextBubbleClick}
-          className="sm:hidden fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-yellow-400 text-gray-900 px-4 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
+          className="sm:hidden fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
         >
           <span className="text-gray-700/70">{"\u2022"}</span>
           <span>{"N\u00e4sta"}</span>
@@ -5932,9 +5932,9 @@ export default function CustomBuild() {
         {customBuildDebugEnabled ? "Debug på" : "Debug av"}
       </button>
       {activeCategory === "ram" ? (
-        <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-yellow-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-yellow-500/30 dark:bg-[#101926]/95 dark:text-gray-200">
+        <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-primary/60 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-primary/30 dark:bg-[#101926]/95 dark:text-gray-200">
           <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-gray-900">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <MemoryStick className="h-5 w-5" />
             </div>
             <div>

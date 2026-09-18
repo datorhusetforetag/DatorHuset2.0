@@ -17,26 +17,34 @@ export const SITE_ICON_OPTIONS = [
 export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
   version: SITE_SETTINGS_VERSION,
   site: {
+    /*
+     * Färgerna kommer från BRAND.md: cyan #3FD9F5 och plommon #B26BDE mot
+     * märkessvart #0C0D14. Cyan används i sin mörkare variant på ljus
+     * bakgrund, annars syns den inte mot vitt.
+     *
+     * Den gamla gula (#facc15) och teal (#11667b) hörde till logotypen
+     * före omritningen och hänger inte ihop med märket längre.
+     */
     theme: {
-      primaryColor: "#facc15",
-      primaryTextColor: "#111827",
-      accentColor: "#11667b",
+      primaryColor: "#1BA8C4",
+      primaryTextColor: "#ffffff",
+      accentColor: "#6E2B92",
       accentTextColor: "#ffffff",
       pageBackground: "#ffffff",
-      pageBackgroundDark: "#0f1824",
+      pageBackgroundDark: "#0C0D14",
       surfaceBackground: "#ffffff",
-      surfaceBackgroundDark: "#111827",
-      mutedBackground: "#f5f6f8",
-      mutedBackgroundDark: "#111827",
+      surfaceBackgroundDark: "#1E1E25",
+      mutedBackground: "#F2F2F7",
+      mutedBackgroundDark: "#16161C",
       cardBackground: "#ffffff",
-      cardBackgroundDark: "#0f1824",
-      cardBorderColor: "#e5e7eb",
-      cardBorderColorDark: "#1f2937",
-      textColor: "#111827",
-      textColorDark: "#f8fafc",
-      mutedTextColor: "#4b5563",
-      mutedTextColorDark: "#cbd5e1",
-      heroImageFrameBackground: "#ffffff",
+      cardBackgroundDark: "#1E1E25",
+      cardBorderColor: "#E4E4EC",
+      cardBorderColorDark: "#2A2A33",
+      textColor: "#0C0D14",
+      textColorDark: "#F2F2F7",
+      mutedTextColor: "#55555F",
+      mutedTextColorDark: "#A8A8B8",
+      heroImageFrameBackground: "#F2F2F7",
       sectionRadiusPx: 18,
       panelRadiusPx: 28,
       sectionPaddingY: 80,

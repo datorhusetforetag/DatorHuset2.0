@@ -743,7 +743,7 @@ export default function ComputerDetails() {
     if (inventoryStatus.canPreorder) {
       return {
         label: "Slut i lager",
-        className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
+        className: "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary",
         schema: "https://schema.org/PreOrder",
       };
     }
@@ -841,7 +841,7 @@ export default function ComputerDetails() {
       {Array.from({ length: 5 }).map((_, index) => (
         <span
           key={index}
-          className={index < rating ? "text-yellow-400" : "text-gray-300 dark:text-gray-600"}
+          className={index < rating ? "text-primary" : "text-gray-300 dark:text-gray-600"}
         >
           {"\u2605"}
         </span>
@@ -968,7 +968,7 @@ export default function ComputerDetails() {
           <h1 className="text-2xl font-bold mb-4">Datorn hittades inte</h1>
           <button
             onClick={() => navigate("/products")}
-            className="bg-yellow-400 hover:bg-[#11667b] hover:text-white text-gray-900 px-6 py-3 rounded font-semibold transition-colors inline-flex items-center gap-2"
+            className="bg-primary hover:bg-secondary hover:text-white text-primary-foreground px-6 py-3 rounded font-semibold transition-colors inline-flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             Tillbaka till produkter
@@ -1102,7 +1102,7 @@ export default function ComputerDetails() {
               )}
               {showPreorderLabel && (
                 <span className="relative group">
-                  <span className="rounded-full px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                  <span className="rounded-full px-3 py-1 bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary">
                     F&ouml;rbest&auml;ll
                   </span>
                   <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
@@ -1121,7 +1121,7 @@ export default function ComputerDetails() {
                   aria-checked={useUsedVariant}
                   onClick={() => setUseUsedVariant((prev) => !prev)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    useUsedVariant ? "bg-yellow-400" : "bg-gray-300 dark:bg-gray-700"
+                    useUsedVariant ? "bg-primary" : "bg-gray-300 dark:bg-gray-700"
                   }`}
                 >
                   <span className="sr-only">V\u00e4xla begagnade delar</span>
@@ -1158,7 +1158,7 @@ export default function ComputerDetails() {
               <button
                 onClick={handleAddToCart}
                 disabled={addingToCart || !activeProductId}
-                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-yellow-400 hover:bg-[#11667b] hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-gray-900 font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary hover:text-white disabled:bg-gray-300 dark:disabled:bg-gray-700 text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
@@ -1208,7 +1208,7 @@ export default function ComputerDetails() {
                       row.value
                     )}
                     {showUsedBadge && (
-                      <span className="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                      <span className="ml-2 inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary dark:bg-primary/20 dark:text-primary">
                         Begagnade
                       </span>
                     )}
@@ -1254,7 +1254,7 @@ export default function ComputerDetails() {
           <div className="mt-4">
             <Link
               to="/kundservice"
-              className="inline-flex items-center justify-center gap-2 bg-yellow-400 text-gray-900 font-semibold px-5 py-2 rounded-lg hover:bg-[#11667b] hover:text-white transition-colors"
+              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-2 rounded-lg hover:bg-secondary hover:text-white transition-colors"
             >
               Kontakta kundservice
             </Link>
@@ -1431,7 +1431,7 @@ export default function ComputerDetails() {
                       </span>
                     </span>
                     <span
-                      className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
+                      className="inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary dark:bg-primary/20 dark:text-primary cursor-help"
                       title={RAM_PRICE_TOOLTIP}
                     >
                       Begagnade
@@ -1446,7 +1446,7 @@ export default function ComputerDetails() {
                   className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     item.id === resolvedComputer.id
                       ? "bg-gray-200 text-gray-700 cursor-default dark:bg-gray-800 dark:text-gray-300"
-                      : "bg-yellow-400 text-gray-900 hover:bg-[#11667b] hover:text-white"
+                      : "bg-primary text-primary-foreground hover:bg-secondary hover:text-white"
                   }`}
                 >
                   {item.id === resolvedComputer.id ? "Aktuell" : "Visa produkt"}

@@ -113,7 +113,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     stickers: [
       {
         label: "B\u00e4st i budget-klass",
-        className: "bg-[#11667b] text-white",
+        className: "bg-secondary text-white",
       },
     ],
     primaryLabel: "Se budgetdatorer",
@@ -130,15 +130,15 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     stickers: [
       {
         label: "DatorHusets val",
-        className: "bg-[#11667b] text-white",
+        className: "bg-secondary text-white",
       },
       {
         label: "Mest valuta",
-        className: "bg-[#11667b] text-white",
+        className: "bg-secondary text-white",
       },
       {
         label: "Otrolig Prestanda",
-        className: "bg-[#11667b] text-white",
+        className: "bg-secondary text-white",
       },
     ],
     primaryLabel: "Se favoriterna",
@@ -155,7 +155,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     stickers: [
       {
         label: "Mest f\u00f6r pengarna",
-        className: "bg-[#11667b] text-white",
+        className: "bg-secondary text-white",
       },
     ],
     primaryLabel: "Se pris/prestanda",
@@ -172,7 +172,7 @@ const CATEGORY_BANNERS: Record<string, BannerConfig> = {
     stickers: [
       {
         label: "Topline",
-        className: "bg-[#11667b] text-white",
+        className: "bg-secondary text-white",
       },
     ],
     primaryLabel: "Se toppmodeller",
@@ -801,7 +801,7 @@ export default function Products() {
       configuredBanner.stickers.length > 0
         ? configuredBanner.stickers.map((label) => ({
             label,
-            className: "bg-[#11667b] text-white",
+            className: "bg-secondary text-white",
           }))
         : fallbackBanner.stickers,
   };
@@ -857,13 +857,13 @@ export default function Products() {
                     <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                       <Link
                         to={banner.primaryHref}
-                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#11667b]"
+                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
                       >
                         {banner.primaryLabel}
                       </Link>
                       <Link
                         to={banner.secondaryHref}
-                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
+                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-secondary hover:bg-secondary hover:text-white"
                       >
                         {banner.secondaryLabel}
                       </Link>
@@ -908,13 +908,13 @@ export default function Products() {
                     <div className="mt-6 flex flex-wrap items-center gap-3">
                       <Link
                         to={banner.primaryHref}
-                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#11667b]"
+                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
                       >
                         {banner.primaryLabel}
                       </Link>
                       <Link
                         to={banner.secondaryHref}
-                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-[#11667b] hover:bg-[#11667b] hover:text-white"
+                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-secondary hover:bg-secondary hover:text-white"
                       >
                         {banner.secondaryLabel}
                       </Link>
@@ -929,7 +929,7 @@ export default function Products() {
                         loading="lazy"
                       />
                       <div
-                        className={`absolute left-4 top-4 rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker?.className ?? "bg-[#11667b] text-white"}`}
+                        className={`absolute left-4 top-4 rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker?.className ?? "bg-secondary text-white"}`}
                       >
                         {primarySticker?.label ?? banner.eyebrow}
                       </div>
@@ -958,7 +958,7 @@ export default function Products() {
             <button
               type="button"
               onClick={() => setMobileFiltersOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-[#11667b] hover:text-[#11667b] dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-gray-800 dark:bg-gray-900 dark:text-gray-100"
             >
               Filter
               <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -969,7 +969,7 @@ export default function Products() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="text-xs font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+                className="text-xs font-semibold text-primary hover:text-secondary"
               >
                 Rensa filter
               </button>
@@ -995,7 +995,7 @@ export default function Products() {
                     max={effectivePriceMax}
                     value={priceRange[1]}
                     onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="w-full accent-yellow-400"
+                    className="w-full accent-primary"
                   />
                   <div className="flex justify-between text-sm text-gray-700 dark:text-gray-300">
                     <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
@@ -1011,7 +1011,7 @@ export default function Products() {
                     type="checkbox"
                     checked={showUsedOnly}
                     onChange={() => setShowUsedOnly((prev) => !prev)}
-                    className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                    className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                   />
                   <span>Begagnade datorer</span>
                 </label>
@@ -1038,7 +1038,7 @@ export default function Products() {
                           type="checkbox"
                           checked={selectedGPUs.includes(option.label)}
                           onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
-                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                         />
                         <span>{option.label}</span>
                       </label>
@@ -1059,7 +1059,7 @@ export default function Products() {
                             type="checkbox"
                             checked={selectedGPUs.includes(option.label)}
                             onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
-                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                            className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                           />
                           <span>{option.label}</span>
                         </label>
@@ -1100,7 +1100,7 @@ export default function Products() {
                           type="checkbox"
                           checked={selectedCPUs.includes(option.label)}
                           onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
-                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                         />
                         <span>{option.label}</span>
                       </label>
@@ -1121,7 +1121,7 @@ export default function Products() {
                             type="checkbox"
                             checked={selectedCPUs.includes(option.label)}
                             onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
-                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                            className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                           />
                           <span>{option.label}</span>
                         </label>
@@ -1162,7 +1162,7 @@ export default function Products() {
                           type="checkbox"
                           checked={selectedTiers.includes(option.label)}
                           onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                          className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                          className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                         />
                         <span className="capitalize">{option.label}</span>
                       </label>
@@ -1183,7 +1183,7 @@ export default function Products() {
                             type="checkbox"
                             checked={selectedTiers.includes(option.label)}
                             onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                            className="w-4 h-4 text-yellow-400 rounded border-gray-300 dark:border-gray-700"
+                            className="w-4 h-4 text-primary rounded border-gray-300 dark:border-gray-700"
                           />
                           <span className="capitalize">{option.label}</span>
                         </label>
@@ -1229,7 +1229,7 @@ export default function Products() {
                     <button
                       type="button"
                       onClick={clearFilters}
-                      className="text-xs font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+                      className="text-xs font-semibold text-primary hover:text-secondary"
                     >
                       Rensa filter
                     </button>
@@ -1281,7 +1281,7 @@ export default function Products() {
                     : inStock
                     ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
                     : canPreorder
-                    ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200"
+                    ? "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary"
                     : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200";
                   const etaNote =
                     !inStock && canPreorder
@@ -1292,7 +1292,7 @@ export default function Products() {
 
                   return (
                     <Link key={cardKey} to={`/computer/${computer.id}`} className="group flex h-full w-full max-w-[34rem]">
-                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-[#11667b] hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-[#11667b] 2xl:min-h-[35rem]">
+                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-secondary hover:shadow-lg dark:border-gray-800 dark:bg-gray-900 dark:hover:border-secondary 2xl:min-h-[35rem]">
                         <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-gray-800 dark:to-gray-900 dark:group-hover:from-gray-700 dark:group-hover:to-gray-800 sm:min-h-[18rem]">
                           <img
                             src={computer.image}
@@ -1312,7 +1312,7 @@ export default function Products() {
                             </span>
                           )}
                           {showPreorderLabel ? (
-                            <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                            <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary">
                               F&ouml;rbest&auml;ll
                             </span>
                           ) : null}
@@ -1324,12 +1324,12 @@ export default function Products() {
                           </div>
 
                         <div className="flex flex-1 flex-col p-4 pb-6">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-[#11667b] dark:group-hover:text-[#11667b] transition-colors">
+                          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2 group-hover:text-primary dark:group-hover:text-primary transition-colors">
                             {displayName}
                           </h3>
 
                           <div className="flex items-center mb-3">
-                            <div className="flex items-center text-yellow-400" aria-hidden>
+                            <div className="flex items-center text-primary" aria-hidden>
                               {Array.from({ length: 5 }).map((_, index) => (
                                 <Star key={index} className="w-4 h-4 fill-current" />
                               ))}
@@ -1348,7 +1348,7 @@ export default function Products() {
                                 </span>
                               </span>
                               <span
-                                className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200 cursor-help"
+                                className="inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary dark:bg-primary/20 dark:text-primary cursor-help"
                                 title={RAM_PRICE_TOOLTIP}
                               >
                                 Begagnade

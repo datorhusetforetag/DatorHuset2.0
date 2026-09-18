@@ -114,11 +114,11 @@ export function LoginButton() {
       <div className="relative z-50">
         <button
           onClick={() => setShowDropdown((prev) => !prev)}
-          className="flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2"
+          className="flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
         >
           <Avatar className="h-10 w-10">
             <AvatarImage src={avatarUrl} alt="Profil" />
-            <AvatarFallback className="bg-yellow-400 text-gray-900 font-semibold">
+            <AvatarFallback className="bg-primary text-primary-foreground font-semibold">
               {initials}
             </AvatarFallback>
           </Avatar>
@@ -170,7 +170,7 @@ export function LoginButton() {
       if (!value) resetForm();
     }}>
       <SheetTrigger asChild>
-        <button className="px-2.5 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm md:px-4 md:py-2 md:text-base rounded-lg bg-yellow-400 text-gray-900 font-semibold leading-none shadow-sm hover:bg-[#11667b] hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-yellow-400 focus-visible:ring-offset-2">
+        <button className="px-2.5 py-1 text-xs sm:px-3 sm:py-1.5 sm:text-sm md:px-4 md:py-2 md:text-base rounded-lg bg-primary text-primary-foreground font-semibold leading-none shadow-sm hover:bg-secondary hover:text-white transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2">
           Logga in
         </button>
       </SheetTrigger>

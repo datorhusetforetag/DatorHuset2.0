@@ -9,13 +9,13 @@ type StepsSectionProps = {
 const renderStepIcon = (icon: SiteStepItem["icon"]) => {
   if (icon === "refresh-euro") {
     return (
-      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-400 dark:text-yellow-300">
+      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:text-primary">
         <SiteIcon icon={icon} className="h-7 w-7" />
       </div>
     );
   }
   return (
-    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-yellow-400/10 text-yellow-400 dark:text-yellow-300">
+    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary dark:text-primary">
       <SiteIcon icon={icon} className="h-7 w-7" />
     </div>
   );

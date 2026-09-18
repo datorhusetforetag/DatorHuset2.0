@@ -111,7 +111,7 @@ export default function Orders() {
             </p>
             <Link
               to="/account"
-              className="inline-flex items-center justify-center px-6 py-3 bg-yellow-400 text-gray-900 font-semibold rounded hover:bg-[#11667b] hover:text-white transition-colors"
+              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
             >
               Gå till konto
             </Link>
@@ -190,7 +190,7 @@ export default function Orders() {
                       <p className="text-sm text-gray-600 dark:text-gray-300">Beställd: {orderDate}</p>
                     </div>
                     <div className="text-right">
-                      <span className="inline-flex items-center justify-center rounded-full border border-yellow-400 bg-yellow-400/15 px-3 py-1 text-xs font-semibold text-gray-900 dark:text-yellow-200">
+                      <span className="inline-flex items-center justify-center rounded-full border border-primary bg-primary/15 px-3 py-1 text-xs font-semibold text-primary-foreground dark:text-primary">
                         {statusInfo.label}
                       </span>
                       <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">ETA: {statusInfo.eta}</p>
@@ -252,7 +252,7 @@ export default function Orders() {
                             key={label}
                             className={`inline-flex min-h-[34px] items-center justify-center rounded-full px-3 text-xs font-semibold border text-center ${
                               stage >= index + 1
-                                ? "border-yellow-400 bg-yellow-400/20 text-gray-900 dark:text-yellow-200"
+                                ? "border-primary bg-primary/20 text-primary-foreground dark:text-primary"
                                 : "border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400"
                             }`}
                           >
@@ -261,7 +261,7 @@ export default function Orders() {
                         ))}
                       </div>
                       <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                        <Clock className="w-4 h-4 text-[#11667b]" />
+                        <Clock className="w-4 h-4 text-primary" />
                         <span>Uppskattad tid kvar: {statusInfo.eta}</span>
                       </div>
                       <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
@@ -271,7 +271,7 @@ export default function Orders() {
                       {showTracking && (
                         <div className="mt-4 rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50/70 dark:bg-[#0f1824] p-4">
                           <div className="flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-[#11667b]" />
+                            <Truck className="w-4 h-4 text-primary" />
                             <p className="text-xs uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400">
                               Spårning
                             </p>
@@ -289,7 +289,7 @@ export default function Orders() {
                               href={trackingUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[#11667b] hover:text-[#0d4d5d]"
+                              className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-primary hover:text-secondary"
                             >
                               Följ paketet
                               <ExternalLink className="w-3.5 h-3.5" />
@@ -307,13 +307,13 @@ export default function Orders() {
 
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-600 dark:text-gray-300">
                     <div className="flex items-center gap-2">
-                      <Package className="w-4 h-4 text-[#11667b]" />
+                      <Package className="w-4 h-4 text-primary" />
                       <span>Vi uppdaterar statusen manuellt under bygget.</span>
                     </div>
                     {order.receipt_url ? (
                       <a
                         href={order.receipt_url}
-                        className="inline-flex items-center gap-2 text-[#11667b] hover:text-[#0d4d5d] font-semibold"
+                        className="inline-flex items-center gap-2 text-primary hover:text-secondary font-semibold"
                       >
                         <ReceiptText className="w-4 h-4" />
                         Visa kvitto
@@ -353,7 +353,7 @@ export default function Orders() {
                   {/* Gäller steget "Klar för leverans" - det är då vi ringer.
                       Efter det talar spårningspanelen för sig själv. */}
                   {rawStatus === "ready" && (
-                    <div className="mt-4 rounded-lg border border-yellow-200 bg-yellow-50/70 text-gray-900 px-4 py-3 text-sm">
+                    <div className="mt-4 rounded-lg border border-primary/40 bg-primary/10 text-gray-900 px-4 py-3 text-sm">
                       DatorHuset kontaktar dig om upphämtning och leverans. Vi ringer och skickar mejl.
                     </div>
                   )}
@@ -370,7 +370,7 @@ export default function Orders() {
             </p>
             <Link
               to="/kundservice"
-              className="mt-4 inline-flex items-center justify-center gap-2 border border-yellow-400 text-yellow-700 dark:text-yellow-300 font-semibold px-4 py-2 rounded-lg hover:bg-[#11667b] hover:border-[#11667b] hover:text-white transition-colors"
+              className="mt-4 inline-flex items-center justify-center gap-2 border border-primary text-primary dark:text-primary font-semibold px-4 py-2 rounded-lg hover:bg-secondary hover:border-secondary hover:text-white transition-colors"
             >
               Kontakta kundservice
             </Link>

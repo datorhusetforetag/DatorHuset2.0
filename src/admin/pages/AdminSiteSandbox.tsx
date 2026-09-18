@@ -236,7 +236,7 @@ const buildPreviewUrl = (
   url.searchParams.set("preview-theme", previewTheme);
   url.searchParams.set("preview-auth", previewAuth);
   url.searchParams.set("preview-path", page.path);
-  const publicPath = new URL(page.path, "https://datorhuset.site");
+  const publicPath = new URL(page.path, "https://datorhuset.se");
   publicPath.searchParams.forEach((value, key) => {
     url.searchParams.set(key, value);
   });
@@ -1179,7 +1179,7 @@ export default function AdminSiteSandbox() {
                 {resettingDefaults ? "Aterstaller..." : "Reset draft to defaults"}
               </Button>
               <Button
-                className="bg-yellow-400 text-slate-950 hover:bg-yellow-300"
+                className="bg-primary text-slate-950 hover:bg-primary/90"
                 onClick={() => void publishDraft()}
                 disabled={!canMutate || publishing}
               >

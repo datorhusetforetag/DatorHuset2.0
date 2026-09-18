@@ -78,7 +78,7 @@ export default function CheckoutSuccess() {
         <Navbar />
         <div className="flex-1 pt-16 sm:pt-24 flex items-center justify-center">
           <div className="text-center">
-            <Loader className="w-12 h-12 text-yellow-400 animate-spin mx-auto mb-4" />
+            <Loader className="w-12 h-12 text-primary animate-spin mx-auto mb-4" />
             <p className="text-gray-600">Bearbetar din betalning...</p>
           </div>
         </div>
@@ -145,7 +145,7 @@ export default function CheckoutSuccess() {
             <div className="flex gap-4">
               <button
                 onClick={() => navigate("/products")}
-                className="flex-1 px-6 py-3 bg-yellow-400 text-gray-900 font-bold rounded hover:bg-[#11667b] hover:text-white transition-colors"
+                className="flex-1 px-6 py-3 bg-primary text-primary-foreground font-bold rounded hover:bg-secondary hover:text-white transition-colors"
               >
                 Forts\u00e4tt handla
               </button>

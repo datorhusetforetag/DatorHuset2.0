@@ -15,7 +15,7 @@ export const Footer = () => {
   const { settings } = useSiteSettings();
   const footer = settings.site.footer;
   const theme = settings.site.theme;
-  const footerLogo = footer.logoUrl?.trim() || "/Datorhuset.png";
+  const footerLogo = footer.logoUrl?.trim() || "/datorhuset-mark-small.png";
 
   return (
     <footer
