@@ -1,11 +1,13 @@
 ﻿import { PageShell } from "@/components/PageShell";
+import { productPath, productSlug } from "@/lib/productUrl";
 import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { SeoHead } from "@/components/SeoHead";
-import { ArrowLeft, ChevronLeft, ChevronRight, Minus, Plus, ShoppingCart } from "lucide-react";
+import { ArrowLeft, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { getProductIdByName, normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { COMPUTERS, Computer } from "@/data/computers";
+import { getProductArt } from "@/data/productArt";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
 import { normalizeProductImagePath, resolveProductImage } from "@/lib/productImageResolver";
 import {
@@ -313,7 +315,16 @@ export default function ComputerDetails() {
   } | null>(null);
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
 
-  const localComputer = COMPUTERS.find((c) => c.id === id);
+  /*
+   * Adressen kan vara en slug ("silver-speedster") eller ett id ("2").
+   *
+   * Sluggen är vad länkarna skickar numera, id:t är vad de skickade
+   * förut. Båda slås upp här, så en sparad eller indexerad länk
+   * fortsätter leda rätt. Se src/lib/productUrl.ts.
+   */
+  const localComputer = COMPUTERS.find(
+    (c) => c.id === id || productSlug(c) === normalizeProductKey(id || ""),
+  );
   const supabaseOnlyProduct = localComputer ? null : getProductFromLookup(productLookup, id);
   const computer: Computer | undefined = localComputer || (supabaseOnlyProduct ? buildComputerFromSupabaseProduct(supabaseOnlyProduct) : undefined);
   const resolvedComputer: Computer = computer || {
@@ -640,6 +651,9 @@ export default function ComputerDetails() {
    */
   const accent = TIER_ACCENTS[displaySpecs.tier] ?? TIER_ACCENTS.default;
 
+  /* Frilagd bild och egen duk för just den här maskinen. */
+  const art = getProductArt(resolvedComputer.id);
+
   /*
    * Korten för utförande. Priserna läses ur respektive produkt och inte
    * ur den valda, så alla kort visar sitt eget pris samtidigt.
@@ -850,7 +864,7 @@ export default function ComputerDetails() {
         priceCurrency: "SEK",
         price: displayPrice,
         availability: availability.schema,
-        url: `${baseUrl}/computer/${resolvedComputer.id}`,
+        url: `${baseUrl}${productPath(resolvedComputer)}`,
       },
       aggregateRating: {
         "@type": "AggregateRating",
@@ -889,7 +903,7 @@ export default function ComputerDetails() {
           "@type": "ListItem",
           position: 3,
           name: displayName,
-          item: `${baseUrl}/computer/${resolvedComputer.id}`,
+          item: `${baseUrl}${productPath(resolvedComputer)}`,
         },
       ],
     };
@@ -1056,111 +1070,92 @@ export default function ComputerDetails() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <div className="flex-1 container mx-auto px-4 py-6 sm:py-10 lg:py-16 pb-24 lg:pb-16">
-        {/* Brödsmulor.
-            Var fyra steg djupa, varav bara det första gick att klicka
-            på - "Datorer & Surfplattor" och "Gamingdatorer stationära"
-            var ren text som såg ut som länkar. En brödsmula som inte
-            leder någonstans är värre än ingen alls, så de två
-            påhittade nivåerna är borta och den som finns på riktigt
-            är en länk. Samma form som banderollen på övriga sidor. */}
-        <nav aria-label="Brödsmulor" className="page-banner__crumbs mb-6 sm:mb-8">
-          <ol>
-            <li>
-              <Link to="/">Hem</Link>
-              <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
-            </li>
-            <li>
-              <Link to="/products">Datorer</Link>
-              <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
-            </li>
-            <li>
-              <span aria-current="page">{displayName}</span>
-            </li>
-          </ol>
-        </nav>
+      {/* Scenen och panelen -------------------------------------------
+          Ligger utanför sidans spalt, så den når skärmkanterna som i
+          förlagan. Resten av sidan - specifikationer, garanti,
+          jämförelse - ligger kvar i spalten längre ned. */}
+      <div className="product-split">
+        <ProductStage
+          art={art}
+          seedKey={resolvedComputer.id}
+          images={detailImageCandidates}
+          index={selectedImage}
+          onIndexChange={setSelectedImage}
+          alt={displayName}
+          note={art.cutout ? "Ungefärligt utseende" : undefined}
+          fallbackImage={DETAIL_FALLBACK_IMAGE}
+        />
 
-        {/* Scenen och panelen ------------------------------------------
-            Förlagans uppdelning: datorn stor till vänster, allt man
-            behöver för att bestämma sig samlat till höger.
+        <div className="product-panel">
+          <div className="product-panel__scroll">
+            <nav aria-label="Brödsmulor" className="page-banner__crumbs">
+              <ol>
+                <li>
+                  <Link to="/">Hem</Link>
+                  <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
+                </li>
+                <li>
+                  <Link to="/products">Datorer</Link>
+                  <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
+                </li>
+                <li>
+                  <span aria-current="page">{displayName}</span>
+                </li>
+              </ol>
+            </nav>
 
-            Scenen står klistrad medan panelen rullar. Panelen är den
-            långa av de två - utförande, specifikationer, antal, köp -
-            och utan det hade man rullat förbi datorn efter en halv
-            skärm och sedan läst resten bredvid en tom yta. */}
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-12">
-          <div className="lg:sticky lg:top-24">
-            <ProductStage
-              images={detailImageCandidates}
-              index={selectedImage}
-              onIndexChange={setSelectedImage}
-              alt={displayName}
-              accent={accent}
-              note="Ungefärligt utseende"
-              fallbackImage={DETAIL_FALLBACK_IMAGE}
-            />
-          </div>
-
-          <div className="space-y-8">
-            <div>
-              <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl">
-                {displayName}
-              </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {[displaySpecs.tier, displaySpecs.gpu].filter(Boolean).join(" · ")}
-              </p>
-            </div>
-
-            <div>
-              <div className="flex flex-wrap items-baseline gap-3">
-                <span
-                  className="font-display text-3xl font-bold tabular-nums sm:text-4xl"
-                  style={{ color: accent }}
-                >
-                  {displayPrice.toLocaleString("sv-SE")} kr
+            <h1 className="font-display text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+              {displayName}
+              {displaySpecs.tier && (
+                <span className="ml-3 align-middle text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+                  {displaySpecs.tier}
                 </span>
-                <span className="text-xs text-muted-foreground">Exkl. moms</span>
-              </div>
+              )}
+            </h1>
 
-              <div className="mt-3 flex flex-wrap items-center gap-2 text-xs font-semibold">
-                {!showPreorderLabel && (
-                  <span className={`rounded-full px-3 py-1 ${availability.className}`}>
-                    {availability.label}
-                  </span>
-                )}
-                {etaLabel && (
-                  <span className="rounded-full bg-foreground/[0.06] px-3 py-1 text-muted-foreground">
-                    {etaLabel}
-                  </span>
-                )}
-                {showPreorderLabel && (
-                  <span
-                    className="rounded-full px-3 py-1"
-                    style={{ backgroundColor: `${accent}1F`, color: accent }}
-                    title="Förbeställ varan och få den inom 2 veckor då varan är slut på lager."
-                  >
-                    Förbeställ
-                  </span>
-                )}
-              </div>
+            <div className="mt-4 flex flex-wrap items-center gap-3">
+              <span
+                className="font-display text-2xl font-bold tabular-nums"
+                style={{ color: accent }}
+              >
+                {displayPrice.toLocaleString("sv-SE")} kr
+              </span>
+              {!showPreorderLabel && (
+                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${availability.className}`}>
+                  {availability.label}
+                </span>
+              )}
+              {showPreorderLabel && (
+                <span
+                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                  style={{ backgroundColor: `${accent}1F`, color: accent }}
+                  title="Förbeställ varan och få den inom 2 veckor då varan är slut på lager."
+                >
+                  Förbeställ
+                </span>
+              )}
+              {etaLabel && (
+                <span className="rounded-full bg-foreground/[0.06] px-3 py-1 text-xs font-semibold text-muted-foreground">
+                  {etaLabel}
+                </span>
+              )}
             </div>
 
-            {/* Utförandena. Var en vippknapp nedtryckt i brödtexten
-                förut, så att det inte syntes att priset ändrades. */}
-            <ProductVariants
-              options={variantOptions}
-              selectedId={selectedVariantId}
-              onSelect={selectVariant}
-              accent={accent}
-            />
+            {/* Utförandena -------------------------------------------- */}
+            <div className="mt-7">
+              <ProductVariants
+                options={variantOptions}
+                selectedId={selectedVariantId}
+                onSelect={selectVariant}
+                accent={accent}
+              />
+            </div>
 
-            {/* Nyckelspecifikationerna: de fyra som avgör köpet, framme
-                direkt. Resten ligger kvar längre ned - länken hoppar
-                dit i stället för att upprepa dem här. */}
-            <div>
+            {/* Nyckelspecifikationer ---------------------------------- */}
+            <div className="mt-8 border-t border-foreground/10 pt-7">
               <div className="flex items-baseline justify-between gap-4">
                 <h2 className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                  Nyckelspecifikationer
+                  Specifikationer
                 </h2>
                 <a
                   href="#alla-specs"
@@ -1171,7 +1166,7 @@ export default function ComputerDetails() {
                 </a>
               </div>
 
-              <dl className="mt-4 grid grid-cols-1 gap-x-6 gap-y-5 border-t border-foreground/10 pt-5 sm:grid-cols-2">
+              <dl className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
                 {[
                   { label: "Grafikkort", value: displaySpecs.gpu },
                   { label: "Processor", value: displaySpecs.cpu },
@@ -1184,8 +1179,10 @@ export default function ComputerDetails() {
                   .filter((row) => Boolean(String(row.value || "").trim()))
                   .map((row) => (
                     <div key={row.label}>
-                      <dt className="text-xs text-muted-foreground">{row.label}</dt>
-                      <dd className="mt-1 text-sm font-semibold leading-snug text-foreground">
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                        {row.label}
+                      </dt>
+                      <dd className="mt-1.5 text-sm font-semibold leading-snug text-foreground">
                         {row.value}
                       </dd>
                     </div>
@@ -1193,60 +1190,70 @@ export default function ComputerDetails() {
               </dl>
             </div>
 
-            {/* Köpet */}
-            <div className="border-t border-foreground/10 pt-7">
-              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="inline-flex items-center rounded-sm border border-foreground/15">
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
-                    aria-label="Minska antal"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="min-w-[3rem] text-center text-base font-bold tabular-nums">
-                    {quantity}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="flex h-11 w-11 items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
-                    aria-label="Öka antal"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
+            {/* FPS ---------------------------------------------------- */}
+            {fpsLoaded && (
+              <div className="mt-8 border-t border-foreground/10 pt-7">
+                <FpsPanel settings={fpsSettings} accent={accent} gameImages={GAME_IMAGES} />
+              </div>
+            )}
 
+            <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
+              Beräknad leverans 1-2 arbetsdagar. Byggtid: i lager 1-2 dagar,
+              förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade
+              delar) 1-2 veckor.
+            </p>
+          </div>
+
+          {/* Foten: summa och köp, kvar längst ned i panelen ---------- */}
+          <div className="product-panel__foot">
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+                Totalt
+              </p>
+              <p className="font-display text-xl font-bold tabular-nums text-foreground">
+                {(displayPrice * quantity).toLocaleString("sv-SE")} kr
+              </p>
+            </div>
+
+            <div className="flex flex-1 items-center justify-end gap-3">
+              <div className="inline-flex shrink-0 items-center rounded-sm border border-foreground/15">
                 <button
                   type="button"
-                  onClick={handleAddToCart}
-                  disabled={addingToCart || !activeProductId}
-                  className="btn-primary w-full flex-1 disabled:cursor-not-allowed disabled:opacity-60"
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="flex h-10 w-10 items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                  aria-label="Minska antal"
                 >
-                  <ShoppingCart className="h-5 w-5" />
-                  {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className="min-w-[2.25rem] text-center text-sm font-bold tabular-nums">
+                  {quantity}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setQuantity(quantity + 1)}
+                  className="flex h-10 w-10 items-center justify-center text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                  aria-label="Öka antal"
+                >
+                  <Plus className="h-4 w-4" />
                 </button>
               </div>
 
-              <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
-                Beräknad leverans 1-2 arbetsdagar. Byggtid: i lager 1-2 dagar,
-                förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade
-                delar) 1-2 veckor.
-              </p>
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                disabled={addingToCart || !activeProductId}
+                className="inline-flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-bold text-[#0c0d14] transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60 sm:flex-none"
+                style={{ backgroundColor: accent }}
+              >
+                <ShoppingCart className="h-4 w-4" />
+                {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
+              </button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* FPS-raden ligger under båda spalterna och inte inuti panelen.
-            Den vill vara bred - sex spel bredvid varandra läses i ett
-            svep, staplade i en smal spalt blir de en lista man rullar
-            förbi. */}
-        {fpsLoaded && (
-          <div className="mt-12">
-            <FpsPanel settings={fpsSettings} accent={accent} gameImages={GAME_IMAGES} />
-          </div>
-        )}
+      <div className="container mx-auto px-4 pb-24 pt-14">
 
         {/* Tabs */}
         <div
@@ -1389,7 +1396,7 @@ export default function ComputerDetails() {
                   </p>
                 </div>
                 <Link
-                  to={`/computer/${item.id}`}
+                  to={productPath(item)}
                   className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     item.id === resolvedComputer.id
                       ? "bg-foreground/[0.08] text-muted-foreground cursor-default dark:bg-foreground/[0.06] dark:text-muted-foreground"
@@ -1410,7 +1417,7 @@ export default function ComputerDetails() {
             {popularItems.map((related) => (
               <button
                 key={related.id}
-                onClick={() => navigate(`/computer/${related.id}`)}
+                onClick={() => navigate(productPath(related))}
                 className="bg-background/70 border border-foreground/10 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
               >
                 <div className="h-28 bg-foreground/[0.05] flex items-center justify-center text-3xl text-muted-foreground overflow-hidden">

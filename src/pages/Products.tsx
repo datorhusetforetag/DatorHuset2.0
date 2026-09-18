@@ -1,4 +1,5 @@
 import { PageShell } from "@/components/PageShell";
+import { productPath } from "@/lib/productUrl";
 import { PageHero } from "@/components/PageHero";
 import { BANNER_ACCENTS, PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
@@ -1332,7 +1333,7 @@ export default function Products() {
                   const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
 
                   return (
-                    <Link key={cardKey} to={`/computer/${computer.id}`} className="group flex h-full w-full max-w-[34rem]">
+                    <Link key={cardKey} to={productPath(computer)} className="group flex h-full w-full max-w-[34rem]">
                       <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-foreground/10 bg-background/70 transition-all hover:border-secondary hover:shadow-lg dark:border-foreground/10 dark:bg-background dark:hover:border-secondary 2xl:min-h-[35rem]">
                         <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-foreground/[0.05] transition-colors group-hover:bg-foreground/[0.08] sm:min-h-[18rem]">
                           <img

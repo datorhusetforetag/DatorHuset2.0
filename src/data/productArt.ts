@@ -1,0 +1,115 @@
+import bronzeCutout from "../../images/bronze tier.png";
+import silverCutout from "../../images/silver tier.png";
+import platinumCutout from "../../images/platinum tier.png";
+import diamondCutout from "../../images/diamond tier.png";
+
+/**
+ * Den svävande datorn och dess egen bakgrund, per maskin.
+ *
+ * FRILÄGGNINGEN
+ *
+ * Produktfotona är tagna i rum och går inte att frilägga maskinellt -
+ * det är provat. Översvämningsfyllning från kanten fungerar på ett
+ * studiofoto men inte här: chassina har glaspanel, så rummet syns rakt
+ * igenom dem och bakgrunden hänger ihop med sig själv genom datorn.
+ * Ingen tröskel i världen skiljer dem åt.
+ *
+ * Men frilagda bilder fanns redan. images/*.png som nivåavsnittet på
+ * startsidan visar är rena urklipp av precis de här chassina - samma
+ * Montech, samma Chieftec, samma CG530, samma vita Lian Li. De var
+ * gjorda för startsidan och används nu här också.
+ *
+ * Kopplingen går på CHASSI och inte på nivå. Två datorer kan ligga i
+ * olika prisklass och ändå vara byggda i samma låda, och det är lådan
+ * bilden visar.
+ *
+ * BAKGRUNDEN
+ *
+ * Varje maskin får en egen duk, byggd av dess egna kulörer - Montechen
+ * lyser blått och rosa, CG530 rött, den vita Lian Li:n stål och cyan.
+ * Duken ritas i ProductBackdrop och är alltså ingen bildfil, så den
+ * kostar ingenting att ladda och skalar till vilken skärm som helst.
+ *
+ * SAKNAS EN MASKIN HÄR visas fotot i stället, och då utan
+ * svävningseffekten. Så här lägger du till en:
+ *
+ *   1. Frilägg bilden - remove.bg tar någon minut och är gratis.
+ *   2. Lägg PNG:en i images/ och importera den överst i den här filen.
+ *   3. Lägg till en rad i PRODUCT_ART med datorns id.
+ */
+
+export type ProductArt = {
+  /** Frilagd bild av chassit. Utelämnad = fotot visas i stället. */
+  cutout?: string;
+  /** Duken bakom: två kulörer och ett ljus. */
+  backdrop: {
+    from: string;
+    to: string;
+    glow: string;
+  };
+};
+
+/*
+ * Nycklarna är datorernas id ur src/data/computers.ts.
+ *
+ * Kulörerna är avlästa ur respektive foto, inte valda fritt. Duken ska
+ * se ut som rummet maskinen står i, annars läser ögat den som en
+ * tapet någon råkat lägga bakom.
+ */
+export const PRODUCT_ART: Record<string, ProductArt> = {
+  // Silver-Speedster - Montech, blå kabinettbelysning med rosa fläktar
+  "2": {
+    cutout: bronzeCutout,
+    backdrop: { from: "#12203f", to: "#2b1740", glow: "#4f8ff7" },
+  },
+
+  // Guld-Inferno - Chieftec Visio, lila och grönt
+  "3": {
+    cutout: silverCutout,
+    backdrop: { from: "#1b1033", to: "#2d0f3d", glow: "#a855f7" },
+  },
+
+  // Glimmrande Guldigaspiken - samma chassi som Guld-Inferno
+  "5": {
+    cutout: silverCutout,
+    backdrop: { from: "#1d1236", to: "#122b2e", glow: "#22d3ee" },
+  },
+
+  // Platina Sleeper - CG530, rött
+  "7": {
+    cutout: platinumCutout,
+    backdrop: { from: "#2a1016", to: "#1a1020", glow: "#f2555a" },
+  },
+
+  // Platina Frostbyte - samma chassi, kallare duk
+  "9": {
+    cutout: platinumCutout,
+    backdrop: { from: "#101a2e", to: "#241129", glow: "#5ab9f5" },
+  },
+
+  /*
+   * All Black, All Out saknar urklipp.
+   *
+   * Chassit är en svart Lian Li och inget av urklippen föreställer
+   * den. Att visa ett annat chassi hade varit att sälja en dator med
+   * bild på en annan, så den får sitt foto och sin duk men ingen
+   * svävande bild förrän någon friläggt den.
+   */
+  "10": {
+    backdrop: { from: "#0e1726", to: "#101a2c", glow: "#38bdf8" },
+  },
+
+  // All White, All Out - vit Lian Li
+  "11": {
+    cutout: diamondCutout,
+    backdrop: { from: "#1b2436", to: "#0f1b2b", glow: "#7dd3fc" },
+  },
+};
+
+/** Reservduk för produkter som inte står i listan. */
+export const DEFAULT_PRODUCT_ART: ProductArt = {
+  backdrop: { from: "#181233", to: "#150f26", glow: "#3FD9F5" },
+};
+
+export const getProductArt = (id?: string | null): ProductArt =>
+  (id ? PRODUCT_ART[id] : undefined) ?? DEFAULT_PRODUCT_ART;

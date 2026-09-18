@@ -1348,176 +1348,221 @@
   }
 }
 
-/* Produktscenen ----------------------------------------------------
+/* Produktsidan ------------------------------------------------------
  *
- * Se src/components/product/ProductStage.tsx för resonemanget. Kort:
- * våra produktbilder är fotografier med egen bakgrund, inte frilagda
- * renderingar, så datorn kan inte sväva av sig själv. Scenen byggs runt
- * den i stället - ljus bakom, raster under, och en mask som tonar ut
- * fotots ytterkant så att rektangeln löses upp.
+ * Formen är Starforges produktsida: scenen tar vänstra halvan och
+ * fyller skärmens höjd, panelen ligger som en egen mörk spalt till
+ * höger och rullar för sig. Avsnittet ligger utanför sidans vanliga
+ * spalt i ComputerDetails, så det når skärmkanterna av sig självt -
+ * ingen negativ marginal behövs.
+ *
+ * Under 1024px blir det två våningar i stället: scenen först, panelen
+ * under. En delad skärm på en telefon ger två spalter som båda är för
+ * smala för att fungera.
  */
 
-.product-stage {
-  --stage-accent: #3fd9f5;
+.product-split {
+  position: relative;
+  display: grid;
+  width: 100%;
+  gap: 0;
+}
 
+@media (min-width: 1024px) {
+  .product-split {
+    grid-template-columns: minmax(0, 1.15fr) minmax(26rem, 0.85fr);
+    align-items: start;
+  }
+}
+
+/* Scenen ----------------------------------------------------------- */
+
+.product-stage {
   position: relative;
   isolation: isolate;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 20rem;
-  padding: 2rem 1.5rem 2.5rem;
-  border-radius: 0.75rem;
-  border: 1px solid hsl(var(--foreground) / 0.08);
-  background:
-    radial-gradient(120% 90% at 50% 0%, hsl(var(--foreground) / 0.05) 0%, transparent 65%),
-    hsl(var(--background) / 0.55);
+  min-height: 24rem;
+  padding: 3rem 1.5rem 7rem;
 }
 
 @media (min-width: 640px) {
   .product-stage {
-    min-height: 26rem;
-    padding: 3rem 2.5rem 3.5rem;
+    min-height: 30rem;
+    padding: 4rem 3rem 8rem;
   }
 }
 
 @media (min-width: 1024px) {
   .product-stage {
-    min-height: 32rem;
+    position: sticky;
+    top: 4rem;
+    height: calc(100vh - 4rem);
+    min-height: 40rem;
+    padding: 4rem 4rem 9rem;
   }
 }
 
-/* Ljuset bakom datorn, i nivåns kulör. */
-.product-stage__glow {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background: radial-gradient(
-    46% 42% at 50% 46%,
-    color-mix(in srgb, var(--stage-accent) 30%, transparent) 0%,
-    color-mix(in srgb, var(--stage-accent) 10%, transparent) 42%,
-    transparent 72%
-  );
-}
+/* Duken ------------------------------------------------------------ */
 
-/* Rastret ger scenen ett golv. Det tonas ut uppåt så att det inte
-   läses som ett mönster utan som djup. */
-.product-stage__grid {
+.product-backdrop {
   position: absolute;
   inset: 0;
   z-index: -1;
-  background-image:
-    repeating-linear-gradient(
-      90deg,
-      hsl(var(--foreground) / 0.05) 0 1px,
-      transparent 1px 64px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      hsl(var(--foreground) / 0.05) 0 1px,
-      transparent 1px 64px
-    );
-  -webkit-mask-image: radial-gradient(70% 60% at 50% 88%, #000 0%, transparent 78%);
-  mask-image: radial-gradient(70% 60% at 50% 88%, #000 0%, transparent 78%);
+  overflow: hidden;
 }
 
-.product-stage__frame {
+.product-backdrop__wash,
+.product-backdrop__glow,
+.product-backdrop__motes,
+.product-backdrop__floor {
+  position: absolute;
+  inset: 0;
+}
+
+.product-backdrop__motes {
+  width: 100%;
+  height: 100%;
+}
+
+/* Stoftet driver uppåt och tonar in och ut. Bara transform och
+   opacity, så grafikkortet sköter det utan att rita om duken. */
+@keyframes mote-drift {
+  0% {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-260px);
+    opacity: 0;
+  }
+}
+
+.product-backdrop__floor {
+  background: linear-gradient(to bottom, transparent 55%, rgb(0 0 0 / 0.45) 100%);
+}
+
+/* Motivet ---------------------------------------------------------- */
+
+.product-stage__subject {
   position: relative;
   display: flex;
   width: 100%;
+  max-width: 44rem;
   align-items: center;
   justify-content: center;
 }
 
-/*
- * Masken: fotot är helt ogenomskinligt ända ut i kanten och slutar
- * därför tvärt mot scenen. Här tonas de yttersta procenten ut så att
- * kanten smälter in.
- *
- * Två raka masker läggs över varandra - en vågrät och en lodrät - i
- * stället för en rund. En rund mask hade ätit in i hörnen på ett
- * stående chassi och kapat toppen av det.
- *
- * Måtten är medvetet försiktiga. Tas mer bort börjar motivet blekna,
- * och en dator vars sidopanel försvinner i dimma ser trasig ut, inte
- * svävande.
- */
-.product-stage__image {
+/* Svävande läge: urklippet står fritt, ingen ram, ingen kant. */
+.product-stage__cutout {
   position: relative;
   z-index: 1;
-  max-height: 15rem;
+  max-height: 17rem;
   width: auto;
   max-width: 100%;
   object-fit: contain;
-  -webkit-mask-image:
-    linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(to right, transparent 0%, #000 6%, #000 94%, transparent 100%),
-    linear-gradient(to bottom, transparent 0%, #000 5%, #000 95%, transparent 100%);
-  mask-composite: intersect;
-  filter: drop-shadow(0 24px 40px hsl(var(--brand-black) / 0.55));
-  animation: stage-rise 0.45s cubic-bezier(0.33, 1, 0.68, 1);
+  filter: drop-shadow(0 34px 44px rgb(0 0 0 / 0.55));
+  animation: stage-float 7s ease-in-out infinite;
 }
 
 @media (min-width: 640px) {
-  .product-stage__image {
-    max-height: 20rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .product-stage__image {
+  .product-stage__cutout {
     max-height: 24rem;
   }
 }
 
-@keyframes stage-rise {
-  from {
-    opacity: 0;
-    transform: translateY(10px) scale(0.985);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+@media (min-width: 1024px) {
+  .product-stage__cutout {
+    max-height: 32rem;
   }
 }
 
-/* Skuggan mot underlaget. Det är den som gör att datorn står i rummet
-   i stället för att ligga på ytan. */
-.product-stage__floor {
+/* Den lilla rörelsen är hela skillnaden mellan "ligger på duken" och
+   "svävar över den". Fyra pixlar räcker - mer och den ser lös ut. */
+@keyframes stage-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-9px);
+  }
+}
+
+/* Skuggan på golvet andas i takt med datorn, så de hänger ihop. */
+.product-stage__shadow {
   position: absolute;
-  bottom: -1.25rem;
+  bottom: -2.25rem;
   left: 50%;
   z-index: 0;
-  height: 2.5rem;
-  width: 60%;
+  height: 2.75rem;
+  width: 58%;
   transform: translateX(-50%);
   border-radius: 9999px;
-  background: radial-gradient(
-    closest-side,
-    hsl(var(--brand-black) / 0.5) 0%,
-    transparent 100%
-  );
-  filter: blur(6px);
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.6) 0%, transparent 100%);
+  filter: blur(8px);
+  animation: stage-shadow 7s ease-in-out infinite;
+}
+
+@keyframes stage-shadow {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translateX(-50%) scale(0.92);
+    opacity: 0.6;
+  }
+}
+
+/* Reservläge: fotot visas som ett foto, i ram. Se ProductStage. */
+.product-stage__photo {
+  position: relative;
+  z-index: 1;
+  max-height: 17rem;
+  width: auto;
+  max-width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  object-fit: contain;
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.5);
+}
+
+@media (min-width: 640px) {
+  .product-stage__photo {
+    max-height: 24rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-stage__photo {
+    max-height: 32rem;
+  }
 }
 
 .product-stage__note {
   position: absolute;
-  left: 1rem;
-  top: 1rem;
+  left: 1.25rem;
+  top: 1.25rem;
   z-index: 2;
   border-radius: 9999px;
-  border: 1px solid hsl(var(--foreground) / 0.12);
-  background: hsl(var(--background) / 0.75);
-  padding: 0.3rem 0.7rem;
+  border: 1px solid rgb(255 255 255 / 0.16);
+  background: rgb(0 0 0 / 0.35);
+  padding: 0.3rem 0.75rem;
   font-size: 0.625rem;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: hsl(var(--muted-foreground));
+  color: rgb(255 255 255 / 0.75);
 }
 
 .product-stage__arrow {
@@ -1525,25 +1570,133 @@
   top: 50%;
   z-index: 2;
   display: inline-flex;
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 2.75rem;
+  width: 2.75rem;
   transform: translateY(-50%);
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
-  border: 1px solid hsl(var(--foreground) / 0.15);
-  background: hsl(var(--background) / 0.8);
-  color: hsl(var(--foreground));
-  transition: border-color 0.2s ease, background-color 0.2s ease;
+  border: 1px solid rgb(255 255 255 / 0.18);
+  background: rgb(0 0 0 / 0.3);
+  color: rgb(255 255 255 / 0.9);
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .product-stage__arrow:hover {
-  border-color: var(--stage-accent);
-  background: hsl(var(--background));
+  background: rgb(0 0 0 / 0.55);
+  border-color: rgb(255 255 255 / 0.4);
+}
+
+/* Miniatyrerna ligger på scenen, som i förlagan, och inte under den. */
+.product-stage__thumbs {
+  position: absolute;
+  bottom: 1.75rem;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  max-width: calc(100% - 3rem);
+  transform: translateX(-50%);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.product-stage__thumb {
+  --thumb-accent: #3fd9f5;
+  height: 3.25rem;
+  width: 4rem;
+  overflow: hidden;
+  border-radius: 0.375rem;
+  border: 1px solid rgb(255 255 255 / 0.2);
+  background: rgb(0 0 0 / 0.35);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.product-stage__thumb img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.product-stage__thumb[data-active] {
+  border-color: var(--thumb-accent);
+  box-shadow: 0 0 0 1px var(--thumb-accent), 0 0 20px color-mix(in srgb, var(--thumb-accent) 45%, transparent);
+}
+
+/* Panelen ---------------------------------------------------------- */
+
+.product-panel {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  background: var(--site-page-bg, #ffffff);
+  border-left: 1px solid hsl(var(--foreground) / 0.08);
+}
+
+.dark .product-panel {
+  background: var(--site-page-bg-dark, #15101f);
+}
+
+.product-panel__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 2rem 1.5rem 2.5rem;
+}
+
+@media (min-width: 640px) {
+  .product-panel__scroll {
+    padding: 2.5rem 2.5rem 3rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-panel__scroll {
+    /* Panelen rullar för sig medan scenen står still. */
+    max-height: calc(100vh - 4rem - 6.25rem);
+    overflow-y: auto;
+    padding: 2.5rem 2.5rem 2.5rem;
+  }
+}
+
+/* Foten med summa och köpknapp sitter kvar längst ned i panelen, precis
+   som i förlagan. Den som rullat ned i specifikationerna ska inte
+   behöva leta sig tillbaka upp för att köpa. */
+.product-panel__foot {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-top: 1px solid hsl(var(--foreground) / 0.1);
+  background: var(--site-page-bg, #ffffff);
+  padding: 1rem 1.5rem;
+}
+
+.dark .product-panel__foot {
+  background: var(--site-page-bg-dark, #15101f);
+}
+
+@media (min-width: 640px) {
+  .product-panel__foot {
+    padding: 1.15rem 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-panel__foot {
+    position: sticky;
+    bottom: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .product-stage__image {
+  .product-stage__cutout,
+  .product-stage__shadow,
+  .product-backdrop__motes circle {
     animation: none;
   }
 }

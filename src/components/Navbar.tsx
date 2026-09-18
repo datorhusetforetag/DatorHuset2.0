@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { productPath } from "@/lib/productUrl";
 import {
   ArrowLeft,
   ChevronDown,
@@ -266,7 +267,9 @@ export const Navbar = () => {
   );
 
   const handleSelectSearch = (id: string) => {
-    navigate(`/computer/${id}`);
+    /* Sluggen byggs ur namnet, inte ur id:t. Se src/lib/productUrl.ts. */
+    const hit = searchState.products.find((product) => product.id === id);
+    navigate(hit ? productPath(hit) : `/computer/${id}`);
     setSearchInput("");
     setShowSearchResults(false);
     setSearchOpen(false);

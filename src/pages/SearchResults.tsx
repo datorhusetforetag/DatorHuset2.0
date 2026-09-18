@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { productPath } from "@/lib/productUrl";
 import { Link } from "react-router-dom";
 import { ArrowRight, Search, SearchX } from "lucide-react";
 
@@ -193,7 +194,7 @@ export default function SearchResults() {
                   {searchState.products.map((result, index) => (
                     <Reveal key={result.id} delay={Math.min(index, 8) * 55}>
                       <Link
-                        to={`/computer/${result.id}`}
+                        to={productPath(result)}
                         className="card-lift group flex h-full flex-col overflow-hidden rounded-lg border border-foreground/10 bg-background/70"
                       >
                         <div className="media-zoom aspect-[4/3] bg-foreground/[0.05]">
