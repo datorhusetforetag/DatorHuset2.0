@@ -560,6 +560,41 @@
   }
 }
 
+/* Karusellen överst -------------------------------------------------
+ *
+ * Bilden kryper långsamt inåt medan den ligger uppe. Zoomen är en
+ * transition och inte en keyframe, så den som tonar ut inte hoppar
+ * tillbaka till utgångsläget mitt i toningen - den kryper i stället
+ * lugnt tillbaka medan den redan är osynlig, och är åter i utgångsläge
+ * långt innan den kommer upp igen.
+ *
+ * Toningen är kortare än zoomen. Byter bilden snabbare än den rör sig
+ * hinner ögat uppfatta bytet som ett byte, inte som ett hack.
+ */
+.hero-slide {
+  transition:
+    opacity 900ms cubic-bezier(0.4, 0, 0.2, 1),
+    transform 9000ms cubic-bezier(0.2, 0.6, 0.3, 1);
+  will-change: opacity, transform;
+}
+
+/* Strecket under karusellen fylls i takt med att tiden går. */
+@keyframes hero-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide {
+    transition: opacity 200ms ease;
+    transform: none !important;
+  }
+}
+
 /* Ambient ------------------------------------------------------------
  *
  * Ljusen driver långsamt över ytan så att bakgrunden lever utan att

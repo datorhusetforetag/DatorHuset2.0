@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-import diamondTier from "../../images/diamond tier.png";
-import platinumTier from "../../images/platinum tier.png";
-import silverTier from "../../images/silver tier.png";
+import buildInterior from "../../images/hero/build-interior.jpg";
+import rigPurpleDesk from "../../images/hero/rig-purple-desk.jpg";
+import rigAmberDesk from "../../images/hero/rig-amber-desk.jpg";
+import serviceHands from "../../images/hero/service-hands.jpg";
 
 /**
  * Stor bildkarusell överst på startsidan, byggd som ORIGIN bygger sin.
@@ -14,12 +15,28 @@ import silverTier from "../../images/silver tier.png";
  * 1. Vänstra halvan är alltid mörkare än den högra. Det är inte en
  *    slump i bilden utan en medveten toning, och det är den som gör att
  *    vit text går att läsa oavsett vad som ligger bakom.
- * 2. Datorn är frilagd och ligger till höger, ovanpå ett färgat ljus i
- *    stället för i en fotografisk bakgrund.
+ * 2. Bilden rör sig långsamt. Ett stillastående foto läser ögat som en
+ *    plansch; ett som sakta kryper inåt läser det som film.
  *
- * Bakgrunden här är ritad med gradienter, inte fotograferad - precis som
- * deras gröna vågor är grafik och inte foto. Datorerna är våra egna
- * frilagda bilder.
+ * Alla bilder ligger kvar i DOM:en ovanpå varandra och tonas mellan i
+ * stället för att bytas ut. Byts de ut blinkar det till medan den nya
+ * laddas; tonas de gör det inte.
+ *
+ * Zoomen är satt som en vanlig transition och inte som en keyframe.
+ * Keyframes måste startas om vid varje byte, och den som tonar ut
+ * hoppar då tillbaka till utgångsläget mitt i toningen. Med en
+ * transition kryper den utgående bilden i stället lugnt tillbaka
+ * medan den redan är osynlig.
+ *
+ * BILDERNA ÄR PLATSHÅLLARE. Det är fria stockfoton från Unsplash och
+ * Pexels, och de föreställer inte våra egna datorer. Byt dem mot egna
+ * bilder när sådana finns - filnamnen i images/hero/ är det enda som
+ * behöver ligga kvar.
+ *
+ *   build-interior.jpg   Unsplash, foto Q-xGz9NOVOE
+ *   rig-purple-desk.jpg  Pexels, foto 33050959
+ *   rig-amber-desk.jpg   Pexels, foto 30469973
+ *   service-hands.jpg    Unsplash, foto sMKUYIasyDM
  */
 
 type Slide = {
@@ -30,9 +47,11 @@ type Slide = {
   image: string;
   primary: { label: string; href: string };
   secondary?: { label: string; href: string };
-  /** Kulören på ljuset till höger, som RGB utan alfa. */
+  /** Kulören på ljuset i högerkanten, som RGB utan alfa. */
   glow: string;
   accent: string;
+  /** Var i bilden motivet sitter, så beskärningen inte kapar det. */
+  position: string;
 };
 
 const SLIDES: Slide[] = [
@@ -41,50 +60,101 @@ const SLIDES: Slide[] = [
     eyebrow: "Custom bygg",
     title: "Bygg den precis som du vill ha den",
     subtitle: "Välj varje del själv. Vi bygger, testar och levererar körklar.",
-    image: diamondTier,
+    image: buildInterior,
     primary: { label: "Starta ditt bygge", href: "/custom-bygg" },
     secondary: { label: "Se färdiga datorer", href: "/products" },
     glow: "63, 217, 245",
     accent: "#3FD9F5",
+    position: "center",
   },
   {
     id: "prebuilt",
     eyebrow: "Färdiga datorer",
     title: "Redan byggd. Redan testad.",
     subtitle: "Handplockade komponenter i fyra nivåer, från Bronze till Diamond.",
-    image: platinumTier,
+    image: rigPurpleDesk,
     primary: { label: "Se alla datorer", href: "/products" },
     secondary: { label: "Jämför nivåerna", href: "/products?clear_filters=1" },
     glow: "178, 107, 222",
     accent: "#B26BDE",
+    position: "center",
+  },
+  {
+    id: "handbuilt",
+    eyebrow: "Byggda för hand",
+    title: "Skruvade i Spånga, inte i en fabrik",
+    subtitle:
+      "Varje dator byggs, kabeldras och provkörs för hand innan den lämnar oss.",
+    image: rigAmberDesk,
+    primary: { label: "Om DatorHuset", href: "/about" },
+    secondary: { label: "Se våra datorer", href: "/products" },
+    glow: "227, 165, 103",
+    accent: "#E3A567",
+    position: "center",
   },
   {
     id: "service",
     eyebrow: "Service & reparation",
     title: "Krånglar datorn? Vi fixar den.",
     subtitle: "Felsökning, uppgradering och rengöring - med garanti på utfört arbete.",
-    image: silverTier,
+    image: serviceHands,
     primary: { label: "Boka service", href: "/service-reparation" },
     secondary: { label: "Fråga en tekniker", href: "/kundservice" },
-    glow: "186, 196, 214",
+    glow: "203, 211, 225",
     accent: "#CBD3E1",
+    position: "center right",
   },
 ];
 
-const AUTOPLAY_MS = 6500;
+const AUTOPLAY_MS = 7000;
+/** Kortare svep än så är oftast en miss, inte ett svep. */
+const SWIPE_THRESHOLD_PX = 50;
 
 export const Hero = () => {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  /*
+   * Bara de bilder som behövts hittills laddas. Sätts alla fyra direkt
+   * hämtar webbläsaren drygt en megabyte innan den första ens är klar,
+   * och då slåss bilden man faktiskt ser om bandbredden med tre man
+   * inte ser. Nästa bild hämtas i förväg, men först efter en stund, så
+   * den första får köra klart i lugn och ro.
+   */
+  const [loaded, setLoaded] = useState<number[]>([0]);
+
+  useEffect(() => {
+    // Den man tittar på måste hämtas nu - hoppar man hit med ett klick
+    // på ett streck har den aldrig varit i tur.
+    setLoaded((current) => (current.includes(index) ? current : [...current, index]));
+
+    const next = (index + 1) % SLIDES.length;
+    const timer = window.setTimeout(() => {
+      setLoaded((current) => (current.includes(next) ? current : [...current, next]));
+    }, 1200);
+
+    return () => window.clearTimeout(timer);
+  }, [index]);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    setReducedMotion(query.matches);
+
+    const onChange = (event: MediaQueryListEvent) => setReducedMotion(event.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
 
   const go = useCallback((next: number) => {
     setIndex(((next % SLIDES.length) + SLIDES.length) % SLIDES.length);
   }, []);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || reducedMotion) return;
     if (typeof window === "undefined") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const timer = window.setInterval(() => {
       if (document.hidden) return;
@@ -92,88 +162,126 @@ export const Hero = () => {
     }, AUTOPLAY_MS);
 
     return () => window.clearInterval(timer);
-  }, [paused]);
+  }, [paused, reducedMotion]);
+
+  const onTouchStart = (event: React.TouchEvent) => {
+    touchStartX.current = event.touches[0]?.clientX ?? null;
+    setPaused(true);
+  };
+
+  const onTouchEnd = (event: React.TouchEvent) => {
+    const start = touchStartX.current;
+    touchStartX.current = null;
+    if (start === null) return;
+
+    const delta = (event.changedTouches[0]?.clientX ?? start) - start;
+    if (Math.abs(delta) < SWIPE_THRESHOLD_PX) return;
+    go(delta < 0 ? index + 1 : index - 1);
+  };
+
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      go(index - 1);
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      go(index + 1);
+    }
+  };
 
   const slide = SLIDES[index];
 
   return (
     <section
       data-sandbox-id="home-hero"
-      className="relative overflow-hidden"
+      className="relative overflow-hidden bg-[#0A0710]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      onTouchStart={() => setPaused(true)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      onKeyDown={onKeyDown}
       aria-roledescription="carousel"
       aria-label="Utvalda erbjudanden"
     >
-      {/* Bakgrund: mörk bas, färgat ljus till höger, och till sist en
-          toning som gör vänsterhalvan mörkare igen så texten håller. */}
+      {/* Bilderna ligger kvar allihop och tonas mellan ------------------ */}
+      {SLIDES.map((item, slideIndex) => (
+        <div
+          key={item.id}
+          aria-hidden="true"
+          className="hero-slide absolute inset-0 bg-cover bg-no-repeat"
+          style={{
+            backgroundImage: loaded.includes(slideIndex) ? `url(${item.image})` : undefined,
+            backgroundPosition: item.position,
+            opacity: slideIndex === index ? 1 : 0,
+            transform: slideIndex === index ? "scale(1.07)" : "scale(1)",
+          }}
+        />
+      ))}
+
+      {/* Färgat ljus i högerkanten, i aktiv slides kulör */}
       <div
         aria-hidden="true"
         className="absolute inset-0 transition-[background] duration-700"
         style={{
-          background: `
-            radial-gradient(70% 120% at 82% 50%, rgba(${slide.glow}, 0.42) 0%, rgba(${slide.glow}, 0.12) 42%, transparent 68%),
-            radial-gradient(50% 80% at 95% 85%, rgba(${slide.glow}, 0.3) 0%, transparent 60%),
-            linear-gradient(180deg, #120C1C 0%, #1A1230 55%, #140E24 100%)
-          `,
+          background: `radial-gradient(60% 100% at 88% 50%, rgba(${slide.glow}, 0.3) 0%, rgba(${slide.glow}, 0.08) 45%, transparent 72%)`,
         }}
       />
+
+      {/* Toningen som håller vänsterhalvan mörk nog för vit text */}
       <div
         aria-hidden="true"
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(90deg, rgba(10,7,16,0.94) 0%, rgba(10,7,16,0.82) 28%, rgba(10,7,16,0.45) 52%, rgba(10,7,16,0) 78%)",
+            "linear-gradient(90deg, rgba(8,5,13,0.95) 0%, rgba(8,5,13,0.86) 30%, rgba(8,5,13,0.55) 55%, rgba(8,5,13,0.15) 80%, rgba(8,5,13,0.3) 100%)",
+        }}
+      />
+      {/* Hjässa och fot mörknas så navbar, pilar och streck håller */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(8,5,13,0.75) 0%, transparent 22%, transparent 68%, rgba(8,5,13,0.8) 100%)",
         }}
       />
 
       <div className="container relative mx-auto px-4">
-        <div className="grid min-h-[460px] items-center gap-6 py-16 sm:min-h-[540px] sm:py-20 lg:min-h-[600px] lg:grid-cols-[1fr_1fr] lg:py-24">
-          {/* Texten ligger till vänster, mot den mörka halvan */}
-          <div key={`${slide.id}-text`} className="relative z-10 animate-in fade-in slide-in-from-left-6 duration-700">
+        <div className="flex min-h-[540px] items-center py-20 sm:min-h-[620px] sm:py-24 lg:min-h-[700px] lg:py-28">
+          <div
+            key={`${slide.id}-text`}
+            className="relative z-10 max-w-xl animate-in fade-in slide-in-from-left-8 duration-700"
+          >
             <p
-              className="text-xs font-semibold uppercase tracking-[0.28em]"
+              className="text-xs font-semibold uppercase tracking-[0.3em]"
               style={{ color: slide.accent }}
             >
               {slide.eyebrow}
             </p>
-            <h1 className="mt-4 max-w-[16ch] font-display text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
+            <h1 className="mt-5 max-w-[16ch] font-display text-4xl font-bold leading-[1.03] tracking-tight text-white drop-shadow-[0_2px_18px_rgba(0,0,0,0.6)] sm:text-5xl lg:text-7xl">
               {slide.title}
             </h1>
-            <p className="mt-5 max-w-[46ch] text-base text-white/70 sm:text-lg">{slide.subtitle}</p>
+            <p className="mt-6 max-w-[46ch] text-base leading-relaxed text-white/75 sm:text-lg">
+              {slide.subtitle}
+            </p>
 
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-9 flex flex-wrap gap-3">
               <Link
                 to={slide.primary.href}
-                className="btn-glow rounded-sm px-6 py-3 text-sm font-semibold transition-colors"
-                style={{ backgroundColor: slide.accent, color: "#120C1C" }}
+                className="btn-glow rounded-sm px-7 py-3.5 text-sm font-semibold transition-colors"
+                style={{ backgroundColor: slide.accent, color: "#0A0710" }}
               >
                 {slide.primary.label}
               </Link>
               {slide.secondary && (
                 <Link
                   to={slide.secondary.href}
-                  className="rounded-sm border border-white/25 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-white/60 hover:bg-white/10"
+                  className="rounded-sm border border-white/30 bg-white/5 px-7 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:border-white/70 hover:bg-white/15"
                 >
                   {slide.secondary.label}
                 </Link>
               )}
             </div>
-          </div>
-
-          {/* Datorn till höger, i det ljusa fältet */}
-          <div className="relative hidden min-h-[320px] items-center justify-center lg:flex">
-            <img
-              key={`${slide.id}-img`}
-              src={slide.image}
-              alt=""
-              aria-hidden="true"
-              loading="eager"
-              decoding="async"
-              className="max-h-[420px] w-auto animate-in fade-in zoom-in-95 object-contain duration-700"
-              style={{ filter: `drop-shadow(0 30px 50px rgba(${slide.glow}, 0.4))` }}
-            />
           </div>
         </div>
       </div>
@@ -196,19 +304,41 @@ export const Hero = () => {
         <ChevronRight className="h-5 w-5" />
       </button>
 
-      {/* Prickar */}
-      <div className="carousel-dots absolute inset-x-0 bottom-6 z-20">
-        {SLIDES.map((item, dotIndex) => (
-          <button
-            key={item.id}
-            type="button"
-            onClick={() => go(dotIndex)}
-            data-active={dotIndex === index}
-            className="carousel-dot"
-            aria-label={`Visa ${item.eyebrow}`}
-            aria-current={dotIndex === index ? "true" : undefined}
-          />
-        ))}
+      {/*
+        Streck i stället för prickar. Det aktiva fylls i takt med att
+        tiden går, så man ser att bilden är på väg att bytas och hinner
+        stanna kvar - i stället för att den bara byter.
+      */}
+      <div className="absolute inset-x-0 bottom-7 z-20 flex justify-center gap-2.5 px-4">
+        {SLIDES.map((item, dotIndex) => {
+          const isActive = dotIndex === index;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => go(dotIndex)}
+              aria-label={`Visa ${item.eyebrow}`}
+              aria-current={isActive ? "true" : undefined}
+              className="group flex h-6 w-12 shrink-0 items-center sm:w-16"
+            >
+              <span className="relative block h-[3px] w-full overflow-hidden rounded-full bg-white/25 transition-colors group-hover:bg-white/45">
+                <span
+                  key={`${item.id}-${index}`}
+                  className="absolute inset-y-0 left-0 w-full origin-left rounded-full"
+                  style={{
+                    backgroundColor: slide.accent,
+                    transform: isActive && reducedMotion ? "scaleX(1)" : "scaleX(0)",
+                    animation:
+                      isActive && !reducedMotion
+                        ? `hero-progress ${AUTOPLAY_MS}ms linear forwards`
+                        : undefined,
+                    animationPlayState: paused ? "paused" : "running",
+                  }}
+                />
+              </span>
+            </button>
+          );
+        })}
       </div>
     </section>
   );
