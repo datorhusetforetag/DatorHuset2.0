@@ -1,4 +1,6 @@
 ﻿import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -98,38 +100,48 @@ export default function Orders() {
 
 
 
+  /* Utloggad: samma banderoll som inloggad, bara med ett annat
+     erbjudande. Ett eget centrerat block hade sett ut som en annan
+     sida, och det är det inte - det är samma sida utan nyckel. */
   if (!user) {
     return (
-    <PageShell>
-        <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-          <div className="max-w-xl mx-auto text-center space-y-4">
-            <h1 className="text-3xl font-bold">Logga in för att se dina beställningar</h1>
-            <p className="text-muted-foreground">
-              Dina ordrar, kvitton och byggstatus finns i kontot.
-            </p>
-            <Link
-              to="/account"
-              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
-            >
-              Gå till konto
-            </Link>
-          </div>
-        </main>
-    </PageShell>
+      <PageShell>
+        <PageHero
+          compact
+          accent={PAGE_BANNERS.orders.accent}
+          sandboxId="orders-hero"
+          breadcrumb={[{ label: "Hem", href: "/" }, { label: "Mina beställningar" }]}
+          eyebrow="Mina beställningar"
+          title="Logga in för att se dina ordrar"
+          lede="Ordrar, kvitton och byggstatus ligger i ditt konto."
+          actions={
+            <>
+              <Link to="/account" className="btn-primary">
+                Gå till konto
+              </Link>
+              <Link to="/products" className="btn-secondary">
+                Se våra datorer
+              </Link>
+            </>
+          }
+        />
+      </PageShell>
     );
   }
 
   return (
     <PageShell>
-      <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-        <div className="flex flex-col gap-3 mb-8">
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">Mina beställningar</p>
-          <h1 className="text-3xl font-bold">Din orderöversikt</h1>
-          <p className="text-sm text-muted-foreground">
-            Se status, ETA och kvitton för alla dina byggen.
-          </p>
-        </div>
+      <PageHero
+        compact
+        accent={PAGE_BANNERS.orders.accent}
+        sandboxId="orders-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Mina beställningar" }]}
+        eyebrow="Mina beställningar"
+        title="Din orderöversikt"
+        lede="Status, beräknad leverans och kvitton för allt du beställt."
+      />
 
+      <main className="container mx-auto px-4 pb-24 pt-10">
         <div className="space-y-6">
             {loadingOrders && (
               <p className="text-sm text-muted-foreground">Hämtar order...</p>
@@ -210,9 +222,9 @@ export default function Orders() {
                           return (
                             <div
                               key={item.id}
-                              className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-foreground/10 bg-white/80 dark:bg-[#101a27] p-4"
+                              className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-foreground/10 bg-white/80 dark:bg-background/70 p-4"
                             >
-                              <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-gray-200 dark:bg-foreground/[0.06]">
+                              <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-foreground/[0.08] dark:bg-foreground/[0.06]">
                                 {imageSrc ? (
                                   <img
                                     src={imageSrc}
@@ -220,7 +232,7 @@ export default function Orders() {
                                     className="h-full w-full object-cover"
                                   />
                                 ) : (
-                                  <div className="flex h-full w-full items-center justify-center text-xs text-gray-500">
+                                  <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
                                     Bild
                                   </div>
                                 )}
@@ -240,7 +252,7 @@ export default function Orders() {
                       </div>
                     </div>
 
-                    <div className="rounded-xl border border-foreground/10 bg-white dark:bg-[#101a27] p-4">
+                    <div className="rounded-xl border border-foreground/10 bg-background/70 dark:bg-background/70 p-4">
                       <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Status</p>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         {ORDER_STATUS_STEPS.map((label, index) => (
@@ -349,7 +361,7 @@ export default function Orders() {
                   {/* Gäller steget "Klar för leverans" - det är då vi ringer.
                       Efter det talar spårningspanelen för sig själv. */}
                   {rawStatus === "ready" && (
-                    <div className="mt-4 rounded-lg border border-primary/40 bg-primary/10 text-gray-900 px-4 py-3 text-sm">
+                    <div className="mt-4 rounded-lg border border-primary/40 bg-primary/10 text-foreground px-4 py-3 text-sm">
                       DatorHuset kontaktar dig om upphämtning och leverans. Vi ringer och skickar mejl.
                     </div>
                   )}

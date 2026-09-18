@@ -3,6 +3,8 @@ import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CalendarClock, PackageCheck, RotateCcw, ShieldCheck, Wrench } from "lucide-react";
 
+import { PageHero } from "@/components/PageHero";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { SeoHead } from "@/components/SeoHead";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 
@@ -85,29 +87,26 @@ export default function ReturnPolicy() {
         </>
       }
     >
-        <section className="relative">
-          <div className="container mx-auto px-4 py-14 md:py-20">
-            <p className="eyebrow">Köpvillkor</p>
-            <h1 className="section-title mt-3 text-4xl md:text-5xl">
-              Ångerrätt och <span className="text-gradient">returer</span>
-            </h1>
-            <p className="section-lede mt-4">
-              Ångrar du köpet har du 14 dagar på dig. Är det fel på datorn har du tre år.
-              Här står exakt vad som gäller och hur du gör.
-            </p>
-            <p className="mt-6 text-sm text-muted-foreground">
-              Senast uppdaterad: {new Date(LAST_UPDATED).toLocaleDateString("sv-SE", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </p>
-          </div>
-        </section>
+        <PageHero
+          sandboxId="returns-hero"
+          image={PAGE_BANNERS.legal.image}
+          accent={PAGE_BANNERS.legal.accent}
+          breadcrumb={[{ label: "Hem", href: "/" }, { label: "Ångerrätt och returer" }]}
+          eyebrow="Köpvillkor"
+          title="Ångerrätt och returer"
+          lede="Ångrar du köpet har du 14 dagar på dig. Är det fel på datorn har du tre år. Här står exakt vad som gäller och hur du gör."
+          facts={[
+            `Senast uppdaterad ${new Date(LAST_UPDATED).toLocaleDateString("sv-SE", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}`,
+          ]}
+        />
 
         {/* Nyckeltal ---------------------------------------------------- */}
         <section className="relative">
-          <div className="container mx-auto px-4">
+          <div className="container mx-auto px-4 pt-12">
             <ul className="grid gap-4 sm:grid-cols-3">
               {KEY_FACTS.map((fact) => (
                 <li key={fact.label} className="surface-card p-6">

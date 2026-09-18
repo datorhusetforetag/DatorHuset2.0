@@ -3,6 +3,7 @@ import { Instagram, Music2, Twitter, Youtube } from "lucide-react";
 
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/components/PageHero";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -31,9 +32,17 @@ export default function About() {
     <PageShell>
       <PageHero
         sandboxId="about-hero"
+        image={PAGE_BANNERS.about.image}
+        accent={PAGE_BANNERS.about.accent}
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Om oss" }]}
         eyebrow={page.heroEyebrow}
         title={page.heroTitle}
         lede={page.heroDescription}
+        facts={[
+          "Byggd för hand i Spånga",
+          "3 års reklamationsrätt",
+          "Provkörd innan leverans",
+        ]}
         actions={
           <>
             <Link to={page.primaryHref} className="btn-primary">

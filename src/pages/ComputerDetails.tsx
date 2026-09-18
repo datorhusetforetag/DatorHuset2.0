@@ -728,7 +728,7 @@ export default function ComputerDetails() {
     if (!inventoryStatus) {
       return {
         label: "Kontrollerar lager",
-        className: "bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground",
+        className: "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground",
         schema: "https://schema.org/InStock",
       };
     }
@@ -840,7 +840,7 @@ export default function ComputerDetails() {
       {Array.from({ length: 5 }).map((_, index) => (
         <span
           key={index}
-          className={index < rating ? "text-primary" : "text-gray-300 dark:text-muted-foreground"}
+          className={index < rating ? "text-primary" : "text-muted-foreground dark:text-muted-foreground"}
         >
           {"\u2605"}
         </span>
@@ -942,28 +942,40 @@ export default function ComputerDetails() {
 
   if (!computer && productsLoading) {
     return (
-    <PageShell>
-        <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
-          <h1 className="text-2xl font-bold mb-4">Laddar produkt...</h1>
+      <PageShell>
+        <div className="container mx-auto flex min-h-[50vh] flex-col items-center justify-center px-4 text-center">
+          <p className="eyebrow">Hämtar</p>
+          <p className="mt-3 text-muted-foreground">Laddar produkt...</p>
         </div>
-    </PageShell>
+      </PageShell>
     );
   }
 
+  /* En produkt som inte finns är en återvändsgränd som 404-sidan, och
+     ska erbjuda samma sak: en väg vidare, inte bara ett besked. */
   if (!computer) {
     return (
-    <PageShell>
-        <div className="flex-1 container mx-auto px-4 py-24 flex flex-col items-center text-center">
-          <h1 className="text-2xl font-bold mb-4">Datorn hittades inte</h1>
-          <button
-            onClick={() => navigate("/products")}
-            className="bg-primary hover:bg-secondary hover:text-white text-primary-foreground px-6 py-3 rounded font-semibold transition-colors inline-flex items-center gap-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Tillbaka till produkter
-          </button>
+      <PageShell>
+        <div className="container mx-auto flex min-h-[55vh] max-w-xl flex-col items-center justify-center px-4 py-20 text-center">
+          <p className="eyebrow">Finns inte</p>
+          <h1 className="section-title mt-4 text-3xl sm:text-4xl">
+            Datorn hittades inte
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
+            Modellen kan vara utgången, eller så har länken blivit gammal. Hela
+            sortimentet ligger kvar.
+          </p>
+          <div className="mt-9 flex flex-wrap justify-center gap-3">
+            <Link to="/products" className="btn-primary">
+              <ArrowLeft className="h-4 w-4" />
+              Se alla datorer
+            </Link>
+            <Link to="/custom-bygg" className="btn-secondary">
+              Bygg din egen
+            </Link>
+          </div>
         </div>
-    </PageShell>
+      </PageShell>
     );
   }
 
@@ -974,20 +986,32 @@ export default function ComputerDetails() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       <div className="flex-1 container mx-auto px-4 py-6 sm:py-10 lg:py-16 pb-24 lg:pb-16">
-        {/* Breadcrumb */}
-        <div className="flex flex-wrap items-center text-xs sm:text-sm text-muted-foreground gap-2 mb-6 sm:mb-8">
-          <button className="hover:text-gray-800 dark:hover:text-foreground" onClick={() => navigate("/")}>Hem</button>
-          <span>/</span>
-          <span>Datorer & Surfplattor</span>
-          <span>/</span>
-          <span>Gamingdatorer stationära</span>
-          <span>/</span>
-          <span className="text-foreground font-semibold">{displayName}</span>
-        </div>
+        {/* Brödsmulor.
+            Var fyra steg djupa, varav bara det första gick att klicka
+            på - "Datorer & Surfplattor" och "Gamingdatorer stationära"
+            var ren text som såg ut som länkar. En brödsmula som inte
+            leder någonstans är värre än ingen alls, så de två
+            påhittade nivåerna är borta och den som finns på riktigt
+            är en länk. Samma form som banderollen på övriga sidor. */}
+        <nav aria-label="Brödsmulor" className="page-banner__crumbs mb-6 sm:mb-8">
+          <ol>
+            <li>
+              <Link to="/">Hem</Link>
+              <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
+            </li>
+            <li>
+              <Link to="/products">Datorer</Link>
+              <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
+            </li>
+            <li>
+              <span aria-current="page">{displayName}</span>
+            </li>
+          </ol>
+        </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 items-start">
           {/* Left: image area */}
-          <div className="bg-gradient-to-br from-gray-100 to-gray-200 dark:from-background dark:to-background rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-foreground/10">
+          <div className="bg-foreground/[0.05] rounded-2xl p-4 sm:p-5 lg:p-6 flex flex-col gap-4 shadow-lg border border-foreground/10">
             <div className="relative w-full aspect-[4/3] bg-foreground/[0.06] rounded-xl border border-foreground/10 overflow-hidden">
               <div className="absolute left-3 top-3 z-10 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide text-gray-800 shadow-sm backdrop-blur dark:bg-black/70 dark:text-foreground">
                 Ungefärligt hur bygget ska se ut som
@@ -1019,14 +1043,14 @@ export default function ComputerDetails() {
                         (prev) => (prev - 1 + detailImageCandidates.length) % detailImageCandidates.length
                       )
                     }
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-background/90 dark:text-foreground"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-background/70 transition-colors dark:bg-background/90 dark:text-foreground"
                     aria-label="Föregående bild"
                   >
                     <ChevronLeft className="w-5 h-5 mx-auto" />
                   </button>
                   <button
                     onClick={() => setSelectedImage((prev) => (prev + 1) % detailImageCandidates.length)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-white transition-colors dark:bg-background/90 dark:text-foreground"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white/90 text-gray-900 shadow hover:bg-background/70 transition-colors dark:bg-background/90 dark:text-foreground"
                     aria-label="Nästa bild"
                   >
                     <ChevronRight className="w-5 h-5 mx-auto" />
@@ -1076,7 +1100,7 @@ export default function ComputerDetails() {
                 <span className={`rounded-full px-3 py-1 ${availability.className}`}>{availability.label}</span>
               )}
               {etaLabel && (
-                <span className="rounded-full px-3 py-1 bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground">
+                <span className="rounded-full px-3 py-1 bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground">
                   {etaLabel}
                 </span>
               )}
@@ -1094,24 +1118,24 @@ export default function ComputerDetails() {
 
             {hasUsedVariant && (
               <div className="flex flex-wrap items-center gap-3 text-xs font-semibold text-muted-foreground">
-                <span className={useUsedVariant ? "text-gray-500" : "text-foreground"}>Nya delar</span>
+                <span className={useUsedVariant ? "text-muted-foreground" : "text-foreground"}>Nya delar</span>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={useUsedVariant}
                   onClick={() => setUseUsedVariant((prev) => !prev)}
                   className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    useUsedVariant ? "bg-primary" : "bg-gray-300 dark:bg-foreground/[0.06]"
+                    useUsedVariant ? "bg-primary" : "bg-foreground/[0.08] dark:bg-foreground/[0.06]"
                   }`}
                 >
                   <span className="sr-only">V\u00e4xla begagnade delar</span>
                   <span
-                    className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+                    className={`inline-block h-5 w-5 transform rounded-full bg-background/70 shadow transition-transform ${
                       useUsedVariant ? "translate-x-5" : "translate-x-1"
                     }`}
                   />
                 </button>
-                <span className={useUsedVariant ? "text-foreground" : "text-gray-500"}>
+                <span className={useUsedVariant ? "text-foreground" : "text-muted-foreground"}>
                   Begagnade delar
                 </span>
               </div>
@@ -1138,7 +1162,7 @@ export default function ComputerDetails() {
               <button
                 onClick={handleAddToCart}
                 disabled={addingToCart || !activeProductId}
-                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary hover:text-white disabled:bg-gray-300 dark:disabled:bg-foreground/[0.08] text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors"
+                className="w-full sm:flex-1 sm:min-w-[220px] inline-flex items-center justify-center gap-2 bg-primary hover:bg-secondary hover:text-white disabled:bg-foreground/[0.08] dark:disabled:bg-foreground/[0.08] text-primary-foreground font-semibold py-3 px-4 rounded-lg transition-colors"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
@@ -1425,7 +1449,7 @@ export default function ComputerDetails() {
                   to={`/computer/${item.id}`}
                   className={`inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-semibold transition-colors ${
                     item.id === resolvedComputer.id
-                      ? "bg-gray-200 text-gray-700 cursor-default dark:bg-foreground/[0.06] dark:text-muted-foreground"
+                      ? "bg-foreground/[0.08] text-muted-foreground cursor-default dark:bg-foreground/[0.06] dark:text-muted-foreground"
                       : "bg-primary text-primary-foreground hover:bg-secondary hover:text-white"
                   }`}
                 >
@@ -1446,7 +1470,7 @@ export default function ComputerDetails() {
                 onClick={() => navigate(`/computer/${related.id}`)}
                 className="bg-background/70 border border-foreground/10 rounded-xl overflow-hidden hover:border-emerald-500 transition-all text-left"
               >
-                <div className="h-28 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-background dark:to-background flex items-center justify-center text-3xl text-gray-400 overflow-hidden">
+                <div className="h-28 bg-foreground/[0.05] flex items-center justify-center text-3xl text-muted-foreground overflow-hidden">
                   <img
                     src={related.image}
                     alt={related.name}

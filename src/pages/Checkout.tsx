@@ -1,4 +1,7 @@
 ﻿import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { CheckoutSteps } from "@/components/CheckoutSteps";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { LoginButton } from "@/components/LoginButton";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -119,43 +122,62 @@ export default function Checkout() {
 
   if (cartLoading) {
     return (
-    <PageShell>
-        <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-          <div className="text-center text-gray-600 dark:text-foreground">Laddar kundvagn...</div>
+      <PageShell>
+      <PageHero
+        compact
+        accent={PAGE_BANNERS.checkout.accent}
+        sandboxId="checkout-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Kundvagn", href: "/cart" }, { label: "Kassa" }]}
+        eyebrow="Kassa"
+        title="Kassa"
+      />
+        <div className="container mx-auto px-4 py-20">
+          <p className="text-muted-foreground">Laddar kundvagn...</p>
         </div>
-    </PageShell>
+      </PageShell>
     );
   }
 
   if (items.length === 0) {
     return (
-    <PageShell>
-        <div className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-foreground mb-4">Din kundvagn är tom</h1>
-            <button
-              onClick={() => navigate("/products")}
-              className="px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
-            >
-              Fortsätt handla
-            </button>
-          </div>
-        </div>
-    </PageShell>
+      <PageShell>
+      <PageHero
+        compact
+        accent={PAGE_BANNERS.checkout.accent}
+        sandboxId="checkout-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Kundvagn", href: "/cart" }, { label: "Kassa" }]}
+        eyebrow="Kassa"
+        title="Din kundvagn är tom"
+        lede="Det finns inget att gå till kassan med. Lägg till en dator först."
+        actions={
+          <button type="button" onClick={() => navigate("/products")} className="btn-primary">
+            Fortsätt handla
+          </button>
+        }
+      />
+      </PageShell>
     );
   }
 
   if (!user) {
     return (
-    <PageShell>
-        <div className="flex-1 pt-16 sm:pt-24">
-          <div className="container mx-auto px-4 py-12">
-            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">Kassa</h1>
+      <PageShell>
+      <PageHero
+        compact
+        accent={PAGE_BANNERS.checkout.accent}
+        sandboxId="checkout-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Kundvagn", href: "/cart" }, { label: "Kassa" }]}
+        eyebrow="Kassa"
+        title="Kassa"
+        actions={<CheckoutSteps current={2} accent={PAGE_BANNERS.checkout.accent} />}
+      />
+        <div className="pt-10">
+          <div className="container mx-auto px-4 pb-24">
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               <div className="lg:col-span-2">
                 <div className="bg-foreground/[0.04] p-6 rounded-lg border border-foreground/10">
-                  <div className="rounded-lg border border-primary/60 bg-primary/10 p-5 dark:border-primary/40 dark:bg-[#1a2533]">
+                  <div className="rounded-lg border border-primary/60 bg-primary/10 p-5 dark:border-primary/40 dark:bg-background/70">
                     <h2 className="text-xl font-bold text-foreground mb-2">Logga in för att slutföra köpet</h2>
                     <p className="text-sm text-foreground mb-4">
                       Du kan lägga produkter i kundvagnen utan konto. För att gå vidare till betalning behöver du logga in.
@@ -192,7 +214,7 @@ export default function Checkout() {
                                 decoding="async"
                               />
                             ) : null}
-                            <span className="text-gray-600 dark:text-foreground truncate">
+                            <span className="text-muted-foreground dark:text-foreground truncate">
                               {item.product?.name} x{item.quantity}
                             </span>
                           </div>
@@ -206,15 +228,15 @@ export default function Checkout() {
 
                   <div className="space-y-3 mb-6 pb-6 border-b border-foreground/10">
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-foreground">Delsumma:</span>
+                      <span className="text-muted-foreground dark:text-foreground">Delsumma:</span>
                       <span className="font-semibold text-foreground">{totalPrice / 100} kr</span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-foreground">Serviceavgift:</span>
+                      <span className="text-muted-foreground dark:text-foreground">Serviceavgift:</span>
                       <span className="font-semibold text-foreground">5 kr</span>
                     </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-foreground">Frakt:</span>
+                    <span className="text-muted-foreground dark:text-foreground">Frakt:</span>
                     <span className="font-semibold text-foreground">
                       {requiresShipping ? "315 kr" : "Ingen frakt vald"}
                     </span>
@@ -358,9 +380,18 @@ export default function Checkout() {
 
   return (
     <PageShell>
-      <div className="flex-1 pt-16 sm:pt-24">
-        <div className="container mx-auto px-4 py-12">
-          <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-8">Kassa</h1>
+      <PageHero
+        compact
+        accent={PAGE_BANNERS.checkout.accent}
+        sandboxId="checkout-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Kundvagn", href: "/cart" }, { label: "Kassa" }]}
+        eyebrow="Kassa"
+        title="Kassa"
+        lede="Två steg kvar. Inget dras förrän du bekräftar."
+        actions={<CheckoutSteps current={2} accent={PAGE_BANNERS.checkout.accent} />}
+      />
+      <div className="pt-10">
+        <div className="container mx-auto px-4 pb-24">
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
@@ -369,9 +400,9 @@ export default function Checkout() {
                 <h2 className="text-xl font-bold text-foreground mb-6">Leveransuppgifter</h2>
 
                 <div className="space-y-4">
-                  <div className="rounded-lg border border-foreground/10 bg-white dark:bg-[#101a27] p-4">
+                  <div className="rounded-lg border border-foreground/10 bg-background/70 dark:bg-background/70 p-4">
                     <h3 className="text-base font-semibold text-foreground">Leveranssätt</h3>
-                    <p className="text-sm text-gray-600 dark:text-foreground mt-1">Vi skickar endast inom Sverige.</p>
+                    <p className="text-sm text-muted-foreground dark:text-foreground mt-1">Vi skickar endast inom Sverige.</p>
                     <div className="mt-4 space-y-3">
                       <label className="flex items-start gap-3 rounded-lg border border-foreground/10 p-3">
                         <input
@@ -384,7 +415,7 @@ export default function Checkout() {
                         />
                         <div>
                               <p className="font-semibold text-foreground">Upphämtning i Spånga (gratis)</p>
-                          <p className="text-sm text-gray-600 dark:text-foreground">
+                          <p className="text-sm text-muted-foreground dark:text-foreground">
                                 Hämta upp din dator i Spånga efter att bygget är klart.
                           </p>
                         </div>
@@ -400,7 +431,7 @@ export default function Checkout() {
                         />
                         <div>
                           <p className="font-semibold text-foreground">PostNord till ombud (315 kr)</p>
-                          <p className="text-sm text-gray-600 dark:text-foreground">
+                          <p className="text-sm text-muted-foreground dark:text-foreground">
                             Spårbar frakt till ombud. Leverans 1-2 vardagar efter att bygget är klart.
                           </p>
                         </div>
@@ -433,7 +464,7 @@ export default function Checkout() {
                           ))}
                         </select>
                         {loadingAddresses && (
-                          <span className="text-xs text-gray-500 dark:text-muted-foreground">Hämtar adresser...</span>
+                          <span className="text-xs text-muted-foreground dark:text-muted-foreground">Hämtar adresser...</span>
                         )}
                       </div>
                     </div>
@@ -451,7 +482,7 @@ export default function Checkout() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="exempel@example.com"
                       aria-invalid={Boolean(errors.email)}
-                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                      className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                         errors.email ? "border-red-400" : "border-foreground/20"
                       }`}
                     />
@@ -471,7 +502,7 @@ export default function Checkout() {
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="Jan"
                         aria-invalid={Boolean(errors.firstName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                           errors.firstName ? "border-red-400" : "border-foreground/20"
                         }`}
                       />
@@ -489,7 +520,7 @@ export default function Checkout() {
                         onChange={(e) => setLastName(e.target.value)}
                         placeholder="Svensson"
                         aria-invalid={Boolean(errors.lastName)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                           errors.lastName ? "border-red-400" : "border-foreground/20"
                         }`}
                       />
@@ -512,12 +543,12 @@ export default function Checkout() {
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="07x xxx xx xx"
                         aria-invalid={Boolean(errors.phone)}
-                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                        className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                           errors.phone ? "border-red-400" : "border-foreground/20"
                         }`}
                       />
                       {errors.phone && <p className="text-xs text-red-500 mt-1">{errors.phone}</p>}
-                      <p className="text-xs text-gray-500 dark:text-muted-foreground mt-1">Ex: 07x xxx xx xx</p>
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">Ex: 07x xxx xx xx</p>
                     </div>
                   </div>
 
@@ -535,7 +566,7 @@ export default function Checkout() {
                           onChange={(e) => setAddress(e.target.value)}
                           placeholder="Gatan 1"
                           aria-invalid={Boolean(errors.address)}
-                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                          className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                             errors.address ? "border-red-400" : "border-foreground/20"
                           }`}
                         />
@@ -557,7 +588,7 @@ export default function Checkout() {
                             onChange={(e) => setPostalCode(e.target.value)}
                             placeholder="123 45"
                             aria-invalid={Boolean(errors.postalCode)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                               errors.postalCode ? "border-red-400" : "border-foreground/20"
                             }`}
                           />
@@ -576,7 +607,7 @@ export default function Checkout() {
                             onChange={(e) => setCity(e.target.value)}
                             placeholder="Stockholm"
                             aria-invalid={Boolean(errors.city)}
-                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground ${
+                            className={`w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground ${
                               errors.city ? "border-red-400" : "border-foreground/20"
                             }`}
                           />
@@ -584,9 +615,9 @@ export default function Checkout() {
                         </div>
                       </div>
 
-                      <div className="mt-6 rounded-lg border border-foreground/10 bg-white dark:bg-[#101a27] p-4">
+                      <div className="mt-6 rounded-lg border border-foreground/10 bg-background/70 dark:bg-background/70 p-4">
                         <h3 className="text-base font-semibold text-foreground">Lägg till fraktinformation</h3>
-                        <p className="text-sm text-gray-600 dark:text-foreground mt-1">
+                        <p className="text-sm text-muted-foreground dark:text-foreground mt-1">
                           Hjälp budet att leverera snabbare (portkod, önskad tid, instruktioner).
                         </p>
                         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -599,7 +630,7 @@ export default function Checkout() {
                               value={doorCode}
                               onChange={(e) => setDoorCode(e.target.value)}
                               placeholder="1234"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground border-foreground/20"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground border-foreground/20"
                             />
                           </div>
                           <div>
@@ -611,7 +642,7 @@ export default function Checkout() {
                               value={deliveryTime}
                               onChange={(e) => setDeliveryTime(e.target.value)}
                               placeholder="Vardagar 17-20"
-                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground border-foreground/20"
+                              className="w-full px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground border-foreground/20"
                             />
                           </div>
                         </div>
@@ -623,7 +654,7 @@ export default function Checkout() {
                             value={deliveryInstructions}
                             onChange={(e) => setDeliveryInstructions(e.target.value)}
                             placeholder="Lämna vid dörren / ring vid leverans / våning osv."
-                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-gray-500 dark:placeholder:text-muted-foreground border-foreground/20"
+                            className="w-full min-h-[96px] px-4 py-2 border rounded focus:outline-none focus:border-primary bg-background/70 text-foreground placeholder:text-muted-foreground dark:placeholder:text-muted-foreground border-foreground/20"
                           />
                         </div>
                       </div>
@@ -653,7 +684,7 @@ export default function Checkout() {
                               decoding="async"
                             />
                           ) : null}
-                          <span className="text-gray-600 dark:text-foreground truncate">
+                          <span className="text-muted-foreground dark:text-foreground truncate">
                             {item.product?.name} x{item.quantity}
                           </span>
                         </div>
@@ -667,19 +698,19 @@ export default function Checkout() {
 
                 <div className="space-y-3 mb-6 pb-6 border-b border-foreground/10">
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-foreground">Delsumma:</span>
+                    <span className="text-muted-foreground dark:text-foreground">Delsumma:</span>
                     <span className="font-semibold text-foreground">{totalPrice / 100} kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-foreground">Frakt:</span>
+                    <span className="text-muted-foreground dark:text-foreground">Frakt:</span>
                     <span className="font-semibold text-foreground">Väljs i kassan</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-foreground">Serviceavgift:</span>
+                    <span className="text-muted-foreground dark:text-foreground">Serviceavgift:</span>
                     <span className="font-semibold text-foreground">5 kr</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-foreground">Skatt:</span>
+                    <span className="text-muted-foreground dark:text-foreground">Skatt:</span>
                     <span className="font-semibold text-foreground">Inkluderad</span>
                   </div>
                 </div>
@@ -689,7 +720,7 @@ export default function Checkout() {
                   <span className="text-2xl font-bold text-foreground">{totalWithFees / 100} kr</span>
                 </div>
 
-                <div className="mb-5 space-y-3 rounded-lg border border-gray-200 bg-white p-3 dark:border-foreground/20 dark:bg-[#101a27]">
+                <div className="mb-5 space-y-3 rounded-lg border border-foreground/10 bg-background/70 p-3 dark:border-foreground/20 dark:bg-background/70">
                   <label className="flex items-start gap-2 text-sm text-foreground">
                     <input
                       type="checkbox"
@@ -731,7 +762,7 @@ export default function Checkout() {
                     </span>
                   </label>
                   {requiresShipping && (
-                    <p className="rounded-lg border border-primary/60 bg-primary/10 px-3 py-2 text-xs text-gray-700 dark:border-primary/40 dark:bg-primary/10 dark:text-primary">
+                    <p className="rounded-lg border border-primary/60 bg-primary/10 px-3 py-2 text-xs text-muted-foreground dark:border-primary/40 dark:bg-primary/10 dark:text-primary">
                       Vid frakt demonterar vi grafikkortet för säker transport. Du får en videoguide för montering när varan levereras. Vid frågor är du välkommen att mejla oss.
                     </p>
                   )}
@@ -740,7 +771,7 @@ export default function Checkout() {
                 <button
                   onClick={handleCheckout}
                   disabled={loading || !isFormValid}
-                  className="w-full px-4 py-3 bg-primary text-primary-foreground font-bold rounded hover:bg-secondary hover:text-white disabled:bg-gray-300 transition-colors flex items-center justify-center gap-2"
+                  className="w-full px-4 py-3 bg-primary text-primary-foreground font-bold rounded hover:bg-secondary hover:text-white disabled:bg-foreground/[0.08] transition-colors flex items-center justify-center gap-2"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   {loading ? "Bearbetar..." : "Gå till betalning"}

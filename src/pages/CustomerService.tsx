@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/components/PageHero";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -55,9 +56,17 @@ export default function CustomerService() {
     <PageShell head={<SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />}>
       <PageHero
         sandboxId="customer-hero"
+        image={PAGE_BANNERS.support.image}
+        accent={PAGE_BANNERS.support.accent}
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Kundservice" }]}
         eyebrow={pageSettings.heroEyebrow}
         title={pageSettings.heroTitle}
         lede={pageSettings.heroDescription}
+        facts={[
+          "Svar på vardagar",
+          "Hjälp före köp och efter",
+          "Vi svarar på svenska",
+        ]}
         actions={
           <>
             <a href={`mailto:${pageSettings.contactEmail}`} className="btn-primary">

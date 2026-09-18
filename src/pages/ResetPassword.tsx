@@ -1,7 +1,30 @@
-import { PageShell } from "@/components/PageShell";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
+
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { Reveal } from "@/components/Reveal";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { supabase } from "@/lib/supabaseClient";
+
+/**
+ * Nytt lösenord.
+ *
+ * Sidan hade tre problem utöver formen. Ögonbrynet stod på engelska
+ * ("Reset your password") mitt i en svensk butik. Alla å, ä och ö
+ * saknades - "Losentordet maste vara minst 8 tecken", "Den har lankens
+ * session har gatt ut" - vilket dessutom dolde ett stavfel:
+ * "Losentordet" skulle vara "Lösenordet". Och fälten låg lösa utan
+ * form, så Enter gjorde ingenting; man var tvungen att sikta på
+ * knappen.
+ *
+ * Allt tre är rättat. Fälten ligger i ett riktigt formulär med
+ * autocomplete="new-password", så lösenordshanterare förstår vad de
+ * ser, och besked om fel läses upp av skärmläsare i stället för att
+ * bara dyka upp.
+ */
+
+const ACCENT = PAGE_BANNERS.account.accent;
 
 type ResetStatus = "idle" | "saving" | "saved" | "error";
 
@@ -30,93 +53,125 @@ export default function ResetPassword() {
     };
   }, []);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     setErrorMessage("");
+
     if (password.length < 8) {
-      setErrorMessage("Losentordet maste vara minst 8 tecken.");
+      setStatus("error");
+      setErrorMessage("Lösenordet måste vara minst 8 tecken.");
       return;
     }
     if (password !== confirmPassword) {
-      setErrorMessage("Losentorden matchar inte.");
+      setStatus("error");
+      setErrorMessage("Lösenorden matchar inte.");
       return;
     }
+
     setStatus("saving");
     const { error } = await supabase.auth.updateUser({ password });
     if (error) {
       setStatus("error");
-      setErrorMessage(error.message || "Kunde inte uppdatera losenordet.");
+      setErrorMessage(error.message || "Kunde inte uppdatera lösenordet.");
       return;
     }
+
     setStatus("saved");
     setTimeout(() => navigate("/account"), 2000);
   };
 
   return (
     <PageShell>
-      <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-        <div className="max-w-xl mx-auto rounded-2xl border border-foreground/10 bg-background/70 p-6">
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-            Reset your password
-          </p>
-          <h1 className="text-2xl font-bold mt-3">Skapa ett nytt losenord</h1>
-          <p className="text-sm text-muted-foreground mt-2">
-            Valt losenord uppdateras direkt nar du sparar.
-          </p>
+      <PageHero
+        compact
+        accent={ACCENT}
+        sandboxId="reset-hero"
+        breadcrumb={[
+          { label: "Hem", href: "/" },
+          { label: "Mitt konto", href: "/account" },
+          { label: "Nytt lösenord" },
+        ]}
+        eyebrow="Mitt konto"
+        title="Skapa ett nytt lösenord"
+        lede="Det nya lösenordet gäller direkt när du sparar."
+      />
 
-          {!sessionReady && (
-            <p className="text-sm text-muted-foreground mt-6">Verifierar lank...</p>
-          )}
+      <section data-sandbox-id="reset-body" className="relative">
+        <div className="container mx-auto max-w-lg px-4 pb-24 pt-12">
+          <Reveal className="rounded-lg border border-foreground/10 bg-background/70 p-7 sm:p-8">
+            {!sessionReady && (
+              <p className="text-sm text-muted-foreground">Verifierar länken...</p>
+            )}
 
-          {sessionReady && !hasSession && (
-            <div className="mt-6 text-sm text-muted-foreground space-y-3">
-              <p>Den har lankens session har gatt ut.</p>
-              <Link to="/account" className="text-primary font-semibold hover:text-secondary">
-                Be om en ny losenordslank
-              </Link>
-            </div>
-          )}
+            {sessionReady && !hasSession && (
+              <div className="space-y-4">
+                <h2 className="font-display text-lg font-bold text-foreground">
+                  Länken har gått ut
+                </h2>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  Återställningslänkar är tillfälliga av säkerhetsskäl. Be om en
+                  ny så skickar vi en färsk.
+                </p>
+                <Link to="/account" className="btn-primary mt-2 w-full">
+                  Be om en ny länk
+                </Link>
+              </div>
+            )}
 
-          {sessionReady && hasSession && (
-            <div className="mt-6 space-y-4">
-              <label className="text-xs text-muted-foreground">
-                Nytt losenord
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(event) => setPassword(event.target.value)}
-                  className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
-                />
-              </label>
-              <label className="text-xs text-muted-foreground">
-                Upprepa losenord
-                <input
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(event) => setConfirmPassword(event.target.value)}
-                  className="mt-1 w-full rounded-lg border border-foreground/10 bg-background/70 px-3 py-2 text-sm"
-                />
-              </label>
+            {sessionReady && hasSession && (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold" htmlFor="reset-password">
+                    Nytt lösenord
+                  </label>
+                  <input
+                    id="reset-password"
+                    type="password"
+                    autoComplete="new-password"
+                    value={password}
+                    onChange={(event) => setPassword(event.target.value)}
+                    className="field"
+                  />
+                  <p className="text-xs text-muted-foreground">Minst 8 tecken.</p>
+                </div>
 
-              {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
-              {status === "saved" && (
-                <p className="text-xs text-green-600">Losenord uppdaterat. Tar dig tillbaka...</p>
-              )}
-              {status === "error" && !errorMessage && (
-                <p className="text-xs text-red-500">Kunde inte uppdatera losenordet.</p>
-              )}
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold" htmlFor="reset-confirm">
+                    Upprepa lösenord
+                  </label>
+                  <input
+                    id="reset-confirm"
+                    type="password"
+                    autoComplete="new-password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    className="field"
+                  />
+                </div>
 
-              <button
-                type="button"
-                onClick={handleSubmit}
-                disabled={status === "saving"}
-                className="w-full mt-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white disabled:opacity-60 transition-colors"
-              >
-                {status === "saving" ? "Sparar..." : "Spara nytt losenord"}
-              </button>
-            </div>
-          )}
+                {errorMessage && (
+                  <p role="alert" className="text-sm text-destructive">
+                    {errorMessage}
+                  </p>
+                )}
+                {status === "saved" && (
+                  <p role="status" className="text-sm" style={{ color: ACCENT }}>
+                    Lösenordet är uppdaterat. Tar dig tillbaka till kontot...
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={status === "saving"}
+                  className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {status === "saving" ? "Sparar..." : "Spara nytt lösenord"}
+                </button>
+              </form>
+            )}
+          </Reveal>
         </div>
-      </main>
+      </section>
     </PageShell>
   );
 }

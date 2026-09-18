@@ -851,3 +851,306 @@
 .animate-pulse-glow {
   animation: pulse-glow 3s ease-in-out infinite;
 }
+
+/* Banderoll på undersidorna ------------------------------------------
+ *
+ * Se src/components/PageHero.tsx för vad varje lager gör och varför.
+ *
+ * Kortversionen: fotot ligger underst och driver långsamt, ovanpå det
+ * en toning i sidans egen bakgrundskulör som gör texten läsbar och
+ * samtidigt låter banderollen tona ut i duken i stället för att sluta
+ * med en kant.
+ *
+ * Toningarna blandas med color-mix i stället för att skrivas en gång
+ * för ljust läge och en gång för mörkt. Duken läses ur temat, så en
+ * ändrad bakgrundsfärg i adminläget följer med hit av sig själv.
+ */
+
+.page-banner {
+  --banner-canvas: var(--site-page-bg, #ffffff);
+  --banner-accent: #3fd9f5;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 300px;
+  padding-top: 3.5rem;
+  padding-bottom: 2.75rem;
+}
+
+.dark .page-banner {
+  --banner-canvas: var(--site-page-bg-dark, #15101f);
+}
+
+@media (min-width: 640px) {
+  .page-banner {
+    min-height: 380px;
+    padding-top: 5rem;
+    padding-bottom: 3.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .page-banner {
+    min-height: 450px;
+    padding-top: 6rem;
+    padding-bottom: 4rem;
+  }
+}
+
+/* Låg variant: ingen bild, bara kulör. Kassan och varukorgen ska komma
+   igång direkt - ett halvskärmsfoto ovanför ett formulär är i vägen. */
+.page-banner--compact {
+  min-height: 0;
+  padding-top: 2.25rem;
+  padding-bottom: 1.75rem;
+}
+
+@media (min-width: 640px) {
+  .page-banner--compact {
+    min-height: 0;
+    padding-top: 3.25rem;
+    padding-bottom: 2.25rem;
+  }
+}
+
+.page-banner__media {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.page-banner__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: banner-drift 38s ease-in-out infinite alternate;
+}
+
+@keyframes banner-drift {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.15) translate3d(-1.8%, -1.2%, 0);
+  }
+}
+
+/* Läsbarhetstoningen.
+ *
+ * På telefon faller den nedifrån och upp: rubriken tar hela bredden
+ * där, så en toning från vänster hade lämnat slutet av varje rad mot
+ * bart foto. */
+.page-banner__wash {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--banner-canvas) 55%, transparent) 0%,
+    color-mix(in srgb, var(--banner-canvas) 34%, transparent) 26%,
+    color-mix(in srgb, var(--banner-canvas) 82%, transparent) 72%,
+    var(--banner-canvas) 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .page-banner__wash {
+    background:
+      linear-gradient(
+        to right,
+        color-mix(in srgb, var(--banner-canvas) 96%, transparent) 0%,
+        color-mix(in srgb, var(--banner-canvas) 74%, transparent) 42%,
+        color-mix(in srgb, var(--banner-canvas) 18%, transparent) 72%,
+        transparent 100%
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in srgb, var(--banner-canvas) 30%, transparent) 0%,
+        transparent 32%,
+        color-mix(in srgb, var(--banner-canvas) 72%, transparent) 84%,
+        var(--banner-canvas) 100%
+      );
+  }
+}
+
+/* Utan foto får duken i stället en mjuk sköld i sidans kulör, så att
+   den låga banderollen ändå skiljer sig från innehållet under. */
+.page-banner--plain .page-banner__wash {
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--banner-accent) 7%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+.page-banner__glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    44% 62% at 78% 42%,
+    color-mix(in srgb, var(--banner-accent) 26%, transparent) 0%,
+    transparent 70%
+  );
+}
+
+.page-banner--plain .page-banner__glow {
+  background: radial-gradient(
+    38% 120% at 88% 50%,
+    color-mix(in srgb, var(--banner-accent) 16%, transparent) 0%,
+    transparent 72%
+  );
+}
+
+/* Hårfina lodräta linjer. De syns knappt, och det är meningen - de ska
+   ge fotot ett raster att sitta på, inte läsas som ett mönster. */
+.page-banner__grid {
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--banner-accent) 14%, transparent) 0 1px,
+    transparent 1px 88px
+  );
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 38%, transparent 94%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 38%, transparent 94%);
+  opacity: 0.6;
+}
+
+/* Linjen längst ned markerar var banderollen slutar nu när toningen
+   inte lämnar någon kant. Den tonar ut mot båda sidorna så att den inte
+   läses som en ram. */
+.page-banner__rule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    color-mix(in srgb, var(--banner-accent) 65%, transparent) 18%,
+    color-mix(in srgb, var(--banner-accent) 65%, transparent) 58%,
+    transparent 92%
+  );
+}
+
+/* Brödsmulor ------------------------------------------------------- */
+
+.page-banner__crumbs {
+  margin-bottom: 1.25rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: hsl(var(--muted-foreground));
+}
+
+.page-banner__crumbs ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.page-banner__crumbs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-banner__crumbs a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.page-banner__crumbs a:hover {
+  color: var(--banner-accent, hsl(var(--primary)));
+}
+
+.page-banner__crumbs [aria-current="page"] {
+  color: hsl(var(--foreground));
+  font-weight: 600;
+}
+
+.page-banner__crumb-sep {
+  opacity: 0.4;
+}
+
+/* Text -------------------------------------------------------------- */
+
+/* Ögonbrynet får ett streck framför sig i sidans kulör. Det är det
+   enskilt billigaste sättet att ge varje undersida en egen identitet -
+   samma form överallt, olika färg. */
+.page-banner__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--banner-accent);
+}
+
+.page-banner__eyebrow::before {
+  content: "";
+  display: block;
+  width: 1.75rem;
+  height: 2px;
+  background: currentColor;
+}
+
+.page-banner__title {
+  margin-top: 0.875rem;
+}
+
+/* Över ett foto behöver texten lite egen tyngd även när toningen redan
+   gjort sitt. Bara i mörkt läge - i ljust läge är duken vit och en
+   skugga hade smutsat ned rubriken. */
+.dark .page-banner--photo .page-banner__title,
+.dark .page-banner--photo .page-banner__lede {
+  text-shadow: 0 2px 24px color-mix(in srgb, var(--banner-canvas) 80%, transparent);
+}
+
+.page-banner__facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 0;
+  margin: 1.5rem 0 0;
+  list-style: none;
+  font-size: 0.8125rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.page-banner__facts li {
+  position: relative;
+  padding-left: 0.9rem;
+}
+
+.page-banner__facts li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--banner-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-banner__photo {
+    animation: none;
+    transform: scale(1.02);
+  }
+}

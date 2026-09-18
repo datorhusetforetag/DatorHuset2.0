@@ -1,4 +1,6 @@
 ﻿import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import {
   useEffect,
   useMemo,
@@ -4663,7 +4665,7 @@ export default function CustomBuild() {
               className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                 isActive(option)
                   ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
-                  : "border-gray-200 bg-gray-50 text-gray-700 hover:border-foreground/20 dark:bg-[#101926] dark:text-foreground"
+                  : "border-foreground/10 bg-foreground/[0.04] text-muted-foreground hover:border-foreground/20 dark:bg-background/70 dark:text-foreground"
               }`}
             >
               {option}
@@ -4693,7 +4695,7 @@ export default function CustomBuild() {
               className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
                 selectedOptions.includes(option)
                   ? "bg-primary text-primary-foreground dark:bg-primary/15 dark:!text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-[#101926] dark:text-foreground dark:hover:bg-[#162234]"
+                  : "bg-foreground/[0.04] text-muted-foreground hover:bg-foreground/[0.06] dark:bg-background/70 dark:text-foreground dark:hover:bg-background/70"
               }`}
             >
               {option}
@@ -5158,48 +5160,53 @@ export default function CustomBuild() {
         ) : null}
       </Dialog>
       <main className="flex-1">
-        <section className="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 text-white">
-          <div className="container mx-auto px-4 pt-16 sm:pt-20 lg:pt-24 pb-12 sm:pb-16">
-            <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] items-center">
-              <div>
-                <p className="text-xs uppercase tracking-[0.4em] text-primary">Custom bygg</p>
-                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mt-4">Bygg din drömdator, din väg</h1>
-                <p className="text-gray-300 mt-4 max-w-xl">
-                  Välj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar
-                  ett färdigt bygge.
-                </p>
-                <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                  <Link
-                    to="/custom-bygg#bygg"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white transition-colors"
-                  >
-                    Börja bygga
-                  </Link>
-                  <Link
-                    to="/products"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 border border-primary text-primary font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:border-secondary hover:text-white transition-colors"
-                  >
-                    Se färdiga datorer
-                  </Link>
-                </div>
-              </div>
-              <div className="relative">
-                <img
-                  src="/products/newpc/allblack-main.jpg"
-                  alt="Custom bygg"
-                  className="w-full h-56 sm:h-72 lg:h-80 object-cover rounded-3xl border border-white/10 shadow-xl"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <div className="absolute -bottom-5 left-6 bg-primary text-primary-foreground px-4 py-2 rounded-full text-sm font-semibold shadow-lg">
-                  Komplett montering & test ingår
-                </div>
-              </div>
+        {/* Banderollen var ett eget mörkt skifferband tvärs över sidan,
+            i en gråblå ton som inte fanns någon annanstans i butiken.
+            Nu är det samma banderoll som resten av undersidorna, med
+            fotot av ett moderkort bakom - och bilden på en färdig maskin
+            står kvar, men fritt i rummet i stället för i en rundad ram. */}
+        <PageHero
+          sandboxId="custom-hero"
+          image={PAGE_BANNERS.customBuild.image}
+          accent={PAGE_BANNERS.customBuild.accent}
+          breadcrumb={[{ label: "Hem", href: "/" }, { label: "Custom bygg" }]}
+          eyebrow="Custom bygg"
+          title="Bygg din drömdator, din väg"
+          lede="Välj komponenter som passar din budget, dina favoritspel och din stil. Vi bygger, testar och levererar ett färdigt bygge."
+          facts={["Komplett montering ingår", "Provkörd innan leverans", "Offert innan du beställer"]}
+          actions={
+            <>
+              <a href="#bygg" className="btn-primary">
+                Börja bygga
+              </a>
+              <Link to="/products" className="btn-secondary">
+                Se färdiga datorer
+              </Link>
+            </>
+          }
+          aside={
+            <div className="relative flex items-center justify-center">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `radial-gradient(46% 42% at 50% 54%, ${PAGE_BANNERS.customBuild.accent}3D 0%, transparent 72%)`,
+                }}
+              />
+              <img
+                src="/products/newpc/allblack-main.jpg"
+                alt=""
+                aria-hidden="true"
+                className="relative max-h-[240px] w-auto object-contain lg:max-h-[320px]"
+                loading="eager"
+                decoding="async"
+                style={{ filter: "drop-shadow(0 28px 46px rgba(0, 0, 0, 0.55))" }}
+              />
             </div>
-          </div>
-        </section>
+          }
+        />
 
-        <section id="bygg" className="bg-gray-100 text-gray-900 dark:bg-background dark:text-foreground">
+        <section id="bygg" className="bg-foreground/[0.04] text-foreground dark:bg-background dark:text-foreground">
           <div className="container mx-auto px-4 py-10 sm:py-12 lg:py-16">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-8">
               <div>
@@ -5209,7 +5216,7 @@ export default function CustomBuild() {
                   Klicka på en kategori till vänster för att se rekommenderade komponenter och filtrera efter märke.
                 </p>
               </div>
-              <div className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700 shadow-sm dark:border-foreground/10 dark:bg-background/70 dark:text-muted-foreground">
+              <div className="rounded-2xl border border-foreground/10 bg-background/70 px-4 py-3 text-sm text-muted-foreground shadow-sm dark:border-foreground/10 dark:bg-background/70 dark:text-muted-foreground">
                 {selectedCount} av {CATEGORY_LIST.length} komponenter valda · Totalt {formatPrice(totalPrice)} kr
               </div>
             </div>
@@ -5218,7 +5225,7 @@ export default function CustomBuild() {
               <button
                 type="button"
                 onClick={() => setMobileSidebarOpen((prev) => !prev)}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-foreground/10 dark:bg-background dark:text-foreground"
+                className="inline-flex items-center gap-2 rounded-lg border border-foreground/10 bg-background/70 px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-foreground/10 dark:bg-background dark:text-foreground"
               >
                 Komponenter
                 <span className="text-xs text-muted-foreground">
@@ -5230,7 +5237,7 @@ export default function CustomBuild() {
             <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] lg:items-start">
               <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block self-start`}>
                 <div className="space-y-4 lg:sticky lg:top-24">
-                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
+                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Komponenter</p>
                       <div className="mt-4 space-y-2">
                         {CATEGORY_LIST.map((category) => {
@@ -5254,7 +5261,7 @@ export default function CustomBuild() {
                                     className={`mt-1 rounded-lg p-2 ${
                                       isActive
                                         ? "bg-primary text-primary-foreground"
-                                        : "bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground"
+                                        : "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
                                     }`}
                                   >
                                     <Icon className="w-5 h-5" />
@@ -5290,7 +5297,7 @@ export default function CustomBuild() {
                         })}
                       </div>
                   </div>
-                  <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
+                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Tips</p>
                     <p className="text-sm text-muted-foreground mt-3">
                       {"\u00c4r du os\u00e4ker? V\u00e4lj en budgetniv\u00e5 i b\u00f6rjan och uppgradera stegvis. Vi hj\u00e4lper dig hitta r\u00e4tt balans."}
@@ -5319,7 +5326,7 @@ export default function CustomBuild() {
               <div className="space-y-6 self-start">
                 <div
                   id="component-picker"
-                  className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80"
+                  className="rounded-2xl border border-foreground/10 bg-background/70 p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80"
                 >
                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                     <div>
@@ -5434,7 +5441,7 @@ export default function CustomBuild() {
                       : null}
                   </div>
 
-                  <div className="mt-6 rounded-2xl border border-gray-200 bg-gray-50 p-4 dark:border-foreground/10 dark:bg-[#111926]">
+                  <div className="mt-6 rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4 dark:border-foreground/10 dark:bg-background/70">
                     <div className="flex items-center justify-between gap-3">
                       <button
                         type="button"
@@ -5447,7 +5454,7 @@ export default function CustomBuild() {
                         <button
                           type="button"
                           onClick={clearAdvancedFilters}
-                          className="text-xs font-semibold text-gray-500 transition-colors hover:text-primary dark:text-muted-foreground dark:hover:text-white"
+                          className="text-xs font-semibold text-muted-foreground transition-colors hover:text-primary dark:text-muted-foreground dark:hover:text-white"
                         >
                           Rensa filter
                         </button>
@@ -5526,7 +5533,7 @@ export default function CustomBuild() {
                     ) : null}
                   </div>
 
-                  <div className="mt-5 grid gap-2 border-b border-gray-200 pb-4 dark:border-foreground/10 sm:grid-cols-2 xl:grid-cols-4">
+                  <div className="mt-5 grid gap-2 border-b border-foreground/10 pb-4 dark:border-foreground/10 sm:grid-cols-2 xl:grid-cols-4">
                     {tableSortButtons.map((sortButton) => {
                       const isActive = activeSort?.key === sortButton.key;
                       const arrow = isActive ? (activeSort.direction === "asc" ? "↑" : "↓") : "↕";
@@ -5538,7 +5545,7 @@ export default function CustomBuild() {
                           className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                             isActive
                               ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
-                              : "border-gray-200 bg-gray-50 text-gray-700 hover:border-foreground/20 dark:bg-[#101926] dark:text-foreground"
+                              : "border-foreground/10 bg-foreground/[0.04] text-muted-foreground hover:border-foreground/20 dark:bg-background/70 dark:text-foreground"
                           }`}
                         >
                           <span className="flex items-center justify-between gap-3">
@@ -5575,7 +5582,7 @@ export default function CustomBuild() {
                     return (
                       <div
                         key={item.id}
-                        className={`rounded-2xl border bg-white p-3 shadow-sm transition-colors dark:bg-background/80 sm:p-4 ${
+                        className={`rounded-2xl border bg-background/70 p-3 shadow-sm transition-colors dark:bg-background/80 sm:p-4 ${
                           isSelected ? "border-primary ring-1 ring-primary/30" : "border-foreground/10"
                         }`}
                       >
@@ -5584,7 +5591,7 @@ export default function CustomBuild() {
                             <img
                               src={imageSrc}
                               alt={imageAlt}
-                              className="w-full h-full object-contain rounded-xl border border-gray-200 bg-gray-50 dark:border-foreground/10 dark:bg-foreground/[0.06]"
+                              className="w-full h-full object-contain rounded-xl border border-foreground/10 bg-foreground/[0.04] dark:border-foreground/10 dark:bg-foreground/[0.06]"
                               loading="lazy"
                               decoding="async"
                               onError={(event) => {
@@ -5601,7 +5608,7 @@ export default function CustomBuild() {
                                 event.currentTarget.src = FALLBACK_COMPONENT_IMAGE;
                               }}
                             />
-                            <span className="absolute top-1 left-1 rounded-full bg-white/90 text-gray-700 border border-gray-200 p-1.5 shadow-sm dark:bg-background/90 dark:text-foreground dark:border-foreground/20 sm:top-2 sm:left-2 sm:p-2">
+                            <span className="absolute top-1 left-1 rounded-full bg-white/90 text-gray-700 border border-foreground/10 p-1.5 shadow-sm dark:bg-background/90 dark:text-foreground dark:border-foreground/20 sm:top-2 sm:left-2 sm:p-2">
                               <ActiveIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                             </span>
                           </div>
@@ -5621,7 +5628,7 @@ export default function CustomBuild() {
                               {item.specs.map((spec, index) => (
                                 <span
                                   key={spec}
-                                  className={`text-[10px] border border-gray-200 text-gray-700 bg-gray-100 px-2 py-0.5 rounded-full dark:border-foreground/20 dark:text-foreground dark:bg-foreground/[0.06] sm:px-2.5 sm:py-1 sm:text-xs ${
+                                  className={`text-[10px] border border-foreground/10 text-muted-foreground bg-foreground/[0.04] px-2 py-0.5 rounded-full dark:border-foreground/20 dark:text-foreground dark:bg-foreground/[0.06] sm:px-2.5 sm:py-1 sm:text-xs ${
                                     index > 1 ? "hidden sm:inline-flex" : ""
                                   }`}
                                 >
@@ -5663,9 +5670,9 @@ export default function CustomBuild() {
                           </div>
                         </div>
                         {isExpanded ? (
-                          <div className="mt-4 border-t border-gray-200 pt-4 dark:border-foreground/10">
+                          <div className="mt-4 border-t border-foreground/10 pt-4 dark:border-foreground/10">
                             <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
-                              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-foreground/10 dark:bg-[#111926]">
+                              <div className="rounded-xl border border-foreground/10 bg-foreground/[0.04] p-4 dark:border-foreground/10 dark:bg-background/70">
                                 <div className="flex items-start justify-between gap-3">
                                   <div>
                                     <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
@@ -5680,7 +5687,7 @@ export default function CustomBuild() {
                                       href={item.selectedProductUrl}
                                       target="_blank"
                                       rel="noreferrer"
-                                      className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
+                                      className="rounded-lg border border-foreground/20 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
                                     >
                                       Produktsida
                                     </a>
@@ -5707,7 +5714,7 @@ export default function CustomBuild() {
                                   )}
                                 </div>
                               </div>
-                              <div className="rounded-xl border border-gray-200 bg-white p-4 dark:border-foreground/10 dark:bg-[#111926]">
+                              <div className="rounded-xl border border-foreground/10 bg-background/70 p-4 dark:border-foreground/10 dark:bg-background/70">
                                 <div className="flex items-center justify-between gap-3">
                                   <div>
                                     <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
@@ -5727,13 +5734,13 @@ export default function CustomBuild() {
                                   <button
                                     type="button"
                                     onClick={handleStorePickerClose}
-                                    className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
+                                    className="rounded-lg border border-foreground/20 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
                                   >
                                     Stäng
                                   </button>
                                 </div>
                                 {storePickerLoading && isExpanded ? (
-                                  <div className="mt-4 rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-600 dark:border-foreground/20 dark:text-muted-foreground">
+                                  <div className="mt-4 rounded-lg border border-dashed border-foreground/20 px-4 py-5 text-sm text-muted-foreground dark:border-foreground/20 dark:text-muted-foreground">
                                     Hämtar butikslänkar och priser...
                                   </div>
                                 ) : null}
@@ -5745,7 +5752,7 @@ export default function CustomBuild() {
                                     {storeOffersForItem.map((offer) => (
                                       <div
                                         key={`${item.id}-${offer.store_id || offer.store}`}
-                                        className="rounded-lg border border-gray-200 px-3 py-2.5 dark:border-foreground/10"
+                                        className="rounded-lg border border-foreground/10 px-3 py-2.5 dark:border-foreground/10"
                                       >
                                         <div className="flex items-center justify-between gap-3">
                                           <div className="min-w-0">
@@ -5762,12 +5769,12 @@ export default function CustomBuild() {
                                             href={offer.product_url || "#"}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-700 transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
+                                            className="rounded-lg border border-foreground/20 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
                                           >
                                             Till butik
                                           </a>
                                         ) : (
-                                          <span className="rounded-lg border border-gray-200 px-2.5 py-1.5 text-xs font-semibold text-gray-400 dark:border-foreground/10 dark:text-muted-foreground">
+                                          <span className="rounded-lg border border-foreground/10 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground dark:border-foreground/10 dark:text-muted-foreground">
                                             Ingen länk
                                           </span>
                                         )}
@@ -5785,7 +5792,7 @@ export default function CustomBuild() {
                                     ))}
                                   </div>
                                 ) : (
-                                  <div className="mt-4 rounded-lg border border-dashed border-gray-300 px-4 py-5 text-sm text-gray-600 dark:border-foreground/20 dark:text-muted-foreground">
+                                  <div className="mt-4 rounded-lg border border-dashed border-foreground/20 px-4 py-5 text-sm text-muted-foreground dark:border-foreground/20 dark:text-muted-foreground">
                                     Välj komponenten direkt för att fortsätta till nästa steg.
                                   </div>
                                 )}
@@ -5818,7 +5825,7 @@ export default function CustomBuild() {
                 <div className="space-y-4 lg:sticky lg:top-24">
                   <div
                     id="build-summary"
-                    className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24"
+                    className="rounded-2xl border border-foreground/10 bg-background/70 p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24"
                   >
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Din build</p>
                     <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
@@ -5830,7 +5837,7 @@ export default function CustomBuild() {
                           onClick={() => {
                             handleCategorySelect(category.key);
                           }}
-                          className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-gray-900 dark:hover:text-white"
+                          className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-foreground dark:hover:text-white"
                         >
                           <span className="text-muted-foreground">{category.label}</span>
                           <span className="text-right">
@@ -5870,7 +5877,7 @@ export default function CustomBuild() {
                       <p className="mt-2 text-xs text-muted-foreground">{shareStatus}</p>
                     ) : null}
                   </div>
-                  <div className="rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-600 shadow-sm dark:border-foreground/10 dark:bg-background/80 dark:text-muted-foreground">
+                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6 text-sm text-muted-foreground shadow-sm dark:border-foreground/10 dark:bg-background/80 dark:text-muted-foreground">
                     <p className="font-semibold text-foreground">{"Vad h\u00e4nder sen?"}</p>
                     <ul className="mt-3 space-y-2">
                       <li>{"Vi granskar dina val och s\u00e4kerst\u00e4ller kompatibilitet."}</li>
@@ -5906,7 +5913,7 @@ export default function CustomBuild() {
           onClick={handleNextBubbleClick}
           className="sm:hidden fixed bottom-24 right-5 z-40 flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-3 text-sm font-semibold shadow-lg shadow-black/20 transition-transform hover:-translate-y-0.5"
         >
-          <span className="text-gray-700/70">{"\u2022"}</span>
+          <span className="text-muted-foreground/70">{"\u2022"}</span>
           <span>{"N\u00e4sta"}</span>
           <ChevronRight className="w-4 h-4" />
         </button>
@@ -5917,13 +5924,13 @@ export default function CustomBuild() {
         className={`fixed bottom-5 left-5 z-40 rounded-full border px-4 py-2 text-xs font-semibold shadow-lg shadow-black/15 transition-colors ${
           customBuildDebugEnabled
             ? "border-sky-500 bg-sky-500 text-white hover:bg-sky-600"
-            : "border-gray-300 bg-white/95 text-gray-700 hover:border-sky-400 hover:text-sky-700 dark:border-foreground/20 dark:bg-[#101926]/95 dark:text-foreground dark:hover:border-sky-700 dark:hover:text-sky-300"
+            : "border-foreground/20 bg-white/95 text-gray-700 hover:border-sky-400 hover:text-sky-700 dark:border-foreground/20 dark:bg-background/80 dark:text-foreground dark:hover:border-sky-700 dark:hover:text-sky-300"
         }`}
       >
         {customBuildDebugEnabled ? "Debug på" : "Debug av"}
       </button>
       {activeCategory === "ram" ? (
-        <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-primary/60 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-primary/30 dark:bg-[#101926]/95 dark:text-foreground">
+        <div className="fixed bottom-5 right-5 z-40 hidden max-w-xs rounded-2xl border border-primary/60 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-primary/30 dark:bg-background/80 dark:text-foreground">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <MemoryStick className="h-5 w-5" />
@@ -5938,7 +5945,7 @@ export default function CustomBuild() {
         </div>
       ) : null}
       {customBuildDebugEnabled ? (
-        <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-[#101926]/95 dark:text-foreground">
+        <div className="fixed bottom-20 left-5 z-40 hidden max-w-xs rounded-2xl border border-sky-300 bg-white/95 p-4 text-sm text-gray-700 shadow-xl shadow-black/15 backdrop-blur sm:block dark:border-sky-800 dark:bg-background/80 dark:text-foreground">
           <p className="font-semibold text-foreground">Custom Build Debug</p>
           <p className="mt-1 text-xs leading-relaxed">
             {"Källor: "}<span className="font-semibold">Live butik</span>{", "}<span className="font-semibold">Cachad pris</span>{", "}<span className="font-semibold">Reservpris</span>{", "}<span className="font-semibold">Ingen butik</span>{"."}

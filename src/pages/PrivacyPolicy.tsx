@@ -1,6 +1,7 @@
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/components/PageHero";
-import { Reveal } from "@/components/Reveal";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
+import { LegalDocument } from "@/components/LegalDocument";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
 const privacyPolicyText = `Allmänna Villkor för DatorHuset (Köpvillkor)
@@ -107,24 +108,21 @@ export default function PrivacyPolicy() {
     <PageShell>
       <PageHero
         sandboxId="privacy-hero"
+        image={PAGE_BANNERS.legal.image}
+        accent={PAGE_BANNERS.legal.accent}
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Integritetspolicy" }]}
         eyebrow={pageSettings.heroEyebrow}
         title={pageSettings.heroTitle}
         lede={pageSettings.heroDescription}
       />
 
       <section data-sandbox-id="privacy-body" className="relative">
-        <div className="container mx-auto max-w-4xl px-4 pb-24">
-          <Reveal>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-              Senast uppdaterad: {pageSettings.updatedAt}
-            </p>
-
-            {/* Villkorstext är lång och läses under tvång. Smalare spalt
-                och mer luft är det enda som gör den uthärdlig. */}
-            <div className="mt-6 rounded-lg border border-foreground/10 bg-background/70 p-7 sm:p-10">
-              <pre className="prose-page whitespace-pre-wrap font-sans">{bodyText}</pre>
-            </div>
-          </Reveal>
+        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-14">
+          <LegalDocument
+            text={bodyText}
+            updatedAt={pageSettings.updatedAt}
+            accent={PAGE_BANNERS.legal.accent}
+          />
         </div>
       </section>
     </PageShell>

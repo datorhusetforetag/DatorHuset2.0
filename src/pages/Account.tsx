@@ -1,4 +1,6 @@
 import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -310,46 +312,48 @@ export default function Account() {
 
   if (!user) {
     return (
-    <PageShell>
-        <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-          <div className="max-w-xl mx-auto text-center space-y-4">
-            <h1 className="text-3xl font-bold">Logga in för att se ditt konto</h1>
-            <p className="text-muted-foreground">
-              För att hantera dina uppgifter och beställningar behöver du vara inloggad.
-            </p>
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center px-6 py-3 bg-primary text-primary-foreground font-semibold rounded hover:bg-secondary hover:text-white transition-colors"
-            >
-              Tillbaka till startsidan
-            </Link>
-          </div>
-        </main>
-    </PageShell>
+      <PageShell>
+        <PageHero
+          compact
+          accent={PAGE_BANNERS.account.accent}
+          sandboxId="account-hero"
+          breadcrumb={[{ label: "Hem", href: "/" }, { label: "Mitt konto" }]}
+          eyebrow="Mitt konto"
+          title="Logga in för att se ditt konto"
+          lede="Uppgifter, adresser och beställningar ligger bakom inloggningen."
+          actions={
+            <>
+              <Link to="/" className="btn-primary">
+                Tillbaka till startsidan
+              </Link>
+              <Link to="/kundservice" className="btn-secondary">
+                Behöver du hjälp?
+              </Link>
+            </>
+          }
+        />
+      </PageShell>
     );
   }
 
   return (
     <PageShell>
-      <main className="flex-1 pt-16 sm:pt-24 container mx-auto px-4 py-12">
-        <div className="flex flex-col gap-3 mb-8">
-          <p className="text-sm uppercase tracking-[0.3em] text-muted-foreground">Mitt konto</p>
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold">Hej {profileName}</h1>
-              <p className="text-sm text-muted-foreground mt-2">
-                Hantera uppgifter, adresser och dina beställningar.
-              </p>
-            </div>
-              <Link
-                to="/orders"
-                className="inline-flex items-center justify-center px-5 py-2 rounded-lg border border-primary text-primary dark:text-primary font-semibold hover:bg-secondary hover:text-white hover:border-secondary transition-colors"
-              >
-              {ordersLabel}
-              </Link>
-          </div>
-        </div>
+      <PageHero
+        compact
+        accent={PAGE_BANNERS.account.accent}
+        sandboxId="account-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Mitt konto" }]}
+        eyebrow="Mitt konto"
+        title={`Hej ${profileName}`}
+        lede="Hantera uppgifter, adresser och dina beställningar."
+        actions={
+          <Link to="/orders" className="btn-secondary">
+            {ordersLabel}
+          </Link>
+        }
+      />
 
+      <main className="container mx-auto px-4 pb-24 pt-10">
         <div className="grid items-start gap-8 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6">

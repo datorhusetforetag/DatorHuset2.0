@@ -1,13 +1,58 @@
-﻿import { PageShell } from "@/components/PageShell";
-import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { CheckCircle, Loader } from "lucide-react";
+import { Link, useSearchParams } from "react-router-dom";
+import { CheckCircle2, Loader } from "lucide-react";
+
+import { PageShell } from "@/components/PageShell";
+import { PageHero } from "@/components/PageHero";
+import { CheckoutSteps } from "@/components/CheckoutSteps";
+import { Reveal } from "@/components/Reveal";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { PAGE_BANNERS } from "@/lib/pageBanners";
+
+/**
+ * Kvittot efter betalning.
+ *
+ * Sidan var i sämst skick av alla. Tre olika pastellrutor - grön, blå
+ * och gul - på en sida vars duk är mörklila, och all text skriven med
+ * text-gray-900. Mörkgrå text i en vit ruta går att läsa; mörkgrå text
+ * som ärvs ned på en mörk duk gör det inte.
+ *
+ * Och värre än så: rubriken stod skriven som "Tack f\\u00f6r din
+ * best\\u00e4llning!" rakt i JSX. Escape-sekvenser tolkas i
+ * strängliteraler, inte i text mellan taggar, så kunden fick se
+ * bokstavligen "Tack f\\u00f6r din best\\u00e4llning!" efter att ha
+ * betalat. Det är rättat med riktiga tecken.
+ *
+ * Formen är nu densamma som varukorgen och kassan, med stegindikatorn
+ * framme på sista steget så att det syns att man är klar. Rutorna är
+ * borta: orderuppgifterna står som en lista, och "vad händer nu" som
+ * numrerade steg i stället för som prickar i en gul ruta.
+ */
+
+const ACCENT = PAGE_BANNERS.receipt.accent;
+
+const NEXT_STEPS = [
+  {
+    title: "Bekräftelsen kommer på mejl",
+    body: "Den brukar vara framme inom några minuter. Titta i skräpposten om den dröjer.",
+  },
+  {
+    title: "Vi packar och skickar",
+    body: "Datorn provkörs innan den packas, precis som alla maskiner som lämnar oss.",
+  },
+  {
+    title: "Du får en spårningslänk",
+    body: "Så fort paketet är på väg skickar vi numret du kan följa det med.",
+  },
+  {
+    title: "Leverans inom 3-5 arbetsdagar",
+    body: "Har du valt upphämtning hör vi av oss när den står redo i Spånga.",
+  },
+];
 
 export default function CheckoutSuccess() {
   const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
   const { clearCart } = useCart();
   const { session } = useAuth();
   const [loading, setLoading] = useState(true);
@@ -69,92 +114,143 @@ export default function CheckoutSuccess() {
       controller.abort();
       window.clearTimeout(safetyTimeout);
     };
-  }, [apiBase, sessionId, token]);
+  }, [apiBase, sessionId, token, clearCart]);
 
   if (loading) {
     return (
-    <PageShell>
-        <div className="flex-1 pt-16 sm:pt-24 flex items-center justify-center">
-          <div className="text-center">
-            <Loader className="w-12 h-12 text-primary animate-spin mx-auto mb-4" />
-            <p className="text-gray-600">Bearbetar din betalning...</p>
-          </div>
+      <PageShell>
+        <div className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
+          <Loader className="mb-5 h-10 w-10 animate-spin text-primary" />
+          <p className="text-muted-foreground">Bearbetar din betalning...</p>
         </div>
-    </PageShell>
+      </PageShell>
     );
   }
 
   const orderNumberLabel = orderNumber || (sessionId ? sessionId.slice(0, 8) : "-");
-  const statusLabel = orderStatus === "received" ? "Order mottagen" : orderStatus || "Betalad";
+  const statusLabel = orderStatus === "received" ? "Order mottagen" : orderStatus || "Betald";
 
   return (
     <PageShell>
-      <div className="flex-1 pt-16 sm:pt-24">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-2xl mx-auto bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-lg border border-green-200">
-            <div className="flex flex-col items-center text-center mb-8">
-              <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
-              <h1 className="text-4xl font-bold text-gray-900 mb-2">Tack f\u00f6r din best\u00e4llning!</h1>
-              <p className="text-lg text-gray-600">Din betalning har behandlats framg\u00e5ngsrikt.</p>
-            </div>
+      <PageHero
+        compact
+        accent={ACCENT}
+        sandboxId="receipt-hero"
+        breadcrumb={[{ label: "Hem", href: "/" }, { label: "Orderbekräftelse" }]}
+        eyebrow="Klart"
+        title="Tack för din beställning!"
+        lede="Betalningen gick igenom. Nu tar vi över."
+        actions={<CheckoutSteps current={3} accent={ACCENT} />}
+      />
 
-            <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Orderdetaljer</h2>
-
-              {sessionId ? (
-                <div className="space-y-3">
-                  <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span className="text-gray-600">Ordernummer:</span>
-                    <span className="font-mono text-sm text-gray-900">{orderNumberLabel}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b border-gray-200">
-                    <span className="text-gray-600">Status:</span>
-                    <span className="font-semibold text-green-600">{statusLabel}</span>
-                  </div>
-                  <div className="flex justify-between py-2">
-                    <span className="text-gray-600">Tid:</span>
-                    <span className="text-gray-900">{new Date().toLocaleString("sv-SE")}</span>
-                  </div>
+      <section data-sandbox-id="receipt-body" className="relative">
+        <div className="container mx-auto max-w-5xl px-4 pb-24 pt-10">
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:gap-14">
+            {/* Orderuppgifterna ---------------------------------------- */}
+            <Reveal>
+              <div className="rounded-lg border border-foreground/10 bg-background/70 p-7 sm:p-8">
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+                    style={{ backgroundColor: ACCENT + "24", color: ACCENT }}
+                  >
+                    <CheckCircle2 className="h-6 w-6" />
+                  </span>
+                  <h2 className="font-display text-lg font-bold tracking-tight text-foreground">
+                    Orderdetaljer
+                  </h2>
                 </div>
-              ) : (
-                <p className="text-sm text-gray-600">Kunde inte hitta ordernumret \u00e4n.</p>
-              )}
-            </div>
 
-            <div className="bg-blue-50 border border-blue-200 p-6 rounded-lg mb-8">
-              <h3 className="font-semibold text-gray-900 mb-2">Bekr\u00e4ftelse skickas till din e-post</h3>
-              <p className="text-gray-600 text-sm mb-4">
-                Du b\u00f6r f\u00e5 en orderbekr\u00e4ftelse inom n\u00e5gra minuter. Kontrollera din spam-mapp om du inte ser den.
+                {sessionId ? (
+                  <dl className="mt-7 divide-y divide-foreground/10 border-y border-foreground/10 text-sm">
+                    <div className="flex items-baseline justify-between gap-4 py-3.5">
+                      <dt className="text-muted-foreground">Ordernummer</dt>
+                      <dd className="font-mono text-sm font-semibold text-foreground">
+                        {orderNumberLabel}
+                      </dd>
+                    </div>
+                    <div className="flex items-baseline justify-between gap-4 py-3.5">
+                      <dt className="text-muted-foreground">Status</dt>
+                      <dd className="font-semibold" style={{ color: ACCENT }}>
+                        {statusLabel}
+                      </dd>
+                    </div>
+                    <div className="flex items-baseline justify-between gap-4 py-3.5">
+                      <dt className="text-muted-foreground">Tid</dt>
+                      <dd className="text-foreground">
+                        {new Date().toLocaleString("sv-SE")}
+                      </dd>
+                    </div>
+                  </dl>
+                ) : (
+                  <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+                    Kunde inte hitta ordernumret än. Det står i bekräftelsen som
+                    kommer på mejl, och under Mina beställningar.
+                  </p>
+                )}
+
+                <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+                  Bekräftelsen skickas till din e-post. Hittar du den inte inom
+                  en kvart, hör av dig så skickar vi om den.
+                </p>
+
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                  <Link to="/orders" className="btn-primary sm:flex-1">
+                    Mina beställningar
+                  </Link>
+                  <Link to="/products" className="btn-secondary sm:flex-1">
+                    Fortsätt handla
+                  </Link>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Vad händer nu ------------------------------------------- */}
+            <Reveal delay={110}>
+              <p className="eyebrow" style={{ color: ACCENT }}>
+                Vad händer nu
               </p>
-            </div>
+              <h2 className="section-title mt-3 text-2xl sm:text-3xl">
+                Härifrån sköter vi resten
+              </h2>
 
-            <div className="bg-amber-50 border border-amber-200 p-6 rounded-lg mb-8">
-              <h3 className="font-semibold text-gray-900 mb-2">Vad h\u00e4nder nu?</h3>
-              <ul className="text-gray-600 text-sm space-y-2">
-                <li>\u2022 Din betalning \u00e4r s\u00e4ker och slutf\u00f6rd</li>
-                <li>\u2022 Dina produkter packas och skickas snart</li>
-                <li>\u2022 Du f\u00e5r en sp\u00e5rningsl\u00e4nk n\u00e4r paketet skickas</li>
-                <li>\u2022 Leverans inom 3-5 arbetsdagar</li>
-              </ul>
-            </div>
+              <ol className="mt-8 divide-y divide-foreground/10 border-t border-foreground/10">
+                {NEXT_STEPS.map((step, index) => (
+                  <li
+                    key={step.title}
+                    className="grid gap-2 py-5 sm:grid-cols-[3rem_1fr] sm:gap-5"
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="select-none font-display text-xl font-bold leading-none tabular-nums sm:text-2xl"
+                      style={{ color: ACCENT, opacity: 0.5 }}
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span>
+                      <span className="block font-display text-base font-bold tracking-tight text-foreground">
+                        {step.title}
+                      </span>
+                      <span className="mt-1.5 block text-sm leading-relaxed text-muted-foreground">
+                        {step.body}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
 
-            <div className="flex gap-4">
-              <button
-                onClick={() => navigate("/products")}
-                className="flex-1 px-6 py-3 bg-primary text-primary-foreground font-bold rounded hover:bg-secondary hover:text-white transition-colors"
-              >
-                Forts\u00e4tt handla
-              </button>
-              <button
-                onClick={() => navigate("/")}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-900 font-semibold rounded hover:bg-gray-100 transition-colors"
-              >
-                Tillbaka till startsidan
-              </button>
-            </div>
+              <p className="mt-8 text-sm leading-relaxed text-muted-foreground">
+                Något som inte stämmer?{" "}
+                <Link to="/kundservice" className="link-underline font-semibold text-primary">
+                  Hör av dig till kundservice
+                </Link>{" "}
+                med ordernumret ovan så löser vi det.
+              </p>
+            </Reveal>
           </div>
         </div>
-      </div>
+      </section>
     </PageShell>
   );
 }

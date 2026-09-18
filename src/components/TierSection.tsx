@@ -100,7 +100,14 @@ export const TierSection = () => {
   const active = TIERS.find((tier) => tier.id === activeId) ?? TIERS[0];
 
   return (
-    <section data-sandbox-id="home-tiers" className="section-surface-alt relative">
+    /* id, inte bara data-sandbox-id: avsnittet länkas till utifrån
+       (bland annat från en tom kundvagn), och ett data-attribut går
+       inte att hoppa till med en ankarlänk. */
+    <section
+      id="home-tiers"
+      data-sandbox-id="home-tiers"
+      className="section-surface-alt relative scroll-mt-24"
+    >
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
         <Reveal className="mb-14 text-center">
           <p className="eyebrow">Våra nivåer</p>

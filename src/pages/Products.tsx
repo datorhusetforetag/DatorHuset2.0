@@ -1,5 +1,6 @@
 import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/components/PageHero";
+import { BANNER_ACCENTS, PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
 import { useState, useMemo, useEffect, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
@@ -102,6 +103,23 @@ const DEFAULT_BANNER: BannerConfig = {
   secondaryHref: "/custom-bygg",
   background: "bg-[#facc15]",
   imageSize: "large",
+};
+
+/*
+ * Kulören på kategoribanderollen.
+ *
+ * Det är inte fyra nya färger utan exakt de fyra som nivåerna på
+ * startsidan använder, och kategorierna länkar redan till samma
+ * nivåer. Klickar man sig från Bronze till budgetdatorerna följer alltså
+ * kulören med, och sidan känns som en fortsättning i stället för som
+ * ett nytt ställe.
+ */
+const CATEGORY_ACCENTS: Record<string, string> = {
+  budget: "#E3A567",
+  "price-performance": "#CBD3E1",
+  "best-selling": "#B26BDE",
+  toptier: "#3FD9F5",
+  default: "#3FD9F5",
 };
 
 const CATEGORY_BANNERS: Record<string, BannerConfig> = {
@@ -804,6 +822,7 @@ export default function Products() {
           }))
         : fallbackBanner.stickers,
   };
+  const bannerAccent = CATEGORY_ACCENTS[bannerKey] ?? BANNER_ACCENTS.buy;
   const leadBannerImage = banner.images[0];
   const secondaryBannerImage = banner.images[1];
   const primarySticker = banner.stickers?.[0];
@@ -815,142 +834,66 @@ export default function Products() {
 
   return (
     <PageShell head={<SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />}>
-        <section data-sandbox-id="products-banner" className="px-4 pt-16 sm:pt-20 lg:pt-24 pb-6">
-          <div className="mx-auto w-full max-w-[1480px]">
-            <div className={`overflow-hidden rounded-3xl border border-[#e4b700] text-gray-900 ${banner.background}`}>
-              {activeCategory === "toptier" ? (
-                <div
-                  className="grid min-h-[clamp(22rem,36vh,30rem)] items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[0.82fr_1.1fr_0.82fr] lg:gap-8 lg:px-10 xl:px-12"
-                  style={{
-                    animationDuration: `${motion.bannerRevealDurationMs}ms`,
-                    ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
-                  }}
-                >
-                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, animationDelay: `${motion.heroRevealStaggerMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
-                    <div className="relative mr-auto w-full max-w-[21rem]">
-                      <img
-                        src={leadBannerImage}
-                        alt={"Bannerbild v\u00e4nster"}
-                        className="h-40 w-full rounded-[1.35rem] object-contain shadow-none sm:h-48 lg:h-56"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                  <div className="min-w-0 text-center animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
-                    <p className="text-xs uppercase tracking-[0.4em] text-gray-900/65">
-                      {banner.eyebrow}
-                    </p>
-                    <h1 className="mt-4 break-words text-3xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-4xl sm:leading-[1.02] lg:text-[4rem]">
-                      {banner.title}
-                    </h1>
-                    <p className="mx-auto mt-4 max-w-2xl break-words text-sm text-gray-800 sm:text-base lg:text-[1.05rem]">
-                      {banner.description}
-                    </p>
-                    <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                      <Link
-                        to={banner.primaryHref}
-                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
-                      >
-                        {banner.primaryLabel}
-                      </Link>
-                      <Link
-                        to={banner.secondaryHref}
-                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-secondary hover:bg-secondary hover:text-white"
-                      >
-                        {banner.secondaryLabel}
-                      </Link>
-                    </div>
-                    {primarySticker ? (
-                      <div className="mt-6 flex justify-center">
-                        <div className={`rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker.className}`}>
-                          {primarySticker.label}
-                        </div>
-                      </div>
-                    ) : null}
-                  </div>
-                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, animationDelay: `${motion.heroRevealStaggerMs * 2}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
-                    <div className="relative ml-auto w-full max-w-[21rem]">
-                      <img
-                        src={secondaryBannerImage ?? leadBannerImage}
-                        alt={"Bannerbild h\u00f6ger"}
-                        className="h-40 w-full rounded-[1.35rem] object-contain shadow-none sm:h-48 lg:h-56"
-                        loading="lazy"
-                      />
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div
-                  className="grid min-h-[clamp(22rem,34vh,28rem)] items-center gap-6 px-8 py-8 animate-in fade-in slide-in-from-bottom-4 sm:px-10 sm:py-10 lg:grid-cols-[1.18fr_0.82fr] lg:gap-10 lg:px-10 xl:px-12"
-                  style={{
-                    animationDuration: `${motion.bannerRevealDurationMs}ms`,
-                    ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px`,
-                  }}
-                >
-                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
-                    <p className="text-xs uppercase tracking-[0.4em] text-gray-900/65">
-                      {banner.eyebrow}
-                    </p>
-                    <h1 className="mt-4 break-words text-3xl font-bold leading-[1.08] tracking-[-0.02em] sm:text-4xl sm:leading-[1.02] lg:text-[4rem]">
-                      {banner.title}
-                    </h1>
-                    <p className="mt-4 max-w-2xl break-words text-sm text-gray-800 sm:text-base lg:text-[1.05rem]">
-                      {banner.description}
-                    </p>
-                    <div className="mt-6 flex flex-wrap items-center gap-3">
-                      <Link
-                        to={banner.primaryHref}
-                        className="inline-flex items-center justify-center rounded-full bg-gray-900 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-secondary"
-                      >
-                        {banner.primaryLabel}
-                      </Link>
-                      <Link
-                        to={banner.secondaryHref}
-                        className="inline-flex items-center justify-center rounded-full border border-gray-900 px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-secondary hover:bg-secondary hover:text-white"
-                      >
-                        {banner.secondaryLabel}
-                      </Link>
-                    </div>
-                  </div>
-                  <div className="min-w-0 animate-in fade-in slide-in-from-bottom-4" style={{ animationDuration: `${motion.bannerRevealDurationMs}ms`, animationDelay: `${motion.heroRevealStaggerMs}ms`, ["--tw-enter-translate-y" as string]: `${motion.bannerRevealDistancePx}px` }}>
-                    <div className="relative ml-auto w-full max-w-[24rem] lg:max-w-[26rem]">
-                      <img
-                        src={leadBannerImage}
-                        alt="Bannerbild"
-                        className="h-40 w-full rounded-[1.35rem] object-contain shadow-none sm:h-48 lg:h-56"
-                        loading="lazy"
-                      />
-                      <div
-                        className={`absolute left-4 top-4 rounded-full px-4 py-2 text-sm font-semibold shadow-lg ${primarySticker?.className ?? "bg-secondary text-white"}`}
-                      >
-                        {primarySticker?.label ?? banner.eyebrow}
-                      </div>
-                      {secondaryStickers.length > 0 ? (
-                        <div className="absolute bottom-3 left-4 flex gap-2">
-                          {secondaryStickers.map((sticker) => (
-                            <span
-                              key={sticker.label}
-                              className={`rounded-full px-3 py-1 text-xs font-semibold shadow-md ${sticker.className}`}
-                            >
-                              {sticker.label}
-                            </span>
-                          ))}
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              )}
+        <PageHero
+          sandboxId="products-banner"
+          image={PAGE_BANNERS.products.image}
+          accent={bannerAccent}
+          breadcrumb={[{ label: "Hem", href: "/" }, { label: "Datorer" }]}
+          eyebrow={banner.eyebrow}
+          title={banner.title}
+          lede={banner.description}
+          facts={banner.stickers?.slice(0, 3).map((sticker) => sticker.label)}
+          actions={
+            <>
+              <Link to={banner.primaryHref} className="btn-primary">
+                {banner.primaryLabel}
+              </Link>
+              <Link to={banner.secondaryHref} className="btn-secondary">
+                {banner.secondaryLabel}
+              </Link>
+            </>
+          }
+          aside={
+            <div className="relative flex items-center justify-center">
+              {/* Datorn står fritt med ett ljus bakom sig, precis som
+                  nivåerna på startsidan. Ingen ram, ingen platta. */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background: `radial-gradient(48% 42% at 52% 54%, ${bannerAccent}40 0%, transparent 72%)`,
+                }}
+              />
+              <img
+                src={leadBannerImage}
+                alt=""
+                aria-hidden="true"
+                className="relative max-h-[220px] w-auto object-contain sm:max-h-[300px] lg:max-h-[340px]"
+                loading="eager"
+                decoding="async"
+                style={{ filter: "drop-shadow(0 26px 44px rgba(0, 0, 0, 0.5))" }}
+              />
+              {secondaryBannerImage ? (
+                <img
+                  src={secondaryBannerImage}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute -right-4 bottom-0 hidden max-h-[150px] w-auto object-contain opacity-90 lg:block"
+                  loading="lazy"
+                  decoding="async"
+                  style={{ filter: "drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55))" }}
+                />
+              ) : null}
             </div>
-          </div>
-        </section>
+          }
+        />
 
         <div className="container mx-auto px-4 lg:hidden mt-4 sm:mt-6">
           <div className="flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={() => setMobileFiltersOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-foreground/10 dark:bg-background dark:text-foreground"
+              className="inline-flex items-center gap-2 rounded-lg border border-foreground/10 bg-background/70 px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-foreground/10 dark:bg-background dark:text-foreground"
             >
               Filter
               <span className="text-xs text-muted-foreground">
@@ -969,9 +912,9 @@ export default function Products() {
           </div>
         </div>
 
-        <div className="mt-4 flex min-h-[calc(100vh-14rem)] flex-1 flex-col gap-6 border-t border-gray-200 pt-6 sm:mt-6 sm:pt-8 dark:border-[#1a2636] lg:flex-row">
+        <div className="mt-4 flex min-h-[calc(100vh-14rem)] flex-1 flex-col gap-6 border-t border-foreground/10 pt-6 sm:mt-6 sm:pt-8 dark:border-foreground/10 lg:flex-row">
           <div
-            className={`h-fit w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 space-y-8 dark:border-foreground/10 dark:bg-background/80 sm:p-6 lg:sticky lg:top-24 lg:min-h-[calc(100vh-12rem)] lg:max-w-xs lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r ${
+            className={`h-fit w-full rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-5 space-y-8 dark:border-foreground/10 dark:bg-background/80 sm:p-6 lg:sticky lg:top-24 lg:min-h-[calc(100vh-12rem)] lg:max-w-xs lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r ${
               mobileFiltersOpen ? "block" : "hidden"
             } lg:block`}
           >
@@ -1063,7 +1006,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={() => setShowAllGpus((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground"
+                    className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-foreground"
                     aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
                   >
                     {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1125,7 +1068,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={() => setShowAllCpus((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground"
+                    className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-foreground"
                     aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
                   >
                     {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1187,7 +1130,7 @@ export default function Products() {
                   <button
                     type="button"
                     onClick={() => setShowAllTiers((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-gray-700 dark:text-muted-foreground dark:hover:text-foreground"
+                    className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-foreground"
                     aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
                   >
                     {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -1197,7 +1140,7 @@ export default function Products() {
 
               <button
                 onClick={clearFilters}
-                className="w-full py-2 px-4 bg-gray-200 hover:bg-gray-300 text-gray-900 rounded font-medium transition-colors dark:bg-foreground/[0.06] dark:hover:bg-foreground/[0.09] dark:text-foreground"
+                className="w-full py-2 px-4 bg-foreground/[0.08] hover:bg-foreground/[0.06] text-foreground rounded font-medium transition-colors dark:bg-foreground/[0.06] dark:hover:bg-foreground/[0.09] dark:text-foreground"
               >
                 Rensa filter
               </button>
@@ -1213,7 +1156,7 @@ export default function Products() {
                     {activeFilters.map((filter) => (
                       <span
                         key={filter}
-                        className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground"
+                        className="rounded-full bg-foreground/[0.04] px-3 py-1 text-xs font-semibold text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
                       >
                         {filter}
                       </span>
@@ -1236,7 +1179,7 @@ export default function Products() {
               </div>
 
               {filteredProducts.length === 0 ? (
-                <div className="flex h-96 items-center justify-center rounded border border-gray-200 bg-gray-50 dark:border-foreground/10 dark:bg-background">
+                <div className="flex h-96 items-center justify-center rounded border border-foreground/10 bg-foreground/[0.04] dark:border-foreground/10 dark:bg-background">
                   <div className="text-center">
                     <p className="text-lg font-semibold text-foreground">Inga datorer hittades</p>
                     <p className="text-muted-foreground">Prova att justera dina filter</p>
@@ -1269,7 +1212,7 @@ export default function Products() {
                     ? "Slut i lager"
                     : "Slut i lager";
                   const badgeTone = !hasInventory || inventoryLoading
-                    ? "bg-gray-100 text-gray-700 dark:bg-foreground/[0.06] dark:text-foreground"
+                    ? "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
                     : inStock
                     ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
                     : canPreorder
@@ -1284,8 +1227,8 @@ export default function Products() {
 
                   return (
                     <Link key={cardKey} to={`/computer/${computer.id}`} className="group flex h-full w-full max-w-[34rem]">
-                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white transition-all hover:border-secondary hover:shadow-lg dark:border-foreground/10 dark:bg-background dark:hover:border-secondary 2xl:min-h-[35rem]">
-                        <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200 transition-colors group-hover:from-gray-200 group-hover:to-gray-300 dark:from-background dark:to-background dark:group-hover:from-foreground/[0.08] dark:group-hover:to-background sm:min-h-[18rem]">
+                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-foreground/10 bg-background/70 transition-all hover:border-secondary hover:shadow-lg dark:border-foreground/10 dark:bg-background dark:hover:border-secondary 2xl:min-h-[35rem]">
+                        <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-foreground/[0.05] transition-colors group-hover:bg-foreground/[0.08] sm:min-h-[18rem]">
                           <img
                             src={computer.image}
                             alt={displayName}
@@ -1329,7 +1272,7 @@ export default function Products() {
                             <span className="ml-2 text-xs text-muted-foreground">({computer.reviews})</span>
                           </div>
 
-                          <div className="mb-auto space-y-1 border-t border-gray-100 pt-3 text-sm text-gray-600 dark:border-foreground/10 dark:text-muted-foreground">
+                          <div className="mb-auto space-y-1 border-t border-foreground/10 pt-3 text-sm text-muted-foreground dark:border-foreground/10 dark:text-muted-foreground">
                             <p className="truncate">CPU: {variant.cpu}</p>
                             <p className="truncate">GPU: {variant.gpu}</p>
                             <p className="flex flex-wrap items-center gap-2">
