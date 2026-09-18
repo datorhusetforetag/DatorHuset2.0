@@ -38,14 +38,41 @@ import diamondCutout from "../../images/diamond tier.png";
  *   3. Lägg till en rad i PRODUCT_ART med datorns id.
  */
 
+/**
+ * Två sorters duk.
+ *
+ *   aura    Toning med ett ljus bakom datorn och stoft som driver
+ *           uppåt. Duger till det mesta och kostar ingenting.
+ *
+ *   studio  En fotostudio: en stor, mjukt lyst rund skiva mot en mörk
+ *           fond, ett golv som ljuset spiller ned på, och en kraftig
+ *           vinjett. Det är formen produktbilder av den här sorten
+ *           faktiskt fotograferas i, och den ger ett helt annat allvar
+ *           än en toning - men den kräver att datorn står mitt i
+ *           skivan, så den passar bara maskiner med urklipp.
+ */
+export type BackdropKind = "aura" | "studio";
+
 export type ProductArt = {
   /** Frilagd bild av chassit. Utelämnad = fotot visas i stället. */
   cutout?: string;
-  /** Duken bakom: två kulörer och ett ljus. */
   backdrop: {
+    /** Utelämnad = "aura". */
+    kind?: BackdropKind;
+    /** Fondens toning, uppifrån och ned. */
     from: string;
     to: string;
+    /** Ljuset bakom datorn, och stoftets kulör i aura-läget. */
     glow: string;
+
+    /* Bara för studio ------------------------------------------- */
+
+    /** Skivans mitt, där ljuset är starkast. */
+    disc?: string;
+    /** Skivans ytterkant, dit ljuset faller av. */
+    discEdge?: string;
+    /** Golvet. Ska vara mörkare än fonden, annars läses det som vägg. */
+    floor?: string;
   };
 };
 
@@ -75,16 +102,44 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
     backdrop: { from: "#1d1236", to: "#122b2e", glow: "#22d3ee" },
   },
 
-  // Platina Sleeper - CG530, rött
+  /*
+   * Platina-maskinerna står i studio.
+   *
+   * Båda är samma röda CG530, och den tål ljuset: ett svart chassi med
+   * röda fläktar mot en varm, rödlyst skiva är precis den bild
+   * tillverkarna själva tar. Kulörerna är avlästa ur förlagan - laxrött
+   * i skivans mitt, mörkt vinrött i kanten, och ett golv som är
+   * avmättat och gråare än fonden så att det läser som golv och inte
+   * som mer vägg.
+   *
+   * De två skiljs bara åt av skivans temperatur. Sleeper har förlagans
+   * varma lax; Frostbyte drar mot djupare karmosin. Samma studio, olika
+   * lampa - som två bilder ur samma fotografering.
+   */
   "7": {
     cutout: platinumCutout,
-    backdrop: { from: "#2a1016", to: "#1a1020", glow: "#f2555a" },
+    backdrop: {
+      kind: "studio",
+      from: "#241315",
+      to: "#140b0d",
+      glow: "#f2555a",
+      disc: "#e0938c",
+      discEdge: "#6e3630",
+      floor: "#2b2628",
+    },
   },
 
-  // Platina Frostbyte - samma chassi, kallare duk
   "9": {
     cutout: platinumCutout,
-    backdrop: { from: "#101a2e", to: "#241129", glow: "#5ab9f5" },
+    backdrop: {
+      kind: "studio",
+      from: "#1f1218",
+      to: "#110a0e",
+      glow: "#e8465c",
+      disc: "#d2757f",
+      discEdge: "#5c2b38",
+      floor: "#282326",
+    },
   },
 
   /*

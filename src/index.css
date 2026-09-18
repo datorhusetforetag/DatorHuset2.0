@@ -1700,3 +1700,101 @@
     animation: none;
   }
 }
+
+/* Studioduken -------------------------------------------------------
+ *
+ * En riktig produktfotografering, byggd i CSS: en stor lyst skiva som
+ * fond, ett golv framför den som ljuset spiller ned på, mörker i
+ * kanterna och ett svagt korn överst.
+ *
+ * Se ProductBackdrop för varför kornet finns - kortfattat: en så här
+ * stor mjuk toning ger synliga band på vanliga skärmar, och brus bryter
+ * upp dem.
+ */
+
+.product-backdrop--studio .product-backdrop__wall {
+  position: absolute;
+  inset: 0;
+}
+
+/* Skivan.
+ *
+ * Bredden är satt i procent av scenens HÖJD och inte av dess bredd
+ * (aspect-ratio 1 på en höjdbaserad storlek), så att cirkeln förblir en
+ * cirkel. Sätts den i procent av bredden blir den en oval så fort
+ * spalten smalnar, och en oval bakom en dator läser man som ett misstag.
+ */
+.product-backdrop__disc {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  height: 92%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 9999px;
+  /* Mjuk kant: skivan är en lyst yta ur fokus, inte en utklippt cirkel. */
+  filter: blur(26px);
+  animation: studio-breathe 14s ease-in-out infinite;
+}
+
+@media (min-width: 1024px) {
+  .product-backdrop__disc {
+    height: 88%;
+    top: 42%;
+  }
+}
+
+/* Ljuset andas, knappt märkbart. En helt stilla studio ser ut som en
+   stillbild; det här räcker för att den ska kännas tänd. */
+@keyframes studio-breathe {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.03);
+    opacity: 0.93;
+  }
+}
+
+/* Golvet. Övergången mot fonden är mjuk och inte en linje - i en studio
+   är den en rundad övergång (en hålkäl), inte ett hörn. */
+.product-backdrop__ground {
+  position: absolute;
+  inset: 72% 0 0 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 14%);
+}
+
+.product-backdrop__spill {
+  position: absolute;
+  inset: 0;
+}
+
+.product-backdrop__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    110% 85% at 50% 44%,
+    transparent 24%,
+    rgb(0 0 0 / 0.38) 62%,
+    rgb(0 0 0 / 0.78) 100%
+  );
+}
+
+.product-backdrop__grain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-backdrop__disc {
+    animation: none;
+  }
+}

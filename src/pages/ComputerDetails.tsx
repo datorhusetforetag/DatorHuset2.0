@@ -14,6 +14,7 @@ import {
   buildDefaultFpsSandboxSettings,
   normalizeFpsSandboxSettings,
 } from "@/lib/fpsSandbox";
+import { buildReportedFpsSettingsForProductName } from "../../shared/fpsProfiles.js";
 import {
   sanitizeUsedPartsSettings,
 } from "@/lib/usedParts";
@@ -295,15 +296,21 @@ export default function ComputerDetails() {
 
   const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSandboxSettings());
   /*
-   * Sant först när servern svarat med den här maskinens egna värden.
+   * Sant när vi har siffror som gäller just den här maskinen.
    *
-   * Utgångsvärdet ovan är en generisk tabell som är identisk för alla
-   * datorer - den finns för adminvyns skull. Visades den för kunden
-   * skulle en Silver-Speedster och ett 5080-bygge påstå samma
-   * bildfrekvens, vilket inte bara är fel utan ett påstående om en
-   * produkt. Servern räknar om tabellen per maskin
-   * (FPS_REPORT_PROFILE_FACTORS i server-local.js), så raden ritas
-   * först när det svaret kommit. Uteblir svaret ritas ingenting.
+   * Utgångsvärdet ovan är en generisk tabell, identisk för alla datorer,
+   * och den får aldrig visas för kund - då hade en Silver-Speedster och
+   * ett 5080-bygge påstått samma bildfrekvens. Därför flaggan.
+   *
+   * Den sätts från två håll. Först ur maskinens egen profil i
+   * shared/fpsProfiles.js, som klienten numera läser direkt. Sedan, om
+   * och när servern svarar, ur dess svar - det är där adminläget sparar
+   * egna värden, och de vinner.
+   *
+   * Tidigare fanns bara det andra hållet, och då försvann hela
+   * avsnittet så fort servern inte svarade. I utvecklingsläge finns
+   * bara Vite och alltså ingen endpoint alls, så det var precis vad som
+   * hände.
    */
   const [fpsLoaded, setFpsLoaded] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -501,6 +508,23 @@ export default function ComputerDetails() {
   const usedDisplayName = resolvedComputer.usedVariant?.productKey || toUsedName(resolvedComputer.name);
   const fallbackName =
     useUsedVariant && hasUsedVariant && resolvedComputer.usedVariant ? usedDisplayName : resolvedComputer.name;
+
+  /*
+   * Maskinens egen FPS-profil, direkt ur den delade tabellen.
+   *
+   * Uppslaget går på namn, precis som serverns. Byter man till den
+   * begagnade varianten heter maskinen "... - Begagnade", och eftersom
+   * uppslaget matchar på delsträng hittar den ändå rätt profil.
+   *
+   * Finns ingen profil för namnet händer ingenting, och avsnittet ritas
+   * inte förrän servern eventuellt svarar med egna värden.
+   */
+  useEffect(() => {
+    const profile = buildReportedFpsSettingsForProductName(fallbackName);
+    if (!profile) return;
+    setFpsSettings(normalizeFpsSandboxSettings(profile));
+    setFpsLoaded(true);
+  }, [fallbackName]);
   const activeProduct = useUsedVariant
     ? (usedProductId ? getProductFromLookup(productLookup, usedProductId) : null) ||
       (resolvedComputer.usedVariant?.productKey ? getProductFromLookup(productLookup, resolvedComputer.usedVariant.productKey) : null)
@@ -508,9 +532,6 @@ export default function ComputerDetails() {
       getProductFromLookup(productLookup, resolvedComputer.name) ||
       getProductFromLookup(productLookup, resolvedComputer.id);
   useEffect(() => {
-    /* Byter man utförande är den gamla maskinens siffror inte längre
-       sanna, så raden döljs tills svaret för den nya kommit. */
-    setFpsLoaded(false);
     if (!activeProductId) return;
     let isMounted = true;
     const loadFps = async () => {

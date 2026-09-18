@@ -1,30 +1,39 @@
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 
 import type { ProductArt } from "@/data/productArt";
 
 /**
  * Duken bakom den svävande datorn - en egen per maskin.
  *
- * Förlagan har en målad scen bakom varje dator: snö och blommor för
- * den ena, något annat för nästa. Vi har ingen illustratör, men vi har
- * datorernas egna kulörer, och det räcker för att varje sida ska se ut
- * som sitt eget rum i stället för som samma mall sju gånger.
+ * Förlagan har en målad scen bakom varje dator. Vi har ingen
+ * illustratör, men vi har datorernas egna kulörer, och det räcker för
+ * att varje sida ska se ut som sitt eget rum i stället för som samma
+ * mall sju gånger.
  *
- * Tre lager, och inte ett enda bildfilsanrop:
+ * TVÅ SORTER, se BackdropKind i src/data/productArt.ts.
  *
- *   toningen   två kulörer ur maskinens egen belysning
- *   ljuset     en rund glöd bakom datorn, i fläktarnas kulör
- *   stoftet    små prickar som driver uppåt, som dammet i en
- *              strålkastare. Det är rörelsen som gör att duken läses
- *              som ett rum med luft i och inte som en gradient.
+ * AURA - toning, ljus och stoft
  *
  * Prickarna ligger i en SVG med fasta koordinater, inte i procent.
  * Procent räknas om vid varje ändrad fönsterbredd, och då räknas hela
- * mönstret om medan man drar i fönstret. Med ett fast rutnät som
- * skalas av viewBox rör sig ingenting utom det som ska röra sig.
+ * mönstret om medan man drar i fönstret. Mönstret är slumpat men inte
+ * slumpmässigt: fröet kommer ur maskinens id, så samma dator får samma
+ * stoft varje gång sidan öppnas.
  *
- * Mönstret är slumpat men inte slumpmässigt: fröet kommer ur maskinens
- * id, så samma dator får samma stoft varje gång sidan öppnas.
+ * STUDIO - rund skiva, golv och vinjett
+ *
+ * Byggd som en riktig produktfotografering: en stor lyst skiva som
+ * fond, ett golv framför den som ljuset spiller ned på, och mörker i
+ * kanterna. Datorn står mitt i skivan.
+ *
+ * Kornet överst är inte dekoration. En skiva som den här är en väldig
+ * mjuk toning, och mjuka toningar över stora ytor ger synliga band på
+ * vanliga skärmar - kanten mellan två närliggande nyanser blir en
+ * rand. Ett svagt brus ovanpå bryter upp banden. Det ritas en gång med
+ * feTurbulence och rör sig aldrig.
+ *
+ * Inget stoft i studio: förlagan är en stillbild i en ren studio, och
+ * damm i luften hade motsagt just det.
  */
 
 /** Liten deterministisk generator, så duken ser likadan ut varje gång. */
@@ -63,7 +72,11 @@ export const ProductBackdrop = ({
   /** Maskinens id. Styr stoftets mönster. */
   seedKey: string;
 }) => {
+  const grainId = useId();
+  const studio = art.backdrop.kind === "studio";
+
   const motes = useMemo<Mote[]>(() => {
+    if (studio) return [];
     const random = seeded(hashOf(seedKey) + 7);
     return Array.from({ length: MOTE_COUNT }, () => ({
       cx: random() * 1000,
@@ -73,7 +86,66 @@ export const ProductBackdrop = ({
       duration: 18 + random() * 18,
       opacity: 0.18 + random() * 0.4,
     }));
-  }, [seedKey]);
+  }, [seedKey, studio]);
+
+  if (studio) {
+    const disc = art.backdrop.disc ?? art.backdrop.glow;
+    const discEdge = art.backdrop.discEdge ?? art.backdrop.to;
+    const floor = art.backdrop.floor ?? art.backdrop.to;
+
+    return (
+      <div aria-hidden="true" className="product-backdrop product-backdrop--studio">
+        {/* Fonden */}
+        <div
+          className="product-backdrop__wall"
+          style={{
+            background: `linear-gradient(180deg, ${art.backdrop.from} 0%, ${art.backdrop.to} 100%)`,
+          }}
+        />
+
+        {/* Skivan. Ljuset sitter en bit upp till vänster i den, som i
+            förlagan - en helt centrerad ljuskälla ser tillverkad ut. */}
+        <div
+          className="product-backdrop__disc"
+          style={{
+            background: `radial-gradient(circle at 44% 38%, ${disc} 0%, ${disc}D9 28%, ${discEdge} 76%, ${discEdge}00 100%)`,
+          }}
+        />
+
+        {/* Golvet, och ljuset som spiller ned på det framför datorn. */}
+        <div
+          className="product-backdrop__ground"
+          style={{
+            background: `linear-gradient(180deg, ${floor} 0%, ${art.backdrop.to} 100%)`,
+          }}
+        >
+          <span
+            className="product-backdrop__spill"
+            style={{
+              background: `radial-gradient(70% 120% at 50% -10%, ${disc}40 0%, transparent 70%)`,
+            }}
+          />
+        </div>
+
+        {/* Mörkret i kanterna. Det är den som gör att blicken stannar
+            mitt i bilden i stället för att vandra ut i hörnen. */}
+        <div className="product-backdrop__vignette" />
+
+        <svg className="product-backdrop__grain" aria-hidden="true" focusable="false">
+          <filter id={grainId}>
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.85"
+              numOctaves="3"
+              stitchTiles="stitch"
+            />
+            <feColorMatrix type="saturate" values="0" />
+          </filter>
+          <rect width="100%" height="100%" filter={`url(#${grainId})`} />
+        </svg>
+      </div>
+    );
+  }
 
   return (
     <div aria-hidden="true" className="product-backdrop">
@@ -112,8 +184,6 @@ export const ProductBackdrop = ({
         ))}
       </svg>
 
-      {/* Golvet: duken mörknar nedåt så att datorn får något att stå
-          på i stället för att hänga i ett tomrum. */}
       <div className="product-backdrop__floor" />
     </div>
   );
