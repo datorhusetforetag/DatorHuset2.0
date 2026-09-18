@@ -71,7 +71,14 @@ export type ProductArt = {
     disc?: string;
     /** Skivans ytterkant, dit ljuset faller av. */
     discEdge?: string;
-    /** Golvet. Ska vara mörkare än fonden, annars läses det som vägg. */
+    /**
+     * Bordsskivan.
+     *
+     * Ska vara LJUSARE än fondens nedre del. Sätts den lika mörk
+     * försvinner planet - man ser en kant högst upp och sedan
+     * ingenting, och datorn ser ut att hänga framför fonden i stället
+     * för att stå på något.
+     */
     floor?: string;
   };
 };
@@ -108,9 +115,8 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
    * Båda är samma röda CG530, och den tål ljuset: ett svart chassi med
    * röda fläktar mot en varm, rödlyst skiva är precis den bild
    * tillverkarna själva tar. Kulörerna är avlästa ur förlagan - laxrött
-   * i skivans mitt, mörkt vinrött i kanten, och ett golv som är
-   * avmättat och gråare än fonden så att det läser som golv och inte
-   * som mer vägg.
+   * i skivans mitt, mörkt vinrött i kanten, och en bordsskiva i ett
+   * avmättat grålila som ligger ljusare än fondens nederkant.
    *
    * De två skiljs bara åt av skivans temperatur. Sleeper har förlagans
    * varma lax; Frostbyte drar mot djupare karmosin. Samma studio, olika
@@ -125,7 +131,7 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
       glow: "#f2555a",
       disc: "#e0938c",
       discEdge: "#6e3630",
-      floor: "#2b2628",
+      floor: "#453c42",
     },
   },
 
@@ -138,7 +144,7 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
       glow: "#e8465c",
       disc: "#d2757f",
       discEdge: "#5c2b38",
-      floor: "#282326",
+      floor: "#413840",
     },
   },
 

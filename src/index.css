@@ -1875,13 +1875,14 @@
   );
 }
 
-/* Bordsytan mörknar framåt, mot betraktaren. Ett bord med jämn ton
-   över hela djupet läses som en vägg. */
+/* Ett svagt mörker framåt, mot betraktaren. Djupet ligger mest i
+   ytans egen toning (se ProductBackdrop) - den här lägger bara på
+   en aning till. Var 0.45 och åt då upp hela bordet. */
 .product-backdrop__ground::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.45) 100%);
+  background: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.18) 100%);
 }
 
 /* Ljuset från skivan som spiller ned på bordsskivan bakom datorn. */
@@ -1916,4 +1917,136 @@
   .product-backdrop__disc {
     animation: none;
   }
+}
+
+/* Datorn ska VILA på bordet ------------------------------------------
+ *
+ * Tre saker var fel, och alla tre handlade om samma sak: att motivet
+ * och bordet inte visste om varandra.
+ *
+ *   1. Motivet centrerades lodrätt i scenen medan bordet låg på en
+ *      fast höjd. Datorn hamnade därför en bit ovanför bordskanten,
+ *      med en glipa emellan, och skuggan låg i luften under den.
+ *   2. Datorn guppade. Ett föremål som vilar mot en yta guppar inte -
+ *      rörelsen sa "svävar" samtidigt som skuggan försökte säga
+ *      "står".
+ *   3. Skivan var så suddig att den inte hade någon kant. I förlagan
+ *      kan man följa cirkelns rand med blicken; här rann den ut i
+ *      duken och blev en dimma över hela ytan.
+ *
+ * Nu är motivet fäst mot bordskanten i stället för mot scenens mitt,
+ * står stilla, och skivan har en rand.
+ */
+
+/* Foten landar på bordskanten.
+ *
+ * bottom i procent räknas mot behållarens HÖJD, vilket är precis vad vi
+ * vill här. Bordet börjar på 71% uppifrån, alltså 29% nedifrån, och
+ * motivet läggs en hårsmån under den kanten så att foten skär in i ytan
+ * i stället för att sväva en pixel ovanför den. */
+.product-stage[data-backdrop="studio"] .product-stage__subject {
+  position: absolute;
+  bottom: 28.4%;
+  left: 50%;
+  width: 100%;
+  max-width: 40rem;
+  transform: translateX(-50%);
+}
+
+/* Höjden måste följa scenen, inte vara ett fast mått.
+ *
+ * Med fasta rem hade ett högt fönster gett en liten dator mitt i en tom
+ * scen, och ett lågt fönster en dator vars topp gick utanför bild -
+ * eftersom foten numera är låst mot bordet växer den uppåt. */
+.product-stage[data-backdrop="studio"] .product-stage__cutout {
+  max-height: min(46vh, 15rem);
+  /* Ett föremål som vilar står stilla. */
+  animation: none;
+  transform: none;
+}
+
+@media (min-width: 640px) {
+  .product-stage[data-backdrop="studio"] .product-stage__cutout {
+    max-height: min(50vh, 21rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  .product-stage[data-backdrop="studio"] .product-stage__cutout {
+    max-height: 52vh;
+  }
+}
+
+/* Skuggorna står också stilla, av samma skäl. */
+.product-stage[data-backdrop="studio"] .product-stage__shadow,
+.product-stage[data-backdrop="studio"] .product-stage__cast {
+  animation: none;
+}
+
+.product-stage[data-backdrop="studio"] .product-stage__shadow {
+  bottom: -0.35rem;
+  height: 1.35rem;
+  width: 52%;
+  transform: translateX(-50%);
+  filter: blur(4px);
+  background: radial-gradient(
+    closest-side,
+    rgb(0 0 0 / 0.82) 0%,
+    rgb(0 0 0 / 0.34) 58%,
+    transparent 100%
+  );
+}
+
+.product-stage[data-backdrop="studio"] .product-stage__cast {
+  bottom: -0.9rem;
+  height: 2.6rem;
+  width: 88%;
+  transform: translateX(-40%) skewX(-24deg);
+  filter: blur(13px);
+  background: radial-gradient(closest-side, rgb(0 0 0 / 0.46) 0%, transparent 100%);
+}
+
+/* Skivan får en rand.
+ *
+ * Suddningen är nere från 26 till 9 pixlar och toningen tar slut strax
+ * innan ytterkanten i stället för att tona ut hela vägen. Det är den
+ * randen som gör att man läser en upplyst skiva bakom datorn i stället
+ * för ett ljus som lagts ovanpå bilden. */
+.product-backdrop__disc {
+  filter: blur(9px);
+}
+
+/* Bordet ska synas som ett bord.
+ *
+ * Ytan var nästan samma ton som fonden och försvann. Nu ligger den
+ * ljusare, och kanten mot fonden är kortare så att den läses som en
+ * kant. Bordet ritas ovanpå skivan, så skivans nederdel döljs bakom
+ * det - precis som en bordsskiva skymmer fonden bakom sig. */
+.product-backdrop__ground {
+  inset: 71% 0 0 0;
+  z-index: 2;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 2.5%);
+  mask-image: linear-gradient(to bottom, transparent 0%, #000 2.5%);
+}
+
+.product-backdrop__ground::before {
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    rgb(255 255 255 / 0.1) 18%,
+    rgb(255 255 255 / 0.26) 50%,
+    rgb(255 255 255 / 0.08) 80%,
+    transparent 96%
+  );
+}
+
+/* Vinjetten ligger över bordet också, annars ser bordets ytterkanter
+   ljusare ut än fondens och planet ser ut att lysa. */
+.product-backdrop__vignette {
+  z-index: 3;
+}
+
+.product-backdrop__grain {
+  z-index: 4;
 }

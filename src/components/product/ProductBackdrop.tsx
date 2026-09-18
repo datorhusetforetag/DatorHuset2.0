@@ -112,11 +112,19 @@ export const ProductBackdrop = ({
           }}
         />
 
-        {/* Golvet, och ljuset som spiller ned på det framför datorn. */}
+        {/*
+          Bordet.
+
+          Ytan tonar INTE ned till fondens kulör. Gjorde den det blev
+          bordet samma ton som väggen nedtill och försvann - man såg en
+          kant högst upp och sedan ingenting. Nu håller den sin egen
+          kulör större delen av djupet och mörknar bara en bit mot
+          betraktaren, så planet syns hela vägen ned.
+        */}
         <div
           className="product-backdrop__ground"
           style={{
-            background: `linear-gradient(180deg, ${floor} 0%, ${art.backdrop.to} 100%)`,
+            background: `linear-gradient(180deg, ${floor} 0%, ${floor} 46%, color-mix(in srgb, ${floor} 62%, #000) 100%)`,
           }}
         >
           <span
