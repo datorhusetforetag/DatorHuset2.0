@@ -2448,7 +2448,15 @@
 /* Ytan från panelen och nedåt ---------------------------------------
  *
  * Panelen och allt under den delar en kulör, så att sidan inte byter
- * underlag mitt i. Kulören är satt av er: #2596be.
+ * underlag mitt i.
+ *
+ * Kulören är ett djupt plommonlila ur husets egen familj, inte den
+ * ljusa plommonaccenten. Accenten är till för text och ikoner mot mörk
+ * yta; som yta i sig blir den en vägg man inte kan läsa något mot.
+ *
+ * Två värden, ett per tema. Ett enda hårdkodat värde hade gett mörk
+ * text på mörk yta i ljust läge - panelens text följer temat, och
+ * ytan måste följa med.
  *
  * Skarven mot scenen är en toning och inte en kant. Den ligger som ett
  * eget lager ovanför den nedre ytan och sträcker sig upp över scenens
@@ -2457,10 +2465,14 @@
  */
 
 .product-lower {
-  --product-surface: #2596be;
+  --product-surface: #f1ecf8;
 
   position: relative;
   background: var(--product-surface);
+}
+
+.dark .product-lower {
+  --product-surface: #1f1430;
 }
 
 .product-lower__seam {
@@ -2481,13 +2493,16 @@
   }
 }
 
-/* Panelen delar ytan med avsnitten under, i båda temana. Var den kvar
-   i sidans bakgrundskulör skulle den bryta mot allt nedanför. */
+/* Panelen delar ytan med avsnitten under. Var den kvar i sidans
+   bakgrundskulör skulle den bryta mot allt nedanför. */
 .product-panel,
-.product-panel__foot,
+.product-panel__foot {
+  background: #f1ecf8;
+}
+
 .dark .product-panel,
 .dark .product-panel__foot {
-  background: #2596be;
+  background: #1f1430;
 }
 
 /*
