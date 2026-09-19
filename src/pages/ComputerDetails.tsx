@@ -121,147 +121,23 @@ const toUsedPartsSettings = (source?: DetailUsedPartsSource | null) =>
     cpu_cooler: source?.cpu_cooler ?? source?.cpuCooler,
   });
 
-const TOP_SELLER_REVIEWS: Record<
-  string,
-  {
-    average: number;
-    total: number;
-    breakdown: { stars: number; count: number }[];
-    reviews: { name: string; rating: number; text: string; date: string }[];
-  }
-> = {
-  "2": {
-    average: 4.6,
-    total: 287,
-    breakdown: [
-      { stars: 5, count: 188 },
-      { stars: 4, count: 72 },
-      { stars: 3, count: 18 },
-      { stars: 2, count: 6 },
-      { stars: 1, count: 3 },
-    ],
-    reviews: [
-      {
-        name: "Emma L.",
-        rating: 5,
-        text: "Otrolig prestanda i spel och streaming. Tyst och stabil.",
-        date: "2025-11-18",
-      },
-      {
-        name: "Johan M.",
-        rating: 4,
-        text: "Snabb leverans och snyggt bygge. Rekommenderas.",
-        date: "2025-10-29",
-      },
-      {
-        name: "Sara K.",
-        rating: 5,
-        text: "Perfekt balans mellan pris och prestanda.",
-        date: "2025-10-12",
-      },
-    ],
-  },
-  "4": {
-    average: 4.9,
-    total: 834,
-    breakdown: [
-      { stars: 5, count: 620 },
-      { stars: 4, count: 150 },
-      { stars: 3, count: 40 },
-      { stars: 2, count: 14 },
-      { stars: 1, count: 10 },
-    ],
-    reviews: [
-      {
-        name: "Oskar R.",
-        rating: 5,
-        text: "B\u00e4sta datorn jag haft. Maxar allt i 4K.",
-        date: "2025-11-22",
-      },
-      {
-        name: "Lina S.",
-        rating: 5,
-        text: "K\u00e4nns riktigt premium. Byggkvaliteten \u00e4r topp.",
-        date: "2025-11-03",
-      },
-      {
-        name: "Mahmoud A.",
-        rating: 4,
-        text: "Snabb och kraftfull, men ville ha fler USB-portar.",
-        date: "2025-10-08",
-      },
-    ],
-  },
-  "7": {
-    average: 4.7,
-    total: 423,
-    breakdown: [
-      { stars: 5, count: 280 },
-      { stars: 4, count: 105 },
-      { stars: 3, count: 26 },
-      { stars: 2, count: 8 },
-      { stars: 1, count: 4 },
-    ],
-    reviews: [
-      {
-        name: "Anton P.",
-        rating: 5,
-        text: "Stabil FPS i alla spel jag k\u00f6r. Supern\u00f6jd.",
-        date: "2025-11-09",
-      },
-      {
-        name: "Felicia T.",
-        rating: 4,
-        text: "Snyggt bygge och bra kylning. Lite h\u00f6g leveranstid.",
-        date: "2025-10-20",
-      },
-      {
-        name: "Daniel N.",
-        rating: 5,
-        text: "Perfekt f\u00f6r 1440p. Rekommenderas varmt.",
-        date: "2025-10-02",
-      },
-    ],
-  },
-};
-
-const buildDefaultReviewData = (computer: Computer) => {
-  const total = Math.max(18, Math.min(999, computer.reviews || 120));
-  const average = 4.2 + (total % 6) * 0.1;
-  const breakdown = [
-    { stars: 5, count: Math.round(total * 0.55) },
-    { stars: 4, count: Math.round(total * 0.28) },
-    { stars: 3, count: Math.round(total * 0.1) },
-    { stars: 2, count: Math.round(total * 0.05) },
-    { stars: 1, count: Math.max(1, total - Math.round(total * 0.98)) },
-  ];
-  return {
-    average: Number(average.toFixed(1)),
-    total,
-    breakdown,
-    reviews: [
-      {
-        name: "Alex S.",
-        rating: 5,
-        text: "Stabil prestanda och snyggt bygge. Mycket n\u00f6jd.",
-        date: "2025-11-04",
-      },
-      {
-        name: "Nora G.",
-        rating: 4,
-        text: "Snabb leverans och bra support. Rekommenderas.",
-        date: "2025-10-22",
-      },
-      {
-        name: "Lucas W.",
-        rating: 4,
-        text: "Prisv\u00e4rt val f\u00f6r vardag och gaming.",
-        date: "2025-10-10",
-      },
-    ],
-  };
-};
-
+/*
+ * Här låg påhittade omdömen.
+ *
+ * Två tabeller med snittbetyg, antal och namngivna recensenter, och
+ * en funktion som hittade på samma sak åt alla övriga maskiner.
+ * Ingenting av det syntes på sidan - men allt skickades ut som
+ * schema.org aggregateRating och Review, alltså precis den
+ * uppmärkning Google läser för att sätta stjärnor i sökresultatet.
+ *
+ * Påhittade konsumentomdömen står på EU:s svarta lista över
+ * otillåten marknadsföring och finns i marknadsföringslagen sedan
+ * 2022. Det bryter dessutom mot Googles regler för strukturerad
+ * data. Att ingen såg dem i webbläsaren gjorde dem inte osynliga.
+ *
+ * Sidan visar nu inga betyg alls. När riktiga omdömen finns kan de
+ * komma tillbaka, med data från kunder som faktiskt handlat.
+ */
 const hashString = (value: string) => {
   let hash = 0;
   for (let index = 0; index < value.length; index += 1) {
@@ -500,7 +376,6 @@ export default function ComputerDetails() {
     }
   };
 
-  const reviewData = TOP_SELLER_REVIEWS[resolvedComputer.id] ?? buildDefaultReviewData(resolvedComputer);
   const activeVariant = useUsedVariant && hasUsedVariant && resolvedComputer.usedVariant ? resolvedComputer.usedVariant : null;
   const usedDisplayName = resolvedComputer.usedVariant?.productKey || toUsedName(resolvedComputer.name);
   const fallbackName =
@@ -891,23 +766,6 @@ export default function ComputerDetails() {
         availability: availability.schema,
         url: `${baseUrl}${productPath(resolvedComputer)}`,
       },
-      aggregateRating: {
-        "@type": "AggregateRating",
-        ratingValue: reviewData.average,
-        reviewCount: reviewData.total,
-      },
-      review: reviewData.reviews.slice(0, 2).map((review) => ({
-        "@type": "Review",
-        author: { "@type": "Person", name: review.name },
-        datePublished: review.date,
-        reviewBody: review.text,
-        reviewRating: {
-          "@type": "Rating",
-          ratingValue: review.rating,
-          bestRating: "5",
-          worstRating: "1",
-        },
-      })),
     };
     const breadcrumbSchema = {
       "@type": "BreadcrumbList",
@@ -936,7 +794,7 @@ export default function ComputerDetails() {
       "@context": "https://schema.org",
       "@graph": [productSchema, breadcrumbSchema],
     };
-  }, [availability.schema, resolvedComputer, detailImageCandidates, displayName, displayPrice, displaySpecs, reviewData]);
+  }, [availability.schema, resolvedComputer, detailImageCandidates, displayName, displayPrice, displaySpecs]);
   const seoBaseUrl = typeof window !== "undefined" ? window.location.origin : "https://datorhuset.se";
   const seoImage = (detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE).startsWith("http")
     ? detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE
