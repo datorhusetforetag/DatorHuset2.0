@@ -16,7 +16,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run lint
-      - run: npx tsc --noEmit
+      # tsconfig.json har "files": [] och bara projektreferenser, så
+      # "tsc --noEmit" utan -p granskade noll filer och gav klart varje
+      # gång. Steget såg ut att vakta koden men släppte igenom allt.
+      # Appens riktiga projekt är tsconfig.app.json.
+      - run: npm run typecheck
       - run: npm run build
 
   lighthouse:

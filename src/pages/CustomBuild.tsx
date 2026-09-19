@@ -586,12 +586,13 @@ const getItemPsuModularValue = (item: ComponentItem) => {
 
 const getItemGpuPerformanceClass = (item: ComponentItem) => item.performanceClass || "";
 
-const getItemGpuExactModel = (item: ComponentItem) =>
-  item.category === undefined || item.id.startsWith("gpu-") ? item.gpuModel || item.name : "";
 
 const getItemCpuChip = (item: ComponentItem) => {
   const text = normalizeFilterToken(item.name);
-  const chipPatterns = [
+  /* Paret maste skrivas ut. Utan typen blir listan (string |
+     RegExp)[][], och da vet inte TypeScript att andra platsen alltid
+     ar ett monster - pattern.test fanns inte. */
+  const chipPatterns: [string, RegExp][] = [
     ["Ryzen 9", /ryzen\s*9/],
     ["Ryzen 7", /ryzen\s*7/],
     ["Ryzen 5", /ryzen\s*5/],
@@ -613,7 +614,7 @@ const getItemCpuChip = (item: ComponentItem) => {
 
 const getItemGpuChip = (item: ComponentItem) => {
   const text = normalizeFilterToken(`${item.gpuModel || ""} ${item.name}`);
-  const chipPatterns = [
+  const chipPatterns: [string, RegExp][] = [
     ["RTX 5070 Ti", /rtx\s*5070\s*ti/],
     ["RTX 5060 Ti", /rtx\s*5060\s*ti/],
     ["RTX 5090", /rtx\s*5090/],
@@ -2022,7 +2023,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       specs: ["AM5", "mATX", "DDR5", "HDMI"],
     },
   ],
-  ram: [
+  ram: ([
     {
       id: "ram-1",
       name: "Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz CL36",
@@ -2275,7 +2276,7 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       image: ramCorsairVengeanceImage,
       specs: ["DDR5", "64GB", "6000 MT/s", "CL40"],
     },
-  ].filter((item) => !UNSUPPORTED_RAM_ITEM_IDS.has(item.id)),
+  ] satisfies ComponentItem[]).filter((item) => !UNSUPPORTED_RAM_ITEM_IDS.has(item.id)),
   storage: [
     {
       id: "sto-1",

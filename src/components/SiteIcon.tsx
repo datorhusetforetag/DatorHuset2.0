@@ -1,6 +1,5 @@
 import {
   BadgePercent,
-  Cpu,
   Hammer,
   Headset,
   Monitor,
@@ -8,11 +7,7 @@ import {
   RefreshCcw,
   Rocket,
   ShieldCheck,
-  Sparkles,
-  Star,
-  Truck,
   Wallet,
-  Wrench,
   Euro,
 } from "lucide-react";
 import type { SiteIconKey } from "@/lib/siteSettings";
@@ -29,12 +24,13 @@ export const SiteIcon = ({ icon, className }: SiteIconProps) => {
   if (icon === "rocket") return <Rocket className={className} aria-hidden />;
   if (icon === "package") return <Package className={className} aria-hidden />;
   if (icon === "shield") return <ShieldCheck className={className} aria-hidden />;
-  if (icon === "truck") return <Truck className={className} aria-hidden />;
-  if (icon === "wrench") return <Wrench className={className} aria-hidden />;
-  if (icon === "star") return <Star className={className} aria-hidden />;
+  /* Har lag ocksa grenar for truck, wrench, star, sparkles och cpu.
+     SiteIconKey har nio varden och SITE_ICON_OPTIONS erbjuder samma
+     nio i adminlaget, sa de fem gick inte att na - ingen kunde valja
+     dem. De ar borttagna i stallet for att typen breddats, eftersom
+     listan i shared/siteSettingsDefaults.js ar det som bestammer vad
+     som faktiskt gar att valja. */
   if (icon === "headset") return <Headset className={className} aria-hidden />;
-  if (icon === "sparkles") return <Sparkles className={className} aria-hidden />;
-  if (icon === "cpu") return <Cpu className={className} aria-hidden />;
   if (icon === "refresh-euro") {
     return (
       <span className={`inline-flex items-center gap-1 ${className || ""}`} aria-hidden>

@@ -16,6 +16,10 @@ export interface SupabaseProduct {
   tier: string;
   rating: number;
   reviews_count: number;
+  /* Adminlaget skriver bada till produkttabellen; typen hade bara
+     glomt dem, sa varje lasning av product.image_url var ett fel. */
+  image_url?: string | null;
+  images?: string[] | null;
   motherboard?: string | null;
   psu?: string | null;
   case_name?: string | null;

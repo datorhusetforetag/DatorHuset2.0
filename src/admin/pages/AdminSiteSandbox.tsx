@@ -194,6 +194,18 @@ const PREVIEW_PAGES: PreviewPageDefinition[] = [
   },
 ];
 
+/*
+ * Paneler som är avstängda.
+ *
+ * De stod tidigare som {false ? ... : null} rakt i koden. Det sa
+ * ingenting om varför, och en nolla rakt i ett villkor läser både
+ * ESLint och nästa läsare som ett misstag. Som namngivna flaggor
+ * syns det att de är avsiktligt släckta, och de går att tända igen
+ * genom att byta ett värde.
+ */
+const SHOW_PUBLISH_VALIDATION = false;
+const SHOW_BANNER_TEXT_FIELDS = false;
+const SHOW_BANNER_DESCRIPTION = false;
 const cloneSettings = (value: SiteSettings): SiteSettings => normalizeSiteSettings(JSON.parse(JSON.stringify(value)));
 
 const parseDelimitedLines = (value: string, size: number) =>
@@ -1017,7 +1029,11 @@ export default function AdminSiteSandbox() {
     if (!iframeWindow) return;
     try {
       window.sessionStorage.setItem("datorhuset_site_sandbox_preview_settings", JSON.stringify(draftSettings));
-    } catch {}
+    } catch {
+      /* sessionStorage kan vara avstängt eller fullt. Förhandsvisningen
+         får sina inställningar via postMessage nedanför ändå, så det
+         här är bara en genväg som inte behöver lyckas. */
+    }
     iframeWindow.postMessage({ type: "site-sandbox:update-preview-settings", settings: draftSettings }, window.location.origin);
     window.setTimeout(syncPreviewOverlays, 50);
   };
@@ -1609,7 +1625,7 @@ export default function AdminSiteSandbox() {
         </div>
       </BuilderPanel>
 
-      {false ? <div className="grid gap-6 xl:grid-cols-2">
+      {SHOW_PUBLISH_VALIDATION ? <div className="grid gap-6 xl:grid-cols-2">
         <BuilderPanel title="Publish validation" eyebrow="Safe checks before live">
           <div className="flex flex-wrap items-center gap-3">
             <Button variant="secondary" onClick={() => void validateDraftSettings()} disabled={validating}>
@@ -1730,32 +1746,6 @@ export default function AdminSiteSandbox() {
         </BuilderPanel>
       </div> : null}
 
-      {false ? <CollapsibleBuilderPanel
-        title="Section navigator"
-        eyebrow="Page-scoped controls"
-        description="Jump between the editable areas for the active page."
-        collapsed={collapsedPanels.sections}
-        onToggle={() => togglePanel("sections")}
-      >
-        <div className="grid gap-3 xl:grid-cols-2">
-          {sectionLinks.map((section) => (
-            <button
-              key={section.id}
-              type="button"
-              onClick={() => setActiveSectionId(section.id)}
-              className={cn(
-                "w-full rounded-2xl border px-4 py-4 text-left transition",
-                isActiveSection(section.id)
-                  ? "border-cyan-400/50 bg-cyan-400/12 text-white shadow-[0_0_0_1px_rgba(34,211,238,0.15)]"
-                  : "border-slate-800 bg-slate-950/50 text-slate-300 hover:border-slate-700 hover:text-white",
-              )}
-            >
-              <p className="text-sm font-semibold">{section.label}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-400">{section.description}</p>
-            </button>
-          ))}
-        </div>
-      </CollapsibleBuilderPanel> : null}
 
       <div
         className={cn(
@@ -2803,7 +2793,7 @@ export default function AdminSiteSandbox() {
                     title="Product banner"
                     description="Buildern styr bara bannern for den kategori som visas i previewn."
                   >
-                    {false ? <div className="grid gap-4 md:grid-cols-2">
+                    {SHOW_BANNER_TEXT_FIELDS ? <div className="grid gap-4 md:grid-cols-2">
                       <FieldBlock label="Eyebrow">
                         <Input
                           value={selectedBanner.eyebrow}
@@ -2995,7 +2985,7 @@ export default function AdminSiteSandbox() {
                       )}
                     </div>
 
-                    {false ? <>
+                    {SHOW_BANNER_DESCRIPTION ? <>
                     <FieldBlock label="Description">
                       <Textarea
                         value={selectedBanner.description}

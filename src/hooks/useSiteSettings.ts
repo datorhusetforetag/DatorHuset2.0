@@ -53,17 +53,29 @@ export const SiteSettingsProvider = ({
   return createElement(SiteSettingsOverrideContext.Provider, { value }, children);
 };
 
+/*
+ * Krokarna anropas alltid, beslutet tas efteråt.
+ *
+ * Tidigare låg en early return för override FÖRE useState och
+ * useEffect. React kräver att krokarna körs i samma ordning varje
+ * gång en komponent ritas om, och den ordningen ändrades i samma
+ * ögonblick som en override dök upp eller försvann - exakt det som
+ * händer när sandlådans förhandsvisning slås på. Resultatet blir
+ * inte ett fel i konsolen utan en krasch: "Rendered fewer hooks
+ * than expected".
+ *
+ * Nu körs alla tre alltid. Hämtningen hoppas över när en override
+ * styr, för då är inställningarna redan givna och ett anrop till
+ * servern skulle vara bortkastat.
+ */
 export const useSiteSettings = (explicitMode?: SiteSettingsMode) => {
   const override = useContext(SiteSettingsOverrideContext);
-  if (override) {
-    return { settings: override.settings, loading: false, mode: override.mode };
-  }
-
   const mode = getRequestedMode(explicitMode);
   const [settings, setSettings] = useState<SiteSettings>(cachedByMode[mode]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (override) return;
     let active = true;
 
     loadSiteSettings(mode)
@@ -79,7 +91,11 @@ export const useSiteSettings = (explicitMode?: SiteSettingsMode) => {
     return () => {
       active = false;
     };
-  }, [mode]);
+  }, [mode, override]);
+
+  if (override) {
+    return { settings: override.settings, loading: false, mode: override.mode };
+  }
 
   return { settings, loading, mode };
 };

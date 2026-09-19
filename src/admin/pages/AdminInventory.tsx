@@ -70,7 +70,14 @@ export default function AdminInventory() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
-  const handleChange = (productId: string, field: keyof InventoryItem, value: string | boolean) => {
+  /* value far vara ett tal. Priset skickas in som ore, alltsa
+     Number(...) * 100, och funktionen kor anda Number(value) for de
+     numeriska falten. Signaturen sa bara string | boolean. */
+  const handleChange = (
+    productId: string,
+    field: keyof InventoryItem,
+    value: string | number | boolean,
+  ) => {
     setItems((prev) =>
       prev.map((item) =>
         item.product_id === productId

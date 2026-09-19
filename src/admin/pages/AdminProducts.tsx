@@ -176,7 +176,10 @@ const EMPTY_DRAFT: ListingDraft = {
   eta_note: "",
 };
 
-const toEtaInput = (inventory?: InventoryItem | null) => {
+/* Funktionen laser bara eta_note och eta_days. Att krava en hel
+   InventoryItem gjorde att anropet nedan, som skickar just de tva,
+   inte gick igenom. */
+const toEtaInput = (inventory?: Pick<InventoryItem, "eta_days" | "eta_note"> | null) => {
   if (!inventory) return "";
   const note = String(inventory.eta_note || "");
   const range = note.match(/ETA\s+(\d+\s*-\s*\d+)\s*dagar/i);
