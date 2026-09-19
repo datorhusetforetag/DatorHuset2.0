@@ -812,9 +812,26 @@ const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM = process.env.SMTP_FROM || "DatorHuset <no-reply@datorhuset.se>";
 const SUPPORT_SMTP_HOST = process.env.SUPPORT_SMTP_HOST || SMTP_HOST;
 const SUPPORT_SMTP_PORT = Number(process.env.SUPPORT_SMTP_PORT || SMTP_PORT || 0);
-const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER;
-const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
-const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.se>";
+/*
+ * Supportkontot faller tillbaka på samma konto som kundmejlen.
+ *
+ * Värd och port gjorde det redan, men inte användare och lösenord.
+ * Med bara SMTP_* satt blev supportutskicket alltså avstängt, och
+ * då svarar både kontakt-, service- och offertformuläret 503 utan
+ * att något kommer fram. Halva reservlösningen var ingen
+ * reservlösning.
+ *
+ * Används samma konto måste också avsändaren vara samma. Gmail och
+ * de flesta andra vägrar skicka från en adress kontot inte äger, så
+ * ett påklistrat support@ hade gett avvisade mejl i stället för
+ * inga alls - lika tyst, men svårare att hitta.
+ */
+const SUPPORT_SMTP_USER = process.env.SUPPORT_SMTP_USER || SMTP_USER;
+const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS || SMTP_PASS;
+const SUPPORT_USES_DEFAULT_ACCOUNT = !process.env.SUPPORT_SMTP_USER;
+const SUPPORT_SMTP_FROM =
+  process.env.SUPPORT_SMTP_FROM ||
+  (SUPPORT_USES_DEFAULT_ACCOUNT ? SMTP_FROM : "DatorHuset <support@datorhuset.se>");
 const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "support@datorhuset.se";
 const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "support@datorhuset.se";
 const CONTACT_REQUEST_TO = process.env.CONTACT_REQUEST_TO || "support@datorhuset.se";
@@ -5118,8 +5135,22 @@ const formatOrderNumber = (order) => {
   return String(raw);
 };
 
+/*
+ * Kundmejlen.
+ *
+ * Funktionen gjorde tidigare en tyst return när SMTP saknades.
+ * Orderbekräftelsen gick alltså inte iväg, ingenting loggades, och
+ * enda sättet att upptäcka det var att en kund hörde av sig och
+ * frågade om köpet gick igenom. Nu skriker den i stället.
+ */
 const sendEmail = async ({ to, subject, html }) => {
-  if (!defaultMailer) return;
+  if (!defaultMailer) {
+    console.error(
+      "[mail] INGET MEJL SKICKAT - SMTP saknas. Satt SMTP_HOST, SMTP_PORT, SMTP_USER och SMTP_PASS.",
+      { to, subject },
+    );
+    return;
+  }
   await defaultMailer.sendMail({ from: SMTP_FROM, to, subject, html });
 };
 
@@ -10057,10 +10088,16 @@ async function handleSuccessfulPayment(stripeSession) {
     .single();
 
   if (orderError || !order) {
-
-  const formattedOrderNumber = formatOrderNumber(order);
     throw new Error(`Failed to create order: ${orderError?.message}`);
   }
+
+  /* Raden har legat inuti if-satsen ovanför. const är blockbunden, så
+     namnet fanns inte utanför den - och det används längre ned när
+     betalningen ska märkas med ordernumret. Felet syntes aldrig,
+     eftersom stället där det small ligger i en egen try/catch som
+     bara loggar en varning: ordern gick igenom, men blev aldrig
+     märkt med sitt nummer hos Stripe. */
+  const formattedOrderNumber = formatOrderNumber(order);
 
   if (stripeSession.payment_intent) {
     try {
@@ -10127,17 +10164,35 @@ async function handleSuccessfulPayment(stripeSession) {
 
   console.log(`Order created for ${userEmail}: ${order.id}`);
 
-  await sendEmail({
-    to: userEmail,
-    subject: "Orderbekräftelse – DatorHuset",
-    html: buildOrderEmailHtml({
-      headline: "Tack för din beställning!",
-      intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och börjar behandla den.`,
-      order,
-      items: emailItems,
-      statusNote: "Beställning mottagen",
-    }),
-  });
+  /*
+   * Bekräftelsen får inte fälla webhooken.
+   *
+   * Kastade sendEmail svarade webhooken 500, och då försöker Stripe
+   * igen. Vid nästa försök finns ordern redan, så funktionen
+   * returnerar tidigt längst upp - mejlet får alltså ingen ny chans
+   * ändå, och det enda man vunnit är en rad rödmärkta försök i
+   * Stripes logg. Bättre att ordern står kvar som klar och att det
+   * syns exakt vad som gick fel här.
+   */
+  try {
+    await sendEmail({
+      to: userEmail,
+      subject: "Orderbekräftelse – DatorHuset",
+      html: buildOrderEmailHtml({
+        headline: "Tack för din beställning!",
+        intro: `Hej ${stripeSession.metadata?.fullName || fullName || ""}! Vi har tagit emot din order och börjar behandla den.`,
+        order,
+        items: emailItems,
+        statusNote: "Beställning mottagen",
+      }),
+    });
+    console.log(`[mail] orderbekraftelse skickad for #${formattedOrderNumber} till ${userEmail}`);
+  } catch (error) {
+    console.error(
+      `[mail] ORDERBEKRAFTELSE MISSLYCKADES for #${formattedOrderNumber} till ${userEmail} - kunden vet inte att kopet gick igenom`,
+      error,
+    );
+  }
 }
 
 // Error handler
@@ -10154,6 +10209,24 @@ app.listen(PORT, () => {
   // det inte att se från utsidan om FRONTEND_URLS nått fram till servern,
   // och en saknad adress visar sig bara som att sidan slutar fungera.
   console.log(`Allowed origins (${ALLOWED_FRONTEND_ORIGINS.length}): ${ALLOWED_FRONTEND_ORIGINS.join(", ")}`);
+  // Orderbekraftelsen ar det enda kunden far som kvitto pa att kopet
+  // gick igenom. Om SMTP inte natt fram till servern ska det sta har i
+  // klartext vid start, inte upptackas nar nagon hor av sig och fragar
+  // om vi tagit pengarna utan att skicka nagot.
+  if (DEFAULT_EMAIL_ENABLED) {
+    console.log(`Order emails: PA (${SMTP_HOST}, avsandare ${SMTP_FROM})`);
+  } else {
+    console.error(
+      "Order emails: AV - SMTP_HOST, SMTP_PORT, SMTP_USER eller SMTP_PASS saknas. Kunder far INGEN orderbekraftelse.",
+    );
+  }
+  if (SUPPORT_EMAIL_ENABLED) {
+    console.log(`Support emails: PA (${SUPPORT_SMTP_HOST}, avsandare ${SUPPORT_SMTP_FROM})`);
+  } else {
+    console.error(
+      "Support emails: AV - kontakt-, service- och offertformularen svarar 503.",
+    );
+  }
   // Prisuppdateringen. Till skillnad från de gamla schemaläggarna håller den
   // sitt "senast körd" i Supabase, så en omstart av Render-instansen inte
   // nollställer dygnsräkningen.
