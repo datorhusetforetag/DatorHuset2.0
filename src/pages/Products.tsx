@@ -1293,7 +1293,7 @@ export default function Products() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3.5 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
             {sortedProducts.map((card) => {
               const { computer, useUsedVariant } = card;
               const variant = getDisplayVariant(computer, useUsedVariant);
@@ -1322,13 +1322,24 @@ export default function Products() {
               /* Frilagd bild om den finns - samma urklipp som
                  produktsidan visar. Annars fotot, i ram. Ett foto med
                  egen bakgrund lagt fritt blir en rektangel klistrad på
-                 kortet. */
-              const cutout = getProductArt(computer.id).cutout;
+                 kortet.
+
+                 Glöden vid hovring tas ur samma konst. backdrop.glow är
+                 maskinens egen belysning - CG530 lyser rött, Chieftec
+                 Visio lila, Montechen blått - så kortet tänds i datorns
+                 kulör utan att någon behöver välja en till. */
+              const art = getProductArt(computer.id);
+              const cutout = art.cutout;
               const bestFor = bestForResolution(computer.name);
               const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
 
               return (
-                <Link key={cardKey} to={productPath(computer)} className="pc-card">
+                <Link
+                  key={cardKey}
+                  to={productPath(computer)}
+                  className="pc-card"
+                  style={{ ["--pc-glow" as string]: art.backdrop.glow }}
+                >
                   <div className="pc-card__media">
                     {badge && (
                       <span className="pc-card__badge" data-tone={badge.tone}>
