@@ -2570,3 +2570,31 @@
     align-items: stretch;
   }
 }
+
+/* Bilden i specifikationsavsnittet ----------------------------------
+ *
+ * Fotot, inte urklippet. Urklippet högst upp visar chassit fritt;
+ * det här visar maskinen som den står i ett rum, så de två bilderna
+ * säger olika saker i stället för att upprepa varandra.
+ *
+ * Fast höjdförhållande så att listan bredvid inte hoppar när man
+ * bläddrar mellan foton av olika format.
+ */
+.spec-shot {
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(var(--foreground) / 0.1);
+  background: hsl(var(--foreground) / 0.04);
+}
+
+.spec-shot img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  object-fit: cover;
+}
+
+@media (min-width: 1024px) {
+  .spec-shot img {
+    aspect-ratio: 1 / 1;
+  }
+}

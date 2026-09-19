@@ -1288,69 +1288,95 @@ export default function ComputerDetails() {
             "Specifikationer" bredvid varandra - två kolumner som inte
             hörde ihop, i en ram. */}
         <section id="alla-specs" className="scroll-mt-24">
-          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-            Tekniska specifikationer
-          </h2>
-          <span
-            aria-hidden="true"
-            className="mt-3 block h-[3px] w-14 rounded-full"
-            style={{ backgroundColor: accent }}
-          />
+          {/* Bilden till vänster, listan till höger - förlagans
+              uppdelning. Fotot visar maskinen i ett rum, till skillnad
+              från urklippet högst upp på sidan som visar chassit fritt,
+              så de två bilderna säger olika saker och upprepar inte
+              varandra. Det följer dessutom miniatyrraden, så det man
+              bläddrat fram där syns här nere också. */}
+          <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-14">
+            <figure className="spec-shot">
+              <img
+                src={detailImageCandidates[selectedImage] || detailImageCandidates[0]}
+                alt={`${displayName} sedd i sin helhet`}
+                loading="lazy"
+                decoding="async"
+                onError={(event) => {
+                  event.currentTarget.src = DETAIL_FALLBACK_IMAGE;
+                }}
+              />
+            </figure>
 
-          <ol className="mt-9 grid gap-x-12 gap-y-7 sm:grid-cols-2">
-            {specRows.map((row, index) => (
-              <li key={row.label} className="flex gap-4">
-                <span
-                  aria-hidden="true"
-                  className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold tabular-nums"
-                  style={{ borderColor: `${accent}59`, color: accent }}
-                >
-                  {index + 1}
-                </span>
-                <span className="min-w-0">
-                  <span
-                    className="block text-[13px] font-semibold"
-                    style={{ color: accent }}
-                  >
-                    {row.label}
-                  </span>
-                  <span className="mt-0.5 block text-sm font-semibold leading-snug text-foreground">
-                    {row.tooltip ? (
-                      <span title={row.tooltip} className="cursor-help">
-                        {row.value}
-                      </span>
-                    ) : (
-                      row.value
-                    )}
-                    {row.used && (
+            <div>
+              <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                Tekniska specifikationer
+              </h2>
+              <span
+                aria-hidden="true"
+                className="mt-3 block h-[3px] w-14 rounded-full"
+                style={{ backgroundColor: accent }}
+              />
+
+              {/* Två spalter först när det finns bredd för dem. I en
+                  halv sida bryts annars varje komponentnamn mitt itu,
+                  och ett radbrutet produktnamn är svårare att läsa än
+                  en längre lista. */}
+              <ol className="mt-8 grid gap-x-8 gap-y-6 xl:grid-cols-2">
+                {specRows.map((row, index) => (
+                  <li key={row.label} className="flex gap-3.5">
+                    <span
+                      aria-hidden="true"
+                      className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold tabular-nums"
+                      style={{ borderColor: `${accent}59`, color: accent }}
+                    >
+                      {index + 1}
+                    </span>
+                    <span className="min-w-0">
                       <span
-                        className="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
-                        style={{ backgroundColor: `${accent}1F`, color: accent }}
+                        className="block text-[13px] font-semibold"
+                        style={{ color: accent }}
                       >
-                        Begagnade
+                        {row.label}
                       </span>
-                    )}
-                  </span>
-                </span>
-              </li>
-            ))}
-          </ol>
-
-          {resolvedComputer.bundleIncludes?.length ? (
-            <div className="mt-10 border-t border-foreground/10 pt-6">
-              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                Ingår i paketet
-              </p>
-              <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
-                {resolvedComputer.bundleIncludes.map((item) => (
-                  <li key={item}>{item}</li>
+                      <span className="mt-0.5 block text-sm font-semibold leading-snug text-foreground">
+                        {row.tooltip ? (
+                          <span title={row.tooltip} className="cursor-help">
+                            {row.value}
+                          </span>
+                        ) : (
+                          row.value
+                        )}
+                        {row.used && (
+                          <span
+                            className="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                            style={{ backgroundColor: `${accent}1F`, color: accent }}
+                          >
+                            Begagnade
+                          </span>
+                        )}
+                      </span>
+                    </span>
+                  </li>
                 ))}
-              </ul>
+              </ol>
+
+              {resolvedComputer.bundleIncludes?.length ? (
+                <div className="mt-9 border-t border-foreground/10 pt-6">
+                  <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                    Ingår i paketet
+                  </p>
+                  <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                    {resolvedComputer.bundleIncludes.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </div>
-          ) : null}
+          </div>
 
           {productInfoSections.length > 0 && (
-            <div className="mt-10 grid gap-6 border-t border-foreground/10 pt-8 sm:grid-cols-2">
+            <div className="mt-12 grid gap-6 border-t border-foreground/10 pt-8 sm:grid-cols-2">
               {productInfoSections.map((section) => (
                 <div key={section.title}>
                   <h3 className="font-display text-base font-bold tracking-tight text-foreground">
@@ -1364,7 +1390,7 @@ export default function ComputerDetails() {
             </div>
           )}
 
-          <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
+          <p className="mt-10 text-center text-xs leading-relaxed text-muted-foreground">
             Bilderna är referens. Specifikationerna stämmer, men enskilda
             komponenters märke och utseende kan variera med tillgången.
           </p>
