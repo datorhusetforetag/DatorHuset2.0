@@ -798,6 +798,7 @@ const SUPPORT_SMTP_PASS = process.env.SUPPORT_SMTP_PASS;
 const SUPPORT_SMTP_FROM = process.env.SUPPORT_SMTP_FROM || "DatorHuset <support@datorhuset.se>";
 const SERVICE_REQUEST_TO = process.env.SERVICE_REQUEST_TO || "support@datorhuset.se";
 const OFFER_REQUEST_TO = process.env.OFFER_REQUEST_TO || "support@datorhuset.se";
+const CONTACT_REQUEST_TO = process.env.CONTACT_REQUEST_TO || "support@datorhuset.se";
 const ORDER_CANCEL_TO =
   process.env.ORDER_CANCEL_TO || "support@datorhuset.se,datorhuset.foretag@gmail.com";
 const DEFAULT_EMAIL_ENABLED = Boolean(SMTP_HOST && SMTP_PORT && SMTP_USER && SMTP_PASS);
@@ -6265,7 +6266,7 @@ app.post("/api/service-request", async (req, res) => {
         <p><strong>Backup-hj\u00e4lp:</strong> ${needsBackup ? "Ja" : "Nej"}</p>
         <p><strong>Offert innan start:</strong> ${wantsQuote ? "Ja" : "Nej"}</p>
         <p><strong>Beskrivning:</strong></p>
-        <p>${escapeHtml(notes).replace(/\\n/g, "<br />")}</p>
+        <p>${escapeHtml(notes).replace(/\n/g, "<br />")}</p>
       </div>
     `;
 
@@ -6279,6 +6280,67 @@ app.post("/api/service-request", async (req, res) => {
     return res.json({ ok: true });
   } catch (error) {
     console.error("Service request error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+/**
+ * POST /api/contact-request
+ *
+ * Kontaktformuläret på kundservicesidan. Samma form som
+ * service-request: sanering, ursprungskontroll och ett mejl till
+ * supportadressen med kundens adress som svarsadress, så man kan
+ * svara direkt ur inkorgen.
+ *
+ * Ämnet följer med i rubriken. Den som öppnar inkorgen ska kunna se
+ * vad ärendet gäller utan att öppna mejlet, och ett ärende som rör
+ * en order ska gå att hitta på ordernumret.
+ */
+app.post("/api/contact-request", async (req, res) => {
+  if (!supportMailer) {
+    return res.status(503).json({ error: "Support email service not configured" });
+  }
+
+  try {
+    if (req?.headers?.origin && !isAllowedOrigin(req.headers.origin)) {
+      return res.status(403).json({ error: "Origin not allowed" });
+    }
+
+    const name = sanitizeText(req.body?.name, 120);
+    const email = sanitizeText(req.body?.email, 120).toLowerCase();
+    const orderNumber = sanitizeText(req.body?.orderNumber, 60);
+    const topic = sanitizeText(req.body?.topic, 80);
+    const message = sanitizeText(req.body?.message, 4000);
+
+    if (!name || !email || !topic || !message) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: "Invalid email address" });
+    }
+
+    const html = `
+      <div style="font-family:Arial,sans-serif;line-height:1.6;color:#111;">
+        <h2>Fr\u00e5ga fr\u00e5n kundservicesidan</h2>
+        <p><strong>Namn:</strong> ${escapeHtml(name)}</p>
+        <p><strong>E-post:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Ordernummer:</strong> ${escapeHtml(orderNumber || "-")}</p>
+        <p><strong>\u00c4mne:</strong> ${escapeHtml(topic)}</p>
+        <p><strong>Meddelande:</strong></p>
+        <p>${escapeHtml(message).replace(/\n/g, "<br />")}</p>
+      </div>
+    `;
+
+    await sendSupportEmail({
+      to: CONTACT_REQUEST_TO,
+      subject: `${topic} - ${name}${orderNumber ? ` (order ${orderNumber})` : ""}`,
+      html,
+      replyTo: email,
+    });
+
+    return res.json({ ok: true });
+  } catch (error) {
+    console.error("Contact request error:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
