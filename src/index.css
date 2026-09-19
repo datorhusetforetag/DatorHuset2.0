@@ -2289,14 +2289,30 @@
 
 /* Produktkortet ---------------------------------------------------- */
 
+/*
+ * Kortet har en egen kulör och inte en genomskinlig yta.
+ *
+ * Genomskinligt lät sidans lila lysa rakt igenom, så korten blev lila
+ * fyrkanter på en lila duk - man såg ramen men inte kortet. En blågrå
+ * yta står still mot duken och ger datorn i mitten något att synas mot.
+ */
 .pc-card {
+  --pc-card-surface: #232c3b;
+
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-radius: 0.75rem;
-  border: 1px solid hsl(var(--foreground) / 0.08);
-  background: hsl(var(--foreground) / 0.02);
+  border: 1px solid hsl(220 20% 100% / 0.08);
+  background: var(--pc-card-surface);
   transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+/* I ljust läge är samma blågrå för mörk. Där ljusnar den till en kall
+   grå som fortfarande skiljer sig från den vita sidan. */
+:root:not(.dark) .pc-card {
+  --pc-card-surface: #eef1f6;
+  border-color: hsl(220 20% 20% / 0.1);
 }
 
 .pc-card:hover {
@@ -2312,6 +2328,8 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem;
+  /* En aning ljusare än kortets fot, som en upplyst nisch. */
+  background: linear-gradient(180deg, hsl(220 20% 100% / 0.05) 0%, transparent 100%);
 }
 
 /* Urklippet svävar, som i förlagan. Glöden bakom kommer ur kortets
@@ -2367,7 +2385,7 @@
 }
 
 .pc-card__body {
-  border-top: 1px solid hsl(var(--foreground) / 0.08);
+  border-top: 1px solid hsl(220 20% 100% / 0.08);
   padding: 1.1rem 1.25rem 1.35rem;
 }
 
@@ -2424,5 +2442,65 @@
 
   .pc-card:hover .pc-card__cutout {
     transform: none;
+  }
+}
+
+/* Ytan från panelen och nedåt ---------------------------------------
+ *
+ * Panelen och allt under den delar en kulör, så att sidan inte byter
+ * underlag mitt i. Kulören är satt av er: #2596be.
+ *
+ * Skarven mot scenen är en toning och inte en kant. Den ligger som ett
+ * eget lager ovanför den nedre ytan och sträcker sig upp över scenens
+ * nederdel, så att bilden tonar ned i ytan i stället för att sluta mot
+ * en linje.
+ */
+
+.product-lower {
+  --product-surface: #2596be;
+
+  position: relative;
+  background: var(--product-surface);
+}
+
+.product-lower__seam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -7rem;
+  z-index: 5;
+  height: 7rem;
+  background: linear-gradient(to bottom, transparent 0%, var(--product-surface) 100%);
+  pointer-events: none;
+}
+
+@media (min-width: 1024px) {
+  .product-lower__seam {
+    top: -9rem;
+    height: 9rem;
+  }
+}
+
+/* Panelen delar ytan med avsnitten under, i båda temana. Var den kvar
+   i sidans bakgrundskulör skulle den bryta mot allt nedanför. */
+.product-panel,
+.product-panel__foot,
+.dark .product-panel,
+.dark .product-panel__foot {
+  background: #2596be;
+}
+
+/*
+ * Tomrummet under panelen.
+ *
+ * Raden hade align-items: start, så varje spalt blev bara så hög som
+ * sitt eget innehåll. Scenen är en hel skärmhöjd; panelen är kortare,
+ * och mellanrummet under dess fot blev ett hål där sidans bakgrund
+ * lyste igenom. Utan den regeln sträcks spalterna till radens höjd och
+ * hålet finns inte.
+ */
+@media (min-width: 1024px) {
+  .product-split {
+    align-items: stretch;
   }
 }

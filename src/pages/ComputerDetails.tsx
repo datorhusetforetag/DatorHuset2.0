@@ -1,4 +1,11 @@
 ﻿import { PageShell } from "@/components/PageShell";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { productPath, productSlug } from "@/lib/productUrl";
 import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
@@ -278,6 +285,7 @@ export default function ComputerDetails() {
   const [usedPartsConfigured, setUsedPartsConfigured] = useState<boolean>(false);
   const [productImagesFromApi, setProductImagesFromApi] = useState<string[]>([]);
   const { products, loading: productsLoading } = useProducts();
+  const { settings: siteSettings } = useSiteSettings();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
   const [fpsSettings, setFpsSettings] = useState(buildDefaultFpsSandboxSettings());
@@ -660,6 +668,13 @@ export default function ComputerDetails() {
 
   /* Frilagd bild och egen duk för just den här maskinen. */
   const art = getProductArt(resolvedComputer.id);
+
+  /*
+   * Frågorna kommer ur inställningarna, samma lista som FAQ-sidan
+   * och startsidans smakprov. Fem stycken här - fler gör avsnittet
+   * till en egen sida mitt i en produktsida.
+   */
+  const faqItems = (siteSettings.pages.faq.items ?? []).slice(0, 5);
 
   /*
    * Korten för utförande. Priserna läses ur respektive produkt och inte
@@ -1260,99 +1275,202 @@ export default function ComputerDetails() {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 pb-24 pt-14">
+      {/* Allt nedanför scenen ligger på en egen yta, och skarven
+          mellan de två är en toning och inte en kant. */}
+      <div className="product-lower">
+        <span aria-hidden="true" className="product-lower__seam" />
+        <div className="container relative mx-auto px-4 pb-24 pt-16">
 
-        {/* Tabs */}
-        <div
-          id="alla-specs"
-          className="mt-10 sm:mt-12 scroll-mt-24 bg-foreground/[0.06] border border-foreground/10 rounded-2xl p-4 sm:p-6"
-        >
-          <div className="flex gap-6 border-b border-foreground/10 pb-4 mb-6 text-sm font-semibold text-muted-foreground">
-            <span className="text-foreground">Produktinfo</span>
-            <span>Specifikationer</span>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-foreground">
-            <div className="space-y-4">
-              {productInfoSections.map((section) => (
-                <div key={section.title} className="space-y-2">
-                  <h3 className="text-lg font-bold text-foreground">{section.title}</h3>
-                  <p className="text-sm text-muted-foreground">{section.body}</p>
-                </div>
-              ))}
-            </div>
-            <div className="space-y-3 text-sm">
-              {specRows.map((row, index) => {
-                const showUsedBadge = Boolean(row.used);
-                return (
-                <div
-                  key={row.label}
-                  className={`flex justify-between ${index < specRows.length - 1 ? "border-b border-foreground/10 pb-2" : ""}`}
+        {/* Tekniska specifikationer ------------------------------------
+            Formen är förlagans: numrerad lista i två spalter, etiketten i
+            sidans kulör och värdet under den i fetstil. Låg tidigare som
+            en tvåspaltig ruta med rubrikerna "Produktinfo" och
+            "Specifikationer" bredvid varandra - två kolumner som inte
+            hörde ihop, i en ram. */}
+        <section id="alla-specs" className="scroll-mt-24">
+          <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Tekniska specifikationer
+          </h2>
+          <span
+            aria-hidden="true"
+            className="mt-3 block h-[3px] w-14 rounded-full"
+            style={{ backgroundColor: accent }}
+          />
+
+          <ol className="mt-9 grid gap-x-12 gap-y-7 sm:grid-cols-2">
+            {specRows.map((row, index) => (
+              <li key={row.label} className="flex gap-4">
+                <span
+                  aria-hidden="true"
+                  className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold tabular-nums"
+                  style={{ borderColor: `${accent}59`, color: accent }}
                 >
-                  <span>{row.label}</span>
-                  <span className="font-semibold text-foreground text-right">
+                  {index + 1}
+                </span>
+                <span className="min-w-0">
+                  <span
+                    className="block text-[13px] font-semibold"
+                    style={{ color: accent }}
+                  >
+                    {row.label}
+                  </span>
+                  <span className="mt-0.5 block text-sm font-semibold leading-snug text-foreground">
                     {row.tooltip ? (
-                      <span className="relative inline-flex items-center justify-end gap-1 group">
-                        <span>{row.value}</span>
-                        <span className="pointer-events-none absolute right-0 top-full z-10 mt-2 w-60 rounded-lg bg-gray-900 px-3 py-2 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                          {row.tooltip}
-                        </span>
+                      <span title={row.tooltip} className="cursor-help">
+                        {row.value}
                       </span>
                     ) : (
                       row.value
                     )}
-                    {showUsedBadge && (
-                      <span className="ml-2 inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary dark:bg-primary/20 dark:text-primary">
+                    {row.used && (
+                      <span
+                        className="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide"
+                        style={{ backgroundColor: `${accent}1F`, color: accent }}
+                      >
                         Begagnade
                       </span>
                     )}
                   </span>
-                </div>
-              );
-              })}
-              {resolvedComputer.bundleIncludes?.length ? (
-                <div className="mt-4 rounded-lg border border-foreground/10 bg-background/70 p-3">
-                  <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-2">Ingår i paketet</p>
-                  <ul className="space-y-1 text-sm text-muted-foreground">
-                    {resolvedComputer.bundleIncludes.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </div>
-          </div>
-        </div>
+                </span>
+              </li>
+            ))}
+          </ol>
 
-        {/* Warranty */}
-        <div className="mt-10 rounded-2xl border border-foreground/10 bg-background/70 p-4 sm:p-6">
-          <h2 className="text-2xl font-bold text-foreground">Garanti & returer</h2>
-          <div className="mt-4 grid gap-4 md:grid-cols-2 text-sm text-muted-foreground">
-            <div className="space-y-2">
-              <p className="font-semibold text-foreground">3 års reklamationsrätt</p>
-              <p>Du har rätt att reklamera och skicka tillbaka varan om ett ursprungligt fel upptäcks.</p>
+          {resolvedComputer.bundleIncludes?.length ? (
+            <div className="mt-10 border-t border-foreground/10 pt-6">
+              <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
+                Ingår i paketet
+              </p>
+              <ul className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+                {resolvedComputer.bundleIncludes.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
-            <div className="space-y-2">
-              <p className="font-semibold text-foreground">14 dagars öppet köp vid frakt!</p>
-              <p>Testa i lugn och ro. Returnera om den inte passar dina behov.</p>
+          ) : null}
+
+          {productInfoSections.length > 0 && (
+            <div className="mt-10 grid gap-6 border-t border-foreground/10 pt-8 sm:grid-cols-2">
+              {productInfoSections.map((section) => (
+                <div key={section.title}>
+                  <h3 className="font-display text-base font-bold tracking-tight text-foreground">
+                    {section.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    {section.body}
+                  </p>
+                </div>
+              ))}
             </div>
-            <div className="space-y-2">
-              <p className="font-semibold text-foreground">Trygg support</p>
-              <p>Vi hjälper dig med felsökning och uppgraderingar när du vill.</p>
-            </div>
-            <div className="space-y-2">
-              <p className="font-semibold text-foreground">Snabb återkoppling</p>
-              <p>Kontakta oss så återkommer vi med nästa steg och tidsplan.</p>
-            </div>
+          )}
+
+          <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
+            Bilderna är referens. Specifikationerna stämmer, men enskilda
+            komponenters märke och utseende kan variera med tillgången.
+          </p>
+        </section>
+
+        {/* Vårt löfte ---------------------------------------------------
+            Två åtaganden, inga fler. Båda står redan i köpvillkoren och
+            följer av lag - 14 dagar ur distansavtalslagen, tre år ur
+            konsumentköplagen - så det är inget nytt som lovas här, bara
+            det som gäller skrivet så att man ser det innan man köper. */}
+        <section className="mt-24 text-center">
+          <p className="eyebrow" style={{ color: accent }}>
+            Vårt löfte
+          </p>
+          <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            Du är trygg hos oss
+          </h2>
+
+          <div className="mx-auto mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
+            {[
+              {
+                figure: "14",
+                unit: "dagar",
+                title: "Ångerrätt vid frakt",
+                body: "Skickas datorn hem till dig har du 14 dagars ångerrätt enligt distansavtalslagen. Packa upp, starta och testa - ångrar du dig hör du bara av dig.",
+              },
+              {
+                figure: "3",
+                unit: "år",
+                title: "Reklamationsrätt på delar",
+                body: "Visar sig ett ursprungligt fel har du tre års reklamationsrätt enligt konsumentköplagen. Vi felsöker, lagar eller byter.",
+              },
+            ].map((promise) => (
+              <div
+                key={promise.title}
+                className="rounded-lg border border-foreground/10 bg-foreground/[0.02] p-8 text-left"
+              >
+                <div className="flex items-baseline gap-3">
+                  <span
+                    className="font-display text-3xl font-bold leading-none tabular-nums"
+                    style={{ color: accent }}
+                  >
+                    {promise.figure}
+                  </span>
+                  <span className="text-sm font-semibold text-muted-foreground">
+                    {promise.unit}
+                  </span>
+                </div>
+                <h3 className="mt-4 font-display text-base font-bold tracking-tight text-foreground">
+                  {promise.title}
+                </h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-muted-foreground">
+                  {promise.body}
+                </p>
+              </div>
+            ))}
           </div>
-          <div className="mt-4">
-            <Link
-              to="/kundservice"
-              className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground font-semibold px-5 py-2 rounded-lg hover:bg-secondary hover:text-white transition-colors"
-            >
-              Kontakta kundservice
-            </Link>
-          </div>
-        </div>
+
+          <Link to="/angerratt-och-returer" className="btn-secondary mt-8">
+            Läs villkoren i sin helhet
+          </Link>
+        </section>
+
+        {/* Vanliga frågor ----------------------------------------------
+            Frågorna kommer ur inställningarna, samma lista som FAQ-sidan
+            och smakprovet på startsidan visar. Egna frågor just här hade
+            blivit en fjärde uppsättning svar att hålla i synk, och den
+            som svarar olika på två ställen har fel på ett av dem. */}
+        {faqItems.length > 0 && (
+          <section className="mt-24">
+            <div className="flex flex-wrap items-end justify-between gap-4">
+              <div>
+                <p className="eyebrow" style={{ color: accent }}>
+                  Vi hjälper dig
+                </p>
+                <h2 className="mt-3 font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                  Vanliga frågor
+                </h2>
+              </div>
+              <Link
+                to="/faq"
+                className="text-xs font-semibold transition-opacity hover:opacity-80"
+                style={{ color: accent }}
+              >
+                Se alla &rarr;
+              </Link>
+            </div>
+
+            <Accordion type="single" collapsible className="mt-8 flex flex-col gap-3">
+              {faqItems.map((item) => (
+                <AccordionItem
+                  key={item.question}
+                  value={item.question}
+                  className="overflow-hidden rounded-lg border border-foreground/10 bg-foreground/[0.02] transition-colors hover:border-foreground/25 data-[state=open]:border-foreground/25"
+                >
+                  <AccordionTrigger className="px-5 py-4 text-left text-sm font-semibold hover:no-underline sm:px-6">
+                    {item.question}
+                  </AccordionTrigger>
+                  <AccordionContent className="px-5 pb-5 pr-12 text-sm leading-relaxed text-muted-foreground sm:px-6">
+                    {item.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </section>
+        )}
 
         {/* Comparison */}
         <div className="mt-12">
@@ -1444,6 +1562,7 @@ export default function ComputerDetails() {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </PageShell>
   );
