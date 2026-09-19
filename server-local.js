@@ -228,6 +228,25 @@ const checkoutLimiter = rateLimit({
   keyGenerator: (req) => getRateLimitKey(req, "checkout"),
   handler: createRateLimitJsonHandler("För många checkout-förfrågningar. Vänta en stund och försök igen."),
 });
+/*
+ * Formulären som skickar mejl.
+ *
+ * apiLimiter släpper igenom 120 anrop per kvart, vilket är rimligt
+ * för en sida som hämtar produkter men inte för tre formulär som
+ * var och en skickar ett mejl till supportinkorgen. Fem i halvtimmen
+ * räcker för en kund som skriver fel och försöker igen, och är för
+ * lågt för den som vill fylla inkorgen.
+ */
+const mailFormLimiter = rateLimit({
+  windowMs: 30 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => getRateLimitKey(req, "mail-form"),
+  handler: createRateLimitJsonHandler(
+    "För många meddelanden från samma plats. Vänta en stund, eller mejla oss direkt.",
+  ),
+});
 const adminLimiter = rateLimit({
   windowMs: 5 * 60 * 1000,
   max: 300,
@@ -6220,7 +6239,7 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
 /**
  * POST /api/service-request
  */
-app.post("/api/service-request", async (req, res) => {
+app.post("/api/service-request", mailFormLimiter, async (req, res) => {
   if (!supportMailer) {
     return res.status(503).json({ error: "Support email service not configured" });
   }
@@ -6296,7 +6315,7 @@ app.post("/api/service-request", async (req, res) => {
  * vad ärendet gäller utan att öppna mejlet, och ett ärende som rör
  * en order ska gå att hitta på ordernumret.
  */
-app.post("/api/contact-request", async (req, res) => {
+app.post("/api/contact-request", mailFormLimiter, async (req, res) => {
   if (!supportMailer) {
     return res.status(503).json({ error: "Support email service not configured" });
   }
@@ -6348,7 +6367,7 @@ app.post("/api/contact-request", async (req, res) => {
 /**
  * POST /api/offer-request
  */
-app.post("/api/offer-request", async (req, res) => {
+app.post("/api/offer-request", mailFormLimiter, async (req, res) => {
   if (!supportMailer) {
     return res.status(503).json({ error: "Support email service not configured" });
   }
