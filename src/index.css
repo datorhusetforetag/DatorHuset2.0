@@ -2305,7 +2305,8 @@
   border-radius: 0.75rem;
   border: 1px solid hsl(220 20% 100% / 0.08);
   background: var(--pc-card-surface);
-  transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+  transition: border-color 0.16s ease-out, transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
 }
 
 /* I ljust läge är samma blågrå för mörk. Där ljusnar den till en kall
@@ -2352,6 +2353,11 @@
  * markering av kortet; den här ser ut som att datorn slås på.
  *
  * Ligger bakom bilden, inte över den.
+ *
+ * Tiden är kort och kurvan ease-out, alltså snabbast i början.
+ * Med ease låg mest av rörelsen i mitten av förloppet, och ett
+ * ljus som tar sig tid att komma igång känns som en fördröjning
+ * även när det inte är det.
  */
 .pc-card__media::before {
   content: "";
@@ -2360,12 +2366,12 @@
   z-index: 0;
   opacity: 0;
   background: radial-gradient(
-    46% 42% at 50% 54%,
-    color-mix(in srgb, var(--pc-glow, #3fd9f5) 55%, transparent) 0%,
-    color-mix(in srgb, var(--pc-glow, #3fd9f5) 18%, transparent) 46%,
-    transparent 72%
+    52% 48% at 50% 54%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 62%, transparent) 0%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 22%, transparent) 46%,
+    transparent 74%
   );
-  transition: opacity 0.32s ease;
+  transition: opacity 0.16s ease-out;
 }
 
 .pc-card:hover .pc-card__media::before,
@@ -2373,8 +2379,18 @@
   opacity: 1;
 }
 
-/* Urklippet svävar, som i förlagan. Glöden bakom kommer ur kortets
-   egen hovring så att den bara tänds när man siktar på kortet. */
+/*
+ * Urklippet svävar, som i förlagan. Glöden bakom kommer ur kortets
+ * egen hovring så att den bara tänds när man siktar på kortet.
+ *
+ * Bara transform får röra sig här. Tidigare växlade också filter
+ * till en kulörad drop-shadow vid hovring, och det var där
+ * fördröjningen satt: en skugga som ändras tvingar webbläsaren att
+ * rita om hela bilden med ny oskärpa för varje bildruta, vilket
+ * sker på processorn. transform och opacity kan i stället lämnas
+ * till grafikkortet, så nu tänds kortet i samma ögonblick som
+ * pekaren når det. Kulören kommer från radialgradienten ovanför.
+ */
 .pc-card__cutout {
   position: relative;
   z-index: 1;
@@ -2382,15 +2398,7 @@
   width: 100%;
   object-fit: contain;
   filter: drop-shadow(0 14px 20px rgb(0 0 0 / 0.45));
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1),
-    filter 0.32s ease;
-}
-
-/* Skuggan blir kulörad vid hovring, så ljuset ser ut att komma FRÅN
-   datorn och inte ligga bakom den. */
-.pc-card:hover .pc-card__cutout {
-  filter: drop-shadow(0 14px 22px rgb(0 0 0 / 0.5))
-    drop-shadow(0 0 26px color-mix(in srgb, var(--pc-glow, #3fd9f5) 45%, transparent));
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .pc-card:hover .pc-card__cutout {

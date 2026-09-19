@@ -1293,7 +1293,7 @@ export default function Products() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-3.5 sm:gap-4 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3">
             {sortedProducts.map((card) => {
               const { computer, useUsedVariant } = card;
               const variant = getDisplayVariant(computer, useUsedVariant);
