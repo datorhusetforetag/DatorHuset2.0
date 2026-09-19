@@ -3,12 +3,14 @@ import { productPath } from "@/lib/productUrl";
 import { PageHero } from "@/components/PageHero";
 import { BANNER_ACCENTS, PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
 import { COMPUTERS, Computer } from "@/data/computers";
+import { getProductArt } from "@/data/productArt";
+import { buildReportedFpsSettingsForProductName } from "../../shared/fpsProfiles.js";
 import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
@@ -91,6 +93,45 @@ type InventoryEntry = {
   allow_preorder?: boolean | null;
   eta_days?: number | null;
   eta_note?: string | null;
+};
+
+type SortKey = "featured" | "price-asc" | "price-desc" | "name";
+
+const SORT_LABELS: Record<SortKey, string> = {
+  featured: "Utvalda",
+  "price-asc": "Lägst pris",
+  "price-desc": "Högst pris",
+  name: "Namn A-Ö",
+};
+
+/*
+ * "Bäst för" på produktkortet.
+ *
+ * Inte en marknadsföringsetikett utan ett svar räknat ur maskinens egna
+ * FPS-värden: den högsta upplösning där Cyberpunk 2077 på High ger
+ * minst 60 bilder per sekund. Cyberpunk för att det är det tyngsta
+ * spelet i tabellen, High för att det är den nivå folk faktiskt spelar
+ * på, 60 för att det är gränsen under vilken det känns trögt.
+ *
+ * Saknar maskinen profil visas ingen etikett alls. En gissning här hade
+ * varit ett prestandapåstående om en produkt.
+ */
+const RESOLUTION_ORDER = ["4K", "1440p", "1080p"] as const;
+
+const bestForResolution = (productName: string): string | null => {
+  const profile = buildReportedFpsSettingsForProductName(productName);
+  if (!profile) return null;
+
+  for (const resolution of RESOLUTION_ORDER) {
+    const entry = profile.entries.find(
+      (item: { game: string; resolution: string; graphics: string; baseFps: number }) =>
+        item.game === "Cyberpunk 2077" &&
+        item.resolution === resolution &&
+        item.graphics === "High",
+    );
+    if (entry && entry.baseFps >= 60) return resolution;
+  }
+  return null;
 };
 
 const DEFAULT_BANNER: BannerConfig = {
@@ -281,6 +322,10 @@ export default function Products() {
   const [selectedTiers, setSelectedTiers] = useState<string[]>([]);
   const [showUsedOnly, setShowUsedOnly] = useState(false);
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+  /* Filterpanelen fälls ut över hela bredden, inte i en sidospalt. */
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [sortBy, setSortBy] = useState<SortKey>("featured");
+  const [sortOpen, setSortOpen] = useState(false);
   const [showAllGpus, setShowAllGpus] = useState(false);
   const [showAllCpus, setShowAllCpus] = useState(false);
   const [showAllTiers, setShowAllTiers] = useState(false);
@@ -685,6 +730,37 @@ export default function Products() {
   const gpuOptions = useMemo(() => buildFilterOptions(gpus, "gpu").sort(sortGpuOptions), [gpus]);
   const cpuOptions = useMemo(() => buildFilterOptions(cpus, "cpu").sort(sortCpuOptions), [cpus]);
   const tierOptions = useMemo(() => buildFilterOptions(tiers, "tier"), [tiers]);
+
+  /*
+   * Antal bakom varje filterval.
+   *
+   * Räknas över hela den kategori man står i, inte över det som råkar
+   * vara framfiltrerat just nu. Räknades de om vid varje bock skulle
+   * siffrorna hoppa medan man klickar, och ett val som visar "(0)" men
+   * ändå går att kryssa i är värre än ingen siffra alls.
+   */
+  const optionCounts = useMemo(() => {
+    const gpu = new Map<string, number>();
+    const cpu = new Map<string, number>();
+    const tier = new Map<string, number>();
+
+    const bump = (map: Map<string, number>, options: FilterOption[], value: string) => {
+      const hit = options.find((option) => option.values.includes(value));
+      if (!hit) return;
+      map.set(hit.label, (map.get(hit.label) ?? 0) + 1);
+    };
+
+    displayCards.forEach((card) => {
+      const variant = getDisplayVariant(card.computer, card.useUsedVariant);
+      bump(gpu, gpuOptions, variant.gpu);
+      bump(cpu, cpuOptions, variant.cpu);
+      bump(tier, tierOptions, variant.tier);
+    });
+
+    return { gpu, cpu, tier };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [displayCards, gpuOptions, cpuOptions, tierOptions]);
+
   const gpuLabelMap = useMemo(
     () => new Map(gpuOptions.map((option) => [option.label, option.values])),
     [gpuOptions],
@@ -798,6 +874,34 @@ export default function Products() {
     tierLabelMap,
     displayCards,
   ]);
+
+  /*
+   * Sorteringen läggs ovanpå lagerordningen.
+   *
+   * "Utvalda" är listan som den kommer ur filtreringen, alltså med
+   * lagervaror först - det är den ordning en butik vill visa. Väljer man
+   * pris eller namn går den ordningen förlorad med flit; har man bett om
+   * pris vill man ha pris, inte pris-inom-lagerstatus.
+   */
+  const sortedProducts = useMemo(() => {
+    if (sortBy === "featured") return filteredProducts;
+
+    const priceOf = (card: DisplayCard) =>
+      getDisplayVariant(card.computer, card.useUsedVariant).price;
+
+    const copy = [...filteredProducts];
+    if (sortBy === "price-asc") copy.sort((a, b) => priceOf(a) - priceOf(b));
+    else if (sortBy === "price-desc") copy.sort((a, b) => priceOf(b) - priceOf(a));
+    else
+      copy.sort((a, b) =>
+        getDisplayName(a.computer, a.useUsedVariant).localeCompare(
+          getDisplayName(b.computer, b.useUsedVariant),
+          "sv",
+        ),
+      );
+    return copy;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filteredProducts, sortBy]);
 
   const toggleFilter = (value: string, selected: string[], setSelected: (v: string[]) => void) => {
     if (selected.includes(value)) {
@@ -922,6 +1026,19 @@ export default function Products() {
   }
 
   const bannerAccent = CATEGORY_ACCENTS[bannerKey] ?? BANNER_ACCENTS.buy;
+
+  /*
+   * Datorn i banderollen.
+   *
+   * Tas ur kategorins FÖRSTA maskin och inte ur den filtrerade
+   * listan. Ur den filtrerade hade bilden bytts varje gång någon
+   * kryssade i ett filter, och en banderoll som byter motiv medan
+   * man filtrerar drar blicken från det man höll på med.
+   *
+   * Bara frilagda bilder duger här. Ett foto med egen bakgrund blir
+   * en rektangel klistrad på banderollen.
+   */
+  const heroCutout = getProductArt(displayCards[0]?.computer.id).cutout;
   const leadBannerImage = banner.images[0];
   const secondaryBannerImage = banner.images[1];
   const primarySticker = banner.stickers?.[0];
@@ -933,487 +1050,379 @@ export default function Products() {
 
   return (
     <PageShell head={<SeoHead title={seoTitle} description={seoDescription} image={leadBannerImage} url={seoUrl} type="website" />}>
-        <PageHero
-          sandboxId="products-banner"
-          image={PAGE_BANNERS.products.image}
-          accent={bannerAccent}
-          breadcrumb={[{ label: "Hem", href: "/" }, { label: "Datorer" }]}
-          eyebrow={banner.eyebrow}
-          title={banner.title}
-          lede={banner.description}
-          facts={banner.stickers?.slice(0, 3).map((sticker) => sticker.label)}
-          actions={
-            <>
-              <Link to={banner.primaryHref} className="btn-primary">
-                {banner.primaryLabel}
-              </Link>
-              <Link to={banner.secondaryHref} className="btn-secondary">
-                {banner.secondaryLabel}
-              </Link>
-            </>
-          }
-          /*
-           * Ingen produktbild bredvid rubriken.
-           *
-           * Tanken var att datorn skulle stå fritt i rummet som på
-           * startsidan. Men bilderna är fotograferade i en miljö och
-           * inte frilagda - de har egen bakgrund och eget ljus - så
-           * mot banderollens foto blev det bara en rektangel klistrad
-           * ovanpå en annan bild. En skugga gör inte en fyrkant
-           * svävande, den gör den till en fyrkant med skugga.
-           *
-           * Rubriken får hela bredden i stället, och banderollens eget
-           * foto syns i stället för att skymmas. Datorerna finns
-           * några hundra pixlar längre ned, ordentligt presenterade.
-           */
-        />
+      {/* Banderollen ---------------------------------------------------
+          Ett rundat kort i spalten, inte ett band tvärs över skärmen.
+          Rubriken till vänster, en av kategorins datorer svävande till
+          höger, och kategorins egen bild suddad bakom. Suddad med flit:
+          skarp konkurrerar den med både rubriken och datorn, suddad ger
+          den bara rummet en kulör. */}
+      <section data-sandbox-id="products-banner" className="container mx-auto px-4 pt-8 sm:pt-10">
+        <div className="collection-hero" style={{ ["--hero-accent" as string]: bannerAccent }}>
+          <img
+            src={PAGE_BANNERS.products.image}
+            alt=""
+            aria-hidden="true"
+            className="collection-hero__wash"
+            loading="eager"
+            decoding="async"
+          />
+          <span aria-hidden="true" className="collection-hero__glow" />
 
-        <div className="container mx-auto px-4 lg:hidden mt-4 sm:mt-6">
-          <div className="flex items-center justify-between gap-3">
+          <div className="collection-hero__text">
+            <h1 className="font-display text-3xl font-bold leading-[1.05] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              {banner.title}
+            </h1>
+            <p className="mt-2 font-display text-lg font-semibold text-white/70 sm:text-xl">
+              {banner.eyebrow}
+            </p>
+          </div>
+
+          {heroCutout && (
+            <img
+              src={heroCutout}
+              alt=""
+              aria-hidden="true"
+              className="collection-hero__pc"
+              loading="eager"
+              decoding="async"
+            />
+          )}
+        </div>
+      </section>
+
+      {/* Raden med filter och sortering -------------------------------- */}
+      <div className="collection-bar">
+        <div className="container mx-auto flex items-center justify-end gap-0 px-4">
+          <button
+            type="button"
+            onClick={() => {
+              setFiltersOpen((prev) => !prev);
+              setSortOpen(false);
+            }}
+            aria-expanded={filtersOpen}
+            className="collection-bar__button"
+            data-open={filtersOpen || undefined}
+          >
+            Filter
+            {activeFilters.length > 0 && (
+              <span className="collection-bar__count">{activeFilters.length}</span>
+            )}
+            <ChevronDown
+              aria-hidden="true"
+              className="h-3.5 w-3.5 transition-transform"
+              style={{ transform: filtersOpen ? "rotate(180deg)" : undefined }}
+            />
+          </button>
+
+          <div className="relative">
             <button
               type="button"
-              onClick={() => setMobileFiltersOpen((prev) => !prev)}
-              className="inline-flex items-center gap-2 rounded-lg border border-foreground/10 bg-background/70 px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:border-secondary hover:text-primary dark:border-foreground/10 dark:bg-background dark:text-foreground"
+              onClick={() => {
+                setSortOpen((prev) => !prev);
+                setFiltersOpen(false);
+              }}
+              aria-expanded={sortOpen}
+              className="collection-bar__button"
+              data-open={sortOpen || undefined}
             >
-              Filter
-              <span className="text-xs text-muted-foreground">
-                {mobileFiltersOpen ? "D\u00f6lj" : "Visa"}
-              </span>
+              Sortera:
+              <span style={{ color: bannerAccent }}>{SORT_LABELS[sortBy]}</span>
+              <ChevronDown
+                aria-hidden="true"
+                className="h-3.5 w-3.5 transition-transform"
+                style={{ transform: sortOpen ? "rotate(180deg)" : undefined }}
+              />
             </button>
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={clearFilters}
-                className="text-xs font-semibold text-primary hover:text-secondary"
-              >
-                Rensa filter
-              </button>
+
+            {sortOpen && (
+              <div className="collection-sort">
+                {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => {
+                      setSortBy(key);
+                      setSortOpen(false);
+                    }}
+                    className="collection-sort__item"
+                    style={key === sortBy ? { color: bannerAccent } : undefined}
+                  >
+                    {SORT_LABELS[key]}
+                  </button>
+                ))}
+              </div>
             )}
           </div>
         </div>
+      </div>
 
-        <div className="mt-4 flex min-h-[calc(100vh-14rem)] flex-1 flex-col gap-6 border-t border-foreground/10 pt-6 sm:mt-6 sm:pt-8 dark:border-foreground/10 lg:flex-row">
-          <div
-            className={`h-fit w-full rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-5 space-y-8 dark:border-foreground/10 dark:bg-background/80 sm:p-6 lg:sticky lg:top-24 lg:min-h-[calc(100vh-12rem)] lg:max-w-xs lg:rounded-none lg:border-y-0 lg:border-l-0 lg:border-r ${
-              mobileFiltersOpen ? "block" : "hidden"
-            } lg:block`}
-          >
-            <div>
-              <h2 className="text-lg font-bold text-foreground mb-6">Filter</h2>
-
-              <div className="mb-8">
-                <h3 className="font-semibold text-foreground mb-4">Pris</h3>
-                <div className="space-y-2">
-                  <input
-                    type="range"
-                    min="0"
-                    max={effectivePriceMax}
-                    value={priceRange[1]}
-                    onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                    className="w-full accent-primary"
+      {/* Filterpanelen -------------------------------------------------
+          Hela bredden, alla grupper samtidigt. Den gamla sidospalten
+          visade tre val per grupp och gömde resten bakom en pil, så man
+          fick klicka sig fram till vad butiken ens har. */}
+      {filtersOpen && (
+        <div className="collection-filters">
+          <div className="container mx-auto px-4 py-8">
+            <div className="grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-4">
+              <FilterColumn title="Processor">
+                {cpuOptions.map((option) => (
+                  <FilterCheck
+                    key={option.label}
+                    label={option.label}
+                    count={optionCounts.cpu.get(option.label) ?? 0}
+                    checked={selectedCPUs.includes(option.label)}
+                    onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
+                    accent={bannerAccent}
                   />
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>{priceRange[0].toLocaleString("sv-SE")} kr</span>
-                    <span>{priceRange[1].toLocaleString("sv-SE")} kr</span>
-                  </div>
-                </div>
-              </div>
+                ))}
+              </FilterColumn>
 
-              <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-foreground">Skick</h3>
-                <label className="flex items-center cursor-pointer gap-3 text-sm text-foreground">
-                  <input
-                    type="checkbox"
-                    checked={showUsedOnly}
-                    onChange={() => setShowUsedOnly((prev) => !prev)}
-                    className="w-4 h-4 text-primary rounded border-foreground/20"
+              <FilterColumn title="Grafikkort">
+                {gpuOptions.map((option) => (
+                  <FilterCheck
+                    key={option.label}
+                    label={option.label}
+                    count={optionCounts.gpu.get(option.label) ?? 0}
+                    checked={selectedGPUs.includes(option.label)}
+                    onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
+                    accent={bannerAccent}
                   />
-                  <span>Begagnade datorer</span>
+                ))}
+              </FilterColumn>
+
+              <FilterColumn title="Kategori">
+                {tierOptions.map((option) => (
+                  <FilterCheck
+                    key={option.label}
+                    label={option.label}
+                    count={optionCounts.tier.get(option.label) ?? 0}
+                    checked={selectedTiers.includes(option.label)}
+                    onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
+                    accent={bannerAccent}
+                  />
+                ))}
+                <FilterCheck
+                  label="Begagnade delar"
+                  checked={showUsedOnly}
+                  onChange={() => setShowUsedOnly((prev) => !prev)}
+                  accent={bannerAccent}
+                />
+              </FilterColumn>
+
+              {/* Priset är ett spann och inte en lista, så det får en
+                  egen form i stället för att tvingas in i kryssrutor. */}
+              <FilterColumn title="Pris">
+                <label className="block text-sm text-muted-foreground" htmlFor="price-max">
+                  Upp till{" "}
+                  <span className="font-semibold text-foreground">
+                    {priceRange[1].toLocaleString("sv-SE")} kr
+                  </span>
                 </label>
-              </div>
-
-              <hr className="my-6 border-foreground/10" />
-
-              <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-foreground">Grafikkort</h3>
-                <div
-                  className={`transition-all duration-300 ${
-                    showAllGpus
-                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
-                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    {visibleGpus.map((option) => (
-                      <label
-                        key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedGPUs.includes(option.label)}
-                          onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
-                          className="w-4 h-4 text-primary rounded border-foreground/20"
-                        />
-                        <span>{option.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      showAllGpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
-                    }`}
-                  >
-                    <div className="mt-3 space-y-3">
-                      {extraGpus.map((option) => (
-                        <label
-                          key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedGPUs.includes(option.label)}
-                            onChange={() => toggleFilter(option.label, selectedGPUs, setSelectedGPUs)}
-                            className="w-4 h-4 text-primary rounded border-foreground/20"
-                          />
-                          <span>{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
+                <input
+                  id="price-max"
+                  type="range"
+                  min={0}
+                  max={effectivePriceMax}
+                  step={500}
+                  value={priceRange[1]}
+                  onChange={(event) =>
+                    setPriceRange([priceRange[0], Number.parseInt(event.target.value, 10)])
+                  }
+                  className="mt-3 w-full accent-primary"
+                />
+                <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+                  <span>0 kr</span>
+                  <span>{effectivePriceMax.toLocaleString("sv-SE")} kr</span>
                 </div>
-                {hasMoreGpus && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllGpus((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-foreground"
-                    aria-label={showAllGpus ? "Visa f\u00e4rre grafikkort" : "Visa fler grafikkort"}
-                  >
-                    {showAllGpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </button>
-                )}
-              </div>
-
-              <hr className="my-6 border-foreground/10" />
-
-              <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-foreground">Processor</h3>
-                <div
-                  className={`transition-all duration-300 ${
-                    showAllCpus
-                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
-                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    {visibleCpus.map((option) => (
-                      <label
-                        key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedCPUs.includes(option.label)}
-                          onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
-                          className="w-4 h-4 text-primary rounded border-foreground/20"
-                        />
-                        <span>{option.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      showAllCpus ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
-                    }`}
-                  >
-                    <div className="mt-3 space-y-3">
-                      {extraCpus.map((option) => (
-                        <label
-                          key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedCPUs.includes(option.label)}
-                            onChange={() => toggleFilter(option.label, selectedCPUs, setSelectedCPUs)}
-                            className="w-4 h-4 text-primary rounded border-foreground/20"
-                          />
-                          <span>{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                {hasMoreCpus && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllCpus((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-foreground"
-                    aria-label={showAllCpus ? "Visa f\u00e4rre processorer" : "Visa fler processorer"}
-                  >
-                    {showAllCpus ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </button>
-                )}
-              </div>
-
-              <hr className="my-6 border-foreground/10" />
-
-              <div className="mb-8 space-y-3">
-                <h3 className="font-semibold text-foreground">Kategori</h3>
-                <div
-                  className={`transition-all duration-300 ${
-                    showAllTiers
-                      ? "max-h-72 overflow-y-auto pr-1 no-scrollbar opacity-100 translate-y-0"
-                      : "max-h-48 overflow-hidden opacity-100 -translate-y-1"
-                  }`}
-                >
-                  <div className="space-y-3">
-                    {visibleTiers.map((option) => (
-                      <label
-                        key={option.label}
-                        className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedTiers.includes(option.label)}
-                          onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                          className="w-4 h-4 text-primary rounded border-foreground/20"
-                        />
-                        <span className="capitalize">{option.label}</span>
-                      </label>
-                    ))}
-                  </div>
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${
-                      showAllTiers ? "max-h-[1000px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-1"
-                    }`}
-                  >
-                    <div className="mt-3 space-y-3">
-                      {extraTiers.map((option) => (
-                        <label
-                          key={option.label}
-                          className="flex items-center cursor-pointer gap-3 text-sm text-foreground"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedTiers.includes(option.label)}
-                            onChange={() => toggleFilter(option.label, selectedTiers, setSelectedTiers)}
-                            className="w-4 h-4 text-primary rounded border-foreground/20"
-                          />
-                          <span className="capitalize">{option.label}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                {hasMoreTiers && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllTiers((prev) => !prev)}
-                    className="flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-muted-foreground dark:text-muted-foreground dark:hover:text-foreground"
-                    aria-label={showAllTiers ? "Visa f\u00e4rre kategorier" : "Visa fler kategorier"}
-                  >
-                    {showAllTiers ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  </button>
-                )}
-              </div>
-
-              <button
-                onClick={clearFilters}
-                className="w-full py-2 px-4 bg-foreground/[0.08] hover:bg-foreground/[0.06] text-foreground rounded font-medium transition-colors dark:bg-foreground/[0.06] dark:hover:bg-foreground/[0.09] dark:text-foreground"
-              >
-                Rensa filter
-              </button>
+              </FilterColumn>
             </div>
-          </div>
 
-          <div className="min-h-[calc(100vh-12rem)] flex-1 p-4 sm:p-6 lg:p-10">
-            <div className="mx-auto w-full max-w-[1720px]">
+            <div className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-foreground/10 pt-5">
+              <p className="text-xs text-muted-foreground">
+                Visar{" "}
+                <span className="font-semibold text-foreground">{sortedProducts.length}</span> av{" "}
+                {displayCards.length} datorer
+              </p>
               {hasFilters && (
-                <div className="sticky top-24 z-10 mb-6 rounded-lg border border-foreground/10 bg-background/90 px-4 py-3 backdrop-blur">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="text-sm font-semibold text-foreground">Aktiva filter:</span>
-                    {activeFilters.map((filter) => (
-                      <span
-                        key={filter}
-                        className="rounded-full bg-foreground/[0.04] px-3 py-1 text-xs font-semibold text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
-                      >
-                        {filter}
-                      </span>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={clearFilters}
-                      className="text-xs font-semibold text-primary hover:text-secondary"
-                    >
-                      Rensa filter
-                    </button>
-                  </div>
-                </div>
-              )}
-              <div className="mb-6 sm:mb-8">
-                <h2 className="mb-2 text-2xl font-bold text-foreground sm:text-3xl">{"Station\u00e4ra datorer"}</h2>
-                <p className="text-muted-foreground">
-                  Visar {filteredProducts.length} av {displayCards.length} produkter
-                </p>
-              </div>
-
-              {filteredProducts.length === 0 ? (
-                /* Tomma läget säger vad som faktiskt hände. "Prova att
-                   justera dina filter" är fel svar när man klickat på
-                   Workstation i menyn och det inte finns några - då är
-                   det inte filtren som är i vägen, det är sortimentet,
-                   och då ska sidan säga det och peka vidare. */
-                <div className="flex min-h-[20rem] flex-col items-center justify-center rounded-lg border border-foreground/10 bg-foreground/[0.04] px-6 py-16 text-center">
-                  <p className="font-display text-lg font-bold text-foreground">
-                    {useFilter === "workstation"
-                      ? "Inga arbetsstationer just nu"
-                      : stockFilter === "in-stock"
-                        ? "Inget färdigbyggt på hyllan just nu"
-                        : stockFilter === "preorder"
-                          ? "Inget att förbeställa just nu"
-                          : "Inga datorer hittades"}
-                  </p>
-                  <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
-                    {useFilter === "workstation"
-                      ? "Vi bygger dem på beställning. Beskriv vad maskinen ska göra så sätter vi ihop ett förslag."
-                      : stockFilter
-                        ? "Sortimentet ändras löpande. Titta på hela listan, eller bygg en egen precis som du vill ha den."
-                        : "Prova att justera dina filter."}
-                  </p>
-                  <div className="mt-8 flex flex-wrap justify-center gap-3">
-                    {(stockFilter || useFilter) && (
-                      <Link to="/products?clear_filters=1" className="btn-primary">
-                        Se alla datorer
-                      </Link>
-                    )}
-                    <Link to="/custom-bygg" className="btn-secondary">
-                      Bygg din egen
-                    </Link>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 justify-items-center gap-6 sm:grid-cols-2 xl:grid-cols-3">
-                {filteredProducts.map((card) => {
-                  const { computer, useUsedVariant } = card;
-                  const variant = getDisplayVariant(computer, useUsedVariant);
-                  const displayPrice = variant.price;
-                  const displayName = getDisplayName(computer, useUsedVariant);
-                  const supabaseKey =
-                    useUsedVariant && computer.usedVariant?.productKey
-                      ? computer.usedVariant.productKey
-                      : computer.name;
-                  const supabaseId =
-                    productIdByName.get(normalizeProductKey(supabaseKey)) ||
-                    productIdByName.get(normalizeProductKey(computer.id));
-                  const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
-                  const hasInventory = Boolean(inventory);
-                  const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
-                  const canPreorder = Boolean(inventory?.is_preorder ?? inventory?.allow_preorder);
-                  const showPreorderLabel = !inStock && canPreorder;
-                  const badgeText = !hasInventory || inventoryLoading
-                    ? "Kontrollerar lager"
-                    : inStock
-                    ? "I lager"
-                    : canPreorder
-                    ? "Slut i lager"
-                    : "Slut i lager";
-                  const badgeTone = !hasInventory || inventoryLoading
-                    ? "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
-                    : inStock
-                    ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-200"
-                    : canPreorder
-                    ? "bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary"
-                    : "bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-200";
-                  const etaNote =
-                    !inStock && canPreorder
-                      ? inventory?.eta_note ?? (inventory?.eta_days ? `ETA ${inventory.eta_days} dagar` : null)
-                      : null;
-
-                  const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
-
-                  return (
-                    <Link key={cardKey} to={productPath(computer)} className="group flex h-full w-full max-w-[34rem]">
-                      <div className="flex h-full min-h-[34rem] w-full flex-col overflow-hidden rounded-lg border border-foreground/10 bg-background/70 transition-all hover:border-secondary hover:shadow-lg dark:border-foreground/10 dark:bg-background dark:hover:border-secondary 2xl:min-h-[35rem]">
-                        <div className="relative aspect-[16/10] min-h-[16rem] overflow-hidden bg-foreground/[0.05] transition-colors group-hover:bg-foreground/[0.08] sm:min-h-[18rem]">
-                          <img
-                            src={computer.image}
-                            alt={displayName}
-                            className="w-full h-full object-cover"
-                            loading="lazy"
-                            decoding="async"
-                            onError={(e) => {
-                              e.currentTarget.src = FALLBACK_IMAGE;
-                            }}
-                          />
-                          {!showPreorderLabel && (
-                            <span
-                              className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${badgeTone}`}
-                            >
-                              {badgeText}
-                            </span>
-                          )}
-                          {showPreorderLabel ? (
-                            <span className="absolute top-3 right-3 text-[10px] font-semibold uppercase tracking-wide px-2 py-1 rounded-full bg-primary/15 text-primary dark:bg-primary/20 dark:text-primary">
-                              F&ouml;rbest&auml;ll
-                            </span>
-                          ) : null}
-                          {etaNote ? (
-                            <span className="absolute bottom-3 left-3 text-xs font-semibold px-3 py-1 rounded-full bg-gray-900/80 text-white">
-                              {etaNote}
-                            </span>
-                          ) : null}
-                          </div>
-
-                        <div className="flex flex-1 flex-col p-4 pb-6">
-                          <h3 className="text-lg font-semibold text-foreground mb-2 group-hover:text-primary dark:group-hover:text-primary transition-colors">
-                            {displayName}
-                          </h3>
-
-                          <div className="flex items-center mb-3">
-                            <div className="flex items-center text-primary" aria-hidden>
-                              {Array.from({ length: 5 }).map((_, index) => (
-                                <Star key={index} className="w-4 h-4 fill-current" />
-                              ))}
-                            </div>
-                            <span className="ml-2 text-xs text-muted-foreground">({computer.reviews})</span>
-                          </div>
-
-                          <div className="mb-auto space-y-1 border-t border-foreground/10 pt-3 text-sm text-muted-foreground dark:border-foreground/10 dark:text-muted-foreground">
-                            <p className="truncate">CPU: {variant.cpu}</p>
-                            <p className="truncate">GPU: {variant.gpu}</p>
-                            <p className="flex flex-wrap items-center gap-2">
-                              <span>
-                                RAM:{" "}
-                                <span className="cursor-help" title={RAM_PRICE_TOOLTIP}>
-                                  {variant.ram}
-                                </span>
-                              </span>
-                              <span
-                                className="inline-flex items-center rounded-full bg-primary/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-primary dark:bg-primary/20 dark:text-primary cursor-help"
-                                title={RAM_PRICE_TOOLTIP}
-                              >
-                                Begagnade
-                              </span>
-                            </p>
-                            <p className="truncate">
-                              Lagring: {variant.storage} {variant.storagetype}
-                            </p>
-                          </div>
-
-                          <div className="pt-5 text-2xl font-bold text-foreground">
-                            {displayPrice.toLocaleString("sv-SE")} kr
-                          </div>
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-                </div>
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="text-xs font-semibold text-primary hover:opacity-80"
+                >
+                  Rensa alla filter
+                </button>
               )}
             </div>
           </div>
         </div>
+      )}
+
+      {/* Rutnätet ------------------------------------------------------ */}
+      <section className="container mx-auto px-4 pb-24 pt-10">
+        {sortedProducts.length === 0 ? (
+          /* Tomma läget säger vad som faktiskt hände. "Prova att justera
+             dina filter" är fel svar när man klickat på Workstation i
+             menyn och det inte finns några - då är det inte filtren som
+             är i vägen, det är sortimentet. */
+          <div className="flex min-h-[20rem] flex-col items-center justify-center px-6 py-16 text-center">
+            <p className="font-display text-lg font-bold text-foreground">
+              {useFilter === "workstation"
+                ? "Inga arbetsstationer just nu"
+                : stockFilter === "in-stock"
+                  ? "Inget färdigbyggt på hyllan just nu"
+                  : stockFilter === "preorder"
+                    ? "Inget att förbeställa just nu"
+                    : "Inga datorer hittades"}
+            </p>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-muted-foreground">
+              {useFilter === "workstation"
+                ? "Vi bygger dem på beställning. Beskriv vad maskinen ska göra så sätter vi ihop ett förslag."
+                : stockFilter
+                  ? "Sortimentet ändras löpande. Titta på hela listan, eller bygg en egen precis som du vill ha den."
+                  : "Prova att justera dina filter."}
+            </p>
+            <div className="mt-8 flex flex-wrap justify-center gap-3">
+              {(stockFilter || useFilter || hasFilters) && (
+                <Link to="/products?clear_filters=1" className="btn-primary">
+                  Se alla datorer
+                </Link>
+              )}
+              <Link to="/custom-bygg" className="btn-secondary">
+                Bygg din egen
+              </Link>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {sortedProducts.map((card) => {
+              const { computer, useUsedVariant } = card;
+              const variant = getDisplayVariant(computer, useUsedVariant);
+              const displayPrice = variant.price;
+              const displayName = getDisplayName(computer, useUsedVariant);
+              const supabaseKey =
+                useUsedVariant && computer.usedVariant?.productKey
+                  ? computer.usedVariant.productKey
+                  : computer.name;
+              const supabaseId =
+                productIdByName.get(normalizeProductKey(supabaseKey)) ||
+                productIdByName.get(normalizeProductKey(computer.id));
+              const inventory = supabaseId ? inventoryMap[supabaseId] : undefined;
+              const hasInventory = Boolean(inventory);
+              const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
+              const canPreorder = Boolean(inventory?.is_preorder ?? inventory?.allow_preorder);
+
+              const badge = !hasInventory || inventoryLoading
+                ? null
+                : inStock
+                  ? { label: "I lager", tone: "stock" }
+                  : canPreorder
+                    ? { label: "Förbeställ", tone: "preorder" }
+                    : { label: "Slutsåld", tone: "sold" };
+
+              /* Frilagd bild om den finns - samma urklipp som
+                 produktsidan visar. Annars fotot, i ram. Ett foto med
+                 egen bakgrund lagt fritt blir en rektangel klistrad på
+                 kortet. */
+              const cutout = getProductArt(computer.id).cutout;
+              const bestFor = bestForResolution(computer.name);
+              const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
+
+              return (
+                <Link key={cardKey} to={productPath(computer)} className="pc-card">
+                  <div className="pc-card__media">
+                    {badge && (
+                      <span className="pc-card__badge" data-tone={badge.tone}>
+                        {badge.label}
+                      </span>
+                    )}
+                    <img
+                      src={cutout || computer.image}
+                      alt={displayName}
+                      className={cutout ? "pc-card__cutout" : "pc-card__photo"}
+                      loading="lazy"
+                      decoding="async"
+                      onError={(event) => {
+                        event.currentTarget.src = FALLBACK_IMAGE;
+                      }}
+                    />
+                  </div>
+
+                  <div className="pc-card__body">
+                    <h2 className="pc-card__name">{displayName}</h2>
+
+                    {bestFor && (
+                      <p className="pc-card__bestfor">
+                        Bäst för:
+                        <span className="pc-card__pill" style={{ color: bannerAccent, borderColor: `${bannerAccent}66` }}>
+                          {bestFor}
+                        </span>
+                      </p>
+                    )}
+
+                    <p className="pc-card__price">
+                      {displayPrice.toLocaleString("sv-SE")} kr
+                    </p>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </PageShell>
   );
 }
+
+/**
+ * En kolumn i filterpanelen.
+ *
+ * Rubriken och en lodrät lista. Ingen ram, ingen bakgrund - kolumnen
+ * hålls ihop av luften runt den, och i en panel med fyra kolumner blir
+ * fyra ramar bara fyra ramar.
+ */
+const FilterColumn = ({ title, children }: { title: string; children: ReactNode }) => (
+  <div>
+    <h3 className="text-sm font-bold text-foreground">{title}</h3>
+    <div className="mt-4 space-y-2.5">{children}</div>
+  </div>
+);
+
+/**
+ * Ett kryssbart filterval med antal.
+ *
+ * Antalet står i parentes efter etiketten, som i förlagan. Det är
+ * skillnaden mellan att gissa och att veta: ser man (1) innan man
+ * klickar vet man att det blir en dator kvar.
+ *
+ * Rutan är en riktig input och inte en ritad fyrkant, så tangentbord
+ * och uppläsare får den gratis.
+ */
+const FilterCheck = ({
+  label,
+  count,
+  checked,
+  onChange,
+  accent,
+}: {
+  label: string;
+  count?: number;
+  checked: boolean;
+  onChange: () => void;
+  accent: string;
+}) => (
+  <label className="flex cursor-pointer items-center gap-2.5 text-sm text-muted-foreground transition-colors hover:text-foreground">
+    <input
+      type="checkbox"
+      checked={checked}
+      onChange={onChange}
+      className="h-4 w-4 shrink-0 rounded-sm border-foreground/25"
+      style={{ accentColor: accent }}
+    />
+    <span className={checked ? "text-foreground" : undefined}>
+      {label}
+      {typeof count === "number" && (
+        <span className="ml-1.5 text-xs text-muted-foreground">({count})</span>
+      )}
+    </span>
+  </label>
+);
