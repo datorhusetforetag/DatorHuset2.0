@@ -51,11 +51,14 @@ export const ProductVariants = ({
 
   return (
     <fieldset>
-      <legend className="mb-3 text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-        Välj utförande
-      </legend>
+      <legend className="panel-label">Utförande</legend>
 
-      <div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3">
+      {/*
+        Två kolumner, inte tre.
+        I panelens bredd blev tre kort så smala att etiketten bröts på
+        mitten, och ett kort vars rubrik radbryts läses som två kort.
+      */}
+      <div className="mt-4 grid grid-cols-2 gap-2">
         {options.map((option) => {
           const active = option.id === selectedId;
           return (
@@ -64,33 +67,36 @@ export const ProductVariants = ({
               type="button"
               onClick={() => onSelect(option.id)}
               aria-pressed={active}
-              className="rounded-sm border p-4 text-left transition-colors"
+              className="rounded-sm border px-3.5 py-3 text-left transition-colors"
               style={{
-                borderColor: active ? accent : "hsl(var(--foreground) / 0.15)",
+                borderColor: active ? accent : "hsl(var(--foreground) / 0.14)",
                 backgroundColor: active ? `${accent}12` : "transparent",
-                boxShadow: active ? `0 0 0 1px ${accent}` : undefined,
               }}
             >
               <span
-                className="block text-sm font-bold"
+                className="block text-[13px] font-bold leading-snug"
                 style={{ color: active ? accent : "hsl(var(--foreground))" }}
               >
                 {option.label}
               </span>
 
-              {option.detail && (
-                <span className="mt-0.5 block text-xs text-muted-foreground">
+              {/* Underrubriken ryker när kortet inte är valt.
+                  Den förklarar vad man väljer, och det behöver man bara
+                  veta om det man står på - fyra rader småtext under fyra
+                  kort är precis den sortens brus panelen inte tål. */}
+              {option.detail && active && (
+                <span className="mt-0.5 block text-[11px] leading-snug text-muted-foreground">
                   {option.detail}
                 </span>
               )}
 
-              <span className="mt-3 flex flex-wrap items-baseline gap-2">
-                <span className="font-display text-base font-bold tabular-nums text-foreground">
+              <span className="mt-2 flex flex-wrap items-baseline gap-1.5">
+                <span className="text-sm font-bold tabular-nums text-foreground">
                   {formatPrice(option.price)}
                 </span>
                 {typeof option.comparePrice === "number" &&
                   option.comparePrice > option.price && (
-                    <span className="text-xs text-muted-foreground line-through">
+                    <span className="text-[11px] text-muted-foreground line-through">
                       {formatPrice(option.comparePrice)}
                     </span>
                   )}

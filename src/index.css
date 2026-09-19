@@ -2050,3 +2050,53 @@
 .product-backdrop__grain {
   z-index: 4;
 }
+
+/* Panelens rytm -----------------------------------------------------
+ *
+ * Spalten bar rubrik, pris, tre pillerknappar, utföranden, ett
+ * specifikationsrutnät och ett inramat FPS-kort med sex bildsatta
+ * spelkort. Var sak för sig var rimlig; tillsammans blev det en vägg.
+ *
+ * Tre grepp, och inget av dem tar bort funktioner:
+ *
+ *   1. En enda etikettstil för alla avsnitt (panel-label), så ögat
+ *      känner igen "här börjar något nytt" utan att läsa.
+ *   2. Ett enda avstånd mellan avsnitt (panel__block), i stället för
+ *      mt-7, mt-8 och egna ramar om vartannat.
+ *   3. Listor i stället för rutor. Specifikationerna och FPS-talen är
+ *      samma sorts innehåll - etikett till vänster, värde till höger -
+ *      och ser nu likadana ut. En ram inuti panelen är en ram för
+ *      mycket.
+ */
+
+.panel-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.product-panel__block {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid hsl(var(--foreground) / 0.08);
+}
+
+/* Vägen tillbaka till listan. Diskret, men den enda navigeringen som
+   behövs härifrån. */
+.product-panel__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.2s ease;
+}
+
+.product-panel__back:hover {
+  color: hsl(var(--foreground));
+}

@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Gauge, Sparkles, Zap } from "lucide-react";
 
 import {
   computeSandboxFps,
@@ -9,46 +8,39 @@ import {
 } from "@/lib/fpsSandbox";
 
 /**
- * FPS-raden under produkten.
+ * FPS-prestanda, som en lugn lista i produktpanelen.
  *
- * Siffrorna är INTE påhittade och räknas inte fram ur komponenterna.
- * De kommer ur produktens egna FPS-värden, de som matas in per dator i
- * adminläget (Produkter -> FPS) och sparas i Supabase. Modellen har
- * funnits hela tiden i src/lib/fpsSandbox.ts - den har bara aldrig
- * visats för kunden. Det här avsnittet gör inget annat än att visa den.
+ * SIFFRORNA ÄR INTE PÅHITTADE och räknas inte fram ur komponenterna.
+ * De kommer ur maskinens egen profil i shared/fpsProfiles.js, samma
+ * tabell som servern och adminvyn använder. Det här avsnittet visar
+ * den, inget annat.
  *
- * Finns inga värden för en dator ritas ingenting. En tom FPS-ruta är
- * sämre än ingen, och påhittade siffror i en butik är inte ett
- * alternativ alls.
+ * FORMEN ÄR AVSKALAD MED FLIT
  *
- * FORMEN
+ * Avsnittet låg först som ett eget inramat kort med sex spelkort, var
+ * och en med omslagsbild bakom siffran. Det fungerar i full bredd men
+ * inte i panelen: en ram inuti en ram är en ram för mycket, och sex
+ * bilder bakom sex tal blir brus i en spalt som redan bär rubrik, pris,
+ * utföranden och specifikationer.
  *
- * Förlagan visar alla spel samtidigt med upplösningen som flikar
- * ovanför, i stället för ett spel i taget bakom en rullgardin. Det är
- * hela poängen med avsnittet: man vill jämföra, inte bläddra. Den gamla
- * varianten här hade tre rullgardiner och visade ett enda spel, så man
- * fick klicka sex gånger för att se vad maskinen klarar.
+ * Nu är det rader. Spelet till vänster, talet till höger, hårfina
+ * linjer emellan - samma form som specifikationerna ovanför, så de två
+ * listorna läses som syskon i stället för som två olika sorters
+ * innehåll.
  *
- * DLSS/FSR och bildgenerering är påslag ovanpå grundvärdet, med
- * multiplikatorer som ligger i samma fil. Ett spel som inte stöder
- * tekniken påverkas inte - därför står det utskrivet under kortet i
- * stället för att siffran tyst låter bli att röra sig.
+ * Kontrollerna är kvar allihop. Det var aldrig de som stökade.
  */
-
-const AVG_LABEL = "FPS I SNITT";
 
 type FpsPanelProps = {
   settings: FpsSandboxSettings;
   /** Sidans kulör, samma som nivån datorn tillhör. */
   accent: string;
-  /** Omslagsbild per spel. Saknas en ritas namnet i stället. */
-  gameImages: Record<string, string>;
 };
 
-export const FpsPanel = ({ settings, accent, gameImages }: FpsPanelProps) => {
+export const FpsPanel = ({ settings, accent }: FpsPanelProps) => {
   const games = useMemo(() => getSandboxGames(settings), [settings]);
 
-  /* Upplösningarna och grafiklägena är gemensamma för hela raden, så de
+  /* Upplösningarna och grafiklägena är gemensamma för hela listan, så de
      samlas ur alla spel och inte ur ett. Ordningen bevaras som den står
      i inställningarna - 1080p, 1440p, 4K - eftersom en sorterad lista
      hade lagt "4K" först. */
@@ -84,8 +76,6 @@ export const FpsPanel = ({ settings, accent, gameImages }: FpsPanelProps) => {
     if (!presets.includes(preset)) setPreset(presets[0]);
   }, [presets, preset]);
 
-  /* Ett spel i taget: hämta värdet för vald upplösning och grafiknivå,
-     lägg på de påslag spelet faktiskt stöder. */
   const rows = useMemo(
     () =>
       games
@@ -119,161 +109,120 @@ export const FpsPanel = ({ settings, accent, gameImages }: FpsPanelProps) => {
   if (rows.length === 0) return null;
 
   return (
-    <section data-sandbox-id="product-fps" className="relative">
-      <div className="rounded-lg border border-foreground/10 bg-foreground/[0.03]">
-        <div className="flex flex-col gap-4 border-b border-foreground/10 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-2.5">
-            <Gauge aria-hidden="true" className="h-4 w-4" style={{ color: accent }} />
-            <h2 className="text-[11px] font-bold uppercase tracking-[0.22em] text-foreground">
-              FPS-prestanda
-            </h2>
-          </div>
+    <section data-sandbox-id="product-fps">
+      <h2 className="panel-label">FPS-prestanda</h2>
 
-          {/* Upplösningen som flikar, inte som rullgardin. Tre val ska
-              synas allihop - en rullgardin gömmer två av tre. */}
-          <div
-            role="tablist"
-            aria-label="Upplösning"
-            className="flex w-full gap-1 rounded-sm border border-foreground/10 bg-background/60 p-1 lg:w-auto"
-          >
-            {resolutions.map((option) => {
-              const active = option === resolution;
-              return (
-                <button
-                  key={option}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setResolution(option)}
-                  className="flex-1 rounded-[3px] px-5 py-2 text-xs font-bold uppercase tracking-[0.12em] transition-colors lg:flex-none"
-                  style={
-                    active
-                      ? { backgroundColor: `${accent}1F`, color: accent }
-                      : { color: "hsl(var(--muted-foreground))" }
-                  }
-                >
-                  {option}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Grafikläge och påslag */}
-        <div className="flex flex-col gap-4 border-b border-foreground/10 p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
-          <label className="flex items-center gap-3 text-xs text-muted-foreground">
-            <span className="font-semibold uppercase tracking-[0.14em]">Grafik</span>
-            <select
-              value={preset}
-              onChange={(event) => setPreset(event.target.value)}
-              className="field h-9 w-auto min-w-[10rem] py-0 text-xs"
-              aria-label="Grafikläge"
+      {/* Upplösningen som flikar. Tre val ska synas allihop - en
+          rullgardin hade gömt två av tre. */}
+      <div
+        role="tablist"
+        aria-label="Upplösning"
+        className="mt-4 flex gap-1 rounded-sm border border-foreground/10 p-1"
+      >
+        {resolutions.map((option) => {
+          const active = option === resolution;
+          return (
+            <button
+              key={option}
+              type="button"
+              role="tab"
+              aria-selected={active}
+              onClick={() => setResolution(option)}
+              className="flex-1 rounded-[3px] py-1.5 text-[11px] font-bold uppercase tracking-[0.12em] transition-colors"
+              style={
+                active
+                  ? { backgroundColor: `${accent}1F`, color: accent }
+                  : { color: "hsl(var(--muted-foreground))" }
+              }
             >
-              {presets.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <div className="flex flex-wrap gap-2">
-            <ToggleChip
-              icon={Sparkles}
-              label="DLSS / FSR"
-              on={dlssOn}
-              disabled={!anyDlss}
-              accent={accent}
-              onClick={() => setDlssOn((prev) => !prev)}
-              title={
-                anyDlss
-                  ? "Uppskalning: renderar i lägre upplösning och skalar upp"
-                  : "Inget av spelen i listan stöder uppskalning"
-              }
-            />
-            <ToggleChip
-              icon={Zap}
-              label="Bildgenerering"
-              on={frameGenOn}
-              disabled={!anyFrameGen}
-              accent={accent}
-              onClick={() => setFrameGenOn((prev) => !prev)}
-              title={
-                anyFrameGen
-                  ? "Genererar extra bildrutor mellan de renderade"
-                  : "Inget av spelen i listan stöder bildgenerering"
-              }
-            />
-          </div>
-        </div>
-
-        {/* Spelen */}
-        <ul className="grid grid-cols-2 gap-px bg-foreground/10 lg:grid-cols-3">
-          {rows.map((row) => {
-            const cover = gameImages[row.game];
-            /* Det som är påslaget men som just det här spelet inte
-               stöder skrivs ut, annars ser det ut som att siffran
-               vägrar röra sig. */
-            const missing = [
-              dlssOn && !row.supportsDlss ? "DLSS/FSR" : null,
-              frameGenOn && !row.supportsFrameGen ? "bildgenerering" : null,
-            ].filter(Boolean);
-
-            return (
-              <li
-                key={row.game}
-                className="relative overflow-hidden bg-background/80 p-5 text-center"
-              >
-                {cover && (
-                  <>
-                    <img
-                      src={cover}
-                      alt=""
-                      aria-hidden="true"
-                      className="absolute inset-0 h-full w-full object-cover opacity-[0.14]"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <span
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40"
-                    />
-                  </>
-                )}
-
-                <div className="relative">
-                  <p className="truncate text-xs font-semibold text-foreground">{row.game}</p>
-                  <p
-                    className="mt-2 font-display text-3xl font-bold tabular-nums sm:text-4xl"
-                    style={{ color: accent }}
-                  >
-                    {row.fps}
-                  </p>
-                  <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
-                    {AVG_LABEL}
-                  </p>
-                  {missing.length > 0 && (
-                    <p className="mt-2 text-[10px] leading-snug text-muted-foreground">
-                      Stöder inte {missing.join(" eller ")}
-                    </p>
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-
-        <p className="px-5 py-4 text-[11px] leading-relaxed text-muted-foreground sm:px-6">
-          Uppskattade värden för den här konfigurationen. Verklig prestanda
-          varierar med spelversion, drivrutiner och övriga inställningar.
-        </p>
+              {option}
+            </button>
+          );
+        })}
       </div>
+
+      {/* Grafikläge och påslag på en rad. */}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <select
+          value={preset}
+          onChange={(event) => setPreset(event.target.value)}
+          className="field h-8 w-auto min-w-[8rem] flex-1 py-0 text-xs"
+          aria-label="Grafikläge"
+        >
+          {presets.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+
+        <ToggleChip
+          label="DLSS"
+          on={dlssOn}
+          disabled={!anyDlss}
+          accent={accent}
+          onClick={() => setDlssOn((prev) => !prev)}
+          title={
+            anyDlss
+              ? "Uppskalning: renderar i lägre upplösning och skalar upp"
+              : "Inget av spelen i listan stöder uppskalning"
+          }
+        />
+        <ToggleChip
+          label="Bildgen."
+          on={frameGenOn}
+          disabled={!anyFrameGen}
+          accent={accent}
+          onClick={() => setFrameGenOn((prev) => !prev)}
+          title={
+            anyFrameGen
+              ? "Genererar extra bildrutor mellan de renderade"
+              : "Inget av spelen i listan stöder bildgenerering"
+          }
+        />
+      </div>
+
+      {/* Spelen som rader, samma form som specifikationerna ovanför. */}
+      <ul className="mt-5 divide-y divide-foreground/10 border-t border-foreground/10">
+        {rows.map((row) => {
+          /* Det som är påslaget men som just det här spelet inte stöder
+             skrivs ut, annars ser det ut som att siffran vägrar röra
+             sig. */
+          const missing = [
+            dlssOn && !row.supportsDlss ? "DLSS" : null,
+            frameGenOn && !row.supportsFrameGen ? "bildgen." : null,
+          ].filter(Boolean);
+
+          return (
+            <li key={row.game} className="flex items-baseline justify-between gap-4 py-2.5">
+              <span className="min-w-0 truncate text-sm text-foreground">
+                {row.game}
+                {missing.length > 0 && (
+                  <span className="ml-2 text-[10px] text-muted-foreground">
+                    utan {missing.join(" och ")}
+                  </span>
+                )}
+              </span>
+              <span
+                className="shrink-0 font-display text-base font-bold tabular-nums"
+                style={{ color: accent }}
+              >
+                {row.fps}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+
+      <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+        Uppskattade snittvärden. Verklig prestanda varierar med
+        spelversion och drivrutiner.
+      </p>
     </section>
   );
 };
 
 const ToggleChip = ({
-  icon: Icon,
   label,
   on,
   disabled,
@@ -281,7 +230,6 @@ const ToggleChip = ({
   onClick,
   title,
 }: {
-  icon: typeof Sparkles;
   label: string;
   on: boolean;
   disabled: boolean;
@@ -295,7 +243,7 @@ const ToggleChip = ({
     disabled={disabled}
     aria-pressed={on}
     title={title}
-    className="inline-flex items-center gap-2 rounded-sm border px-3.5 py-2 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40"
+    className="shrink-0 rounded-sm border px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40"
     style={
       on && !disabled
         ? { borderColor: accent, color: accent, backgroundColor: `${accent}14` }
@@ -305,7 +253,6 @@ const ToggleChip = ({
           }
     }
   >
-    <Icon aria-hidden="true" className="h-3.5 w-3.5" />
     {label}
   </button>
 );

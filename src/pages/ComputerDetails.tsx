@@ -22,21 +22,7 @@ import { FpsPanel } from "@/components/product/FpsPanel";
 import { ProductStage } from "@/components/product/ProductStage";
 import { ProductVariants } from "@/components/product/ProductVariants";
 import { checkStock, getAllInventory } from "@/lib/supabaseServices";
-import fortniteImage from "../../images/fortnite.jpg";
-import cyberpunkImage from "../../images/Cyberpunk 2077.jfif";
-import gta5Image from "../../images/Gta 5.jpg";
-import minecraftImage from "../../images/minecraft.jpg";
-import cs2Image from "../../images/cs2.jpg";
-import ghostImage from "../../images/Ghost Of Tsushima.jpg";
 
-const GAME_IMAGES: Record<string, string> = {
-  Fortnite: fortniteImage,
-  "Cyberpunk 2077": cyberpunkImage,
-  "GTA 5": gta5Image,
-  Minecraft: minecraftImage,
-  CS2: cs2Image,
-  "Ghost of Tsushima": ghostImage,
-};
 const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
 
@@ -1109,61 +1095,60 @@ export default function ComputerDetails() {
 
         <div className="product-panel">
           <div className="product-panel__scroll">
-            <nav aria-label="Brödsmulor" className="page-banner__crumbs">
-              <ol>
-                <li>
-                  <Link to="/">Hem</Link>
-                  <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
-                </li>
-                <li>
-                  <Link to="/products">Datorer</Link>
-                  <span aria-hidden="true" className="page-banner__crumb-sep">/</span>
-                </li>
-                <li>
-                  <span aria-current="page">{displayName}</span>
-                </li>
-              </ol>
-            </nav>
+            {/*
+              Brödsmulorna var tre led chrome ovanför rubriken, och två
+              av leden står redan i menyn högst upp. Kvar är den enda
+              som faktiskt gör något härifrån: vägen tillbaka till
+              listan. Strukturerad data för sökmotorn ligger orörd i
+              structuredData längre upp i filen.
+            */}
+            <Link to="/products" className="product-panel__back">
+              <ArrowLeft aria-hidden="true" className="h-3.5 w-3.5" />
+              Alla datorer
+            </Link>
 
-            <h1 className="font-display text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-3xl">
+            <h1 className="mt-5 font-display text-2xl font-bold uppercase leading-tight tracking-tight text-foreground sm:text-[1.75rem]">
               {displayName}
-              {displaySpecs.tier && (
-                <span className="ml-3 align-middle text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-                  {displaySpecs.tier}
-                </span>
-              )}
             </h1>
 
-            <div className="mt-4 flex flex-wrap items-center gap-3">
+            {/*
+              Pris och läge på en rad, och EN etikett - inte tre.
+              Lager, förbeställning och leveranstid stod som var sin
+              pillerknapp bredvid priset, vilket gav fyra saker att läsa
+              på översta raden. Leveranstiden hör ihop med leveransen
+              och står nu i den raden längst ned i stället.
+            */}
+            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2">
               <span
                 className="font-display text-2xl font-bold tabular-nums"
                 style={{ color: accent }}
               >
                 {displayPrice.toLocaleString("sv-SE")} kr
               </span>
-              {!showPreorderLabel && (
-                <span className={`rounded-full px-3 py-1 text-xs font-semibold ${availability.className}`}>
-                  {availability.label}
-                </span>
-              )}
-              {showPreorderLabel && (
+
+              {showPreorderLabel ? (
                 <span
-                  className="rounded-full px-3 py-1 text-xs font-semibold"
+                  className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold"
                   style={{ backgroundColor: `${accent}1F`, color: accent }}
                   title="Förbeställ varan och få den inom 2 veckor då varan är slut på lager."
                 >
                   Förbeställ
                 </span>
+              ) : (
+                <span className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${availability.className}`}>
+                  {availability.label}
+                </span>
               )}
-              {etaLabel && (
-                <span className="rounded-full bg-foreground/[0.06] px-3 py-1 text-xs font-semibold text-muted-foreground">
-                  {etaLabel}
+
+              {displaySpecs.tier && (
+                <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {displaySpecs.tier}
                 </span>
               )}
             </div>
 
             {/* Utförandena -------------------------------------------- */}
-            <div className="mt-7">
+            <div className="product-panel__block">
               <ProductVariants
                 options={variantOptions}
                 selectedId={selectedVariantId}
@@ -1172,22 +1157,22 @@ export default function ComputerDetails() {
               />
             </div>
 
-            {/* Nyckelspecifikationer ---------------------------------- */}
-            <div className="mt-8 border-t border-foreground/10 pt-7">
+            {/* Specifikationer ---------------------------------------- */}
+            <div className="product-panel__block">
               <div className="flex items-baseline justify-between gap-4">
-                <h2 className="text-[11px] font-bold uppercase tracking-[0.22em] text-muted-foreground">
-                  Specifikationer
-                </h2>
+                <h2 className="panel-label">Specifikationer</h2>
                 <a
                   href="#alla-specs"
-                  className="text-xs font-semibold transition-opacity hover:opacity-80"
+                  className="text-[11px] font-semibold transition-opacity hover:opacity-80"
                   style={{ color: accent }}
                 >
-                  Visa alla specs
+                  Alla specs
                 </a>
               </div>
 
-              <dl className="mt-5 grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
+              {/* Samma radform som FPS-listan nedanför, så de två läses
+                  som syskon i stället för som två olika sorters ruta. */}
+              <dl className="mt-4 divide-y divide-foreground/10 border-t border-foreground/10">
                 {[
                   { label: "Grafikkort", value: displaySpecs.gpu },
                   { label: "Processor", value: displaySpecs.cpu },
@@ -1199,11 +1184,12 @@ export default function ComputerDetails() {
                 ]
                   .filter((row) => Boolean(String(row.value || "").trim()))
                   .map((row) => (
-                    <div key={row.label}>
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                        {row.label}
-                      </dt>
-                      <dd className="mt-1.5 text-sm font-semibold leading-snug text-foreground">
+                    <div
+                      key={row.label}
+                      className="flex items-baseline justify-between gap-4 py-2.5"
+                    >
+                      <dt className="shrink-0 text-xs text-muted-foreground">{row.label}</dt>
+                      <dd className="min-w-0 text-right text-[13px] font-semibold leading-snug text-foreground">
                         {row.value}
                       </dd>
                     </div>
@@ -1213,15 +1199,15 @@ export default function ComputerDetails() {
 
             {/* FPS ---------------------------------------------------- */}
             {fpsLoaded && (
-              <div className="mt-8 border-t border-foreground/10 pt-7">
-                <FpsPanel settings={fpsSettings} accent={accent} gameImages={GAME_IMAGES} />
+              <div className="product-panel__block">
+                <FpsPanel settings={fpsSettings} accent={accent} />
               </div>
             )}
 
-            <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
-              Beräknad leverans 1-2 arbetsdagar. Byggtid: i lager 1-2 dagar,
-              förbeställd (nya delar) cirka 5 dagar, förbeställd (begagnade
-              delar) 1-2 veckor.
+            <p className="mt-8 text-[11px] leading-relaxed text-muted-foreground">
+              Leverans 1-2 arbetsdagar när datorn finns i lager
+              {etaLabel ? ` (${etaLabel.toLowerCase()})` : ""}. Förbeställd
+              byggs på cirka 5 dagar med nya delar, 1-2 veckor med begagnade.
             </p>
           </div>
 
