@@ -1685,6 +1685,29 @@
   object-fit: cover;
 }
 
+/*
+ * Urklippets egen miniatyr.
+ *
+ * Den ligger först i raden och är den vy sidan öppnar med. Bilden
+ * är genomskinlig, så cover skulle beskära chassit och resten av
+ * rutan skulle bli tom - contain visar hela datorn i stället. Ytan
+ * under får en gnätta av maskinens egen kulör, dels för att ett
+ * mörkt chassi mot svart annars knappt syns, dels för att rutan ska
+ * se ut som en annan sorts vy än fotorutorna bredvid.
+ */
+.product-stage__thumb[data-kind="cutout"] {
+  background: radial-gradient(
+    70% 70% at 50% 55%,
+    color-mix(in srgb, var(--thumb-accent) 30%, transparent) 0%,
+    rgb(0 0 0 / 0.45) 100%
+  );
+}
+
+.product-stage__thumb[data-kind="cutout"] img {
+  object-fit: contain;
+  padding: 0.3rem;
+}
+
 .product-stage__thumb[data-active] {
   border-color: var(--thumb-accent);
   box-shadow: 0 0 0 1px var(--thumb-accent), 0 0 20px color-mix(in srgb, var(--thumb-accent) 45%, transparent);

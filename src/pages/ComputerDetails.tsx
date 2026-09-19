@@ -307,7 +307,10 @@ export default function ComputerDetails() {
    * hände.
    */
   const [fpsLoaded, setFpsLoaded] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(0);
+  /* Indexet pekar på en VY i scenen, inte på ett foto. Vy 0 är
+     urklippet när det finns, därefter följer fotona. Se
+     buildStageViews i ProductStage. */
+  const [selectedView, setSelectedView] = useState(0);
   const [inventoryStatus, setInventoryStatus] = useState<{
     inStock: boolean;
     canPreorder: boolean;
@@ -440,7 +443,7 @@ export default function ComputerDetails() {
   }, [baseProductId, computer?.usedVariant, computer?.usedVariantEnabled]);
 
   useEffect(() => {
-    setSelectedImage(0);
+    setSelectedView(0);
   }, [computer?.id]);
 
   const hasUsedVariant =
@@ -1044,8 +1047,16 @@ export default function ComputerDetails() {
       .slice(0, 4)
       .map(({ item }) => item);
   }, [enrichedComputers, inventoryMap, resolvedComputer.id]);
-  const hasMultipleImages = detailImageCandidates.length > 1;
-  const resolvedImage = detailImageCandidates[selectedImage] || detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
+  /*
+   * Bilden i specifikationsavsnittet står still.
+   *
+   * Den följde tidigare miniatyrraden högst upp på sidan. Eftersom
+   * raden inte bytte den stora bilden där uppe var det enda ett
+   * klick syntes på en bild långt utanför rutan - man tryckte på
+   * något och såg ingenting hända. Nu styr raden scenen, och här
+   * nere visas maskinens huvudfoto.
+   */
+  const specShot = detailImageCandidates[0] || DETAIL_FALLBACK_IMAGE;
 
   if (!computer && productsLoading) {
     return (
@@ -1101,8 +1112,8 @@ export default function ComputerDetails() {
           art={art}
           seedKey={resolvedComputer.id}
           images={detailImageCandidates}
-          index={selectedImage}
-          onIndexChange={setSelectedImage}
+          index={selectedView}
+          onIndexChange={setSelectedView}
           alt={displayName}
           note={art.cutout ? "Ungefärligt utseende" : undefined}
           fallbackImage={DETAIL_FALLBACK_IMAGE}
@@ -1292,12 +1303,11 @@ export default function ComputerDetails() {
               uppdelning. Fotot visar maskinen i ett rum, till skillnad
               från urklippet högst upp på sidan som visar chassit fritt,
               så de två bilderna säger olika saker och upprepar inte
-              varandra. Det följer dessutom miniatyrraden, så det man
-              bläddrat fram där syns här nere också. */}
+              varandra. */}
           <div className="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-start lg:gap-14">
             <figure className="spec-shot">
               <img
-                src={detailImageCandidates[selectedImage] || detailImageCandidates[0]}
+                src={specShot}
                 alt={`${displayName} sedd i sin helhet`}
                 loading="lazy"
                 decoding="async"
