@@ -343,12 +343,12 @@ export default function ServiceRepair() {
       </section>
 
       {/* Så går det till -------------------------------------------------
-          Rubriken klistras fast och stegen rullar förbi den, samma grepp
+          Rubriken står stilla medan stegen rullar förbi, samma grepp
           som "Hur DatorHuset kör" på startsidan. */}
       <section data-sandbox-id="service-flow" className="relative">
         <div className="container mx-auto max-w-6xl px-4 pb-16 sm:pb-20">
           <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-            <Reveal className="lg:sticky lg:top-28 lg:self-start">
+            <Reveal className="lg:self-start">
               <p className="eyebrow" style={{ color: ACCENT }}>
                 Så går det till
               </p>

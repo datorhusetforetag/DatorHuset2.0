@@ -80,8 +80,11 @@ export const StepsSection = ({ settings = DEFAULT_SITE_SETTINGS.homepage.steps }
     <section data-sandbox-id="home-steps" className="relative text-foreground">
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
         <div className="grid gap-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
-          {/* Rubriken står kvar medan punkterna rullar förbi */}
-          <Reveal className="lg:sticky lg:top-28 lg:self-start">
+          {/* Rubriken följde tidigare med nedåt medan punkterna rullade
+              förbi. På papper höll det ihop rubrik och innehåll, men i
+              praktiken såg det ut som att texten hade lossnat från
+              sidan och gled. Den står stilla nu. */}
+          <Reveal className="lg:self-start">
             {settings.eyebrow && (
               <p className="eyebrow">
                 {settings.eyebrow}
