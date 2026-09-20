@@ -130,9 +130,5 @@ export function useProducts() {
   return { products, loading, error };
 }
 
-// Helper: Get Supabase ID for a local product ID
-export function getSupabaseProductId(localId: string, computersByTier: any[]): string | null {
-  // This is a fallback - normally you'd use the products hook
-  // For now, map by position or name
-  return null;
-}
+/* Har lag getSupabaseProductId, som tog emot tva argument, struntade
+   i bada och alltid returnerade null. Ingen anropade den. */

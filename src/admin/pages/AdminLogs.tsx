@@ -11,7 +11,7 @@ type AdminLog = {
   order_id?: string | null;
   previous_status?: string | null;
   new_status?: string | null;
-  metadata?: Record<string, any> | null;
+  metadata?: Record<string, unknown> | null;
   ip_address?: string | null;
   user_agent?: string | null;
   created_at?: string | null;

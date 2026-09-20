@@ -55,6 +55,38 @@ type AdminProduct = {
   tags?: string[] | null;
 };
 
+/*
+ * Formerna som kommer från och går till admin-API:t.
+ *
+ * De stod tidigare som any på var sitt ställe. Skillnaden är inte
+ * att koden blir säkrare av sig själv, utan att det nu går att läsa
+ * här vad servern faktiskt skickar - i stället för att lista ut det
+ * ur varje ?.-kedja längre ned.
+ */
+type ApiFieldErrors = Record<string, string[] | undefined>;
+
+type ApiErrorPayload = {
+  error?:
+    | string
+    | {
+        message?: string;
+        details?: { fieldErrors?: ApiFieldErrors; field_errors?: ApiFieldErrors };
+      }
+    | null;
+};
+
+/* En listningsrad som den kommer ur API:t, innan den blir en
+   CatalogItem. Fälten läses alla genom String()/Number()/Boolean(),
+   så unknown räcker och säger sanningen: vi vet inte vad som
+   kommer, vi tvingar det till rätt form när vi läser det. */
+type ListingRow = Record<string, unknown>;
+
+type CreateListingPayload = {
+  listing: Record<string, unknown>;
+  fps: ReturnType<typeof normalizeFpsSandboxSettings>;
+  used_variant?: Record<string, unknown>;
+};
+
 type InventoryItem = {
   product_id: string;
   quantity_in_stock?: number | null;
@@ -383,7 +415,7 @@ export default function AdminProducts() {
   const [lastDraftAutosaveAt, setLastDraftAutosaveAt] = useState<string>("");
   const [draftHydrated, setDraftHydrated] = useState(false);
 
-  const mapListingToCatalogItem = (row: any): CatalogItem => ({
+  const mapListingToCatalogItem = (row: ListingRow): CatalogItem => ({
     // Keep UI payloads free from legacy placeholder paths.
     ...(() => {
       const normalizedImages = dedupeImageUrls([
@@ -397,7 +429,7 @@ export default function AdminProducts() {
         images: finalImages,
       };
     })(),
-    id: row.id,
+    id: String(row.id ?? ""),
     name: String(row.name ?? ""),
     slug: String(row.slug ?? ""),
     legacy_id: String(row.legacy_id ?? ""),
@@ -420,7 +452,7 @@ export default function AdminProducts() {
     eta_days: Number.isFinite(Number(row.eta_days)) ? Number(row.eta_days) : null,
     eta_input: toEtaInput({
       eta_days: Number.isFinite(Number(row.eta_days)) ? Number(row.eta_days) : null,
-      eta_note: row.eta_note || "",
+      eta_note: String(row.eta_note ?? ""),
     }),
     eta_note: String(row.eta_note || ""),
     used_variant_enabled: Boolean(row.used_variant_enabled ?? true),
@@ -430,8 +462,8 @@ export default function AdminProducts() {
     listing_group_id: row.listing_group_id ? String(row.listing_group_id) : row.variant_group_id ? String(row.variant_group_id) : null,
     variant_role: row.variant_role === "base" || row.variant_role === "used" ? row.variant_role : null,
     variant_group_id: row.variant_group_id ? String(row.variant_group_id) : null,
-    updated_at: row.updated_at || null,
-    inventory_updated_at: row.inventory_updated_at || null,
+    updated_at: row.updated_at ? String(row.updated_at) : null,
+    inventory_updated_at: row.inventory_updated_at ? String(row.inventory_updated_at) : null,
   });
 
   const loadItems = async () => {
@@ -549,9 +581,12 @@ export default function AdminProducts() {
     });
   };
 
-  const resolveApiErrorMessage = (data: any, fallback: string) => {
-    const baseMessage = data?.error?.message || data?.error || fallback;
-    const fieldErrors = data?.error?.details?.fieldErrors || data?.error?.details?.field_errors;
+  const resolveApiErrorMessage = (data: ApiErrorPayload | null | undefined, fallback: string) => {
+    const raw = data?.error;
+    const asObject = raw && typeof raw === "object" ? raw : null;
+    const baseMessage =
+      asObject?.message || (typeof raw === "string" ? raw : "") || fallback;
+    const fieldErrors = asObject?.details?.fieldErrors || asObject?.details?.field_errors;
     if (fieldErrors && typeof fieldErrors === "object") {
       const firstField = Object.keys(fieldErrors)[0];
       const firstFieldError = Array.isArray(fieldErrors[firstField]) ? fieldErrors[firstField][0] : "";
@@ -573,7 +608,7 @@ export default function AdminProducts() {
     return data?.data ? mapListingToCatalogItem(data.data) : null;
   };
 
-  const getValidationMessage = (error: any, fallback: string) => {
+  const getValidationMessage = (error: unknown, fallback: string) => {
     const details = formatContractValidationError(error);
     const fieldErrors = details?.fieldErrors || {};
     const firstField = Object.keys(fieldErrors)[0];
@@ -1136,7 +1171,7 @@ export default function AdminProducts() {
     setLocalError("");
     try {
       const baseListing = mapDraftToListingPayload(draft, draftImages);
-      const payload: any = {
+      const payload: CreateListingPayload = {
         listing: baseListing,
         fps: normalizeFpsSandboxSettings({ version: 2, entries: normalizedDraftFps }),
       };

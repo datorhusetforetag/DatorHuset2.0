@@ -125,6 +125,24 @@ const sanitizeEntries = (entries: unknown): FpsSandboxEntry[] => {
   return Array.from(deduped.values());
 };
 
+/*
+ * Det gamla FPS-formatet.
+ *
+ * Inställningarna sparades före version 2 som ett nästlat objekt:
+ * spel -> upplösning -> grafikläge -> intervall. Formatet var aldrig
+ * versionsmärkt och ändrades medan det användes, så det finns rader
+ * i databasen som ser olika ut och ingen typ som beskriver dem alla.
+ *
+ * Därför any här i stället för unknown. Koden nedan plöjer igenom
+ * fyra nivåer och kontrollerar varje nivå medan den går - det är
+ * kontrollerna som bär, inte typen. Med unknown hade varje rad
+ * behövt en cast till samma sak, vilket inte gör läsningen säkrare,
+ * bara längre.
+ *
+ * Undantaget är med flit begränsat till den här funktionen. Allt som
+ * kommer ut härifrån är FpsSandboxEntry och kontrolleras som vanligt.
+ */
+/* eslint-disable @typescript-eslint/no-explicit-any -- se kommentaren ovan */
 const legacySettingsToEntries = (input: any): FpsSandboxEntry[] => {
   const games = input?.games && typeof input.games === "object" ? input.games : {};
   const entries: FpsSandboxEntry[] = [];
@@ -161,6 +179,7 @@ const legacySettingsToEntries = (input: any): FpsSandboxEntry[] => {
   });
   return entries;
 };
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 export const buildDefaultFpsSandboxSettings = (): FpsSandboxSettings => {
   const entries: FpsSandboxEntry[] = [];
@@ -193,7 +212,10 @@ export const normalizeFpsSandboxSettings = (
     return { version: 2, entries: fallbackEntries };
   }
   let entries = sanitizeEntries((input as FpsSandboxSettings).entries);
-  if (entries.length === 0 && (input as any).games && typeof (input as any).games === "object") {
+  /* Samma gamla format som ovan: är den nya listan tom kan raden vara
+     sparad före version 2. */
+  const legacyRoot = input as { games?: unknown };
+  if (entries.length === 0 && legacyRoot.games && typeof legacyRoot.games === "object") {
     entries = sanitizeEntries(legacySettingsToEntries(input));
   }
   if (entries.length === 0) {

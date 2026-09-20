@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import type { ProductLike } from "@/lib/productImageResolver";
 import { useAuth } from '@/context/AuthContext';
 import {
   getCart as getUserCartItems,
@@ -8,12 +9,22 @@ import {
 } from '@/lib/supabaseServices';
 import { supabase } from '@/lib/supabaseClient';
 
+/*
+ * Det vagnen faktiskt laser ur en produkt.
+ *
+ * ProductLike ar redan formen bildupplosaren behover - id, namn,
+ * slug och de tre bildfalten. Vagnen laser dessutom priset. Att
+ * bygga pa den i stallet for att skriva en egen typ gor att de tva
+ * inte kan glida isar.
+ */
+export type CartProduct = ProductLike & { price_cents?: number | null };
+
 export interface CartItem {
   id: string;
   user_id?: string;
   product_id: string;
   quantity: number;
-  product?: any;
+  product?: CartProduct | null;
 }
 
 interface CartContextType {
@@ -88,7 +99,9 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         throw error;
       }
 
-      const productsById = new Map((data || []).map((product: any) => [String(product.id), product]));
+      const productsById = new Map(
+        (data || []).map((product: CartProduct) => [String(product.id), product]),
+      );
       const guestItems: CartItem[] = guestEntries.map((entry) => ({
         id: toGuestItemId(entry.product_id),
         user_id: 'guest',

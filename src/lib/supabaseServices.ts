@@ -103,13 +103,21 @@ export async function getListingTagsMap() {
   if (error) throw error;
 
   const map: Record<string, string[]> = {};
-  (data || []).forEach((row: any) => {
+  (data || []).forEach((row: { key?: string | null; value?: unknown }) => {
     const key = String(row?.key || '');
     const productId = key.startsWith('listing_tags:') ? key.slice('listing_tags:'.length).trim() : '';
     if (!productId) return;
-    const rawValue = row?.value;
-    const tags = Array.isArray(rawValue?.tags)
-      ? rawValue.tags
+    /* Vardet har sparats i tva former genom aren: ibland { tags: [] },
+       ibland en naken lista. Bada las redan har, men typen sa any -
+       nu star det i stallet utskrivet att vi inte vet vilken av dem
+       vi far forran vi tittat. */
+    const rawValue: unknown = row?.value;
+    const wrapped =
+      rawValue && typeof rawValue === "object" && "tags" in rawValue
+        ? (rawValue as { tags?: unknown }).tags
+        : rawValue;
+    const tags: unknown[] = Array.isArray(wrapped)
+      ? wrapped
       : Array.isArray(rawValue)
         ? rawValue
         : [];
@@ -330,7 +338,7 @@ export async function createUserAddress(address: {
   });
 }
 
-export async function updateUserAddress(addressId: string, updates: Record<string, any>) {
+export async function updateUserAddress(addressId: string, updates: Record<string, unknown>) {
   const { data, error } = await supabase
     .from('user_addresses')
     .update({ ...updates, updated_at: new Date() })

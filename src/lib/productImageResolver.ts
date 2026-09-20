@@ -1,6 +1,6 @@
 import { COMPUTERS } from "@/data/computers";
 
-type ProductLike = {
+export type ProductLike = {
   id?: string | number | null;
   legacy_id?: string | number | null;
   name?: string | null;

@@ -1,16 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-let supabaseInstance: any;
+let supabaseInstance: SupabaseClient;
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn("Supabase env vars missing; running in offline/mock mode. Auth features disabled.");
 
   const mockAuth = {
     getSession: async () => ({ data: { session: null }, error: null }),
-    onAuthStateChange: (_cb: any) => ({
+    onAuthStateChange: (_cb: unknown) => ({
       data: { subscription: { unsubscribe: () => {} } },
     }),
     signInWithOAuth: async () => ({
@@ -31,7 +31,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
   };
 
   // Minimal mock client to keep the app running locally without env vars
-  supabaseInstance = { auth: mockAuth };
+  supabaseInstance = { auth: mockAuth } as unknown as SupabaseClient;
 } else {
   supabaseInstance = createClient(supabaseUrl, supabaseAnonKey);
 }

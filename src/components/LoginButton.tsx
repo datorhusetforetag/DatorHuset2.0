@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { decodeUnicodeEscapes } from "@/lib/textUtils";
+import { errorMessage } from "@/lib/utils";
 
 export function LoginButton() {
   const { user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut } = useAuth();
@@ -54,8 +55,8 @@ export function LoginButton() {
     try {
       await signInWithEmail(email, password);
       setOpen(false);
-    } catch (err: any) {
-      setError(err?.message || "Kunde inte logga in.");
+    } catch (err) {
+      setError(errorMessage(err, "Kunde inte logga in."));
     } finally {
       setPending(false);
     }
@@ -77,8 +78,8 @@ export function LoginButton() {
       setResendCooldown(60);
       setMode("login");
       setSuccessMessage("Konto skapat! Kontrollera din e-post och bekräfta kontot innan du loggar in.");
-    } catch (err: any) {
-      setError(err?.message || "Kunde inte skapa konto.");
+    } catch (err) {
+      setError(errorMessage(err, "Kunde inte skapa konto."));
     } finally {
       setPending(false);
     }
@@ -92,8 +93,8 @@ export function LoginButton() {
       await resendSignupEmail(lastSignupEmail);
       setResendCooldown(60);
       setSuccessMessage("Verifieringsmejlet skickades igen. Kolla inkorgen.");
-    } catch (err: any) {
-      setError(err?.message || "Kunde inte skicka verifieringsmejl.");
+    } catch (err) {
+      setError(errorMessage(err, "Kunde inte skicka verifieringsmejl."));
     } finally {
       setResendPending(false);
     }
@@ -198,8 +199,8 @@ export function LoginButton() {
               setPending(true);
               try {
                 await signInWithGoogle();
-              } catch (err: any) {
-                setError(err?.message || "Google-inloggning misslyckades.");
+              } catch (err) {
+                setError(errorMessage(err, "Google-inloggning misslyckades."));
               } finally {
                 setPending(false);
               }

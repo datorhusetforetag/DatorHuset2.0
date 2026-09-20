@@ -1,5 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
+import type { User } from "@supabase/supabase-js";
 
 export type AdminAccessState = {
   isAdmin: boolean;
@@ -9,7 +10,7 @@ export type AdminAccessState = {
 };
 
 export type AdminAccessContext = AdminAccessState & {
-  user: any;
+  user: User | null;
   token: string;
   apiBase: string;
   refresh: () => Promise<void>;

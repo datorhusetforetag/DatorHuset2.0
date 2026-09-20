@@ -1,11 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Session } from '@supabase/supabase-js';
+import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
 import { getPreviewAuthOverride } from '@/lib/previewMode';
 
 interface AuthContextType {
   session: Session | null;
-  user: any;
+  user: User | null;
   loading: boolean;
   signInWithGoogle: () => Promise<void>;
   signInWithEmail: (email: string, password: string) => Promise<void>;
@@ -18,7 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const previewAuthOverride = getPreviewAuthOverride();
 
@@ -118,7 +118,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             full_name: 'Previewkund',
           },
           app_metadata: {},
-        }
+        /* Attrapp for forhandsvisningen i adminlaget, inte en riktig
+           inloggning. Den behover bara de falt granssnittet visar,
+           sa resten av User fylls inte i - darav casten. */
+        } as unknown as User
       : null;
   const effectiveSession = previewAuthOverride === 'logged-out' ? null : session;
   const effectiveUser = previewAuthOverride === 'logged-out' ? null : user || mockPreviewUser;

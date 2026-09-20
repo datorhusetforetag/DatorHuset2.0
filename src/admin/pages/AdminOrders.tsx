@@ -165,7 +165,17 @@ const DEFAULT_CHECKLIST: BuildChecklistItem[] = [
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
-const readApiError = (data: any, fallback: string) => data?.error?.message || data?.error || fallback;
+/* Svaret kan bara vara tva saker: { error: "text" } eller
+   { error: { message } }. Bada las redan, men any lovade att vi
+   visste vilket. */
+const readApiError = (
+  data: { error?: string | { message?: string } | null } | null | undefined,
+  fallback: string,
+) => {
+  const raw = data?.error;
+  if (raw && typeof raw === "object") return raw.message || fallback;
+  return (typeof raw === "string" && raw) || fallback;
+};
 
 export default function AdminOrders() {
   const { isAdmin, role, loading, error, token, apiBase, signInWithGoogle } =

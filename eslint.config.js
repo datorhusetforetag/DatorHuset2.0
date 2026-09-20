@@ -23,19 +23,34 @@ export default tseslint.config(
       "@typescript-eslint/no-unused-vars": "off",
 
       /*
-       * any: varning, inte fel - tills vidare.
+       * any är ett fel igen.
        *
-       * Det finns 36 kvar, nästan alla i inloggning, Supabase-svar och
-       * felobjekt. Att typa dem på riktigt är ett eget arbete, och att
-       * gissa en typ som inte stämmer är sämre än any: då ljuger
-       * koden om vad den fått. Som fel spärrade de hela CI-jobbet, så
-       * varken typkontrollen eller bygget hann köras - alltså fångades
-       * ingenting alls.
+       * De 36 som fanns är genomgångna: inloggningen använder Supabase
+       * egen User, felobjekt narrows genom errorMessage i lib/utils,
+       * och admin-API:ts svarsformer står utskrivna där de läses.
        *
-       * Som varning syns de kvar i varje körning utan att blockera, och
-       * porten stängs för NYA fel. Sätt tillbaka "error" när de är
-       * borta.
+       * Ett undantag står kvar, i lib/fpsSandbox.ts, med sin motivering
+       * på plats: parsern för det gamla ovärsionerade FPS-formatet.
        */
+      "@typescript-eslint/no-explicit-any": "error",
+    },
+  },
+
+  /*
+   * server.ts körs inte.
+   *
+   * Ingenting startar den: npm start kör server-local.js, och filen
+   * importeras inte från något håll. Den är en tidigare, mycket
+   * mindre version av samma backend. Den har dessutom ändringar som
+   * inte är incheckade, så att typa om den nu hade blandat ihop två
+   * personers arbete i samma diff.
+   *
+   * Undantaget är alltså tillöver tills någon bestämmer om filen ska
+   * raderas eller återuppstå. Radera den och ta bort det här blocket.
+   */
+  {
+    files: ["server.ts"],
+    rules: {
       "@typescript-eslint/no-explicit-any": "warn",
     },
   },
