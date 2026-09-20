@@ -28,13 +28,70 @@ const apiRequest = async (path: string, options: RequestInit = {}) => {
 // PRODUCTS SERVICE
 // ============================================================
 
+/*
+ * Sortimentet som sajten visar.
+ *
+ * Två villkor, båda satta i adminportalen:
+ *
+ * archived_at  Arkiverade listningar är borttagna ur butiken men
+ *              finns kvar för orderhistorikens skull. De ska inte
+ *              synas här. Se migrationen 20260920 för skälet till
+ *              att raden står kvar i stället för att raderas.
+ *
+ * sort_order   Ordningen korten ligger i under "Utvalda" på
+ *              produktsidan. Utan den kom raderna i den ordning
+ *              databasen råkade ge dem. nullsFirst: false lägger
+ *              en produkt utan ordning sist i stället för först,
+ *              så en nyskapad listning inte hoppar till toppen av
+ *              butiken innan någon bestämt var den ska ligga.
+ */
 export async function getProducts() {
   const { data, error } = await supabase
     .from('products')
-    .select('*');
+    .select('*')
+    .is('archived_at', null)
+    .order('sort_order', { ascending: true, nullsFirst: false })
+    .order('name', { ascending: true });
   
   if (error) throw error;
   return data || [];
+}
+
+/* En direktlänk till en arkiverad produkt ska inte öppna en
+   köpsida. Utan villkoret hade en gammal länk eller ett sökresultat
+   lett till en maskin som inte längre säljs. */
+/*
+ * Nycklarna till de arkiverade listningarna.
+ *
+ * Behövs för att arkivering ska betyda något för de maskiner som
+ * också står i src/data/computers.ts. Den listan är vad sajten
+ * börjar med, och den frågar inte databasen om en maskin fortfarande
+ * säljs - så utan det här skulle "ta bort listning" dölja produkten
+ * överallt utom på produktsidan, vilket är värre än att inte kunna
+ * ta bort den alls.
+ *
+ * Alla fyra kända namnformer tas med, eftersom kopplingen mellan
+ * den lokala filen och databasen sker på id, slug, legacy_id eller
+ * namn beroende på maskin.
+ */
+export async function getArchivedProductKeys(): Promise<string[]> {
+  const { data, error } = await supabase
+    .from('products')
+    .select('id, slug, legacy_id, name')
+    .not('archived_at', 'is', null);
+
+  /* Ett fel här får inte tömma butiken. Kan vi inte läsa listan är
+     rätt svar att inget är arkiverat, inte att allt är det. */
+  if (error) return [];
+
+  const keys: string[] = [];
+  (data || []).forEach((row: { id?: unknown; slug?: unknown; legacy_id?: unknown; name?: unknown }) => {
+    [row.id, row.slug, row.legacy_id, row.name].forEach((value) => {
+      const text = String(value ?? '').trim();
+      if (text) keys.push(text);
+    });
+  });
+  return keys;
 }
 
 export async function getProductBySlug(slug: string) {
@@ -42,6 +99,7 @@ export async function getProductBySlug(slug: string) {
     .from('products')
     .select('*')
     .eq('slug', slug)
+    .is('archived_at', null)
     .single();
   
   if (error) throw error;
@@ -52,7 +110,9 @@ export async function getProductsByTier(tier: string) {
   const { data, error } = await supabase
     .from('products')
     .select('*')
-    .eq('tier', tier);
+    .eq('tier', tier)
+    .is('archived_at', null)
+    .order('sort_order', { ascending: true, nullsFirst: false });
   
   if (error) throw error;
   return data || [];

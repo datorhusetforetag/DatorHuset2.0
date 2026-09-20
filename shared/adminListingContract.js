@@ -13,6 +13,15 @@ export const ADMIN_FPS_RESOLUTION_OPTIONS = ["1080p", "1440p", "4K"];
 export const ADMIN_DLSS_FSR_MODE_OPTIONS = ["quality", "balanced", "performance"];
 export const ADMIN_LISTING_TAG_OPTIONS = ["Budgetvänliga", "Price-Performance", "Bästa prestanda"];
 
+/* Nivåerna som faktiskt används i sortimentet. De står på svenska i
+   databasen, och TIER_ACCENTS i ComputerDetails ger var och en sin
+   kulör. Brons finns i kulörlistan men ingen maskin bär den ännu. */
+export const ADMIN_LISTING_TIER_OPTIONS = ["Brons", "Silver", "Guld", "Platina", "Diamant"];
+
+/* Speldator eller arbetsstation. Samma två värden som ?use= på
+   produktsidan och som villkoret products_use_check i databasen. */
+export const ADMIN_LISTING_USE_OPTIONS = ["gaming", "workstation"];
+
 const normalizeTagKey = (value) =>
   String(value || "")
     .trim()
@@ -121,6 +130,27 @@ export const listingWriteSchema = z.object({
   used_parts: z.record(z.boolean()).optional(),
   fps: z.any().optional(),
   listing_group_id: z.preprocess(normalizeNullableString, z.string().trim().max(120).nullable()).optional(),
+
+  /* Ordningen på produktsidan. Tomt fält betyder "rör den inte", inte
+     "sätt den till noll" - annars hade varje sparning utan ordning
+     kastat om hela listan. */
+  sort_order: z.preprocess(
+    (value) => {
+      if (value === null || value === undefined || String(value).trim() === "") return null;
+      return value;
+    },
+    z.coerce.number().int().min(0).max(100000).nullable()
+  ).optional(),
+
+  /* Användning. Utelämnat eller null räknas som speldator av
+     produktsidan, så en maskin som inte satts försvinner inte. */
+  use: z.preprocess(
+    (value) => {
+      const text = String(value ?? "").trim().toLowerCase();
+      return text ? text : null;
+    },
+    z.enum(["gaming", "workstation"]).nullable()
+  ).optional(),
   expected_updated_at: z.preprocess(
     (value) => {
       if (value === null || value === undefined) return null;
@@ -141,6 +171,36 @@ export const createListingRequestSchema = z.object({
       used_parts: z.record(z.boolean()).optional(),
     })
     .optional(),
+});
+
+/*
+ * Omordning av flera listningar i ett anrop.
+ *
+ * Att spara hela listningar en och en bara för att flytta ett kort
+ * hade inneburit tio fulla skrivningar för en enda dragning, med tio
+ * chanser att något annat fält följer med på köpet. Det här rör bara
+ * sort_order.
+ */
+export const reorderListingsRequestSchema = z.object({
+  order: z
+    .array(
+      z.object({
+        id: z.string().trim().min(1).max(80),
+        sort_order: z.coerce.number().int().min(0).max(100000),
+      })
+    )
+    .min(1)
+    .max(500),
+});
+
+/*
+ * Arkivera eller återställ.
+ *
+ * archived: true döljer listningen från sajten, false tar fram den
+ * igen. Ingen rad raderas - se migrationen för skälet.
+ */
+export const archiveListingRequestSchema = z.object({
+  archived: z.boolean(),
 });
 
 export const updateListingRequestSchema = z.object({

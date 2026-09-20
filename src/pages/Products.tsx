@@ -3,7 +3,7 @@ import { productPath } from "@/lib/productUrl";
 import { PageHero } from "@/components/PageHero";
 import { BANNER_ACCENTS, PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
-import { useState, useMemo, useEffect, useRef, type ReactNode } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback, type ReactNode } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
@@ -14,7 +14,7 @@ import { buildReportedFpsSettingsForProductName } from "../../shared/fpsProfiles
 import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
-import { getAllInventory } from "@/lib/supabaseServices";
+import { getArchivedProductKeys, getAllInventory } from "@/lib/supabaseServices";
 import { normalizeProductImagePath } from "@/lib/productImageResolver";
 import chieftecVistaBanner from "../../public/products/newpc/chieftecvista_new3.jpg";
 import chieftecVisioBanner from "../../public/products/newpc/chieftecvisio_new.png";
@@ -334,6 +334,37 @@ export default function Products() {
   const [inventoryLoading, setInventoryLoading] = useState(true);
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
 
+  /* Arkiverade listningar.
+
+     getProducts filtrerar redan bort dem, vilket racker for de
+     maskiner som bara finns i databasen. De sju i computers.ts ar
+     daremot sajtens utgangslage och fragar ingen om de fortfarande
+     saljs - darfor den har listan. */
+  const [archivedKeys, setArchivedKeys] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    let active = true;
+    getArchivedProductKeys()
+      .then((keys) => {
+        if (!active) return;
+        setArchivedKeys(new Set(keys.map((key) => normalizeProductKey(key)).filter(Boolean)));
+      })
+      .catch(() => {
+        /* Kan vi inte lasa listan visar vi hellre allt an inget. */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const isArchived = useCallback(
+    (computer: Computer) =>
+      [computer.id, computer.name, computer.usedVariant?.productKey].some((value) => {
+        const normalized = normalizeProductKey(String(value || ""));
+        return normalized ? archivedKeys.has(normalized) : false;
+      }),
+    [archivedKeys],
+  );
+
   const getFilterLabel = (type: "gpu" | "cpu" | "tier", value: string) => {
     if (type === "gpu") {
       return FILTER_LABELS.gpu[value as keyof typeof FILTER_LABELS.gpu] ?? value;
@@ -600,8 +631,11 @@ export default function Products() {
         ["All in, all out - BLACK nybyggd", "All white, all out - NYPRIS"].includes(computer.name)
       );
     }
-    return showUsedOnly ? COMPUTERS.filter((computer) => computer.usedVariant) : [...COMPUTERS, ...supabaseOnlyComputers];
-  }, [preset, showUsedOnly, supabaseOnlyComputers]);
+    const base = showUsedOnly
+      ? COMPUTERS.filter((computer) => computer.usedVariant)
+      : [...COMPUTERS, ...supabaseOnlyComputers];
+    return base.filter((computer) => !isArchived(computer));
+  }, [preset, showUsedOnly, supabaseOnlyComputers, isArchived]);
   const getProductForVariant = (computer: Computer, useUsedVariant: boolean) => {
     const key =
       useUsedVariant && computer.usedVariant?.productKey ? computer.usedVariant.productKey : computer.name;

@@ -29,10 +29,12 @@ import {
   ADMIN_DLSS_FSR_MODE_OPTIONS,
   ADMIN_FPS_GAME_OPTIONS,
   ADMIN_FPS_RESOLUTION_OPTIONS,
+  archiveListingRequestSchema,
   createListingRequestSchema,
   formatZodValidationError,
   listingWriteSchema,
   normalizeListingTags,
+  reorderListingsRequestSchema,
   updateListingRequestSchema,
 } from "./shared/adminListingContract.js";
 import {
@@ -5513,8 +5515,9 @@ const requireServiceRoleKey = (res) => {
 };
 
 const LISTING_SELECT_FIELDS =
-  "id, name, slug, legacy_id, description, image_url, price_cents, currency, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, rating, reviews_count, updated_at";
+  "id, name, slug, legacy_id, description, image_url, price_cents, currency, cpu, gpu, ram, storage, storage_type, tier, motherboard, psu, case_name, cpu_cooler, os, rating, reviews_count, sort_order, use, archived_at, updated_at";
 const LISTING_SORT_FIELD_MAP = {
+  sort_order: "sort_order",
   name: "name",
   updated_at: "updated_at",
   price_cents: "price_cents",
@@ -5933,6 +5936,20 @@ const persistListingState = async ({ req, user, productId, listing, fpsInput, us
     os: sanitizeText(parsedListing.os, 80) || null,
     updated_at: new Date(),
   };
+
+  /* Utelamnat falt betyder ror den inte.
+
+     Skillnaden mot null ar viktig har. Ett formular som inte kanner
+     till sort_order ska inte kasta om produktsidan bara for att
+     nagon rattade ett stavfel i namnet, och en arbetsstation ska
+     inte tyst bli speldator av samma skal. Darfor satts de bara nar
+     de faktiskt skickades med. */
+  if (parsedListing.sort_order !== undefined) {
+    payload.sort_order = parsedListing.sort_order;
+  }
+  if (parsedListing.use !== undefined) {
+    payload.use = parsedListing.use;
+  }
 
   const { data: product, error: updateError } = await supabase
     .from("products")
@@ -7336,6 +7353,158 @@ app.post("/api/admin/v2/listings/:productId/used-variant", async (req, res) => {
   }
 });
 
+/**
+ * PATCH /api/admin/v2/listings/order
+ *
+ * Flyttar kort på produktsidan.
+ *
+ * Ett anrop för hela listan i stället för en full sparning per kort.
+ * En dragning berör i praktiken alla rader mellan det gamla och det
+ * nya läget, och att skriva hela listningar för det hade inneburit
+ * tiotals skrivningar där varje enskild kan ta med sig ett annat
+ * fält på köpet. Här rörs bara sort_order.
+ *
+ * updated_at lämnas med flit i fred. Ordningen är inte en ändring av
+ * själva listningen, och skulle den räknas som det skulle varje
+ * dragning utlösa versionskonflikt för den som har formuläret öppet.
+ */
+app.patch("/api/admin/v2/listings/order", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const parsed = reorderListingsRequestSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      return jsonError(
+        res,
+        400,
+        "VALIDATION_FAILED",
+        "Ogiltig ordning.",
+        formatZodValidationError(parsed.error),
+      );
+    }
+
+    /* Samma id två gånger skulle ge två skrivningar där den sista
+       vinner, altså en ordning som inte är den man drog fram. */
+    const seen = new Set();
+    for (const row of parsed.data.order) {
+      if (seen.has(row.id)) {
+        return jsonError(res, 400, "DUPLICATE_ID", `Produkten ${row.id} finns med flera gånger.`);
+      }
+      seen.add(row.id);
+    }
+
+    for (const row of parsed.data.order) {
+      const { error } = await supabase
+        .from("products")
+        .update({ sort_order: row.sort_order })
+        .eq("id", row.id);
+      if (error) {
+        return jsonError(res, 500, "REORDER_FAILED", error.message || "Kunde inte spara ordningen.");
+      }
+    }
+
+    await logAdminAction(
+      req,
+      user,
+      "listing.reorder",
+      "product",
+      null,
+      { count: parsed.data.order.length },
+    );
+    return res.json({ ok: true, data: { count: parsed.data.order.length } });
+  } catch (error) {
+    console.error("Reorder listings error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
+
+/**
+ * POST /api/admin/v2/listings/:productId/archive
+ *
+ * Tar bort en listning från sajten, eller hämtar tillbaka den.
+ *
+ * Ingen rad raderas. En produkt som någon har köpt pekas ut av
+ * order_items, så en riktig delete antingen stoppas av främmande
+ * nyckel eller river med sig orderhistoriken - och då står det
+ * plötsligt "Produkt" i stället för maskinens namn på ett kvitto
+ * någon redan fått. Arkivering döljer den från sajten direkt och
+ * lämnar historiken i fred.
+ *
+ * Lagersaldot nollas på köpet. En arkiverad listning som ligger kvar
+ * med "3 i lager" dyker upp i adminportalens siffror och ser ut att
+ * vara säljbar.
+ */
+app.post("/api/admin/v2/listings/:productId/archive", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return jsonError(res, 400, "INVALID_PRODUCT_ID", "Ogiltigt produkt-id.");
+    }
+
+    const parsed = archiveListingRequestSchema.safeParse(req.body || {});
+    if (!parsed.success) {
+      return jsonError(
+        res,
+        400,
+        "VALIDATION_FAILED",
+        "Ange archived: true eller false.",
+        formatZodValidationError(parsed.error),
+      );
+    }
+
+    const archived = parsed.data.archived;
+    const { data: product, error } = await supabase
+      .from("products")
+      .update({ archived_at: archived ? new Date() : null, updated_at: new Date() })
+      .eq("id", productId)
+      .select(LISTING_SELECT_FIELDS)
+      .maybeSingle();
+
+    if (error) {
+      return jsonError(res, 500, "ARCHIVE_FAILED", error.message || "Kunde inte arkivera.");
+    }
+    if (!product) {
+      return jsonError(res, 404, "NOT_FOUND", "Listningen finns inte.");
+    }
+
+    if (archived) {
+      const { error: inventoryError } = await supabase
+        .from("inventory")
+        .update({ quantity_in_stock: 0, is_preorder: false })
+        .eq("product_id", productId);
+      if (inventoryError) {
+        console.warn("Kunde inte nolla lagret vid arkivering:", inventoryError.message);
+      }
+    }
+
+    await logAdminAction(
+      req,
+      user,
+      archived ? "listing.archive" : "listing.restore",
+      "product",
+      productId,
+      { name: product.name },
+    );
+    return res.json({ ok: true, data: product });
+  } catch (error) {
+    console.error("Archive listing error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
 app.put("/api/admin/v2/listings/:productId", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
