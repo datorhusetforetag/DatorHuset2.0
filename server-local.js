@@ -10220,6 +10220,24 @@ app.listen(PORT, () => {
       "Order emails: AV - SMTP_HOST, SMTP_PORT, SMTP_USER eller SMTP_PASS saknas. Kunder far INGEN orderbekraftelse.",
     );
   }
+  // Vilket Stripe-läge nyckeln hör till.
+  //
+  // Testkort som 4242 4242 4242 4242 fungerar bara mot en testnyckel,
+  // och riktiga kort bara mot en skarp. När ett kort nekas säger
+  // Stripe inte vilket av de två det handlade om, så raden nedan är
+  // snabbaste sättet att se vilket läge servern faktiskt kör i.
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("Stripe: AV - STRIPE_SECRET_KEY saknas. Ingen kassa.");
+  } else if (process.env.STRIPE_SECRET_KEY.startsWith("sk_live")) {
+    console.log("Stripe: SKARPT LAGE - riktiga kort och riktiga pengar. Testkort nekas.");
+  } else {
+    console.log("Stripe: TESTLAGE - testkort fungerar, riktiga kort nekas.");
+  }
+  if (!stripeWebhookSecret) {
+    console.error(
+      "Stripe webhook: AV - STRIPE_WEBHOOK_SECRET saknas. Betalningar blir aldrig ordrar och ingen bekraftelse gar ut.",
+    );
+  }
   if (SUPPORT_EMAIL_ENABLED) {
     console.log(`Support emails: PA (${SUPPORT_SMTP_HOST}, avsandare ${SUPPORT_SMTP_FROM})`);
   } else {
