@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getPreviewThemeOverride } from "@/lib/previewMode";
 
 type Theme = "light" | "dark";
 
@@ -45,8 +44,7 @@ const getPreferredTheme = (): Theme => {
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setThemeState] = useState<Theme>(() => getPreferredTheme());
-  const previewThemeOverride = getPreviewThemeOverride();
-  const effectiveTheme = previewThemeOverride || theme;
+  const effectiveTheme = theme;
 
   useEffect(() => {
     const root = document.documentElement;
@@ -58,7 +56,7 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     // Skriver inte till localStorage här. Det var precis det som gjorde att
     // alla fick "light" sparat utan att ha valt det. Sparandet sker i
     // setTheme, alltså bara när besökaren själv byter.
-  }, [effectiveTheme, previewThemeOverride, theme]);
+  }, [effectiveTheme]);
 
   /** Byter läge och sparar valet. Enda stället som skriver till lagringen. */
   const persistTheme = (next: Theme) => {

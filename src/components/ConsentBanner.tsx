@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { getConsentChoice, setConsentChoice } from "@/lib/consent";
 
 export function ConsentBanner() {
   const [choice, setChoice] = useState<"granted" | "denied" | null>(() => getConsentChoice());
-  const location = useLocation();
 
   useEffect(() => {
     const onConsentUpdate = (event: Event) => {
@@ -17,7 +15,7 @@ export function ConsentBanner() {
     return () => window.removeEventListener("datorhuset-consent-updated", onConsentUpdate);
   }, []);
 
-  if (choice || location.pathname === "/site-sandbox/preview") return null;
+  if (choice) return null;
 
   return (
     <div className="fixed inset-x-0 bottom-0 z-[90] p-4">

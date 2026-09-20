@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabaseClient';
-import { getPreviewAuthOverride } from '@/lib/previewMode';
 
 interface AuthContextType {
   session: Session | null;
@@ -20,7 +19,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const previewAuthOverride = getPreviewAuthOverride();
 
   useEffect(() => {
     // Get initial session
@@ -108,27 +106,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const mockPreviewUser =
-    previewAuthOverride === 'logged-in'
-      ? {
-          id: 'preview-user',
-          email: 'preview@datorhuset.se',
-          user_metadata: {
-            username: 'Previewkund',
-            full_name: 'Previewkund',
-          },
-          app_metadata: {},
-        /* Attrapp for forhandsvisningen i adminlaget, inte en riktig
-           inloggning. Den behover bara de falt granssnittet visar,
-           sa resten av User fylls inte i - darav casten. */
-        } as unknown as User
-      : null;
-  const effectiveSession = previewAuthOverride === 'logged-out' ? null : session;
-  const effectiveUser = previewAuthOverride === 'logged-out' ? null : user || mockPreviewUser;
-  const effectiveLoading = previewAuthOverride ? false : loading;
-
+  /* Här satt en attrapp som låtsades att någon var inloggad när
+     ?preview-auth=logged-in stod i adressen. Den fanns för
+     sandlådans förhandsvisning, men läste parametern utan att fråga
+     om man faktiskt var där - alltså gick den att sätta på den
+     riktiga sajten och få gränssnittet att visa en inloggning som
+     inte fanns. Sandlådan är borta, och attrappen med den. */
   return (
-    <AuthContext.Provider value={{ session: effectiveSession, user: effectiveUser, loading: effectiveLoading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut }}>
+    <AuthContext.Provider value={{ session, user, loading, signInWithGoogle, signInWithEmail, signUpWithEmail, resendSignupEmail, signOut }}>
       {children}
     </AuthContext.Provider>
   );

@@ -21,7 +21,6 @@ import { buildSearchCatalog, buildSearchState } from "@/lib/siteSearch";
 import { Wordmark } from "./Wordmark";
 import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
-import { getPreviewPathOverride } from "@/lib/previewMode";
 
 /**
  * Sidhuvudet: en rad.
@@ -156,11 +155,7 @@ export const Navbar = () => {
     [productLookup],
   );
 
-  const previewPathOverride = getPreviewPathOverride();
-  const effectivePathname = previewPathOverride
-    ? previewPathOverride.split("?")[0] || "/"
-    : location.pathname;
-  const shouldShowBackButton = effectivePathname !== "/";
+  const shouldShowBackButton = location.pathname !== "/";
   const isAdmin = Boolean(
     user?.app_metadata?.role === "admin" || user?.app_metadata?.is_admin,
   );

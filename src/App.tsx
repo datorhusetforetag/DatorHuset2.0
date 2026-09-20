@@ -9,7 +9,6 @@ import { ScrollToTop } from "./components/ScrollToTop";
 import { ConsentBanner } from "./components/ConsentBanner";
 import { AdminLayout } from "./admin/AdminLayout";
 import { AdminNotFound } from "./admin/AdminNotFound";
-import AdminSiteSandboxPreview from "./admin/pages/AdminSiteSandboxPreview.tsx";
 
 const Index = lazy(() => import("./pages/Index.tsx"));
 const Products = lazy(() => import("./pages/Products.tsx"));
@@ -32,7 +31,6 @@ const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy.tsx"));
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
 const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
-const AdminSiteSandbox = lazy(() => import("./admin/pages/AdminSiteSandbox.tsx"));
 const queryClient = new QueryClient();
 const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
 
@@ -59,10 +57,8 @@ const App = () => (
                     <Route path="produkter" element={<AdminProducts />} />
                     <Route path="bestallningar" element={<AdminOrders />} />
                     <Route path="bygg" element={<AdminOrders />} />
-                    <Route path="site-sandbox" element={<AdminSiteSandbox />} />
                     <Route path="logs" element={<AdminLogs />} />
                   </Route>
-                  <Route path="/site-sandbox/preview" element={<AdminSiteSandboxPreview />} />
                   <Route path="*" element={<AdminNotFound />} />
                 </>
               ) : (
