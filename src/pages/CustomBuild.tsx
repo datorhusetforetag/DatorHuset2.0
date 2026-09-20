@@ -5296,12 +5296,18 @@ export default function CustomBuild() {
                       >
                         {"F\u00e5 r\u00e5dgivning"}
                       </Link>
-                      <a
-                        href="https://datorhuset.se/service-reparation"
+                      {/* Knappen låg som <a> mot https://datorhuset.se och
+                          inte som <Link>. Den bredvid är en Link, så två
+                          knappar i samma rad betedde sig olika: den ena
+                          bytte sida i appen, den andra lämnade sajten man
+                          stod på. Från localhost eller datorhuset.site
+                          hamnade man alltså på den driftsatta sajten. */}
+                      <Link
+                        to="/service-reparation"
                         className="inline-flex items-center justify-center gap-2 rounded-lg bg-secondary px-4 py-2 font-semibold text-white transition-colors hover:bg-secondary"
                       >
                         Mejla oss
-                      </a>
+                      </Link>
                     </div>
                   </div>
                 </div>
