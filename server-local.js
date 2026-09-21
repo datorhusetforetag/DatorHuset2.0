@@ -5469,6 +5469,12 @@ const buildListingResponse = ({
     is_preorder: Boolean(inventoryRow?.is_preorder ?? inventoryRow?.allow_preorder),
     eta_days: inventoryRow?.eta_days ?? null,
     eta_note: inventoryRow?.eta_note || "",
+    /* Ordning, anvandning och arkivstatus. Valdes redan i
+       LISTING_SELECT_FIELDS men foll bort har, sa adminportalen fick
+       aldrig se dem. */
+    sort_order: product.sort_order ?? null,
+    use: product.use ?? null,
+    archived_at: product.archived_at ?? null,
     updated_at: product.updated_at || null,
     inventory_updated_at: inventoryRow?.updated_at || null,
     used_variant_enabled: parseUsedVariantSetting(usedVariantByProductId.get(product.id), true),

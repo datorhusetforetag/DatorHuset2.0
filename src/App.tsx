@@ -29,7 +29,7 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy.tsx"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService.tsx"));
 const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy.tsx"));
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
-const AdminProducts = lazy(() => import("./admin/pages/AdminProducts.tsx"));
+const AdminListings = lazy(() => import("./admin/pages/AdminListings.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
 const queryClient = new QueryClient();
 const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
@@ -52,9 +52,9 @@ const App = () => (
               {isAdminApp ? (
                 <>
                   <Route path="/" element={<AdminLayout />}>
-                    <Route index element={<AdminProducts />} />
-                    <Route path="lager" element={<AdminProducts />} />
-                    <Route path="produkter" element={<AdminProducts />} />
+                    <Route index element={<AdminListings />} />
+                    <Route path="lager" element={<AdminListings />} />
+                    <Route path="produkter" element={<AdminListings />} />
                     <Route path="bestallningar" element={<AdminOrders />} />
                     <Route path="bygg" element={<AdminOrders />} />
                     <Route path="logs" element={<AdminLogs />} />

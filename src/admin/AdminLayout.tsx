@@ -4,7 +4,7 @@ import { ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck
 import { useAdminAccess } from "./useAdminAccess";
 
 const navItems = [
-  { to: "/produkter", label: "Produkter & Lager", icon: LayoutGrid },
+  { to: "/produkter", label: "Listningar", icon: LayoutGrid },
   { to: "/bestallningar", label: "Beställningar", icon: ClipboardList },
   { to: "/logs", label: "Loggar", icon: ScrollText },
 ];
