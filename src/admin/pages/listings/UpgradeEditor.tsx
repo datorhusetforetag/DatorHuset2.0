@@ -141,9 +141,17 @@ export const UpgradeEditor = ({
     <div className="space-y-3">
       {error && <p className="text-xs text-rose-300">{error}</p>}
 
+      {/* Varför listan saknar en post är inte självklart, och en
+          rullgardin med ett saknat namn läses som ett fel. */}
+      <p className="text-xs leading-relaxed text-slate-500">
+        En uppgradering är en <em>annan</em> produkt som kunden köper i
+        stället för den här. Därför står inte listningen du redigerar med i
+        listan, och inte heller de du redan valt.
+      </p>
+
       {value.length === 0 && (
         <p className="text-xs leading-relaxed text-slate-500">
-          Inga uppgraderingar. Lägg till en så får kunden välja mellan
+          Inga uppgraderingar satta. Lägg till en så får kunden välja mellan
           grundmaskinen och en dyrare variant på produktsidan.
         </p>
       )}
@@ -159,7 +167,7 @@ export const UpgradeEditor = ({
               <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
                 <label className="block">
                   <span className="mb-1 block text-[10px] font-bold uppercase tracking-wide text-slate-500">
-                    Produkt
+                    Kunden köper i stället
                   </span>
                   <select
                     value={upgrade.product_id}
@@ -264,9 +272,16 @@ export const UpgradeEditor = ({
         Lägg till uppgradering
       </button>
 
+      {available.length === 0 && value.length > 0 && (
+        <p className="text-[11px] text-slate-500">
+          Alla andra listningar är redan valda. Skapa en ny listning för den
+          uppgraderade maskinen om du vill ha fler.
+        </p>
+      )}
+
       <p className="text-[11px] leading-relaxed text-slate-500">
-        Varje uppgradering är en egen produkt. Kunden köper den i stället för
-        grundmaskinen, och priset kommer från produkten - inte härifrån.
+        Priset kommer från produkten, inte härifrån. Ändrar du priset på den
+        uppgraderade maskinen syns det direkt på produktsidan.
       </p>
     </div>
   );
