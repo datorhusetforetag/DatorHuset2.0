@@ -3694,3 +3694,618 @@
     transition: none;
   }
 }
+
+/* =================================================================
+ * Startsidans band: service och custom bygg som 8-bitarsscener
+ *
+ * Paletten är densamma som orderstapelns byggare. Det är samma person
+ * och samma verkstad - kunden ska känna igen honom när datorn väl
+ * byggs.
+ *
+ * Varje övergång är ett hårt klipp, inte en toning. steps(1) överallt.
+ * En mjuk toning mellan två pixellägen läser som att sidan hakat upp
+ * sig; ett klipp läser som en bildruta.
+ * ================================================================= */
+
+.promo-scene {
+  position: relative;
+  width: 100%;
+  max-width: 22rem;
+  margin-inline: auto;
+}
+
+.promo-scene__svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+/* Ett svagt sken bakom scenen, i bandets egen kulör. Utan det ligger
+   den mörka pixelkonsten och flyter ut i den mörka duken. */
+.promo-scene::before {
+  content: "";
+  position: absolute;
+  inset: -14% -10%;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    52% 48% at 50% 55%,
+    var(--ps-halo, rgba(63, 217, 245, 0.2)) 0%,
+    transparent 72%
+  );
+}
+
+.promo-scene__svg {
+  position: relative;
+  z-index: 1;
+}
+
+.promo-scene[data-kind="service"] {
+  --ps-halo: rgba(63, 217, 245, 0.22);
+}
+.promo-scene[data-kind="build"] {
+  --ps-halo: rgba(178, 107, 222, 0.24);
+}
+
+/* Paletten ------------------------------------------------------ */
+
+.promo-scene .ps-floor {
+  fill: rgba(12, 16, 28, 0.55);
+}
+.promo-scene .ps-desk {
+  fill: #5a4632;
+}
+.promo-scene .ps-desk-leg {
+  fill: #3e3022;
+}
+.promo-scene .ps-chair {
+  fill: #2b3347;
+}
+.promo-scene .ps-chair-post {
+  fill: #3a4459;
+}
+.promo-scene .ps-chair-base {
+  fill: #2b3347;
+}
+.promo-scene .ps-monitor {
+  fill: #2a3242;
+}
+.promo-scene .ps-hair {
+  fill: #3b2d22;
+}
+.promo-scene .ps-skin {
+  fill: #e0a074;
+}
+.promo-scene .ps-eye {
+  fill: #101524;
+}
+.promo-scene .ps-overall {
+  fill: #2f6fb5;
+}
+.promo-scene .ps-strap {
+  fill: #1d4b7e;
+}
+.promo-scene .ps-boot {
+  fill: #4a3626;
+}
+.promo-scene .ps-tool {
+  fill: #8a8f9c;
+}
+.promo-scene .ps-hammer-head {
+  fill: #6b7280;
+}
+.promo-scene .ps-hammer-dark {
+  fill: #4b5260;
+}
+.promo-scene .ps-case {
+  fill: #1b2130;
+}
+.promo-scene .ps-glass {
+  fill: #0e1220;
+}
+.promo-scene .ps-board {
+  fill: #1f5c3a;
+}
+.promo-scene .ps-chip {
+  fill: #c9a227;
+}
+.promo-scene .ps-fan {
+  fill: #39404f;
+}
+.promo-scene .ps-cooler {
+  fill: #4b5260;
+}
+.promo-scene .ps-ram {
+  fill: #2a3242;
+}
+.promo-scene .ps-gpu {
+  fill: #232a3a;
+}
+.promo-scene .ps-gpu-fan {
+  fill: #121724;
+}
+.promo-scene .ps-glow {
+  fill: #3fd9f5;
+}
+.promo-scene .ps-panel {
+  fill: rgba(120, 190, 235, 0.1);
+}
+.promo-scene .ps-sheen {
+  fill: rgba(190, 230, 255, 0.12);
+}
+
+/* Service: en kväll i sex takter -------------------------------- */
+
+/*
+ * Allt nedan delar ett varv på 18 sekunder och samma procenttal, så
+ * skärmen, gubben och gnistorna byter läge i samma ögonblick.
+ *
+ *   0-16%   sitter, skärmen blå
+ *  16-33%   bankar på burken
+ *  33-44%   sitter igen, skärmen svart
+ *  44-61%   bankar en gång till
+ *  61-78%   sitter och skriver kod, grön text
+ *  78-90%   den startar
+ *  90-100%  blå igen, och om igen
+ */
+
+.promo-scene .ps-screen {
+  fill: #2a5bd7;
+  animation: ps-screen-state 18s steps(1) infinite;
+}
+
+@keyframes ps-screen-state {
+  0% {
+    fill: #2a5bd7;
+  }
+  16% {
+    fill: #05080f;
+  }
+  61% {
+    fill: #06130c;
+  }
+  78% {
+    fill: #0b2030;
+  }
+  90% {
+    fill: #2a5bd7;
+  }
+}
+
+/* Innehållet på skärmen. Varje lager syns bara i sin takt. */
+.promo-scene .ps-face {
+  opacity: 0;
+}
+.promo-scene .ps-face--blue {
+  animation: ps-show-blue 18s steps(1) infinite;
+}
+.promo-scene .ps-face--code {
+  animation: ps-show-code 18s steps(1) infinite;
+}
+.promo-scene .ps-face--boot {
+  animation: ps-show-boot 18s steps(1) infinite;
+}
+
+@keyframes ps-show-blue {
+  0% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 0;
+  }
+  90% {
+    opacity: 1;
+  }
+}
+@keyframes ps-show-code {
+  0% {
+    opacity: 0;
+  }
+  61% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0;
+  }
+}
+@keyframes ps-show-boot {
+  0% {
+    opacity: 0;
+  }
+  78% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 0;
+  }
+}
+
+.promo-scene .ps-bsod-ink {
+  fill: #cfe0ff;
+}
+.promo-scene .ps-code {
+  fill: #4ade80;
+  opacity: 0;
+}
+.promo-scene .ps-boot-window {
+  fill: #123449;
+}
+.promo-scene .ps-boot-bar {
+  fill: #3fd9f5;
+}
+.promo-scene .ps-boot-line {
+  fill: #7fb4cc;
+}
+
+/* Raderna kommer en i taget inom kodtakten, så det ser ut som att
+   någon skriver och inte som att en färdig fil klistras in.
+   Fördröjningen skjuter fram varje rad; fönstret nedan släcker dem
+   allihop när takten är slut. */
+.promo-scene .ps-code--1 {
+  animation: ps-type-1 18s steps(1) infinite;
+}
+.promo-scene .ps-code--2 {
+  animation: ps-type-2 18s steps(1) infinite;
+}
+.promo-scene .ps-code--3 {
+  animation: ps-type-3 18s steps(1) infinite;
+}
+.promo-scene .ps-code--4 {
+  animation: ps-type-4 18s steps(1) infinite;
+}
+.promo-scene .ps-code--5 {
+  animation: ps-type-5 18s steps(1) infinite;
+}
+
+/* Varje rad tänds vid sin tidpunkt och släcks när takten är slut,
+   så nästa varv börjar med tom skärm igen.
+
+   Fem nästan lika nyckelrutor är fulare än en fördröjning, men den
+   här gången stämmer de. En negativ fördröjning gav ett fönster på
+   6,3 sekunder när takten bara är 2,7 lång - raderna hade slocknat
+   i otakt med allt annat. */
+@keyframes ps-type-1 {
+  0% {
+    opacity: 0;
+  }
+  63% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0;
+  }
+}
+@keyframes ps-type-2 {
+  0% {
+    opacity: 0;
+  }
+  66% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0;
+  }
+}
+@keyframes ps-type-3 {
+  0% {
+    opacity: 0;
+  }
+  69% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0;
+  }
+}
+@keyframes ps-type-4 {
+  0% {
+    opacity: 0;
+  }
+  72% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0;
+  }
+}
+@keyframes ps-type-5 {
+  0% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 0;
+  }
+}
+
+/* Gubben: sittande i tre av takterna, stående i två. */
+.promo-scene .ps-actor--sitting {
+  animation: ps-sit 18s steps(1) infinite;
+}
+.promo-scene .ps-actor--standing {
+  opacity: 0;
+  animation: ps-stand 18s steps(1) infinite;
+}
+
+@keyframes ps-sit {
+  0% {
+    opacity: 1;
+  }
+  16% {
+    opacity: 0;
+  }
+  33% {
+    opacity: 1;
+  }
+  44% {
+    opacity: 0;
+  }
+  61% {
+    opacity: 1;
+  }
+}
+@keyframes ps-stand {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 0;
+  }
+  44% {
+    opacity: 1;
+  }
+  61% {
+    opacity: 0;
+  }
+}
+
+/* Armbågarna guppar medan han skriver. En pixel upp och ned - mer än
+   så ser ut som att han slår på tangentbordet. */
+.promo-scene .ps-typing {
+  animation: ps-typing 0.34s steps(2) infinite;
+}
+@keyframes ps-typing {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(1px);
+  }
+}
+
+/* Hammaren svänger kring axeln: långsamt lyft, snabbt slag, liten
+   studs. Ett jämnt fram och tillbaka läses som en vinkande arm. */
+.promo-scene .ps-hammer {
+  transform-origin: 41px 15px;
+  animation: ps-hammer 0.62s cubic-bezier(0.4, 0, 0.7, 1) infinite;
+}
+@keyframes ps-hammer {
+  0% {
+    transform: rotate(-42deg);
+  }
+  45% {
+    transform: rotate(-46deg);
+  }
+  58% {
+    transform: rotate(6deg);
+  }
+  66% {
+    transform: rotate(-2deg);
+  }
+  100% {
+    transform: rotate(-42deg);
+  }
+}
+
+/* Gnistorna sprutar bara när han faktiskt bankar. Grinden går på
+   scenens 18-sekundersvarv - samma som den stående gubben - och
+   flykten på hammarens egna 0,62. */
+.promo-scene .ps-sparks {
+  opacity: 0;
+  animation: ps-stand 18s steps(1) infinite;
+}
+
+.promo-scene .ps-spark {
+  fill: #ff8a2b;
+  opacity: 0;
+  animation: ps-spark 0.62s ease-out infinite;
+}
+
+/* Gnistan uppstår i samma ögonblick som hammaren träffar, alltså vid
+   58 procent av dess varv, och slocknar innan lyftet börjar. */
+@keyframes ps-spark {
+  0%,
+  56% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    transform: translate(var(--sx), var(--sy));
+    opacity: 0;
+  }
+}
+
+/* Custom bygg: fem bildrutor ------------------------------------ */
+
+/*
+ * Ett varv på 11 sekunder. Delarna läggs i en i taget och blir kvar
+ * tills varvet är slut, så bilden byggs upp i stället för att blinka.
+ *
+ *   0-18%   tomt chassi
+ *  18-38%   moderkortet
+ *  38-56%   kylaren och minnet
+ *  56-74%   grafikkortet
+ *  74-100%  glaset på och lysdioderna igång
+ */
+
+.promo-scene .ps-part {
+  opacity: 0;
+}
+
+.promo-scene .ps-part--board {
+  animation: ps-drop-board 11s infinite;
+}
+.promo-scene .ps-part--cooler {
+  animation: ps-drop-cooler 11s infinite;
+}
+.promo-scene .ps-part--ram {
+  animation: ps-drop-ram 11s infinite;
+}
+.promo-scene .ps-part--gpu {
+  animation: ps-slide-gpu 11s infinite;
+}
+.promo-scene .ps-part--panel {
+  animation: ps-panel 11s steps(1) infinite;
+}
+
+/* Delen faller ned på sin plats och blir kvar. Fallet är kort och
+   hårt - den ska landa, inte sväva ned. */
+@keyframes ps-drop-board {
+  0%,
+  17.9% {
+    opacity: 0;
+    transform: translateY(-7px);
+  }
+  18% {
+    opacity: 1;
+    transform: translateY(-7px);
+  }
+  23% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ps-drop-cooler {
+  0%,
+  37.9% {
+    opacity: 0;
+    transform: translateY(-7px);
+  }
+  38% {
+    opacity: 1;
+    transform: translateY(-7px);
+  }
+  43% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Minnet kommer en halv takt efter kylaren, så de två inte landar i
+   samma bildruta. */
+@keyframes ps-drop-ram {
+  0%,
+  43.9% {
+    opacity: 0;
+    transform: translateY(-7px);
+  }
+  44% {
+    opacity: 1;
+    transform: translateY(-7px);
+  }
+  49% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Grafikkortet skjuts in från sidan i stället för uppifrån - det är så
+   det sätts i, och skillnaden i riktning gör att de fyra delarna inte
+   ser ut att komma från samma ställe. */
+@keyframes ps-slide-gpu {
+  0%,
+  55.9% {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  56% {
+    opacity: 1;
+    transform: translateX(14px);
+  }
+  62% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ps-panel {
+  0% {
+    opacity: 0;
+  }
+  74% {
+    opacity: 1;
+  }
+}
+
+/* Lysdioderna vandrar genom märkets kulörer när glaset väl sitter. */
+.promo-scene .ps-rgb {
+  fill: #3fd9f5;
+  animation: ps-rgb 3.2s steps(1) infinite;
+}
+@keyframes ps-rgb {
+  0% {
+    fill: #3fd9f5;
+  }
+  33% {
+    fill: #b26bde;
+  }
+  66% {
+    fill: #f0a52b;
+  }
+}
+
+/*
+ * Mindre rörelse.
+ *
+ * Scenerna är utsmyckning - rubriken och texten säger allt som behövs -
+ * så allt stannar i stället för att sakta ned. Lägena som väljs är de
+ * som ser färdiga ut: datorn som startat, och bygget som är klart. En
+ * halvbyggd dator eller en fryst blåskärm ser ut som ett fel på sidan.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .promo-scene * {
+    animation: none !important;
+  }
+
+  .promo-scene .ps-screen {
+    fill: #0b2030;
+  }
+  .promo-scene .ps-face--boot,
+  .promo-scene .ps-actor--sitting,
+  .promo-scene .ps-part {
+    opacity: 1;
+  }
+  .promo-scene .ps-face--blue,
+  .promo-scene .ps-face--code,
+  .promo-scene .ps-actor--standing,
+  .promo-scene .ps-sparks {
+    opacity: 0;
+  }
+}
