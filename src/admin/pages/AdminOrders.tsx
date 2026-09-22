@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Truck, Wrench } from "lucide-react";
+import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Truck } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
+import { StatusScene, type StatusKey } from "./orders/StatusScene";
 import {
   CARRIER_LABELS,
   getOrderStatusInfo,
@@ -428,12 +429,20 @@ export default function AdminOrders() {
                   <h3 className="text-lg font-semibold text-white">#{orderNumber}</h3>
                   <p className="text-sm text-slate-400">Beställd: {orderDate}</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Totalt</p>
-                  <p className="text-lg font-semibold text-white">{formatCurrency(total)}</p>
-                  <div className="mt-2 inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-xs text-slate-200">
-                    <Wrench className="h-3.5 w-3.5 text-primary" />
-                    {statusInfo.label}
+                {/* Statusen som en scen i stället för en etikett.
+
+                    En textremsa säger vilket steg ordern står på men
+                    ingenting om vad som händer där. Scenen säger båda:
+                    stapeln hur långt den kommit, det som rör sig vad
+                    steget innebär. */}
+                <div className="flex flex-wrap items-start justify-end gap-6">
+                  <StatusScene
+                    status={(statusInfo.value || "received") as StatusKey}
+                    label={statusInfo.label}
+                  />
+                  <div className="text-right">
+                    <p className="text-xs uppercase tracking-[0.3em] text-slate-500">Totalt</p>
+                    <p className="text-lg font-semibold text-white">{formatCurrency(total)}</p>
                   </div>
                 </div>
               </div>

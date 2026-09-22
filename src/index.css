@@ -2970,3 +2970,587 @@
   line-height: 1.2;
   color: hsl(var(--muted-foreground));
 }
+
+/* Statusscenerna i adminportalen -----------------------------------
+ *
+ * Varje byggstatus har en egen liten scen ovanför stapeln. Textremsan
+ * sa vilket steg ordern stod på men ingenting om vad som händer där;
+ * scenen säger båda på en gång.
+ *
+ * Byggaren är samma figur och samma kulörer som svetsaren på
+ * produktsidan. Det är meningen att det ska vara samma person.
+ */
+
+.scene {
+  --sc-hot: #ff8a2b;
+  --sc-ink: #cbd5e1;
+
+  width: 100%;
+  min-width: 11rem;
+}
+
+/* Scenen. overflow: visible så gnistor, sedlar och fågeln får lämna
+   rutan - något som klipps mot en kant läses som ett fel. */
+.scene__stage {
+  position: relative;
+  height: 3rem;
+  overflow: visible;
+}
+
+.scene__actor {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.scene__figure {
+  display: block;
+  height: 3rem;
+  width: auto;
+  overflow: visible;
+}
+
+/* Pixlarna. Samma palett som CapacityBar, så personen känns igen. */
+.scene .px-hardhat {
+  fill: #f0a52b;
+}
+.scene .px-helmet {
+  fill: #2f3a4d;
+}
+.scene .px-visor {
+  fill: var(--sc-hot);
+}
+.scene .px-overall {
+  fill: #2f6fb5;
+}
+.scene .px-strap {
+  fill: #1d4b7e;
+}
+.scene .px-skin {
+  fill: #e0a074;
+}
+.scene .px-boot {
+  fill: #4a3626;
+}
+.scene .px-eye {
+  fill: #101524;
+}
+.scene .px-tool {
+  fill: #8a8f9c;
+}
+.scene .px-hammer {
+  fill: #6b7280;
+}
+.scene .px-case {
+  fill: #1b2130;
+}
+.scene .px-glass {
+  fill: #0e1220;
+}
+.scene .px-board {
+  fill: #1f5c3a;
+}
+.scene .px-chip {
+  fill: #c9a227;
+}
+.scene .px-fan {
+  fill: #39404f;
+}
+
+/* Betald -------------------------------------------------------- */
+
+.scene__bill {
+  position: absolute;
+  bottom: 0;
+  width: 0.75rem;
+  opacity: 0;
+  animation-name: sc-bill;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-out;
+}
+
+.scene .px-bill {
+  fill: #1f5c3a;
+}
+.scene .px-bill-inner {
+  fill: #2f8f56;
+}
+.scene .px-bill-mark {
+  fill: #d7f2df;
+}
+
+/* Sedeln stiger, driver i sidled och snurrar. Driften och rotationen
+   sätts per sedel, så de inte flyger i formation. */
+@keyframes sc-bill {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--drift, 0), -2.9rem) rotate(var(--spin, 180deg));
+    opacity: 0;
+  }
+}
+
+/* Bygger -------------------------------------------------------- */
+
+/* Hammaren svingar kring axeln, inte kring mitten - därav origin. */
+.scene__hammer {
+  transform-origin: 11px 10px;
+  animation: sc-hammer 0.62s ease-in-out infinite;
+}
+
+@keyframes sc-hammer {
+  0%,
+  100% {
+    transform: rotate(-24deg);
+  }
+  /* Slaget är snabbt och uppehållet långt, som ett riktigt hammartag. */
+  55% {
+    transform: rotate(6deg);
+  }
+  70% {
+    transform: rotate(0deg);
+  }
+}
+
+.scene__sparks {
+  position: absolute;
+  left: 62%;
+  bottom: 1.6rem;
+  width: 0;
+  height: 0;
+}
+
+.scene__spark {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--sc-hot);
+  box-shadow: 0 0 5px var(--sc-hot);
+  opacity: 0;
+  animation: sc-spark 0.62s ease-out infinite;
+}
+
+/* Gnistorna följer hammarens takt - de uppstår vid slaget, inte hela
+   tiden. Varje har sin egen riktning via nth-child. */
+.scene__spark:nth-child(1) {
+  --sx: 14px;
+  --sy: -12px;
+}
+.scene__spark:nth-child(2) {
+  --sx: -11px;
+  --sy: -9px;
+}
+.scene__spark:nth-child(3) {
+  --sx: 18px;
+  --sy: 3px;
+}
+.scene__spark:nth-child(4) {
+  --sx: -16px;
+  --sy: -2px;
+}
+.scene__spark:nth-child(5) {
+  --sx: 5px;
+  --sy: -16px;
+}
+
+@keyframes sc-spark {
+  0%,
+  50% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  58% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--sx), var(--sy));
+    opacity: 0;
+  }
+}
+
+/* Post-bygg ----------------------------------------------------- */
+
+.scene .px-desk {
+  fill: #5a4632;
+}
+.scene .px-desk-leg {
+  fill: #3e3022;
+}
+.scene .px-monitor {
+  fill: #2a3242;
+}
+.scene .px-screen {
+  fill: #06131f;
+}
+.scene .px-bios {
+  fill: #5eead4;
+  opacity: 0;
+}
+.scene .px-bios-cursor {
+  fill: #5eead4;
+  animation: sc-blink 1s step-end infinite 2.4s;
+}
+
+/* Raderna skrivs ut en i taget, som en självtest som räknar igenom. */
+.scene .bios-1 {
+  animation: sc-type 3.2s steps(1) infinite 0s;
+}
+.scene .bios-2 {
+  animation: sc-type 3.2s steps(1) infinite 0.5s;
+}
+.scene .bios-3 {
+  animation: sc-type 3.2s steps(1) infinite 1s;
+}
+.scene .bios-4 {
+  animation: sc-type 3.2s steps(1) infinite 1.5s;
+}
+
+@keyframes sc-type {
+  0% {
+    opacity: 0;
+  }
+  8%,
+  88% {
+    opacity: 1;
+  }
+  92%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes sc-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Klar för leverans --------------------------------------------- */
+
+.scene .px-box {
+  fill: #b98a4f;
+}
+.scene .px-box-lid {
+  fill: #d4a366;
+}
+.scene .px-tape {
+  fill: #e7d6bb;
+}
+
+/* Fliken viks ned och upp igen: han packar, gång på gång. */
+.scene__box-flap {
+  transform-origin: 17px 12px;
+  animation: sc-flap 2.6s ease-in-out infinite;
+}
+
+@keyframes sc-flap {
+  0%,
+  30% {
+    transform: rotate(-70deg);
+  }
+  50%,
+  80% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(-70deg);
+  }
+}
+
+/* Armarna går ned mot lådan i samma takt. */
+.scene__packing-arms {
+  transform-origin: 11px 11px;
+  animation: sc-pack 2.6s ease-in-out infinite;
+}
+
+@keyframes sc-pack {
+  0%,
+  30% {
+    transform: rotate(-8deg);
+  }
+  50%,
+  80% {
+    transform: rotate(22deg);
+  }
+  100% {
+    transform: rotate(-8deg);
+  }
+}
+
+/* Skickad ------------------------------------------------------- */
+
+.scene .px-truck-body {
+  fill: #e2e8f0;
+}
+.scene .px-truck-cab {
+  fill: #2f6fb5;
+}
+.scene .px-truck-window {
+  fill: #9fd4ef;
+}
+.scene .px-truck-logo {
+  fill: #b26bde;
+}
+.scene .px-tyre {
+  fill: #1a1f2b;
+}
+.scene .px-hub {
+  fill: #94a3b8;
+}
+
+/* Lastbilen guppar en aning, som på en ojämn väg. */
+.scene__actor--truck {
+  animation: sc-drive 0.5s ease-in-out infinite;
+}
+
+@keyframes sc-drive {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-1px);
+  }
+}
+
+/* Hjulen snurrar kring sin egen mitt. Navet gör rotationen synlig -
+   utan det ser en fyrkant som snurrar ut som en fyrkant som står still. */
+.scene__wheel {
+  animation: sc-roll 0.42s linear infinite;
+}
+.scene__wheel--rear {
+  transform-origin: 6.5px 17.5px;
+}
+.scene__wheel--front {
+  transform-origin: 23.5px 17.5px;
+}
+
+@keyframes sc-roll {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.scene__speed {
+  position: absolute;
+  right: 100%;
+  bottom: 0.8rem;
+  width: 2rem;
+  height: 1rem;
+}
+
+.scene__speed-line {
+  position: absolute;
+  height: 1px;
+  width: 0.7rem;
+  background: var(--sc-ink);
+  opacity: 0;
+  animation: sc-speed 0.7s linear infinite;
+}
+
+.scene__speed-line:nth-child(1) {
+  top: 0.15rem;
+}
+.scene__speed-line:nth-child(2) {
+  top: 0.45rem;
+  width: 1rem;
+}
+.scene__speed-line:nth-child(3) {
+  top: 0.75rem;
+}
+
+@keyframes sc-speed {
+  0% {
+    transform: translateX(1.5rem);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.55;
+  }
+  100% {
+    transform: translateX(-1rem);
+    opacity: 0;
+  }
+}
+
+/* Levererad ----------------------------------------------------- */
+
+.scene .px-post {
+  fill: #5a4632;
+}
+.scene .px-mailbox {
+  fill: #37527a;
+}
+.scene .px-mailbox-top {
+  fill: #4a6b9c;
+}
+.scene .px-mailbox-slot {
+  fill: #0e1220;
+}
+.scene .px-flagpole {
+  fill: #8a8f9c;
+}
+.scene .px-flag {
+  fill: #e0484b;
+}
+.scene .px-bird {
+  fill: #3f4a5f;
+}
+.scene .px-beak {
+  fill: #f0a52b;
+}
+.scene .px-leg {
+  fill: #f0a52b;
+}
+
+.scene__actor--mailbox {
+  left: 0.75rem;
+  transform: none;
+}
+
+/*
+ * Fågeln.
+ *
+ * Den sitter på brevlådan, lyfter, landar någonstans på stapeln och
+ * återvänder. Landningspunkten slumpas per order via --target, så två
+ * rader i listan aldrig flyger samma väg.
+ *
+ * Banan är byggd med translate i två steg i stället för en båge:
+ * uppflyg, sväv, landning, paus, och samma väg tillbaka. Det räcker för
+ * att läsas som en fågel utan att bli en simulering.
+ */
+.scene__bird {
+  position: absolute;
+  bottom: 1.6rem;
+  left: 1rem;
+  width: 0.6rem;
+  animation: sc-bird 7s ease-in-out infinite;
+}
+
+.scene__wing {
+  transform-origin: 3px 2px;
+  animation: sc-wing 0.22s ease-in-out infinite;
+}
+
+@keyframes sc-wing {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes sc-bird {
+  /* Sitter på lådan */
+  0%,
+  12% {
+    transform: translate(0, 0);
+  }
+  /* Lyfter */
+  22% {
+    transform: translate(calc(var(--target) * 0.35), calc(var(--peak) * -1));
+  }
+  /* Landar på stapeln */
+  34%,
+  58% {
+    transform: translate(var(--target), 0.9rem);
+  }
+  /* Tillbaka i luften */
+  70% {
+    transform: translate(calc(var(--target) * 0.5), calc(var(--peak) * -1));
+  }
+  /* Hemma igen */
+  82%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+/* Stapeln och etiketten ------------------------------------------ */
+
+.scene__track {
+  position: relative;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: rgb(148 163 184 / 0.18);
+  overflow: hidden;
+}
+
+.scene__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #3fd9f5 0%, #b26bde 100%);
+  transition: width 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scene__label {
+  margin-top: 0.4rem;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--sc-ink);
+}
+
+.scene__step {
+  font-size: 0.6875rem;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+  color: rgb(148 163 184 / 0.75);
+}
+
+/*
+ * Mindre rörelse.
+ *
+ * Scenerna är utsmyckning och inte information - stapeln och texten
+ * säger allt som behövs. Därför stannar allt som rör sig, i stället för
+ * att sakta ned. Fågeln och sedlarna göms helt: en fågel som fastnat
+ * mitt i luften ser trasig ut.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .scene__hammer,
+  .scene__spark,
+  .scene__box-flap,
+  .scene__packing-arms,
+  .scene__wheel,
+  .scene__actor--truck,
+  .scene__speed-line,
+  .scene .px-bios,
+  .scene .px-bios-cursor,
+  .scene__wing {
+    animation: none;
+  }
+
+  .scene .px-bios {
+    opacity: 1;
+  }
+
+  .scene__bill,
+  .scene__bird,
+  .scene__speed {
+    display: none;
+  }
+
+  .scene__fill {
+    transition: none;
+  }
+}
