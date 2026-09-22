@@ -23,23 +23,32 @@
  */
 
 /*
- * Gnistorna från slaget.
+ * Gnistorna från slaget. Alla är en enda pixel.
  *
- * Sexton stycken som far en bit och slocknar. Det här är skuren kring
- * bänken - de som går hela vägen över bilden är FLYERS längre ned, och
- * de är bara tre. Låter man alla sexton gå tvärs över blir det ett
- * fyrverkeri i stället för ett hammarslag.
+ * DE LÅNGA VAR FÖRST NÅGOT ANNAT
  *
- * Riktning, längd och fördröjning sätts per gnista och är skrivna
- * för hand i stället för slumpade. Slumpen ger klungor - fyra åt
- * samma håll och ingen åt det andra - och en lista som är läst en
- * gång ser ut som en explosion varje gång.
+ * Tre breda strimmor med svans skulle gå tvärs över bilden. De såg
+ * inte ut som gnistor utan som pinnar som svävade i luften - en
+ * strimma på tjugosex pixlar är en tredjedel av bildens bredd, och i
+ * den storleken läser ögat den som ett föremål och inte som en
+ * partikel.
+ *
+ * Nu finns bara en sorts gnista, och den är en pixel stor. Skillnaden
+ * mellan en kort och en lång är hur ofta den kommer och hur långt den
+ * når - inte hur den ser ut. En prick som far tvärs över bilden läser
+ * som en gnista; en stav som gör det gör inte det.
+ *
+ * Sexton kommer vid varje slag och far en handsbredd. Fem kommer
+ * sällan, var annat till var sjunde slag, och går hela vägen ut genom
+ * kanten. Se every i typen ovan.
+ *
+ * Riktning, längd och fördröjning är skrivna för hand i stället för
+ * slumpade. Slumpen ger klungor - fyra åt samma håll och ingen åt det
+ * andra - och en lista som är läst igenom en gång ser ut som en
+ * explosion varje gång.
  *
  * hot = den vitheta kärnan närmast slaget. Utan ett par sådana blir
  * allt samma orangea nyans och skuren ser platt ut.
- *
- * Det här är närskuren - skräpet som far en bit och landar. De som
- * går tvärs över bilden är något annat, se FLYERS nedan.
  */
 type Spark = {
   x: number;
@@ -48,6 +57,18 @@ type Spark = {
   dy: number;
   delay: number;
   hot?: boolean;
+  /*
+   * Hur många hammarslag mellan varje gång den kommer.
+   *
+   * Utelämnad betyder varje slag - det är närskuren. Ett tal här gör
+   * gnistan sällsynt, och då får den räckvidd i utbyte: den far tvärs
+   * över bilden i stället för en handsbredd.
+   *
+   * Talen 2, 3, 4, 5 och 7 går inte jämnt upp i varandra, så de långa
+   * sammanfaller sällan. Ett slag ger noll eller någon enstaka, aldrig
+   * alla fem, och det utan att någon slump behöver hålla dem isär.
+   */
+  every?: 2 | 3 | 4 | 5 | 7;
 };
 
 /*
@@ -81,63 +102,15 @@ const SPARKS: Spark[] = [
   { x: 47, y: 13, dx: 12, dy: 4, delay: 0 },
   { x: 48, y: 13, dx: -15, dy: -10, delay: 0.03 },
   { x: 47, y: 11, dx: 4, dy: 18, delay: 0.02 },
+
+  /* De sällsynta. Samma pixel, mycket längre bana. */
+  { x: 47, y: 11, dx: -38, dy: -12, delay: 0, every: 2 },
+  { x: 47, y: 11, dx: -52, dy: 8, delay: 0, every: 3, hot: true },
+  { x: 48, y: 11, dx: 24, dy: -30, delay: 0, every: 4 },
+  { x: 47, y: 12, dx: -58, dy: -6, delay: 0, every: 5, hot: true },
+  { x: 47, y: 11, dx: -34, dy: 26, delay: 0, every: 7 },
 ];
 
-/*
- * De som går hela vägen.
- *
- * En eller två åt gången, inte sexton. Far allt tvärs över bilden blir
- * det ett fyrverkeri; far en enda det medan resten stannar vid bänken
- * blir den en gnista man följer med blicken.
- *
- * VARFÖR DE INTE KOMMER SAMTIDIGT
- *
- * Var och en har en omloppstid som är ett helt antal hammarslag -
- * tre, fyra och fem. De startar alltså alltid på ett slag, men på
- * olika slag, och eftersom 3, 4 och 5 inte går jämnt upp i varandra
- * sammanfaller de sällan. Ingen slump behövs för att hålla dem isär.
- *
- * SVANSEN, OCH VARFÖR VRIDNINGEN LIGGER I ATTRIBUTET
- *
- * Strimman är ritad liggande, med huvudet i origo och svansen ut åt
- * +x - alltså en gnista på väg åt vänster. En vridning pekar den åt
- * sitt verkliga håll, och den måste ske kring huvudet.
- *
- * Vridningen stod först i CSS, och då hamnade den fel. CSS räknar
- * transform-origin från 50% 50%, och för ett svg-element mäts de
- * procenten mot viewBox-rutan - inte mot strimman. Den vreds alltså
- * kring bildens mitt: den brantaste av de tre startade nere vid
- * golvet mitt i bilden i stället för vid hammaren.
- *
- * Som svg-attribut finns ingen procenträkning. rotate() utgår från
- * (0, 0) i gruppens eget koordinatsystem, och det ligger i
- * träffpunkten tack vare translate på gruppen utanför. Alltså kring
- * huvudet, vilket är det enda stället som ser rätt ut.
- */
-type Flyer = { n: number; angle: number };
-
-const FLYERS: Flyer[] = [
-  /* Vinklarna hör ihop med riktningarna i ps-fly-1..3 i index.css.
-     Ändras en riktning måste vinkeln räknas om: den är atan2 för
-     riktningen, mätt från strimmans egen (-1, 0). */
-  { n: 1, angle: 5.2 },
-  { n: 2, angle: -20.8 },
-  { n: 3, angle: 127.4 },
-];
-
-/* Huvud, tre glödande segment och en döende svans - tjugosex pixlar,
-   alltså drygt en tredjedel av bildens bredd. Ljusare och kortare
-   fram, mörkare och längre bak: det är det som läser som fart och
-   inte som ett streck. */
-const FlyerTrail = () => (
-  <>
-    <rect x="0" y="0" width="3" height="2" className="ps-fly-head" />
-    <rect x="3" y="0" width="4" height="2" className="ps-fly-a" />
-    <rect x="7" y="0" width="5" height="1" className="ps-fly-b" />
-    <rect x="12" y="0" width="6" height="1" className="ps-fly-c" />
-    <rect x="18" y="0" width="8" height="1" className="ps-fly-d" />
-  </>
-);
 
 /**
  * Service och reparation: en kväll som går i cirkel.
@@ -258,10 +231,10 @@ const ServiceScene = () => (
       {/* Blixten i själva träffpunkten. Den gör slaget hårt: utan
           den ser gnistorna ut att komma från ingenstans. */}
       <rect
-        x={HIT_X - 3}
-        y={HIT_Y - 3}
-        width="6"
-        height="6"
+        x={HIT_X - 2}
+        y={HIT_Y - 2}
+        width="4"
+        height="4"
         className="ps-flash"
       />
 
@@ -272,7 +245,13 @@ const ServiceScene = () => (
           y={spark.y}
           width="1"
           height="1"
-          className={`ps-spark${spark.hot ? " ps-spark--hot" : ""}`}
+          className={[
+            "ps-spark",
+            spark.hot ? "ps-spark--hot" : "",
+            spark.every ? `ps-spark--every-${spark.every}` : "",
+          ]
+            .filter(Boolean)
+            .join(" ")}
           style={{
             ["--sx" as string]: `${spark.dx}px`,
             ["--sy" as string]: `${spark.dy}px`,
@@ -281,21 +260,6 @@ const ServiceScene = () => (
         />
       ))}
 
-      {/* Strimmorna som går tvärs över.
-
-          Tre lager med var sin uppgift: yttersta flyttar origo till
-          träffpunkten, mellersta bär flykten (CSS, animerad), innersta
-          vrider strimman rätt. Både translate och rotate är attribut
-          och inte CSS, så ingen av dem rör transform-origin. */}
-      {FLYERS.map((flyer) => (
-        <g key={flyer.n} transform={`translate(${HIT_X} ${HIT_Y})`}>
-          <g className={`ps-flyer ps-flyer--${flyer.n}`}>
-            <g transform={`rotate(${flyer.angle})`}>
-              <FlyerTrail />
-            </g>
-          </g>
-        </g>
-      ))}
     </g>
   </svg>
 );
