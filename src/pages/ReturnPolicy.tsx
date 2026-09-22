@@ -252,6 +252,60 @@ export default function ReturnPolicy() {
                 </div>
               </section>
 
+              {/* Ångerblankett ---------------------------------------
+                  Distansavtalslagen kräver att vi tillhandahåller
+                  standardformuläret för ångerrätt. Det behöver inte
+                  användas - ett vanligt mejl duger lika bra och står
+                  utskrivet ovan - men det ska finnas, och det ska gå
+                  att komma åt utan att fråga efter det. */}
+              <section>
+                <h2 className="font-display text-2xl font-bold text-foreground">
+                  Ångerblankett
+                </h2>
+                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                  <p>
+                    Du behöver inte använda den här blanketten. Ett mejl där du säger
+                    att du ångrar köpet räcker lika bra. Men lagen säger att den ska
+                    finnas, så här är den - kopiera, fyll i och mejla till{" "}
+                    <a
+                      href={`mailto:${SUPPORT_EMAIL}?subject=Ångerblankett`}
+                      className="font-semibold text-primary underline-offset-4 hover:underline"
+                    >
+                      {SUPPORT_EMAIL}
+                    </a>
+                    .
+                  </p>
+
+                  <div className="surface-card p-6">
+                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground/90">
+{`Till DatorHuset UF
+E-post: support@datorhuset.se
+
+Jag meddelar härmed att jag frånträder mitt köpeavtal
+avseende följande vara:
+
+Vara: ..................................................
+Ordernummer: ...........................................
+Beställdes den: ........................................
+Mottogs den: ...........................................
+
+Konsumentens namn: .....................................
+Konsumentens adress: ...................................
+
+Datum: .................................................
+Underskrift: ...........................................
+(behövs bara om blanketten lämnas på papper)`}
+                    </pre>
+                  </div>
+
+                  <p className="text-sm text-muted-foreground">
+                    Ångerfristen räknas från den dag du tog emot datorn. Skickar du
+                    meddelandet inom fjorton dagar har du använt din ångerrätt i tid,
+                    även om returen kommer fram senare.
+                  </p>
+                </div>
+              </section>
+
               {/* Tvist ----------------------------------------------- */}
               <section>
                 <h2 className="font-display text-2xl font-bold text-foreground">

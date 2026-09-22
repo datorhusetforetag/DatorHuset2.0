@@ -126,10 +126,10 @@ export const ListingEditor = ({
         headers: { Authorization: `Bearer ${token}` },
         body,
       });
-      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(await readApiError(response.clone(), "Bilden kunde inte laddas upp."));
+        throw new Error(await readApiError(response, "Bilden kunde inte laddas upp."));
       }
+      const payload = await response.json().catch(() => ({}));
       const url = payload?.data?.url || payload?.url;
       if (!url) throw new Error("Servern gav ingen adress till bilden.");
       setForm((prev) => ({

@@ -113,10 +113,10 @@ export default function AdminListings() {
         `${apiBase}/api/admin/v2/listings?limit=${API_PAGE_SIZE}&sort=sort_order&order=asc`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(await readApiError(response.clone(), "Kunde inte hämta listningarna."));
+        throw new Error(await readApiError(response, "Kunde inte hämta listningarna."));
       }
+      const payload = await response.json().catch(() => ({}));
       setListings(Array.isArray(payload?.data) ? payload.data : []);
     } catch (error) {
       setLoadError(errorMessage(error, "Kunde inte hämta listningarna."));
@@ -313,10 +313,10 @@ export default function AdminListings() {
           headers: authHeaders,
           body: JSON.stringify({ archived }),
         });
-        const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(await readApiError(response.clone(), "Gick inte att ändra."));
+          throw new Error(await readApiError(response, "Gick inte att ändra."));
         }
+        const payload = await response.json().catch(() => ({}));
         patchLocal(listing.id, {
           archived_at: archived ? new Date().toISOString() : null,
           ...(archived ? { quantity_in_stock: 0, is_preorder: false } : {}),

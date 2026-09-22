@@ -43,10 +43,10 @@ export default function AdminArchive() {
       const response = await fetch(`${apiBase}/api/admin/v2/listings?limit=250&sort=name&order=asc`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(await readApiError(response.clone(), "Kunde inte hämta arkivet."));
+        throw new Error(await readApiError(response, "Kunde inte hämta arkivet."));
       }
+      const payload = await response.json().catch(() => ({}));
       const rows: Listing[] = Array.isArray(payload?.data) ? payload.data : [];
       setListings(rows.filter((row) => Boolean(row.archived_at)));
     } catch (loadError) {
@@ -86,10 +86,10 @@ export default function AdminArchive() {
           headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
           body: JSON.stringify({ archived: false }),
         });
-        const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(await readApiError(response.clone(), "Kunde inte hämta tillbaka listningen."));
+          throw new Error(await readApiError(response, "Kunde inte hämta tillbaka listningen."));
         }
+        const payload = await response.json().catch(() => ({}));
         setListings((prev) => prev.filter((row) => row.id !== listing.id));
       } catch (restoreError) {
         setError(errorMessage(restoreError, "Kunde inte hämta tillbaka listningen."));

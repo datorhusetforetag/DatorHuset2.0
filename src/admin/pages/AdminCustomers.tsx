@@ -103,10 +103,10 @@ export default function AdminCustomers() {
       const response = await fetch(`${apiBase}/api/admin/v2/customers`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(await readApiError(response.clone(), "Kunde inte hämta kunderna."));
+        throw new Error(await readApiError(response, "Kunde inte hämta kunderna."));
       }
+      const payload = await response.json().catch(() => ({}));
       setCustomers(Array.isArray(payload?.data) ? payload.data : []);
     } catch (loadError) {
       setError(errorMessage(loadError, "Kunde inte hämta kunderna."));
@@ -262,10 +262,10 @@ const CustomerPanel = ({
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (response) => {
-        const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(await readApiError(response.clone(), "Kunde inte hämta kunden."));
+          throw new Error(await readApiError(response, "Kunde inte hämta kunden."));
         }
+        const payload = await response.json().catch(() => ({}));
         if (active) setCustomer(payload.data);
       })
       .catch((loadError) => {
@@ -295,10 +295,10 @@ const CustomerPanel = ({
         method: "POST",
         headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       });
-      const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(await readApiError(response.clone(), "Kunde inte skicka mejlet."));
+        throw new Error(await readApiError(response, "Kunde inte skicka mejlet."));
       }
+      const payload = await response.json().catch(() => ({}));
       setResetState("sent");
     } catch (resetError) {
       setError(errorMessage(resetError, "Kunde inte skicka mejlet."));
