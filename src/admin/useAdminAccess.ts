@@ -92,7 +92,36 @@ export const useAdminAccess = (): AdminAccessContext => {
       return;
     }
     if (refreshInFlight.current) return;
-    if (now - lastRequestAt < ADMIN_MIN_REQUEST_GAP_MS) return;
+
+    /*
+     * Strypningen fick inte lämna hooken i utgångsläget.
+     *
+     * Raden nedan skyddar mot att /api/admin/me anropas om och om
+     * igen, vilket är rimligt. Men den returnerade tomhänt: ingen
+     * setState, ingen ny försök inbokad. Blev man avvisad inom de
+     * femton sekunderna stod state kvar på sitt utgångsvärde -
+     * role: "", loading: true - och ingenting kom någonsin och
+     * rättade det.
+     *
+     * Följden var en portal som såg ut att fungera men där varje
+     * knapp var dold, eftersom alla behörighetsprövningar utgår från
+     * role. Databasen kunde säga admin hur mycket som helst.
+     *
+     * Nu används det vi redan vet om vi vet något, och annars bokas
+     * ett nytt försök när spärren släpper.
+     */
+    if (now - lastRequestAt < ADMIN_MIN_REQUEST_GAP_MS) {
+      if (cachedState) {
+        setState(cachedState);
+        return;
+      }
+      const waitMs = ADMIN_MIN_REQUEST_GAP_MS - (now - lastRequestAt);
+      window.setTimeout(() => {
+        requestedToken.current = "";
+        void refresh();
+      }, waitMs + 50);
+      return;
+    }
 
     refreshInFlight.current = true;
     lastRequestAt = now;

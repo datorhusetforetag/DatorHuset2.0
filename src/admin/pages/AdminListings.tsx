@@ -64,7 +64,14 @@ const API_PAGE_SIZE = 250;
 type ToastState = { kind: "ok" | "error"; text: string } | null;
 
 export default function AdminListings() {
-  const { token, apiBase, role, user } = useOutletContext<AdminAccessContext>();
+  const {
+    token,
+    apiBase,
+    role,
+    user,
+    error: accessError,
+    refresh: refreshAccess,
+  } = useOutletContext<AdminAccessContext>();
   const canWrite = role === "admin" || role === "ops";
 
   const [listings, setListings] = useState<Listing[]>([]);
@@ -382,19 +389,45 @@ export default function AdminListings() {
         <div className="flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
           <Lock className="mt-0.5 h-4 w-4 shrink-0" />
           <div>
-            <p className="font-semibold">Du har läsbehörighet</p>
+            {/* Ingen roll alls och läsbehörighet är två olika saker, och
+                de åtgärdas på olika sätt. Att kalla båda för
+                "läsbehörighet" skickar folk till Supabase för att ändra
+                något som redan står rätt. */}
+            <p className="font-semibold">
+              {role
+                ? "Du har läsbehörighet"
+                : "Din behörighet har inte lästs in"}
+            </p>
             <p className="mt-1 text-amber-200/80">
               Därför syns varken knappen för ny listning, pilarna för ordning,
               platsrutan eller borttagning.
             </p>
             <p className="mt-2 font-mono text-xs text-amber-200/70">
               konto: {user?.email || "okänt"} · roll: {role || "ingen"}
+              {accessError ? ` · fel: ${accessError}` : ""}
             </p>
-            <p className="mt-2 text-amber-200/80">
-              Rollen sätts på kontot i Supabase, under app_metadata. Står det
-              redan admin här ovan men knapparna saknas ändå, är det tokenet som
-              är gammalt: logga ut och in igen, en omladdning räcker inte.
-            </p>
+            {role ? (
+              <p className="mt-2 text-amber-200/80">
+                Rollen sätts på kontot i Supabase, under app_metadata. Sätt role
+                till admin eller ops, logga sedan ut och in igen - rollen läses
+                ur inloggningen och följer med först vid nästa.
+              </p>
+            ) : (
+              <>
+                <p className="mt-2 text-amber-200/80">
+                  Servern har inte hunnit svara på vilken roll du har, eller så
+                  avvisades frågan. Står rätt roll i Supabase räcker det oftast
+                  att hämta behörigheten igen.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void refreshAccess()}
+                  className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-amber-400/50 px-3 py-1.5 text-xs font-semibold text-amber-100 hover:bg-amber-400/10"
+                >
+                  Hämta behörigheten igen
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
