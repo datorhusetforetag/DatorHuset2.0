@@ -222,6 +222,17 @@ export default function AdminListings() {
     return buckets;
   }, [visible, hasVisibleBase]);
 
+  /* Det uppgraderingsväljaren behöver. Byggs här eftersom listan redan
+     finns i minnet - komponenten hämtade den tidigare själv, en gång
+     per öppnad panel, vilket räckte för att slå i spärren. */
+  const productOptions = useMemo(
+    () =>
+      listings
+        .filter((row) => !row.archived_at)
+        .map((row) => ({ id: row.id, name: row.name, price_cents: row.price_cents })),
+    [listings],
+  );
+
   const patchLocal = useCallback((id: string, changes: Partial<Listing>) => {
     setListings((prev) => prev.map((listing) => (listing.id === id ? { ...listing, ...changes } : listing)));
   }, []);
@@ -539,6 +550,7 @@ export default function AdminListings() {
             setEditingId(null);
             setCreating(false);
           }}
+          productOptions={productOptions}
           onSaved={(message) => {
             setEditingId(null);
             setCreating(false);

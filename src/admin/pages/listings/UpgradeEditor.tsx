@@ -1,8 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import { Loader2, Plus, Trash2 } from "lucide-react";
+import { useMemo } from "react";
+import { Plus, Trash2 } from "lucide-react";
 
-import { readApiError } from "../../apiError";
-import { errorMessage } from "@/lib/utils";
 
 /**
  * Uppgraderingarna för en listning.
@@ -34,7 +32,7 @@ export type Upgrade = {
   summary?: string | null;
 };
 
-type ProductOption = { id: string; name: string; price_cents: number };
+export type ProductOption = { id: string; name: string; price_cents: number };
 
 const GROUPS: { value: Upgrade["group"]; label: string }[] = [
   { value: "performance", label: "Processor och grafikkort" },
@@ -46,56 +44,25 @@ const GROUPS: { value: Upgrade["group"]; label: string }[] = [
 const kr = (cents: number) => `${Math.round((cents || 0) / 100).toLocaleString("sv-SE")} kr`;
 
 export const UpgradeEditor = ({
-  apiBase,
-  token,
+  products,
   currentListingId,
   value,
   onChange,
 }: {
-  apiBase: string;
-  token: string;
+  /*
+   * Listningarna kommer uppifrån och hämtas inte här.
+   *
+   * Komponenten hämtade tidigare hela listan varje gång panelen
+   * öppnades - samma data som listsidan redan hade i minnet. Att öppna
+   * tio listningar efter varandra blev tio onödiga anrop, och
+   * tillsammans med resten räckte det för att slå i spärren och ge 429.
+   */
+  products: ProductOption[];
   /** Den listning som redigeras. Den ska inte kunna välja sig själv. */
   currentListingId: string;
   value: Upgrade[];
   onChange: (next: Upgrade[]) => void;
 }) => {
-  const [products, setProducts] = useState<ProductOption[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    let active = true;
-    fetch(`${apiBase}/api/admin/v2/listings?limit=250&sort=name&order=asc`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(async (response) => {
-        if (!response.ok) {
-          throw new Error(await readApiError(response, "Kunde inte hämta produkterna."));
-        }
-        const payload = await response.json().catch(() => ({}));
-        const rows = Array.isArray(payload?.data) ? payload.data : [];
-        if (!active) return;
-        setProducts(
-          rows
-            .filter((row: { archived_at?: string | null }) => !row.archived_at)
-            .map((row: { id: string; name: string; price_cents: number }) => ({
-              id: row.id,
-              name: row.name,
-              price_cents: row.price_cents,
-            })),
-        );
-      })
-      .catch((loadError) => {
-        if (active) setError(errorMessage(loadError, "Kunde inte hämta produkterna."));
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
-    return () => {
-      active = false;
-    };
-  }, [apiBase, token]);
-
   const byId = useMemo(
     () => new Map(products.map((product) => [product.id, product])),
     [products],
@@ -128,19 +95,9 @@ export const UpgradeEditor = ({
 
   const remove = (index: number) => onChange(value.filter((_, i) => i !== index));
 
-  if (loading) {
-    return (
-      <p className="flex items-center gap-2 text-xs text-slate-500">
-        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-        Hämtar produkter...
-      </p>
-    );
-  }
 
   return (
     <div className="space-y-3">
-      {error && <p className="text-xs text-rose-300">{error}</p>}
-
       {/* Varför listan saknar en post är inte självklart, och en
           rullgardin med ett saknat namn läses som ett fel. */}
       <p className="text-xs leading-relaxed text-slate-500">

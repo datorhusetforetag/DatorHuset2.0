@@ -5,7 +5,7 @@ import { errorMessage } from "@/lib/utils";
 import { readApiError } from "../../apiError";
 import { type Listing, formatPrice } from "./listingModel";
 import { FpsEditor, type FpsSettings } from "./FpsEditor";
-import { UpgradeEditor, type Upgrade } from "./UpgradeEditor";
+import { UpgradeEditor, type ProductOption, type Upgrade } from "./UpgradeEditor";
 
 /**
  * Redigera en listning.
@@ -56,6 +56,9 @@ type Props = {
   token: string;
   canWrite: boolean;
   /** Den listning som redigeras, eller null när en ny skapas. */
+  /* Listningarna som kan väljas som uppgradering. Kommer uppifrån,
+     eftersom listsidan redan har dem - se UpgradeEditor. */
+  productOptions: ProductOption[];
   listing: Listing | null;
   /** Utkastet för en ny listning, eller null när en befintlig ändras. */
   draft: Listing | null;
@@ -67,6 +70,7 @@ export const ListingEditor = ({
   apiBase,
   token,
   canWrite,
+  productOptions,
   listing,
   draft,
   onClose,
@@ -499,8 +503,7 @@ export const ListingEditor = ({
 
           <Group title="Uppgraderingar">
             <UpgradeEditor
-              apiBase={apiBase}
-              token={token}
+              products={productOptions}
               currentListingId={form.id}
               value={upgrades}
               onChange={setUpgrades}

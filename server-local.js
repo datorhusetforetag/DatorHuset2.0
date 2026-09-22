@@ -479,7 +479,22 @@ app.use(cors({
 }));
 app.use("/api/webhook", express.raw({ type: "application/json" })); // raw for Stripe
 app.use(express.json({ limit: JSON_BODY_LIMIT }));
-app.use("/api/", apiLimiter);
+/*
+ * Adminvägarna hoppar över den allmänna spärren.
+ *
+ * De låg tidigare under båda: först apiLimiter med 120 anrop per kvart,
+ * sedan adminLimiter med 300 per fem minuter. Den allmänna är alltså
+ * långt striktare, och det var den som slog till - en gräns tänkt för
+ * en besökare som bläddrar bland datorer, applicerad på någon som
+ * arbetar i portalen och öppnar listning efter listning.
+ *
+ * Adminvägarna kräver dessutom inloggning och prövas av
+ * requireAdminPermission, så de är inte öppna för vem som helst att
+ * hamra på. Deras egen spärr räcker.
+ */
+app.use("/api/", (req, res, next) =>
+  req.path.startsWith("/admin") ? next() : apiLimiter(req, res, next),
+);
 app.use("/api/admin", adminLimiter);
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
