@@ -15,3 +15,4 @@ _*.mjs
 
 # Cachefiler som skrivs om vid varje prisuppdatering
 data/custom-price-cache.json
+dist-admin
