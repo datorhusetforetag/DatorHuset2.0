@@ -3878,34 +3878,41 @@
  * Allt nedan delar ett varv på 18 sekunder och samma procenttal, så
  * skärmen, gubben och gnistorna byter läge i samma ögonblick.
  *
- *   0-16%   sitter, skärmen blå
- *  16-33%   bankar på burken
- *  33-44%   sitter igen, skärmen svart
- *  44-61%   bankar en gång till
- *  61-78%   sitter och skriver kod, grön text
- *  78-90%   den startar
- *  90-100%  blå igen, och om igen
+ *     0-12,5%   sitter, skärmen blå
+ *  12,5-36,7%   bankar på burken
+ *  36,7-45,3%   sitter igen, skärmen svart
+ *  45,3-69,5%   bankar en gång till
+ *  69,5-82,8%   sitter och skriver kod, grön text
+ *  82,8-92,2%   den startar
+ *  92,2-100%    blå igen, och om igen
+ *
+ * De två hammartakterna är 5,6 sekunder styck. Alla andra är lika
+ * långa som de alltid varit - det är bara procenttalen som flyttat
+ * sig, eftersom varvet vuxit från 18 till 23 sekunder.
+ *
+ * Ett slag tar 0,62 sekunder, så en hammartakt är nio slag. Vid tre
+ * slag hann man knappt se vad han gjorde innan han satt ned igen.
  */
 
 .promo-scene .ps-screen {
   fill: #2a5bd7;
-  animation: ps-screen-state 18s steps(1) infinite;
+  animation: ps-screen-state 23s steps(1) infinite;
 }
 
 @keyframes ps-screen-state {
   0% {
     fill: #2a5bd7;
   }
-  16% {
+  12.5% {
     fill: #05080f;
   }
-  61% {
+  69.5% {
     fill: #06130c;
   }
-  78% {
+  82.8% {
     fill: #0b2030;
   }
-  90% {
+  92.2% {
     fill: #2a5bd7;
   }
 }
@@ -3915,23 +3922,23 @@
   opacity: 0;
 }
 .promo-scene .ps-face--blue {
-  animation: ps-show-blue 18s steps(1) infinite;
+  animation: ps-show-blue 23s steps(1) infinite;
 }
 .promo-scene .ps-face--code {
-  animation: ps-show-code 18s steps(1) infinite;
+  animation: ps-show-code 23s steps(1) infinite;
 }
 .promo-scene .ps-face--boot {
-  animation: ps-show-boot 18s steps(1) infinite;
+  animation: ps-show-boot 23s steps(1) infinite;
 }
 
 @keyframes ps-show-blue {
   0% {
     opacity: 1;
   }
-  16% {
+  12.5% {
     opacity: 0;
   }
-  90% {
+  92.2% {
     opacity: 1;
   }
 }
@@ -3939,10 +3946,10 @@
   0% {
     opacity: 0;
   }
-  61% {
+  69.5% {
     opacity: 1;
   }
-  78% {
+  82.8% {
     opacity: 0;
   }
 }
@@ -3950,10 +3957,10 @@
   0% {
     opacity: 0;
   }
-  78% {
+  82.8% {
     opacity: 1;
   }
-  90% {
+  92.2% {
     opacity: 0;
   }
 }
@@ -3980,19 +3987,19 @@
    Fördröjningen skjuter fram varje rad; fönstret nedan släcker dem
    allihop när takten är slut. */
 .promo-scene .ps-code--1 {
-  animation: ps-type-1 18s steps(1) infinite;
+  animation: ps-type-1 23s steps(1) infinite;
 }
 .promo-scene .ps-code--2 {
-  animation: ps-type-2 18s steps(1) infinite;
+  animation: ps-type-2 23s steps(1) infinite;
 }
 .promo-scene .ps-code--3 {
-  animation: ps-type-3 18s steps(1) infinite;
+  animation: ps-type-3 23s steps(1) infinite;
 }
 .promo-scene .ps-code--4 {
-  animation: ps-type-4 18s steps(1) infinite;
+  animation: ps-type-4 23s steps(1) infinite;
 }
 .promo-scene .ps-code--5 {
-  animation: ps-type-5 18s steps(1) infinite;
+  animation: ps-type-5 23s steps(1) infinite;
 }
 
 /* Varje rad tänds vid sin tidpunkt och släcks när takten är slut,
@@ -4006,10 +4013,10 @@
   0% {
     opacity: 0;
   }
-  63% {
+  71.1% {
     opacity: 1;
   }
-  78% {
+  82.8% {
     opacity: 0;
   }
 }
@@ -4017,10 +4024,10 @@
   0% {
     opacity: 0;
   }
-  66% {
+  73.4% {
     opacity: 1;
   }
-  78% {
+  82.8% {
     opacity: 0;
   }
 }
@@ -4028,10 +4035,10 @@
   0% {
     opacity: 0;
   }
-  69% {
+  75.8% {
     opacity: 1;
   }
-  78% {
+  82.8% {
     opacity: 0;
   }
 }
@@ -4039,10 +4046,10 @@
   0% {
     opacity: 0;
   }
-  72% {
+  78.1% {
     opacity: 1;
   }
-  78% {
+  82.8% {
     opacity: 0;
   }
 }
@@ -4050,37 +4057,37 @@
   0% {
     opacity: 0;
   }
-  75% {
+  80.5% {
     opacity: 1;
   }
-  78% {
+  82.8% {
     opacity: 0;
   }
 }
 
 /* Gubben: sittande i tre av takterna, stående i två. */
 .promo-scene .ps-actor--sitting {
-  animation: ps-sit 18s steps(1) infinite;
+  animation: ps-sit 23s steps(1) infinite;
 }
 .promo-scene .ps-actor--standing {
   opacity: 0;
-  animation: ps-stand 18s steps(1) infinite;
+  animation: ps-stand 23s steps(1) infinite;
 }
 
 @keyframes ps-sit {
   0% {
     opacity: 1;
   }
-  16% {
+  12.5% {
     opacity: 0;
   }
-  33% {
+  36.7% {
     opacity: 1;
   }
-  44% {
+  45.3% {
     opacity: 0;
   }
-  61% {
+  69.5% {
     opacity: 1;
   }
 }
@@ -4088,16 +4095,16 @@
   0% {
     opacity: 0;
   }
-  16% {
+  12.5% {
     opacity: 1;
   }
-  33% {
+  36.7% {
     opacity: 0;
   }
-  44% {
+  45.3% {
     opacity: 1;
   }
-  61% {
+  69.5% {
     opacity: 0;
   }
 }
@@ -4145,7 +4152,7 @@
    flykten på hammarens egna 0,62. */
 .promo-scene .ps-sparks {
   opacity: 0;
-  animation: ps-stand 18s steps(1) infinite;
+  animation: ps-stand 23s steps(1) infinite;
 }
 
 .promo-scene .ps-spark {
