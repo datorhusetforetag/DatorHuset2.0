@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { Loader2, Trash2, Upload, X } from "lucide-react";
+import { ExternalLink, Eye, Loader2, Trash2, Upload, X } from "lucide-react";
 
 import { errorMessage } from "@/lib/utils";
 import { type Listing, formatPrice } from "./listingModel";
@@ -27,6 +27,27 @@ import { FpsEditor, type FpsSettings } from "./FpsEditor";
 const TIERS = ["Brons", "Silver", "Guld", "Platina", "Diamant"];
 const TAGS = ["Budgetvänliga", "Price-Performance", "Bästa prestanda"];
 const STORAGE_TYPES = ["SSD", "NVMe", "HDD"];
+
+/* Rubrikerna produktsidan sätter på avsnitten. Samma två som
+   DEFAULT_PRODUCT_INFO i ComputerDetails, så förhandsgranskningen
+   visar det sidan faktiskt skriver ut och inte en gissning. */
+const SECTION_TITLES = ["Game Changer", "Ultimat strålspårning och AI"];
+
+/* Samma uppdelning som produktsidan gör: första stycket blir ett
+   avsnitt, resten slås ihop till ett andra. */
+const splitIntoSections = (description: string) => {
+  const blocks = description
+    .split(/\n\s*\n/)
+    .map((block) => block.trim())
+    .filter(Boolean);
+  if (blocks.length === 0) return [];
+  if (blocks.length === 1) return [{ title: "Produktinfo", body: blocks[0] }];
+  const [first, ...rest] = blocks;
+  return [
+    { title: SECTION_TITLES[0], body: first },
+    { title: SECTION_TITLES[1], body: rest.join("\n\n") },
+  ];
+};
 
 type Props = {
   apiBase: string;
@@ -59,6 +80,7 @@ export const ListingEditor = ({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   const fileInput = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -79,6 +101,20 @@ export const ListingEditor = ({
 
   const set = <K extends keyof Listing>(key: K, value: Listing[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
+
+  /* Butiken kör på 8080 lokalt och på sin egen domän i drift. */
+  const storeOrigin = import.meta.env.DEV
+    ? "http://localhost:8080"
+    : "https://datorhuset.se";
+
+  /* Jämförs mot raden vi öppnade, inte mot ett eget flaggfält. Ett
+     fält som ändras fram och tillbaka till samma värde räknas då inte
+     som en ändring, vilket är vad man menar när man frågar sig om man
+     har sparat. */
+  const isDirty = useMemo(
+    () => Boolean(listing) && JSON.stringify(form) !== JSON.stringify(listing),
+    [form, listing],
+  );
 
   const priceKronor = useMemo(() => Math.round((form.price_cents || 0) / 100), [form.price_cents]);
 
@@ -259,21 +295,88 @@ export const ListingEditor = ({
                 placeholder={"Första avsnittet.\n\nAndra avsnittet, efter en tom rad."}
               />
             </Field>
-            <p className="-mt-2 text-xs leading-relaxed text-slate-500">
-              {(() => {
-                const blocks = (form.description || "")
-                  .split(/\n\s*\n/)
-                  .map((block) => block.trim())
-                  .filter(Boolean);
-                if (blocks.length === 0) {
-                  return "Lämnas fältet tomt visas en standardtext i stället.";
-                }
-                if (blocks.length === 1) {
-                  return "Ett avsnitt. Lägg en tom rad mitt i texten för att dela den i två.";
-                }
-                return `${blocks.length} stycken blir två avsnitt sida vid sida - det första för sig, resten tillsammans.`;
-              })()}
-            </p>
+            <div className="-mt-2 flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs leading-relaxed text-slate-500">
+                {(() => {
+                  const blocks = (form.description || "")
+                    .split(/\n\s*\n/)
+                    .map((block) => block.trim())
+                    .filter(Boolean);
+                  if (blocks.length === 0) {
+                    return "Lämnas fältet tomt visas en standardtext i stället.";
+                  }
+                  if (blocks.length === 1) {
+                    return "Ett avsnitt. Lägg en tom rad mitt i texten för att dela den i två.";
+                  }
+                  return `${blocks.length} stycken blir två avsnitt - det första för sig, resten tillsammans.`;
+                })()}
+              </p>
+
+              <div className="flex shrink-0 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowPreview((prev) => !prev)
+                  }
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:border-cyan-400/60 hover:text-cyan-300"
+                >
+                  <Eye className="h-3.5 w-3.5" />
+                  {showPreview ? "Dölj" : "Förhandsgranska"}
+                </button>
+
+                {/* Hela sidan, inte bara texten. Den visar allt annat
+                    också - bilder, specifikation, pris - men bara det
+                    som är sparat. Därför sägs det rakt ut när det
+                    finns osparade ändringar. */}
+                {!isNew && (
+                  <a
+                    href={`${storeOrigin}/computer/${form.slug || form.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={(event) => {
+                      if (isDirty && !window.confirm(
+                        "Du har ändringar som inte är sparade. Produktsidan visar det som är sparat, alltså inte dina ändringar. Öppna ändå?",
+                      )) {
+                        event.preventDefault();
+                      }
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:border-cyan-400/60 hover:text-cyan-300"
+                  >
+                    <ExternalLink className="h-3.5 w-3.5" />
+                    Hela sidan
+                  </a>
+                )}
+              </div>
+            </div>
+
+            {/* Avsnitten som produktsidan kommer visa dem, medan man
+                skriver. Den riktiga sidan kan bara visa sparad text,
+                och att behöva spara för att se hur en formulering
+                landar gör att man slutar prova. */}
+            {showPreview && (
+              <div className="rounded-lg border border-slate-800 bg-slate-950/60 p-4">
+                <p className="mb-3 text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500">
+                  Så här visas texten på produktsidan
+                </p>
+                {splitIntoSections(form.description || "").length === 0 ? (
+                  <p className="text-xs italic text-slate-500">
+                    Tomt fält. Produktsidan visar sin standardtext i stället.
+                  </p>
+                ) : (
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    {splitIntoSections(form.description || "").map((section) => (
+                      <div key={section.title}>
+                        <h5 className="font-display text-sm font-bold text-slate-100">
+                          {section.title}
+                        </h5>
+                        <p className="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-slate-400">
+                          {section.body}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
             <Field label="Används till" hint="Styr om maskinen syns under Workstation i menyn">
               <div className="flex gap-2">
                 {(["gaming", "workstation"] as const).map((value) => (

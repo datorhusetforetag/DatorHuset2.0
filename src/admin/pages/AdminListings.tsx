@@ -10,6 +10,7 @@ import {
   Package,
   Plus,
   ExternalLink,
+  Lock,
   Search,
   Trash2,
 } from "lucide-react";
@@ -371,6 +372,22 @@ export default function AdminListings() {
           )}
         </div>
       </header>
+
+      {!canWrite && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
+          <Lock className="mt-0.5 h-4 w-4 shrink-0" />
+          <div>
+            <p className="font-semibold">Du har läsbehörighet</p>
+            <p className="mt-1 text-amber-200/80">
+              Därför syns varken knappen för ny listning, pilarna för ordning,
+              platsrutan eller borttagning. Behörigheten ligger på ditt konto i
+              Supabase, under app_metadata. Sätt role till admin eller ops, logga
+              ut och in igen - rollen läses ur inloggningen och följer med först
+              vid nästa.
+            </p>
+          </div>
+        </div>
+      )}
 
       {toast && (
         <div
