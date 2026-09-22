@@ -35,6 +35,10 @@ import {
   normalizeQuantity,
 } from "./shared/checkoutMath.js";
 import {
+  checkPreorderCapacity,
+  remainingCapacity,
+} from "./shared/orderCapacity.js";
+import {
   ADMIN_DLSS_FSR_MODE_OPTIONS,
   ADMIN_FPS_GAME_OPTIONS,
   ADMIN_FPS_RESOLUTION_OPTIONS,
@@ -5899,6 +5903,134 @@ const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
 /**
  * POST /api/create-checkout-session
  */
+/*
+ * Ordrar som fortfarande tar plats i verkstaden.
+ *
+ * En levererad, avbruten eller återbetald order är avslutad och
+ * släpper sin plats. Allt annat räknas som pågående - också det som
+ * ligger kvar i "received" för att ingen hunnit titta på det, för
+ * datorn ska byggas ändå.
+ */
+const OPEN_ORDER_STATUSES_EXCLUDED = ["delivered", "cancelled", "refunded"];
+
+/*
+ * Vilka produkter som är begagnatvarianter.
+ *
+ * Kopplingen ligger i ui_settings, antingen som variant_role på
+ * produkten själv eller som en länk från basen till varianten. Båda
+ * formerna finns i databasen sedan tidigare, så båda läses.
+ */
+const loadUsedVariantProductIds = async () => {
+  const ids = new Set();
+  const { data } = await supabase
+    .from("ui_settings")
+    .select("key, value")
+    .or("key.like.listing_group:%,key.like.used_variant_link:%");
+
+  (data || []).forEach((row) => {
+    const key = String(row?.key || "");
+    const value = row?.value;
+    if (key.startsWith("listing_group:")) {
+      const productId = key.slice(14).trim();
+      if (productId && value?.variant_role === "used") ids.add(productId);
+      return;
+    }
+    if (key.startsWith("used_variant_link:")) {
+      /* Värdet pekar ut varianten. Formen har skiftat över tid, så
+         både en naken sträng och ett objekt hanteras. */
+      const linked = typeof value === "string" ? value : value?.product_id || value?.used_product_id;
+      const id = sanitizeText(linked, 80);
+      if (id) ids.add(id);
+    }
+  });
+  return ids;
+};
+
+/*
+ * Hur mycket som redan är igång.
+ *
+ * Räknar maskiner, inte ordrar. En order med tre datorer är tre
+ * byggen, och kapaciteten handlar om hur många maskiner som ryms i
+ * veckorna framåt - inte hur många gånger någon tryckt på köp.
+ *
+ * Bara förbeställningar räknas. En färdigbyggd maskin på hyllan tar
+ * ingen byggtid; den ska bara packas.
+ */
+const loadPreorderLoad = async () => {
+  const [{ data: orders }, { data: inventory }, usedIds] = await Promise.all([
+    supabase
+      .from("orders")
+      .select("status, order_items ( product_id, quantity )")
+      .not("status", "in", `(${OPEN_ORDER_STATUSES_EXCLUDED.join(",")})`),
+    supabase.from("inventory").select("product_id, is_preorder"),
+    loadUsedVariantProductIds(),
+  ]);
+
+  const preorderProductIds = new Set(
+    (inventory || []).filter((row) => row?.is_preorder).map((row) => row.product_id),
+  );
+
+  let newCount = 0;
+  let usedCount = 0;
+  (orders || []).forEach((order) => {
+    (order?.order_items || []).forEach((line) => {
+      const productId = line?.product_id;
+      if (!productId || !preorderProductIds.has(productId)) return;
+      const quantity = Math.max(0, Number(line?.quantity) || 0);
+      if (usedIds.has(productId)) usedCount += quantity;
+      else newCount += quantity;
+    });
+  });
+
+  return { newCount, usedCount };
+};
+
+/** Samma uppdelning, men för det kunden håller på att köpa. */
+const summarizeCartPreorders = async (cartItems) => {
+  const [{ data: inventory }, usedIds] = await Promise.all([
+    supabase.from("inventory").select("product_id, is_preorder"),
+    loadUsedVariantProductIds(),
+  ]);
+  const preorderProductIds = new Set(
+    (inventory || []).filter((row) => row?.is_preorder).map((row) => row.product_id),
+  );
+
+  let newCount = 0;
+  let usedCount = 0;
+  (cartItems || []).forEach((item) => {
+    const productId = item?.product?.id;
+    if (!productId || !preorderProductIds.has(productId)) return;
+    const quantity = normalizeQuantity(item?.quantity);
+    if (usedIds.has(productId)) usedCount += quantity;
+    else newCount += quantity;
+  });
+
+  return { newCount, usedCount };
+};
+
+/**
+ * GET /api/preorder-capacity
+ *
+ * Hur många platser som är kvar. Öppen, eftersom butiken behöver visa
+ * det innan någon lägger något i vagnen - att få veta att det är
+ * fullt först i kassan är att låta någon fylla i hela sin adress i
+ * onödan.
+ */
+app.get("/api/preorder-capacity", async (_req, res) => {
+  if (!supabase) {
+    return res.json({ ok: true, data: { used: 0, new: 0, isFull: false } });
+  }
+  try {
+    const load = await loadPreorderLoad();
+    return res.json({ ok: true, data: remainingCapacity(load) });
+  } catch (error) {
+    console.error("Preorder capacity error:", error);
+    /* Kan vi inte räkna säger vi inte att det är fullt. Att stänga
+       butiken på grund av ett läsfel är värre än att släppa igenom en
+       order för mycket - kassan prövar ändå en gång till. */
+    return res.json({ ok: true, data: { used: 0, new: 0, isFull: false } });
+  }
+});
 app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
   if (!stripe) {
     return res.status(503).json({ error: "Stripe not configured. Set STRIPE_SECRET_KEY to enable checkout." });
@@ -5974,6 +6106,29 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
       throw error;
     }
     const feeLineItems = buildFeeLineItems(normalizedShippingMethod);
+
+    /* Kapaciteten prövas här och inte i webbhooken. Säger vi nej
+       efter betalningen har kunden redan blivit dragen på pengar för
+       en dator vi inte tänker bygga, och då är enda vägen ut en
+       återbetalning. Ett nej före betalningen kostar ingenting. */
+    try {
+      const [load, cartPreorders] = await Promise.all([
+        loadPreorderLoad(),
+        summarizeCartPreorders(dbCartItems),
+      ]);
+      const verdict = checkPreorderCapacity(load, cartPreorders);
+      if (!verdict.ok) {
+        return res.status(409).json({
+          error: verdict.message,
+          code: verdict.reason,
+        });
+      }
+    } catch (capacityError) {
+      /* Går räkningen inte att göra släpper vi igenom. En butik som
+         stänger av sig själv vid ett läsfel är värre än en order för
+         mycket, som går att lösa för hand. */
+      console.error("Kunde inte pröva förbeställningskapaciteten:", capacityError);
+    }
 
     const paymentMethodTypes = [...PAYMENT_METHODS];
     const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;

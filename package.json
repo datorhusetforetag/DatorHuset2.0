@@ -22,7 +22,8 @@
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "preview": "vite preview",
     "test:checkout": "node tests/checkout.test.mjs",
-    "test": "node tests/checkout.test.mjs && node tests/pricing.match.test.mjs"
+    "test:capacity": "node tests/orderCapacity.test.mjs",
+    "test": "node tests/checkout.test.mjs && node tests/orderCapacity.test.mjs && node tests/pricing.match.test.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

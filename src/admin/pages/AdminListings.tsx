@@ -83,6 +83,11 @@ export default function AdminListings() {
   const [creating, setCreating] = useState(false);
   const [toast, setToast] = useState<ToastState>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
+  /* Platserna kvar i verkstaden. Hämtas från samma öppna endpoint som
+     butiken använder, så admin och kund ser samma siffra. */
+  const [capacity, setCapacity] = useState<{ used: number; new: number; isFull: boolean } | null>(
+    null,
+  );
 
   /* Beskedet försvinner av sig självt. Ett kvitto på att sparandet gick
      igenom behöver inte stå kvar och kräva ett klick för att gå bort. */
@@ -128,6 +133,22 @@ export default function AdminListings() {
   useEffect(() => {
     if (token) void load();
   }, [token, load]);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`${apiBase}/api/preorder-capacity`)
+      .then((response) => response.json())
+      .then((payload) => {
+        if (active && payload?.data) setCapacity(payload.data);
+      })
+      .catch(() => {
+        /* Siffran är upplysning, inte funktion. Går den inte att hämta
+           visas den inte, och resten av sidan fungerar som vanligt. */
+      });
+    return () => {
+      active = false;
+    };
+  }, [apiBase]);
 
   /* Sökningen sker här och inte på servern. Tjugo listningar får plats i
      minnet, och ett anrop per tangenttryck vore både långsammare och
@@ -354,6 +375,13 @@ export default function AdminListings() {
             {counts.ready} redo att skickas · {counts.preorder} förbeställningar
             {counts.soldOut > 0 && ` · ${counts.soldOut} slutsålda`}
           </p>
+          {capacity && (
+            <p className={`mt-1.5 text-xs ${capacity.isFull ? "text-rose-300" : "text-slate-500"}`}>
+              {capacity.isFull
+                ? "Verkstaden är full - inga fler förbeställningar tas emot"
+                : `Plats kvar: ${capacity.new} nybyggda, ${capacity.used} begagnade`}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
