@@ -50,23 +50,37 @@ type Spark = {
   hot?: boolean;
 };
 
+/*
+ * TRÄFFPUNKTEN ÄR (47, 11)
+ *
+ * Uträknad, inte gissad. Hammarhuvudets mitt sitter på (46, 9.5) i
+ * vila; roterad +18 grader kring axeln på (41, 15) hamnar den på
+ * (47.5, 11.3). Chassits övre vänstra hörn är (46, 11), så slaget
+ * landar på ovankanten strax innanför hörnet.
+ *
+ * Ändras slagvinkeln i ps-hammer måste punkten räknas om, och då
+ * flyttar sig både blixten, skuren och de tre strimmorna.
+ */
+const HIT_X = 47;
+const HIT_Y = 11;
+
 const SPARKS: Spark[] = [
-  { x: 46, y: 10, dx: -18, dy: -6, delay: 0 },
-  { x: 46, y: 10, dx: 11, dy: -12, delay: 0.01 },
-  { x: 47, y: 11, dx: -13, dy: -15, delay: 0 },
-  { x: 46, y: 11, dx: 9, dy: 11, delay: 0.02, hot: true },
-  { x: 46, y: 10, dx: -10, dy: 14, delay: 0.01 },
-  { x: 47, y: 10, dx: 6, dy: -17, delay: 0, hot: true },
-  { x: 46, y: 12, dx: -16, dy: 8, delay: 0.03 },
-  { x: 46, y: 9, dx: 14, dy: -5, delay: 0.02 },
-  { x: 47, y: 11, dx: -7, dy: -19, delay: 0.01 },
-  { x: 46, y: 10, dx: -21, dy: 2, delay: 0 },
-  { x: 46, y: 11, dx: 8, dy: 16, delay: 0.03 },
-  { x: 47, y: 10, dx: -12, dy: -3, delay: 0.02, hot: true },
-  { x: 46, y: 9, dx: -5, dy: -20, delay: 0.01 },
-  { x: 46, y: 12, dx: 12, dy: 4, delay: 0 },
-  { x: 47, y: 12, dx: -15, dy: -10, delay: 0.03 },
-  { x: 46, y: 10, dx: 4, dy: 18, delay: 0.02 },
+  { x: 47, y: 11, dx: -18, dy: -6, delay: 0 },
+  { x: 47, y: 11, dx: 11, dy: -12, delay: 0.01 },
+  { x: 48, y: 12, dx: -13, dy: -15, delay: 0 },
+  { x: 47, y: 12, dx: 9, dy: 11, delay: 0.02, hot: true },
+  { x: 47, y: 11, dx: -10, dy: 14, delay: 0.01 },
+  { x: 48, y: 11, dx: 6, dy: -17, delay: 0, hot: true },
+  { x: 47, y: 13, dx: -16, dy: 8, delay: 0.03 },
+  { x: 47, y: 10, dx: 14, dy: -5, delay: 0.02 },
+  { x: 48, y: 12, dx: -7, dy: -19, delay: 0.01 },
+  { x: 47, y: 11, dx: -21, dy: 2, delay: 0 },
+  { x: 47, y: 12, dx: 8, dy: 16, delay: 0.03 },
+  { x: 48, y: 11, dx: -12, dy: -3, delay: 0.02, hot: true },
+  { x: 47, y: 10, dx: -5, dy: -20, delay: 0.01 },
+  { x: 47, y: 13, dx: 12, dy: 4, delay: 0 },
+  { x: 48, y: 13, dx: -15, dy: -10, delay: 0.03 },
+  { x: 47, y: 11, dx: 4, dy: 18, delay: 0.02 },
 ];
 
 /*
@@ -83,29 +97,45 @@ const SPARKS: Spark[] = [
  * olika slag, och eftersom 3, 4 och 5 inte går jämnt upp i varandra
  * sammanfaller de sällan. Ingen slump behövs för att hålla dem isär.
  *
- * SVANSEN
+ * SVANSEN, OCH VARFÖR VRIDNINGEN LIGGER I ATTRIBUTET
  *
- * Ritad liggande, med huvudet i origo och svansen ut åt +x, alltså en
- * gnista som far åt vänster. Vinkeln vrider hela strimman till sin
- * verkliga riktning, så svansen ligger bakom och inte på tvären.
+ * Strimman är ritad liggande, med huvudet i origo och svansen ut åt
+ * +x - alltså en gnista på väg åt vänster. En vridning pekar den åt
+ * sitt verkliga håll, och den måste ske kring huvudet.
  *
- * Vridningen sker kring (0, 0) i gruppens eget koordinatsystem, och
- * det ligger i träffpunkten tack vare translate på gruppen utanför.
- * Alltså vrids den kring gnistans huvud, vilket är det enda stället
- * som ser rätt ut.
+ * Vridningen stod först i CSS, och då hamnade den fel. CSS räknar
+ * transform-origin från 50% 50%, och för ett svg-element mäts de
+ * procenten mot viewBox-rutan - inte mot strimman. Den vreds alltså
+ * kring bildens mitt: den brantaste av de tre startade nere vid
+ * golvet mitt i bilden i stället för vid hammaren.
+ *
+ * Som svg-attribut finns ingen procenträkning. rotate() utgår från
+ * (0, 0) i gruppens eget koordinatsystem, och det ligger i
+ * träffpunkten tack vare translate på gruppen utanför. Alltså kring
+ * huvudet, vilket är det enda stället som ser rätt ut.
  */
-const FLYERS = [1, 2, 3];
+type Flyer = { n: number; angle: number };
 
-/* Huvud, tre glödande segment och en döende svans. Ljusare och
-   kortare fram, mörkare och längre bak - det är det som läser som
-   fart och inte som ett streck. */
+const FLYERS: Flyer[] = [
+  /* Vinklarna hör ihop med riktningarna i ps-fly-1..3 i index.css.
+     Ändras en riktning måste vinkeln räknas om: den är atan2 för
+     riktningen, mätt från strimmans egen (-1, 0). */
+  { n: 1, angle: 5.2 },
+  { n: 2, angle: -20.8 },
+  { n: 3, angle: 127.4 },
+];
+
+/* Huvud, tre glödande segment och en döende svans - tjugosex pixlar,
+   alltså drygt en tredjedel av bildens bredd. Ljusare och kortare
+   fram, mörkare och längre bak: det är det som läser som fart och
+   inte som ett streck. */
 const FlyerTrail = () => (
   <>
-    <rect x="0" y="0" width="2" height="1" className="ps-fly-head" />
-    <rect x="2" y="0" width="3" height="1" className="ps-fly-a" />
-    <rect x="5" y="0" width="4" height="1" className="ps-fly-b" />
-    <rect x="9" y="0" width="5" height="1" className="ps-fly-c" />
-    <rect x="14" y="0" width="6" height="1" className="ps-fly-d" />
+    <rect x="0" y="0" width="3" height="2" className="ps-fly-head" />
+    <rect x="3" y="0" width="4" height="2" className="ps-fly-a" />
+    <rect x="7" y="0" width="5" height="1" className="ps-fly-b" />
+    <rect x="12" y="0" width="6" height="1" className="ps-fly-c" />
+    <rect x="18" y="0" width="8" height="1" className="ps-fly-d" />
   </>
 );
 
@@ -227,7 +257,13 @@ const ServiceScene = () => (
     <g className="ps-sparks">
       {/* Blixten i själva träffpunkten. Den gör slaget hårt: utan
           den ser gnistorna ut att komma från ingenstans. */}
-      <rect x="44" y="8" width="5" height="5" className="ps-flash" />
+      <rect
+        x={HIT_X - 3}
+        y={HIT_Y - 3}
+        width="6"
+        height="6"
+        className="ps-flash"
+      />
 
       {SPARKS.map((spark, index) => (
         <rect
@@ -245,14 +281,16 @@ const ServiceScene = () => (
         />
       ))}
 
-      {/* Strimmorna som går tvärs över. translate som attribut och
-          inte som CSS: då hamnar gruppens eget origo i träffpunkten,
-          och vridningen inuti sker kring gnistans huvud utan att man
-          behöver peta på transform-origin. */}
-      {FLYERS.map((n) => (
-        <g key={n} transform="translate(46 10)">
-          <g className={`ps-flyer ps-flyer--${n}`}>
-            <g className="ps-flyer__body">
+      {/* Strimmorna som går tvärs över.
+
+          Tre lager med var sin uppgift: yttersta flyttar origo till
+          träffpunkten, mellersta bär flykten (CSS, animerad), innersta
+          vrider strimman rätt. Både translate och rotate är attribut
+          och inte CSS, så ingen av dem rör transform-origin. */}
+      {FLYERS.map((flyer) => (
+        <g key={flyer.n} transform={`translate(${HIT_X} ${HIT_Y})`}>
+          <g className={`ps-flyer ps-flyer--${flyer.n}`}>
+            <g transform={`rotate(${flyer.angle})`}>
               <FlyerTrail />
             </g>
           </g>
