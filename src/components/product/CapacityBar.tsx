@@ -51,9 +51,20 @@ export const CapacityBar = ({ accent }: { accent: string }) => {
       .then((payload) => {
         if (active && payload?.data) setCapacity(payload.data);
       })
-      .catch(() => {
+      .catch((error) => {
         /* Raden är upplysning, inte funktion. Går den inte att hämta
-           visas ingenting, och köpknappen ovanför fungerar som vanligt. */
+           visas ingenting, och köpknappen ovanför fungerar som vanligt.
+
+           I utvecklingsläge sägs det i konsolen ändå. Att den bara
+           uteblir är rätt för en kund men obegripligt för den som just
+           byggt den och undrar var den tog vägen - oftast är svaret att
+           API-servern kör gammal kod och inte känner till rutten. */
+        if (import.meta.env.DEV) {
+          console.warn(
+            "[CapacityBar] kunde inte hämta /api/preorder-capacity - kör npm run serve:dev den senaste koden?",
+            error,
+          );
+        }
       });
     return () => {
       active = false;
@@ -65,7 +76,7 @@ export const CapacityBar = ({ accent }: { accent: string }) => {
   const total = 10;
   const left = Math.max(0, Math.min(total, capacity.new));
   const taken = total - left;
-  /* Andelen upptagna platser. Stapeln fylls alltså medan sommaren går,
+  /* Andelen upptagna platser. Stapeln fylls alltså medan platserna tar slut,
      och gubben vandrar med den. */
   const percent = Math.round((taken / total) * 100);
 

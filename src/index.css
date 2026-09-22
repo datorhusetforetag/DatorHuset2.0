@@ -2641,7 +2641,13 @@
  */
 
 .capacity {
-  margin-top: 1.25rem;
+  /* Foten är en flexrad med space-between, så utan egen bredd hade
+     stapeln ställt sig BREDVID köpknappen i stället för under den.
+     100 procent tvingar den till en egen rad. */
+  width: 100%;
+  /* Svetsaren står ovanpå spåret och är knappt 28 px hög. Marginalen
+     är hans takhöjd - med mindre hamnar han över knappraden. */
+  margin-top: 2.25rem;
 }
 
 .capacity__label {
