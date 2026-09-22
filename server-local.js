@@ -7387,6 +7387,210 @@ app.put("/api/admin/v2/listings/:productId/fps", async (req, res) => {
   }
 });
 
+/**
+ * GET /api/admin/v2/customers
+ *
+ * Kunderna, för den som svarar i supporten.
+ *
+ * Ringer någon om sin order vill man se personen och hennes ordrar på
+ * ett ställe, inte leta i två listor. Listan här är avsiktligt smal:
+ * namn, adress, när kontot skapades och hur många ordrar det har.
+ * Allt annat - adresser, telefonnummer, orderrader - hämtas först när
+ * man öppnar en enskild kund.
+ *
+ * Sökningen körs mot Supabase egen lista. Den saknar "sök", så vi
+ * hämtar sidan och filtrerar här. Med några hundra konton är det
+ * rimligt; blir det tiotusentals behöver kunderna en egen tabell.
+ */
+app.get("/api/admin/v2/customers", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const term = sanitizeText(req.query?.q, 80).toLowerCase();
+    const page = Math.max(1, Number(req.query?.page || 1));
+    const perPage = Math.min(200, Math.max(1, Number(req.query?.perPage || 200)));
+
+    const { data: userData, error: userError } = await supabase.auth.admin.listUsers({
+      page,
+      perPage,
+    });
+    if (userError) {
+      return jsonError(res, 500, "CUSTOMERS_FETCH_FAILED", userError.message || "Kunde inte hämta kunder.");
+    }
+
+    const users = userData?.users || [];
+
+    /* Ordrarna räknas i en fråga i stället för en per kund. Tvåhundra
+       konton hade annars blivit tvåhundra rundturer till databasen. */
+    const { data: orderRows } = await supabase.from("orders").select("user_id, status, total_cents");
+    const statsByUser = new Map();
+    (orderRows || []).forEach((row) => {
+      if (!row?.user_id) return;
+      const current = statsByUser.get(row.user_id) || { orders: 0, spentCents: 0, open: 0 };
+      current.orders += 1;
+      current.spentCents += Number(row.total_cents || 0);
+      if (!["delivered", "cancelled", "refunded"].includes(String(row.status || ""))) {
+        current.open += 1;
+      }
+      statsByUser.set(row.user_id, current);
+    });
+
+    const mapped = users.map((user) => {
+      const meta = user?.user_metadata || {};
+      const stats = statsByUser.get(user.id) || { orders: 0, spentCents: 0, open: 0 };
+      return {
+        id: user.id,
+        email: user.email || null,
+        name: meta.full_name || meta.username || meta.name || null,
+        created_at: user.created_at || null,
+        last_sign_in_at: user.last_sign_in_at || null,
+        email_confirmed: Boolean(user.email_confirmed_at || user.confirmed_at),
+        orders: stats.orders,
+        open_orders: stats.open,
+        spent_cents: stats.spentCents,
+      };
+    });
+
+    const filtered = term
+      ? mapped.filter((customer) =>
+          [customer.email, customer.name, customer.id].some((field) =>
+            String(field || "").toLowerCase().includes(term),
+          ),
+        )
+      : mapped;
+
+    return res.json({ ok: true, data: filtered, total: filtered.length });
+  } catch (error) {
+    console.error("Admin customers error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
+
+/**
+ * GET /api/admin/v2/customers/:userId
+ *
+ * En kund med sina ordrar, i den ordning man behöver dem: pågående
+ * först, sedan avslutade. Den som ringer undrar nästan alltid om den
+ * order som inte kommit fram än.
+ */
+app.get("/api/admin/v2/customers/:userId", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["readonly", "ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const userId = sanitizeText(req.params?.userId, 80);
+    if (!userId) {
+      return jsonError(res, 400, "INVALID_USER_ID", "Ogiltigt kund-id.");
+    }
+
+    const { data: userData, error: userError } = await supabase.auth.admin.getUserById(userId);
+    if (userError || !userData?.user) {
+      return jsonError(res, 404, "CUSTOMER_NOT_FOUND", "Kunden hittades inte.");
+    }
+    const user = userData.user;
+    const meta = user.user_metadata || {};
+
+    const { data: orders } = await supabase
+      .from("orders")
+      .select(
+        `
+        *,
+        order_items (
+          quantity,
+          unit_price_cents,
+          product:product_id (name)
+        )
+      `,
+      )
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    const { data: addresses } = await supabase
+      .from("user_addresses")
+      .select("*")
+      .eq("user_id", userId);
+
+    await logAdminAction(req, access.user, "customer.view", "user", userId, {
+      email: user.email,
+    });
+
+    return res.json({
+      ok: true,
+      data: {
+        id: user.id,
+        email: user.email || null,
+        name: meta.full_name || meta.username || meta.name || null,
+        phone: meta.phone || null,
+        created_at: user.created_at || null,
+        last_sign_in_at: user.last_sign_in_at || null,
+        email_confirmed: Boolean(user.email_confirmed_at || user.confirmed_at),
+        provider: user.app_metadata?.provider || null,
+        addresses: addresses || [],
+        orders: orders || [],
+      },
+    });
+  } catch (error) {
+    console.error("Admin customer detail error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
+
+/**
+ * POST /api/admin/v2/customers/:userId/reset-password
+ *
+ * Skickar ett återställningsmejl till kundens egen adress.
+ *
+ * Vi sätter aldrig ett lösenord åt någon annan. Länken går till den
+ * adress kontot redan har, så den som ringer måste ha tillgång till
+ * inkorgen för att komma vidare - annars hade ett telefonsamtal räckt
+ * för att ta över ett konto.
+ *
+ * Kräver ops eller admin. Läsbehörighet får titta, inte skicka.
+ */
+app.post("/api/admin/v2/customers/:userId/reset-password", mailFormLimiter, async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const userId = sanitizeText(req.params?.userId, 80);
+    const { data: userData, error: userError } = await supabase.auth.admin.getUserById(userId);
+    if (userError || !userData?.user?.email) {
+      return jsonError(res, 404, "CUSTOMER_NOT_FOUND", "Kunden hittades inte.");
+    }
+
+    const email = userData.user.email;
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${FRONTEND_URL}/reset-password`,
+    });
+    if (resetError) {
+      return jsonError(
+        res,
+        500,
+        "RESET_FAILED",
+        resetError.message || "Kunde inte skicka återställningsmejlet.",
+      );
+    }
+
+    await logAdminAction(req, access.user, "customer.reset_password", "user", userId, { email });
+    return res.json({ ok: true, data: { email } });
+  } catch (error) {
+    console.error("Admin reset password error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
 app.get("/api/admin/v2/orders", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
