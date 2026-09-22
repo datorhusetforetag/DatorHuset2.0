@@ -3,6 +3,7 @@ import { Loader2, Trash2, Upload, X } from "lucide-react";
 
 import { errorMessage } from "@/lib/utils";
 import { type Listing, formatPrice } from "./listingModel";
+import { FpsEditor, type FpsSettings } from "./FpsEditor";
 
 /**
  * Redigera en listning.
@@ -50,6 +51,11 @@ export const ListingEditor = ({
 }: Props) => {
   const isNew = !listing;
   const [form, setForm] = useState<Listing>(() => listing || draft || ({} as Listing));
+  /* FPS ligger vid sidan av resten. Formen kommer från servern och
+     skickas tillbaka oförändrad, så den hör inte hemma i Listing. */
+  const [fps, setFps] = useState<FpsSettings | null>(
+    () => ((listing || draft) as unknown as { fps?: FpsSettings })?.fps ?? null,
+  );
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -57,6 +63,7 @@ export const ListingEditor = ({
 
   useEffect(() => {
     setForm(listing || draft || ({} as Listing));
+    setFps(((listing || draft) as unknown as { fps?: FpsSettings })?.fps ?? null);
     setError("");
   }, [listing, draft]);
 
@@ -143,6 +150,8 @@ export const ListingEditor = ({
         /* Bara vid ändring. En ny listning har inget att krocka med. */
         ...(isNew ? {} : { expected_updated_at: form.updated_at }),
       },
+      /* Utelämnas när inget rörts, så servern behåller det den har. */
+      ...(fps ? { fps } : {}),
     };
 
     try {
@@ -233,14 +242,38 @@ export const ListingEditor = ({
                 </select>
               </Field>
             </div>
-            <Field label="Beskrivning" hint="Visas på produktsidan">
+            {/* Texten längst ned på produktsidan.
+
+                Reglen var osynlig: en tom rad delar texten i två
+                avsnitt som visas sida vid sida under specifikationen.
+                Skrev man ett enda stycke fick man ett avsnitt, skrev
+                man två fick man två - utan att någonstans få veta
+                varför. Nu står det i fältet, och antalet avsnitt
+                räknas fram medan man skriver. */}
+            <Field label="Text på produktsidan" hint="Visas under specifikationen">
               <textarea
-                rows={3}
+                rows={6}
                 className={`${inputClass} resize-y`}
                 value={form.description || ""}
                 onChange={(e) => set("description", e.target.value)}
+                placeholder={"Första avsnittet.\n\nAndra avsnittet, efter en tom rad."}
               />
             </Field>
+            <p className="-mt-2 text-xs leading-relaxed text-slate-500">
+              {(() => {
+                const blocks = (form.description || "")
+                  .split(/\n\s*\n/)
+                  .map((block) => block.trim())
+                  .filter(Boolean);
+                if (blocks.length === 0) {
+                  return "Lämnas fältet tomt visas en standardtext i stället.";
+                }
+                if (blocks.length === 1) {
+                  return "Ett avsnitt. Lägg en tom rad mitt i texten för att dela den i två.";
+                }
+                return `${blocks.length} stycken blir två avsnitt sida vid sida - det första för sig, resten tillsammans.`;
+              })()}
+            </p>
             <Field label="Används till" hint="Styr om maskinen syns under Workstation i menyn">
               <div className="flex gap-2">
                 {(["gaming", "workstation"] as const).map((value) => (
@@ -354,6 +387,10 @@ export const ListingEditor = ({
               <Field label="CPU-kylare"><input className={inputClass} value={form.cpu_cooler || ""} onChange={(e) => set("cpu_cooler", e.target.value)} /></Field>
               <Field label="Operativsystem"><input className={inputClass} value={form.os || ""} onChange={(e) => set("os", e.target.value)} /></Field>
             </div>
+          </Group>
+
+          <Group title="FPS på produktsidan">
+            <FpsEditor value={fps} onChange={setFps} />
           </Group>
 
           <Group title="Bilder">

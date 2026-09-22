@@ -9,6 +9,7 @@ import {
   Loader2,
   Package,
   Plus,
+  ExternalLink,
   Search,
   Trash2,
 } from "lucide-react";
@@ -89,6 +90,13 @@ export default function AdminListings() {
     [],
   );
 
+  /* Butiken kör på 8080 under utveckling och på sin egen domän i
+     drift. Portalen ligger på 8081 respektive en annan värd, så
+     adressen kan inte tas från window.location. */
+  const storeOrigin = import.meta.env.DEV
+    ? "http://localhost:8080"
+    : "https://datorhuset.se";
+
   const authHeaders = useMemo(
     () => ({ Authorization: `Bearer ${token}`, "Content-Type": "application/json" }),
     [token],
@@ -133,6 +141,38 @@ export default function AdminListings() {
     });
   }, [listings, query]);
 
+  /*
+   * Begagnatvarianter hör ihop med sin bas.
+   *
+   * En maskin som säljs både nybyggd och begagnad ligger som två
+   * rader med samma namn. I listan såg det ut som en dubblett - "varför
+   * står Platina Historia två gånger?" - fast det är ett val kunden
+   * gör på produktsidan, inte ett fel.
+   *
+   * Varianten plockas därför ur huvudlistan och hängs under sin bas.
+   * Saknas basen, till exempel för att den är arkiverad, får varianten
+   * stå kvar på egen hand hellre än att försvinna helt.
+   */
+  const usedByBaseId = useMemo(() => {
+    const map = new Map<string, Listing>();
+    listings.forEach((listing) => {
+      if (listing.variant_role === "used" && listing.linked_product_id) {
+        map.set(listing.linked_product_id, listing);
+      }
+    });
+    return map;
+  }, [listings]);
+
+  const hasVisibleBase = useCallback(
+    (listing: Listing) =>
+      listing.variant_role === "used" &&
+      Boolean(listing.linked_product_id) &&
+      listings.some(
+        (row) => row.id === listing.linked_product_id && !row.archived_at,
+      ),
+    [listings],
+  );
+
   const grouped = useMemo(() => {
     const buckets: Record<ListingGroup, Listing[]> = {
       ready: [],
@@ -140,7 +180,9 @@ export default function AdminListings() {
       preorder: [],
       archived: [],
     };
-    visible.forEach((listing) => buckets[groupOf(listing)].push(listing));
+    visible
+      .filter((listing) => !hasVisibleBase(listing))
+      .forEach((listing) => buckets[groupOf(listing)].push(listing));
     /* Inom varje grupp gäller butikens ordning. Utan sort_order hamnar
        maskinen sist i stället för först, så en ny listning inte hoppar
        upp i toppen av butiken innan någon bestämt var den ska ligga. */
@@ -154,7 +196,7 @@ export default function AdminListings() {
     buckets.sold_out.sort(byOrder);
     buckets.preorder.sort(byOrder);
     return buckets;
-  }, [visible]);
+  }, [visible, hasVisibleBase]);
 
   const patchLocal = useCallback((id: string, changes: Partial<Listing>) => {
     setListings((prev) => prev.map((listing) => (listing.id === id ? { ...listing, ...changes } : listing)));
@@ -175,6 +217,53 @@ export default function AdminListings() {
       [next[index], next[target]] = [next[target], next[index]];
 
       const order = next.map((row, position) => ({ id: row.id, sort_order: (position + 1) * 10 }));
+      order.forEach((row) => patchLocal(row.id, { sort_order: row.sort_order }));
+
+      setBusyId(listing.id);
+      try {
+        const response = await fetch(`${apiBase}/api/admin/v2/listings/order`, {
+          method: "PATCH",
+          headers: authHeaders,
+          body: JSON.stringify({ order }),
+        });
+        if (!response.ok) {
+          const payload = await response.json().catch(() => ({}));
+          throw new Error(payload?.error?.message || payload?.error || "Kunde inte spara ordningen.");
+        }
+      } catch (error) {
+        flash("error", errorMessage(error, "Kunde inte spara ordningen."));
+        void load();
+      } finally {
+        setBusyId(null);
+      }
+    },
+    [apiBase, authHeaders, flash, grouped, load, patchLocal],
+  );
+
+  /*
+   * Flytta till en bestämd plats.
+   *
+   * Pilarna räcker för att putta ett kort ett steg, men inte för att
+   * säga "den här ska ligga först". Med tjugo listningar blir det
+   * nitton klick, och man tappar räkningen på vägen.
+   *
+   * Platsen räknas från ett, som den står i rutan bredvid, inte från
+   * noll. Rutnätet i butiken är tre kort brett, så plats 4 är första
+   * kortet på rad två - det står utskrivet i raden så man slipper
+   * räkna själv.
+   */
+  const moveTo = useCallback(
+    async (listing: Listing, position: number) => {
+      const siblings = grouped[groupOf(listing)];
+      const from = siblings.findIndex((row) => row.id === listing.id);
+      const to = Math.min(Math.max(1, Math.round(position)), siblings.length) - 1;
+      if (from === -1 || from === to) return;
+
+      const next = [...siblings];
+      const [moved] = next.splice(from, 1);
+      next.splice(to, 0, moved);
+
+      const order = next.map((row, index) => ({ id: row.id, sort_order: (index + 1) * 10 }));
       order.forEach((row) => patchLocal(row.id, { sort_order: row.sort_order }));
 
       setBusyId(listing.id);
@@ -398,17 +487,55 @@ export default function AdminListings() {
         </div>
 
         <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/40">
-          {rows.map((listing, index) => (
-            <Row
-              key={listing.id}
-              listing={listing}
-              group={group}
-              isFirst={index === 0}
-              isLast={index === rows.length - 1}
-            />
-          ))}
+          {rows.map((listing, index) => {
+            const used = usedByBaseId.get(listing.id);
+            return (
+              <div key={listing.id}>
+                <Row
+                  listing={listing}
+                  group={group}
+                  isFirst={index === 0}
+                  isLast={index === rows.length - 1 && !used}
+                  position={index + 1}
+                  total={rows.length}
+                />
+                {used && <UsedRow listing={used} />}
+              </div>
+            );
+          })}
         </div>
       </section>
+    );
+  }
+
+  /*
+   * Begagnatvarianten, indragen under sin bas.
+   *
+   * Medvetet mindre än en vanlig rad: den är ett andra skick av samma
+   * maskin, inte en egen produkt. Ingen ordning att flytta - varianten
+   * följer basen på produktsidan - och ingen egen borttagning, för att
+   * ta bort basen utan varianten skulle lämna ett skick utan maskin.
+   */
+  function UsedRow({ listing }: { listing: Listing }) {
+    return (
+      <div className="flex items-center gap-3 border-b border-slate-800/70 bg-slate-950/30 py-2 pl-12 pr-3 last:border-b-0">
+        <span className="text-xs text-slate-600">└</span>
+        <button
+          type="button"
+          onClick={() => setEditingId(listing.id)}
+          className="min-w-0 flex-1 text-left"
+        >
+          <span className="text-xs font-semibold text-slate-300">Begagnad</span>
+          <span className="ml-2 text-xs text-slate-500">{listing.name}</span>
+        </button>
+        <span className="w-24 shrink-0 text-right text-xs font-semibold tabular-nums text-slate-300">
+          {formatPrice(listing.price_cents)}
+        </span>
+        <span className="hidden w-28 shrink-0 text-center text-[11px] text-slate-500 sm:block">
+          {listing.quantity_in_stock > 0 ? `${listing.quantity_in_stock} i lager` : "Slut"}
+        </span>
+        <span className="w-9 shrink-0" />
+      </div>
     );
   }
 
@@ -417,14 +544,22 @@ export default function AdminListings() {
     group,
     isFirst,
     isLast,
+    position,
+    total,
   }: {
     listing: Listing;
     group: ListingGroup;
     isFirst: boolean;
     isLast: boolean;
+    position: number;
+    total: number;
   }) {
     const status = statusOf(listing);
     const busy = busyId === listing.id;
+    /* Butiken lägger tre kort per rad på bred skärm. Se grid-cols-3
+       i Products.tsx. */
+    const row = Math.floor((position - 1) / 3) + 1;
+    const slot = ((position - 1) % 3) + 1;
 
     return (
       <div className="flex items-center gap-3 border-b border-slate-800/70 px-3 py-3 last:border-b-0 hover:bg-slate-800/30">
@@ -476,6 +611,33 @@ export default function AdminListings() {
           </span>
         </button>
 
+        {/* Platsen i butiken. Rutan tar ett tal; texten under säger
+            vilken rad och plats det blir, så man slipper räkna. */}
+        {canWrite && (
+          <div className="hidden w-20 shrink-0 text-center lg:block">
+            <input
+              type="number"
+              min={1}
+              max={total}
+              defaultValue={position}
+              key={`${listing.id}-${position}`}
+              disabled={busy}
+              aria-label={`Plats för ${listing.name}`}
+              onBlur={(event) => {
+                const next = Number(event.target.value);
+                if (next && next !== position) void moveTo(listing, next);
+              }}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") event.currentTarget.blur();
+              }}
+              className="w-12 rounded border border-slate-700/60 bg-slate-950/60 px-1 py-1 text-center text-xs tabular-nums text-slate-100 focus:border-cyan-400/60 focus:outline-none"
+            />
+            <span className="mt-0.5 block text-[10px] text-slate-600">
+              rad {row}, plats {slot}
+            </span>
+          </div>
+        )}
+
         <span className="hidden w-20 shrink-0 text-xs font-semibold uppercase tracking-wide text-slate-400 sm:block">
           {listing.tier || "-"}
         </span>
@@ -492,6 +654,20 @@ export default function AdminListings() {
 
         <div className="flex shrink-0 items-center gap-1">
           {busy && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+          {/* Rakt till den sida kunden ser. Snabbaste sättet att
+              upptäcka ett fel pris eller en bild som saknas är att
+              titta på den riktiga sidan, och utan den här länken
+              betyder det att kopiera namnet och leta i butiken. */}
+          <a
+            href={`${storeOrigin}/computer/${listing.slug || listing.id}`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label={`Visa ${listing.name} på sajten`}
+            title="Visa på sajten"
+            className="rounded-lg p-2 text-slate-500 hover:bg-slate-800 hover:text-cyan-300"
+          >
+            <ExternalLink className="h-4 w-4" />
+          </a>
           {/* På en slutsåld rad är det här huvudhandlingen, och då ska
               den vara läsbar i klartext. På övriga är det en åtgärd man
               sällan tar, och där räcker ikonen. */}

@@ -37,6 +37,16 @@ export type Listing = {
   eta_days: number | null;
   eta_note: string | null;
 
+  /* Begagnatvarianten.
+
+     En maskin kan säljas i två skick: nybyggd och begagnad. De ligger
+     som två rader i databasen och pekar på varandra, med variant_role
+     som säger vilken som är vilken. Adminportalen visar dem ihop -
+     två identiska namn bredvid varandra i listan ser ut som ett
+     misstag, inte som ett val. */
+  variant_role: "base" | "used" | null;
+  linked_product_id: string | null;
+
   sort_order: number | null;
   archived_at: string | null;
   updated_at: string | null;
@@ -141,6 +151,8 @@ export const emptyDraft = (): Listing => ({
   is_preorder: true,
   eta_days: null,
   eta_note: null,
+  variant_role: null,
+  linked_product_id: null,
   sort_order: null,
   archived_at: null,
   updated_at: null,
