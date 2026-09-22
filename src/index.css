@@ -2676,6 +2676,11 @@
  */
 
 .capacity {
+  /* Gnistornas kulör. Orange oavsett maskinens accent - glödande
+     metall har sin egen temperatur. */
+  --spark-hot: #ff8a2b;
+  --spark-warm: #ffc061;
+
   /* Foten är en flexrad med space-between, så utan egen bredd hade
      stapeln ställt sig BREDVID köpknappen i stället för under den. */
   width: 100%;
@@ -2738,8 +2743,10 @@
 
 .capacity__figure {
   display: block;
-  width: 2.6rem;
-  height: 2.6rem;
+  /* viewBox är 28x24, alltså bredare än hög. Bredden följer det så
+     att chassit inte pressas ihop. */
+  width: 3.6rem;
+  height: 3.1rem;
   overflow: visible;
   /* Han gungar en aning medan han arbetar. Två grader räcker - mer och
      det blir en dans i stället för ett handgrepp. */
@@ -2750,46 +2757,56 @@
 /*
  * Pixlarna.
  *
- * Varje rect i figuren är en ruta. Kulörerna är få med flit: fler toner
- * gör att det slutar läsas som 8 bitar och börjar läsas som en dålig
- * teckning.
+ * Varje rect i figuren är en ruta. Kulörerna är fasta och inte hämtade
+ * ur temat: en svetsare i sidans grå toner blir en skugga, och hela
+ * poängen är att det sitter en människa där. Få toner med flit - fler
+ * gör att det slutar läsas som 8 bitar.
  */
-.capacity__figure .px-dark {
-  fill: hsl(var(--foreground) / 0.88);
+.capacity__figure .px-helmet {
+  fill: #2f3a4d;
 }
-.capacity__figure .px-body {
-  fill: hsl(var(--foreground) / 0.62);
+.capacity__figure .px-overall {
+  fill: #2f6fb5;
 }
 .capacity__figure .px-strap {
-  fill: hsl(var(--foreground) / 0.3);
-}
-.capacity__figure .px-legs {
-  fill: hsl(var(--foreground) / 0.48);
-}
-.capacity__figure .px-boot {
-  fill: hsl(var(--foreground) / 0.8);
+  fill: #1d4b7e;
 }
 .capacity__figure .px-skin {
-  fill: hsl(var(--foreground) / 0.72);
+  fill: #e0a074;
 }
-.capacity__figure .px-board {
-  fill: hsl(var(--foreground) / 0.22);
-}
-.capacity__figure .px-chip {
-  fill: hsl(var(--foreground) / 0.5);
-}
-/* Visiret och lödspetsen lyser i maskinens egen kulör, så figuren hör
-   ihop med resten av sidan. */
-.capacity__figure .px-visor {
-  fill: var(--capacity-accent);
+.capacity__figure .px-boot {
+  fill: #4a3626;
 }
 .capacity__figure .px-tool {
-  fill: hsl(var(--foreground) / 0.66);
-}
-.capacity__figure .px-tip {
-  fill: var(--capacity-accent);
+  fill: #8a8f9c;
 }
 
+/* Chassit han bygger. Glaset mörkare än ramen, så sidopanelen syns.
+   Kretskortet grönt av samma skäl som en riktig dator har det: det är
+   det som säger att det är elektronik och inte en låda. */
+.capacity__figure .px-case {
+  fill: #1b2130;
+}
+.capacity__figure .px-glass {
+  fill: #0e1220;
+}
+.capacity__figure .px-board {
+  fill: #1f5c3a;
+}
+.capacity__figure .px-chip {
+  fill: #c9a227;
+}
+.capacity__figure .px-fan {
+  fill: #39404f;
+}
+
+/* Visir, lödspets och lampor lyser i samma orange som gnistorna, så
+   det heta hänger ihop. */
+.capacity__figure .px-visor,
+.capacity__figure .px-tip,
+.capacity__figure .px-glow {
+  fill: var(--spark-hot);
+}
 @keyframes capacity-lean {
   0%,
   100% {
@@ -2807,20 +2824,24 @@
  * Riktning och längd kommer från --dx och --dy, satta per gnista i
  * komponenten.
  */
+/* Utgångspunkten är lödpennans spets. Flyttas figuren måste de två
+   talen följa med, annars sprutar gnistorna ur tomma luften. */
 .capacity__sparks {
   position: absolute;
-  left: 2.45rem;
-  top: 1.05rem;
+  left: 2.55rem;
+  top: 1.2rem;
   width: 0;
   height: 0;
 }
 
+/* Orange, inte maskinens kulör. En gnista är glödande metall och har
+   sin egen temperatur oavsett vilken dator sidan visar. */
 .capacity__spark {
   position: absolute;
   width: var(--size, 2px);
   height: var(--size, 2px);
-  background: var(--capacity-accent);
-  box-shadow: 0 0 6px var(--capacity-accent);
+  background: var(--spark-hot);
+  box-shadow: 0 0 6px var(--spark-warm), 0 0 12px var(--spark-hot);
   opacity: 0;
   animation-name: capacity-spark;
   animation-iteration-count: infinite;
@@ -2909,4 +2930,43 @@
   .capacity__spark {
     display: none;
   }
+}
+
+/* FPS-rutorna ------------------------------------------------------
+ *
+ * Omslaget känns igen innan man läst något; siffran under blir då
+ * svaret på en fråga man redan ställt sig. En rad text bredvid ett tal
+ * kräver att man läser namnet först.
+ *
+ * Fast bildformat, så rutorna står i linje även när omslagen har olika
+ * proportioner. object-fit: cover beskär i stället för att tänja -
+ * ett tänjt omslag ser ut som ett fel.
+ */
+.fps-tile {
+  position: relative;
+  display: flex;
+  aspect-ratio: 16 / 10;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(var(--foreground) / 0.12);
+  background: hsl(var(--foreground) / 0.05);
+}
+
+.fps-tile__art {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+/* Reservläge när omslaget saknas. Namnet får ta platsen i stället för
+   att rutan står tom. */
+.fps-tile__name {
+  padding: 0 0.5rem;
+  text-align: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: hsl(var(--muted-foreground));
 }

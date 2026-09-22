@@ -31,6 +31,8 @@ import {
  * Kontrollerna är kvar allihop. Det var aldrig de som stökade.
  */
 
+import { gameArtFor } from "@/lib/gameArt";
+
 type FpsPanelProps = {
   settings: FpsSandboxSettings;
   /** Sidans kulör, samma som nivån datorn tillhör. */
@@ -182,8 +184,16 @@ export const FpsPanel = ({ settings, accent }: FpsPanelProps) => {
         />
       </div>
 
-      {/* Spelen som rader, samma form som specifikationerna ovanför. */}
-      <ul className="mt-5 divide-y divide-foreground/10 border-t border-foreground/10">
+      {/* Spelen som rutor med omslag.
+
+          En rad text bredvid ett tal säger ingenting förrän man läst
+          namnet. Ett omslag känns igen innan man läst något alls, och
+          då blir siffran under det svaret på en fråga man redan
+          ställt sig.
+
+          Saknas omslaget visas namnet stort i stället. En bild som
+          inte finns ska inte kunna ta bort en siffra kunden ska se. */}
+      <ul className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
         {rows.map((row) => {
           /* Det som är påslaget men som just det här spelet inte stöder
              skrivs ut, annars ser det ut som att siffran vägrar röra
@@ -192,23 +202,41 @@ export const FpsPanel = ({ settings, accent }: FpsPanelProps) => {
             dlssOn && !row.supportsDlss ? "DLSS" : null,
             frameGenOn && !row.supportsFrameGen ? "bildgen." : null,
           ].filter(Boolean);
+          const art = gameArtFor(row.game);
 
           return (
-            <li key={row.game} className="flex items-baseline justify-between gap-4 py-2.5">
-              <span className="min-w-0 truncate text-sm text-foreground">
-                {row.game}
-                {missing.length > 0 && (
-                  <span className="ml-2 text-[10px] text-muted-foreground">
-                    utan {missing.join(" och ")}
-                  </span>
+            <li key={row.game} className="min-w-0">
+              <div className="fps-tile">
+                {art ? (
+                  <img
+                    src={art}
+                    alt={row.game}
+                    loading="lazy"
+                    decoding="async"
+                    className="fps-tile__art"
+                  />
+                ) : (
+                  <span className="fps-tile__name">{row.game}</span>
                 )}
-              </span>
-              <span
-                className="shrink-0 font-display text-base font-bold tabular-nums"
-                style={{ color: accent }}
-              >
-                {row.fps}
-              </span>
+              </div>
+
+              <p className="mt-1.5 flex items-baseline gap-1.5">
+                <span
+                  className="font-display text-lg font-bold tabular-nums leading-none"
+                  style={{ color: accent }}
+                >
+                  {row.fps}
+                </span>
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  fps · {resolution}
+                </span>
+              </p>
+
+              {missing.length > 0 && (
+                <p className="text-[10px] leading-tight text-muted-foreground">
+                  utan {missing.join(" och ")}
+                </p>
+              )}
             </li>
           );
         })}

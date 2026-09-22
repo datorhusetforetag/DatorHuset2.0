@@ -35,42 +35,93 @@ import { useEffect, useMemo, useState } from "react";
 
 type Capacity = { used: number; new: number; isFull: boolean };
 
-/*
- * Korta gnistor. Alltid igång - de bär intrycket av att något hettar.
- * Olika riktning, längd och fördröjning, eftersom samma bana på alla
- * läses som ett mönster i stället för som gnistor.
- */
-const NEAR_SPARKS = [
-  { dx: 22, dy: -26, dur: 0.8, delay: 0, size: 3 },
-  { dx: -18, dy: -22, dur: 0.95, delay: 0.16, size: 2 },
-  { dx: 30, dy: -12, dur: 1.05, delay: 0.3, size: 2 },
-  { dx: -26, dy: -8, dur: 0.88, delay: 0.46, size: 3 },
-  { dx: 10, dy: -34, dur: 1.15, delay: 0.62, size: 2 },
-  { dx: -8, dy: -30, dur: 1, delay: 0.78, size: 2 },
-];
+type Spark = {
+  dx: number;
+  dy: number;
+  size: number;
+  delay: number;
+  duration: number;
+  far: boolean;
+  curve: string;
+};
 
 /*
- * Långa gnistor, tvärs över hela stapeln.
+ * Gnistorna slumpas fram i stället för att stå i en lista.
  *
- * cycle är hur ofta gnistan flyger, i sekunder. Själva flykten tar
- * bara fyra procent av varvet - resten ligger gnistan stilla och
- * osynlig. Det är så sällsyntheten uppstår: ingen räknar varv i
- * javascript, animationen gör det åt oss.
+ * En handskriven lista ger alltid samma sex banor i samma takt, och
+ * ögat hittar mönstret på ett par sekunder. Med slumpade värden är
+ * varje sidladdning sin egen, och eftersom varvtiderna inte går jämnt
+ * upp mot varandra sammanfaller de nästan aldrig - det finns ingen
+ * takt att låsa fast vid.
  *
- * Med cykler runt tjugo till trettiofem sekunder, och fyra gnistor med
- * olika varvtid och start, korsar något stapeln då och då utan att det
- * går att förutse när. Flöge de varje gång vore det ett fyrverkeri.
+ * Tre saker varieras utöver riktning och längd:
+ *
+ *   duration   flykttiden, olika per gnista
+ *   delay      var i varvet den råkar befinna sig just nu
+ *   curve      accelerationen, dragen ur en handfull olika
+ *
+ * Det sista är det som gör mest: två gnistor med samma bana men olika
+ * kurva ser ut som två olika kast.
  */
+const CURVES = [
+  "cubic-bezier(0.15, 0.6, 0.4, 1)",
+  "cubic-bezier(0.05, 0.8, 0.3, 1)",
+  "cubic-bezier(0.25, 0.45, 0.35, 1)",
+  "cubic-bezier(0.1, 0.9, 0.2, 1)",
+];
+
 /* Måste stämma med nyckelrutorna i capacity-spark-far, där flykten är
    över vid fyra procent. */
 const FAR_FLIGHT_FRACTION = 0.04;
 
-const FAR_SPARKS = [
-  { dx: 210, dy: -46, cycle: 19, delay: 0.4, size: 3 },
-  { dx: -190, dy: -38, cycle: 26, delay: 1.3, size: 2 },
-  { dx: 320, dy: -22, cycle: 33, delay: 2.1, size: 2 },
-  { dx: -280, dy: -54, cycle: 23, delay: 3.2, size: 3 },
-];
+const pick = <T,>(list: T[]) => list[Math.floor(Math.random() * list.length)];
+const between = (min: number, max: number) => min + Math.random() * (max - min);
+
+/*
+ * Korta gnistor. Alltid igång - de bär intrycket av att något hettar.
+ *
+ * Riktningen är vägd uppåt och åt höger, dit lödpennan pekar, men
+ * några få går åt andra hållet. Gnistor som alla flyger åt samma håll
+ * ser ut som en stråle, inte som lödning.
+ */
+const makeNearSparks = (count: number): Spark[] =>
+  Array.from({ length: count }, () => {
+    const towardsRight = Math.random() > 0.3;
+    return {
+      dx: towardsRight ? between(8, 38) : between(-32, -6),
+      dy: between(-38, -6),
+      size: Math.random() > 0.6 ? 3 : 2,
+      delay: between(0, 1.4),
+      duration: between(0.7, 1.3),
+      far: false,
+      curve: pick(CURVES),
+    };
+  });
+
+/*
+ * Långa gnistor, tvärs över hela stapeln.
+ *
+ * duration är hela varvet. Själva flykten tar bara fyra procent av
+ * det - resten ligger gnistan stilla och osynlig, och det är så
+ * sällsyntheten uppstår utan att något behöver räkna varv i
+ * javascript.
+ *
+ * Fördröjningen slumpas över hela varvet, så de inte börjar i kö.
+ */
+const makeFarSparks = (count: number): Spark[] =>
+  Array.from({ length: count }, () => {
+    const towardsRight = Math.random() > 0.45;
+    const duration = between(16, 38);
+    return {
+      dx: towardsRight ? between(150, 340) : between(-300, -140),
+      dy: between(-58, -18),
+      size: Math.random() > 0.5 ? 3 : 2,
+      delay: between(0, duration),
+      duration,
+      far: true,
+      curve: pick(CURVES),
+    };
+  });
 
 export const CapacityBar = ({ accent }: { accent: string }) => {
   const [capacity, setCapacity] = useState<Capacity | null>(null);
@@ -102,9 +153,10 @@ export const CapacityBar = ({ accent }: { accent: string }) => {
     };
   }, []);
 
-  /* De långa gnistorna får slumpade startpunkter en gång per besök, så
-     två laddningar av samma sida inte ser identiska ut. */
-  const farOffsets = useMemo(() => FAR_SPARKS.map(() => Math.random() * 12), []);
+  /* Slumpas en gång per besök och behålls sedan. Utan useMemo skulle
+     varje omritning ge nya banor, och gnistorna skulle hoppa till så
+     fort något annat på sidan ändrades. */
+  const sparks = useMemo(() => [...makeNearSparks(9), ...makeFarSparks(5)], []);
 
   if (!capacity) return null;
 
@@ -133,68 +185,71 @@ export const CapacityBar = ({ accent }: { accent: string }) => {
           {/* 8-bitars: varje rect är en pixel. Inga kurvor, och
               shapeRendering stänger av kantutjämningen så rutorna blir
               hårda i stället för suddiga. */}
-          <svg viewBox="0 0 22 22" className="capacity__figure" shapeRendering="crispEdges">
+          <svg viewBox="0 0 28 24" className="capacity__figure" shapeRendering="crispEdges">
             {/* Svetshjälm */}
-            <rect x="6" y="1" width="6" height="1" className="px-dark" />
-            <rect x="5" y="2" width="8" height="1" className="px-dark" />
-            <rect x="5" y="3" width="2" height="2" className="px-dark" />
-            <rect x="11" y="3" width="2" height="2" className="px-dark" />
-            <rect x="7" y="3" width="4" height="2" className="px-visor" />
-            <rect x="5" y="5" width="8" height="1" className="px-dark" />
+            <rect x="4" y="1" width="6" height="1" className="px-helmet" />
+            <rect x="3" y="2" width="8" height="1" className="px-helmet" />
+            <rect x="3" y="3" width="2" height="2" className="px-helmet" />
+            <rect x="9" y="3" width="2" height="2" className="px-helmet" />
+            <rect x="5" y="3" width="4" height="2" className="px-visor" />
+            <rect x="3" y="5" width="8" height="1" className="px-helmet" />
 
-            {/* Överkropp och förkläde */}
-            <rect x="6" y="6" width="6" height="1" className="px-body" />
-            <rect x="5" y="7" width="8" height="4" className="px-body" />
-            <rect x="6" y="8" width="6" height="1" className="px-strap" />
+            {/* Hals och överkropp i blå overall */}
+            <rect x="6" y="6" width="2" height="1" className="px-skin" />
+            <rect x="3" y="7" width="8" height="5" className="px-overall" />
+            {/* Förklädets rem */}
+            <rect x="4" y="8" width="6" height="1" className="px-strap" />
 
-            {/* Bakre arm mot arbetsstycket, främre sträckt mot pennan */}
-            <rect x="3" y="8" width="2" height="3" className="px-skin" />
-            <rect x="13" y="8" width="3" height="2" className="px-skin" />
-            <rect x="16" y="9" width="2" height="2" className="px-skin" />
+            {/* Armar. Den främre sträckt mot lödpennan. */}
+            <rect x="1" y="8" width="2" height="4" className="px-overall" />
+            <rect x="1" y="12" width="2" height="2" className="px-skin" />
+            <rect x="11" y="8" width="3" height="2" className="px-overall" />
+            <rect x="14" y="9" width="2" height="2" className="px-skin" />
 
             {/* Lödpennan, med het spets */}
-            <rect x="18" y="9" width="3" height="1" className="px-tool" />
-            <rect x="21" y="9" width="1" height="1" className="px-tip" />
+            <rect x="16" y="9" width="3" height="1" className="px-tool" />
+            <rect x="19" y="9" width="1" height="1" className="px-tip" />
 
             {/* Ben och kängor */}
-            <rect x="5" y="11" width="8" height="2" className="px-legs" />
-            <rect x="5" y="13" width="3" height="5" className="px-legs" />
-            <rect x="10" y="13" width="3" height="5" className="px-legs" />
-            <rect x="4" y="18" width="5" height="2" className="px-boot" />
-            <rect x="9" y="18" width="5" height="2" className="px-boot" />
+            <rect x="3" y="12" width="8" height="2" className="px-overall" />
+            <rect x="3" y="14" width="3" height="5" className="px-overall" />
+            <rect x="8" y="14" width="3" height="5" className="px-overall" />
+            <rect x="2" y="19" width="5" height="2" className="px-boot" />
+            <rect x="7" y="19" width="5" height="2" className="px-boot" />
 
-            {/* Kretskortet han lutar sig över */}
-            <rect x="15" y="12" width="7" height="5" className="px-board" />
-            <rect x="16" y="13" width="2" height="1" className="px-chip" />
-            <rect x="19" y="14" width="2" height="2" className="px-chip" />
+            {/* Datorn han bygger.
+
+                Den var förut sju rutor bred och fem höga, alltså mindre
+                än hans överkropp - en dator i den storleken läses som en
+                låda på golvet. Nu är den ett chassi som går från hans
+                midja ned till fötterna, med sidopanel, fläkt och
+                lysande kretskort. */}
+            <rect x="18" y="10" width="10" height="11" className="px-case" />
+            <rect x="19" y="11" width="8" height="9" className="px-glass" />
+            {/* Moderkort och kort */}
+            <rect x="20" y="12" width="6" height="4" className="px-board" />
+            <rect x="21" y="13" width="2" height="2" className="px-chip" />
+            <rect x="24" y="13" width="2" height="1" className="px-chip" />
+            {/* Fläkt */}
+            <rect x="20" y="17" width="3" height="3" className="px-fan" />
+            <rect x="21" y="18" width="1" height="1" className="px-glow" />
+            {/* Frontpanelens lampa */}
+            <rect x="25" y="18" width="1" height="1" className="px-glow" />
           </svg>
 
           {/* Gnistorna sitter på lödpennans spets och flyger därifrån. */}
           <span className="capacity__sparks">
-            {NEAR_SPARKS.map((spark, index) => (
+            {sparks.map((spark, index) => (
               <span
-                key={`near-${index}`}
-                className="capacity__spark"
+                key={index}
+                className={spark.far ? "capacity__spark capacity__spark--far" : "capacity__spark"}
                 style={{
-                  ["--dx" as string]: `${spark.dx}px`,
-                  ["--dy" as string]: `${spark.dy}px`,
+                  ["--dx" as string]: `${Math.round(spark.dx)}px`,
+                  ["--dy" as string]: `${Math.round(spark.dy)}px`,
                   ["--size" as string]: `${spark.size}px`,
-                  animationDelay: `${spark.delay}s`,
-                  animationDuration: `${spark.dur}s`,
-                }}
-              />
-            ))}
-
-            {FAR_SPARKS.map((spark, index) => (
-              <span
-                key={`far-${index}`}
-                className="capacity__spark capacity__spark--far"
-                style={{
-                  ["--dx" as string]: `${spark.dx}px`,
-                  ["--dy" as string]: `${spark.dy}px`,
-                  ["--size" as string]: `${spark.size}px`,
-                  animationDelay: `${(spark.delay + farOffsets[index]).toFixed(1)}s`,
-                  animationDuration: `${spark.cycle}s`,
+                  animationDelay: `${spark.delay.toFixed(2)}s`,
+                  animationDuration: `${spark.duration.toFixed(2)}s`,
+                  animationTimingFunction: spark.curve,
                 }}
               />
             ))}
