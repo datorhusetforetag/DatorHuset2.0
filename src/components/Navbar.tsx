@@ -164,6 +164,21 @@ export const Navbar = () => {
   const navigationLogo = navigation.logoUrl?.trim() || "/datorhuset-mark-small.png";
 
   /*
+   * Vägen till adminportalen.
+   *
+   * Inställningen pekar på https://admin.datorhuset.se, som är rätt den
+   * dag portalen driftsätts där. Lokalt finns den inte - den körs på
+   * 8081 med npm run dev:admin - så knappen tog en rakt ut på internet
+   * och, eftersom domänen inte har någon DNS-post, till ett felmeddelande.
+   *
+   * import.meta.env.DEV är sant bara när Vite kör i utvecklingsläge, så
+   * det driftsatta bygget påverkas inte.
+   */
+  const adminPortalHref = import.meta.env.DEV
+    ? "http://localhost:8081"
+    : navigation.adminPortalHref;
+
+  /*
    * Menyn = den fasta raden plus det adminläget lagt till.
    *
    * Standardinställningarna pekar på sidor som nu har egna poster i
@@ -545,7 +560,7 @@ export const Navbar = () => {
                   inloggad som admin. */}
               {isAdmin && (
                 <a
-                  href={navigation.adminPortalHref}
+                  href={adminPortalHref}
                   aria-label="Adminpanelen"
                   title="Adminpanelen"
                   className="site-nav-bar__icon hidden sm:inline-flex"
@@ -695,7 +710,7 @@ export const Navbar = () => {
             </div>
 
             {isAdmin && (
-              <a href={navigation.adminPortalHref} className="btn-secondary w-full">
+              <a href={adminPortalHref} className="btn-secondary w-full">
                 <ShieldCheck className="h-4 w-4" />
                 Admin
               </a>
