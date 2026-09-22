@@ -88,12 +88,19 @@ const makeBills = () =>
 
 /* Fågelns mål slumpas varje gång komponenten monteras, så flygturen
    inte ser likadan ut på varje rad i listan. */
+/*
+ * Fågelns flygtur.
+ *
+ * Brevlådan står längst till höger, eftersom stapeln är full när
+ * ordern är levererad. Fågeln flyger därför åt vänster, ut på
+ * stapeln, och målet anges i pixlar bakåt.
+ *
+ * Slumpas per order så att två rader i listan inte flyger samma väg.
+ */
 const makeBirdTrip = () => ({
-  /* Landar någonstans på mittendelen av stapeln, aldrig så nära kanten
-     att den halkar utanför. */
-  target: 28 + Math.random() * 46,
+  target: -(40 + Math.random() * 90),
   delay: Math.random() * 2.5,
-  height: 14 + Math.random() * 12,
+  height: 16 + Math.random() * 12,
 });
 
 export const StatusScene = ({
@@ -109,8 +116,26 @@ export const StatusScene = ({
   const step = STEP_OF[status] ?? 1;
   const percent = Math.round((step / TOTAL_STEPS) * 100);
 
+  /*
+   * Figuren står där stapeln slutar, inte mitt på.
+   *
+   * Det är hela poängen med att ha en scen ovanför en stapel: det som
+   * händer ska stå på den punkt ordern nått. En brevlåda i mitten när
+   * stapeln är full säger fel sak.
+   *
+   * translateX(calc(--at * -1)) håller figuren innanför kanterna:
+   * vid 0 procent flyttas den inte alls, vid 50 halva sin bredd, vid
+   * 100 hela. Utan det skulle brevlådan hänga halvvägs utanför kortet.
+   *
+   * Betald är undantaget. Sedlarna flyger över hela bredden och har
+   * ingen figur att placera.
+   */
   return (
-    <div className="scene" data-status={status}>
+    <div
+      className="scene"
+      data-status={status}
+      style={{ ["--at" as string]: `${percent}%` }}
+    >
       <div className="scene__stage">
         {/* Sedlar som flyger uppåt över hela stapeln. */}
         {status === "received" &&
@@ -137,30 +162,37 @@ export const StatusScene = ({
         {/* Byggaren som hamrar, med gnistor. */}
         {status === "building" && (
           <span className="scene__actor scene__actor--builder">
-            <svg viewBox="0 0 30 22" className="scene__figure" shapeRendering="crispEdges">
+            <svg viewBox="0 0 34 24" className="scene__figure" shapeRendering="crispEdges">
               <Builder />
-              {/* Armen och hammaren svingar */}
+
+              {/* Chassit han bankar på. Står på en arbetsbänk, så det
+                  är i hans arbetshöjd och inte på golvet. */}
+              <rect x="18" y="19" width="16" height="2" className="px-bench" />
+              <rect x="20" y="8" width="12" height="11" className="px-case" />
+              <rect x="21" y="9" width="10" height="9" className="px-glass" />
+              <rect x="22" y="10" width="7" height="4" className="px-board" />
+              <rect x="23" y="11" width="2" height="2" className="px-chip" />
+              <rect x="27" y="11" width="2" height="1" className="px-chip" />
+              <rect x="22" y="15" width="3" height="3" className="px-fan" />
+              <rect x="23" y="16" width="1" height="1" className="px-glow" />
+
+              {/* Armen och hammaren i ett, så de svänger ihop kring
+                  axeln. Förut satt armen still och hammaren snurrade
+                  för sig, vilket såg ut som att verktyget svävade. */}
               <g className="scene__hammer">
-                <rect x="11" y="9" width="4" height="2" className="px-skin" />
-                <rect x="15" y="8" width="1" height="4" className="px-tool" />
-                <rect x="14" y="6" width="4" height="2" className="px-hammer" />
+                <rect x="11" y="9" width="6" height="2" className="px-skin" />
+                <rect x="17" y="6" width="2" height="6" className="px-tool" />
+                <rect x="15" y="4" width="6" height="3" className="px-hammer" />
+                <rect x="15" y="4" width="2" height="3" className="px-hammer-dark" />
               </g>
-              {/* Datorn han bankar på */}
-              <rect x="19" y="10" width="11" height="11" className="px-case" />
-              <rect x="20" y="11" width="9" height="9" className="px-glass" />
-              <rect x="21" y="12" width="6" height="4" className="px-board" />
-              <rect x="22" y="13" width="2" height="2" className="px-chip" />
-              <rect x="21" y="17" width="3" height="3" className="px-fan" />
             </svg>
             <span className="scene__sparks">
-              {[0, 1, 2, 3, 4].map((index) => (
-                <span key={index} className="scene__spark" style={{ animationDelay: `${index * 0.19}s` }} />
+              {[0, 1, 2, 3, 4, 5].map((index) => (
+                <span key={index} className="scene__spark" style={{ animationDelay: `${index * 0.05}s` }} />
               ))}
             </span>
           </span>
         )}
-
-        {/* Skärmen på skrivbordet med BIOS igång. */}
         {status === "postbuild" && (
           <span className="scene__actor scene__actor--desk">
             <svg viewBox="0 0 34 22" className="scene__figure" shapeRendering="crispEdges">
@@ -186,26 +218,45 @@ export const StatusScene = ({
         {/* Byggaren packar en låda. */}
         {status === "ready" && (
           <span className="scene__actor scene__actor--packing">
-            <svg viewBox="0 0 30 22" className="scene__figure" shapeRendering="crispEdges">
+            <svg viewBox="0 0 36 24" className="scene__figure" shapeRendering="crispEdges">
               <Builder />
-              {/* Armarna ned mot lådan */}
-              <g className="scene__packing-arms">
-                <rect x="11" y="10" width="5" height="2" className="px-skin" />
+
+              {/* Lådan, sedd snett framifrån. Datorn ligger i den och
+                  syns tills flikarna viks ned - det är det som gör att
+                  man förstår vad som packas. */}
+              <rect x="19" y="21" width="17" height="2" className="px-bench" />
+              <rect x="20" y="11" width="15" height="10" className="px-box" />
+
+              {/* Datorn i lådan */}
+              <g className="scene__packed-item">
+                <rect x="24" y="8" width="7" height="8" className="px-case" />
+                <rect x="25" y="9" width="5" height="6" className="px-glass" />
+                <rect x="26" y="10" width="3" height="2" className="px-board" />
               </g>
-              {/* Lådan */}
-              <rect x="17" y="12" width="12" height="9" className="px-box" />
-              <rect x="17" y="12" width="12" height="2" className="px-box-lid" />
-              {/* Tejpremsan */}
-              <rect x="22" y="12" width="2" height="9" className="px-tape" />
-              {/* Fliken som viks ned */}
-              <g className="scene__box-flap">
-                <rect x="17" y="10" width="6" height="2" className="px-box-lid" />
+
+              {/* Lådans framsida ligger över datorn, så den ser ut att
+                  vara nedsänkt i kartongen och inte stå framför den. */}
+              <rect x="20" y="14" width="15" height="7" className="px-box" />
+              <rect x="20" y="14" width="15" height="1" className="px-box-edge" />
+
+              {/* De två flikarna viker ihop sig mot mitten */}
+              <g className="scene__flap scene__flap--left">
+                <rect x="20" y="12" width="8" height="2" className="px-box-lid" />
+              </g>
+              <g className="scene__flap scene__flap--right">
+                <rect x="27" y="12" width="8" height="2" className="px-box-lid" />
+              </g>
+
+              {/* Tejpremsan dras över skarven när flikarna är nere */}
+              <rect x="20" y="13" width="15" height="2" className="px-tape scene__tape" />
+
+              {/* Armarna trycker ned locket i samma takt */}
+              <g className="scene__packing-arms">
+                <rect x="11" y="9" width="7" height="2" className="px-skin" />
               </g>
             </svg>
           </span>
         )}
-
-        {/* Lastbilen kör, med hjul som snurrar. */}
         {status === "shipped" && (
           <span className="scene__actor scene__actor--truck">
             <svg viewBox="0 0 34 20" className="scene__figure" shapeRendering="crispEdges">
@@ -216,13 +267,20 @@ export const StatusScene = ({
               {/* Huset på sidan, som en dekal */}
               <rect x="6" y="7" width="7" height="5" className="px-truck-logo" />
               {/* Hjulen snurrar var för sig */}
+              {/* Runda hjul, till skillnad från resten som är rutor.
+                  Ett fyrkantigt hjul som snurrar läses som en låda som
+                  vickar, inte som något som rullar. Ekern gör
+                  rotationen synlig - utan den ser en cirkel som snurrar
+                  ut som en cirkel som står still. */}
               <g className="scene__wheel scene__wheel--rear">
-                <rect x="4" y="15" width="5" height="5" className="px-tyre" />
-                <rect x="6" y="17" width="1" height="1" className="px-hub" />
+                <circle cx="6.5" cy="17.5" r="2.8" className="px-tyre-round" />
+                <circle cx="6.5" cy="17.5" r="1.1" className="px-hub-round" />
+                <rect x="6.2" y="14.9" width="0.6" height="2" className="px-spoke" />
               </g>
               <g className="scene__wheel scene__wheel--front">
-                <rect x="21" y="15" width="5" height="5" className="px-tyre" />
-                <rect x="23" y="17" width="1" height="1" className="px-hub" />
+                <circle cx="23.5" cy="17.5" r="2.8" className="px-tyre-round" />
+                <circle cx="23.5" cy="17.5" r="1.1" className="px-hub-round" />
+                <rect x="23.2" y="14.9" width="0.6" height="2" className="px-spoke" />
               </g>
             </svg>
             {/* Fartstreck bakom, så det syns att den är på väg */}
@@ -251,29 +309,48 @@ export const StatusScene = ({
               </svg>
             </span>
 
-            {/* Fågeln. Målet slumpas per order, så flygturen skiljer sig
-                mellan raderna i listan. */}
+            {/* Fågeln.
+
+                Var förut sex pixlar bred och såg ut som ett bi. Nu är
+                den dubbelt så stor och har kropp, huvud, stjärt och
+                vinge - silhuetten är det som gör att man ser vilket
+                djur det är, inte detaljerna.
+
+                Brevlådan står längst till höger eftersom stapeln är
+                full, så flygturen går åt vänster ut på stapeln. */}
             <span
               className="scene__bird"
               style={{
-                ["--target" as string]: `${bird.target.toFixed(0)}%`,
+                ["--target" as string]: `${bird.target.toFixed(0)}px`,
                 ["--peak" as string]: `${bird.height.toFixed(0)}px`,
                 animationDelay: `${bird.delay.toFixed(2)}s`,
               }}
             >
-              <svg viewBox="0 0 9 7" shapeRendering="crispEdges">
-                <rect x="2" y="2" width="4" height="3" className="px-bird" />
-                <rect x="6" y="2" width="2" height="2" className="px-bird" />
-                <rect x="8" y="2" width="1" height="1" className="px-beak" />
-                <rect x="6" y="2" width="1" height="1" className="px-eye" />
-                {/* Vingen slår */}
-                <rect x="2" y="1" width="3" height="1" className="px-bird scene__wing" />
+              <svg viewBox="0 0 16 13" shapeRendering="crispEdges">
+                {/* Stjärt */}
+                <rect x="0" y="4" width="4" height="2" className="px-bird-dark" />
+                <rect x="1" y="6" width="3" height="1" className="px-bird-dark" />
+                {/* Kropp */}
+                <rect x="3" y="3" width="7" height="5" className="px-bird" />
+                <rect x="4" y="8" width="5" height="1" className="px-bird" />
+                {/* Huvud */}
+                <rect x="9" y="1" width="5" height="4" className="px-bird" />
+                <rect x="10" y="0" width="3" height="1" className="px-bird" />
+                {/* Öga och näbb */}
+                <rect x="11" y="2" width="1" height="1" className="px-eye" />
+                <rect x="14" y="2" width="2" height="2" className="px-beak" />
+                {/* Vingen slår över kroppen */}
+                <g className="scene__wing">
+                  <rect x="4" y="2" width="5" height="2" className="px-bird-dark" />
+                  <rect x="5" y="1" width="3" height="1" className="px-bird-dark" />
+                </g>
                 {/* Ben, syns när den sitter */}
-                <rect x="3" y="5" width="1" height="2" className="px-leg" />
-                <rect x="5" y="5" width="1" height="2" className="px-leg" />
+                <rect x="5" y="9" width="1" height="3" className="px-leg" />
+                <rect x="8" y="9" width="1" height="3" className="px-leg" />
+                <rect x="4" y="12" width="3" height="1" className="px-leg" />
+                <rect x="7" y="12" width="3" height="1" className="px-leg" />
               </svg>
-            </span>
-          </>
+            </span>          </>
         )}
       </div>
 

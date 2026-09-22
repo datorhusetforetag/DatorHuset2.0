@@ -3008,11 +3008,20 @@
   overflow: visible;
 }
 
+/*
+ * Figuren står där stapeln slutar.
+ *
+ * --at sätts per order och är samma procenttal som stapelns bredd.
+ * translateX(calc(--at * -1)) håller figuren innanför kanterna: vid
+ * 0 procent flyttas den inte alls, vid 50 halva sin bredd, vid 100
+ * hela. Utan det hänger brevlådan halvvägs utanför kortet när ordern
+ * är levererad.
+ */
 .scene__actor {
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: var(--at, 50%);
+  transform: translateX(calc(var(--at, 50%) * -1));
 }
 
 .scene__figure {
@@ -3110,29 +3119,40 @@
 /* Bygger -------------------------------------------------------- */
 
 /* Hammaren svingar kring axeln, inte kring mitten - därav origin. */
+/* Arm och hammare svänger ihop kring axeln. Förut satt armen still
+   och bara verktyget roterade, vilket såg ut som att hammaren
+   svävade bredvid honom. */
 .scene__hammer {
   transform-origin: 11px 10px;
-  animation: sc-hammer 0.62s ease-in-out infinite;
+  animation: sc-hammer 0.62s cubic-bezier(0.4, 0, 0.7, 1) infinite;
 }
 
+/* Lyftet är långsamt, slaget snabbt, och den studsar en aning på
+   nedslaget. Ett jämnt fram och tillbaka läses som en vinkande arm. */
 @keyframes sc-hammer {
-  0%,
+  0% {
+    transform: rotate(-38deg);
+  }
+  45% {
+    transform: rotate(-42deg);
+  }
+  /* Nedslaget */
+  58% {
+    transform: rotate(10deg);
+  }
+  /* Studsen */
+  66% {
+    transform: rotate(2deg);
+  }
   100% {
-    transform: rotate(-24deg);
-  }
-  /* Slaget är snabbt och uppehållet långt, som ett riktigt hammartag. */
-  55% {
-    transform: rotate(6deg);
-  }
-  70% {
-    transform: rotate(0deg);
+    transform: rotate(-38deg);
   }
 }
 
 .scene__sparks {
   position: absolute;
-  left: 62%;
-  bottom: 1.6rem;
+  left: 58%;
+  bottom: 2.1rem;
   width: 0;
   height: 0;
 }
@@ -3170,15 +3190,18 @@
   --sy: -16px;
 }
 
+/* Gnistorna uppstår i samma ögonblick som hammaren träffar, alltså
+   vid 58 procent av dess varv, och slocknar innan lyftet börjar. */
 @keyframes sc-spark {
   0%,
-  50% {
+  56% {
     transform: translate(0, 0);
     opacity: 0;
   }
-  58% {
+  60% {
     opacity: 1;
   }
+  92%,
   100% {
     transform: translate(var(--sx), var(--sy));
     opacity: 0;
@@ -3259,43 +3282,103 @@
   fill: #e7d6bb;
 }
 
-/* Fliken viks ned och upp igen: han packar, gång på gång. */
-.scene__box-flap {
-  transform-origin: 17px 12px;
-  animation: sc-flap 2.6s ease-in-out infinite;
+/*
+ * Packningen, i fyra takter.
+ *
+ * Datorn sänks ned i lådan, flikarna viks in från var sitt håll, och
+ * tejpen dras över skarven. Förut var det en ensam flik som vippade,
+ * vilket inte såg ut som packning utan som en lucka som stod och
+ * slog.
+ *
+ * Alla fyra delar har samma varvtid och olika fördröjning, så de
+ * följer på varandra i stället för att röra sig samtidigt.
+ */
+.scene__packed-item {
+  animation: sc-lower 3.4s ease-in-out infinite;
 }
 
-@keyframes sc-flap {
-  0%,
-  30% {
-    transform: rotate(-70deg);
+@keyframes sc-lower {
+  0% {
+    transform: translateY(-7px);
+    opacity: 1;
   }
-  50%,
-  80% {
+  18%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.scene__flap {
+  animation: sc-fold 3.4s ease-in-out infinite;
+}
+
+/* Vardera fliken vrider kring sin egen ytterkant, så de möts på
+   mitten i stället för att glida över varandra. */
+.scene__flap--left {
+  transform-origin: 20px 13px;
+}
+.scene__flap--right {
+  transform-origin: 35px 13px;
+  animation-name: sc-fold-right;
+}
+
+@keyframes sc-fold {
+  0%,
+  22% {
+    transform: rotate(-78deg);
+  }
+  42%,
+  100% {
     transform: rotate(0deg);
   }
+}
+
+@keyframes sc-fold-right {
+  0%,
+  22% {
+    transform: rotate(78deg);
+  }
+  42%,
   100% {
-    transform: rotate(-70deg);
+    transform: rotate(0deg);
   }
 }
 
-/* Armarna går ned mot lådan i samma takt. */
+/* Tejpen dras över skarven först när flikarna ligger ned. */
+.scene__tape {
+  transform-origin: 20px 14px;
+  animation: sc-tape 3.4s ease-out infinite;
+}
+
+@keyframes sc-tape {
+  0%,
+  48% {
+    transform: scaleX(0);
+  }
+  64%,
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+/* Armarna trycker ned locket när flikarna viks, och lyfts sedan. */
 .scene__packing-arms {
-  transform-origin: 11px 11px;
-  animation: sc-pack 2.6s ease-in-out infinite;
+  transform-origin: 11px 10px;
+  animation: sc-pack 3.4s ease-in-out infinite;
 }
 
 @keyframes sc-pack {
   0%,
-  30% {
-    transform: rotate(-8deg);
+  20% {
+    transform: rotate(-14deg);
   }
-  50%,
-  80% {
-    transform: rotate(22deg);
+  40%,
+  64% {
+    transform: rotate(16deg);
   }
   100% {
-    transform: rotate(-8deg);
+    transform: rotate(-14deg);
   }
 }
 
@@ -3313,11 +3396,31 @@
 .scene .px-truck-logo {
   fill: #b26bde;
 }
-.scene .px-tyre {
+.scene .px-tyre-round {
   fill: #1a1f2b;
 }
-.scene .px-hub {
+.scene .px-hub-round {
   fill: #94a3b8;
+}
+/* Ekern gör rotationen synlig. Utan den ser en cirkel som snurrar ut
+   som en cirkel som står still. */
+.scene .px-spoke {
+  fill: #64748b;
+}
+.scene .px-bench {
+  fill: #5a4632;
+}
+.scene .px-hammer-dark {
+  fill: #4b5563;
+}
+.scene .px-box-edge {
+  fill: #8a6438;
+}
+.scene .px-glow {
+  fill: var(--sc-hot);
+}
+.scene .px-bird-dark {
+  fill: #2b3444;
 }
 
 /* Lastbilen guppar en aning, som på en ojämn väg. */
@@ -3325,13 +3428,15 @@
   animation: sc-drive 0.5s ease-in-out infinite;
 }
 
+/* Guppet måste behålla figurens sidoförskjutning, annars hoppar
+   lastbilen till mitten så fort animationen börjar. */
 @keyframes sc-drive {
   0%,
   100% {
-    transform: translateX(-50%) translateY(0);
+    transform: translateX(calc(var(--at, 50%) * -1)) translateY(0);
   }
   50% {
-    transform: translateX(-50%) translateY(-1px);
+    transform: translateX(calc(var(--at, 50%) * -1)) translateY(-1px);
   }
 }
 
@@ -3428,10 +3533,7 @@
   fill: #f0a52b;
 }
 
-.scene__actor--mailbox {
-  left: 0.75rem;
-  transform: none;
-}
+
 
 /*
  * Fågeln.
@@ -3444,50 +3546,75 @@
  * uppflyg, sväv, landning, paus, och samma väg tillbaka. Det räcker för
  * att läsas som en fågel utan att bli en simulering.
  */
+/*
+ * Fågeln.
+ *
+ * Sitter på brevlådan, flyger ut på stapeln, sätter sig där en stund
+ * och återvänder. Eftersom brevlådan står längst till höger går
+ * turen åt vänster, och --target är därför ett negativt tal.
+ */
 .scene__bird {
   position: absolute;
-  bottom: 1.6rem;
-  left: 1rem;
-  width: 0.6rem;
-  animation: sc-bird 7s ease-in-out infinite;
+  bottom: 2.1rem;
+  left: var(--at, 50%);
+  margin-left: -1.6rem;
+  width: 1.15rem;
+  animation: sc-bird 8s ease-in-out infinite;
 }
 
 .scene__wing {
-  transform-origin: 3px 2px;
-  animation: sc-wing 0.22s ease-in-out infinite;
+  transform-origin: 8px 3px;
+  animation: sc-wing 0.19s ease-in-out infinite;
 }
 
+/* Vingen slår bara medan den flyger. En fågel som sitter still och
+   viftar med vingen ser ut att ha fastnat. */
 @keyframes sc-wing {
   0%,
   100% {
-    transform: translateY(0);
+    transform: translateY(0) scaleY(1);
   }
   50% {
-    transform: translateY(-1.5px);
+    transform: translateY(-2.5px) scaleY(0.7);
   }
 }
 
+/*
+ * Turen: sitter, lyfter, landar, sitter, tillbaka.
+ *
+ * Bågen är byggd av tre punkter i stället för en rak linje - upp,
+ * över, ned - vilket räcker för att läsas som flykt utan att bli en
+ * simulering. Pauserna är längre än flygsträckorna, så det ser ut som
+ * en fågel som rastar och inte en som pendlar.
+ */
 @keyframes sc-bird {
-  /* Sitter på lådan */
+  /* Sitter på brevlådan */
   0%,
-  12% {
+  14% {
     transform: translate(0, 0);
   }
-  /* Lyfter */
-  22% {
-    transform: translate(calc(var(--target) * 0.35), calc(var(--peak) * -1));
+  /* Lyfter och stiger */
+  21% {
+    transform: translate(calc(var(--target) * 0.3), calc(var(--peak) * -1));
   }
-  /* Landar på stapeln */
-  34%,
-  58% {
-    transform: translate(var(--target), 0.9rem);
+  /* Dalar ned mot stapeln */
+  27% {
+    transform: translate(calc(var(--target) * 0.75), calc(var(--peak) * -0.45));
   }
-  /* Tillbaka i luften */
-  70% {
-    transform: translate(calc(var(--target) * 0.5), calc(var(--peak) * -1));
+  /* Sitter på stapeln */
+  32%,
+  60% {
+    transform: translate(var(--target), 1.5rem);
+  }
+  /* Lyfter igen */
+  68% {
+    transform: translate(calc(var(--target) * 0.7), calc(var(--peak) * -1));
+  }
+  74% {
+    transform: translate(calc(var(--target) * 0.25), calc(var(--peak) * -0.5));
   }
   /* Hemma igen */
-  82%,
+  80%,
   100% {
     transform: translate(0, 0);
   }
@@ -3540,7 +3667,9 @@
 @media (prefers-reduced-motion: reduce) {
   .scene__hammer,
   .scene__spark,
-  .scene__box-flap,
+  .scene__flap,
+  .scene__tape,
+  .scene__packed-item,
   .scene__packing-arms,
   .scene__wheel,
   .scene__actor--truck,
