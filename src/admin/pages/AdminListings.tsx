@@ -9,7 +9,6 @@ import {
   Loader2,
   Package,
   Plus,
-  RotateCcw,
   Search,
   Trash2,
 } from "lucide-react";
@@ -18,9 +17,9 @@ import { AdminAccessContext } from "../useAdminAccess";
 import { errorMessage } from "@/lib/utils";
 import { ListingEditor } from "./listings/ListingEditor";
 import {
-  ARCHIVED,
   PREORDER,
   READY,
+  SOLD_OUT,
   type Listing,
   type ListingGroup,
   emptyDraft,
@@ -70,7 +69,6 @@ export default function AdminListings() {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState("");
   const [query, setQuery] = useState("");
-  const [showArchived, setShowArchived] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [toast, setToast] = useState<ToastState>(null);
@@ -126,15 +124,22 @@ export default function AdminListings() {
   const visible = useMemo(() => {
     const term = query.trim().toLowerCase();
     return listings.filter((listing) => {
-      if (!showArchived && listing.archived_at) return false;
+      /* Arkiverade hör hemma under Arkiv slutsålda och ska inte synas
+         bland det som säljs. */
+      if (listing.archived_at) return false;
       if (!term) return true;
       return [listing.name, listing.cpu, listing.gpu, listing.slug]
         .some((field) => String(field || "").toLowerCase().includes(term));
     });
-  }, [listings, query, showArchived]);
+  }, [listings, query]);
 
   const grouped = useMemo(() => {
-    const buckets: Record<ListingGroup, Listing[]> = { ready: [], preorder: [], archived: [] };
+    const buckets: Record<ListingGroup, Listing[]> = {
+      ready: [],
+      sold_out: [],
+      preorder: [],
+      archived: [],
+    };
     visible.forEach((listing) => buckets[groupOf(listing)].push(listing));
     /* Inom varje grupp gäller butikens ordning. Utan sort_order hamnar
        maskinen sist i stället för först, så en ny listning inte hoppar
@@ -146,8 +151,8 @@ export default function AdminListings() {
       return String(a.name || "").localeCompare(String(b.name || ""), "sv");
     };
     buckets.ready.sort(byOrder);
+    buckets.sold_out.sort(byOrder);
     buckets.preorder.sort(byOrder);
-    buckets.archived.sort(byOrder);
     return buckets;
   }, [visible]);
 
@@ -199,8 +204,8 @@ export default function AdminListings() {
         const confirmed = window.confirm(
           `Ta bort "${listing.name}" från butiken?\n\n` +
             "Listningen döljs på sajten men raderas inte, så tidigare ordrar " +
-            "behåller sitt innehåll. Du kan hämta tillbaka den när som helst " +
-            'under "Borttagna".',
+            "behåller sitt innehåll. Den hamnar under Arkiv slutsålda, där " +
+            "du kan hämta tillbaka den när som helst.",
         );
         if (!confirmed) return;
       }
@@ -236,9 +241,9 @@ export default function AdminListings() {
 
   const counts = useMemo(
     () => ({
-      ready: listings.filter((l) => !l.archived_at && groupOf(l) === "ready").length,
-      preorder: listings.filter((l) => !l.archived_at && groupOf(l) === "preorder").length,
-      archived: listings.filter((l) => Boolean(l.archived_at)).length,
+      ready: listings.filter((l) => groupOf(l) === READY).length,
+      soldOut: listings.filter((l) => groupOf(l) === SOLD_OUT).length,
+      preorder: listings.filter((l) => groupOf(l) === PREORDER).length,
     }),
     [listings],
   );
@@ -250,7 +255,7 @@ export default function AdminListings() {
           <h2 className="text-2xl font-semibold text-white">Listningar</h2>
           <p className="mt-1 text-sm text-slate-400">
             {counts.ready} redo att skickas · {counts.preorder} förbeställningar
-            {counts.archived > 0 && ` · ${counts.archived} borttagna`}
+            {counts.soldOut > 0 && ` · ${counts.soldOut} slutsålda`}
           </p>
         </div>
 
@@ -310,9 +315,19 @@ export default function AdminListings() {
         <>
           <Section
             title="Redo att skickas"
-            hint="Ligger i lager. Saldot ändras direkt i raden."
+            hint="Ligger i lager och går att köpa nu."
             rows={grouped.ready}
             group={READY}
+          />
+          {/* Slutsålda står för sig. De syns fortfarande i butiken,
+              märkta "Slutsåld", tills någon bestämmer sig - antingen
+              fylla på lagret eller ta bort dem från sajten. Som en
+              del av Redo att skickas hade de sett ut som säljbara. */}
+          <Section
+            title="Slutsålda"
+            hint={'Syns i butiken som "Slutsåld". Ta bort dem från sajten eller fyll på lagret.'}
+            rows={grouped.sold_out}
+            group={SOLD_OUT}
           />
           <Section
             title="Förbeställningar"
@@ -320,28 +335,6 @@ export default function AdminListings() {
             rows={grouped.preorder}
             group={PREORDER}
           />
-
-          {counts.archived > 0 && (
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowArchived((prev) => !prev)}
-                className="text-sm font-semibold text-slate-400 hover:text-slate-200"
-              >
-                {showArchived ? "Dölj" : "Visa"} borttagna ({counts.archived})
-              </button>
-              {showArchived && (
-                <div className="mt-4">
-                  <Section
-                    title="Borttagna"
-                    hint="Dolda på sajten. Ordrar som innehåller dem är orörda."
-                    rows={grouped.archived}
-                    group={ARCHIVED}
-                  />
-                </div>
-              )}
-            </div>
-          )}
 
           {visible.length === 0 && (
             <div className="rounded-2xl border border-slate-800 bg-slate-900/40 px-6 py-16 text-center">
@@ -435,9 +428,9 @@ export default function AdminListings() {
 
     return (
       <div className="flex items-center gap-3 border-b border-slate-800/70 px-3 py-3 last:border-b-0 hover:bg-slate-800/30">
-        {/* Ordningen. Dolda i arkivet - en borttagen listning har ingen
-            plats i butiken att flytta. */}
-        {group !== ARCHIVED && canWrite ? (
+        {/* Ordningen i butiken. Alla rader här ligger på sajten, så
+            alla går att flytta. */}
+        {canWrite ? (
           <div className="flex flex-col">
             <button
               type="button"
@@ -499,16 +492,19 @@ export default function AdminListings() {
 
         <div className="flex shrink-0 items-center gap-1">
           {busy && <Loader2 className="h-4 w-4 animate-spin text-slate-500" />}
+          {/* På en slutsåld rad är det här huvudhandlingen, och då ska
+              den vara läsbar i klartext. På övriga är det en åtgärd man
+              sällan tar, och där räcker ikonen. */}
           {canWrite &&
-            (group === ARCHIVED ? (
+            (group === SOLD_OUT ? (
               <button
                 type="button"
-                onClick={() => void setArchived(listing, false)}
+                onClick={() => void setArchived(listing, true)}
                 disabled={busy}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:border-cyan-400/60 hover:text-cyan-300 disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-300 hover:border-rose-400/60 hover:text-rose-300 disabled:opacity-50"
               >
-                <RotateCcw className="h-3.5 w-3.5" />
-                Återställ
+                <Trash2 className="h-3.5 w-3.5" />
+                Ta bort från sajten
               </button>
             ) : (
               <button

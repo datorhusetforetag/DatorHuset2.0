@@ -43,19 +43,37 @@ export type Listing = {
 };
 
 export const READY = "ready" as const;
+export const SOLD_OUT = "sold_out" as const;
 export const PREORDER = "preorder" as const;
 export const ARCHIVED = "archived" as const;
-export type ListingGroup = typeof READY | typeof PREORDER | typeof ARCHIVED;
+export type ListingGroup =
+  | typeof READY
+  | typeof SOLD_OUT
+  | typeof PREORDER
+  | typeof ARCHIVED;
 
 /**
  * Vilken grupp en listning hör till.
  *
- * Arkiv går före allt annat: en borttagen listning ska inte dyka upp
- * bland de säljbara bara för att den råkar ha saldo kvar.
+ * Ordningen på villkoren är själva flödet:
+ *
+ *   1. Arkiverad  - borttagen från butiken, ligger i Arkiv slutsålda.
+ *   2. Förbeställning - byggs på beställning, saldot är inte relevant.
+ *   3. Slutsåld   - skulle skickas direkt, men lagret är tomt. Syns
+ *                   fortfarande i butiken med texten Slutsåld tills
+ *                   någon väljer att ta bort den.
+ *   4. Redo att skickas - finns på hyllan.
+ *
+ * Arkiv går först. En borttagen listning ska inte dyka upp bland de
+ * säljbara bara för att den råkar ha saldo kvar.
+ *
+ * Förbeställning går före slutsåld. En maskin som byggs på beställning
+ * har inget lager att ta slut, så noll betyder ingenting där.
  */
 export const groupOf = (listing: Listing): ListingGroup => {
   if (listing.archived_at) return ARCHIVED;
-  return listing.is_preorder ? PREORDER : READY;
+  if (listing.is_preorder) return PREORDER;
+  return listing.quantity_in_stock <= 0 ? SOLD_OUT : READY;
 };
 
 /**

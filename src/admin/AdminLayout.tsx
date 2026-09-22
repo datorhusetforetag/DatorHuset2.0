@@ -1,12 +1,15 @@
 ﻿import { useMemo, useState } from "react";
 import { NavLink, Outlet } from "react-router-dom";
-import { ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck } from "lucide-react";
+import { Archive, ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, ShieldCheck } from "lucide-react";
 import { useAdminAccess } from "./useAdminAccess";
 
 const navItems = [
   { to: "/produkter", label: "Listningar", icon: LayoutGrid },
   { to: "/bestallningar", label: "Beställningar", icon: ClipboardList },
   { to: "/logs", label: "Loggar", icon: ScrollText },
+  /* Arkivet ligger sist och under Loggar med flit. Det ar nagot man
+     slar upp i, inte nagot man arbetar i. */
+  { to: "/arkiv", label: "Arkiv slutsålda", icon: Archive },
 ];
 
 export const AdminLayout = () => {
