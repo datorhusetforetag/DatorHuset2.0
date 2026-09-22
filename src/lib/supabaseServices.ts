@@ -265,6 +265,13 @@ export async function clearCart(userId: string) {
 // ORDERS SERVICE
 // ============================================================
 
+/*
+ * Kundens ordrar, med specifikationen på det som köptes.
+ *
+ * Kommentarer får inte stå inuti select-strängen: supabase tolkar den
+ * som en typ vid kompilering, och allt som inte är ett fältnamn blir
+ * ett parsningsfel.
+ */
 export async function getUserOrders(userId: string) {
   const { data, error } = await supabase
     .from('orders')
@@ -272,7 +279,7 @@ export async function getUserOrders(userId: string) {
       *,
       order_items (
         *,
-        product:product_id (name, price_cents, image_url)
+        product:product_id (name, price_cents, image_url, slug, cpu, gpu, ram, storage, storage_type)
       )
     `)
     .eq('user_id', userId)

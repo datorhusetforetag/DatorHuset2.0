@@ -5,7 +5,7 @@ import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { getUserOrders, requestOrderCancel } from "@/lib/supabaseServices";
+import { getUserOrders } from "@/lib/supabaseServices";
 import {
   CARRIER_LABELS,
   getOrderStatusInfo,
@@ -24,6 +24,11 @@ type OrderItem = {
     name?: string;
     price_cents?: number;
     image_url?: string | null;
+    cpu?: string | null;
+    gpu?: string | null;
+    ram?: string | null;
+    storage?: string | null;
+    storage_type?: string | null;
   };
 };
 
@@ -49,9 +54,7 @@ export default function Orders() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
-  const [cancelingOrderId, setCancelingOrderId] = useState<string | null>(null);
-  const [cancelSuccess, setCancelSuccess] = useState<Record<string, boolean>>({});
-  const [cancelError, setCancelError] = useState<Record<string, string>>({});
+
 
   useEffect(() => {
     if (!user) return;
@@ -75,32 +78,6 @@ export default function Orders() {
       isMounted = false;
     };
   }, [user]);
-
-  const handleCancelOrder = async (orderId: string) => {
-    try {
-      setCancelingOrderId(orderId);
-      setCancelError((prev) => ({ ...prev, [orderId]: "" }));
-      await requestOrderCancel(orderId);
-      setCancelSuccess((prev) => ({ ...prev, [orderId]: true }));
-      setOrders((prev) =>
-        prev.map((order) =>
-          order.id === orderId ? { ...order, status: "cancel_requested" } : order
-        )
-      );
-    } catch (error) {
-      setCancelError((prev) => ({
-        ...prev,
-        [orderId]:
-          error instanceof Error
-            ? error.message
-            : "Kunde inte skicka avbokningsförfrågan.",
-      }));
-    } finally {
-      setCancelingOrderId(null);
-    }
-  };
-
-
 
   /* Utloggad: samma banderoll som inloggad, bara med ett annat
      erbjudande. Ett eget centrerat block hade sett ut som en annan
@@ -161,11 +138,12 @@ export default function Orders() {
               const statusInfo = getOrderStatusInfo(order.status);
               const stage = statusInfo.step;
               const rawStatus = order.status || "received";
+              /* Hänvisningen visas bara medan det fortfarande går att
+                 ändra något. Är datorn byggd och packad är det för sent
+                 att avbryta, och då vore raden ett falskt löfte. */
               const canCancel =
                 stage === 1 &&
-                ["received", "ordering", "pending"].includes(rawStatus) &&
-                !cancelSuccess[order.id] &&
-                rawStatus !== "cancel_requested";
+                ["received", "ordering", "pending"].includes(rawStatus);
               const orderDate = order.created_at
                 ? new Date(order.created_at).toLocaleDateString("sv-SE")
                 : "Okänt datum";
@@ -235,65 +213,119 @@ export default function Orders() {
                       status={(statusInfo.value || "received") as StatusKey}
                       label={statusInfo.label}
                     />
+                    {/* Bara beskrivningen. Tiden kvar var en gissning
+                        som räknades ned oavsett vad som faktiskt hände,
+                        och en uppskattning som inte stämmer är sämre än
+                        ingen. */}
                     <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                       {statusInfo.description}
-                      {statusInfo.eta ? ` Uppskattad tid kvar: ${statusInfo.eta}.` : ""}
                     </p>
                   </div>
 
-                  {/* Produkterna i full bredd. De låg i en smal spalt
-                      bredvid leveransrutan, vilket gjorde bilderna små
-                      och namnen radbrutna - och leveransrutan bredvid var
-                      oftast tom. */}
-                  <div className="mt-6">
-                    <div>
-                      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        Innehåll
-                      </p>
-                      {items.length === 0 && (
-                        <p className="text-sm text-muted-foreground">Inga produkter kopplade till ordern.</p>
-                      )}
-                      <div className="space-y-4">
-                        {items.map((item) => {
-                          const itemTotal =
-                            typeof item.product?.price_cents === "number"
-                              ? ((item.product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
-                              : "--";
-                          const imageSrc = resolveProductImage(item.product);
-                          return (
-                            <div
-                              key={item.id}
-                              className="flex items-center gap-4 rounded-xl border border-foreground/10 p-3"
-                            >
-                              <div className="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/[0.06]">
-                                {imageSrc ? (
-                                  <img
-                                    src={imageSrc}
-                                    alt={item.product?.name || "Produkt"}
-                                    className="h-full w-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                                    Bild
-                                  </div>
-                                )}
-                              </div>
-                              <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-semibold text-foreground">
-                                  {item.product?.name || "Produkt"}
-                                </p>
-                                <p className="text-xs text-muted-foreground">{item.quantity} st</p>
-                              </div>
-                              <div className="shrink-0 text-sm font-semibold tabular-nums text-foreground">
-                                {itemTotal} kr
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
+                  {/* Det som köptes.
 
+                      En dator är inte en rad i en kvittolista. Folk
+                      handlar här en gång, och det de vill se när de
+                      kommer tillbaka är maskinen de väntar på - inte en
+                      miniatyr bredvid ett pris.
+
+                      Därför stor bild och specifikationen bredvid. Vid
+                      flera rader upprepas formen; det är ovanligt nog
+                      att det inte är värt en egen, tätare vy. */}
+                  <div className="mt-7 space-y-4">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      Det här byggde vi
+                    </p>
+
+                    {items.length === 0 && (
+                      <p className="text-sm text-muted-foreground">
+                        Inga produkter kopplade till ordern.
+                      </p>
+                    )}
+
+                    {items.map((item) => {
+                      const product = item.product;
+                      const itemTotal =
+                        typeof product?.price_cents === "number"
+                          ? ((product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
+                          : "--";
+                      const imageSrc = resolveProductImage(product);
+                      /* Bara det som faktiskt finns. En rad som säger
+                         "Grafikkort: -" är sämre än ingen rad alls. */
+                      const specs = [
+                        { label: "Processor", value: product?.cpu },
+                        { label: "Grafikkort", value: product?.gpu },
+                        { label: "Minne", value: product?.ram },
+                        {
+                          label: "Lagring",
+                          value: product?.storage
+                            ? `${product.storage}${product.storage_type ? ` ${product.storage_type}` : ""}`
+                            : null,
+                        },
+                      ].filter((row) => Boolean(row.value));
+
+                      return (
+                        <div
+                          key={item.id}
+                          className="overflow-hidden rounded-2xl border border-foreground/10"
+                        >
+                          <div className="grid gap-0 sm:grid-cols-[minmax(0,15rem)_1fr]">
+                            {/* Bilden får stå i sitt eget fält och fylla
+                                det. Tidigare låg den i en liten ruta med
+                                luft runt, vilket fick datorn att se ut som
+                                en ikon. */}
+                            <div className="aspect-[4/3] w-full overflow-hidden bg-foreground/[0.06] sm:aspect-auto sm:h-full">
+                              {imageSrc ? (
+                                <img
+                                  src={imageSrc}
+                                  alt={product?.name || "Produkt"}
+                                  className="h-full w-full object-cover"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <div className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
+                                  Ingen bild
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="flex flex-col gap-4 p-5">
+                              <div className="flex flex-wrap items-start justify-between gap-3">
+                                <div>
+                                  <p className="font-display text-lg font-bold leading-tight text-foreground">
+                                    {product?.name || "Produkt"}
+                                  </p>
+                                  {item.quantity > 1 && (
+                                    <p className="mt-1 text-sm text-muted-foreground">
+                                      {item.quantity} exemplar
+                                    </p>
+                                  )}
+                                </div>
+                                <p className="font-display text-lg font-bold tabular-nums text-foreground">
+                                  {itemTotal} kr
+                                </p>
+                              </div>
+
+                              {specs.length > 0 && (
+                                <dl className="grid gap-x-6 gap-y-2.5 sm:grid-cols-2">
+                                  {specs.map((spec) => (
+                                    <div key={spec.label}>
+                                      <dt className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                        {spec.label}
+                                      </dt>
+                                      <dd className="mt-0.5 text-sm font-medium leading-snug text-foreground">
+                                        {spec.value}
+                                      </dd>
+                                    </div>
+                                  ))}
+                                </dl>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
                   {/* Spårningen står för sig, i full bredd och bara när
                       det finns något att spåra. En tom ruta som väntar på
                       ett nummer säger bara att något saknas. */}
@@ -350,33 +382,25 @@ export default function Orders() {
                     )}
                   </div>
 
-                  {(canCancel || cancelSuccess[order.id] || cancelError[order.id]) && (
-                    <div className="mt-4 rounded-lg border border-foreground/10 bg-background/60 px-4 py-3 text-sm">
-                      {cancelSuccess[order.id] ? (
-                        <p className="text-emerald-600">
-                          Avbokningsförfrågan skickad. Vi återkommer via e-post.
-                        </p>
-                      ) : (
-                        <div className="flex flex-wrap items-center justify-between gap-3">
-                          <p className="text-muted-foreground">
-                            Du kan avbryta ordern innan produktionen har startat.
-                          </p>
-                          <button
-                            type="button"
-                            onClick={() => handleCancelOrder(order.id)}
-                            disabled={cancelingOrderId === order.id}
-                            className="inline-flex items-center justify-center rounded-lg border border-red-400 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 dark:hover:bg-red-950 disabled:opacity-60"
-                          >
-                            {cancelingOrderId === order.id ? "Skickar..." : "Avbryt order"}
-                          </button>
-                        </div>
-                      )}
-                      {cancelError[order.id] && (
-                        <p className="mt-2 text-sm text-red-500">{cancelError[order.id]}</p>
-                      )}
-                    </div>
-                  )}
+                  {/* Avbrytknappen är borta.
 
+                      Att avbryta en order betyder att pengar ska
+                      tillbaka och att ett bygge ska stoppas, ofta mitt i.
+                      Det är inget som ska gå på ett klick utan att någon
+                      hos oss vet om det - vi hanterar det för hand i
+                      portalen, där återbetalningen sker i samma steg. */}
+                  {canCancel && (
+                    <p className="mt-4 text-sm text-muted-foreground">
+                      Behöver du ändra eller avbryta ordern?{" "}
+                      <Link
+                        to="/kundservice"
+                        className="font-semibold text-primary underline-offset-4 hover:underline"
+                      >
+                        Hör av dig till kundservice
+                      </Link>{" "}
+                      så löser vi det.
+                    </p>
+                  )}
                   {/* Gäller steget "Klar för leverans" - det är då vi ringer.
                       Efter det talar spårningspanelen för sig själv. */}
                   {rawStatus === "ready" && (
