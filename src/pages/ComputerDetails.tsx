@@ -161,6 +161,12 @@ export default function ComputerDetails() {
   const [usedPartsFromApi, setUsedPartsFromApi] = useState<Record<string, boolean> | null>(null);
   const [usedPartsConfigured, setUsedPartsConfigured] = useState<boolean>(false);
   const [productImagesFromApi, setProductImagesFromApi] = useState<string[]>([]);
+  /* Uppgraderingarna sätts i adminläget och ligger i databasen. Listan
+     i src/data/computers.ts finns kvar som reserv för maskiner som
+     ännu inte fått några satta där. */
+  const [apiUpgrades, setApiUpgrades] = useState<
+    { product_id: string; group: string; label: string; summary: string | null }[]
+  >([]);
   const { products, loading: productsLoading } = useProducts();
   const { settings: siteSettings } = useSiteSettings();
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
@@ -241,6 +247,27 @@ export default function ComputerDetails() {
    * fel pris. Se ComputerUpgrade i src/data/computers.ts.
    */
   const upgradeVariants = useMemo(() => {
+    /* Adminläget går före koden. Har någon satt uppgraderingar på
+       listningen är det de som gäller; listan i computers.ts är kvar
+       som reserv för maskiner ingen hunnit sätta något på. */
+    if (apiUpgrades.length > 0) {
+      return apiUpgrades.flatMap((upgrade) => {
+        const product = getProductFromLookup(productLookup, upgrade.product_id);
+        if (!product?.id) return [];
+        return [
+          {
+            id: `upgrade:${upgrade.product_id}`,
+            productId: product.id,
+            label: upgrade.label,
+            detail: upgrade.summary || undefined,
+            group: upgrade.group,
+            price:
+              typeof product.price_cents === "number" ? product.price_cents / 100 : 0,
+          },
+        ];
+      });
+    }
+
     const declared = localComputer?.upgrades ?? [];
     return declared.flatMap((upgrade) => {
       const product = getProductFromLookup(productLookup, upgrade.productKey);
@@ -257,7 +284,7 @@ export default function ComputerDetails() {
         },
       ];
     });
-  }, [localComputer, productLookup]);
+  }, [apiUpgrades, localComputer, productLookup]);
 
   const selectedUpgrade =
     upgradeVariants.find((variant) => variant.id === selectedUpgradeId) || null;
@@ -449,6 +476,29 @@ export default function ComputerDetails() {
     };
   }, []);
 
+  /* Uppgraderingarna hämtas för GRUNDmaskinen, inte för den valda
+     varianten. Väljer man en uppgradering ska listan stå kvar så man
+     kan byta tillbaka - hämtade vi om för varianten skulle valet
+     försvinna i samma stund det gjordes. */
+  useEffect(() => {
+    if (!baseProductId) {
+      setApiUpgrades([]);
+      return;
+    }
+    let active = true;
+    fetch(`/api/product-upgrades/${baseProductId}`)
+      .then((response) => response.json())
+      .then((payload) => {
+        if (active && Array.isArray(payload?.data)) setApiUpgrades(payload.data);
+      })
+      .catch(() => {
+        /* Utan svar visas grundmaskinen. Ett fel här ska inte kunna
+           stoppa ett köp. */
+      });
+    return () => {
+      active = false;
+    };
+  }, [baseProductId]);
   useEffect(() => {
     if (!activeProductId) {
       setProductImagesFromApi([]);

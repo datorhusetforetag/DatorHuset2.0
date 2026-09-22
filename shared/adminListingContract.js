@@ -22,6 +22,10 @@ export const ADMIN_LISTING_TIER_OPTIONS = ["Brons", "Silver", "Guld", "Platina",
    produktsidan och som villkoret products_use_check i databasen. */
 export const ADMIN_LISTING_USE_OPTIONS = ["gaming", "workstation"];
 
+/* Rubrikerna uppgraderingarna sorteras under på produktsidan. Samma
+   fyra som GROUPS i ProductVariants.tsx. */
+export const ADMIN_UPGRADE_GROUP_OPTIONS = ["storage", "performance", "ram", "other"];
+
 const normalizeTagKey = (value) =>
   String(value || "")
     .trim()
@@ -141,6 +145,29 @@ export const listingWriteSchema = z.object({
     },
     z.coerce.number().int().min(0).max(100000).nullable()
   ).optional(),
+
+  /*
+   * Uppgraderingar.
+   *
+   * Varje post pekar med product_id på en RIKTIG produkt, och det är
+   * hela konstruktionen: varukorgen tar ett produkt-id och ett antal,
+   * så ett pristillägg som bara fanns i produktsidans vy hade visats
+   * för kunden men aldrig följt med till kassan.
+   *
+   * Priset lagras inte här. Det hämtas ur produkten när sidan ritas, så
+   * en prisjustering slår igenom på båda ställena samtidigt.
+   */
+  upgrades: z
+    .array(
+      z.object({
+        product_id: z.string().trim().min(1).max(80),
+        group: z.enum(["storage", "performance", "ram", "other"]),
+        label: z.string().trim().min(1).max(60),
+        summary: z.preprocess(normalizeNullableString, z.string().trim().max(120).nullable()).optional(),
+      })
+    )
+    .max(12)
+    .optional(),
 
   /* Användning. Utelämnat eller null räknas som speldator av
      produktsidan, så en maskin som inte satts försvinner inte. */

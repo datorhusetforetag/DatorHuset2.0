@@ -5,6 +5,7 @@ import { errorMessage } from "@/lib/utils";
 import { readApiError } from "../../apiError";
 import { type Listing, formatPrice } from "./listingModel";
 import { FpsEditor, type FpsSettings } from "./FpsEditor";
+import { UpgradeEditor, type Upgrade } from "./UpgradeEditor";
 
 /**
  * Redigera en listning.
@@ -82,11 +83,17 @@ export const ListingEditor = ({
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  /* Som FPS: formen kommer från servern och skickas tillbaka, så den
+     hör inte hemma i Listing. */
+  const [upgrades, setUpgrades] = useState<Upgrade[]>(
+    () => ((listing || draft) as unknown as { upgrades?: Upgrade[] })?.upgrades ?? [],
+  );
   const fileInput = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setForm(listing || draft || ({} as Listing));
     setFps(((listing || draft) as unknown as { fps?: FpsSettings })?.fps ?? null);
+    setUpgrades(((listing || draft) as unknown as { upgrades?: Upgrade[] })?.upgrades ?? []);
     setError("");
   }, [listing, draft]);
 
@@ -180,6 +187,7 @@ export const ListingEditor = ({
         is_preorder: Boolean(form.is_preorder),
         eta_note: form.eta_note || null,
         eta_days: form.eta_days,
+        upgrades,
         /* Bara vid ändring. En ny listning har inget att krocka med. */
         ...(isNew ? {} : { expected_updated_at: form.updated_at }),
       },
@@ -487,6 +495,16 @@ export const ListingEditor = ({
               <Field label="CPU-kylare"><input className={inputClass} value={form.cpu_cooler || ""} onChange={(e) => set("cpu_cooler", e.target.value)} /></Field>
               <Field label="Operativsystem"><input className={inputClass} value={form.os || ""} onChange={(e) => set("os", e.target.value)} /></Field>
             </div>
+          </Group>
+
+          <Group title="Uppgraderingar">
+            <UpgradeEditor
+              apiBase={apiBase}
+              token={token}
+              currentListingId={form.id}
+              value={upgrades}
+              onChange={setUpgrades}
+            />
           </Group>
 
           <Group title="FPS på produktsidan">

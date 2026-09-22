@@ -5429,6 +5429,7 @@ const buildListingResponse = ({
   usedVariantByProductId,
   usedPartsByProductId,
   tagsByProductId,
+  upgradesByProductId,
   productImagesByProductId,
   variantLinkByBaseId,
   variantBaseByUsedId,
@@ -5473,6 +5474,7 @@ const buildListingResponse = ({
     storage_type: product.storage_type,
     tier: product.tier,
     tags: parseListingTagsSetting(tagsByProductId.get(product.id)),
+    upgrades: upgradesByProductId.get(product.id) || [],
     motherboard: product.motherboard,
     psu: product.psu,
     case_name: product.case_name,
@@ -5539,6 +5541,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
     `used_variant:${id}`,
     `used_parts:${id}`,
     `listing_tags:${id}`,
+    `listing_upgrades:${id}`,
     `product_images:${id}`,
     `used_variant_link:${id}`,
     `listing_group:${id}`,
@@ -5557,6 +5560,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
   const usedVariantByProductId = new Map();
   const usedPartsByProductId = new Map();
   const tagsByProductId = new Map();
+  const upgradesByProductId = new Map();
   const productImagesByProductId = new Map();
   const variantLinkByBaseId = new Map();
   const variantBaseByUsedId = new Map();
@@ -5574,6 +5578,25 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
     }
     if (key.startsWith("used_parts:")) {
       usedPartsByProductId.set(key.slice(11), setting.value);
+      return;
+    }
+    if (key.startsWith("listing_upgrades:")) {
+      const id = sanitizeText(key.slice(18), 80);
+      if (!id) return;
+      const list = Array.isArray(setting?.value?.upgrades) ? setting.value.upgrades : [];
+      upgradesByProductId.set(
+        id,
+        list
+          .map((row) => ({
+            product_id: sanitizeText(row?.product_id, 80),
+            group: ["storage", "performance", "ram", "other"].includes(row?.group)
+              ? row.group
+              : "other",
+            label: sanitizeText(row?.label, 60),
+            summary: sanitizeText(row?.summary, 120) || null,
+          }))
+          .filter((row) => row.product_id && row.label),
+      );
       return;
     }
     if (key.startsWith("listing_tags:")) {
@@ -5613,6 +5636,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
       usedVariantByProductId,
       usedPartsByProductId,
       tagsByProductId,
+      upgradesByProductId,
       productImagesByProductId,
       variantLinkByBaseId,
       variantBaseByUsedId,
@@ -5784,6 +5808,19 @@ const persistListingState = async ({ req, user, productId, listing, fpsInput, us
   );
   if (tagsError) {
     throw new Error(tagsError.message || "Kunde inte uppdatera listningstaggar.");
+  }
+
+  /* Uppgraderingarna. Utelämnat fält betyder rör dem inte - ett
+     formulär som inte känner till dem ska inte kunna tömma listan. */
+  if (parsedListing.upgrades !== undefined) {
+    const upgradesKey = `listing_upgrades:${productId}`;
+    const { error: upgradesError } = await supabase.from("ui_settings").upsert(
+      [{ key: upgradesKey, value: { upgrades: parsedListing.upgrades }, updated_at: new Date() }],
+      { onConflict: "key" }
+    );
+    if (upgradesError) {
+      throw new Error(upgradesError.message || "Kunde inte spara uppgraderingarna.");
+    }
   }
 
   const normalizedFps = sanitizeFpsSettings(fpsInput || parsedListing.fps, EMPTY_FPS_SETTINGS);
@@ -9126,6 +9163,51 @@ app.get("/api/used-parts/:productId", async (req, res) => {
   }
 });
 
+/**
+ * GET /api/product-upgrades/:productId
+ *
+ * Uppgraderingarna för en produkt, som produktsidan visar dem.
+ *
+ * Öppen, eftersom kunden ska se dem. Innehåller inget känsligt: namn,
+ * rubrik och vilken produkt kortet pekar på. Priset finns i produkten
+ * och hämtas inte härifrån.
+ */
+app.get("/api/product-upgrades/:productId", async (req, res) => {
+  if (!supabase) {
+    return res.json({ ok: true, data: [] });
+  }
+  try {
+    const productId = sanitizeText(req.params?.productId, 80);
+    if (!productId) {
+      return res.status(400).json({ error: "Missing product id" });
+    }
+    const { data } = await supabase
+      .from("ui_settings")
+      .select("value")
+      .eq("key", `listing_upgrades:${productId}`)
+      .maybeSingle();
+
+    const list = Array.isArray(data?.value?.upgrades) ? data.value.upgrades : [];
+    return res.json({
+      ok: true,
+      data: list
+        .map((row) => ({
+          product_id: sanitizeText(row?.product_id, 80),
+          group: ["storage", "performance", "ram", "other"].includes(row?.group)
+            ? row.group
+            : "other",
+          label: sanitizeText(row?.label, 60),
+          summary: sanitizeText(row?.summary, 120) || null,
+        }))
+        .filter((row) => row.product_id && row.label),
+    });
+  } catch (error) {
+    console.error("Product upgrades error:", error);
+    /* En tom lista är rätt svar vid fel. Produktsidan ska visa
+       grundmaskinen, inte gå sönder. */
+    return res.json({ ok: true, data: [] });
+  }
+});
 app.get("/api/product-images/:productId", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
