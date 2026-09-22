@@ -122,3 +122,24 @@ export const resolveTrackingUrl = (tracking?: OrderTracking | null): string | nu
   const build = CARRIER_TRACKING_URLS[carrier];
   return build ? build(code) : null;
 };
+
+/**
+ * Statusar där ordern är avslutad och inget mer ska hända med den.
+ *
+ * "cancelled" och "refunded" finns inte i ORDER_STATUS_FLOW - de är
+ * inte steg på vägen utan slut på den, och har därför ingen plats i
+ * stapeln kunden ser. De hör ändå hemma här: en avbruten order är lika
+ * färdig som en levererad.
+ *
+ * Spegla ändringar i FINISHED_ORDER_STATUSES i server-local.js.
+ */
+export const FINISHED_ORDER_STATUSES = new Set([
+  "delivered",
+  "completed",
+  "cancelled",
+  "refunded",
+]);
+
+/** Går ordern att arkivera? Bara avslutade gör det. */
+export const isFinishedOrder = (status?: string | null) =>
+  FINISHED_ORDER_STATUSES.has(String(status || ""));

@@ -8,9 +8,10 @@ const navItems = [
   { to: "/admin/bestallningar", label: "Beställningar", icon: ClipboardList },
   { to: "/admin/kunder", label: "Kunder", icon: Users },
   { to: "/admin/logs", label: "Loggar", icon: ScrollText },
-  /* Arkivet ligger sist och under Loggar med flit. Det ar nagot man
+  /* Arkiven ligger sist och under Loggar med flit. De ar nagot man
      slar upp i, inte nagot man arbetar i. */
   { to: "/admin/arkiv", label: "Arkiv slutsålda", icon: Archive },
+  { to: "/admin/arkiv-bestallningar", label: "Arkiv beställningar", icon: Archive },
 ];
 
 export const AdminLayout = () => {

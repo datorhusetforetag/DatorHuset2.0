@@ -5990,6 +5990,17 @@ const buildOrderEmailHtml = ({ headline, intro, order, items, statusNote }) => {
 const OPEN_ORDER_STATUSES_EXCLUDED = ["delivered", "cancelled", "refunded"];
 
 /*
+ * Samma lista, som mängd. Den frågas på tre ställen - kapaciteten,
+ * kundstatistiken och arkivet - och stod tidigare skriven två gånger
+ * till. Tre kopior av samma regel är tre chanser att en av dem inte
+ * hänger med när en fjärde status tillkommer.
+ */
+const FINISHED_ORDER_STATUSES = new Set([
+  ...OPEN_ORDER_STATUSES_EXCLUDED,
+  "completed",
+]);
+
+/*
  * Vilka produkter som är begagnatvarianter.
  *
  * Kopplingen ligger i ui_settings, antingen som variant_role på
@@ -7847,7 +7858,7 @@ app.get("/api/admin/v2/customers", async (req, res) => {
       const current = statsByUser.get(row.user_id) || { orders: 0, spentCents: 0, open: 0 };
       current.orders += 1;
       current.spentCents += Number(row.total_cents || 0);
-      if (!["delivered", "cancelled", "refunded"].includes(String(row.status || ""))) {
+      if (!FINISHED_ORDER_STATUSES.has(String(row.status || ""))) {
         current.open += 1;
       }
       statsByUser.set(row.user_id, current);
@@ -8016,6 +8027,11 @@ app.get("/api/admin/v2/orders", async (req, res) => {
     const offset = Math.max(0, Number(req.query?.offset || 0));
     const statusFilter = sanitizeText(req.query?.status, 40);
     const term = sanitizeText(req.query?.q, 80);
+    /* Arkivet är en egen vy, inte ett filter ovanpå samma lista.
+       Utan ett val här hade beställningssidan fortsatt visa allt som
+       någonsin sålts, vilket är hela anledningen till att arkivet
+       finns. Standard är alltså de aktiva. */
+    const wantsArchived = String(req.query?.archived || "") === "true";
 
     let query = supabase
       .from("orders")
@@ -8032,13 +8048,17 @@ app.get("/api/admin/v2/orders", async (req, res) => {
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
 
+    query = wantsArchived
+      ? query.not("archived_at", "is", null)
+      : query.is("archived_at", null);
+
     if (statusFilter) {
       query = query.eq("status", statusFilter);
     }
     if (term) {
       const escaped = term.replace(/[%]/g, "");
       query = query.or(
-        `customer_name.ilike.%${escaped}%,customer_email.ilike.%${escaped}%,customer_phone.ilike.%${escaped}%,order_number.ilike.%${escaped}%`
+        `customer_name.ilike.%${escaped}%,customer_email.ilike.%${escaped}%,customer_phone.ilike.%${escaped}%,order_number.ilike.%${escaped}%,order_reference.ilike.%${escaped}%`
       );
     }
 
@@ -8226,6 +8246,96 @@ app.patch("/api/admin/v2/orders/:orderId/byggdetaljer", async (req, res) => {
   }
 });
 
+
+/**
+ * POST /api/admin/v2/orders/:orderId/arkiv
+ *
+ * Flyttar en avslutad order till Arkiv beställningar, eller tillbaka.
+ *
+ * BARA AVSLUTADE ORDRAR
+ *
+ * En order som fortfarande byggs får inte arkiveras. Arkivering
+ * döljer den ur listan där arbetet syns, och en dator som ingen ser
+ * är en dator ingen bygger. Kunden väntar på den likafullt.
+ *
+ * Att hämta tillbaka är alltid tillåtet. Går något fel ska vägen
+ * tillbaka aldrig vara den som är spärrad.
+ *
+ * Ingenting raderas. Kunden ser sin order som förut, kvittot
+ * fungerar, och serienumret går att slå upp. Kolumnen styr bara
+ * vilken av adminportalens två listor ordern hamnar i.
+ */
+app.post("/api/admin/v2/orders/:orderId/arkiv", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const orderId = sanitizeText(req.params?.orderId, 64);
+    if (!orderId) {
+      return jsonError(res, 400, "INVALID_ORDER_ID", "Ogiltigt order-id.");
+    }
+    if (typeof req.body?.archived !== "boolean") {
+      return jsonError(
+        res,
+        400,
+        "INVALID_ARCHIVE_FLAG",
+        "Ange archived: true eller false.",
+      );
+    }
+    const archived = req.body.archived;
+
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select("id, status, order_number, order_reference, archived_at")
+      .eq("id", orderId)
+      .maybeSingle();
+    if (orderError || !order) {
+      return jsonError(res, 404, "ORDER_NOT_FOUND", "Beställningen hittades inte.");
+    }
+
+    if (archived && !FINISHED_ORDER_STATUSES.has(String(order.status || ""))) {
+      return jsonError(
+        res,
+        409,
+        "ORDER_NOT_FINISHED",
+        "Bara levererade, avbrutna och återbetalade ordrar kan arkiveras. Den här är fortfarande igång.",
+      );
+    }
+
+    const { data: updated, error: updateError } = await supabase
+      .from("orders")
+      .update({ archived_at: archived ? new Date() : null, updated_at: new Date() })
+      .eq("id", orderId)
+      .select("id, archived_at")
+      .maybeSingle();
+    if (updateError) {
+      return jsonError(
+        res,
+        500,
+        "ARCHIVE_FAILED",
+        updateError.message || "Kunde inte arkivera beställningen.",
+      );
+    }
+
+    await logAdminAction(
+      req,
+      access.user,
+      archived ? "order.archive" : "order.restore",
+      "order",
+      orderId,
+      { order_number: formatOrderNumber(order) },
+    );
+
+    return res.json({ ok: true, data: updated || { id: orderId } });
+  } catch (error) {
+    console.error("Archive order error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
 app.get("/api/site-settings", async (_req, res) => {
   try {
     const mode = resolveSiteSettingsMode(_req.query?.mode);

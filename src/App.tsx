@@ -31,6 +31,7 @@ const ReturnPolicy = lazy(() => import("./pages/ReturnPolicy.tsx"));
 const AdminOrders = lazy(() => import("./admin/pages/AdminOrders.tsx"));
 const AdminListings = lazy(() => import("./admin/pages/AdminListings.tsx"));
 const AdminArchive = lazy(() => import("./admin/pages/AdminArchive.tsx"));
+const AdminOrdersArchive = lazy(() => import("./admin/pages/AdminOrdersArchive.tsx"));
 const AdminCustomers = lazy(() => import("./admin/pages/AdminCustomers.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
 const queryClient = new QueryClient();
@@ -75,6 +76,7 @@ const App = () => (
                 <Route path="bygg" element={<AdminOrders />} />
                 <Route path="logs" element={<AdminLogs />} />
                 <Route path="arkiv" element={<AdminArchive />} />
+                <Route path="arkiv-bestallningar" element={<AdminOrdersArchive />} />
                 <Route path="*" element={<AdminNotFound />} />
               </Route>
 

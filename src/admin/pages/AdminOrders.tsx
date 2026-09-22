@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Download, RefreshCcw, Search, ShieldAlert, Truck } from "lucide-react";
+import { Archive, Download, RefreshCcw, Search, ShieldAlert, Truck } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
 import { BuildDetails } from "./orders/BuildDetails";
@@ -7,6 +7,7 @@ import { StatusScene, type StatusKey } from "@/components/orders/StatusScene";
 import {
   CARRIER_LABELS,
   getOrderStatusInfo,
+  isFinishedOrder,
   ORDER_STATUS_FLOW,
   resolveTrackingUrl,
   SHIPPING_STATUSES,
@@ -133,6 +134,10 @@ function TrackingFields({ order, disabled, onSave }: TrackingFieldsProps) {
 type Order = {
   id: string;
   order_number?: string | number | null;
+  /* Referensen är det kunden läser upp i telefon. Löpnumret är
+     internt, och att visa det här gjorde att en sökning på det
+     kunden sa ("DH-1004-K7M") inte träffade någonting. */
+  order_reference?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
   status?: string | null;
@@ -156,6 +161,14 @@ type Order = {
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
+
+/* Referensen först, löpnumret om den saknas, id:t om båda gör det.
+   Samma ordning som kunden ser på sin ordersida. */
+const orderLabel = (order: Order) =>
+  order.order_reference ||
+  (order.order_number === null || order.order_number === undefined || order.order_number === ""
+    ? order.id.slice(0, 8)
+    : String(order.order_number));
 
 /* Svaret kan bara vara tva saker: { error: "text" } eller
    { error: { message } }. Bada las redan, men any lovade att vi
@@ -185,7 +198,10 @@ export default function AdminOrders() {
     setLoadingOrders(true);
     setLocalError("");
     try {
-      const params = new URLSearchParams({ limit: "200" });
+      /* Arkiverade ordrar hör hemma i Arkiv beställningar, inte här.
+         Servern utgår redan från de aktiva, men raden står kvar för
+         att det ska synas i koden vilken av de två listorna det är. */
+      const params = new URLSearchParams({ limit: "200", archived: "false" });
       if (query.trim()) params.set("q", query.trim());
       if (statusFilter) params.set("status", statusFilter);
       const response = await fetch(`${apiBase}/api/admin/v2/orders?${params.toString()}`, {
@@ -264,6 +280,40 @@ export default function AdminOrders() {
       setOrders((prev) => prev.map((entry) => (entry.id === order.id ? { ...entry, ...(data?.data || {}) } : entry)));
     } catch (err) {
       setLocalError(err instanceof Error ? err.message : "Statusuppdatering misslyckades.");
+    } finally {
+      setSavingOrder(null);
+    }
+  };
+
+  /* Arkivering flyttar bara ordern till den andra listan. Ingenting
+     raderas, kunden märker ingenting, och vägen tillbaka finns i
+     Arkiv beställningar. */
+  const handleArchive = async (order: Order) => {
+    if (!token || !canMutate) return;
+    const confirmed = window.confirm(
+      `Arkivera order ${orderLabel(order)}?\n\n` +
+        "Den flyttas till Arkiv beställningar. Kunden ser sin order som vanligt, och du kan hämta tillbaka den när som helst.",
+    );
+    if (!confirmed) return;
+
+    try {
+      setSavingOrder(order.id);
+      setLocalError("");
+      const response = await fetch(`${apiBase}/api/admin/v2/orders/${order.id}/arkiv`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ archived: true }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(readApiError(data, "Kunde inte arkivera beställningen."));
+      }
+      setOrders((prev) => prev.filter((entry) => entry.id !== order.id));
+    } catch (err) {
+      setLocalError(err instanceof Error ? err.message : "Arkiveringen misslyckades.");
     } finally {
       setSavingOrder(null);
     }
@@ -389,10 +439,7 @@ export default function AdminOrders() {
         {orders.map((order) => {
           const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
           const orderDate = order.created_at ? new Date(order.created_at).toLocaleDateString("sv-SE") : "Okänt datum";
-          const orderNumber =
-            order.order_number === null || order.order_number === undefined || order.order_number === ""
-              ? order.id.slice(0, 8)
-              : String(order.order_number);
+          const orderNumber = orderLabel(order);
           const statusInfo = getOrderStatusInfo(order.status || undefined);
 
           return (
@@ -500,6 +547,24 @@ export default function AdminOrders() {
                 canMutate={canMutate}
                 onSaved={(savedItems) => handleBuildDetailsSaved(order.id, savedItems)}
               />
+
+              {/* Arkivering erbjuds bara när ordern är avslutad. En
+                  dator som fortfarande byggs får inte gå att gömma:
+                  den här listan är där arbetet syns, och det som inte
+                  syns blir inte gjort. */}
+              {canMutate && isFinishedOrder(order.status) && (
+                <div className="mt-4 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => void handleArchive(order)}
+                    disabled={savingOrder === order.id}
+                    className="inline-flex items-center gap-2 rounded-lg border border-slate-700 px-3 py-1.5 text-xs font-semibold text-slate-400 hover:border-slate-500 hover:text-slate-200 disabled:opacity-40"
+                  >
+                    <Archive className="h-3.5 w-3.5" />
+                    Arkivera
+                  </button>
+                </div>
+              )}
             </section>
           );
         })}
