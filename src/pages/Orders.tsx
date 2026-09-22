@@ -17,6 +17,12 @@ import { Check, Copy, ExternalLink, Package, ReceiptText, Truck } from "lucide-r
 type OrderItem = {
   id: string;
   quantity: number;
+  /* Numret på chassit. Samma nummer som serviceformuläret frågar
+     efter, så kunden slipper leta på lådan.
+
+     build_notes finns på raden men hämtas inte hit: den är skriven
+     till oss själva och har inget i kundens vy att göra. */
+  serial_number?: string | null;
   product?: {
     id?: string;
     legacy_id?: string | number | null;
@@ -365,6 +371,42 @@ export default function Orders() {
                                   ))}
                                 </dl>
                               )}
+
+                              {/* Serienumret och vägen tillbaka till
+                                  produkten.
+
+                                  Numret står här för att det är här man
+                                  letar efter det - serviceformuläret
+                                  frågar efter det, och alternativet är
+                                  att vända på lådan.
+
+                                  Länken finns för att ordern visar vad
+                                  man köpt men inte vägen till sidan om
+                                  det. Vill man kolla en specifikation
+                                  eller skicka den vidare får man annars
+                                  söka i butiken igen. */}
+                              <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-foreground/10 pt-4">
+                                {item.serial_number && (
+                                  <div>
+                                    <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                                      Serienummer
+                                    </p>
+                                    <p className="mt-0.5 font-mono text-sm font-semibold text-foreground">
+                                      {item.serial_number}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {(product?.slug || product?.id) && (
+                                  <Link
+                                    to={`/computer/${product.slug || product.id}`}
+                                    className="ml-auto inline-flex items-center gap-1.5 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                                  >
+                                    Visa produktsidan
+                                    <ExternalLink className="h-3.5 w-3.5" />
+                                  </Link>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>

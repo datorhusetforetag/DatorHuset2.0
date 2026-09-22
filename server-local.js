@@ -558,14 +558,6 @@ const CARRIER_OPTIONS = new Set(["schenker", "postnord", "dhl", "budbee", "insta
 const swedishPhoneRegex = /^(?:\+46|0)7\d{8}$/;
 const swedishPostalRegex = /^\d{3}\s?\d{2}$/;
 const swedishCityRegex = /^[A-Za-z\u00c5\u00c4\u00d6\u00e5\u00e4\u00f6.\s-]+$/;
-const DEFAULT_BUILD_CHECKLIST = [
-  { id: "parts", label: "Delar plockade", done: false },
-  { id: "assembly", label: "Montering klar", done: false },
-  { id: "bios", label: "BIOS & uppdateringar", done: false },
-  { id: "stress", label: "Stresstest", done: false },
-  { id: "qc", label: "QC & packning", done: false },
-  { id: "ready", label: "Klar f\u00f6r utl\u00e4mning", done: false },
-];
 
 const STATUS_LABELS = {
   received: "Betald",
@@ -8134,67 +8126,103 @@ app.patch("/api/admin/v2/orders/:orderId/byggstatus", async (req, res) => {
   }
 });
 
-app.patch("/api/admin/v2/orders/:orderId/checklista", async (req, res) => {
+/**
+ * PATCH /api/admin/v2/orders/:orderId/byggdetaljer
+ *
+ * Serienummer och byggnoteringar per maskin i ordern.
+ *
+ * Ersätter checklistendpointen. Den kryssade av sex steg som redan
+ * framgår av byggstatusen, alltså samma uppgift två gånger på två
+ * ställen som kunde säga emot varandra.
+ *
+ * Det här säger något statusen inte kan: vilket exemplar kunden har.
+ * Kommer den tillbaka med ett garantiärende om ett år är det numret
+ * som avgör vilken maskin det gäller.
+ *
+ * Raderna prövas mot ordern innan de skrivs. Utan det hade ett
+ * post-anrop med ett främmande rad-id kunnat sätta serienummer på
+ * någon annans order.
+ */
+app.patch("/api/admin/v2/orders/:orderId/byggdetaljer", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
   }
   try {
     const access = await requireAdminPermission(req, res, ["ops", "admin"]);
     if (!access) return;
-    const { user, role } = access;
     if (!requireServiceRoleKey(res)) return;
 
     const orderId = sanitizeText(req.params?.orderId, 64);
-    const checklist = Array.isArray(req.body?.build_checklist) ? req.body.build_checklist : null;
-    const expectedUpdatedAt = sanitizeText(req.body?.expected_updated_at, 80);
-    if (!orderId || !checklist) {
-      return jsonError(res, 400, "INVALID_CHECKLIST", "Ogiltig checklista.");
+    const items = Array.isArray(req.body?.items) ? req.body.items : null;
+    if (!orderId || !items) {
+      return jsonError(res, 400, "INVALID_BUILD_DETAILS", "Ogiltiga byggdetaljer.");
     }
-    if (expectedUpdatedAt) {
-      const { data: currentOrder } = await supabase
-        .from("orders")
-        .select("updated_at")
-        .eq("id", orderId)
-        .maybeSingle();
-      if (currentOrder?.updated_at) {
-        const expected = new Date(expectedUpdatedAt).getTime();
-        const current = new Date(currentOrder.updated_at).getTime();
-        if (Number.isFinite(expected) && Number.isFinite(current) && expected !== current) {
-          return jsonError(
-            res,
-            409,
-            "ORDER_VERSION_CONFLICT",
-            "Beställningen har ändrats av någon annan. Ladda om innan du sparar igen."
-          );
-        }
-      }
-    }
-    const sanitizedChecklist = checklist.map((entry) => ({
-      id: sanitizeText(entry?.id, 40),
-      label: sanitizeText(entry?.label, 80),
-      done: Boolean(entry?.done),
-    }));
 
-    const { data, error } = await supabase
-      .from("orders")
-      .update({ build_checklist: sanitizedChecklist, updated_at: new Date() })
-      .eq("id", orderId)
-      .select("id, build_checklist, updated_at")
-      .single();
-    if (error || !data) {
+    /* Bara rader som hör till den här ordern får röras. */
+    const { data: ownRows, error: ownError } = await supabase
+      .from("order_items")
+      .select("id")
+      .eq("order_id", orderId);
+    if (ownError) {
       return jsonError(
         res,
         500,
-        "ORDER_CHECKLIST_UPDATE_FAILED",
-        error?.message || "Kunde inte uppdatera checklista."
+        "BUILD_DETAILS_FAILED",
+        ownError.message || "Kunde inte läsa orderraderna.",
       );
     }
+    const allowed = new Set((ownRows || []).map((row) => row.id));
 
-    await logAdminAction(req, user, "order_checklist_update_v2", "order", orderId, { role });
-    return res.json({ ok: true, data });
+    for (const item of items) {
+      const itemId = sanitizeText(item?.id, 64);
+      if (!itemId || !allowed.has(itemId)) {
+        return jsonError(
+          res,
+          400,
+          "UNKNOWN_ITEM",
+          "En av raderna hör inte till den här ordern.",
+        );
+      }
+
+      const serial = sanitizeText(item?.serial_number, 80);
+      const notes = sanitizeText(item?.build_notes, 1000);
+      const { error } = await supabase
+        .from("order_items")
+        .update({
+          serial_number: serial || null,
+          build_notes: notes || null,
+        })
+        .eq("id", itemId);
+
+      if (error) {
+        /* Serienumret är unikt i databasen. Krocken är värd ett eget
+           besked: den betyder att numret redan sitter på en annan
+           maskin, alltså att någon skrivit fel. */
+        if (String(error.code) === "23505") {
+          return jsonError(
+            res,
+            409,
+            "SERIAL_IN_USE",
+            `Serienumret ${serial} finns redan på en annan maskin.`,
+          );
+        }
+        return jsonError(
+          res,
+          500,
+          "BUILD_DETAILS_FAILED",
+          error.message || "Kunde inte spara byggdetaljerna.",
+        );
+      }
+    }
+
+    await logAdminAction(req, access.user, "order.build_details", "order", orderId, {
+      count: items.length,
+    });
+
+    return res.json({ ok: true, data: { count: items.length } });
   } catch (error) {
-    console.error("Admin v2 checklist error:", error);
-    return jsonError(res, 500, "ORDER_CHECKLIST_UPDATE_FAILED", "Kunde inte uppdatera checklista.");
+    console.error("Build details error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
   }
 });
 
@@ -9695,47 +9723,6 @@ app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
     }
   } catch (error) {
     console.error("Update order status error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
-app.post("/api/admin/orders/:orderId/checklist", async (req, res) => {
-  if (!supabase) {
-    return res.status(503).json({ error: "Supabase not configured." });
-  }
-  try {
-    const { user, error: authError } = await getAuthUser(req);
-    if (authError || !user) {
-      return res.status(401).json({ error: authError || "Unauthorized" });
-    }
-    if (!isAdminUser(user)) {
-      return res.status(403).json({ error: "Forbidden" });
-    }
-
-    const { orderId } = req.params;
-    const checklist = Array.isArray(req.body?.build_checklist) ? req.body.build_checklist : null;
-    if (!checklist) {
-      return res.status(400).json({ error: "Invalid checklist" });
-    }
-
-    const { data, error } = await supabase
-      .from("orders")
-      .update({ build_checklist: checklist, updated_at: new Date() })
-      .eq("id", orderId)
-      .select()
-      .single();
-
-    if (error || !data) {
-      return res.status(500).json({ error: "Failed to update checklist" });
-    }
-
-    await logAdminAction(req, user, "order_checklist_update", "order", orderId, {
-      build_checklist: checklist,
-    });
-
-    res.json(data);
-  } catch (error) {
-    console.error("Checklist update error:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

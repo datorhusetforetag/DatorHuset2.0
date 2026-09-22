@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Truck } from "lucide-react";
+import { Download, RefreshCcw, Search, ShieldAlert, Truck } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
+import { BuildDetails } from "./orders/BuildDetails";
 import { StatusScene, type StatusKey } from "@/components/orders/StatusScene";
 import {
   CARRIER_LABELS,
@@ -16,12 +17,11 @@ type OrderItem = {
   quantity: number;
   unit_price_cents?: number | null;
   product?: { name?: string | null };
-};
-
-type BuildChecklistItem = {
-  id: string;
-  label: string;
-  done: boolean;
+  /* Numret på chassit, och en notering till oss själva. Noteringen
+     stannar i portalen; serienumret följer med till kundens
+     ordersida. */
+  serial_number?: string | null;
+  build_notes?: string | null;
 };
 
 type TrackingFieldsProps = {
@@ -150,18 +150,9 @@ type Order = {
   tracking_url?: string | null;
   shipped_at?: string | null;
   delivered_at?: string | null;
-  build_checklist?: BuildChecklistItem[] | null;
   order_items?: OrderItem[];
 };
 
-const DEFAULT_CHECKLIST: BuildChecklistItem[] = [
-  { id: "parts", label: "Delar plockade", done: false },
-  { id: "assembly", label: "Montering klar", done: false },
-  { id: "bios", label: "BIOS & uppdateringar", done: false },
-  { id: "stress", label: "Stresstest", done: false },
-  { id: "qc", label: "QC & packning", done: false },
-  { id: "ready", label: "Klar för utlämning", done: false },
-];
 
 const formatCurrency = (value: number) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
@@ -278,50 +269,34 @@ export default function AdminOrders() {
     }
   };
 
-  const handleChecklistToggle = async (order: Order, checklistItemId: string) => {
-    if (!token || !isAdmin) return;
-    if (!canMutate) {
-      setLocalError("Du har läsbehörighet och kan inte uppdatera checklistan.");
-      return;
-    }
-    const baseChecklist = order.build_checklist?.length ? order.build_checklist : DEFAULT_CHECKLIST;
-    const updatedChecklist = baseChecklist.map((item) =>
-      item.id === checklistItemId ? { ...item, done: !item.done } : item
+  /* Byggdetaljerna sparas i sin egen komponent. Den här lägger bara
+     tillbaka det sparade i listan, så fälten inte hoppar tillbaka
+     till gamla värden vid nästa omritning. */
+  const handleBuildDetailsSaved = (
+    orderId: string,
+    savedItems: { id: string; serial_number: string; build_notes: string }[],
+  ) => {
+    const byId = new Map(savedItems.map((item) => [item.id, item]));
+    setOrders((prev) =>
+      prev.map((entry) =>
+        entry.id === orderId
+          ? {
+              ...entry,
+              order_items: (entry.order_items || []).map((item) => {
+                const saved = byId.get(item.id);
+                return saved
+                  ? {
+                      ...item,
+                      serial_number: saved.serial_number || null,
+                      build_notes: saved.build_notes || null,
+                    }
+                  : item;
+              }),
+            }
+          : entry
+      )
     );
-    try {
-      setSavingOrder(order.id);
-      const response = await fetch(`${apiBase}/api/admin/v2/orders/${order.id}/checklista`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ build_checklist: updatedChecklist, expected_updated_at: order.updated_at || null }),
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) {
-        throw new Error(readApiError(data, "Kunde inte uppdatera checklistan."));
-      }
-      setOrders((prev) =>
-        prev.map((entry) =>
-          entry.id === order.id
-            ? {
-                ...entry,
-                build_checklist: Array.isArray(data?.data?.build_checklist)
-                  ? data.data.build_checklist
-                  : updatedChecklist,
-                updated_at: data?.data?.updated_at || entry.updated_at,
-              }
-            : entry
-        )
-      );
-    } catch (err) {
-      setLocalError(err instanceof Error ? err.message : "Checklist-uppdatering misslyckades.");
-    } finally {
-      setSavingOrder(null);
-    }
   };
-
   const orderCount = useMemo(() => orders.length, [orders]);
 
   if (!token) {
@@ -419,7 +394,6 @@ export default function AdminOrders() {
               ? order.id.slice(0, 8)
               : String(order.order_number);
           const statusInfo = getOrderStatusInfo(order.status || undefined);
-          const checklist = order.build_checklist?.length ? order.build_checklist : DEFAULT_CHECKLIST;
 
           return (
             <section key={order.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
@@ -518,28 +492,14 @@ export default function AdminOrders() {
                 />
               )}
 
-              <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-                <div className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  Byggchecklista
-                </div>
-                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                  {checklist.map((item) => (
-                    <label
-                      key={`${order.id}-${item.id}`}
-                      className="flex items-center gap-2 rounded-lg border border-slate-700/60 px-3 py-2 text-sm text-slate-200"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={Boolean(item.done)}
-                        disabled={!canMutate}
-                        onChange={() => void handleChecklistToggle(order, item.id)}
-                      />
-                      <span className={item.done ? "text-slate-500 line-through" : ""}>{item.label}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+              <BuildDetails
+                apiBase={apiBase}
+                token={token}
+                orderId={order.id}
+                items={order.order_items || []}
+                canMutate={canMutate}
+                onSaved={(savedItems) => handleBuildDetailsSaved(order.id, savedItems)}
+              />
             </section>
           );
         })}
