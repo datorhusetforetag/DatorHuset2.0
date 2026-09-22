@@ -112,12 +112,16 @@ export const AmbientBackground = () => {
       className="pointer-events-none fixed inset-0 z-0 overflow-hidden motion-reduce:hidden"
     >
       {/*
-        Punktrastret. Det ligger längst bak och rör sig minst, och det är
-        det som ger de mjuka ljusen något att mätas mot - utan en yta med
+        Höjdkurvorna. De ligger längst bak och rör sig minst, och det är
+        de som ger de mjuka ljusen något att mätas mot - utan en yta med
         struktur i finns det inget som avslöjar att de rör sig alls.
+
+        Rutan är tio procent större än fönstret åt alla håll, så
+        parallaxen har något att flytta in i kanterna. Utan marginalen
+        hade en tom rand dykt upp när mönstret skjuts åt sidan.
       */}
       <div
-        className="ambient-grid absolute inset-[-10%]"
+        className="ambient-topo absolute inset-[-10%]"
         style={{ transform: shift(-0.03) }}
       />
 

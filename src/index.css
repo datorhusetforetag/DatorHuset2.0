@@ -635,29 +635,51 @@
   }
 }
 
-/* Punktrastret längst bak ------------------------------------------
+/* Höjdkurvorna längst bak -------------------------------------------
  *
- * En prickmatris i stället för ännu ett suddigt ljusfält. De mjuka
- * fälten har ingen kant och ingen struktur, och en yta helt utan
- * struktur går inte att bedöma avstånd i - det är därför en bakgrund
- * som bara består av sådana ser platt ut hur många man än lägger på.
- * Rastret ger ögat något att mäta mot, och känns dessutom mer som
- * hårdvara än en tonad fläck gör.
+ * Här låg tidigare en prickmatris. Den gjorde sitt jobb - gav ögat
+ * något att mäta avstånd mot, så att de mjuka ljusfälten ovanpå inte
+ * såg platta ut - men ett jämnt raster är också det mest opersonliga
+ * en bakgrund kan vara. Var tredje sajt har det.
  *
- * Prickarna tonar ut mot kanterna så rastret inte slutar i en rak
+ * Höjdkurvorna gör samma jobb och säger något: de har riktning,
+ * täthet och plan, alltså mer att mäta mot än ett raster med samma
+ * avstånd överallt.
+ *
+ * OM FILEN
+ *
+ * Den är inte bilden som den kom. Originalet är nästan svart - hela
+ * omfånget ligger mellan ljushet 5 och 30 av 255 - och lagt på sidans
+ * redan mörka bakgrund syns det knappt. scripts/make-topo-pattern.mjs
+ * gör om ljusheten till alfakanal och färgen till märkets lila, så
+ * bottnen blir genomskinlig och kurvorna lila. Där står också varför.
+ *
+ * Styrkan ställs här med opacity. Höjs den för mycket lyfts hela
+ * sidans ton mot lila, eftersom mönstret täcker allt och inte bara
+ * är linjer - det har mjuka plan mellan dem också.
+ *
+ * cover och inte upprepning. Bilden är 4,6 gånger bredare än hög och
+ * kurvorna möts inte vid kanterna, så en upprepning skulle klippa av
+ * varje linje vid sömmen. Uppskalningen gör dem mjukare, vilket för
+ * en bakgrund bakom text är en vinst och inte en förlust.
+ *
+ * Vinjetten tonar ut mönstret mot hörnen så det inte slutar i en rak
  * linje mot fönsterkanten.
  */
-.ambient-grid {
-  background-image: radial-gradient(hsl(var(--brand-plum) / 0.34) 1px, transparent 1px);
-  background-size: 38px 38px;
-  mask-image: radial-gradient(70% 60% at 50% 42%, black 0%, transparent 82%);
-  -webkit-mask-image: radial-gradient(70% 60% at 50% 42%, black 0%, transparent 82%);
+.ambient-topo {
+  background-image: url("/patterns/topografi.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  opacity: 0.18;
+  mask-image: radial-gradient(88% 78% at 50% 45%, black 0%, black 52%, transparent 100%);
+  -webkit-mask-image: radial-gradient(88% 78% at 50% 45%, black 0%, black 52%, transparent 100%);
   will-change: transform;
 }
 
-/* Mot vitt försvinner kulören långt innan den syns. */
-:root:not(.dark) .ambient-grid {
-  background-image: radial-gradient(hsl(var(--brand-plum) / 0.24) 1px, transparent 1px);
+/* Mot vitt tar lila över långt innan det syns lika mycket. */
+:root:not(.dark) .ambient-topo {
+  opacity: 0.09;
 }
 
 /* Vågfältet bakom vanliga frågor ------------------------------------
