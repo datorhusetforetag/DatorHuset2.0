@@ -43,10 +43,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
-    const redirectTo =
-      import.meta.env.VITE_APP_MODE === 'admin'
-        ? 'https://admin.datorhuset.se'
-        : window.location.origin;
+    /*
+     * Tillbaka dit man kom ifrån.
+     *
+     * Adminläget pekade tidigare alltid på https://admin.datorhuset.se,
+     * oavsett var man faktiskt stod. Loggade man in i adminportalen
+     * lokalt hamnade man alltså på den driftsatta sajten - inloggningen
+     * lyckades, men man kastades ut ur det man höll på med.
+     *
+     * window.location.origin ger redan rätt svar i båda fallen: står
+     * man på admin.datorhuset.se är det den adressen, och står man på
+     * localhost är det localhost. Hårdkodningen tillförde ingenting
+     * annat än felet.
+     *
+     * Supabase måste känna igen adressen. Varje origin som ska gå att
+     * logga in från behöver stå under Redirect URLs i projektets
+     * URL Configuration, annars byts den tyst mot Site URL - vilket är
+     * precis hur det här yttrar sig.
+     */
+    const redirectTo = window.location.origin;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
