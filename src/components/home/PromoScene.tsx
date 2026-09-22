@@ -22,15 +22,51 @@
  * prefers-reduced-motion längst ned i index.css.
  */
 
-/* Gnistor som sprutar från slaget. Riktningen sätts per gnista, så de
-   inte far iväg i formation. */
-const SPARKS: { x: number; y: number; dx: number; dy: number }[] = [
-  { x: 46, y: 10, dx: 7, dy: -6 },
-  { x: 46, y: 11, dx: -5, dy: -7 },
-  { x: 47, y: 11, dx: 9, dy: 3 },
-  { x: 46, y: 10, dx: -7, dy: -1 },
-  { x: 47, y: 10, dx: 3, dy: -9 },
-  { x: 46, y: 12, dx: -4, dy: 6 },
+/*
+ * Gnistorna från slaget.
+ *
+ * De höll sig tidigare inom en handflata kring hammaren, vilket såg
+ * ut som ett vänligt litet pysande. Ett slag med en hammare på ett
+ * plåtchassi kastar skräp över hela bordet, och nu gör de det: de
+ * längsta når tvärs över scenen och ut genom kanten på den.
+ *
+ * Riktning, längd och fördröjning sätts per gnista och är skrivna
+ * för hand i stället för slumpade. Slumpen ger klungor - fyra åt
+ * samma håll och ingen åt det andra - och en lista som är läst en
+ * gång ser ut som en explosion varje gång.
+ *
+ * hot = den vitheta kärnan närmast slaget. Utan ett par sådana blir
+ * allt samma orangea nyans och skuren ser platt ut.
+ * long = en strimma i stället för en prick, alltså en gnista som
+ * far så fort att ögat drar ut den.
+ */
+type Spark = {
+  x: number;
+  y: number;
+  dx: number;
+  dy: number;
+  delay: number;
+  hot?: boolean;
+  long?: boolean;
+};
+
+const SPARKS: Spark[] = [
+  { x: 46, y: 10, dx: -42, dy: -8, delay: 0, long: true },
+  { x: 46, y: 10, dx: 16, dy: -15, delay: 0.01 },
+  { x: 47, y: 11, dx: -28, dy: -19, delay: 0, long: true },
+  { x: 46, y: 11, dx: 13, dy: 13, delay: 0.02, hot: true },
+  { x: 46, y: 10, dx: -19, dy: 17, delay: 0.01 },
+  { x: 47, y: 10, dx: 8, dy: -23, delay: 0, hot: true },
+  { x: 46, y: 12, dx: -35, dy: 9, delay: 0.03, long: true },
+  { x: 46, y: 9, dx: 19, dy: -6, delay: 0.02 },
+  { x: 47, y: 11, dx: -12, dy: -25, delay: 0.01 },
+  { x: 46, y: 10, dx: -46, dy: 3, delay: 0, long: true },
+  { x: 46, y: 11, dx: 11, dy: 21, delay: 0.03 },
+  { x: 47, y: 10, dx: -24, dy: -4, delay: 0.02, hot: true },
+  { x: 46, y: 9, dx: -7, dy: -27, delay: 0.01, long: true },
+  { x: 46, y: 12, dx: 17, dy: 5, delay: 0 },
+  { x: 47, y: 12, dx: -31, dy: -13, delay: 0.03 },
+  { x: 46, y: 10, dx: 5, dy: 25, delay: 0.02 },
 ];
 
 /**
@@ -149,18 +185,22 @@ const ServiceScene = () => (
 
     {/* Gnistorna ligger sist, alltså överst. */}
     <g className="ps-sparks">
+      {/* Blixten i själva träffpunkten. Den gör slaget hårt: utan
+          den ser gnistorna ut att komma från ingenstans. */}
+      <rect x="44" y="8" width="5" height="5" className="ps-flash" />
+
       {SPARKS.map((spark, index) => (
         <rect
           key={index}
           x={spark.x}
           y={spark.y}
-          width="1"
+          width={spark.long ? 2 : 1}
           height="1"
-          className="ps-spark"
+          className={`ps-spark${spark.hot ? " ps-spark--hot" : ""}`}
           style={{
             ["--sx" as string]: `${spark.dx}px`,
             ["--sy" as string]: `${spark.dy}px`,
-            animationDelay: `${(index * 0.04).toFixed(2)}s`,
+            animationDelay: `${spark.delay}s`,
           }}
         />
       ))}
@@ -216,7 +256,7 @@ const BuildScene = () => (
       <rect x="29" y="8" width="2" height="1" className="ps-glow" />
     </g>
 
-    {/* 4. Grafikkortet, som skjuts in från sidan */}
+    {/* 4. Grafikkortet, som skjuts in utifrån höger */}
     <g className="ps-part ps-part--gpu">
       <rect x="14" y="18" width="18" height="5" className="ps-gpu" />
       <rect x="16" y="19" width="4" height="3" className="ps-gpu-fan" />
@@ -225,7 +265,7 @@ const BuildScene = () => (
       <rect x="24" y="20" width="2" height="1" className="ps-glow" />
     </g>
 
-    {/* 5. Glaset på plats och lysdioderna igång */}
+    {/* 5. Glaset, som skjuts på utifrån vänster, och lysdioderna */}
     <g className="ps-part ps-part--panel">
       <rect x="12" y="4" width="24" height="25" className="ps-panel" />
       <rect x="12" y="4" width="24" height="1" className="ps-rgb" />

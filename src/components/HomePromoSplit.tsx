@@ -99,7 +99,7 @@ const ACCENTS = ["#3FD9F5", "#B26BDE"];
 
 export const HomePromoSplit = ({ settings = DEFAULT_SITE_SETTINGS.homepage.promo }: HomePromoSplitProps) => {
   return (
-    <section data-sandbox-id="home-promo" className="relative text-foreground">
+    <section data-sandbox-id="home-promo" className="scene-bleed relative text-foreground">
       <div className="container mx-auto px-4 py-14 sm:py-16 lg:py-20">
         <Reveal className="mb-8 text-center">
           <p className="eyebrow">{settings.eyebrow}</p>
