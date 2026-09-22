@@ -68,10 +68,26 @@ export const useAdminAccess = (): AdminAccessContext => {
       return;
     }
 
-    if (!apiBase) {
-      setState({ isAdmin: false, role: "", loading: false, error: "API-bas saknas i adminmiljön." });
-      return;
-    }
+    /*
+     * Här låg en spärr som vägrade fråga servern när
+     * VITE_API_BASE_URL saknades, med felet "API-bas saknas i
+     * adminmiljön".
+     *
+     * Tom bas betyder inte att den saknas, den betyder samma
+     * ursprung: /api/... går till den server som levererade sidan.
+     * Så fungerar portalen lokalt, där Vite skickar /api vidare till
+     * Express, och alla andra anrop i adminläget gör redan precis det
+     * utan invändning.
+     *
+     * Spärren gissade alltså att ett anrop skulle misslyckas i stället
+     * för att låta det misslyckas och rapportera varför. Gissningen
+     * var fel, och resultatet var en portal där listningarna laddades
+     * men behörigheten aldrig hämtades - alltså inga knappar, utan
+     * något som pekade på den verkliga orsaken.
+     *
+     * Går anropet inte fram tas det om hand längre ned, där svaret
+     * faktiskt finns.
+     */
 
     const now = Date.now();
     if (lastVerifiedToken === token && now - lastVerifiedAt < ADMIN_CACHE_TTL_MS && cachedState) {
