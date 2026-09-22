@@ -21,6 +21,9 @@ jobs:
       # gång. Steget såg ut att vakta koden men släppte igenom allt.
       # Appens riktiga projekt är tsconfig.app.json.
       - run: npm run typecheck
+      # Räkningen i kassan. Den bestämmer vad kunden betalar, så den ska
+      # prövas vid varje ändring och inte först när någon handlar.
+      - run: npm test
       - run: npm run build
 
   lighthouse:

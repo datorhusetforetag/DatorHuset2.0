@@ -26,6 +26,15 @@ import {
 import { CUSTOM_BUILD_PRELOADED_PRICE_BY_ID } from "./src/data/customBuildPreloadedPrices.js";
 import * as pricing from "./server/pricing/index.mjs";
 import {
+  MAX_LINE_ITEMS,
+  MAX_QUANTITY,
+  SERVICE_FEE_CENTS,
+  SHIPPING_COST_CENTS,
+  buildCartLineItems,
+  buildFeeLineItems,
+  normalizeQuantity,
+} from "./shared/checkoutMath.js";
+import {
   ADMIN_DLSS_FSR_MODE_OPTIONS,
   ADMIN_FPS_GAME_OPTIONS,
   ADMIN_FPS_RESOLUTION_OPTIONS,
@@ -494,8 +503,9 @@ if (!HAS_SERVICE_ROLE_KEY) {
 pricing.store.configure(supabase);
 
 const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8080";
-const MAX_LINE_ITEMS = 50;
-const MAX_QUANTITY = 10;
+/* MAX_LINE_ITEMS, MAX_QUANTITY, SHIPPING_COST_CENTS och
+   SERVICE_FEE_CENTS importeras från shared/checkoutMath.js, där
+   räkningen bor och där tests/checkout.test.mjs prövar den. */
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
 const CUSTOM_PAYMENT_METHOD = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
 const ALLOWED_PAYMENT_METHODS = new Set([
@@ -506,8 +516,7 @@ const CHECKOUT_EXPIRES_IN_SECONDS = Math.min(
   Math.max(Number(process.env.CHECKOUT_EXPIRES_IN_SECONDS || 30 * 60), 30 * 60),
   24 * 60 * 60
 );
-const SHIPPING_COST_CENTS = 31500;
-const SERVICE_FEE_CENTS = 500;
+
 const STATUS_OPTIONS = new Set([
   "received",
   "ordering",
@@ -5950,54 +5959,21 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    if (dbCartItems.length > MAX_LINE_ITEMS) {
-      return res.status(400).json({ error: "Too many items in cart" });
-    }
-
-    const line_items = dbCartItems.map((item) => {
-      const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(item.quantity) || 1));
-      const unitAmount = Number(item.product?.price_cents || 0);
-      if (!unitAmount || unitAmount < 1) {
-        throw new Error("Invalid product price");
+    /* Raderna och avgifterna räknas i shared/checkoutMath.js. Koden
+       låg tidigare här inne, mitt bland anrop till Stripe och
+       Supabase, och gick därför inte att pröva utan att göra ett
+       riktigt köp - fast det är den som bestämmer vad kunden
+       betalar. Se tests/checkout.test.mjs. */
+    let line_items;
+    try {
+      line_items = buildCartLineItems(dbCartItems);
+    } catch (error) {
+      if (error?.code === "TOO_MANY_ITEMS") {
+        return res.status(400).json({ error: "Too many items in cart" });
       }
-      return {
-        price_data: {
-          currency: "sek",
-          product_data: {
-            name: item.product?.name || "Produkt",
-            metadata: {
-              product_id: item.product?.id || "",
-            },
-          },
-          unit_amount: unitAmount,
-        },
-        quantity,
-      };
-    });
-    const feeLineItems = [
-      {
-        price_data: {
-          currency: "sek",
-          product_data: {
-            name: "Serviceavgift",
-          },
-          unit_amount: SERVICE_FEE_CENTS,
-        },
-        quantity: 1,
-      },
-    ];
-    if (requiresShipping) {
-      feeLineItems.push({
-        price_data: {
-          currency: "sek",
-          product_data: {
-            name: "Frakt med PostNord till ombud",
-          },
-          unit_amount: SHIPPING_COST_CENTS,
-        },
-        quantity: 1,
-      });
+      throw error;
     }
+    const feeLineItems = buildFeeLineItems(normalizedShippingMethod);
 
     const paymentMethodTypes = [...PAYMENT_METHODS];
     const customPaymentMethod = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
@@ -9689,7 +9665,7 @@ async function handleSuccessfulPayment(stripeSession) {
   let productTotal = 0;
 
   for (const lineItem of lineItems) {
-    const quantity = Math.min(MAX_QUANTITY, Math.max(1, Number(lineItem.quantity) || 1));
+    const quantity = normalizeQuantity(lineItem.quantity);
     const unitAmount = Number(lineItem.price?.unit_amount ?? 0);
     if (!unitAmount || unitAmount < 1) {
       throw new Error("Invalid line item price");
