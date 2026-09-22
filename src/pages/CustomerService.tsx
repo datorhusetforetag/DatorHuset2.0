@@ -1,5 +1,5 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { PageShell } from "@/components/PageShell";
@@ -73,7 +73,25 @@ export default function CustomerService() {
   const { settings: siteSettings } = useSiteSettings();
   const pageSettings = siteSettings.pages.customerService;
 
-  const [formData, setFormData] = useState(initialFormState);
+  /*
+   * Ordernumret kan komma med i adressen.
+   *
+   * Ordersidan länkar hit med ?order=DH-1004-K7M när kunden vill ändra
+   * något. Utan det här hade länken varit ett halvt löfte: den som
+   * klickar tror att ordern följt med och skriver inte numret, och ni
+   * får ett ärende utan att veta vilken order det gäller.
+   *
+   * Ämnet sätts samtidigt, eftersom en fråga som kommer från en order
+   * nästan alltid handlar om den.
+   */
+  const [searchParams] = useSearchParams();
+  const orderFromLink = (searchParams.get("order") || "").trim().slice(0, 60);
+
+  const [formData, setFormData] = useState(() => ({
+    ...initialFormState,
+    orderNumber: orderFromLink,
+    topic: orderFromLink ? "Min order" : "",
+  }));
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 

@@ -12,7 +12,7 @@ import {
   resolveTrackingUrl,
 } from "@/lib/orderStatus";
 import { resolveProductImage } from "@/lib/productImageResolver";
-import { ExternalLink, Package, ReceiptText, Truck } from "lucide-react";
+import { Check, Copy, ExternalLink, Package, ReceiptText, Truck } from "lucide-react";
 
 type OrderItem = {
   id: string;
@@ -52,6 +52,9 @@ type Order = {
 export default function Orders() {
   const { user } = useAuth();
   const [orders, setOrders] = useState<Order[]>([]);
+  /* Vilket ordernummer som nyss kopierats, så knappen kan kvittera.
+     Utan kvittens vet man inte om klicket tog. */
+  const [copiedOrderId, setCopiedOrderId] = useState("");
   const [loadingOrders, setLoadingOrders] = useState(false);
   const [orderError, setOrderError] = useState("");
 
@@ -178,16 +181,58 @@ export default function Orders() {
                   className="overflow-hidden rounded-2xl border border-foreground/10 bg-background/70"
                 >
                   {/* Huvudet ligger på egen yta, avskilt med en linje.
-                      Ordernumret är det man letar efter när man ringer,
-                      så det står störst och i monospace - bokstäver och
-                      siffror blandade blir lättare att läsa upp när de
-                      har samma bredd. */}
+
+                      Numret står under ordet Ordernummer. Utan etiketten
+                      är det bara en rad tecken, och den som blivit ombedd
+                      att "uppge ordernumret" letar efter något som ser ut
+                      som ett nummer - alltså inte DH-1004-K7M.
+
+                      Monospace för att blandade bokstäver och siffror är
+                      lättare att läsa upp när tecknen har samma bredd. */}
                   <div className="flex flex-wrap items-center justify-between gap-4 border-b border-foreground/10 bg-foreground/[0.02] px-6 py-4">
                     <div>
-                      <p className="font-mono text-base font-bold tracking-tight text-foreground">
-                        {orderNumber}
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        Ordernummer
                       </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">Beställd {orderDate}</p>
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <p className="font-mono text-base font-bold tracking-tight text-foreground">
+                          {orderNumber}
+                        </p>
+                        {/* Numret ska nästan alltid vidare in i ett mejl
+                            eller ett formulär. Att skriva av det för hand
+                            är där felen uppstår. */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            navigator.clipboard
+                              ?.writeText(orderNumber)
+                              .then(() => {
+                                setCopiedOrderId(order.id);
+                                window.setTimeout(() => setCopiedOrderId(""), 2000);
+                              })
+                              .catch(() => {
+                                /* Vissa webbläsare nekar utan säker
+                                   anslutning. Numret står kvar att
+                                   markera för hand. */
+                              });
+                          }}
+                          aria-label={`Kopiera ordernummer ${orderNumber}`}
+                          className="inline-flex items-center gap-1 rounded-md border border-foreground/15 px-2 py-1 text-[11px] font-semibold text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                        >
+                          {copiedOrderId === order.id ? (
+                            <>
+                              <Check className="h-3 w-3" />
+                              Kopierat
+                            </>
+                          ) : (
+                            <>
+                              <Copy className="h-3 w-3" />
+                              Kopiera
+                            </>
+                          )}
+                        </button>
+                      </div>
+                      <p className="mt-1 text-xs text-muted-foreground">Beställd {orderDate}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -392,8 +437,11 @@ export default function Orders() {
                   {canCancel && (
                     <p className="mt-4 text-sm text-muted-foreground">
                       Behöver du ändra eller avbryta ordern?{" "}
+                      {/* Ordernumret följer med i länken, så kunden
+                          slipper leta upp det igen och ni slipper fråga
+                          efter det. */}
                       <Link
-                        to="/kundservice"
+                        to={`/kundservice?order=${encodeURIComponent(orderNumber)}`}
                         className="font-semibold text-primary underline-offset-4 hover:underline"
                       >
                         Hör av dig till kundservice
