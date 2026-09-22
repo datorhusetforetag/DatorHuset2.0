@@ -251,6 +251,7 @@ export default function ComputerDetails() {
           productId: product.id,
           label: upgrade.label,
           detail: upgrade.summary,
+          group: upgrade.group,
           price:
             typeof product.price_cents === "number" ? product.price_cents / 100 : 0,
         },
@@ -605,7 +606,8 @@ export default function ComputerDetails() {
         label: variant.label,
         detail: variant.detail,
         price: variant.price,
-      });
+        group: variant.group,
+      } as (typeof options)[number] & { group: string });
     });
 
     return options;
@@ -1089,11 +1091,7 @@ export default function ComputerDetails() {
               </div>
             )}
 
-            <p className="mt-8 text-[11px] leading-relaxed text-muted-foreground">
-              Leverans 1-2 arbetsdagar när datorn finns i lager
-              {etaLabel ? ` (${etaLabel.toLowerCase()})` : ""}. Förbeställd
-              byggs på cirka 5 dagar med nya delar, 1-2 veckor med begagnade.
-            </p>
+
           </div>
 
           {/* Foten: summa och köp, kvar längst ned i panelen ---------- */}

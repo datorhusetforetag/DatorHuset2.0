@@ -56,7 +56,15 @@ export interface ComputerVariant {
 export type ComputerUpgrade = {
   /** Namnet på produkten i Supabase. Priset hämtas därifrån. */
   productKey: string;
-  group: "ram" | "storage" | "other";
+  /**
+   * Vilken rubrik uppgraderingen hamnar under på produktsidan.
+   *
+   * performance är processor och grafikkort tillsammans. De byts i
+   * praktiken ihop - ett snabbare grafikkort utan processor att mata
+   * det med är inte en uppgradering - och att erbjuda dem var för
+   * sig hade bjudit in till obalanserade byggen.
+   */
+  group: "storage" | "performance" | "ram" | "other";
   /** Kort etikett på kortet, till exempel "64GB DDR5". */
   label: string;
   /** En rad under etiketten. */
