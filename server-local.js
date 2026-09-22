@@ -5157,7 +5157,39 @@ const jsonError = (res, status, code, message, details = null) =>
 const formatCurrency = (value) =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency: "SEK" }).format(value);
 
+/*
+ * Tecken som går att läsa upp i telefon.
+ *
+ * Noll, etta, I, L och O är uteslutna - de förväxlas med varandra och
+ * med siffror när någon läser referensen högt för supporten.
+ */
+const REFERENCE_ALPHABET = "23456789ABCDEFGHJKMNPQRSTUVWXYZ";
+
+const referenceSuffix = (length = 3) =>
+  Array.from({ length }, () =>
+    REFERENCE_ALPHABET[Math.floor(Math.random() * REFERENCE_ALPHABET.length)],
+  ).join("");
+
+/*
+ * Ordernumret kunden ser: DH-1004-K7M.
+ *
+ * Löpnumret gör att två ordrar aldrig kan få samma referens, och de tre
+ * slumpade tecknen gör att man inte kan räkna sig till grannens order
+ * genom att lägga på ett.
+ */
+const buildOrderReference = (orderNumber, fallbackId) => {
+  const base =
+    orderNumber === null || orderNumber === undefined || orderNumber === ""
+      ? String(fallbackId || "").slice(0, 6).toUpperCase()
+      : String(orderNumber);
+  return `DH-${base}-${referenceSuffix(3)}`;
+};
+
 const formatOrderNumber = (order) => {
+  /* Referensen går före löpnumret. Gamla ordrar som saknar den faller
+     tillbaka på numret, så inget kvitto blir tomt. */
+  const reference = order?.order_reference;
+  if (reference) return String(reference);
   const raw = order?.order_number;
   if (raw === null || raw === undefined || raw === "") {
     return order?.id ? order.id.slice(0, 8) : "-";
@@ -10363,6 +10395,30 @@ async function handleSuccessfulPayment(stripeSession) {
     throw new Error(`Failed to create order: ${orderError?.message}`);
   }
 
+  /*
+   * Referensen sätts efter insättningen, inte före.
+   *
+   * Löpnumret genereras av databasen, så det finns inte att bygga på
+   * förrän raden är skapad. Två skrivningar alltså - men referensen
+   * bygger på ett tal som garanterat är unikt, vilket är bättre än att
+   * slumpa fram en och sedan leta efter krockar.
+   *
+   * Misslyckas den andra skrivningen står ordern kvar med sitt
+   * löpnummer. formatOrderNumber faller tillbaka på det, så kvittot
+   * blir aldrig tomt.
+   */
+  const orderReference = buildOrderReference(order.order_number, order.id);
+  {
+    const { error: referenceError } = await supabase
+      .from("orders")
+      .update({ order_reference: orderReference })
+      .eq("id", order.id);
+    if (referenceError) {
+      console.warn("Kunde inte sätta ordernummer:", referenceError.message);
+    } else {
+      order.order_reference = orderReference;
+    }
+  }
   /* Raden har legat inuti if-satsen ovanför. const är blockbunden, så
      namnet fanns inte utanför den - och det används längre ned när
      betalningen ska märkas med ordernumret. Felet syntes aldrig,

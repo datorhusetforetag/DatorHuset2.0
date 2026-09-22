@@ -30,6 +30,8 @@ type OrderItem = {
 type Order = {
   id: string;
   order_number?: string | number | null;
+  /** DH-1004-K7M. Saknas på ordrar lagda före referenserna infördes. */
+  order_reference?: string | null;
   created_at?: string;
   total_cents?: number;
   status?: string;
@@ -169,10 +171,16 @@ export default function Orders() {
                 : "Okänt datum";
               const total = typeof order.total_cents === "number" ? order.total_cents / 100 : 0;
               const items = order.order_items || [];
+              /* Referensen går före löpnumret. Gamla ordrar saknar den
+                 och faller tillbaka på numret, så inget kort blir
+                 tomt. */
               const orderNumber =
-                order.order_number === null || order.order_number === undefined || order.order_number === ""
+                order.order_reference ||
+                (order.order_number === null ||
+                order.order_number === undefined ||
+                order.order_number === ""
                   ? order.id.slice(0, 8)
-                  : String(order.order_number);
+                  : String(order.order_number));
 
               const trackingUrl = resolveTrackingUrl({
                 carrier: order.shipping_carrier,
@@ -189,19 +197,31 @@ export default function Orders() {
               return (
                 <div
                   key={order.id}
-                  className="rounded-2xl border border-foreground/10 bg-background/70 p-6"
+                  className="overflow-hidden rounded-2xl border border-foreground/10 bg-background/70"
                 >
-                  <div className="flex flex-wrap items-baseline justify-between gap-4">
+                  {/* Huvudet ligger på egen yta, avskilt med en linje.
+                      Ordernumret är det man letar efter när man ringer,
+                      så det står störst och i monospace - bokstäver och
+                      siffror blandade blir lättare att läsa upp när de
+                      har samma bredd. */}
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-b border-foreground/10 bg-foreground/[0.02] px-6 py-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                        Order #{orderNumber}
+                      <p className="font-mono text-base font-bold tracking-tight text-foreground">
+                        {orderNumber}
                       </p>
-                      <p className="mt-1 text-sm text-muted-foreground">Beställd {orderDate}</p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">Beställd {orderDate}</p>
                     </div>
-                    <p className="font-display text-xl font-bold tabular-nums">
-                      {total.toLocaleString("sv-SE")} kr
-                    </p>
+                    <div className="text-right">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        Totalt
+                      </p>
+                      <p className="font-display text-lg font-bold tabular-nums text-foreground">
+                        {total.toLocaleString("sv-SE")} kr
+                      </p>
+                    </div>
                   </div>
+
+                  <div className="px-6 py-5">
 
                   {/* Statusen som en scen, i full bredd.
 
@@ -210,7 +230,7 @@ export default function Orders() {
                       ingen av dem särskilt tydlig. Nu är det ett band över
                       hela kortet: stapeln visar hur långt bygget kommit och
                       det som rör sig säger vad som händer just nu. */}
-                  <div className="mt-5">
+                  <div>
                     <StatusScene
                       status={(statusInfo.value || "received") as StatusKey}
                       label={statusInfo.label}
@@ -221,9 +241,15 @@ export default function Orders() {
                     </p>
                   </div>
 
-                  <div className="mt-4 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-                    <div className="rounded-xl border border-foreground/10 bg-background/60 p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Produkt</p>
+                  {/* Produkterna i full bredd. De låg i en smal spalt
+                      bredvid leveransrutan, vilket gjorde bilderna små
+                      och namnen radbrutna - och leveransrutan bredvid var
+                      oftast tom. */}
+                  <div className="mt-6">
+                    <div>
+                      <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                        Innehåll
+                      </p>
                       {items.length === 0 && (
                         <p className="text-sm text-muted-foreground">Inga produkter kopplade till ordern.</p>
                       )}
@@ -237,9 +263,9 @@ export default function Orders() {
                           return (
                             <div
                               key={item.id}
-                              className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl border border-foreground/10 bg-white/80 dark:bg-background/70 p-4"
+                              className="flex items-center gap-4 rounded-xl border border-foreground/10 p-3"
                             >
-                              <div className="h-24 w-full sm:h-24 sm:w-40 lg:h-28 lg:w-44 flex-shrink-0 overflow-hidden rounded-xl bg-foreground/[0.08] dark:bg-foreground/[0.06]">
+                              <div className="h-16 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-foreground/[0.06]">
                                 {imageSrc ? (
                                   <img
                                     src={imageSrc}
@@ -252,13 +278,13 @@ export default function Orders() {
                                   </div>
                                 )}
                               </div>
-                              <div className="flex-1">
-                                <p className="text-base font-semibold text-foreground">
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-semibold text-foreground">
                                   {item.product?.name || "Produkt"}
                                 </p>
-                                <p className="text-sm text-muted-foreground">Antal: {item.quantity}</p>
+                                <p className="text-xs text-muted-foreground">{item.quantity} st</p>
                               </div>
-                              <div className="text-base font-semibold text-foreground sm:ml-auto">
+                              <div className="shrink-0 text-sm font-semibold tabular-nums text-foreground">
                                 {itemTotal} kr
                               </div>
                             </div>
@@ -266,28 +292,27 @@ export default function Orders() {
                         })}
                       </div>
                     </div>
+                  </div>
 
-                    <div className="rounded-xl border border-foreground/10 bg-background/70 dark:bg-background/70 p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">
-                        Leverans
-                      </p>
-
-                      {showTracking && (
-                        <div className="mt-4 rounded-lg border border-foreground/10 bg-background/60 p-4">
-                          <div className="flex items-center gap-2">
-                            <Truck className="w-4 h-4 text-primary" />
-                            <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                              Spårning
-                            </p>
-                          </div>
-                          {carrierLabel && (
-                            <p className="mt-2 text-sm text-muted-foreground">{carrierLabel}</p>
-                          )}
-                          {order.tracking_number && (
-                            <p className="mt-1 font-mono text-sm text-foreground break-all">
-                              {order.tracking_number}
-                            </p>
-                          )}
+                  {/* Spårningen står för sig, i full bredd och bara när
+                      det finns något att spåra. En tom ruta som väntar på
+                      ett nummer säger bara att något saknas. */}
+                  {showTracking && (
+                    <div className="mt-6 rounded-xl border border-primary/30 bg-primary/[0.06] p-4">
+                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                        <Truck className="h-4 w-4 text-primary" />
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                          Spåra paketet
+                        </p>
+                        {carrierLabel && (
+                          <span className="text-xs text-muted-foreground">· {carrierLabel}</span>
+                        )}
+                      </div>
+                        {order.tracking_number && (
+                          <p className="mt-2 break-all font-mono text-sm font-semibold text-foreground">
+                            {order.tracking_number}
+                          </p>
+                        )}
                           {trackingUrl && (
                             <a
                               href={trackingUrl}
@@ -299,17 +324,15 @@ export default function Orders() {
                               <ExternalLink className="w-3.5 h-3.5" />
                             </a>
                           )}
-                          {order.delivered_at && (
-                            <p className="mt-3 text-sm text-emerald-600">
-                              Levererad {new Date(order.delivered_at).toLocaleDateString("sv-SE")}
-                            </p>
-                          )}
-                        </div>
+                      {order.delivered_at && (
+                        <p className="mt-3 text-sm text-emerald-600">
+                          Levererad {new Date(order.delivered_at).toLocaleDateString("sv-SE")}
+                        </p>
                       )}
                     </div>
-                  </div>
+                  )}
 
-                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
+                  <div className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-foreground/10 pt-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <Package className="w-4 h-4 text-primary" />
                       <span>Vi uppdaterar statusen manuellt under bygget.</span>
@@ -361,6 +384,7 @@ export default function Orders() {
                       DatorHuset kontaktar dig om upphämtning och leverans. Vi ringer och skickar mejl.
                     </div>
                   )}
+                  </div>
                 </div>
               );
             })}
