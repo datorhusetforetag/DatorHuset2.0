@@ -8067,7 +8067,6 @@ app.patch("/api/admin/v2/orders/:orderId/byggstatus", async (req, res) => {
       }
     }
 
-    const statusMessage = resolveStatusMessage(nextStatus);
     const trackingPatch = buildTrackingPatch(req.body, nextStatus);
     if (trackingPatch.error) {
       return jsonError(res, 400, "INVALID_TRACKING", trackingPatch.error);
@@ -8077,7 +8076,11 @@ app.patch("/api/admin/v2/orders/:orderId/byggstatus", async (req, res) => {
       .from("orders")
       .update({
         status: nextStatus,
-        status_message: statusMessage,
+        /* status_message skrevs här förut, mot en kolumn som inte finns.
+           Texten härleds ur status via resolveStatusMessage när den
+           behövs - att lagra en kopia hade dessutom betytt att gamla
+           ordrar behåller den gamla formuleringen när någon skriver om
+           den. */
         ...trackingPatch.values,
         updated_at: new Date(),
       })
@@ -9599,7 +9602,8 @@ app.post("/api/orders/:orderId/status", adminLimiter, async (req, res) => {
       .from("orders")
       .update({
         status: nextStatus,
-        status_message: resolveStatusMessage(nextStatus),
+        /* Se kommentaren i den andra statusendpointen: texten lagras
+           inte, den härleds. */
         ...trackingPatch.values,
         updated_at: new Date(),
       })
