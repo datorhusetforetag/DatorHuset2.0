@@ -1150,10 +1150,10 @@ export default function ComputerDetails() {
         </div>
       </div>
 
-      {/* Allt nedanför scenen ligger på en egen yta, och skarven
-          mellan de två är en toning och inte en kant. */}
+      {/* Allt nedanför scenen ligger på en egen yta. Toningen mellan
+          de två sitter i scenen, se product-stage__fade - den hör till
+          bilden och ska inte läggas över panelen. */}
       <div className="product-lower">
-        <span aria-hidden="true" className="product-lower__seam" />
         <div className="container relative mx-auto px-4 pb-24 pt-16">
 
         {/* Tekniska specifikationer ------------------------------------

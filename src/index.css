@@ -812,7 +812,7 @@
     transform: translate3d(0, -110%, 0);
     opacity: 0;
   }
-  12% {
+  4% {
     opacity: 1;
   }
   88% {
@@ -1659,7 +1659,8 @@
   position: absolute;
   bottom: 1.75rem;
   left: 50%;
-  z-index: 2;
+  /* Över toningen, som ligger på 2. */
+  z-index: 3;
   display: flex;
   max-width: calc(100% - 3rem);
   transform: translateX(-50%);
@@ -2546,32 +2547,65 @@
  * en linje.
  */
 
+/*
+ * Ytans kulör bor på .product-split och inte på .product-lower.
+ *
+ * Toningen i scenens nederkant ska tona mot exakt samma kulör som
+ * avsnittet under har, men scenen och avsnittet är syskon - en variabel
+ * satt på det ena syns inte i det andra. På den gemensamma föräldern
+ * ser båda den, och det finns bara ett ställe att ändra på.
+ */
+.product-split,
 .product-lower {
   --product-surface: #f1ecf8;
-
-  position: relative;
-  background: var(--product-surface);
 }
 
+.dark .product-split,
 .dark .product-lower {
   --product-surface: #1f1430;
 }
 
-.product-lower__seam {
+.product-lower {
+  position: relative;
+  background: var(--product-surface);
+}
+
+/*
+ * Toningen i scenens nederkant.
+ *
+ * Låg tidigare i .product-lower med left: 0 och right: 0, alltså
+ * över hela sidans bredd - också över panelen till höger, som inte
+ * är en bild och inte ska tona ut i något. Här sitter den i scenen
+ * och täcker därför bara den.
+ *
+ * z-index 2 lägger den över datorn och duken men under miniatyrraden,
+ * som ligger på 3. Bilderna står alltså mot den mörka botten i
+ * stället för att skäras av ovanför den.
+ *
+ * Höjden är tilltagen så att miniatyrerna ryms helt innanför
+ * toningen. Slutade den ovanför dem skulle raden sitta i ett ljusare
+ * band med mörker under, vilket är precis det som såg fel ut.
+ */
+.product-stage__fade {
   position: absolute;
   left: 0;
   right: 0;
-  top: -7rem;
-  z-index: 5;
-  height: 7rem;
-  background: linear-gradient(to bottom, transparent 0%, var(--product-surface) 100%);
+  bottom: 0;
+  z-index: 2;
+  height: 11rem;
   pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--product-surface, #2596be) 45%, transparent) 45%,
+    color-mix(in srgb, var(--product-surface, #2596be) 85%, transparent) 75%,
+    var(--product-surface, #2596be) 100%
+  );
 }
 
 @media (min-width: 1024px) {
-  .product-lower__seam {
-    top: -9rem;
-    height: 9rem;
+  .product-stage__fade {
+    height: 14rem;
   }
 }
 
@@ -2633,7 +2667,8 @@
 /* Byggkapaciteten ------------------------------------------------
  *
  * Stapeln under köpknappen som säger hur många datorer verkstaden
- * hinner bygga till, med en svetsare som står på fyllnadskanten.
+ * hinner bygga till, med en svetsare i 8-bitarsstil som står på
+ * fyllnadskanten.
  *
  * overflow: visible på spåret är hela poängen. Gnistorna ska flyga
  * utanför stapeln - en gnista som klipps mot en kant ser ut som ett
@@ -2642,24 +2677,11 @@
 
 .capacity {
   /* Foten är en flexrad med space-between, så utan egen bredd hade
-     stapeln ställt sig BREDVID köpknappen i stället för under den.
-     100 procent tvingar den till en egen rad. */
+     stapeln ställt sig BREDVID köpknappen i stället för under den. */
   width: 100%;
-  /* Svetsaren står ovanpå spåret och är knappt 28 px hög. Marginalen
-     är hans takhöjd - med mindre hamnar han över knappraden. */
-  margin-top: 2.25rem;
-}
-
-.capacity__label {
-  margin-bottom: 0.9rem;
-  font-size: 0.8125rem;
-  line-height: 1.4;
-  color: hsl(var(--foreground) / 0.72);
-}
-
-.capacity__label strong {
-  font-weight: 700;
-  color: hsl(var(--foreground));
+  /* Svetsaren står ovanpå spåret och är drygt 40 px hög. Marginalen är
+     hans takhöjd - med mindre hamnar han över knappraden. */
+  margin-top: 3.25rem;
 }
 
 .capacity__track {
@@ -2685,12 +2707,26 @@
   transition: width 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* Texten under stapeln. Stapeln syns i ögonvrån; siffran läses när man
+   redan tittat dit. */
+.capacity__label {
+  margin-top: 0.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: hsl(var(--foreground) / 0.72);
+}
+
+.capacity__label strong {
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
 /*
  * Svetsaren.
  *
  * bottom: 100% ställer honom ovanpå spåret i stället för i det, och
- * translateX(-50%) centrerar honom över fyllnadskanten så att han
- * står på gränsen och inte bredvid den.
+ * translateX(-50%) centrerar honom över fyllnadskanten så att han står
+ * på gränsen och inte bredvid den.
  */
 .capacity__welder {
   position: absolute;
@@ -2702,36 +2738,56 @@
 
 .capacity__figure {
   display: block;
-  width: 1.6rem;
-  height: 1.75rem;
+  width: 2.6rem;
+  height: 2.6rem;
   overflow: visible;
-  /* Han gungar en aning medan han arbetar. Två grader räcker - mer
-     och det blir en dans i stället för ett handgrepp. */
+  /* Han gungar en aning medan han arbetar. Två grader räcker - mer och
+     det blir en dans i stället för ett handgrepp. */
   animation: capacity-lean 2.4s ease-in-out infinite;
   transform-origin: 50% 100%;
 }
 
-.capacity__limb,
-.capacity__visor {
-  fill: none;
-  stroke: hsl(var(--foreground) / 0.85);
-  stroke-width: 1.6;
-  stroke-linecap: round;
+/*
+ * Pixlarna.
+ *
+ * Varje rect i figuren är en ruta. Kulörerna är få med flit: fler toner
+ * gör att det slutar läsas som 8 bitar och börjar läsas som en dålig
+ * teckning.
+ */
+.capacity__figure .px-dark {
+  fill: hsl(var(--foreground) / 0.88);
 }
-
-.capacity__head {
-  fill: hsl(var(--foreground) / 0.85);
+.capacity__figure .px-body {
+  fill: hsl(var(--foreground) / 0.62);
 }
-
-.capacity__visor {
-  stroke: var(--capacity-accent);
-  stroke-width: 1.2;
+.capacity__figure .px-strap {
+  fill: hsl(var(--foreground) / 0.3);
 }
-
-.capacity__box {
-  fill: hsl(var(--foreground) / 0.25);
-  stroke: hsl(var(--foreground) / 0.5);
-  stroke-width: 1;
+.capacity__figure .px-legs {
+  fill: hsl(var(--foreground) / 0.48);
+}
+.capacity__figure .px-boot {
+  fill: hsl(var(--foreground) / 0.8);
+}
+.capacity__figure .px-skin {
+  fill: hsl(var(--foreground) / 0.72);
+}
+.capacity__figure .px-board {
+  fill: hsl(var(--foreground) / 0.22);
+}
+.capacity__figure .px-chip {
+  fill: hsl(var(--foreground) / 0.5);
+}
+/* Visiret och lödspetsen lyser i maskinens egen kulör, så figuren hör
+   ihop med resten av sidan. */
+.capacity__figure .px-visor {
+  fill: var(--capacity-accent);
+}
+.capacity__figure .px-tool {
+  fill: hsl(var(--foreground) / 0.66);
+}
+.capacity__figure .px-tip {
+  fill: var(--capacity-accent);
 }
 
 @keyframes capacity-lean {
@@ -2747,15 +2803,14 @@
 /*
  * Gnistorna.
  *
- * Utgångspunkten är lödpennans spets, alltså en bit upp och åt höger
- * från gubbens fötter. Varje gnista har egen riktning och längd via
- * --dx och --dy, satta i komponenten, så att de inte bildar ett
- * mönster.
+ * Utgångspunkten är lödpennans spets, uppe till höger på figuren.
+ * Riktning och längd kommer från --dx och --dy, satta per gnista i
+ * komponenten.
  */
 .capacity__sparks {
   position: absolute;
-  left: 0.95rem;
-  top: 0.75rem;
+  left: 2.45rem;
+  top: 1.05rem;
   width: 0;
   height: 0;
 }
@@ -2764,7 +2819,6 @@
   position: absolute;
   width: var(--size, 2px);
   height: var(--size, 2px);
-  border-radius: 9999px;
   background: var(--capacity-accent);
   box-shadow: 0 0 6px var(--capacity-accent);
   opacity: 0;
@@ -2798,6 +2852,48 @@
   }
 }
 
+/*
+ * De långa gnistorna, tvärs över hela stapeln.
+ *
+ * De har ett långt varv men rör sig bara under de första fyra
+ * procenten av det. Resten ligger gnistan stilla och osynlig.
+ *
+ * Sällsyntheten sitter alltså i varvtiden och inte i nyckelrutorna.
+ * Ett varv på tjugosex sekunder ger en flykt på drygt en sekund, och
+ * tjugofem sekunders stiltje däremellan.
+ *
+ * Procenten står som siffror. En nyckelrutas väljare måste vara ett
+ * tal - varken calc eller variabler är tillåtna där.
+ */
+.capacity__spark--far {
+  animation-name: capacity-spark-far;
+  animation-timing-function: cubic-bezier(0.1, 0.7, 0.3, 1);
+}
+
+@keyframes capacity-spark-far {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  1% {
+    opacity: 1;
+  }
+  3% {
+    transform: translate(calc(var(--dx) * 0.85), var(--dy)) scale(0.8);
+    opacity: 0.85;
+  }
+  /* Vid fyra procent är flykten över. Resten av varvet ligger gnistan
+     kvar osynlig, vilket är det som gör den sällsynt. */
+  4% {
+    transform: translate(var(--dx), calc(var(--dy) * 0.3)) scale(0.15);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(var(--dx), calc(var(--dy) * 0.3)) scale(0.15);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .capacity__fill,
   .capacity__welder {
@@ -2808,8 +2904,8 @@
     animation: none;
   }
 
-  /* Gnistorna tas bort helt i stället för att frysas. En frusen
-     gnista är bara en prick som ligger och skräpar bredvid stapeln. */
+  /* Gnistorna tas bort helt i stället för att frysas. En frusen gnista
+     är bara en prick som ligger och skräpar bredvid stapeln. */
   .capacity__spark {
     display: none;
   }

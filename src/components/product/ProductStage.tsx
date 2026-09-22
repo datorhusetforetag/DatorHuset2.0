@@ -152,6 +152,17 @@ export const ProductStage = ({
         </>
       )}
 
+      {/* Toningen mot ytan nedanför.
+
+          Den låg tidigare i .product-lower och sträckte sig över hela
+          sidans bredd, alltså även över panelen till höger - som inte
+          är en bild och inte ska tona ut i något. Här inne täcker den
+          bara scenen, av sig själv.
+
+          Den ligger under miniatyrraden i z-led, så bilderna syns mot
+          den mörka botten i stället för att skäras av ovanför den. */}
+      <span aria-hidden="true" className="product-stage__fade" />
+
       {hasMultiple && (
         <div className="product-stage__thumbs">
           {safeViews.map((view, position) => {
