@@ -19,21 +19,25 @@
 alter table public.orders add column if not exists order_reference text;
 
 -- Slumptecken ur ett alfabet utan förväxlingsbara tecken.
-create or replace function public.datorhuset_order_suffix(length integer default 3)
+--
+-- Parametern heter suffix_length och inte length. length är namnet på en
+-- inbyggd funktion, och en parameter med samma namn skuggar den - raden
+-- inuti anropar length(alphabet), vilket då slutar fungera.
+create or replace function public.datorhuset_order_suffix(suffix_length integer default 3)
 returns text
 language plpgsql
-as $$
+as $func$
 declare
   alphabet text := '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
   result text := '';
   i integer;
 begin
-  for i in 1..length loop
+  for i in 1..suffix_length loop
     result := result || substr(alphabet, floor(random() * length(alphabet) + 1)::int, 1);
   end loop;
   return result;
 end
-$$;
+$func$;
 
 -- Befintliga ordrar får sin referens i efterhand, byggd på det
 -- löpnummer de redan har.
