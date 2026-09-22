@@ -4,105 +4,144 @@ import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { LegalDocument } from "@/components/LegalDocument";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
-const privacyPolicyText = `Allmänna Villkor för DatorHuset (Köpvillkor)
-1. Parter och Allmänt
+/**
+ * Integritetspolicyn.
+ *
+ * Sidan visade tidigare köpvillkoren - samma text som
+ * /terms-of-service, fast under rubriken integritetspolicy. Den enda
+ * stycket om personuppgifter slutade med platshållaren "[länk eller
+ * hänvisning om sådan finns]". Det fanns alltså ingen policy alls,
+ * vilket dataskyddsförordningen artikel 13 kräver att det gör.
+ *
+ * Texten nedan är skriven mot GDPR och svensk rätt, men två saker måste
+ * fyllas i av er innan den stämmer: organisationsnummer och postadress.
+ * De står som XXXXXX-XXXX respektive [gatuadress] och ska bytas ut.
+ *
+ * Underbiträdena är de tjänster koden faktiskt använder. Ändras stacken
+ * måste listan i avsnitt 5 ändras med den.
+ */
 
-Dessa allmänna villkor ("Villkoren") gäller för alla köp som görs av konsumenten ("Kunden") via DatorHuset's webbutik. Säljaren är DatorHuset (nedan kallad "vi" eller "DatorHuset"). Genom att genomföra ett köp hos oss godkänner Kunden Villkoren. Kunden måste vara minst 18 år gammal eller ha målsmans godkännande för att få handla hos DatorHuset.
+const privacyPolicyText = `Integritetspolicy för DatorHuset
+Senast uppdaterad: 2026-09-22
 
-        Kontaktuppgifter: För frågor gällande beställningar når du oss via e-post support@datorhuset.se. DatorHuset är baserat i Spånga, Stockholm.
+1. Vem som ansvarar för dina uppgifter
 
-2. Priser och Betalning
+DatorHuset UF, organisationsnummer XXXXXX-XXXX, är personuppgiftsansvarig för de uppgifter som behandlas när du använder vår webbplats eller handlar hos oss. Det betyder att vi bestämmer varför och hur uppgifterna används, och att det är vi du vänder dig till med frågor.
 
-Alla priser anges i svenska kronor (SEK) och inkluderar moms (25%) om inget annat anges. Eventuella avgifter såsom fraktkostnad (se nedan) läggs till i kassan innan du bekräftar köpet. Vi reserverar oss för uppenbara prisfel och förbehåller oss rätten att justera priser utan föregående meddelande; priset som anges vid köptillfället gäller för ditt köp.
+        Postadress: [gatuadress], Spånga, Stockholm
+        E-post: support@datorhuset.se
 
-Betalningsalternativ: Samtliga köp betalas genom DatorHusets säkra betalningslösning (Stripe). Via Stripe erbjuder vi flera betalningsmetoder, bland annat:
+Har du en fråga om dina uppgifter räcker det att mejla oss. Du behöver inte uppge något skäl.
 
-Kortbetalning: Visa, MasterCard, American Express och andra vanliga bankkort.
+2. Vad vi samlar in och varför
 
-PayPal: Betala smidigt via ditt PayPal-konto.
+Vi samlar bara in det vi behöver för att sköta butiken. Här är allt, och varför:
 
-Google Pay & Apple Pay: Snabba betalningar via mobil/plånbokstjänster.
+        Konto: e-postadress, namn och lösenord (lagrat krypterat, aldrig i klartext). Behövs för att du ska kunna logga in och se dina ordrar. Loggar du in med Google får vi din e-postadress och ditt namn från Google, inte ditt Google-lösenord.
 
-Klarna: Faktura, delbetalning eller direktbetalning genom Klarna (vid användning av Klarna gäller även Klarnas villkor för betalning).
+        Beställning: namn, e-postadress, telefonnummer, leveransadress, orderrader och belopp. Behövs för att bygga och skicka datorn, och för att kunna svara när du hör av dig om köpet.
 
-Betalningen debiteras normalt i samband med att beställningen genomförs. Ingen kontant betalning accepteras - även vid avhämtning ska ordern vara betald i förväg via något av ovanstående alternativ. Observera: Varor förblir DatorHusets egendom tills full betalning har mottagits.
+        Betalning: vi tar aldrig emot och lagrar aldrig dina kortuppgifter. Betalningen sker hos Stripe, som är ett eget personuppgiftsansvarigt bolag för den delen. Vi får veta att betalningen gick igenom, beloppet och ett referensnummer - inget kortnummer.
 
-3. Beställning och Orderbekräftelse
+        Kontakt: det du skriver i kontaktformuläret, serviceformuläret eller offertförfrågan, tillsammans med den adress du uppger. Behövs för att kunna svara.
 
-När du slutfört din betalning får du en orderbekräftelse via e-post. Kontrollera att alla uppgifter i orderbekräftelsen är korrekta. Om något behöver ändras, kontakta oss omgående. Vi förbehåller oss rätten att neka en beställning (till exempel vid misstanke om bedrägeri eller om varan av misstag listats med felaktigt pris). Skulle detta inträffa kontaktar vi dig så snart som möjligt.
+        Teknisk information: anonym besöksstatistik om du samtyckt till det i cookierutan. Utan samtycke mäter vi ingenting utöver det som krävs för att sidan ska fungera.
 
-4. Leveransalternativ
+3. Vår rättsliga grund
 
-Kunden kan välja mellan avhämtning (upphämtning) på plats eller leverans med PostNord till ombud. Nedan följer villkor för båda leveransalternativen:
+Dataskyddsförordningen kräver att vi har en giltig grund för varje behandling. Våra är:
 
-        Avhämtning (Kostnadsfri): Du kan välja att hämta varan kostnadsfritt vid Spånga i Stockholm vid en förbestämd tid. Efter att din order är färdigbehandlad kontaktar vi dig för att avtala en tid och exakt plats för upphämtning. Vid avhämtning måste giltig legitimation och orderbekräftelse uppvisas. Om ombud hämtar ut varan åt dig krävs skriftlig fullmakt samt legitimation för både dig och ombudet. Observera att ordern måste vara betald i förväg; ingen betalning hanteras vid avhämtning.
+        Avtal (artikel 6.1 b): konto, beställning, leverans och support. Utan de uppgifterna kan vi inte fullgöra köpet.
 
-PostNord Standardpaket till ombud: Vi erbjuder spårbar leverans med PostNord till ombud (Service Point) för en fast fraktkostnad om 315 kr. Försändelsen levereras till ditt närmaste ombud och hämtas ut mot giltig legitimation. Leveranstiden är normalt 1-2 vardagar från det att vi skickar paketet. Till vissa orter och mer avlägsna postnummer kan det ta 2-3 vardagar. Vardagar räknas i regel som leveransdagar; i vissa storstadsområden förekommer även lördagsutlämning beroende på tjänst och ort. Vi strävar efter att expediera din order så snart som möjligt; normal hanteringstid innan utskick är 1-3 arbetsdagar. Skulle försändelsen bli försenad meddelar vi dig snarast möjligt.
+        Rättslig förpliktelse (artikel 6.1 c): bokföring. Bokföringslagen kräver att underlag för affärshändelser sparas, och den skyldigheten går före din rätt att bli raderad.
 
-Leveransbegränsningar: I nuläget levererar vi enbart inom Sverige. Om du önskar leverans utanför Sverige, vänligen kontakta oss innan köp för att undersöka möjligheterna.
+        Samtycke (artikel 6.1 a): valfri besöksstatistik. Du lämnar det i cookierutan och kan ta tillbaka det när som helst, utan att något annat påverkas.
 
-Outlöst försändelse: Paket som levereras till ombud ligger normalt kvar i 7-14 dagar (beroende på transportörens regler) för avhämtning. Om du inte hämtar ut ditt paket i tid och det går i retur till oss, förbehåller vi oss rätten att debitera dig för faktiska kostnader för frakt och retur. Outlöst paket räknas inte som utnyttjande av ångerrätt (se Ångerrätt nedan); du måste aktivt meddela oss om du ångrar köpet. Vi kontaktar dig om vi mottar en retur på grund av outlöst försändelse för att göra upp om eventuellt återköp minus kostnader eller om ny utkörning (mot ny fraktavgift).
+        Berättigat intresse (artikel 6.1 f): att skydda sajten mot missbruk, till exempel genom att begränsa hur många gånger ett formulär får skickas. Vi har vägt det mot din integritet och bedömt att ett fungerande skydd mot spam väger tyngre än den mycket begränsade behandling det innebär.
 
-Leveransansvar: Vi står för transportrisken tills paketet har överlämnats till dig. Det innebär att om varan skadas eller kommer bort under transporten till dig, skickar vi en ny vara (om möjligt) eller ersätter dig för köpet. Kontrollera alltid paketets yttre innan du kvitterar hos ombudet. Transportskador: Om emballaget är synbart skadat vid utlämning bör du anmäla detta direkt hos ombudet eller transportören och kontakta oss snarast möjligt. Dokumentera skadan gärna med fotografier. Dold transportskada (skada som upptäcks först efter att du öppnat paketet) bör anmälas till oss och PostNord så snart som möjligt efter mottagandet.
+Vi använder inte dina uppgifter för marknadsföring utan att först fråga.
 
-5. Ångerrätt (Öppet köp)
+4. Hur länge vi sparar
 
-Som konsument har du enligt Distansavtalslagen rätt att ångra ditt köp inom 14 dagar från det att du tagit emot varan. För att utnyttja ångerrätten ska du meddela oss inom ångerfristen (14 dagar räknat från dagen efter att du mottagit varan). Kontakta oss skriftligen via e-post för att utöva ångerrätten och ange ditt ordernummer, vilka varor du vill returnera samt ditt namn och kontaktuppgifter. Vi bekräftar därefter din begäran och ger dig instruktioner för retur.
+Vi sparar inte något längre än vi behöver. Konkret:
 
-Villkor för ångrat köp:
+        Bokföringsunderlag - ordrar, fakturor och betalningsuppgifter: sju år efter utgången av det kalenderår då räkenskapsåret avslutades. Det är vad bokföringslagen (1999:1078) kräver, och vi kan inte radera det tidigare ens om du ber oss.
 
-Skick på varan: Varan ska returneras i väsentligen oförändrat skick. Det innebär att den ska vara komplett, oanvänd (utöver normal undersökning) och gärna i originalförpackning med allt medföljande material. Du får försiktigt undersöka och prova varan för att fastställa dess egenskaper eller funktion, men inte använda den mer än nödvändigt. Om varan hanterats i större omfattning än vad som behövs för att pröva den kan en värdeminskning dras av från återbetalningen.
+        Konto: så länge du har det kvar. Raderar du kontot, eller har du varit inaktiv i tre år, tar vi bort det. Ordrarna blir då anonyma i bokföringen - beloppen står kvar, kopplingen till dig försvinner.
 
-Returfrakt: Kunden står för kostnaden för returfrakt vid ångrat köp. Du ansvarar också för varan under returfrakten, så se till att förpacka den väl. Vi rekommenderar spårbar och försäkrad försändelse vid retur, särskilt för högvärdiga varor, för att minimera risken för transportskador eller borttappade paket.
+        Kontakt- och serviceärenden: två år efter att ärendet avslutats. Så länge kan ett garantiärende komma tillbaka och vi behöver kunna se vad som sagts.
 
-Återbetalning: När vi har mottagit och kontrollerat den returnerade varan, kommer vi att återbetala köpesumman inom 14 dagar. Återbetalningen sker via samma betalningssätt som du använde vid köpet, om inget annat överenskommes. Notera att eventuell fraktkostnad (315 kr) för den ursprungliga leveransen normalt inte återbetalas vid ångrat köp, utom i de fall varan var defekt eller felaktig (se Reklamation nedan). Eventuell värdeminskningsavgift (se ovan) dras av från beloppet som återbetalas om varan inte är i nyskick.
+        Reklamationer och garantiärenden: tre år efter köpet, eftersom reklamationsrätten enligt konsumentköplagen sträcker sig så långt.
 
-Undantag: Ångerrätten gäller inte för varor som har specialtillverkats eller anpassats specifikt efter dina anvisningar eller personliga önskemål. Om du till exempel beställt en unikt konfigurerad dator som byggs enligt dina specifika önskemål kan ångerrätten vara begränsad eller inte gälla alls. (Standardprodukter och förkonfigurerade datorer omfattas dock av ångerrätten.) Ångerrätten gäller inte heller för förseglade datorprogram eller liknande programvara om förseglingen brutits.
+        Besöksstatistik: tolv månader, därefter raderas den.
 
-För att undvika missförstånd: att helt enkelt låta bli att hämta ut ett paket räknas inte som att du utövar ångerrätten. Du måste meddela oss om du vill ångra köpet och därefter returnera varan enligt instruktion. Om du har några frågor om ångerrätten eller är osäker på hur du ska gå tillväga, kontakta vår kundservice så hjälper vi dig.
+        Loggar över inloggningar och administrativa åtgärder: tolv månader. De behövs för att kunna utreda om något gått fel eller om någon tagit sig in där de inte ska.
 
-6. Reklamation och Garanti
+När tiden gått ut raderas uppgifterna eller anonymiseras så att de inte längre går att koppla till dig.
 
-Reklamation: Om varan skulle visa sig vara felaktig, defekt eller på något sätt inte motsvara beskrivningen, har du som kund rätt att reklamera produkten enligt Konsumentköplagen. Reklamationsrätten gäller i upp till 3 år från inköpsdatum, men för att den ska vara giltig behöver felet vara ursprungligt (dvs. det fanns på varan från början). Upptäcker du ett fel på varan bör du meddela oss inom skälig tid efter att felet upptäckts. Meddelanden inom två månader från att felet upptäckts anses alltid vara inom skälig tid.
+5. Vilka som får se uppgifterna
 
-För att reklamera en vara, kontakta oss via e-post och beskriv problemet. Bifoga gärna bilder som visar felet eller skadan, om möjligt. Efter att du kontaktat oss kommer vi att ge instruktioner om eventuellt returförfarande eller annan åtgärd. Vid en godkänd reklamation står vi för returfraktkostnaden och du har rätt att få varan reparerad, utbytt eller - om det inte är möjligt - pengarna tillbaka. Vi följer Allmänna reklamationsnämndens (ARN) rekommendationer vid en eventuell tvist gällande reklamationer.
+Vi säljer aldrig dina uppgifter, och vi lämnar dem inte vidare till någon som inte behöver dem för att vi ska kunna göra vårt jobb. De företag som behandlar uppgifter åt oss är:
 
-Garanti: Om en särskild garanti erbjuds för produkten framgår det av produktbeskrivningen eller medföljande handlingar. Om ingen uttrycklig garanti anges, gäller enbart reklamationsrätten enligt lag. Eventuella tillverkargarantier på enskilda komponenter (t.ex. grafikkort, processor) kan gälla utöver vår reklamationsrätt; vi hjälper gärna till att förmedla garantiservice hos tillverkaren i den mån det är möjligt. Notera att garanti och reklamationsrätt är skilda saker - garanti kan ge extra rättigheter under en viss tid, men påverkar inte dina lagstadgade rättigheter att reklamera varor som är felaktiga.
+        Stripe - betalningar. Eget personuppgiftsansvar för betalningen.
+        Supabase - databas och inloggning.
+        Render - drift av webbplatsen.
+        Maileroo - utskick av order- och supportmejl.
+        Cloudflare - domän och vidarebefordran av e-post.
+        Google - inloggning med Google-konto, om du väljer det.
+        PostNord - leverans, när du valt frakt.
 
-Transportskador vid leverans: Skulle produkten vara skadad vid mottagandet (transportskada) ska detta rapporteras omedelbart enligt avsnitt 4 ovan. Sådana skador hanteras som reklamation gentemot transportören, men kontakta också oss så att vi kan hjälpa till och påbörja ett ersättningsärende. Vid transportskador ersätter vi dig med en ny vara eller full återbetalning, och hanterar ersättningen med PostNord.
+Med var och en av dem finns ett personuppgiftsbiträdesavtal som binder dem att bara behandla uppgifterna enligt våra instruktioner.
 
-7. Ansvar och Begränsningar
+Vi lämnar också ut uppgifter om en myndighet kräver det med stöd av lag.
 
-DatorHuset ansvarar för att leverera varan i utlovat skick och enligt dessa villkor. Vi ansvarar dock inte för indirekta skador eller följdförluster som kan drabba kunden. Det innebär till exempel att vi inte ersätter förlorad inkomst, förlorade data, driftstopp eller annan följdförlust som kan uppstå i samband med försenad eller utebliven leverans, fel på produkten eller liknande omständigheter.
+6. Överföring utanför EU och EES
 
-Vid tekniska produkter som datorer är det Kundens ansvar att säkerhetskopiera viktig data före användning. DatorHuset kan inte hållas ansvarigt för dataförlust eller skador på annan utrustning i samband med installation eller användning av den sålda varan, såvida inte tvingande lag föreskriver annat.
+Flera av tjänsterna ovan är amerikanska. När uppgifter förs över till ett land utanför EU och EES sker det med stöd av EU-kommissionens beslut om adekvat skyddsnivå (EU-US Data Privacy Framework) eller EU:s standardavtalsklausuler. Vill du veta exakt vilken grund som gäller för en viss tjänst, mejla oss så berättar vi.
 
-Force Majeure: DatorHuset förbehåller sig rätten att frias från påföljd för underlåtenhet att fullgöra vissa förpliktelser enligt detta avtal, om underlåtenheten har sin grund i befriande omständigheter (så kallade force majeure-händelser). Exempel på sådana omständigheter kan vara extrema väderförhållanden, brand, översvämning, krig, pandemier, strejk, lockout, myndighetsbeslut eller andra omständigheter utanför vår kontroll som väsentligen påverkar förpliktelserna. Skulle en sådan situation uppstå kommer vi att meddela Kunden så snart som möjligt och göra vårt bästa för att lösa situationen.
+7. Dina rättigheter
 
-8. Personuppgifter och Sekretess
+Du har rätt att:
 
-När du handlar hos DatorHuset behandlar vi dina personuppgifter i enlighet med gällande dataskyddslagar (GDPR). De uppgifter du lämnar (såsom namn, adress, kontaktinformation och betalningsuppgifter) används endast för att administrera din order, leverera varan och ge dig service. Vi vidtar lämpliga säkerhetsåtgärder för att skydda dina personuppgifter. Vi delar endast nödvändiga uppgifter med våra betalnings- och leveranspartners (t.ex. Stripe/PayPal/Klarna för betalning och PostNord för frakt) för att kunna genomföra köpet. Mer information om vår hantering av personuppgifter finns i vår Integritetspolicy [länk eller hänvisning om sådan finns].
+        Få veta vilka uppgifter vi har om dig, och få en kopia av dem.
+        Få felaktiga uppgifter rättade.
+        Få uppgifter raderade, när vi inte har en rättslig skyldighet att spara dem.
+        Begära att vi begränsar behandlingen medan en fråga utreds.
+        Få ut dina uppgifter i ett maskinläsbart format, eller få dem överförda till någon annan.
+        Invända mot behandling som vi gör med stöd av berättigat intresse.
+        Ta tillbaka ett samtycke du lämnat, utan att det påverkar det som redan behandlats.
 
-9. Tillämplig lag och Tvistlösning
+Mejla support@datorhuset.se så svarar vi inom en månad. Är frågan komplicerad kan vi behöva två månader till, och då hör vi av oss och säger det. Det kostar ingenting.
 
-Alla köp som görs under dessa Villkor lyder under svensk lag. Vi strävar efter att i första hand lösa eventuella tvister direkt med Kunden på ett smidigt sätt. Om en tvist mot förmodan inte kan lösas i samförstånd, rekommenderar vi konsumenten att vända sig till Allmänna reklamationsnämnden (ARN) för prövning. DatorHuset följer ARNs beslut.
+Observera att rätten till radering inte gäller bokföringsunderlag. Vi kan ta bort ditt konto, men beloppen i bokföringen måste stå kvar i sju år.
 
-Kunden har även möjlighet att använda EU-kommissionens onlineplattform för tvistlösning (ODR) för att få hjälp att lösa en tvist online. Du hittar plattformen på ec.europa.eu/consumers/odr.
+8. Om du inte är nöjd
 
-Om en tvist trots allt behöver avgöras rättsligt, ska den avgöras av allmän domstol i Sverige, med Stockholms tingsrätt som första instans (såvida tvingande lag inte föreskriver annat).
+Tycker du att vi behandlar dina uppgifter fel vill vi först och främst höra det själva - mejla oss så reder vi ut det.
 
-10. Övrigt
+Du har också alltid rätt att klaga till tillsynsmyndigheten. I Sverige är det Integritetsskyddsmyndigheten (IMY), Box 8114, 104 20 Stockholm, imy@imy.se, imy.se.
 
-Vi förbehåller oss rätten att ändra dessa allmänna villkor vid behov. Eventuella ändringar publiceras på DatorHusets webbplats. De villkor som var gällande vid tidpunkten för ditt köp kommer dock att fortsätta gälla för just det köpet. Spara därför gärna en kopia av villkoren tillsammans med din orderbekräftelse.
+9. Säkerhet
 
-Om någon bestämmelse i dessa villkor skulle befinnas ogiltig eller inte verkställbar av domstol eller myndighet, ska detta inte påverka giltigheten av övriga bestämmelser - villkoren ska tolkas som om den ogiltiga bestämmelsen inte fanns, med syftet att skydda parternas rättigheter i möjligaste mån.
+Trafiken till och från sajten är krypterad. Lösenord lagras hashade, alltså aldrig i läsbar form, och vi ser dem inte ens själva - därför kan vi inte heller återställa ett lösenord åt dig, bara skicka en återställningslänk till din adress. Tillgången till administrationen är begränsad till namngivna konton och varje åtgärd loggas.
 
-Tack för att du handlar hos DatorHuset! Vi uppskattar ditt förtroende. Har du några frågor om dessa villkor eller kring ditt köp är du alltid välkommen att kontakta oss. Vi hjälper gärna till och vill att du ska känna dig trygg med ditt köp. Vår målsättning är att du som kund ska vara nöjd, både med produkten och med köpupplevelsen.`;
+10. Cookies
+
+Nödvändiga cookies används för att hålla dig inloggad och för att kundvagnen ska minnas vad du lagt i den. De kräver inget samtycke, eftersom sidan inte fungerar utan dem.
+
+Valfria cookies för besöksstatistik sätts bara om du klickar ja i cookierutan. Väljer du "Endast nödvändiga" mäter vi ingenting. Du kan ändra dig när som helst genom att rensa webbplatsens data i din webbläsare.
+
+11. Automatiserat beslutsfattande
+
+Vi fattar inga beslut om dig automatiskt som har rättsliga följder eller påverkar dig i motsvarande grad. Ingen profilering sker.
+
+12. Ändringar i policyn
+
+Ändrar vi något väsentligt uppdaterar vi datumet högst upp och, om ändringen påverkar dig i någon nämnvärd grad, hör vi av oss per mejl. Den senaste versionen finns alltid på den här sidan.`;
 
 export default function PrivacyPolicy() {
-  const { settings: siteSettings } = useSiteSettings();
-  const pageSettings = siteSettings.pages.privacyPolicy;
-  const bodyText = pageSettings.bodyText?.trim() || privacyPolicyText;
+  const { settings } = useSiteSettings();
+  const pageSettings = settings.pages.privacyPolicy;
 
   return (
     <PageShell>
@@ -111,20 +150,15 @@ export default function PrivacyPolicy() {
         image={PAGE_BANNERS.legal.image}
         accent={PAGE_BANNERS.legal.accent}
         breadcrumb={[{ label: "Hem", href: "/" }, { label: "Integritetspolicy" }]}
-        eyebrow={pageSettings.heroEyebrow}
-        title={pageSettings.heroTitle}
-        lede={pageSettings.heroDescription}
+        eyebrow={pageSettings?.heroEyebrow || "Integritet"}
+        title={pageSettings?.heroTitle || "Integritetspolicy"}
+        lede={
+          pageSettings?.heroDescription ||
+          "Vad vi sparar, varför, hur länge och vad du kan begära av oss."
+        }
       />
 
-      <section data-sandbox-id="privacy-body" className="relative">
-        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-14">
-          <LegalDocument
-            text={bodyText}
-            updatedAt={pageSettings.updatedAt}
-            accent={PAGE_BANNERS.legal.accent}
-          />
-        </div>
-      </section>
+      <LegalDocument text={privacyPolicyText} />
     </PageShell>
   );
 }

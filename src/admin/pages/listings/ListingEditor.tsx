@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ExternalLink, Eye, Loader2, Trash2, Upload, X } from "lucide-react";
 
 import { errorMessage } from "@/lib/utils";
+import { readApiError } from "../../apiError";
 import { type Listing, formatPrice } from "./listingModel";
 import { FpsEditor, type FpsSettings } from "./FpsEditor";
 
@@ -127,7 +128,7 @@ export const ListingEditor = ({
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Bilden kunde inte laddas upp.");
+        throw new Error(await readApiError(response.clone(), "Bilden kunde inte laddas upp."));
       }
       const url = payload?.data?.url || payload?.url;
       if (!url) throw new Error("Servern gav ingen adress till bilden.");

@@ -7402,6 +7402,188 @@ app.put("/api/admin/v2/listings/:productId/fps", async (req, res) => {
  * hämtar sidan och filtrerar här. Med några hundra konton är det
  * rimligt; blir det tiotusentals behöver kunderna en egen tabell.
  */
+/**
+ * POST /api/admin/v2/orders/:orderId/cancel
+ *
+ * Avbryter en order och betalar tillbaka.
+ *
+ * ORDNINGEN ÄR VIKTIG
+ *
+ * Först återbetalningen hos Stripe, sedan statusen i databasen, sist
+ * mejlen. Skulle Stripe säga nej avbryts allt - då står ordern kvar
+ * som den var, och kunden har inte fått ett besked om pengar som
+ * aldrig skickades. Motsatt ordning hade kunnat ge ett mejl om en
+ * återbetalning som inte gick igenom, vilket är värre än inget mejl.
+ *
+ * Mejlen får inte fälla anropet. Är återbetalningen gjord är ordern
+ * avbruten, och att svara med ett fel hade fått någon att trycka en
+ * gång till - alltså försöka återbetala en redan återbetald order.
+ *
+ * Både orderns adress och kontots adress får mejlet. De är oftast
+ * samma, och då skickas bara ett.
+ */
+app.post("/api/admin/v2/orders/:orderId/cancel", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    if (!requireServiceRoleKey(res)) return;
+
+    const orderId = sanitizeText(req.params?.orderId, 64);
+    const reason = sanitizeText(req.body?.reason, 300);
+    if (!orderId) {
+      return jsonError(res, 400, "INVALID_ORDER_ID", "Ogiltigt order-id.");
+    }
+
+    const { data: order, error: orderError } = await supabase
+      .from("orders")
+      .select(
+        `*, order_items ( quantity, unit_price_cents, product_id, product:product_id (name) )`,
+      )
+      .eq("id", orderId)
+      .maybeSingle();
+    if (orderError || !order) {
+      return jsonError(res, 404, "ORDER_NOT_FOUND", "Beställningen hittades inte.");
+    }
+    if (String(order.status) === "cancelled") {
+      return jsonError(
+        res,
+        409,
+        "ALREADY_CANCELLED",
+        "Beställningen är redan avbruten.",
+      );
+    }
+
+    /* 1. Pengarna först. */
+    let refundId = null;
+    if (stripe && order.stripe_payment_intent_id) {
+      try {
+        const refund = await stripe.refunds.create({
+          payment_intent: order.stripe_payment_intent_id,
+          reason: "requested_by_customer",
+          metadata: { order_id: orderId, cancelled_by: access.user?.email || "admin" },
+        });
+        refundId = refund?.id || null;
+      } catch (refundError) {
+        /* Redan återbetald hos Stripe är inget fel - då är målet nått
+           och vi kan gå vidare och märka ordern. Allt annat stoppar. */
+        const alreadyDone = String(refundError?.code || "") === "charge_already_refunded";
+        if (!alreadyDone) {
+          console.error("Refund failed:", refundError);
+          return jsonError(
+            res,
+            502,
+            "REFUND_FAILED",
+            `Återbetalningen gick inte igenom: ${refundError?.message || "okänt fel"}. Ordern är orörd.`,
+          );
+        }
+      }
+    }
+
+    /* 2. Statusen. */
+    const { error: updateError } = await supabase
+      .from("orders")
+      .update({
+        status: "cancelled",
+        cancelled_at: new Date(),
+        cancel_reason: reason || null,
+        updated_at: new Date(),
+      })
+      .eq("id", orderId);
+    if (updateError) {
+      return jsonError(
+        res,
+        500,
+        "CANCEL_UPDATE_FAILED",
+        `Pengarna är återbetalda men ordern kunde inte märkas som avbruten: ${updateError.message}. Märk den för hand.`,
+      );
+    }
+
+    /* 3. Lagret tillbaka. En avbruten order ska inte hålla kvar en
+       maskin som går att sälja igen. */
+    for (const line of order.order_items || []) {
+      if (!line?.product_id) continue;
+      const { data: inventory } = await supabase
+        .from("inventory")
+        .select("quantity_in_stock")
+        .eq("product_id", line.product_id)
+        .maybeSingle();
+      if (inventory) {
+        await supabase
+          .from("inventory")
+          .update({
+            quantity_in_stock: Math.max(0, Number(inventory.quantity_in_stock || 0)) + Number(line.quantity || 0),
+          })
+          .eq("product_id", line.product_id);
+      }
+    }
+
+    /* 4. Beskedet till kunden. Orderns adress och kontots, utan
+       dubbletter. */
+    const recipients = new Set();
+    if (order.customer_email) recipients.add(String(order.customer_email).toLowerCase());
+    if (order.user_id) {
+      try {
+        const { data: userData } = await supabase.auth.admin.getUserById(order.user_id);
+        if (userData?.user?.email) recipients.add(String(userData.user.email).toLowerCase());
+      } catch (lookupError) {
+        console.warn("Kunde inte slå upp kontots adress:", lookupError?.message);
+      }
+    }
+
+    const orderNumber = formatOrderNumber(order);
+    const emailItems = (order.order_items || []).map((line) => ({
+      name: line?.product?.name || "Produkt",
+      quantity: Number(line?.quantity || 1),
+      total: (Number(line?.unit_price_cents || 0) * Number(line?.quantity || 1)) / 100,
+    }));
+
+    const html = buildOrderEmailHtml({
+      headline: "Din beställning är avbruten",
+      intro:
+        `Hej ${order.customer_name || ""}! Vi har avbrutit din beställning och betalat tillbaka hela beloppet. ` +
+        "Pengarna är på väg tillbaka till samma kort eller konto du betalade med. " +
+        "Hos de flesta banker tar det tre till fem bankdagar." +
+        (reason ? ` Anledning: ${reason}` : ""),
+      order,
+      items: emailItems,
+      statusNote: "Avbruten och återbetald",
+    });
+
+    for (const to of recipients) {
+      try {
+        await sendEmail({
+          to,
+          subject: `Avbruten beställning #${orderNumber} - DatorHuset`,
+          html,
+        });
+        console.log(`[mail] avbokningsbesked skickat for #${orderNumber} till ${to}`);
+      } catch (mailError) {
+        console.error(
+          `[mail] AVBOKNINGSBESKED MISSLYCKADES for #${orderNumber} till ${to} - kunden vet inte att pengarna kommer tillbaka`,
+          mailError,
+        );
+      }
+    }
+
+    await logAdminAction(req, access.user, "order.cancel", "order", orderId, {
+      order_number: orderNumber,
+      refund_id: refundId,
+      reason: reason || null,
+      notified: Array.from(recipients).length,
+    });
+
+    return res.json({
+      ok: true,
+      data: { refunded: Boolean(refundId), notified: Array.from(recipients) },
+    });
+  } catch (error) {
+    console.error("Cancel order error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
 app.get("/api/admin/v2/customers", async (req, res) => {
   if (!supabase) {
     return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
@@ -7450,7 +7632,7 @@ app.get("/api/admin/v2/customers", async (req, res) => {
         created_at: user.created_at || null,
         last_sign_in_at: user.last_sign_in_at || null,
         email_confirmed: Boolean(user.email_confirmed_at || user.confirmed_at),
-        orders: stats.orders,
+        order_count: stats.orders,
         open_orders: stats.open,
         spent_cents: stats.spentCents,
       };

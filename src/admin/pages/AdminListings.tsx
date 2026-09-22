@@ -17,6 +17,7 @@ import {
 
 import { AdminAccessContext } from "../useAdminAccess";
 import { errorMessage } from "@/lib/utils";
+import { readApiError } from "../apiError";
 import { ListingEditor } from "./listings/ListingEditor";
 import {
   PREORDER,
@@ -114,7 +115,7 @@ export default function AdminListings() {
       );
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta listningarna.");
+        throw new Error(await readApiError(response.clone(), "Kunde inte hämta listningarna."));
       }
       setListings(Array.isArray(payload?.data) ? payload.data : []);
     } catch (error) {
@@ -314,7 +315,7 @@ export default function AdminListings() {
         });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(payload?.error?.message || payload?.error || "Gick inte att ändra.");
+          throw new Error(await readApiError(response.clone(), "Gick inte att ändra."));
         }
         patchLocal(listing.id, {
           archived_at: archived ? new Date().toISOString() : null,

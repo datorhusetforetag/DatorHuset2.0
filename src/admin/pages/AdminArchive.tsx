@@ -4,6 +4,7 @@ import { Archive, Loader2, Package, RotateCcw, Search } from "lucide-react";
 
 import { AdminAccessContext } from "../useAdminAccess";
 import { errorMessage } from "@/lib/utils";
+import { readApiError } from "../apiError";
 import { type Listing, formatPrice } from "./listings/listingModel";
 
 /**
@@ -44,7 +45,7 @@ export default function AdminArchive() {
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta arkivet.");
+        throw new Error(await readApiError(response.clone(), "Kunde inte hämta arkivet."));
       }
       const rows: Listing[] = Array.isArray(payload?.data) ? payload.data : [];
       setListings(rows.filter((row) => Boolean(row.archived_at)));
@@ -87,7 +88,7 @@ export default function AdminArchive() {
         });
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta tillbaka listningen.");
+          throw new Error(await readApiError(response.clone(), "Kunde inte hämta tillbaka listningen."));
         }
         setListings((prev) => prev.filter((row) => row.id !== listing.id));
       } catch (restoreError) {

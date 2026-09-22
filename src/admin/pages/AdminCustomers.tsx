@@ -9,10 +9,12 @@ import {
   Search,
   ShoppingBag,
   UserRound,
+  XCircle,
 } from "lucide-react";
 
 import { AdminAccessContext } from "../useAdminAccess";
 import { errorMessage } from "@/lib/utils";
+import { readApiError } from "../apiError";
 
 /**
  * Kunderna.
@@ -44,7 +46,9 @@ type Customer = {
   created_at: string | null;
   last_sign_in_at: string | null;
   email_confirmed: boolean;
-  orders: number;
+  /* Antalet, inte listan. Detaljvyn har orders som en array, och två
+     fält med samma namn och olika betydelse blev en typkrock. */
+  order_count: number;
   open_orders: number;
   spent_cents: number;
 };
@@ -101,7 +105,7 @@ export default function AdminCustomers() {
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta kunderna.");
+        throw new Error(await readApiError(response.clone(), "Kunde inte hämta kunderna."));
       }
       setCustomers(Array.isArray(payload?.data) ? payload.data : []);
     } catch (loadError) {
@@ -213,7 +217,7 @@ export default function AdminCustomers() {
               )}
 
               <span className="hidden w-24 shrink-0 text-right text-xs text-slate-500 sm:block">
-                {customer.orders} {customer.orders === 1 ? "order" : "ordrar"}
+                {customer.order_count} {customer.order_count === 1 ? "order" : "ordrar"}
               </span>
 
               <span className="hidden w-24 shrink-0 text-right text-sm font-semibold tabular-nums text-slate-300 lg:block">
@@ -248,6 +252,8 @@ const CustomerPanel = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [resetState, setResetState] = useState<"idle" | "sending" | "sent">("idle");
+  const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     let active = true;
@@ -258,7 +264,7 @@ const CustomerPanel = ({
       .then(async (response) => {
         const payload = await response.json().catch(() => ({}));
         if (!response.ok) {
-          throw new Error(payload?.error?.message || payload?.error || "Kunde inte hämta kunden.");
+          throw new Error(await readApiError(response.clone(), "Kunde inte hämta kunden."));
         }
         if (active) setCustomer(payload.data);
       })
@@ -291,12 +297,75 @@ const CustomerPanel = ({
       });
       const payload = await response.json().catch(() => ({}));
       if (!response.ok) {
-        throw new Error(payload?.error?.message || payload?.error || "Kunde inte skicka mejlet.");
+        throw new Error(await readApiError(response.clone(), "Kunde inte skicka mejlet."));
       }
       setResetState("sent");
     } catch (resetError) {
       setError(errorMessage(resetError, "Kunde inte skicka mejlet."));
       setResetState("idle");
+    }
+  };
+
+  /*
+   * Avbryt och betala tillbaka.
+   *
+   * Bekräftelsen säger vad som faktiskt händer, med belopp och
+   * ordernummer. "Är du säker?" är ingen fråga man kan svara på -
+   * det här är pengar som lämnar kontot och ett mejl som går till en
+   * kund, och båda är svåra att ta tillbaka.
+   *
+   * Anledningen är frivillig och hamnar i mejlet. Den som får veta
+   * varför behöver inte ringa och fråga.
+   */
+  const cancelOrder = async (order: CustomerOrder) => {
+    const total = kr(order.total_cents);
+    const number = order.order_number ?? String(order.id).slice(0, 8);
+    const confirmed = window.confirm(
+      `Avbryt order #${number} och betala tillbaka ${total}?\n\n` +
+        "Pengarna går tillbaka till samma kort eller konto som betalade. " +
+        "Kunden får ett mejl om att ordern är avbruten. " +
+        "Lagret räknas upp igen.\n\n" +
+        "Det här går inte att ångra härifrån.",
+    );
+    if (!confirmed) return;
+
+    const reason = window.prompt(
+      "Anledning? Den följer med i mejlet till kunden. Lämna tomt om du hellre vill.",
+      "",
+    );
+    /* Avbryt i rutan betyder avbryt, inte tom anledning. */
+    if (reason === null) return;
+
+    setCancellingId(order.id);
+    setError("");
+    try {
+      const response = await fetch(`${apiBase}/api/admin/v2/orders/${order.id}/cancel`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ reason: reason.trim() }),
+      });
+      if (!response.ok) {
+        throw new Error(await readApiError(response, "Kunde inte avbryta ordern."));
+      }
+      const payload = await response.json().catch(() => ({}));
+      setCustomer((prev): CustomerDetail | null => {
+        if (!prev) return prev;
+        const orders: CustomerOrder[] = prev.orders.map((row) =>
+          row.id === order.id ? { ...row, status: "cancelled" } : row,
+        );
+        return { ...prev, orders };
+      });
+      const notified = payload?.data?.notified?.length || 0;
+      setNotice(
+        `Order #${number} är avbruten och ${total} betalas tillbaka.` +
+          (notified > 0
+            ? ` Besked skickat till ${notified === 1 ? "kundens adress" : `${notified} adresser`}.`
+            : " Inget mejl kunde skickas - hör av dig till kunden."),
+      );
+    } catch (cancelError) {
+      setError(errorMessage(cancelError, "Kunde inte avbryta ordern."));
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -321,6 +390,12 @@ const CustomerPanel = ({
       {error && (
         <p role="alert" className="rounded-lg border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
           {error}
+        </p>
+      )}
+
+      {notice && (
+        <p role="status" className="rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-200">
+          {notice}
         </p>
       )}
 
@@ -394,8 +469,18 @@ const CustomerPanel = ({
             )}
           </section>
 
-          <OrderList title="Pågående ordrar" orders={open} empty="Inga pågående ordrar." />
-          <OrderList title="Avslutade ordrar" orders={closed} empty="Inga avslutade ordrar än." />
+          <OrderList
+            title="Pågående ordrar"
+            orders={open}
+            empty="Inga pågående ordrar."
+            onCancel={canWrite ? cancelOrder : undefined}
+            cancellingId={cancellingId}
+          />
+          <OrderList
+            title="Avslutade ordrar"
+            orders={closed}
+            empty="Inga avslutade ordrar än."
+          />
         </>
       ) : null}
     </div>
@@ -413,10 +498,16 @@ const OrderList = ({
   title,
   orders,
   empty,
+  onCancel,
+  cancellingId,
 }: {
   title: string;
   orders: CustomerOrder[];
   empty: string;
+  /* Utelämnas för avslutade ordrar och för läsbehörighet. En knapp
+     som inte går att trycka på är sämre än ingen knapp. */
+  onCancel?: (order: CustomerOrder) => void | Promise<void>;
+  cancellingId?: string | null;
 }) => (
   <section>
     <h3 className="mb-3 text-sm font-bold uppercase tracking-[0.18em] text-slate-300">
@@ -446,6 +537,22 @@ const OrderList = ({
               <span className="ml-auto text-sm font-semibold tabular-nums text-slate-200">
                 {kr(order.total_cents)}
               </span>
+
+              {onCancel && (
+                <button
+                  type="button"
+                  onClick={() => void onCancel(order)}
+                  disabled={cancellingId === order.id}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-slate-700 px-2.5 py-1.5 text-xs font-semibold text-slate-400 hover:border-rose-400/60 hover:text-rose-300 disabled:opacity-50"
+                >
+                  {cancellingId === order.id ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <XCircle className="h-3.5 w-3.5" />
+                  )}
+                  Avbryt och återbetala
+                </button>
+              )}
             </div>
 
             <p className="mt-1.5 pl-7 text-xs text-slate-500">
