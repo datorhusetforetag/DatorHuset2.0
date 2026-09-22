@@ -32,16 +32,6 @@ export default defineConfig(({ mode }) => ({
       },
     },
   },
-  /*
-   * Adminbygget hamnar i en egen mapp.
-   *
-   * Vilken app som byggs avgörs av VITE_APP_MODE vid byggtillfället, så
-   * butiken och portalen är två olika buntar. Med samma outDir skrev de
-   * över varandra: byggde man portalen försvann butiken.
-   */
-  build: {
-    outDir: mode === "admin" ? "dist-admin" : "dist",
-  },
 
   plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {

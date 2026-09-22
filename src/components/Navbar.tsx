@@ -166,17 +166,12 @@ export const Navbar = () => {
   /*
    * Vägen till adminportalen.
    *
-   * Inställningen pekar på https://admin.datorhuset.se, som är rätt den
-   * dag portalen driftsätts där. Lokalt finns den inte - den körs på
-   * 8081 med npm run dev:admin - så knappen tog en rakt ut på internet
-   * och, eftersom domänen inte har någon DNS-post, till ett felmeddelande.
-   *
-   * import.meta.env.DEV är sant bara när Vite kör i utvecklingsläge, så
-   * det driftsatta bygget påverkas inte.
+   * Numera en rutt i samma app, inte en egen adress. Inställningen
+   * adminPortalHref pekade på https://admin.datorhuset.se, en domän som
+   * aldrig fick någon DNS-post - så knappen ledde till ett
+   * felmeddelande oavsett var man stod.
    */
-  const adminPortalHref = import.meta.env.DEV
-    ? "http://localhost:8081"
-    : navigation.adminPortalHref;
+  const adminPortalHref = "/admin";
 
   /*
    * Menyn = den fasta raden plus det adminläget lagt till.

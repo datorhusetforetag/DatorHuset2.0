@@ -2,7 +2,7 @@
 
 ## Environment variables
 
-Required for the backend (`server.ts`):
+Required for the backend (`server-local.js`):
 
 - `STRIPE_SECRET_KEY`
 - `SUPABASE_URL`
@@ -28,6 +28,10 @@ Stripe webhook (`server-local.js`):
 
 - `STRIPE_WEBHOOK_SECRET` — required, or `/api/webhook` answers 503 and no
   order is ever created from a payment.
+
+Adminportalen ligger på /admin i samma app - ingen egen domän, ingen
+separat driftsättning. Behörigheten sätts på kontot i Supabase, under
+app_metadata: role admin, ops eller readonly.
 
 Optional for custom build store price scraping (`server-local.js`):
 

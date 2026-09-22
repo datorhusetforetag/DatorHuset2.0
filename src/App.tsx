@@ -33,7 +33,20 @@ const AdminListings = lazy(() => import("./admin/pages/AdminListings.tsx"));
 const AdminArchive = lazy(() => import("./admin/pages/AdminArchive.tsx"));
 const AdminLogs = lazy(() => import("./admin/pages/AdminLogs.tsx"));
 const queryClient = new QueryClient();
-const isAdminApp = import.meta.env.VITE_APP_MODE === "admin";
+
+/*
+ * Adminportalen ligger på /admin i samma app.
+ *
+ * Tidigare avgjorde VITE_APP_MODE vid byggtillfället om appen var
+ * butiken eller portalen. Två buntar betyder två driftsättningar, två
+ * adresser och en DNS-post som aldrig blev till - portalen fanns i
+ * koden men gick inte att nå någonstans.
+ *
+ * Nu är det en rutt bland andra. Den laddas separat, så den som
+ * handlar aldrig hämtar hem den, och behörigheten prövas ändå på
+ * servern vid varje anrop. Det som ligger i bunten är formulär och
+ * tabeller, inte nycklar.
+ */
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -50,43 +63,39 @@ const App = () => (
             }
           >
             <Routes>
-              {isAdminApp ? (
-                <>
-                  <Route path="/" element={<AdminLayout />}>
-                    <Route index element={<AdminListings />} />
-                    <Route path="lager" element={<AdminListings />} />
-                    <Route path="produkter" element={<AdminListings />} />
-                    <Route path="bestallningar" element={<AdminOrders />} />
-                    <Route path="bygg" element={<AdminOrders />} />
-                    <Route path="logs" element={<AdminLogs />} />
-                    <Route path="arkiv" element={<AdminArchive />} />
-                  </Route>
-                  <Route path="*" element={<AdminNotFound />} />
-                </>
-              ) : (
-                <>
-                  <Route path="/" element={<Index />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/computer/:id" element={<ComputerDetails />} />
-                  <Route path="/search" element={<SearchResults />} />
-                  <Route path="/cart" element={<Cart />} />
-                  <Route path="/checkout" element={<Checkout />} />
-                  <Route path="/checkout-success" element={<CheckoutSuccess />} />
-                  <Route path="/account" element={<Account />} />
-                  <Route path="/orders" element={<Orders />} />
-                  <Route path="/reset-password" element={<ResetPassword />} />
-                  <Route path="/faq" element={<Faq />} />
-                  <Route path="/kundservice" element={<CustomerService />} />
-                  <Route path="/custom-bygg" element={<CustomBuild />} />
-                  <Route path="/service-reparation" element={<ServiceRepair />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
-                  <Route path="/angerratt-och-returer" element={<ReturnPolicy />} />
-                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                  <Route path="*" element={<NotFound />} />
-                </>
-              )}
+              {/* Portalen. Ligger före butikens rutter så att
+                  /admin/... inte fångas av catch-all nedanför. */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminListings />} />
+                <Route path="produkter" element={<AdminListings />} />
+                <Route path="lager" element={<AdminListings />} />
+                <Route path="bestallningar" element={<AdminOrders />} />
+                <Route path="bygg" element={<AdminOrders />} />
+                <Route path="logs" element={<AdminLogs />} />
+                <Route path="arkiv" element={<AdminArchive />} />
+                <Route path="*" element={<AdminNotFound />} />
+              </Route>
+
+              <Route path="/" element={<Index />} />
+              <Route path="/products" element={<Products />} />
+              <Route path="/computer/:id" element={<ComputerDetails />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route path="/checkout-success" element={<CheckoutSuccess />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/faq" element={<Faq />} />
+              <Route path="/kundservice" element={<CustomerService />} />
+              <Route path="/custom-bygg" element={<CustomBuild />} />
+              <Route path="/service-reparation" element={<ServiceRepair />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms-of-service" element={<TermsOfService />} />
+              <Route path="/angerratt-och-returer" element={<ReturnPolicy />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
         </ScrollToTop>

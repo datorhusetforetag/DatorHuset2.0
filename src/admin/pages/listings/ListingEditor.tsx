@@ -102,10 +102,6 @@ export const ListingEditor = ({
   const set = <K extends keyof Listing>(key: K, value: Listing[K]) =>
     setForm((prev) => ({ ...prev, [key]: value }));
 
-  /* Butiken kör på 8080 lokalt och på sin egen domän i drift. */
-  const storeOrigin = import.meta.env.DEV
-    ? "http://localhost:8080"
-    : "https://datorhuset.se";
 
   /* Jämförs mot raden vi öppnade, inte mot ett eget flaggfält. Ett
      fält som ändras fram och tillbaka till samma värde räknas då inte
@@ -329,7 +325,7 @@ export const ListingEditor = ({
                     finns osparade ändringar. */}
                 {!isNew && (
                   <a
-                    href={`${storeOrigin}/computer/${form.slug || form.id}`}
+                    href={`/computer/${form.slug || form.id}`}
                     target="_blank"
                     rel="noreferrer"
                     onClick={(event) => {

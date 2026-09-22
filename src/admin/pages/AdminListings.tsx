@@ -98,12 +98,6 @@ export default function AdminListings() {
     [],
   );
 
-  /* Butiken kör på 8080 under utveckling och på sin egen domän i
-     drift. Portalen ligger på 8081 respektive en annan värd, så
-     adressen kan inte tas från window.location. */
-  const storeOrigin = import.meta.env.DEV
-    ? "http://localhost:8080"
-    : "https://datorhuset.se";
 
   const authHeaders = useMemo(
     () => ({ Authorization: `Bearer ${token}`, "Content-Type": "application/json" }),
@@ -736,7 +730,7 @@ export default function AdminListings() {
               titta på den riktiga sidan, och utan den här länken
               betyder det att kopiera namnet och leta i butiken. */}
           <a
-            href={`${storeOrigin}/computer/${listing.slug || listing.id}`}
+            href={`/computer/${listing.slug || listing.id}`}
             target="_blank"
             rel="noreferrer"
             aria-label={`Visa ${listing.name} på sajten`}

@@ -4,12 +4,12 @@ import { Archive, ClipboardList, LayoutGrid, LogIn, LogOut, Menu, ScrollText, Sh
 import { useAdminAccess } from "./useAdminAccess";
 
 const navItems = [
-  { to: "/produkter", label: "Listningar", icon: LayoutGrid },
-  { to: "/bestallningar", label: "Beställningar", icon: ClipboardList },
-  { to: "/logs", label: "Loggar", icon: ScrollText },
+  { to: "/admin/produkter", label: "Listningar", icon: LayoutGrid },
+  { to: "/admin/bestallningar", label: "Beställningar", icon: ClipboardList },
+  { to: "/admin/logs", label: "Loggar", icon: ScrollText },
   /* Arkivet ligger sist och under Loggar med flit. Det ar nagot man
      slar upp i, inte nagot man arbetar i. */
-  { to: "/arkiv", label: "Arkiv slutsålda", icon: Archive },
+  { to: "/admin/arkiv", label: "Arkiv slutsålda", icon: Archive },
 ];
 
 export const AdminLayout = () => {
