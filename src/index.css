@@ -2629,3 +2629,182 @@
     aspect-ratio: 1 / 1;
   }
 }
+
+/* Byggkapaciteten ------------------------------------------------
+ *
+ * Stapeln under köpknappen som säger hur många datorer verkstaden
+ * hinner bygga till, med en svetsare som står på fyllnadskanten.
+ *
+ * overflow: visible på spåret är hela poängen. Gnistorna ska flyga
+ * utanför stapeln - en gnista som klipps mot en kant ser ut som ett
+ * fel i utritningen, inte som en gnista.
+ */
+
+.capacity {
+  margin-top: 1.25rem;
+}
+
+.capacity__label {
+  margin-bottom: 0.9rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: hsl(var(--foreground) / 0.72);
+}
+
+.capacity__label strong {
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.capacity__track {
+  position: relative;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: hsl(var(--foreground) / 0.12);
+  /* Gnistorna lämnar spåret. Se kommentaren ovan. */
+  overflow: visible;
+}
+
+.capacity__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 9999px;
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--capacity-accent) 55%, transparent) 0%,
+    var(--capacity-accent) 100%
+  );
+  /* Bredden kommer från servern, så den ska glida på plats i stället
+     för att hoppa dit när svaret kommer. */
+  transition: width 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/*
+ * Svetsaren.
+ *
+ * bottom: 100% ställer honom ovanpå spåret i stället för i det, och
+ * translateX(-50%) centrerar honom över fyllnadskanten så att han
+ * står på gränsen och inte bredvid den.
+ */
+.capacity__welder {
+  position: absolute;
+  bottom: 100%;
+  transform: translateX(-50%);
+  transition: left 1.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  pointer-events: none;
+}
+
+.capacity__figure {
+  display: block;
+  width: 1.6rem;
+  height: 1.75rem;
+  overflow: visible;
+  /* Han gungar en aning medan han arbetar. Två grader räcker - mer
+     och det blir en dans i stället för ett handgrepp. */
+  animation: capacity-lean 2.4s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.capacity__limb,
+.capacity__visor {
+  fill: none;
+  stroke: hsl(var(--foreground) / 0.85);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+.capacity__head {
+  fill: hsl(var(--foreground) / 0.85);
+}
+
+.capacity__visor {
+  stroke: var(--capacity-accent);
+  stroke-width: 1.2;
+}
+
+.capacity__box {
+  fill: hsl(var(--foreground) / 0.25);
+  stroke: hsl(var(--foreground) / 0.5);
+  stroke-width: 1;
+}
+
+@keyframes capacity-lean {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+/*
+ * Gnistorna.
+ *
+ * Utgångspunkten är lödpennans spets, alltså en bit upp och åt höger
+ * från gubbens fötter. Varje gnista har egen riktning och längd via
+ * --dx och --dy, satta i komponenten, så att de inte bildar ett
+ * mönster.
+ */
+.capacity__sparks {
+  position: absolute;
+  left: 0.95rem;
+  top: 0.75rem;
+  width: 0;
+  height: 0;
+}
+
+.capacity__spark {
+  position: absolute;
+  width: var(--size, 2px);
+  height: var(--size, 2px);
+  border-radius: 9999px;
+  background: var(--capacity-accent);
+  box-shadow: 0 0 6px var(--capacity-accent);
+  opacity: 0;
+  animation-name: capacity-spark;
+  animation-iteration-count: infinite;
+  animation-timing-function: cubic-bezier(0.15, 0.6, 0.4, 1);
+}
+
+/*
+ * Gnistan skjuter ut, bleknar och faller lite på slutet.
+ *
+ * Tyngdkraften ligger i sista steget: den går längre i sidled än den
+ * stiger, och slutar under sin högsta punkt. Utan det ser det ut som
+ * konfetti i stället för som något varmt.
+ */
+@keyframes capacity-spark {
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  70% {
+    transform: translate(calc(var(--dx) * 0.8), var(--dy)) scale(0.9);
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(var(--dx), calc(var(--dy) * 0.35)) scale(0.2);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .capacity__fill,
+  .capacity__welder {
+    transition: none;
+  }
+
+  .capacity__figure {
+    animation: none;
+  }
+
+  /* Gnistorna tas bort helt i stället för att frysas. En frusen
+     gnista är bara en prick som ligger och skräpar bredvid stapeln. */
+  .capacity__spark {
+    display: none;
+  }
+}

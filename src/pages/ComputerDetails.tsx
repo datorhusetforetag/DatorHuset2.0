@@ -27,6 +27,7 @@ import {
 } from "@/lib/usedParts";
 import { FpsPanel } from "@/components/product/FpsPanel";
 import { ProductStage } from "@/components/product/ProductStage";
+import { CapacityBar } from "@/components/product/CapacityBar";
 import { ProductVariants } from "@/components/product/ProductVariants";
 import { checkStock, getAllInventory } from "@/lib/supabaseServices";
 
@@ -1140,6 +1141,11 @@ export default function ComputerDetails() {
                 {addingToCart ? "Lägger till..." : "Lägg i kundvagn"}
               </button>
             </div>
+
+            {/* Byggkapaciteten. Ligger under knappen och inte över:
+                priset är det man kom för, kön är det man vill veta
+                strax efter. */}
+            <CapacityBar accent={accent} />
           </div>
         </div>
       </div>
