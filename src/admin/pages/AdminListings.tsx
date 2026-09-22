@@ -64,7 +64,7 @@ const API_PAGE_SIZE = 250;
 type ToastState = { kind: "ok" | "error"; text: string } | null;
 
 export default function AdminListings() {
-  const { token, apiBase, role } = useOutletContext<AdminAccessContext>();
+  const { token, apiBase, role, user } = useOutletContext<AdminAccessContext>();
   const canWrite = role === "admin" || role === "ops";
 
   const [listings, setListings] = useState<Listing[]>([]);
@@ -291,11 +291,16 @@ export default function AdminListings() {
   const setArchived = useCallback(
     async (listing: Listing, archived: boolean) => {
       if (archived) {
+        const isUsed = listing.variant_role === "used";
         const confirmed = window.confirm(
-          `Ta bort "${listing.name}" från butiken?\n\n` +
-            "Listningen döljs på sajten men raderas inte, så tidigare ordrar " +
-            "behåller sitt innehåll. Den hamnar under Arkiv slutsålda, där " +
-            "du kan hämta tillbaka den när som helst.",
+          isUsed
+            ? `Ta bort det begagnade skicket av "${listing.name}"?\n\n` +
+              "Den nybyggda versionen står kvar i butiken. Bara valet " +
+              "Begagnad försvinner från produktsidan."
+            : `Ta bort "${listing.name}" från butiken?\n\n` +
+              "Listningen döljs på sajten men raderas inte, så tidigare ordrar " +
+                "behåller sitt innehåll. Den hamnar under Arkiv slutsålda, där " +
+                "du kan hämta tillbaka den när som helst.",
         );
         if (!confirmed) return;
       }
@@ -380,10 +385,15 @@ export default function AdminListings() {
             <p className="font-semibold">Du har läsbehörighet</p>
             <p className="mt-1 text-amber-200/80">
               Därför syns varken knappen för ny listning, pilarna för ordning,
-              platsrutan eller borttagning. Behörigheten ligger på ditt konto i
-              Supabase, under app_metadata. Sätt role till admin eller ops, logga
-              ut och in igen - rollen läses ur inloggningen och följer med först
-              vid nästa.
+              platsrutan eller borttagning.
+            </p>
+            <p className="mt-2 font-mono text-xs text-amber-200/70">
+              konto: {user?.email || "okänt"} · roll: {role || "ingen"}
+            </p>
+            <p className="mt-2 text-amber-200/80">
+              Rollen sätts på kontot i Supabase, under app_metadata. Står det
+              redan admin här ovan men knapparna saknas ändå, är det tokenet som
+              är gammalt: logga ut och in igen, en omladdning räcker inte.
             </p>
           </div>
         </div>
@@ -530,10 +540,14 @@ export default function AdminListings() {
    *
    * Medvetet mindre än en vanlig rad: den är ett andra skick av samma
    * maskin, inte en egen produkt. Ingen ordning att flytta - varianten
-   * följer basen på produktsidan - och ingen egen borttagning, för att
-   * ta bort basen utan varianten skulle lämna ett skick utan maskin.
+   * följer basen på produktsidan.
+   *
+   * Borttagning finns däremot, och gäller bara varianten. Det andra
+   * begagnade exemplaret kan ta slut medan maskinen fortfarande byggs
+   * ny, och då ska skicket kunna försvinna utan att maskinen gör det.
    */
   function UsedRow({ listing }: { listing: Listing }) {
+    const busy = busyId === listing.id;
     return (
       <div className="flex items-center gap-3 border-b border-slate-800/70 bg-slate-950/30 py-2 pl-12 pr-3 last:border-b-0">
         <span className="text-xs text-slate-600">└</span>
@@ -551,7 +565,20 @@ export default function AdminListings() {
         <span className="hidden w-28 shrink-0 text-center text-[11px] text-slate-500 sm:block">
           {listing.quantity_in_stock > 0 ? `${listing.quantity_in_stock} i lager` : "Slut"}
         </span>
-        <span className="w-9 shrink-0" />
+        <div className="flex w-9 shrink-0 items-center justify-end">
+          {busy && <Loader2 className="h-3.5 w-3.5 animate-spin text-slate-500" />}
+          {canWrite && !busy && (
+            <button
+              type="button"
+              onClick={() => void setArchived(listing, true)}
+              aria-label={`Ta bort den begagnade varianten av ${listing.name}`}
+              title="Ta bort bara det begagnade skicket"
+              className="rounded p-1.5 text-slate-600 hover:bg-rose-500/10 hover:text-rose-300"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          )}
+        </div>
       </div>
     );
   }
