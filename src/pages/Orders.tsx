@@ -1,5 +1,6 @@
 ﻿import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/components/PageHero";
+import { StatusScene, type StatusKey } from "@/components/orders/StatusScene";
 import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -8,11 +9,10 @@ import { getUserOrders, requestOrderCancel } from "@/lib/supabaseServices";
 import {
   CARRIER_LABELS,
   getOrderStatusInfo,
-  ORDER_STATUS_STEPS,
   resolveTrackingUrl,
 } from "@/lib/orderStatus";
 import { resolveProductImage } from "@/lib/productImageResolver";
-import { Clock, ExternalLink, Package, ReceiptText, Truck } from "lucide-react";
+import { ExternalLink, Package, ReceiptText, Truck } from "lucide-react";
 
 type OrderItem = {
   id: string;
@@ -191,19 +191,34 @@ export default function Orders() {
                   key={order.id}
                   className="rounded-2xl border border-foreground/10 bg-background/70 p-6"
                 >
-                  <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="flex flex-wrap items-baseline justify-between gap-4">
                     <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Order</p>
-                      <p className="text-lg font-semibold mt-2">#{orderNumber}</p>
-                      <p className="text-sm text-muted-foreground">Beställd: {orderDate}</p>
+                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                        Order #{orderNumber}
+                      </p>
+                      <p className="mt-1 text-sm text-muted-foreground">Beställd {orderDate}</p>
                     </div>
-                    <div className="text-right">
-                      <span className="inline-flex items-center justify-center rounded-full border border-primary bg-primary/15 px-3 py-1 text-xs font-semibold text-primary-foreground dark:text-primary">
-                        {statusInfo.label}
-                      </span>
-                      <p className="text-sm text-muted-foreground mt-2">ETA: {statusInfo.eta}</p>
-                      <p className="text-lg font-semibold mt-2">{total.toLocaleString("sv-SE")} kr</p>
-                    </div>
+                    <p className="font-display text-xl font-bold tabular-nums">
+                      {total.toLocaleString("sv-SE")} kr
+                    </p>
+                  </div>
+
+                  {/* Statusen som en scen, i full bredd.
+
+                      Den låg som en liten rund etikett i hörnet och en rad
+                      med sex chips längre ned - samma sak sagd två gånger,
+                      ingen av dem särskilt tydlig. Nu är det ett band över
+                      hela kortet: stapeln visar hur långt bygget kommit och
+                      det som rör sig säger vad som händer just nu. */}
+                  <div className="mt-5">
+                    <StatusScene
+                      status={(statusInfo.value || "received") as StatusKey}
+                      label={statusInfo.label}
+                    />
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {statusInfo.description}
+                      {statusInfo.eta ? ` Uppskattad tid kvar: ${statusInfo.eta}.` : ""}
+                    </p>
                   </div>
 
                   <div className="mt-4 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
@@ -253,27 +268,8 @@ export default function Orders() {
                     </div>
 
                     <div className="rounded-xl border border-foreground/10 bg-background/70 dark:bg-background/70 p-4">
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Status</p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {ORDER_STATUS_STEPS.map((label, index) => (
-                          <span
-                            key={label}
-                            className={`inline-flex min-h-[34px] items-center justify-center rounded-full px-3 text-xs font-semibold border text-center ${
-                              stage >= index + 1
-                                ? "border-primary bg-primary/20 text-primary-foreground dark:text-primary"
-                                : "border-foreground/10 text-muted-foreground"
-                            }`}
-                          >
-                            {label}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4 text-primary" />
-                        <span>Uppskattad tid kvar: {statusInfo.eta}</span>
-                      </div>
-                      <p className="mt-2 text-sm text-muted-foreground">
-                        {statusInfo.description}
+                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">
+                        Leverans
                       </p>
 
                       {showTracking && (

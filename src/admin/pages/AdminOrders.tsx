@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CheckCircle2, Download, RefreshCcw, Search, ShieldAlert, Truck } from "lucide-react";
 import { useOutletContext } from "react-router-dom";
 import { AdminAccessContext } from "../useAdminAccess";
-import { StatusScene, type StatusKey } from "./orders/StatusScene";
+import { StatusScene, type StatusKey } from "@/components/orders/StatusScene";
 import {
   CARRIER_LABELS,
   getOrderStatusInfo,
