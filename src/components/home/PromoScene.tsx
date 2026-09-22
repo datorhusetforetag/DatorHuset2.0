@@ -25,10 +25,10 @@
 /*
  * Gnistorna från slaget.
  *
- * De höll sig tidigare inom en handflata kring hammaren, vilket såg
- * ut som ett vänligt litet pysande. Ett slag med en hammare på ett
- * plåtchassi kastar skräp över hela bordet, och nu gör de det: de
- * längsta når tvärs över scenen och ut genom kanten på den.
+ * Sexton stycken som far en bit och slocknar. Det här är skuren kring
+ * bänken - de som går hela vägen över bilden är FLYERS längre ned, och
+ * de är bara tre. Låter man alla sexton gå tvärs över blir det ett
+ * fyrverkeri i stället för ett hammarslag.
  *
  * Riktning, längd och fördröjning sätts per gnista och är skrivna
  * för hand i stället för slumpade. Slumpen ger klungor - fyra åt
@@ -37,8 +37,9 @@
  *
  * hot = den vitheta kärnan närmast slaget. Utan ett par sådana blir
  * allt samma orangea nyans och skuren ser platt ut.
- * long = en strimma i stället för en prick, alltså en gnista som
- * far så fort att ögat drar ut den.
+ *
+ * Det här är närskuren - skräpet som far en bit och landar. De som
+ * går tvärs över bilden är något annat, se FLYERS nedan.
  */
 type Spark = {
   x: number;
@@ -47,27 +48,66 @@ type Spark = {
   dy: number;
   delay: number;
   hot?: boolean;
-  long?: boolean;
 };
 
 const SPARKS: Spark[] = [
-  { x: 46, y: 10, dx: -42, dy: -8, delay: 0, long: true },
-  { x: 46, y: 10, dx: 16, dy: -15, delay: 0.01 },
-  { x: 47, y: 11, dx: -28, dy: -19, delay: 0, long: true },
-  { x: 46, y: 11, dx: 13, dy: 13, delay: 0.02, hot: true },
-  { x: 46, y: 10, dx: -19, dy: 17, delay: 0.01 },
-  { x: 47, y: 10, dx: 8, dy: -23, delay: 0, hot: true },
-  { x: 46, y: 12, dx: -35, dy: 9, delay: 0.03, long: true },
-  { x: 46, y: 9, dx: 19, dy: -6, delay: 0.02 },
-  { x: 47, y: 11, dx: -12, dy: -25, delay: 0.01 },
-  { x: 46, y: 10, dx: -46, dy: 3, delay: 0, long: true },
-  { x: 46, y: 11, dx: 11, dy: 21, delay: 0.03 },
-  { x: 47, y: 10, dx: -24, dy: -4, delay: 0.02, hot: true },
-  { x: 46, y: 9, dx: -7, dy: -27, delay: 0.01, long: true },
-  { x: 46, y: 12, dx: 17, dy: 5, delay: 0 },
-  { x: 47, y: 12, dx: -31, dy: -13, delay: 0.03 },
-  { x: 46, y: 10, dx: 5, dy: 25, delay: 0.02 },
+  { x: 46, y: 10, dx: -18, dy: -6, delay: 0 },
+  { x: 46, y: 10, dx: 11, dy: -12, delay: 0.01 },
+  { x: 47, y: 11, dx: -13, dy: -15, delay: 0 },
+  { x: 46, y: 11, dx: 9, dy: 11, delay: 0.02, hot: true },
+  { x: 46, y: 10, dx: -10, dy: 14, delay: 0.01 },
+  { x: 47, y: 10, dx: 6, dy: -17, delay: 0, hot: true },
+  { x: 46, y: 12, dx: -16, dy: 8, delay: 0.03 },
+  { x: 46, y: 9, dx: 14, dy: -5, delay: 0.02 },
+  { x: 47, y: 11, dx: -7, dy: -19, delay: 0.01 },
+  { x: 46, y: 10, dx: -21, dy: 2, delay: 0 },
+  { x: 46, y: 11, dx: 8, dy: 16, delay: 0.03 },
+  { x: 47, y: 10, dx: -12, dy: -3, delay: 0.02, hot: true },
+  { x: 46, y: 9, dx: -5, dy: -20, delay: 0.01 },
+  { x: 46, y: 12, dx: 12, dy: 4, delay: 0 },
+  { x: 47, y: 12, dx: -15, dy: -10, delay: 0.03 },
+  { x: 46, y: 10, dx: 4, dy: 18, delay: 0.02 },
 ];
+
+/*
+ * De som går hela vägen.
+ *
+ * En eller två åt gången, inte sexton. Far allt tvärs över bilden blir
+ * det ett fyrverkeri; far en enda det medan resten stannar vid bänken
+ * blir den en gnista man följer med blicken.
+ *
+ * VARFÖR DE INTE KOMMER SAMTIDIGT
+ *
+ * Var och en har en omloppstid som är ett helt antal hammarslag -
+ * tre, fyra och fem. De startar alltså alltid på ett slag, men på
+ * olika slag, och eftersom 3, 4 och 5 inte går jämnt upp i varandra
+ * sammanfaller de sällan. Ingen slump behövs för att hålla dem isär.
+ *
+ * SVANSEN
+ *
+ * Ritad liggande, med huvudet i origo och svansen ut åt +x, alltså en
+ * gnista som far åt vänster. Vinkeln vrider hela strimman till sin
+ * verkliga riktning, så svansen ligger bakom och inte på tvären.
+ *
+ * Vridningen sker kring (0, 0) i gruppens eget koordinatsystem, och
+ * det ligger i träffpunkten tack vare translate på gruppen utanför.
+ * Alltså vrids den kring gnistans huvud, vilket är det enda stället
+ * som ser rätt ut.
+ */
+const FLYERS = [1, 2, 3];
+
+/* Huvud, tre glödande segment och en döende svans. Ljusare och
+   kortare fram, mörkare och längre bak - det är det som läser som
+   fart och inte som ett streck. */
+const FlyerTrail = () => (
+  <>
+    <rect x="0" y="0" width="2" height="1" className="ps-fly-head" />
+    <rect x="2" y="0" width="3" height="1" className="ps-fly-a" />
+    <rect x="5" y="0" width="4" height="1" className="ps-fly-b" />
+    <rect x="9" y="0" width="5" height="1" className="ps-fly-c" />
+    <rect x="14" y="0" width="6" height="1" className="ps-fly-d" />
+  </>
+);
 
 /**
  * Service och reparation: en kväll som går i cirkel.
@@ -194,7 +234,7 @@ const ServiceScene = () => (
           key={index}
           x={spark.x}
           y={spark.y}
-          width={spark.long ? 2 : 1}
+          width="1"
           height="1"
           className={`ps-spark${spark.hot ? " ps-spark--hot" : ""}`}
           style={{
@@ -203,6 +243,20 @@ const ServiceScene = () => (
             animationDelay: `${spark.delay}s`,
           }}
         />
+      ))}
+
+      {/* Strimmorna som går tvärs över. translate som attribut och
+          inte som CSS: då hamnar gruppens eget origo i träffpunkten,
+          och vridningen inuti sker kring gnistans huvud utan att man
+          behöver peta på transform-origin. */}
+      {FLYERS.map((n) => (
+        <g key={n} transform="translate(46 10)">
+          <g className={`ps-flyer ps-flyer--${n}`}>
+            <g className="ps-flyer__body">
+              <FlyerTrail />
+            </g>
+          </g>
+        </g>
       ))}
     </g>
   </svg>

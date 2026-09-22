@@ -4192,6 +4192,129 @@
   }
 }
 
+/* ---- Strimmorna som går tvärs över bilden ----
+ *
+ * Omloppstiden är ett helt antal hammarslag (0,62 s), så de startar
+ * alltid i samma ögonblick som ett slag. Slaget ligger vid 58 procent
+ * av ett hammarvarv, alltså vid 58/n procent av flygarens eget varv -
+ * därav de udda talen nedan. Räknas hammarens takt om måste de tre
+ * räknas om med den.
+ *
+ * Tre, fyra och fem slag. Talen går inte jämnt upp i varandra, så de
+ * sammanfaller sällan och det blir en eller två i luften åt gången
+ * utan att någon slump behöver hålla dem isär.
+ *
+ * Flykten tar ungefär 0,68 sekunder oavsett längd. Resten av varvet
+ * ligger gnistan osynlig och väntar på sin tur.
+ */
+
+.promo-scene .ps-flyer {
+  opacity: 0;
+}
+
+/* 3 slag: uppåt vänster, tvärs över hela bilden och ut. */
+.promo-scene .ps-flyer--1 {
+  animation: ps-fly-1 1.86s linear infinite;
+}
+.promo-scene .ps-flyer--1 .ps-flyer__body {
+  transform: rotate(7.6deg);
+}
+@keyframes ps-fly-1 {
+  0%,
+  19.32% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  19.33% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  48% {
+    transform: translate(-51px, -7px);
+    opacity: 1;
+  }
+  56%,
+  100% {
+    transform: translate(-60px, -8px);
+    opacity: 0;
+  }
+}
+
+/* 4 slag: nedåt vänster, mot skrivbordet. */
+.promo-scene .ps-flyer--2 {
+  animation: ps-fly-2 2.48s linear infinite;
+}
+.promo-scene .ps-flyer--2 .ps-flyer__body {
+  transform: rotate(-16.5deg);
+}
+@keyframes ps-fly-2 {
+  0%,
+  14.49% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  14.5% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  36.4% {
+    transform: translate(-46px, 14px);
+    opacity: 1;
+  }
+  42%,
+  100% {
+    transform: translate(-54px, 16px);
+    opacity: 0;
+  }
+}
+
+/* 5 slag: brant uppåt höger, ut genom taket. */
+.promo-scene .ps-flyer--3 {
+  animation: ps-fly-3 3.1s linear infinite;
+}
+.promo-scene .ps-flyer--3 .ps-flyer__body {
+  transform: rotate(131.4deg);
+}
+@keyframes ps-fly-3 {
+  0%,
+  11.59% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  11.6% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  29.1% {
+    transform: translate(25px, -29px);
+    opacity: 1;
+  }
+  33.5%,
+  100% {
+    transform: translate(30px, -34px);
+    opacity: 0;
+  }
+}
+
+/* Svansen svalnar bakåt. Vitglödgat huvud, orange mitt, rökigt slut. */
+.promo-scene .ps-fly-head {
+  fill: #fff6e2;
+}
+.promo-scene .ps-fly-a {
+  fill: #ffd08a;
+}
+.promo-scene .ps-fly-b {
+  fill: #ff8a2b;
+  opacity: 0.85;
+}
+.promo-scene .ps-fly-c {
+  fill: #e05f14;
+  opacity: 0.55;
+}
+.promo-scene .ps-fly-d {
+  fill: #a33d0c;
+  opacity: 0.28;
+}
 /* Blixten i träffpunkten. Två bildrutor lång - syns den längre
    läser den som en lampa i stället för som ett slag. */
 .promo-scene .ps-flash {
