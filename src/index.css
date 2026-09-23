@@ -637,49 +637,98 @@
 
 /* Höjdkurvorna längst bak -------------------------------------------
  *
- * Här låg tidigare en prickmatris. Den gjorde sitt jobb - gav ögat
- * något att mäta avstånd mot, så att de mjuka ljusfälten ovanpå inte
- * såg platta ut - men ett jämnt raster är också det mest opersonliga
- * en bakgrund kan vara. Var tredje sajt har det.
+ * Här låg först en prickmatris, sedan en PNG av höjdkurvor. PNG:n var
+ * 1239 px bred och skalades upp drygt fyra gånger för att täcka
+ * fönstret, så varje linje blev ett suddigt band. Att höja
+ * upplösningen bytte bara suddighet mot filstorlek.
  *
- * Höjdkurvorna gör samma jobb och säger något: de har riktning,
- * täthet och plan, alltså mer att mäta mot än ett raster med samma
- * avstånd överallt.
+ * Nu är kurvorna riktiga vektorer, uträknade av
+ * scripts/generate-topo-field.mjs. Samma fil på en telefon som på en
+ * 4K-skärm, skarp på båda, och mindre än bilden den ersatte.
  *
- * OM FILEN
+ * TVÅ LAGER SOM GLIDER OLIKA FORT
  *
- * Den är inte bilden som den kom. Originalet är nästan svart - hela
- * omfånget ligger mellan ljushet 5 och 30 av 255 - och lagt på sidans
- * redan mörka bakgrund syns det knappt. scripts/make-topo-pattern.mjs
- * gör om ljusheten till alfakanal och färgen till märkets lila, så
- * bottnen blir genomskinlig och kurvorna lila. Där står också varför.
+ * Ett enda lager som rör sig läses som en bild som dras förbi. Två som
+ * rör sig olika fort läses som djup - det är parallax, och det är det
+ * enda som får ett platt mönster att kännas som ett rum. Det fjärran
+ * lagret har färre och lugnare kurvor och tar 190 sekunder på sig; det
+ * nära har fler och tjockare och tar 110.
  *
- * Styrkan ställs här med opacity. Höjs den för mycket lyfts hela
- * sidans ton mot lila, eftersom mönstret täcker allt och inte bara
- * är linjer - det har mjuka plan mellan dem också.
+ * VARFÖR SLINGAN INTE SYNS
  *
- * cover och inte upprepning. Bilden är 4,6 gånger bredare än hög och
- * kurvorna möts inte vid kanterna, så en upprepning skulle klippa av
- * varje linje vid sömmen. Uppskalningen gör dem mjukare, vilket för
- * en bakgrund bakom text är en vinst och inte en förlust.
+ * Rutan upprepas med sin egen bredd som period, och lagret flyttas
+ * exakt en sådan bredd. Efter ett varv står allt alltså pixel för
+ * pixel där det stod när varvet började, och det finns ingen punkt
+ * där något hoppar. Kurvorna själva går ihop över rutans kanter
+ * eftersom fältet de ritades ur är periodiskt - se skriptet.
+ *
+ * Lagret sträcker sig en hel rutbredd utanför sin behållare åt höger,
+ * annars hade en tom rand kommit in från det hållet när det glider.
+ *
+ * Bara transform animeras, så grafikkortet sköter rörelsen och
+ * layouten räknas aldrig om.
  *
  * Vinjetten tonar ut mönstret mot hörnen så det inte slutar i en rak
- * linje mot fönsterkanten.
+ * linje mot fönsterkanten. Den ligger på behållaren och gäller därför
+ * båda lagren.
  */
 .ambient-topo {
-  background-image: url("/patterns/topografi.png");
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-  opacity: 0.18;
   mask-image: radial-gradient(88% 78% at 50% 45%, black 0%, black 52%, transparent 100%);
   -webkit-mask-image: radial-gradient(88% 78% at 50% 45%, black 0%, black 52%, transparent 100%);
   will-change: transform;
 }
 
+.ambient-topo__layer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  /* En hel ruta extra åt höger, att glida in i. */
+  right: calc(var(--topo-tile) * -1);
+  background-repeat: repeat;
+  background-size: var(--topo-tile) auto;
+  animation: topo-drift var(--topo-speed) linear infinite;
+  will-change: transform;
+}
+
+.ambient-topo__layer--far {
+  background-image: url("/patterns/topo-far.svg");
+  --topo-tile: 1600px;
+  --topo-speed: 190s;
+  opacity: 0.17;
+}
+
+.ambient-topo__layer--near {
+  background-image: url("/patterns/topo-near.svg");
+  --topo-tile: 1120px;
+  --topo-speed: 110s;
+  opacity: 0.11;
+}
+
+/* Exakt en rutbredd. Ett enda avvikande värde här och slingan hackar
+   en gång i minuten, vilket är precis svårt nog att få syn på. */
+@keyframes topo-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(calc(var(--topo-tile) * -1), 0, 0);
+  }
+}
+
 /* Mot vitt tar lila över långt innan det syns lika mycket. */
-:root:not(.dark) .ambient-topo {
-  opacity: 0.09;
+:root:not(.dark) .ambient-topo__layer--far {
+  opacity: 0.2;
+}
+:root:not(.dark) .ambient-topo__layer--near {
+  opacity: 0.13;
+}
+
+/* Mönstret får stå kvar, men stilla. */
+@media (prefers-reduced-motion: reduce) {
+  .ambient-topo__layer {
+    animation: none;
+  }
 }
 
 /* Vågfältet bakom vanliga frågor ------------------------------------

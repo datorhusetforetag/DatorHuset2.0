@@ -121,9 +121,15 @@ export const AmbientBackground = () => {
         hade en tom rand dykt upp när mönstret skjuts åt sidan.
       */}
       <div
-        className="ambient-topo absolute inset-[-10%]"
+        className="ambient-topo absolute inset-[-10%] overflow-hidden"
         style={{ transform: shift(-0.03) }}
-      />
+      >
+        {/* Två lager, olika fart. Det fjärran är glesare och ljusare,
+            det nära tätare och tyngre. Skillnaden i hastighet är det
+            som gör mönstret till ett rum i stället för en tapet. */}
+        <div className="ambient-topo__layer ambient-topo__layer--far" />
+        <div className="ambient-topo__layer ambient-topo__layer--near" />
+      </div>
 
       {BLOBS.map((blob, index) => (
         <div
