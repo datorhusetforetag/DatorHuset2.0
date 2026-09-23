@@ -45,7 +45,7 @@ import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import zlib from "node:zlib";
 
-const MASTER = "public/datorhuset-mark-master.png";
+const MASTER = "public/Datorhuset final logo.png";
 const PUBLIC_DIR = "public";
 
 /* Andel av rutan som märket fyller. Resten är luft runt om.
@@ -67,7 +67,7 @@ const HAZE = 14;
  *
  * Sätt till false för att låta dem vara genomskinliga igen.
  */
-const FILL_HOLES = true;
+const FILL_HOLES = false;
 const HOLE_COLOR = [0xff, 0xff, 0xff];
 
 const TARGETS = [
