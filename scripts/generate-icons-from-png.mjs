@@ -57,6 +57,19 @@ const FILL = 0.86;
    varför 14 och inte 2 eller 40. */
 const HAZE = 14;
 
+/*
+ * Fyll de inneslutna hålen med vitt.
+ *
+ * Detaljerna inuti datorn - fläktarna, slangarna, hyllan, skarven - var
+ * vita i originalet och blev därför genomskinliga när masken räknades
+ * fram ur ljusheten. Mot sidans mörka bakgrund lyser då bakgrunden
+ * igenom dem, och märket ser ihåligt ut.
+ *
+ * Sätt till false för att låta dem vara genomskinliga igen.
+ */
+const FILL_HOLES = true;
+const HOLE_COLOR = [0xff, 0xff, 0xff];
+
 const TARGETS = [
   ["icon-512.png", 512],
   ["Datorhuset.png", 512],
@@ -177,17 +190,76 @@ const writePng = (file, w, h, px) => {
   );
 };
 
+/* ------------------------------------------------------- fyll hålen ----- */
+
+/*
+ * Vilka genomskinliga pixlar ligger inne i märket?
+ *
+ * Färg går inte att gå på: hålen och ytan utanför är båda exakt lika
+ * genomskinliga. Det som skiljer dem åt är inte hur de ser ut utan var
+ * de sitter - utsidan hänger ihop med bildens kant, hålen gör det inte.
+ *
+ * Så: översvämma inåt från alla fyra kanterna och gå bara genom det som
+ * är helt genomskinligt. Allt vattnet når är utsida. Genomskinliga
+ * pixlar det inte når är inneslutna, alltså hål, och de målas vita.
+ *
+ * Halvgenomskinliga pixlar är väggar. Det är kanterna på strecken, och
+ * de ska stoppa vattnet - annars sipprar det in genom varje mjuk kant
+ * och ingenting räknas som hål.
+ *
+ * Egen stack i stället för rekursion: bilden är 2,5 miljoner pixlar och
+ * ett anropsdjup i den storleken spränger stacken.
+ */
+const fillHoles = ({ w, h, px }) => {
+  const outside = new Uint8Array(w * h);
+  const stack = [];
+
+  const visit = (x, y) => {
+    const i = y * w + x;
+    if (outside[i] || px[i * 4 + 3] !== 0) return;
+    outside[i] = 1;
+    stack.push(i);
+  };
+
+  for (let x = 0; x < w; x++) { visit(x, 0); visit(x, h - 1); }
+  for (let y = 0; y < h; y++) { visit(0, y); visit(w - 1, y); }
+
+  while (stack.length) {
+    const i = stack.pop();
+    const x = i % w;
+    const y = (i - x) / w;
+    if (x > 0) visit(x - 1, y);
+    if (x < w - 1) visit(x + 1, y);
+    if (y > 0) visit(x, y - 1);
+    if (y < h - 1) visit(x, y + 1);
+  }
+
+  let filled = 0;
+  for (let i = 0; i < w * h; i++) {
+    if (outside[i] || px[i * 4 + 3] !== 0) continue;
+    px[i * 4] = HOLE_COLOR[0];
+    px[i * 4 + 1] = HOLE_COLOR[1];
+    px[i * 4 + 2] = HOLE_COLOR[2];
+    px[i * 4 + 3] = 255;
+    filled++;
+  }
+  return filled;
+};
+
 /* ---------------------------------------------------- rensa och beskär --- */
 
-const clean = ({ w, h, px }) => {
-  /* Sträck alfa så hinnan hamnar på noll och riktiga kanter behåller sin
-     mjukhet. Ren avhuggning hade gett taggiga kanter på de kurvor som
-     ligger snett. */
+/* Sträck alfa så hinnan hamnar på noll och riktiga kanter behåller sin
+   mjukhet. Ren avhuggning hade gett taggiga kanter på de kurvor som
+   ligger snett. */
+const stretchAlpha = ({ px }) => {
   for (let i = 3; i < px.length; i += 4) {
     const a = px[i];
     px[i] = a <= HAZE ? 0 : Math.min(255, Math.round(((a - HAZE) * 255) / (255 - HAZE)));
   }
+};
 
+/* Beskär till det som faktiskt syns. */
+const trim = ({ w, h, px }) => {
   let minX = w, maxX = -1, minY = h, maxY = -1;
   for (let y = 0; y < h; y++) {
     for (let x = 0; x < w; x++) {
@@ -317,11 +389,22 @@ const buildIco = (paths) => {
 /* ------------------------------------------------------------------ kör - */
 
 const raw = readPng(MASTER);
-const art = clean(raw);
-console.log(
-  `${MASTER}  ${raw.w}x${raw.h}  ->  beskuret ${art.w}x${art.h}` +
-    `  (dis under alfa ${HAZE} nollat)`,
-);
+
+/* Ordningen spelar roll: diset måste bort innan hålen letas upp.
+   Med diset kvar är ingen pixel helt genomskinlig, och då finns det
+   varken utsida att översvämma eller hål att hitta. */
+stretchAlpha(raw);
+const holes = FILL_HOLES ? fillHoles(raw) : 0;
+const art = trim(raw);
+
+console.log(`${MASTER}  ${raw.w}x${raw.h}  ->  beskuret ${art.w}x${art.h}`);
+console.log(`      dis under alfa ${HAZE} nollat`);
+if (FILL_HOLES) {
+  console.log(
+    `      ${holes.toLocaleString("sv-SE")} pixlar i inneslutna hål målade vita` +
+      ` (${((100 * holes) / (raw.w * raw.h)).toFixed(1)} % av rutan)`,
+  );
+}
 
 const cleanFile = join(WORK, "mark-clean.png");
 writePng(cleanFile, art.w, art.h, art.px);
