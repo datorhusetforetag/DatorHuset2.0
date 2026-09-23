@@ -40,8 +40,8 @@
  */
 
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { existsSync, mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import zlib from "node:zlib";
 
@@ -238,7 +238,22 @@ const page = (b64, size) =>
   `img{display:block;width:100%;height:100%;object-fit:contain;padding:${Math.round((size * (1 - FILL)) / 2)}px;box-sizing:border-box}` +
   `</style></head><body><img src="data:image/png;base64,${b64}"></body></html>`;
 
+/*
+ * Skärmbilden måste ha en absolut sökväg.
+ *
+ * Med en relativ skrev Chrome ingenting alls - och avslutade ändå med
+ * noll, så execFileSync kastade inte. Skriptet skrev ut nio rader om
+ * filer det trodde att det hade gjort, medan de på disken var kvar
+ * från förra gången. Det upptäcktes bara för att git inte såg några
+ * ändringar att checka in.
+ *
+ * Därav kontrollen efteråt: en bild som inte finns, eller som är äldre
+ * än anropet, är ett fel och ska stoppa körningen. Ett byggsteg som
+ * ljuger om vad det gjort är värre än ett som kraschar.
+ */
 const shot = (b64, size, outFile) => {
+  const target = resolve(outFile);
+  const before = Date.now();
   const file = join(WORK, `p-${size}-${Math.random().toString(36).slice(2)}.html`);
   writeFileSync(file, page(b64, size), "utf8");
   execFileSync(
@@ -250,13 +265,24 @@ const shot = (b64, size, outFile) => {
       "--force-device-scale-factor=1",
       "--default-background-color=00000000",
       "--virtual-time-budget=4000",
-      `--screenshot=${outFile}`,
+      `--screenshot=${target}`,
       `--window-size=${size},${size}`,
       `file:///${file.replace(/\\/g, "/")}`,
     ],
     { stdio: "ignore" },
   );
   rmSync(file, { force: true });
+
+  if (!existsSync(target)) {
+    throw new Error(`Chrome skrev ingen fil till ${target}.`);
+  }
+  /* En sekunds marginal för klockans upplösning på filsystemet. */
+  if (statSync(target).mtimeMs < before - 1000) {
+    throw new Error(
+      `${target} är oförändrad - Chrome skrev inte över den. Kontrollera CHROME_PATH.`,
+    );
+  }
+  return statSync(target).size;
 };
 
 /* ------------------------------------------------------------ favicon.ico */
@@ -303,8 +329,8 @@ const b64 = readFileSync(cleanFile).toString("base64");
 
 for (const [name, size] of TARGETS) {
   const out = join(PUBLIC_DIR, name);
-  shot(b64, size, out);
-  console.log(`png   ${out.padEnd(38)} ${size}x${size}`);
+  const bytes = shot(b64, size, out);
+  console.log(`png   ${out.padEnd(34)} ${String(size + 'x' + size).padStart(9)}  ${String(Math.round(bytes / 1024)).padStart(4)} kB`);
 }
 
 const icoParts = ICO_SIZES.map((size) => {
