@@ -332,11 +332,19 @@ export const matchOffer = (identity, item, row) => {
   });
 
   if (missing.length > 0) {
+    /* missing följer med ut, inte bara som text i reason.
+
+       Anroparen behöver kunna skilja "saknar 6gb" från "saknar 5070".
+       Det första är en titel som utelämnat kapaciteten och går att
+       avgöra med ett EAN-uppslag; det andra är fel produkt. Att låta
+       refresh.mjs parsa reason-strängen hade fungerat tills någon
+       skrev om formuleringen. */
     return {
       matched: false,
       method: "token",
       score: 0,
       reason: `saknar:${missing.join(",")}`,
+      missing,
     };
   }
 
@@ -353,6 +361,25 @@ export const matchOffer = (identity, item, row) => {
   const score = Math.min(0.9, modelTokens.length / Math.max(titleTokens.length, 1) + 0.3);
   return { matched: true, method: "token", score, reason: "token" };
 };
+
+/**
+ * Är det enda som saknas en kapacitetsangivelse?
+ *
+ * Butiker skriver inte alltid ut minnesstorleken i titeln. Katalogen
+ * säger "ASUS Dual GeForce RTX 3050 6GB OC", Webhallen skriver "ASUS
+ * GeForce RTX 3050 Dual OC" - samma kort, men token 6gb fattas och
+ * matchningen faller.
+ *
+ * Att bara släppa kravet vore fel: RTX 3050 finns i både 6 och 8 GB och
+ * det är olika kort. Men det är precis den frågan ett EAN besvarar, så
+ * den här funktionen pekar ut när det är värt att hämta ett.
+ */
+const CAPACITY_TOKEN = /^\d{1,4}(gb|tb|mb)$/;
+
+export const missingOnlyCapacity = (result) =>
+  Array.isArray(result?.missing) &&
+  result.missing.length > 0 &&
+  result.missing.every((token) => CAPACITY_TOKEN.test(token));
 
 /**
  * Väljer bästa raden per butik ur en lista kandidater.

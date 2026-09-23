@@ -11,7 +11,12 @@
  * uppdatering, oavsett vad klockan är och hur många gånger processen startat om.
  */
 
-import { matchOffer, pickBestPerStore, buildSearchQuery } from "./match.mjs";
+import {
+  matchOffer,
+  missingOnlyCapacity,
+  pickBestPerStore,
+  buildSearchQuery,
+} from "./match.mjs";
 import * as store from "./store.mjs";
 import webhallen from "./sources/webhallen.mjs";
 import { streamFeed, COMPONENT_CATEGORY_FILTER } from "./sources/feed.mjs";
@@ -87,10 +92,40 @@ const ingestFeed = async (config, items, identities, candidatesByItem) => {
   return { ...stats, matched };
 };
 
+/*
+ * Slår upp EAN på en kandidat och provar matchningen igen.
+ *
+ * Sök-API:er returnerar sällan EAN - Webhallens gör det inte - så en
+ * titel som utelämnat kapaciteten går inte att avgöra på det man fått.
+ * Produktsidan har EAN:et. Ett extra anrop per närmiss är billigt i ett
+ * nattjobb och gör skillnad på gissat och vetat.
+ *
+ * Hämtas bara vid närmiss, aldrig för varje rad. Ett uppslag per
+ * sökträff hade blivit tusentals anrop per körning.
+ */
+const resolveByEan = async (source, identity, item, row) => {
+  if (typeof source.fetchIdentifiers !== "function" || !row.external_id) return null;
+
+  const ids = await source.fetchIdentifiers(row.external_id);
+  if (!ids?.ean) return null;
+
+  const enriched = { ...row, ean: ids.ean, mpn: row.mpn || ids.mpn || null };
+  const result = matchOffer(identity, item, enriched);
+  return result.matched ? { row: enriched, result, identifiers: ids } : null;
+};
+
 /** Frågar ett sök-API per katalogprodukt, i små omgångar. */
 const ingestApiSource = async (source, items, identities, candidatesByItem, onProgress) => {
   let matched = 0;
   let failures = 0;
+  let idLookups = 0;
+  let eanRescued = 0;
+  let idLearned = 0;
+
+  /* En sökning ger flera kandidatrader för samma produkt. Utan den här
+     hade varje rad slagit upp sitt eget EAN och vi hade ringt
+     produktsidan fem gånger för att lära oss en siffra. */
+  const enriched = new Set();
 
   for (let i = 0; i < items.length; i += API_CONCURRENCY) {
     const batch = items.slice(i, i + API_CONCURRENCY);
@@ -104,11 +139,79 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
         try {
           const rows = await source.search(query);
           for (const row of rows) {
-            const result = matchOffer(identity, item, row);
+            let accepted = row;
+            let result = matchOffer(identity, item, row);
+
+            /* Närmiss på bara kapacitet: fråga produktsidan om EAN i
+               stället för att gissa. Utan identitets-EAN att jämföra
+               mot blir svaret ändå nej, men uppslaget är inte bortkastat
+               - EAN:et sparas nedan och gör nästa körning säkrare. */
+            if (!result.matched && missingOnlyCapacity(result)) {
+              idLookups++;
+              try {
+                const rescued = await resolveByEan(source, identity, item, row);
+                if (rescued) {
+                  accepted = rescued.row;
+                  result = rescued.result;
+                  eanRescued++;
+                }
+              } catch {
+                // Produktsidan svarade inte. Raden förblir omatchad.
+              }
+            }
+
             if (!result.matched) continue;
+
+            /* Lär katalogen produktens identifierare.
+
+               Det här är den verkliga utdelningen. Affiliateflödena bär
+               både EAN och MPN, så när de kopplas in avgörs matchningen av
+               hur många av de 455 produkterna som har en identifierare.
+               Varje träff hos Webhallen är ett tillfälle att fylla i en.
+
+               EAN OCH MPN, INTE BARA EAN
+
+               Webhallens produkt-API svarar ofta med ean: null men med ett
+               ifyllt partNumber. Första versionen sparade bara EAN och
+               lärde sig därför ingenting: 35 träffar gav noll rader. MPN är
+               nästan lika bra - matchOffer väger det till 0,95 mot EAN:s
+               1,0 - och det är det som faktiskt finns att hämta.
+
+               Sök-API:et svarar utan identifierare alls, så en träff måste
+               slå upp produktsidan för att ha något att lära ut. En gång
+               per produkt, inte per kandidatrad. */
+            const needsIdentity = !identity?.ean && !identity?.mpn;
+            if (needsIdentity && !enriched.has(item.id)) {
+              enriched.add(item.id);
+              idLookups++;
+              try {
+                const ids = await source.fetchIdentifiers?.(accepted.external_id);
+                if (ids?.ean || ids?.mpn) {
+                  accepted = {
+                    ...accepted,
+                    ean: accepted.ean || ids.ean || null,
+                    mpn: accepted.mpn || ids.mpn || null,
+                  };
+                  const learned = {
+                    item_id: item.id,
+                    ean: accepted.ean,
+                    mpn: accepted.mpn,
+                    brand: identity?.brand || ids.brand || null,
+                    model: identity?.model || null,
+                  };
+                  await store.upsertIdentity(learned);
+                  identities.set(item.id, { ...(identity || {}), ...learned });
+                  idLearned++;
+                }
+              } catch {
+                // Produktsidan svarade inte, eller gick inte att spara.
+                // Priset gäller ändå - identiteten får vänta till nästa varv.
+              }
+            }
+
             if (!candidatesByItem.has(item.id)) candidatesByItem.set(item.id, []);
             candidatesByItem.get(item.id).push({
-              ...row,
+              ...accepted,
               match_method: result.method,
               match_score: result.score,
             });
@@ -125,7 +228,7 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
     if (API_BATCH_PAUSE_MS > 0) await sleep(API_BATCH_PAUSE_MS);
   }
 
-  return { matched, failures };
+  return { matched, failures, idLookups, eanRescued, idLearned };
 };
 
 /**
