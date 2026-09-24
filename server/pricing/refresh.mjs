@@ -90,21 +90,42 @@ const ingestFeed = async (config, items, identities, candidatesByItem) => {
   let matched = 0;
   const stats = await streamFeed(config, async (row) => {
     /* Tidsgränsen sätts nedanför slingan, se FEED_TIMEOUT_MS. */
-    for (const item of items) {
-      const identity = identities.get(item.id);
-      const result = matchOffer(identity, item, row);
-      if (!result.matched) continue;
 
-      if (!candidatesByItem.has(item.id)) candidatesByItem.set(item.id, []);
-      candidatesByItem.get(item.id).push({
-        ...row,
-        match_method: result.method,
-        match_score: result.score,
-      });
-      matched++;
-      // En flödesrad hör till exakt en katalogprodukt.
-      break;
+    /*
+     * Raden går till den produkt som passar BÄST, inte den första som
+     * passar alls.
+     *
+     * Förut bröt slingan vid första träffen. Då blev en allmänt hållen
+     * katalogpost en dammsugare: "Intenso Premium M.2" saknar kapacitet i
+     * namnet och matchade därför flödets alla fyra rader - 250 GB, 500 GB,
+     * 1 TB och 2 TB - medan "Intenso Premium M.2 250GB" stod bredvid och
+     * aldrig fick något pris alls.
+     *
+     * Poängen i matchOffer stiger med antalet modelltoken som måste
+     * stämma, så den mer specifika posten vinner. Tjugotvå produkter satt
+     * fast bakom det här.
+     */
+    let bestItem = null;
+    let bestResult = null;
+
+    for (const item of items) {
+      const result = matchOffer(identities.get(item.id), item, row);
+      if (!result.matched) continue;
+      if (!bestResult || result.score > bestResult.score) {
+        bestItem = item;
+        bestResult = result;
+      }
     }
+
+    if (!bestItem) return;
+
+    if (!candidatesByItem.has(bestItem.id)) candidatesByItem.set(bestItem.id, []);
+    candidatesByItem.get(bestItem.id).push({
+      ...row,
+      match_method: bestResult.method,
+      match_score: bestResult.score,
+    });
+    matched++;
   }, { timeoutMs: FEED_TIMEOUT_MS });
   return { ...stats, matched };
 };

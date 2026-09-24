@@ -214,6 +214,20 @@ export const extractModelTokens = (name) => {
     "gaming",
     "oc",
     "edition",
+    /* Tekniknamn, inte modellnamn.
+
+       Katalogen skriver "Sandisk WD_Black SN8100 NVMe 1TB", Proshop
+       skriver "SANDISK WD Black SN8100 SSD - 1TB". Samma disk, men ordet
+       nvme fattades och matchningen föll - trots att modellnumret SN8100
+       och kapaciteten 1tb stämde exakt.
+
+       Att släppa dem är säkert eftersom modelltoken fortfarande krävs:
+       en SN8100 är NVMe oavsett vad butiken kallar den. sata står med
+       flit inte här - en disk finns ibland i både sata- och nvme-utförande
+       under näraliggande modellnamn. */
+    "nvme",
+    "ssd",
+    "pcie",
     "med",
     "och",
     "for",
