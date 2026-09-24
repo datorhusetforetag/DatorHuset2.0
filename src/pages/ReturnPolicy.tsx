@@ -278,7 +278,7 @@ export default function ReturnPolicy() {
 
                   <div className="surface-card p-6">
                     <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground/90">
-{`Till DatorHuset UF
+{`Till DatorHuset, Sahran Rahman
 E-post: support@datorhuset.se
 
 Jag meddelar härmed att jag frånträder mitt köpeavtal

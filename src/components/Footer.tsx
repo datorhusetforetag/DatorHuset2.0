@@ -127,16 +127,26 @@ export const Footer = () => {
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-6 sm:flex-row sm:items-center sm:justify-between">
           {/* Säljarens identitet.
 
-              Lagen om elektronisk handel kräver att namn,
-              organisationsnummer, adress och e-post går att nå lätt,
-              direkt och varaktigt. Sidfoten finns på varje sida och är
-              därför rätt ställe. Uppgifterna saknades helt.
+              Lagen om elektronisk handel kräver att namn, adress och
+              e-post går att nå lätt, direkt och varaktigt. Sidfoten
+              finns på varje sida och är därför rätt ställe.
 
-              XXXXXX-XXXX och gatuadressen måste fyllas i. */}
+              INGEN FÖRETAGSFORM STÅR HÄR
+
+              Det stod "DatorHuset UF · Org.nr XXXXXX-XXXX" fram till
+              nu. UF-företaget avslutades i juni 2026, och ett
+              organisationsnummer har aldrig funnits - ett UF-företag
+              får inget. Kvar står den som faktiskt är avtalspart.
+
+              Organisationsnummer krävs bara av den som har ett. Namn
+              och adress krävs alltid, och namnet här måste vara samma
+              som i köpvillkoren och integritetspolicyn.
+
+              Gatuadressen måste fortfarande fyllas i. */}
           <div className="text-sm text-[#A99FC0]">
             <p>{footer.copyright}</p>
             <p className="mt-1 text-xs">
-              DatorHuset UF · Org.nr XXXXXX-XXXX · [gatuadress], Spånga, Stockholm ·{" "}
+              DatorHuset · Sahran Rahman · [gatuadress], Spånga, Stockholm ·{" "}
               <a href="mailto:support@datorhuset.se" className="hover:text-white">
                 support@datorhuset.se
               </a>

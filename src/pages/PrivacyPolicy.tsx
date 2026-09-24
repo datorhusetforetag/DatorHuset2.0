@@ -13,9 +13,14 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
  * hänvisning om sådan finns]". Det fanns alltså ingen policy alls,
  * vilket dataskyddsförordningen artikel 13 kräver att det gör.
  *
- * Texten nedan är skriven mot GDPR och svensk rätt, men två saker måste
- * fyllas i av er innan den stämmer: organisationsnummer och postadress.
- * De står som XXXXXX-XXXX respektive [gatuadress] och ska bytas ut.
+ * Texten nedan är skriven mot GDPR och svensk rätt, men postadressen
+ * måste fyllas i innan den stämmer. Den står som [gatuadress].
+ *
+ * Personuppgiftsansvarig är en fysisk person, inte ett bolag. Det är
+ * korrekt så länge ingen registrering finns - ansvaret ligger hos den
+ * som faktiskt bestämmer över uppgifterna. Registreras ett bolag ska
+ * namnet bytas här, i köpvillkoren, i returpolicyn och i sidfoten,
+ * och alla fyra måste säga samma sak.
  *
  * Underbiträdena är de tjänster koden faktiskt använder. Ändras stacken
  * måste listan i avsnitt 5 ändras med den.
@@ -26,7 +31,7 @@ Senast uppdaterad: 2026-09-22
 
 1. Vem som ansvarar för dina uppgifter
 
-DatorHuset UF, organisationsnummer XXXXXX-XXXX, är personuppgiftsansvarig för de uppgifter som behandlas när du använder vår webbplats eller handlar hos oss. Det betyder att vi bestämmer varför och hur uppgifterna används, och att det är vi du vänder dig till med frågor.
+DatorHuset drivs av Sahran Rahman, som är personuppgiftsansvarig för de uppgifter som behandlas när du använder vår webbplats eller handlar hos oss. Det betyder att det är han som bestämmer varför och hur uppgifterna används, och att det är dit du vänder dig med frågor.
 
         Postadress: [gatuadress], Spånga, Stockholm
         E-post: support@datorhuset.se

@@ -9,7 +9,7 @@ const termsOfServiceText = `Allmänna villkor för DatorHuset
 Senast uppdaterad: 2026-02-08
 
 1. Allmänt
-Dessa villkor gäller för köp av produkter från DatorHuset UF till dig som kund. Genom att beställa en vara från oss godkänner du dessa villkor. För att handla hos oss måste du vara minst 18 år eller ha målsmans godkännande.
+Dessa villkor gäller för köp av produkter från DatorHuset, som drivs av Sahran Rahman, till dig som kund. Genom att beställa en vara från oss godkänner du dessa villkor. För att handla hos oss måste du vara minst 18 år eller ha målsmans godkännande.
 
 2. Beställning och betalning
 Beställningar genomförs via vår webbplats. När du slutfört en beställning skickas en orderbekräftelse automatiskt till din e-postadress. Vi använder Stripe som betalningsleverantör och erbjuder bland annat kort, PayPal, Google Pay och Klarna. Alla priser visas i svenska kronor inklusive moms om inget annat anges.
