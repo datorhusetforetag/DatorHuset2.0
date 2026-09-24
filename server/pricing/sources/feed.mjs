@@ -15,21 +15,74 @@ import { createGunzip } from "node:zlib";
 import { Readable } from "node:stream";
 import { createInterface } from "node:readline";
 
-/** Kolumnnamn vi känner igen, i fallande prioritet. */
+/*
+ * Kolumn- och elementnamn vi känner igen, i fallande prioritet.
+ *
+ * Danska namn står med eftersom Partner-ads är ett danskt nätverk och
+ * levererar produktnavn, nypris, vareurl och billedurl även i sina
+ * svenska flöden.
+ *
+ * produktid och varenummer är med flit INTE mappade till mpn. De är
+ * butikens egna löpnummer, inte tillverkarens artikelnummer, och två
+ * butiker sätter olika sådana på samma vara. Matchar man på dem tror
+ * man sig ha en exakt träff och har en slumpmässig.
+ */
 const FIELD_ALIASES = {
-  title: ["product_name", "productname", "name", "title", "produktnamn"],
+  title: ["product_name", "productname", "name", "title", "produktnamn", "produktnavn"],
   ean: ["ean", "gtin", "gtin13", "ean_code", "eancode", "barcode"],
   mpn: ["mpn", "manufacturer_sku", "model_number", "sku", "part_number", "artnr"],
-  brand: ["brand", "manufacturer", "varumarke", "tillverkare"],
-  price: ["price", "sale_price", "saleprice", "pris", "current_price"],
-  regularPrice: ["regular_price", "list_price", "ordinarie_pris", "rrp"],
-  shipping: ["shipping_price", "shipping", "delivery_cost", "frakt"],
+  brand: ["brand", "manufacturer", "varumarke", "tillverkare", "maerke", "mærke"],
+  price: ["price", "sale_price", "saleprice", "pris", "current_price", "nypris"],
+  regularPrice: [
+    "regular_price",
+    "list_price",
+    "ordinarie_pris",
+    "rrp",
+    "gammelpris",
+    "glpris",
+    "foerpris",
+  ],
+  shipping: [
+    "shipping_price",
+    "shipping",
+    "delivery_cost",
+    "frakt",
+    "fragt",
+    "fragtomk",
+  ],
   currency: ["currency", "valuta"],
-  availability: ["availability", "in_stock", "instock", "stock_status", "lagerstatus"],
-  stockCount: ["stock_quantity", "quantity", "antal", "stock"],
-  url: ["aw_deep_link", "deep_link", "tracking_url", "product_url", "url", "link"],
-  image: ["image_url", "merchant_image_url", "aw_image_url", "image", "bild"],
-  category: ["category", "merchant_category", "kategori", "product_type"],
+  availability: [
+    "availability",
+    "in_stock",
+    "instock",
+    "stock_status",
+    "lagerstatus",
+  ],
+  stockCount: ["stock_quantity", "quantity", "antal", "stock", "lagerantal"],
+  url: [
+    "aw_deep_link",
+    "deep_link",
+    "tracking_url",
+    "product_url",
+    "vareurl",
+    "url",
+    "link",
+  ],
+  image: [
+    "image_url",
+    "merchant_image_url",
+    "aw_image_url",
+    "billedurl",
+    "image",
+    "bild",
+  ],
+  category: [
+    "category",
+    "merchant_category",
+    "kategorinavn",
+    "kategori",
+    "product_type",
+  ],
 };
 
 const IN_STOCK_VALUES = new Set([
@@ -171,6 +224,151 @@ const resolveAvailability = (raw, stockCount) => {
   return "unknown";
 };
 
+/*
+ * Läser början av en ström och lämnar tillbaka den hel.
+ *
+ * Formatet avgörs av första tecknet, men strömmen får inte förbrukas av
+ * att man tittar. Det lästa läggs tillbaka först i en ny ström, så den
+ * som läser efteråt ser allt från början.
+ */
+const peek = async (stream, bytes) => {
+  let head = "";
+  const chunks = [];
+  for await (const chunk of stream) {
+    chunks.push(chunk);
+    head += chunk.toString("utf8");
+    if (head.length >= bytes) break;
+  }
+  const rest = Readable.from(
+    (async function* () {
+      for (const chunk of chunks) yield chunk;
+      for await (const chunk of stream) yield chunk;
+    })(),
+  );
+  return [head, rest];
+};
+
+/* ------------------------------------------------------------ XML ---- */
+
+/*
+ * Partner-ads levererar XML, inte avgränsad text.
+ *
+ * Läsaren nedan klarade bara CSV, så ett Partner-ads-flöde hade gett noll
+ * rader utan att klaga - den hade tagit första raden som rubrikrad, inte
+ * hittat någon kolumn som hette pris, och kastat.
+ *
+ * Ingen XML-parser hämtas in. Ett komplett elektronikflöde är hundratusen
+ * produkter, och varenda färdig parser bygger ett träd av alltihop i
+ * minnet först. Vi behöver en produkt i taget och kastar den direkt, så
+ * här letas <produkt>-block ut ur strömmen medan den rinner förbi.
+ */
+
+/** Elementnamn som brukar omsluta en produkt. Första som hittas vinner. */
+const ITEM_TAGS = ["produkt", "product", "item", "vare"];
+
+const ENTITIES = {
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  nbsp: " ",
+};
+
+const decodeEntities = (text) =>
+  text.replace(/&(#x?[0-9a-f]+|[a-z]+);/gi, (whole, body) => {
+    if (body[0] === "#") {
+      const code = body[1] === "x" || body[1] === "X"
+      ? Number.parseInt(body.slice(2), 16)
+      : Number.parseInt(body.slice(1), 10);
+      return Number.isFinite(code) ? String.fromCodePoint(code) : whole;
+    }
+    const hit = ENTITIES[body.toLowerCase()];
+    return hit === undefined ? whole : hit;
+  });
+
+/*
+ * Ett produktblock till ett enkelt objekt.
+ *
+ * Bara direkta barn med text läses. Attribut och djupare nivåer ignoreras
+ * - inget flöde vi bryr oss om lägger pris eller titel där, och att ta
+ * hand om dem hade krävt en riktig parser.
+ *
+ * CDATA plockas ut som den är. Produktnamn innehåller ofta & och <, och
+ * det är därför butiken lagt dem i CDATA från början.
+ */
+const parseItemBlock = (block) => {
+  const record = {};
+
+  /* Skala av <produkt>-omslaget innan barnen läses. Utan det matchar
+     mönstret nedan omslaget först och hela produkten hamnar som ett enda
+     fält som heter "produkt". */
+  const inner = block
+    .replace(/^\s*<[a-z0-9_:-]+(?:\s[^>]*)?>/i, "")
+    .replace(/<\/[a-z0-9_:-]+\s*>\s*$/i, "");
+
+  const pattern = /<([a-z0-9_:-]+)(?:\s[^>]*)?>([\s\S]*?)<\/\1>/gi;
+  let match;
+  while ((match = pattern.exec(inner)) !== null) {
+    const key = match[1].toLowerCase().replace(/^.*:/, "");
+    let value = match[2];
+    const cdata = value.match(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/);
+    value = cdata ? cdata[1] : decodeEntities(value);
+    /* Första förekomsten vinner. Vissa flöden upprepar element för
+       varianter, och den första är huvudprodukten. */
+    if (record[key] === undefined) record[key] = value.trim();
+  }
+  return record;
+};
+
+/*
+ * Plockar ut ett produktblock i taget ur en ström.
+ *
+ * Bufferten kapas efter varje träff, så minnesanvändningen följer
+ * storleken på en produkt och inte på flödet.
+ */
+async function* streamXmlItems(stream) {
+  let buffer = "";
+  let tag = null;
+
+  for await (const chunk of stream) {
+    buffer += chunk.toString("utf8");
+
+    if (!tag) {
+      for (const candidate of ITEM_TAGS) {
+        if (new RegExp(`<${candidate}[\\s>]`, "i").test(buffer)) {
+          tag = candidate;
+          break;
+        }
+      }
+      /* Ingen känd taggform ännu. Låt bufferten växa, men inte hur
+         långt som helst - då är det inte den sortens XML vi tror. */
+      if (!tag) {
+        if (buffer.length > 262144) {
+          throw new Error(
+            `Hittade inget produktelement i flödet. Väntade något av: ${ITEM_TAGS.join(", ")}.`,
+          );
+        }
+        continue;
+      }
+    }
+
+    const open = new RegExp(`<${tag}(?:\\s[^>]*)?>`, "i");
+    const close = new RegExp(`</${tag}\\s*>`, "i");
+
+    for (;;) {
+      const start = buffer.search(open);
+      if (start === -1) break;
+      const rest = buffer.slice(start);
+      const end = rest.search(close);
+      if (end === -1) break;
+      const closeLength = rest.match(close)[0].length;
+      yield rest.slice(0, end + closeLength);
+      buffer = rest.slice(end + closeLength);
+    }
+  }
+}
+
 /**
  * Läser ett flöde och anropar onRow för varje produktrad.
  *
@@ -183,7 +381,7 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
 
   const response = await fetch(url, {
     headers: {
-      Accept: "text/csv,text/plain,application/gzip,*/*",
+      Accept: "text/csv,text/xml,application/xml,text/plain,application/gzip,*/*",
       "User-Agent": process.env.PRICING_USER_AGENT || "DatorHuset-PriceBot/1.0 (+https://datorhuset.se)",
     },
     signal: AbortSignal.timeout(timeoutMs),
@@ -195,40 +393,35 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
     throw error;
   }
 
-  // Många nätverk levererar .csv.gz för att spara bandbredd.
+  /*
+   * Många nätverk levererar .csv.gz eller .xml.gz för att spara bandbredd.
+   *
+   * Content-Encoding står med flit INTE här. Det är transportkomprimering
+   * och fetch packar upp den åt oss innan vi ser kroppen - packar vi upp en
+   * gång till får vi "incorrect header check" och flödet dör.
+   *
+   * Content-Type: application/gzip är något annat: då ÄR innehållet en
+   * gzip-fil, och den måste vi öppna själva.
+   */
   const isGzip =
-    url.endsWith(".gz") ||
-    (response.headers.get("content-type") || "").includes("gzip") ||
-    (response.headers.get("content-encoding") || "").includes("gzip");
+    url.endsWith(".gz") || (response.headers.get("content-type") || "").includes("gzip");
 
   let stream = Readable.fromWeb(response.body);
   if (isGzip) stream = stream.pipe(createGunzip());
 
-  const lines = createInterface({ input: stream, crlfDelay: Infinity });
-
-  let fieldMap = null;
-  let delimiter = ",";
   let total = 0;
   let accepted = 0;
   let skipped = 0;
 
-  for await (const line of lines) {
-    if (!line.trim()) continue;
-
-    if (fieldMap === null) {
-      delimiter = detectDelimiter(line);
-      fieldMap = buildFieldMap(parseDelimited(line, delimiter), fieldOverrides);
-      if (fieldMap.title === undefined || fieldMap.price === undefined) {
-        throw new Error(
-          `Flödet för ${storeId} saknar kolumn för titel eller pris. Hittade: ${Object.keys(fieldMap).join(", ") || "inga"}`,
-        );
-      }
-      continue;
-    }
-
+  /*
+   * En produkt, oavsett format.
+   *
+   * cell(field) svarar på samma frågor vare sig värdet kom ur en
+   * CSV-cell eller ett XML-element. Allt nedanför den här punkten var
+   * skrivet en gång för CSV och behövde inte skrivas om.
+   */
+  const handleRecord = async (cell) => {
     total++;
-    const cells = parseDelimited(line, delimiter);
-    const cell = (field) => (fieldMap[field] === undefined ? null : cells[fieldMap[field]] ?? null);
 
     // Ett elektronikflöde innehåller allt från diskmaskiner till kablar.
     // Filtrera tidigt så vi slipper matcha mot hundratusentals irrelevanta rader.
@@ -237,7 +430,7 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
       const title = String(cell("title") ?? "").toLowerCase();
       if (!categoryFilter.test(category) && !categoryFilter.test(title)) {
         skipped++;
-        continue;
+        return;
       }
     }
 
@@ -246,7 +439,7 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
     const title = cell("title");
     if (priceCents === null || !productUrl || !title) {
       skipped++;
-      continue;
+      return;
     }
 
     const shippingCents = toCents(cell("shipping"));
@@ -270,6 +463,67 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
       mpn: cell("mpn"),
       brand: cell("brand"),
     });
+  };
+
+  /*
+   * Formatet avgörs av innehållet, inte av filändelsen.
+   *
+   * En flödeslänk från ett nätverk slutar ofta på .php eller bär bara en
+   * nyckel i frågesträngen, så namnet säger ingenting. Första tecknet
+   * som inte är blanksteg gör det: < betyder XML.
+   */
+  const [head, rest] = await peek(stream, 4096);
+  const isXml = head.trimStart().startsWith("<");
+
+  if (isXml) {
+    let checked = false;
+
+    for await (const block of streamXmlItems(rest)) {
+      const record = parseItemBlock(block);
+      const names = Object.keys(record);
+      /* Kartan byggs per produkt, inte en gång. Valfria element utelämnas
+         ibland, och en karta låst till den första produkten hade då tappat
+         fält på alla följande. Femton alias-uppslag per rad kostar inget
+         mot hämtningen och databasskrivningen. */
+      const fieldMap = buildFieldMap(names, fieldOverrides);
+
+      if (!checked) {
+        checked = true;
+        if (fieldMap.title === undefined || fieldMap.price === undefined) {
+          throw new Error(
+            `Flödet för ${storeId} saknar element för titel eller pris. Hittade: ${names.join(", ") || "inga"}`,
+          );
+        }
+      }
+
+      await handleRecord((field) =>
+        fieldMap[field] === undefined ? null : record[names[fieldMap[field]]] ?? null,
+      );
+    }
+  } else {
+    const lines = createInterface({ input: rest, crlfDelay: Infinity });
+    let fieldMap = null;
+    let delimiter = ",";
+
+    for await (const line of lines) {
+      if (!line.trim()) continue;
+
+      if (fieldMap === null) {
+        delimiter = detectDelimiter(line);
+        fieldMap = buildFieldMap(parseDelimited(line, delimiter), fieldOverrides);
+        if (fieldMap.title === undefined || fieldMap.price === undefined) {
+          throw new Error(
+            `Flödet för ${storeId} saknar kolumn för titel eller pris. Hittade: ${Object.keys(fieldMap).join(", ") || "inga"}`,
+          );
+        }
+        continue;
+      }
+
+      const cells = parseDelimited(line, delimiter);
+      await handleRecord((field) =>
+        fieldMap[field] === undefined ? null : cells[fieldMap[field]] ?? null,
+      );
+    }
   }
 
   return { total, accepted, skipped };
