@@ -34,6 +34,22 @@ const API_CONCURRENCY = Math.max(1, Number(process.env.PRICING_API_CONCURRENCY |
 /** Paus mellan omgångar, så vi inte hamrar någons API. */
 const API_BATCH_PAUSE_MS = Math.max(0, Number(process.env.PRICING_API_PAUSE_MS || 400));
 
+/*
+ * Hur länge ett flöde får ta att hämta och läsa.
+ *
+ * Proshops flöde är 274 MB. Läst från disk tar det fem sekunder, men över
+ * internet tog det mer än de 120 sekunder som var standard - hämtningen
+ * avbröts mitt i, och bara de produkter som hunnit läsas kom med.
+ *
+ * Det märks inte som ett fel i prislistan, bara som färre priser än det
+ * borde vara, vilket är den sortens sak ingen letar efter. Tio minuter
+ * räcker med marginal även på en långsam uppkoppling.
+ */
+const FEED_TIMEOUT_MS = Math.max(
+  60_000,
+  Number(process.env.PRICING_FEED_TIMEOUT_MS || 600_000),
+);
+
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
@@ -73,6 +89,7 @@ export const getFeedConfigs = () => {
 const ingestFeed = async (config, items, identities, candidatesByItem) => {
   let matched = 0;
   const stats = await streamFeed(config, async (row) => {
+    /* Tidsgränsen sätts nedanför slingan, se FEED_TIMEOUT_MS. */
     for (const item of items) {
       const identity = identities.get(item.id);
       const result = matchOffer(identity, item, row);
@@ -88,7 +105,7 @@ const ingestFeed = async (config, items, identities, candidatesByItem) => {
       // En flödesrad hör till exakt en katalogprodukt.
       break;
     }
-  });
+  }, { timeoutMs: FEED_TIMEOUT_MS });
   return { ...stats, matched };
 };
 
