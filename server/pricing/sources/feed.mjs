@@ -528,6 +528,12 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
         skipped++;
         return;
       }
+      /* Kategorin vinner över titeln. En rad som butiken själv lagt under
+         mobiltillbehör är det, hur mycket ordet "case" än står i den. */
+      if (NON_COMPONENT_FILTER.test(category)) {
+        skipped++;
+        return;
+      }
     }
 
     const priceCents = toCents(cell("price"));
@@ -558,6 +564,11 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
       ean: cell("ean"),
       mpn: cell("mpn"),
       brand: cell("brand"),
+      /* Butikens egen kategori följer med ut. Den används till filtret
+         ovan, men katalogimporten behöver den också för att avgöra om en
+         rad är ett moderkort eller en kylare - titeln ensam räcker inte
+         alltid, och butiken har redan sorterat varan. */
+      feed_category: cell("category") || null,
     });
   };
 
@@ -627,8 +638,28 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
   return { total, accepted, skipped };
 };
 
-/** Bara PC-komponenter - håller matchningsarbetet nere. */
+/*
+ * Bara PC-komponenter - håller matchningsarbetet nere.
+ *
+ * "case" stod här förut och släppte igenom 16 610 mobilskal: Proshops
+ * kategori heter "Mobile Covers Cases". Nästan hälften av det som
+ * räknades som komponenter var alltså skal till telefoner och surfplattor,
+ * och varje sådan rad jämfördes mot hela katalogen vid varje körning.
+ *
+ * Chassin fångas i stället på chassi, kabinett och tower, som är vad både
+ * svenska och engelska flöden faktiskt skriver.
+ */
 export const COMPONENT_CATEGORY_FILTER =
-  /processor|cpu|grafikkort|graphics|gpu|moderkort|motherboard|ram|minne|memory|ssd|nvme|hårddisk|hardisk|storage|chassi|case|nätaggregat|natagg|power supply|psu|kylare|cooler|kylning/i;
+  /processor|cpu|grafikkort|graphics|gpu|moderkort|motherboard|ram|minne|memory|ssd|nvme|hårddisk|hardisk|haarddisk|storage|chassi|kabinett|tower|nätaggregat|natagg|stroemfoers|power supply|psu|kylare|flaekt|cooler|kylning/i;
+
+/*
+ * Kategorier som annars slinker igenom på ett ord i titeln.
+ *
+ * Ett mobilskal heter "Cover til iPhone" och innehåller inget av orden
+ * ovan - men en laddare till en telefon kan heta "USB-C strömförsörjning"
+ * och en väska "Datorväska". Den här fångar dem efteråt.
+ */
+export const NON_COMPONENT_FILTER =
+  /mobil|tablet|surfplatta|telefon|iphone|samsung galaxy|skyddsfilm|vaeska|väska|kameraväska|kameravaeska|gloedlampor|glödlampor|draenering|dränering/i;
 
 export default { streamFeed, parseDelimited, COMPONENT_CATEGORY_FILTER };
