@@ -18,9 +18,11 @@ import { createInterface } from "node:readline";
 /*
  * Kolumn- och elementnamn vi känner igen, i fallande prioritet.
  *
- * Danska namn står med eftersom Partner-ads är ett danskt nätverk och
- * levererar produktnavn, nypris, vareurl och billedurl även i sina
- * svenska flöden.
+ * Både danska och svenska namn står med. Partner-ads är danskt, men
+ * deras svenska flöden använder svenska elementnamn - Proshop skickar
+ * nyttpris och produkturl, inte nypris och vareurl. Skillnaden är en
+ * bokstav på de flesta och hela ordet på ett par, och missar man dem
+ * hittas varken pris eller spårningslänk.
  *
  * produktid och varenummer är med flit INTE mappade till mpn. De är
  * butikens egna löpnummer, inte tillverkarens artikelnummer, och två
@@ -32,10 +34,19 @@ const FIELD_ALIASES = {
   ean: ["ean", "gtin", "gtin13", "ean_code", "eancode", "barcode"],
   mpn: ["mpn", "manufacturer_sku", "model_number", "sku", "part_number", "artnr"],
   brand: ["brand", "manufacturer", "varumarke", "tillverkare", "maerke", "mærke"],
-  price: ["price", "sale_price", "saleprice", "pris", "current_price", "nypris"],
+  price: [
+    "price",
+    "sale_price",
+    "saleprice",
+    "nyttpris",
+    "nypris",
+    "pris",
+    "current_price",
+  ],
   regularPrice: [
     "regular_price",
     "list_price",
+    "ordinariepris",
     "ordinarie_pris",
     "rrp",
     "gammelpris",
@@ -46,9 +57,11 @@ const FIELD_ALIASES = {
     "shipping_price",
     "shipping",
     "delivery_cost",
+    "fraktomkostnader",
     "frakt",
-    "fragt",
+    "fragtomkostninger",
     "fragtomk",
+    "fragt",
   ],
   currency: ["currency", "valuta"],
   availability: [
@@ -63,6 +76,7 @@ const FIELD_ALIASES = {
     "aw_deep_link",
     "deep_link",
     "tracking_url",
+    "produkturl",
     "product_url",
     "vareurl",
     "url",
@@ -72,6 +86,7 @@ const FIELD_ALIASES = {
     "image_url",
     "merchant_image_url",
     "aw_image_url",
+    "bildurl",
     "billedurl",
     "image",
     "bild",
@@ -79,6 +94,7 @@ const FIELD_ALIASES = {
   category: [
     "category",
     "merchant_category",
+    "kategorinamn",
     "kategorinavn",
     "kategori",
     "product_type",
@@ -213,11 +229,24 @@ const toCents = (value) => {
   return Math.round(numeric * 100);
 };
 
+/*
+ * Lagerstatus ur två fält som båda kan innehålla vad som helst.
+ *
+ * Proshop skickar lagerantal som en siffra, Paracon skickar texten
+ * "out of stock" i samma element. Läses antalet bara som tal blir
+ * Paracons hela sortiment okänt i stället för slutsålt, och en slutsåld
+ * vara som inte är märkt slutsåld dyker upp som lägsta pris.
+ *
+ * Därför prövas båda fälten mot ordlistorna först, och siffran sist.
+ */
 const resolveAvailability = (raw, stockCount) => {
-  const value = String(raw ?? "").toLowerCase().trim();
-  if (IN_STOCK_VALUES.has(value)) return "in_stock";
-  if (OUT_OF_STOCK_VALUES.has(value)) return "out_of_stock";
-  if (value.includes("preorder") || value.includes("forhandsbok")) return "preorder";
+  for (const candidate of [raw, stockCount]) {
+    const value = String(candidate ?? "").toLowerCase().trim();
+    if (!value) continue;
+    if (IN_STOCK_VALUES.has(value)) return "in_stock";
+    if (OUT_OF_STOCK_VALUES.has(value)) return "out_of_stock";
+    if (value.includes("preorder") || value.includes("forhandsbok")) return "preorder";
+  }
 
   const count = Number(stockCount);
   if (Number.isFinite(count)) return count > 0 ? "in_stock" : "out_of_stock";
@@ -232,21 +261,88 @@ const resolveAvailability = (raw, stockCount) => {
  * som läser efteråt ser allt från början.
  */
 const peek = async (stream, bytes) => {
-  let head = "";
+  /*
+   * Iteratorn styrs för hand i stället för med for await.
+   *
+   * Ett break ur en for await-slinga anropar return() på iteratorn, och
+   * det förstör strömmen under oss - resten av flödet kom aldrig fram och
+   * hämtningen avbröts med "The operation was aborted". Så länge vi bara
+   * anropar next() lever strömmen vidare.
+   */
+  const iterator = stream[Symbol.asyncIterator]();
   const chunks = [];
-  for await (const chunk of stream) {
-    chunks.push(chunk);
-    head += chunk.toString("utf8");
-    if (head.length >= bytes) break;
+  let size = 0;
+
+  while (size < bytes) {
+    const { value, done } = await iterator.next();
+    if (done) break;
+    chunks.push(value);
+    size += value.length;
   }
+
+  /* latin1 mappar varje byte till ett tecken och kan aldrig kasta. Det
+     som ska läsas ur huvudet - xml-deklarationen och första tecknet -
+     är ren ASCII, så det duger för att avgöra format och teckenkodning
+     innan vi vet vilken kodningen är. */
+  const head = Buffer.concat(chunks).toString("latin1");
+
   const rest = Readable.from(
     (async function* () {
       for (const chunk of chunks) yield chunk;
-      for await (const chunk of stream) yield chunk;
+      for (;;) {
+        const { value, done } = await iterator.next();
+        if (done) return;
+        yield value;
+      }
     })(),
   );
   return [head, rest];
 };
+
+/*
+ * Vilken teckenkodning har flödet?
+ *
+ * Proshops och Paracons XML är iso-8859-1, vilket står i deras
+ * xml-deklaration. Läses den som UTF-8 blir varje å, ä och ö ett
+ * ersättningstecken, och produktnamnen blir obrukbara både för
+ * matchningen och för kunden.
+ *
+ * Ordningen är deklarationen först, sedan http-huvudet. Filen vet bäst
+ * vad den innehåller; servern gissar ibland utifrån filändelsen.
+ */
+const detectCharset = (head, contentType) => {
+  const declared = head.match(/<\?xml[^>]*encoding=["']([\w-]+)["']/i);
+  if (declared) return declared[1].toLowerCase();
+
+  const fromHeader = String(contentType || "").match(/charset=([\w-]+)/i);
+  if (fromHeader) return fromHeader[1].toLowerCase();
+
+  return "utf-8";
+};
+
+/*
+ * Byteström till teckenström.
+ *
+ * TextDecoder med stream: true behövs även för UTF-8. En hämtning delar
+ * strömmen var 64:e kilobyte utan att bry sig om var tecknen börjar, och
+ * chunk.toString() på en bit som slutar mitt i ett å ger ett
+ * ersättningstecken i båda halvorna. Avkodaren håller reda på den
+ * halva byten över chunk-gränsen.
+ */
+async function* decodeStream(stream, charset) {
+  let decoder;
+  try {
+    decoder = new TextDecoder(charset);
+  } catch {
+    /* Okänt namn på kodningen. Hellre UTF-8 än att avbryta hämtningen. */
+    decoder = new TextDecoder("utf-8");
+  }
+  for await (const chunk of stream) {
+    yield decoder.decode(chunk, { stream: true });
+  }
+  const tail = decoder.decode();
+  if (tail) yield tail;
+}
 
 /* ------------------------------------------------------------ XML ---- */
 
@@ -327,12 +423,12 @@ const parseItemBlock = (block) => {
  * Bufferten kapas efter varje träff, så minnesanvändningen följer
  * storleken på en produkt och inte på flödet.
  */
-async function* streamXmlItems(stream) {
+async function* streamXmlItems(chunks) {
   let buffer = "";
   let tag = null;
 
-  for await (const chunk of stream) {
-    buffer += chunk.toString("utf8");
+  for await (const chunk of chunks) {
+    buffer += chunk;
 
     if (!tag) {
       for (const candidate of ITEM_TAGS) {
@@ -474,11 +570,13 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
    */
   const [head, rest] = await peek(stream, 4096);
   const isXml = head.trimStart().startsWith("<");
+  const charset = detectCharset(head, response.headers.get("content-type"));
+  const text = decodeStream(rest, charset);
 
   if (isXml) {
     let checked = false;
 
-    for await (const block of streamXmlItems(rest)) {
+    for await (const block of streamXmlItems(text)) {
       const record = parseItemBlock(block);
       const names = Object.keys(record);
       /* Kartan byggs per produkt, inte en gång. Valfria element utelämnas
@@ -501,7 +599,7 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
       );
     }
   } else {
-    const lines = createInterface({ input: rest, crlfDelay: Infinity });
+    const lines = createInterface({ input: Readable.from(text), crlfDelay: Infinity });
     let fieldMap = null;
     let delimiter = ",";
 
