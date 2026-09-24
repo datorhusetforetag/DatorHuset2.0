@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { productPath, productSlug } from "@/lib/productUrl";
+import { SHIPPING_COST_CENTS } from "../../shared/checkoutMath.js";
 import { Link, useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { SeoHead } from "@/components/SeoHead";
@@ -818,6 +819,45 @@ export default function ComputerDetails() {
         price: displayPrice,
         availability: availability.schema,
         url: `${baseUrl}${productPath(resolvedComputer)}`,
+
+        /*
+         * Retur och frakt, som Google efterfrågar i Merchant listings.
+         *
+         * Båda var giltiga utan dem - rapporten listade dem under "Improve
+         * item appearance", inte som fel - men utan dem visas varken
+         * fraktkostnad eller returvillkor i sökresultatet. Det är den
+         * sortens uppgift kunden annars måste klicka sig in för att hitta.
+         *
+         * SIFFRORNA MÅSTE STÄMMA MED SIDAN
+         *
+         * Google jämför strukturdatan med vad som faktiskt står i kassan
+         * och i villkoren, och straffar avvikelser. Därför hämtas frakten
+         * ur shared/checkoutMath.js i stället för att skrivas in här -
+         * ändras priset i kassan följer sökresultatet med av sig självt.
+         *
+         * De fjorton dagarna och att kunden betalar returfrakten står i
+         * ReturnPolicy.tsx. Ändras något där ska det ändras här också.
+         */
+        hasMerchantReturnPolicy: {
+          "@type": "MerchantReturnPolicy",
+          applicableCountry: "SE",
+          returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+          merchantReturnDays: 14,
+          returnMethod: "https://schema.org/ReturnByMail",
+          returnFees: "https://schema.org/ReturnShippingFees",
+        },
+        shippingDetails: {
+          "@type": "OfferShippingDetails",
+          shippingRate: {
+            "@type": "MonetaryAmount",
+            value: SHIPPING_COST_CENTS / 100,
+            currency: "SEK",
+          },
+          shippingDestination: {
+            "@type": "DefinedRegion",
+            addressCountry: "SE",
+          },
+        },
       },
     };
     const breadcrumbSchema = {
