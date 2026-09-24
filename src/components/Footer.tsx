@@ -134,7 +134,7 @@ export const Footer = () => {
               INGEN FÖRETAGSFORM STÅR HÄR
 
               Det stod "DatorHuset UF · Org.nr XXXXXX-XXXX" fram till
-              nu. UF-företaget avslutades i juni 2026, och ett
+              nu. UF-företaget drevs oktober 2025 till maj 2026, och ett
               organisationsnummer har aldrig funnits - ett UF-företag
               får inget. Kvar står den som faktiskt är avtalspart.
 
