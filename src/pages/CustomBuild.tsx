@@ -723,6 +723,25 @@ type SortKey =
   | "wattage"
   | "coolingType";
 
+/*
+ * De tre sorteringarna som alltid finns, alltid först, alltid på samma
+ * plats oavsett kategori.
+ *
+ * "exact" betyder att knappen både sätter och visar en bestämd riktning.
+ * Billigast och Dyrast delar nyckeln "price" och skiljs bara av
+ * riktningen - utan flaggan hade båda lyst upp samtidigt, och den gamla
+ * knappen "Lägsta pris" såg aktiv ut även när listan låg dyrast först.
+ *
+ * Ligger utanför komponenten med flit. Som en konstant inne i renderen
+ * blev den ett nytt objekt varje gång, och knappradens useMemo kunde
+ * aldrig återanvända något.
+ */
+const PRIMARY_SORTS = [
+  { key: "popularity" as SortKey, label: "Populärast", direction: "desc" as SortDirection, exact: true },
+  { key: "price" as SortKey, label: "Billigast", direction: "asc" as SortDirection, exact: true },
+  { key: "price" as SortKey, label: "Dyrast", direction: "desc" as SortDirection, exact: true },
+];
+
 const CPU_VENDOR_CARD_OPTIONS = ["Alla", "AMD", "Intel"];
 const CPU_PERFORMANCE_OPTIONS = ["Kontor / Media", "Gaming", "Entusiast"];
 const CPU_MODEL_OPTIONS = [
@@ -3915,13 +3934,26 @@ export default function CustomBuild() {
     cpu: { key: "popularity", direction: "desc" },
     gpu: { key: "popularity", direction: "desc" },
     motherboard: { key: "popularity", direction: "desc" },
-    ram: { key: "price", direction: "asc" },
-    storage: { key: "price", direction: "asc" },
-    case: { key: "price", direction: "asc" },
-    psu: { key: "price", direction: "asc" },
-    cooling: { key: "price", direction: "asc" },
-    chassifan: { key: "price", direction: "asc" },
-    networkcard: { key: "price", direction: "asc" },
+    /*
+     * Alla tio öppnar på populärast, inte på billigast.
+     *
+     * Fem av dem öppnade förut på lägsta pris. Det var ofarligt när
+     * minneskategorin hade trettiofem poster och är det inte när den har
+     * tusen: det första en kund såg var en fyra gigabyte DDR4-sticka för
+     * några hundralappar, och chassilistan började på det billigaste
+     * plåtskal Proshop säljer.
+     *
+     * Populärast sorterar på listans egen ordning, och där ligger de
+     * handplockade först. Tills taggen finns är det den enda kurering
+     * som når kunden.
+     */
+    ram: { key: "popularity", direction: "desc" },
+    storage: { key: "popularity", direction: "desc" },
+    case: { key: "popularity", direction: "desc" },
+    psu: { key: "popularity", direction: "desc" },
+    cooling: { key: "popularity", direction: "desc" },
+    chassifan: { key: "popularity", direction: "desc" },
+    networkcard: { key: "popularity", direction: "desc" },
   });
   const [cpuPerformanceFilters, setCpuPerformanceFilters] = useState<string[]>([]);
   const [cpuModelFilters, setCpuModelFilters] = useState<string[]>([]);
@@ -4474,6 +4506,19 @@ export default function CustomBuild() {
     setter((prev) => (prev.includes(value) ? prev.filter((entry) => entry !== value) : [...prev, value]));
   };
 
+  /*
+   * Sätter sorteringen rakt av, utan att vända på den.
+   *
+   * De tre huvudknapparna säger vad de gör - Populärast, Billigast,
+   * Dyrast - och måste därför landa på exakt den ordningen varje gång.
+   * Med toggleSortForCategory hade ett klick på "Billigast" när
+   * billigast redan var valt vänt listan till dyrast, under en knapp som
+   * fortfarande sa Billigast.
+   */
+  const setSortForCategory = (key: SortKey, direction: SortDirection) => {
+    setTableSortByCategory((prev) => ({ ...prev, [activeCategory]: { key, direction } }));
+  };
+
   const toggleSortForCategory = (key: SortKey, defaultDirection: SortDirection = "desc") => {
     setTableSortByCategory((prev) => {
       const current = prev[activeCategory];
@@ -4880,60 +4925,49 @@ export default function CustomBuild() {
   const visibleItems = useMemo(() => sortedItems.slice(0, visibleCount), [sortedItems, visibleCount]);
   const hiddenItemCount = sortedItems.length - visibleItems.length;
 
-  const tableSortButtons = useMemo(() => {
+  /* Kategorins egna mått. De vänder vid upprepat klick och visar pil. */
+  const categorySortButtons = useMemo(() => {
     switch (activeCategory) {
       case "cpu":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "speed" as SortKey, label: "Hastighet", direction: "desc" as SortDirection },
           { key: "cores" as SortKey, label: "Kärnor", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       case "motherboard":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "chipset" as SortKey, label: "Chipset", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       case "gpu":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "vram" as SortKey, label: "Minne", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       case "ram":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "ramSpeed" as SortKey, label: "Hastighet", direction: "desc" as SortDirection },
           { key: "ramCl" as SortKey, label: "CL", direction: "asc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       case "storage":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "read" as SortKey, label: "Läs", direction: "desc" as SortDirection },
           { key: "write" as SortKey, label: "Skriv", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       case "psu":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "wattage" as SortKey, label: "Effekt", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       case "cooling":
         return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
           { key: "coolingType" as SortKey, label: "Typ", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
         ];
       default:
-        return [
-          { key: "popularity" as SortKey, label: "Populär", direction: "desc" as SortDirection },
-          { key: "price" as SortKey, label: "Lägsta pris", direction: "asc" as SortDirection },
-        ];
+        return [];
     }
   }, [activeCategory]);
+
+  const tableSortButtons = useMemo(
+    () => [...PRIMARY_SORTS, ...categorySortButtons],
+    [categorySortButtons],
+  );
 
   /*
    * En rad i vänsterlistan.
@@ -5897,13 +5931,29 @@ export default function CustomBuild() {
 
                   <div className="mt-5 grid gap-2 border-b border-foreground/10 pb-4 dark:border-foreground/10 sm:grid-cols-2 xl:grid-cols-4">
                     {tableSortButtons.map((sortButton) => {
-                      const isActive = activeSort?.key === sortButton.key;
-                      const arrow = isActive ? (activeSort.direction === "asc" ? "↑" : "↓") : "↕";
+                      /*
+                       * Huvudknapparna jämförs på både nyckel och riktning.
+                       *
+                       * Billigast och Dyrast delar nyckeln "price" och skiljs
+                       * bara av riktningen. Ett prov på enbart nyckeln hade
+                       * tänt båda samtidigt, och den gamla knappen "Lägsta
+                       * pris" såg aktiv ut även när listan låg dyrast först.
+                       */
+                      const exact = "exact" in sortButton && sortButton.exact;
+                      const isActive = exact
+                        ? activeSort?.key === sortButton.key && activeSort?.direction === sortButton.direction
+                        : activeSort?.key === sortButton.key;
+                      /* Pil bara där riktningen går att vända. */
+                      const arrow = exact ? null : isActive ? (activeSort.direction === "asc" ? "↑" : "↓") : "↕";
                       return (
                         <button
-                          key={`${activeCategory}-${sortButton.key}`}
+                          key={`${activeCategory}-${sortButton.key}-${sortButton.direction}`}
                           type="button"
-                          onClick={() => toggleSortForCategory(sortButton.key, sortButton.direction)}
+                          onClick={() =>
+                            exact
+                              ? setSortForCategory(sortButton.key, sortButton.direction)
+                              : toggleSortForCategory(sortButton.key, sortButton.direction)
+                          }
                           className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
                             isActive
                               ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
@@ -5912,7 +5962,7 @@ export default function CustomBuild() {
                         >
                           <span className="flex items-center justify-between gap-3">
                             <span>{sortButton.label}</span>
-                            <span>{arrow}</span>
+                            {arrow ? <span>{arrow}</span> : null}
                           </span>
                         </button>
                       );

@@ -13,8 +13,10 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
  * hänvisning om sådan finns]". Det fanns alltså ingen policy alls,
  * vilket dataskyddsförordningen artikel 13 kräver att det gör.
  *
- * Texten nedan är skriven mot GDPR och svensk rätt, men postadressen
- * måste fyllas i innan den stämmer. Den står som [gatuadress].
+ * Texten nedan är skriven mot GDPR och svensk rätt. Postadressen är
+ * densamma som i sidfoten, och måste förbli det - dataskyddsförordningen
+ * artikel 13 kräver att den registrerade kan nå den ansvarige, och två
+ * olika adresser på samma sajt gör det oklart vilken som gäller.
  *
  * Personuppgiftsansvarig är en fysisk person, inte ett bolag. Det är
  * korrekt så länge ingen registrering finns - ansvaret ligger hos den
@@ -33,7 +35,7 @@ Senast uppdaterad: 2026-09-22
 
 DatorHuset drivs av Sahran Rahman, som är personuppgiftsansvarig för de uppgifter som behandlas när du använder vår webbplats eller handlar hos oss. Det betyder att det är han som bestämmer varför och hur uppgifterna används, och att det är dit du vänder dig med frågor.
 
-        Postadress: [gatuadress], Spånga, Stockholm
+        Postadress: Visbyringen 22, 163 73 Spånga
         E-post: support@datorhuset.se
 
 Har du en fråga om dina uppgifter räcker det att mejla oss. Du behöver inte uppge något skäl.

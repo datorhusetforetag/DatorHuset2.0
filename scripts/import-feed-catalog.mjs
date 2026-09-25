@@ -604,6 +604,25 @@ const handleRow = (row) => {
     return;
   }
 
+  /*
+   * Ingen bild, ingen plats i katalogen.
+   *
+   * Proshop lämnar bildfältet tomt på ett fyrtiotal rader, mest OEM-varor
+   * från Lenovo och Dell som aldrig haft en produktbild. Konfiguratorn
+   * faller då tillbaka på kategoribilden, så minnet får en bild på en
+   * annan modell och chassit en bild på ett annat chassi.
+   *
+   * En rad med fel bild är värre än en rad som inte finns: kunden tror
+   * att hon vet vad hon väljer. 45 av 6 371 är ett billigt pris för att
+   * slippa det.
+   */
+  if (!row.image_url) {
+    const label = `${key}: ingen bild i flödet`;
+    rejects[label] = (rejects[label] || 0) + 1;
+    review.push({ title: row.title, feedCategory, category: key, reason: "ingen bild", url: row.product_url });
+    return;
+  }
+
   const price = Math.round(row.price_cents / 100);
   const sanity = PRICE_SANITY[key];
   if (sanity?.maxPrice && price > sanity.maxPrice) {

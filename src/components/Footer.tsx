@@ -142,11 +142,12 @@ export const Footer = () => {
               och adress krävs alltid, och namnet här måste vara samma
               som i köpvillkoren och integritetspolicyn.
 
-              Gatuadressen måste fortfarande fyllas i. */}
+              Adressen står ordagrant likadan i integritetspolicyn.
+              Ändras den ena ska den andra ändras i samma veva. */}
           <div className="text-sm text-[#A99FC0]">
             <p>{footer.copyright}</p>
             <p className="mt-1 text-xs">
-              DatorHuset · Sahran Rahman · [gatuadress], Spånga, Stockholm ·{" "}
+              DatorHuset · Sahran Rahman · Visbyringen 22, 163 73 Spånga ·{" "}
               <a href="mailto:support@datorhuset.se" className="hover:text-white">
                 support@datorhuset.se
               </a>

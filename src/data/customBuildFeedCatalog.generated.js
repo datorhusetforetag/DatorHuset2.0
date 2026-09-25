@@ -24417,20 +24417,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-case-dutzoc322pwmmesh",
-    "category": "case",
-    "name": "DUTZO C322 PWM Mesh - Chassi - Miditower - Svart",
-    "brand": "DUTZO",
-    "price": 399,
-    "ean": null,
-    "specs": [
-      "Miditower"
-    ],
-    "details": {
-      "Formfaktor": "Miditower"
-    }
-  },
-  {
     "id": "feed-gpu-4719331357337",
     "category": "gpu",
     "name": "GIGABYTE GeForce RTX 5090 AORUS INFINITY - 32GB GDDR7 RAM - Grafikkort",
@@ -30772,22 +30758,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-kingstondesignin",
-    "category": "storage",
-    "name": "Kingston Design-In - SSD - 256 GB - SATA 6Gb/s",
-    "brand": "Kingston",
-    "price": 701,
-    "ean": null,
-    "specs": [
-      "256 GB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "256 GB",
-      "Gränssnitt": "SATA"
-    }
-  },
-  {
     "id": "feed-case-darkflashth285pl",
     "category": "case",
     "name": "Darkflash TH285 Plus (with 8x fans and a IPS screen) - Chassi - Miditower - Svart",
@@ -32041,25 +32011,6 @@ export const FEED_CATALOG_ITEMS = [
       "Storlek": "360 mm",
       "Ljudnivå": "24 dBA"
     }
-  },
-  {
-    "id": "feed-cpu-0675902121865",
-    "category": "cpu",
-    "name": "Intel Xeon E-2434 / 3.4 GHz processor - Box CPU - 4 kärnor - 3.4 GHz - Intel LGA1700 - Intel Boxed (med kylare)",
-    "brand": "Intel",
-    "price": 4665,
-    "ean": "0675902121865",
-    "specs": [
-      "LGA1700",
-      "4 kärnor",
-      "3.4 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "4",
-      "Basfrekvens": "3.4 GHz"
-    },
-    "socket": "LGA1700"
   },
   {
     "id": "feed-case-7340172706557",
@@ -34501,22 +34452,6 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Kapacitet": "256 GB",
-      "Gränssnitt": "SATA"
-    }
-  },
-  {
-    "id": "feed-storage-4719331803711",
-    "category": "storage",
-    "name": "GIGABYTE SSD - 240GB - SATA-600 - 2.5&quot;",
-    "brand": "GIGABYTE",
-    "price": 683,
-    "ean": "4719331803711",
-    "specs": [
-      "240 GB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "240 GB",
       "Gränssnitt": "SATA"
     }
   },
@@ -40382,25 +40317,6 @@ export const FEED_CATALOG_ITEMS = [
       "Ljudnivå": "25 dBA",
       "Belysning": "Ingen"
     }
-  },
-  {
-    "id": "feed-cpu-4251538816953",
-    "category": "cpu",
-    "name": "Intel Core i7 i7-14700T / 1.3 GHz processor - OEM CPU - 20 kärnor - 1.3 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 5895,
-    "ean": "4251538816953",
-    "specs": [
-      "LGA1700",
-      "20 kärnor",
-      "1.3 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "20",
-      "Basfrekvens": "1.3 GHz"
-    },
-    "socket": "LGA1700"
   },
   {
     "id": "feed-case-4711636437189",
@@ -49895,22 +49811,6 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
-    }
-  },
-  {
-    "id": "feed-networkcard-735858552431",
-    "category": "networkcard",
-    "name": "Intel Wi-Fi 7 BE213 - network adapter - M.2 2230 (CNVio3)",
-    "brand": "Intel",
-    "price": 287,
-    "ean": "735858552431",
-    "specs": [
-      "Wi-Fi 7",
-      "M.2"
-    ],
-    "details": {
-      "Fack": "M.2",
-      "Wi-Fi": "7"
     }
   },
   {
@@ -65452,25 +65352,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-cpu-4251538816885",
-    "category": "cpu",
-    "name": "Intel Core i5 i5-14400T / 1.5 GHz processor - OEM CPU - 10 kärnor - 1.5 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 2991,
-    "ean": "4251538816885",
-    "specs": [
-      "LGA1700",
-      "10 kärnor",
-      "1.5 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "10",
-      "Basfrekvens": "1.5 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
     "id": "feed-motherboard-4711387856512",
     "category": "motherboard",
     "name": "ASUS PRO H810M-C-CSM Moderkort - Intel H810 - Intel LGA1851 - DDR5 RAM - Micro-ATX",
@@ -72666,22 +72547,6 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
-    "id": "feed-storage-0889488731619",
-    "category": "storage",
-    "name": "Lenovo ThinkSystem - hard drive - 16 TB - SATA 6Gb/s - 16TB - Hårddisk - 4XB7A93785 - SATA-600 - 3,5&quot;",
-    "brand": "Lenovo",
-    "price": 21682,
-    "ean": "0889488731619",
-    "specs": [
-      "16 TB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "16 TB",
-      "Gränssnitt": "SATA"
-    }
-  },
-  {
     "id": "feed-case-4711377144612",
     "category": "case",
     "name": "MSI MEG MAESTRO 700L PZ - Chassi - Tower - Svart",
@@ -75374,22 +75239,6 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "4710343793915",
     "specs": [],
     "details": {}
-  },
-  {
-    "id": "feed-storage-lenovoharddrive6",
-    "category": "storage",
-    "name": "Lenovo - hard drive - 6 TB - SATA 6Gb/s - 6TB - Hårddisk - 4XB7A77448 - SATA-600 - 3,5&quot;",
-    "brand": "Lenovo",
-    "price": 12530,
-    "ean": null,
-    "specs": [
-      "6 TB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "6 TB",
-      "Gränssnitt": "SATA"
-    }
   },
   {
     "id": "feed-case-886523302377",
@@ -80240,16 +80089,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-case-0761345102766",
-    "category": "case",
-    "name": "Antec C6 Curve Air White - Chassi",
-    "brand": "Antec",
-    "price": 1599,
-    "ean": "0761345102766",
-    "specs": [],
-    "details": {}
-  },
-  {
     "id": "feed-psu-4262443280333",
     "category": "psu",
     "name": "LC Power Integrator Series LC700SIV 2.31 Strömförsörjning - 700 Watt - 140 mm - ATX 2.31 - 80 Plus White certificate (upp till 80% effektivitet)",
@@ -83656,22 +83495,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-0889488731633",
-    "category": "storage",
-    "name": "Lenovo - hard drive - 12 TB - 512e v2 - SATA 6Gb/s - 12TB - Hårddisk - 4XB7A93787 - SATA-600 - 3,5&quot;",
-    "brand": "Lenovo",
-    "price": 19189,
-    "ean": "0889488731633",
-    "specs": [
-      "12 TB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "12 TB",
-      "Gränssnitt": "SATA"
-    }
-  },
-  {
     "id": "feed-case-4711475644212",
     "category": "case",
     "name": "Thermaltake View 270 Plus TG ARGB - Chassi - Tower - Blå",
@@ -84963,25 +84786,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-cpu-intelcorei5i5145",
-    "category": "cpu",
-    "name": "Intel Core i5 i5-14500T / 1.7 GHz processor - OEM CPU - 14 kärnor - 1.7 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 4780,
-    "ean": null,
-    "specs": [
-      "LGA1700",
-      "14 kärnor",
-      "1.7 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "14",
-      "Basfrekvens": "1.7 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
     "id": "feed-cooling-4711387624449",
     "category": "cooling",
     "name": "ASUS PRIME LC 240 ARGB - CPU Vattenkylare - Max 34 dBA",
@@ -85269,40 +85073,6 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "4.5 GHz"
     },
     "socket": "AM5"
-  },
-  {
-    "id": "feed-gpu-5397184923658",
-    "category": "gpu",
-    "name": "Dell RTX 5000 Ada - 32GB GDDR6 RAM - Grafikkort",
-    "brand": "Dell",
-    "price": 70623,
-    "ean": "5397184923658",
-    "specs": [
-      "RTX 5000",
-      "32 GB"
-    ],
-    "details": {
-      "Krets": "RTX 5000",
-      "Minne": "32 GB"
-    },
-    "gpuModel": "Dell RTX 5000 Ada - 32GB GDDR6 RAM - Grafikkort"
-  },
-  {
-    "id": "feed-gpu-5397184923665",
-    "category": "gpu",
-    "name": "Dell RTX 6000 Ada - 48GB GDDR6 RAM - Grafikkort",
-    "brand": "Dell",
-    "price": 129544,
-    "ean": "5397184923665",
-    "specs": [
-      "RTX 6000",
-      "48 GB"
-    ],
-    "details": {
-      "Krets": "RTX 6000",
-      "Minne": "48 GB"
-    },
-    "gpuModel": "Dell RTX 6000 Ada - 48GB GDDR6 RAM - Grafikkort"
   },
   {
     "id": "feed-cooling-4718466015761",
@@ -86011,35 +85781,6 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
-    }
-  },
-  {
-    "id": "feed-storage-nutanixharddrive",
-    "category": "storage",
-    "name": "Nutanix - hard drive - 8 TB - Upgrade - 8TB - Hårddisk - U-HDD-8TB-BA-CM - 3,5&quot;",
-    "brand": "Nutanix",
-    "price": 4402,
-    "ean": null,
-    "specs": [
-      "8 TB"
-    ],
-    "details": {
-      "Kapacitet": "8 TB"
-    }
-  },
-  {
-    "id": "feed-chassifan-nutanixcasefanch",
-    "category": "chassifan",
-    "name": "Nutanix - case fan - Chassi fläkt - 80mm",
-    "brand": "Nutanix",
-    "price": 1127,
-    "ean": null,
-    "specs": [
-      "80 mm"
-    ],
-    "details": {
-      "Storlek": "80 mm",
-      "Belysning": "Ingen"
     }
   },
   {
@@ -92436,25 +92177,6 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
-    "id": "feed-ram-5715063685945",
-    "category": "ram",
-    "name": "Hewlett Packard Enterprise HPE Standard Memory - DDR5 - module - 32 GB - DIMM 288-pin - 4800 MHz / PC5-38400 - unbuffered",
-    "brand": "Hewlett Packard Enterprise",
-    "price": 25803,
-    "ean": "5715063685945",
-    "specs": [
-      "32 GB",
-      "DDR5",
-      "4800 MHz"
-    ],
-    "details": {
-      "Typ": "DDR5",
-      "Storlek": "32 GB",
-      "Hastighet": "4800 MHz"
-    },
-    "ramType": "DDR5"
-  },
-  {
     "id": "feed-ram-0765441777767",
     "category": "ram",
     "name": "Team Group T-FORCE Vulcan - DDR5 - module - 16 GB - DIMM 288-pin - 6000 MHz / PC5-48000 - unbuffered",
@@ -92473,55 +92195,6 @@ export const FEED_CATALOG_ITEMS = [
       "Hastighet": "6000 MHz"
     },
     "ramType": "DDR5"
-  },
-  {
-    "id": "feed-storage-0889488712496",
-    "category": "storage",
-    "name": "Lenovo - SSD - Read Intensive - 960 GB - SATA 6Gb/s",
-    "brand": "Lenovo",
-    "price": 13892,
-    "ean": "0889488712496",
-    "specs": [
-      "960 GB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "960 GB",
-      "Gränssnitt": "SATA"
-    }
-  },
-  {
-    "id": "feed-ram-0814914026861",
-    "category": "ram",
-    "name": "Patriot Signature Line - DDR4 - module - 32 GB - DIMM 288-pin / PC4-21300 - unbuffered",
-    "brand": "Patriot",
-    "price": 4808,
-    "ean": "0814914026861",
-    "specs": [
-      "32 GB",
-      "DDR4"
-    ],
-    "details": {
-      "Typ": "DDR4",
-      "Storlek": "32 GB"
-    },
-    "ramType": "DDR4"
-  },
-  {
-    "id": "feed-storage-4065221982258",
-    "category": "storage",
-    "name": "Fujitsu Micron - SSD - 480 GB - boot drive - SATA 6Gb/s",
-    "brand": "Fujitsu",
-    "price": 24044,
-    "ean": "4065221982258",
-    "specs": [
-      "480 GB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "480 GB",
-      "Gränssnitt": "SATA"
-    }
   },
   {
     "id": "feed-ram-0760557872504",
@@ -92732,35 +92405,6 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
-    "id": "feed-case-4044951030422",
-    "category": "case",
-    "name": "Sharkoon Elite Shark CA300H - Chassi",
-    "brand": "Sharkoon",
-    "price": 2553,
-    "ean": "4044951030422",
-    "specs": [],
-    "details": {}
-  },
-  {
-    "id": "feed-cpu-4251538816984",
-    "category": "cpu",
-    "name": "Intel Core i9 i9-14900T / 1.1 GHz processor - OEM CPU - 24 kärnor - 1.1 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 9324,
-    "ean": "4251538816984",
-    "specs": [
-      "LGA1700",
-      "24 kärnor",
-      "1.1 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "24",
-      "Basfrekvens": "1.1 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
     "id": "feed-storage-3536403410063",
     "category": "storage",
     "name": "PNY CS2341 M.2 NVMe - 1TB",
@@ -92846,34 +92490,6 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "850 W",
       "Certifiering": "80 Plus Platinum"
-    }
-  },
-  {
-    "id": "feed-storage-nutanixharddrive",
-    "category": "storage",
-    "name": "Nutanix - hard drive - 18 TB - 18TB - Hårddisk - C-HDD-18TB-AB-CM - 3,5&quot;",
-    "brand": "Nutanix",
-    "price": 12369,
-    "ean": null,
-    "specs": [
-      "18 TB"
-    ],
-    "details": {
-      "Kapacitet": "18 TB"
-    }
-  },
-  {
-    "id": "feed-storage-nutanixharddrive",
-    "category": "storage",
-    "name": "Nutanix - hard drive - 12 TB - 12TB - Hårddisk - C-HDD-12TB-AB-CM - 3,5&quot;",
-    "brand": "Nutanix",
-    "price": 8855,
-    "ean": null,
-    "specs": [
-      "12 TB"
-    ],
-    "details": {
-      "Kapacitet": "12 TB"
     }
   },
   {
@@ -94372,21 +93988,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-chassifan-4711103088982",
-    "category": "chassifan",
-    "name": "QNAP FAN-8CM-T03 - case fan - Chassi fläkt - 80mm - Svart",
-    "brand": "QNAP",
-    "price": 464,
-    "ean": "4711103088982",
-    "specs": [
-      "80 mm"
-    ],
-    "details": {
-      "Storlek": "80 mm",
-      "Belysning": "Ingen"
-    }
-  },
-  {
     "id": "feed-gpu-4711377379946",
     "category": "gpu",
     "name": "MSI GeForce RTX 5050 GAMING OC - 8GB GDDR6 RAM - Grafikkort",
@@ -94822,25 +94423,6 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
-    "id": "feed-cpu-intelcorei313100",
-    "category": "cpu",
-    "name": "Intel Core i3 13100T / 2.5 GHz processor - OEM CPU - 4 kärnor - 2.5 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 2763,
-    "ean": null,
-    "specs": [
-      "LGA1700",
-      "4 kärnor",
-      "2.5 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "4",
-      "Basfrekvens": "2.5 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
     "id": "feed-psu-4710679815541",
     "category": "psu",
     "name": "SilverStone HELA 2050R Strömförsörjning - 2050 Watt - 135 mm - ATX - 80 Plus",
@@ -95219,20 +94801,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-0632983063422",
-    "category": "storage",
-    "name": "Kyocera HD-15 - hard drive - 320 GB - 320GB - Hårddisk - 1503TA0UN0",
-    "brand": "Kyocera",
-    "price": 1720,
-    "ean": "0632983063422",
-    "specs": [
-      "320 GB"
-    ],
-    "details": {
-      "Kapacitet": "320 GB"
-    }
-  },
-  {
     "id": "feed-case-6933412765172",
     "category": "case",
     "name": "DeepCool CG580 4F - Chassi - Miditower - Svart",
@@ -95393,22 +94961,6 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "960 GB",
       "Gränssnitt": "SATA"
-    }
-  },
-  {
-    "id": "feed-chassifan-4044953503641",
-    "category": "chassifan",
-    "name": "Xilence XPF120G.ARGB.PWM - Chassi fläkt - 120mm - Genomsiktlig",
-    "brand": "Xilence",
-    "price": 164,
-    "ean": "4044953503641",
-    "specs": [
-      "120 mm",
-      "RGB"
-    ],
-    "details": {
-      "Storlek": "120 mm",
-      "Belysning": "RGB"
     }
   },
   {
@@ -96181,20 +95733,6 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
-    }
-  },
-  {
-    "id": "feed-storage-095205046014",
-    "category": "storage",
-    "name": "Xerox - SSD - 1 TB",
-    "brand": "Xerox",
-    "price": 3445,
-    "ean": "095205046014",
-    "specs": [
-      "1 TB"
-    ],
-    "details": {
-      "Kapacitet": "1 TB"
     }
   },
   {
@@ -97210,20 +96748,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-nutanixssd768tbu",
-    "category": "storage",
-    "name": "Nutanix - SSD - 7.68 TB - Upgrade",
-    "brand": "Nutanix",
-    "price": 19958,
-    "ean": null,
-    "specs": [
-      "7.6796875 TB"
-    ],
-    "details": {
-      "Kapacitet": "7.6796875 TB"
-    }
-  },
-  {
     "id": "feed-chassifan-0840006684237",
     "category": "chassifan",
     "name": "Corsair RS140 - dual-pack - Chassi fläkt - 140mm - Svart - 36 dBA",
@@ -97504,20 +97028,6 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
-  },
-  {
-    "id": "feed-storage-nutanixssd512gbu",
-    "category": "storage",
-    "name": "Nutanix - SSD - 512 GB - Upgrade",
-    "brand": "Nutanix",
-    "price": 2282,
-    "ean": null,
-    "specs": [
-      "512 GB"
-    ],
-    "details": {
-      "Kapacitet": "512 GB"
-    }
   },
   {
     "id": "feed-storage-0840006686767",
@@ -98047,23 +97557,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-gpu-0195892099109",
-    "category": "gpu",
-    "name": "Lenovo RTX 4000 Ada - 20GB GDDR6 RAM - Grafikkort",
-    "brand": "Lenovo",
-    "price": 19725,
-    "ean": "0195892099109",
-    "specs": [
-      "RTX 4000",
-      "20 GB"
-    ],
-    "details": {
-      "Krets": "RTX 4000",
-      "Minne": "20 GB"
-    },
-    "gpuModel": "Lenovo RTX 4000 Ada - 20GB GDDR6 RAM - Grafikkort"
-  },
-  {
     "id": "feed-cooling-4713227539241",
     "category": "cooling",
     "name": "Thermaltake TH360 ARGB Sync V2 - CPU Luftkylare",
@@ -98361,25 +97854,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-cpu-0675902126228",
-    "category": "cpu",
-    "name": "Intel Xeon E-2478 / 2.8 GHz processor - Box CPU - 8 kärnor - 2.8 GHz - Intel LGA1700 - Intel Boxed (med kylare)",
-    "brand": "Intel",
-    "price": 9482,
-    "ean": "0675902126228",
-    "specs": [
-      "LGA1700",
-      "8 kärnor",
-      "2.8 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "8",
-      "Basfrekvens": "2.8 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
     "id": "feed-cooling-4713157727848",
     "category": "cooling",
     "name": "Enermax LIQMAXFLO Series 420mm - CPU Vattenkylare - Max 24 dBA",
@@ -98466,63 +97940,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-cpu-intelxeone241433",
-    "category": "cpu",
-    "name": "Intel Xeon E-2414 / 3.3 GHz processor - OEM CPU - 4 kärnor - 2.6 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 7490,
-    "ean": null,
-    "specs": [
-      "LGA1700",
-      "4 kärnor",
-      "3.3 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "4",
-      "Basfrekvens": "3.3 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
-    "id": "feed-cpu-intelxeone243629",
-    "category": "cpu",
-    "name": "Intel Xeon E-2436 / 2.9 GHz processor - OEM CPU - 6 kärnor - 2.9 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 5270,
-    "ean": null,
-    "specs": [
-      "LGA1700",
-      "6 kärnor",
-      "2.9 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "6",
-      "Basfrekvens": "2.9 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
-    "id": "feed-cpu-intelxeone245633",
-    "category": "cpu",
-    "name": "Intel Xeon E-2456 / 3.3 GHz processor - OEM CPU - 6 kärnor - 3.3 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 10624,
-    "ean": null,
-    "specs": [
-      "LGA1700",
-      "6 kärnor",
-      "3.3 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "6",
-      "Basfrekvens": "3.3 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
     "id": "feed-cpu-5054444568928",
     "category": "cpu",
     "name": "Intel Xeon E-2486 / 3.5 GHz processor - OEM CPU - 6 kärnor - 3.5 GHz - Intel LGA1700 - Bulk (utan kylare)",
@@ -98559,25 +97976,6 @@ export const FEED_CATALOG_ITEMS = [
       "Sockel": "LGA1700",
       "Kärnor": "8",
       "Basfrekvens": "2.6 GHz"
-    },
-    "socket": "LGA1700"
-  },
-  {
-    "id": "feed-cpu-intelxeone247828",
-    "category": "cpu",
-    "name": "Intel Xeon E-2478 / 2.8 GHz processor - OEM CPU - 8 kärnor - 2.8 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 12619,
-    "ean": null,
-    "specs": [
-      "LGA1700",
-      "8 kärnor",
-      "2.8 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "8",
-      "Basfrekvens": "2.8 GHz"
     },
     "socket": "LGA1700"
   },
@@ -98645,22 +98043,6 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
-    }
-  },
-  {
-    "id": "feed-storage-5397184879030",
-    "category": "storage",
-    "name": "Dell - Customer Kit - hard drive - 1 TB - SATA 6Gb/s - 1TB - Hårddisk - 400-BLLJ - SATA-600 - 3,5&quot;",
-    "brand": "Dell",
-    "price": 2645,
-    "ean": "5397184879030",
-    "specs": [
-      "1 TB",
-      "SATA"
-    ],
-    "details": {
-      "Kapacitet": "1 TB",
-      "Gränssnitt": "SATA"
     }
   },
   {
@@ -98907,20 +98289,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-0632983051603",
-    "category": "storage",
-    "name": "Kyocera HD-11 - hard drive - 320 GB - 320GB - Hårddisk - 1502R50UN1",
-    "brand": "Kyocera",
-    "price": 3876,
-    "ean": "0632983051603",
-    "specs": [
-      "320 GB"
-    ],
-    "details": {
-      "Kapacitet": "320 GB"
-    }
-  },
-  {
     "id": "feed-psu-5999094005426",
     "category": "psu",
     "name": "Kolink Regulator 1200W ATX 3.0 Strömförsörjning - 1200 Watt - 120 mm - ATX 3.0 - 80 Plus Gold certificate",
@@ -98969,22 +98337,6 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
-    }
-  },
-  {
-    "id": "feed-psu-lenovothinksyste",
-    "category": "psu",
-    "name": "Lenovo ThinkSystem v2 Strömförsörjning - 750 Watt - ATX - 80 Plus Titanium certificate (upp till 90% effektivitet)",
-    "brand": "Lenovo",
-    "price": 3870,
-    "ean": null,
-    "specs": [
-      "750 W",
-      "80 Plus Titanium"
-    ],
-    "details": {
-      "Effekt": "750 W",
-      "Certifiering": "80 Plus Titanium"
     }
   },
   {
@@ -99669,20 +99021,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-nutanixharddrive",
-    "category": "storage",
-    "name": "Nutanix - hard drive - 8 TB - Upgrade - 8TB - Hårddisk - U-HDD-8TB-AA-CM - 3,5&quot;",
-    "brand": "Nutanix",
-    "price": 4275,
-    "ean": null,
-    "specs": [
-      "8 TB"
-    ],
-    "details": {
-      "Kapacitet": "8 TB"
-    }
-  },
-  {
     "id": "feed-case-5901969432831",
     "category": "case",
     "name": "Natec Genesis Irid 505 V2 aRGB - Chassi - Tower - Vit",
@@ -100351,20 +99689,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-nutanixssd384tb",
-    "category": "storage",
-    "name": "Nutanix - SSD - 3.84 TB",
-    "brand": "Nutanix",
-    "price": 11718,
-    "ean": null,
-    "specs": [
-      "3.83984375 TB"
-    ],
-    "details": {
-      "Kapacitet": "3.83984375 TB"
-    }
-  },
-  {
     "id": "feed-storage-panasonicfzvsd40",
     "category": "storage",
     "name": "Panasonic FZ-VSD400T1U - SSD - 512 GB",
@@ -100394,20 +99718,6 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "3.83984375 TB",
       "Gränssnitt": "SATA"
-    }
-  },
-  {
-    "id": "feed-storage-hpssd256gbpcie",
-    "category": "storage",
-    "name": "HP - SSD - 256 GB - PCIe",
-    "brand": "HP",
-    "price": 1559,
-    "ean": null,
-    "specs": [
-      "256 GB"
-    ],
-    "details": {
-      "Kapacitet": "256 GB"
     }
   },
   {
@@ -109213,24 +108523,6 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
-    "id": "feed-storage-7613081124454",
-    "category": "storage",
-    "name": "Samsung PM9A1a MZVL22T0HDLB - SSD - 2 TB - PCIe 4.0 x4 (NVMe)",
-    "brand": "Samsung",
-    "price": 10468,
-    "ean": "7613081124454",
-    "specs": [
-      "2 TB",
-      "NVMe",
-      "PCIe 4.0"
-    ],
-    "details": {
-      "Kapacitet": "2 TB",
-      "Gränssnitt": "NVMe",
-      "PCIe": "4.0"
-    }
-  },
-  {
     "id": "feed-storage-0619659234577",
     "category": "storage",
     "name": "SANDISK NAS 600 - SSD - 4 TB - SATA 6Gb/s",
@@ -110390,25 +109682,6 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "4"
     },
     "ramType": "DDR5"
-  },
-  {
-    "id": "feed-cpu-4251538816830",
-    "category": "cpu",
-    "name": "Intel Core i3 i3-14100T / 2.7 GHz processor - OEM CPU - 4 kärnor - 2.7 GHz - Intel LGA1700 - Bulk (utan kylare)",
-    "brand": "Intel",
-    "price": 2434,
-    "ean": "4251538816830",
-    "specs": [
-      "LGA1700",
-      "4 kärnor",
-      "2.7 GHz"
-    ],
-    "details": {
-      "Sockel": "LGA1700",
-      "Kärnor": "4",
-      "Basfrekvens": "2.7 GHz"
-    },
-    "socket": "LGA1700"
   },
   {
     "id": "feed-ram-4713294238009",
