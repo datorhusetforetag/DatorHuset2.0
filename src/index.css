@@ -2599,6 +2599,444 @@
   }
 }
 
+
+/* Konfiguratorns komponentrad ---------------------------------------
+ *
+ * Samma språk som produktkortet ovanför, inte ett eget.
+ *
+ * Custom bygg byggdes innan .pc-card fanns och lärde sig aldrig det
+ * kortet redan hade kostat på sig att komma fram till: en genomskinlig
+ * yta låter sidans lila lysa rakt igenom, och då ser man ramen men inte
+ * kortet. Raderna låg på bg-background/70 och smälte in i duken medan
+ * produktsidan stod ut. Därav samma --pc-card-surface här.
+ *
+ * Raden är också en tredjedel så hög som den var. Förut tog varje
+ * komponent tvåhundratio pixlar för ett namn, fyra etiketter och ett
+ * pris, med ett tomrum på hundrafemtio pixlar mitt i. Fem produkter
+ * fick plats på en skärm, av tvåhundra i listan.
+ */
+.cb-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(220 20% 100% / 0.08);
+  background: var(--pc-card-surface, #232c3b);
+  transition: border-color 0.16s ease-out, transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+:root:not(.dark) .cb-row {
+  --pc-card-surface: #eef1f6;
+  border-color: hsl(220 20% 20% / 0.1);
+}
+
+.cb-row:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, hsl(var(--primary)) 45%, transparent);
+  box-shadow: 0 12px 26px hsl(var(--brand-black) / 0.38),
+    0 0 0 1px color-mix(in srgb, hsl(var(--primary)) 22%, transparent);
+}
+
+/* Vald komponent. Ingen lyftning - den ligger kvar, den är bestämd. */
+.cb-row[data-vald="true"] {
+  border-color: hsl(var(--primary) / 0.7);
+  box-shadow: 0 0 0 1px hsl(var(--primary) / 0.35),
+    0 10px 24px hsl(var(--brand-black) / 0.3);
+}
+
+/*
+ * Bildrutan är ljus med flit.
+ *
+ * Nästan varje produktfoto från butiken har vit bakgrund inbränd i
+ * jpeg:en. Mot en mörk platta blir ett sådant foto en lysande vit
+ * fyrkant, och det var precis vad sidan såg ut som: trettio vita rutor
+ * nedför en mörk spalt.
+ *
+ * Lösningen är inte en mörk ruta utan en ljus som fotot kan försvinna
+ * in i. Kulören är samma #eef1f6 som produktkortet använder som yta i
+ * ljust läge, alltså systemets egen ljusa yta och ingen ny.
+ *
+ * Den är dessutom en tredjedel så stor som förut och har ingen ram.
+ * Det som såg klistrat ut var storleken och kanten, inte ljusheten.
+ */
+.cb-row__media {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: 0.55rem;
+  padding: 0.3rem;
+
+  /*
+   * Plattan är en toning, inte en vit fyrkant.
+   *
+   * Nästan varje produktfoto har vit bakgrund inbränd i jpeg:en, så
+   * fotot måste få något ljust att försvinna in i. Men en platt vit
+   * ruta såg pålagd ut - det var det sidan led av, trettio lysande
+   * fyrkantar nedför en mörk spalt.
+   *
+   * En svag toning plus en ljus kant upptill och en skugga nedtill gör
+   * den till en urgröpt bricka som fotot ligger i. Samma ljushet, helt
+   * annan läsning.
+   */
+  background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7),
+    inset 0 -2px 4px rgb(15 23 42 / 0.1);
+}
+
+/*
+ * I ljust läge är kortet redan #eef1f6, och en platta i samma kulör
+ * hade varit osynlig. Där blir brickan i stället vit med en tunn kant.
+ */
+:root:not(.dark) .cb-row__media {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px hsl(220 20% 20% / 0.08);
+}
+
+.cb-row__media img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.cb-row:hover .cb-row__media img {
+  transform: scale(1.06);
+}
+
+/* Kategoriikonen sitter på bildrutans hörn som förut, men mindre och
+   utan den vita platta den satt på. */
+.cb-row__ikon {
+  position: absolute;
+  left: 0.25rem;
+  top: 0.25rem;
+  z-index: 2;
+  display: inline-flex;
+  border-radius: 9999px;
+  background: hsl(var(--brand-black) / 0.55);
+  padding: 0.25rem;
+  color: #fff;
+  backdrop-filter: blur(2px);
+}
+
+.cb-row__brand {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-row__namn {
+  margin-top: 0.15rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  color: hsl(var(--foreground));
+  /* Två rader räcker för varje titel butiken skriver. Utan taket bröt
+     de längsta titlarna radhöjden och listan blev ojämn. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/*
+ * Märkningen står bredvid namnet, inte över priset.
+ *
+ * Som egen ruta till höger krockade "Gaming favorite" med prissiffran
+ * och bröts till två rader. Den hör till varan och inte till priset.
+ */
+.cb-row__brandrad {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-width: 0;
+}
+
+.cb-row__markning {
+  display: inline-block;
+  border-radius: 9999px;
+  background: hsl(var(--primary) / 0.16);
+  padding: 0.1rem 0.5rem;
+  font-family: system-ui, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: hsl(var(--primary));
+  white-space: nowrap;
+}
+
+.cb-row__specar {
+  margin-top: 0.4rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.cb-row__spec {
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--foreground) / 0.12);
+  padding: 0.1rem 0.45rem;
+  font-size: 0.625rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-row__hoger {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.4rem;
+  min-width: 7.5rem;
+}
+
+.cb-row__pris {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  color: hsl(var(--foreground));
+}
+
+.cb-row__kalla {
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  color: hsl(var(--muted-foreground));
+}
+
+@media (max-width: 640px) {
+  .cb-row {
+    grid-template-columns: 4rem minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+  /* På mobil får priset och knappen en egen rad under namnet i stället
+     för en tredje spalt - tre spalter på 360 px ger ingen av dem plats. */
+  .cb-row__hoger {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-row,
+  .cb-row__media img {
+    transition: none;
+  }
+
+  .cb-row:hover {
+    transform: none;
+  }
+
+  .cb-row:hover .cb-row__media img {
+    transform: none;
+  }
+}
+
+
+/* Konfiguratorns snabbfilter ----------------------------------------
+ *
+ * Etiketten står bredvid valen, inte över dem.
+ *
+ * Förut var varje filter tre knappar i rutnät med rubriken på egen rad,
+ * ungefär tvåhundra pixlar styck. Med två sådana per kategori, en
+ * prisreglage och en rubrik hamnade den första komponenten 1 463 pixlar
+ * ner på sidan - kunden fick skrolla förbi en hel skärmhöjd formulär
+ * innan hon såg en enda produkt.
+ *
+ * Samma val, samma ordning, på en rad i stället för tre.
+ */
+.cb-snabbfilter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+
+.cb-snabbfilter__etikett {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-snabbfilter__val {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cb-chip {
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--foreground) / 0.14);
+  background: hsl(var(--foreground) / 0.04);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: hsl(var(--muted-foreground));
+  transition: border-color 0.14s ease-out, background-color 0.14s ease-out,
+    color 0.14s ease-out;
+}
+
+.cb-chip:hover {
+  border-color: hsl(var(--foreground) / 0.3);
+  color: hsl(var(--foreground));
+}
+
+.cb-chip[data-aktiv="true"] {
+  border-color: hsl(var(--primary) / 0.7);
+  background: hsl(var(--primary) / 0.14);
+  color: hsl(var(--primary));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-chip {
+    transition: none;
+  }
+}
+
+
+/* Konfiguratorns steglista -------------------------------------------
+ *
+ * Nio lika stora rutor som alla sa "Ej valt" gav ingen känsla av var i
+ * bygget man var. Steget visar nu tre saker i stället för två: vad det
+ * heter, om det är klart, och vad som valts.
+ *
+ * Den valda komponentens namn står där beskrivningen stod. Beskrivningen
+ * ("Hjärnan i datorn") hjälper den som inte vet vad en processor är, och
+ * behövs bara tills hon valt en - efter det vill hon se vilken.
+ */
+.cb-steg {
+  position: relative;
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 0.6rem;
+  border: 1px solid transparent;
+  padding: 0.5rem 2.1rem 0.5rem 0.55rem;
+  text-align: left;
+  transition: background-color 0.14s ease-out, border-color 0.14s ease-out;
+}
+
+.cb-steg:hover {
+  background: hsl(var(--foreground) / 0.05);
+}
+
+.cb-steg[data-aktiv="true"] {
+  border-color: hsl(var(--primary) / 0.55);
+  background: hsl(var(--primary) / 0.1);
+}
+
+.cb-steg__ikon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  height: 2rem;
+  width: 2rem;
+  border-radius: 0.5rem;
+  background: hsl(var(--foreground) / 0.06);
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-steg[data-aktiv="true"] .cb-steg__ikon {
+  background: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+}
+
+/* Klart steg: ikonen behåller sin plats men byter kulör, så att listan
+   läses som en checklista utan att raderna hoppar. */
+.cb-steg[data-klart="true"]:not([data-aktiv="true"]) .cb-steg__ikon {
+  background: hsl(var(--primary) / 0.16);
+  color: hsl(var(--primary));
+}
+
+.cb-steg__namn {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: hsl(var(--foreground));
+}
+
+.cb-steg__vald {
+  margin-top: 0.1rem;
+  font-size: 0.6875rem;
+  line-height: 1.3;
+  color: hsl(var(--primary));
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cb-steg__tom {
+  margin-top: 0.1rem;
+  font-size: 0.6875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-steg__rensa {
+  position: absolute;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  height: 1.5rem;
+  width: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: hsl(var(--muted-foreground));
+  transition: background-color 0.14s ease-out, color 0.14s ease-out;
+}
+
+.cb-steg__rensa:hover {
+  background: hsl(var(--foreground) / 0.1);
+  color: hsl(var(--foreground));
+}
+
+.cb-steg__rensa[disabled] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Förloppet. En rad siffror räcker inte - en stapel syns i ögonvrån. */
+.cb-forlopp {
+  height: 0.25rem;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: hsl(var(--foreground) / 0.1);
+}
+
+.cb-forlopp__fyllt {
+  height: 100%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-steg,
+  .cb-steg__rensa,
+  .cb-forlopp__fyllt {
+    transition: none;
+  }
+}
+
 /* Ytan från panelen och nedåt ---------------------------------------
  *
  * Panelen och allt under den delar en kulör, så att sidan inte byter

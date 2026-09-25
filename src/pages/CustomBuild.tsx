@@ -4987,29 +4987,24 @@ export default function CustomBuild() {
         <button
           type="button"
           onClick={() => handleCategorySelect(category.key)}
-          className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
-            isActive
-              ? "border-primary bg-primary/10 dark:bg-primary/10"
-              : "border-foreground/10 bg-background/60 hover:border-primary/40"
-          }`}
+          className="cb-steg"
+          data-aktiv={isActive ? "true" : "false"}
+          data-klart={selectedItem ? "true" : "false"}
         >
-          <div className="flex items-start gap-3">
-            <span
-              className={`mt-1 rounded-lg ${nested ? "p-1.5" : "p-2"} ${
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
-              }`}
-            >
-              <Icon className={nested ? "w-4 h-4" : "w-5 h-5"} />
-            </span>
-            <div>
-              <p className={`${nested ? "text-xs" : "text-sm"} font-semibold text-foreground`}>{category.label}</p>
-              <p className="text-xs text-muted-foreground">{category.description}</p>
-              <p className="text-xs text-muted-foreground mt-2">{selectedItem ? selectedItem.name : "Ej valt"}</p>
-            </div>
-          </div>
+          <span className="cb-steg__ikon">
+            <Icon className={nested ? "h-3.5 w-3.5" : "h-4 w-4"} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="cb-steg__namn block">{category.label}</span>
+            {selectedItem ? (
+              <span className="cb-steg__vald">{selectedItem.name}</span>
+            ) : (
+              <span className="cb-steg__tom block">{category.description}</span>
+            )}
+          </span>
         </button>
+        {/* Papperskorgen syns först när det finns något att ta bort. En
+            nedtonad knapp som ändå inte gör något är en knapp för mycket. */}
         <button
           type="button"
           onClick={(event) => {
@@ -5017,13 +5012,11 @@ export default function CustomBuild() {
             if (!selectedItem) return;
             setSelected((prev) => ({ ...prev, [category.key]: null }));
           }}
-          className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
-            selectedItem ? "hover:bg-slate-800 dark:hover:bg-slate-600" : "opacity-40 cursor-default"
-          }`}
+          className="cb-steg__rensa"
           aria-label={`Ta bort ${category.label}`}
-          aria-disabled={!selectedItem}
+          disabled={!selectedItem}
         >
-          <TrashIcon className="h-4 w-4" />
+          <TrashIcon className="h-3.5 w-3.5" />
         </button>
       </div>
     );
@@ -5031,28 +5024,40 @@ export default function CustomBuild() {
 
   const selectedExtraCount = OPTIONAL_CATEGORIES.filter((category) => selected[category.key]).length;
 
+  /*
+   * Etiketterna kortas ner när de ritas, inte där de skrivs.
+   *
+   * "Välj processortillverkare" var en rubrik på egen rad och läste sig
+   * som en instruktion. Bredvid sina egna knappar räcker "Tillverkare" -
+   * att man ska välja framgår av att det står knappar där. Kortningen
+   * sitter här och inte på de tolv anropsställena, så att ett nytt
+   * filter får samma behandling utan att någon behöver tänka på det.
+   */
+  const kortEtikett = (label: string) =>
+    label
+      .replace(/^Välj din /i, "")
+      .replace(/^Välj /i, "")
+      .replace(/^Minsta storlek på /i, "Minst ")
+      .replace(/^./, (c) => c.toUpperCase());
+
   const renderCardFilterGrid = (
     label: string,
     options: string[],
     isActive: (option: string) => boolean,
     onToggle: (option: string) => void,
-    columns = "sm:grid-cols-2 xl:grid-cols-3"
   ) => {
     if (options.length === 0) return null;
     return (
-      <div className="space-y-3">
-        <p className="text-sm font-semibold text-foreground">{label}</p>
-        <div className={`grid grid-cols-1 gap-3 ${columns}`}>
+      <div className="cb-snabbfilter">
+        <span className="cb-snabbfilter__etikett">{kortEtikett(label)}</span>
+        <div className="cb-snabbfilter__val">
           {options.map((option) => (
             <button
               key={`${label}-${option}`}
               type="button"
               onClick={() => onToggle(option)}
-              className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                isActive(option)
-                  ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
-                  : "border-foreground/10 bg-foreground/[0.04] text-muted-foreground hover:border-foreground/20 dark:bg-background/70 dark:text-foreground"
-              }`}
+              className="cb-chip"
+              data-aktiv={isActive(option) ? "true" : "false"}
             >
               {option}
             </button>
@@ -5624,7 +5629,16 @@ export default function CustomBuild() {
                 <div className="space-y-4 lg:sticky lg:top-24">
                   <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Komponenter</p>
-                      <div className="mt-4 space-y-2">
+                      <p className="mt-2 text-sm font-semibold text-foreground">
+                        {selectedCount} av {REQUIRED_CATEGORIES.length} valda
+                      </p>
+                      <div className="cb-forlopp mt-2">
+                        <div
+                          className="cb-forlopp__fyllt"
+                          style={{ width: `${(selectedCount / REQUIRED_CATEGORIES.length) * 100}%` }}
+                        />
+                      </div>
+                      <div className="mt-4 space-y-1">
                         {REQUIRED_CATEGORIES.map((category) => renderCategoryRow(category))}
 
                         <div className="rounded-xl border border-dashed border-foreground/15 bg-foreground/[0.02] dark:bg-background/40">
@@ -5691,25 +5705,37 @@ export default function CustomBuild() {
                   id="component-picker"
                   className="rounded-2xl border border-foreground/10 bg-background/70 p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80"
                 >
-                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Vald kategori</p>
-                      <h3 className="text-2xl font-bold mt-2">{activeConfig?.label}</h3>
-                      <p className="text-sm text-muted-foreground mt-2">{activeConfig?.description}</p>
+                  {/*
+                    * Rubrik, beskrivning och sökruta på en rad.
+                    *
+                    * "VALD KATEGORI" över "CPU" över "Hjärnan i datorn" tog
+                    * hundratrettio pixlar för att säga det vänsterspalten
+                    * redan visar med markerad ruta. Kvar står namnet, och
+                    * bredvid det antalet träffar - som aldrig stod någonstans
+                    * trots att listan kan vara tolvhundra poster lång.
+                    */}
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex items-baseline gap-3">
+                      <h3 className="text-xl font-bold">{activeConfig?.label}</h3>
+                      <span className="text-sm text-muted-foreground">
+                        {sortedItems.length.toLocaleString("sv-SE")}
+                        {sortedItems.length === 1 ? " komponent" : " komponenter"}
+                      </span>
                     </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <input
-                        type="search"
-                        placeholder="Sök komponent..."
-                        value={searchTerm}
-                        onChange={(event) => setSearchTerm(event.target.value)}
-                        className="w-full sm:w-60 rounded-lg bg-background/70 border border-foreground/20 px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
-                      />
-                    </div>
+                    <input
+                      type="search"
+                      placeholder="Sök komponent..."
+                      value={searchTerm}
+                      onChange={(event) => setSearchTerm(event.target.value)}
+                      className="w-full sm:w-64 rounded-lg bg-background/70 border border-foreground/20 px-4 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
+                    />
                   </div>
-                  <div className="mt-5 space-y-2">
-                    <p className="text-sm font-semibold text-foreground">Pris</p>
+                  {/* Reglaget står på samma rad som sin etikett, som
+                      snabbfiltren under. En egen rubrikrad för ett enda
+                      reglage var en rad för mycket. */}
+                  <div className="mt-4">
                     <div className="flex flex-wrap items-center gap-3">
+                      <span className="cb-snabbfilter__etikett">Högst</span>
                       <input
                         type="range"
                         min={priceBounds.min}
@@ -5719,7 +5745,7 @@ export default function CustomBuild() {
                         onChange={(event) =>
                           setPriceRange([priceRange[0], parseInt(event.target.value)])
                         }
-                        className="h-1 w-full max-w-[260px] accent-primary"
+                        className="h-1 w-full max-w-[220px] accent-primary"
                       />
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <label htmlFor="custom-price-max" className="sr-only">
@@ -5758,8 +5784,8 @@ export default function CustomBuild() {
                     {activeCategory === "gpu"
                       ? (
                         <>
-                          {renderCardFilterGrid("Välj chiptillverkare", GPU_VENDOR_CARD_OPTIONS, (option) => gpuChipVendorFilter === option, (option) => setGpuChipVendorFilter(option), "sm:grid-cols-2 xl:grid-cols-4")}
-                          {renderCardFilterGrid("Välj din prestandaklass", gpuPerformanceFilterOptions, (option) => gpuPerformanceFilters.includes(option), (option) => toggleArrayFilter(option, setGpuPerformanceFilters), "sm:grid-cols-2 xl:grid-cols-3")}
+                          {renderCardFilterGrid("Välj chiptillverkare", GPU_VENDOR_CARD_OPTIONS, (option) => gpuChipVendorFilter === option, (option) => setGpuChipVendorFilter(option))}
+                          {renderCardFilterGrid("Välj din prestandaklass", gpuPerformanceFilterOptions, (option) => gpuPerformanceFilters.includes(option), (option) => toggleArrayFilter(option, setGpuPerformanceFilters))}
                         </>
                       )
                       : null}
@@ -5769,8 +5795,8 @@ export default function CustomBuild() {
                           {renderCardFilterGrid("Minsta storlek på minne", RAM_SIZE_CARD_OPTIONS.map((value) => `${value}GB`), (option) => ramMinimumSizeCard === Number(option.replace("GB", "")), (option) => {
                             const next = Number(option.replace("GB", ""));
                             setRamMinimumSizeCard((prev) => (prev === next ? null : next));
-                          }, "sm:grid-cols-3")}
-                          {renderCardFilterGrid("Typ", RAM_TYPE_CARD_OPTIONS, (option) => ramTypeFilters.includes(option), (option) => toggleArrayFilter(option, setRamTypeFilters), "sm:grid-cols-2")}
+                          })}
+                          {renderCardFilterGrid("Typ", RAM_TYPE_CARD_OPTIONS, (option) => ramTypeFilters.includes(option), (option) => toggleArrayFilter(option, setRamTypeFilters))}
                         </>
                       )
                       : null}
@@ -5780,8 +5806,8 @@ export default function CustomBuild() {
                           {renderCardFilterGrid("Storlek", STORAGE_SIZE_CARD_OPTIONS.map((value) => formatCapacityCardLabel(value)), (option) => storageMinimumSizeCard === (option.endsWith("TB") ? Number(option.replace("TB", "")) * 1024 : Number(option.replace("GB", ""))), (option) => {
                             const next = option.endsWith("TB") ? Number(option.replace("TB", "")) * 1024 : Number(option.replace("GB", ""));
                             setStorageMinimumSizeCard((prev) => (prev === next ? null : next));
-                          }, "sm:grid-cols-3 xl:grid-cols-5")}
-                          {renderCardFilterGrid("Typ", STORAGE_TYPE_CARD_OPTIONS, (option) => storageTypeFilters.includes(option), (option) => toggleArrayFilter(option, setStorageTypeFilters), "sm:grid-cols-2")}
+                          })}
+                          {renderCardFilterGrid("Typ", STORAGE_TYPE_CARD_OPTIONS, (option) => storageTypeFilters.includes(option), (option) => toggleArrayFilter(option, setStorageTypeFilters))}
                         </>
                       )
                       : null}
@@ -5794,22 +5820,22 @@ export default function CustomBuild() {
                           }, (option) => {
                             const next = option === "1200W+" ? 1200 : Number(option.replace("W", ""));
                             setPsuMinimumWattCard((prev) => (prev === next ? null : next));
-                          }, "sm:grid-cols-3 xl:grid-cols-4")}
-                          {renderCardFilterGrid("Välj 80-plus certifiering", PSU_MIN_RATING_CARD_OPTIONS, (option) => psuMinimumRatingCard === option, (option) => setPsuMinimumRatingCard((prev) => (prev === option ? null : option)), "sm:grid-cols-3")}
+                          })}
+                          {renderCardFilterGrid("Välj 80-plus certifiering", PSU_MIN_RATING_CARD_OPTIONS, (option) => psuMinimumRatingCard === option, (option) => setPsuMinimumRatingCard((prev) => (prev === option ? null : option)))}
                         </>
                       )
                       : null}
                     {activeCategory === "cooling"
-                      ? renderCardFilterGrid("Välj kylningstyp", COOLING_TYPE_CARD_OPTIONS, (option) => coolingTypeFilter === option, (option) => setCoolingTypeFilter((prev) => (prev === option ? "Alla" : option as "Luft" | "Vatten")), "sm:grid-cols-2")
+                      ? renderCardFilterGrid("Välj kylningstyp", COOLING_TYPE_CARD_OPTIONS, (option) => coolingTypeFilter === option, (option) => setCoolingTypeFilter((prev) => (prev === option ? "Alla" : option as "Luft" | "Vatten")))
                       : null}
                   </div>
 
-                  <div className="mt-6 rounded-2xl border border-foreground/10 bg-foreground/[0.04] p-4 dark:border-foreground/10 dark:bg-background/70">
+                  <div className="mt-4">
                     <div className="flex items-center justify-between gap-3">
                       <button
                         type="button"
                         onClick={() => setShowDetailedFilters((prev) => !prev)}
-                        className="text-left text-sm font-semibold text-foreground"
+                        className="text-left text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:text-foreground"
                       >
                         Detaljerat filter {showDetailedFilters ? "▴" : "▾"}
                       </button>
@@ -5838,7 +5864,7 @@ export default function CustomBuild() {
                             {renderToggleChipGroup("Socket", socketFilterOptions, socketFilters, (option) => toggleArrayFilter(option, setSocketFilters))}
                             {renderToggleChipGroup("Chipset", chipsetFilterOptions, chipsetFilters, (option) => toggleArrayFilter(option, setChipsetFilters))}
                             {renderToggleChipGroup("Minnestyp", MOTHERBOARD_RAM_TYPE_OPTIONS.filter((option) => ramTypeFilterOptions.includes(option)), ramTypeFilters, (option) => toggleArrayFilter(option, setRamTypeFilters))}
-                            {renderCardFilterGrid("Wi-Fi", ["Ja", "Nej"], (option) => motherboardWifiFilter === option, (option) => setMotherboardWifiFilter((prev) => (prev === option ? "Alla" : option as "Ja" | "Nej")), "sm:grid-cols-2")}
+                            {renderCardFilterGrid("Wi-Fi", ["Ja", "Nej"], (option) => motherboardWifiFilter === option, (option) => setMotherboardWifiFilter((prev) => (prev === option ? "Alla" : option as "Ja" | "Nej")))}
                             {renderRangeFilter("Minnesplatser", motherboardMemorySlotsRange, motherboardMemorySlotBounds, setMotherboardMemorySlotsRange)}
                             {renderRangeFilter("M.2 platser", motherboardM2SlotsRange, motherboardM2Bounds, setMotherboardM2SlotsRange)}
                           </>
@@ -5929,7 +5955,11 @@ export default function CustomBuild() {
                     ) : null}
                   </div>
 
-                  <div className="mt-5 grid gap-2 border-b border-foreground/10 pb-4 dark:border-foreground/10 sm:grid-cols-2 xl:grid-cols-4">
+                  {/* Sorteringen som chips, inte som fyra rutor i rutnät.
+                      Rutorna var lika stora som kategorivalen i vänsterspalten
+                      och såg därför ut att väga lika tungt. */}
+                  <div className="cb-snabbfilter mt-4 border-b border-foreground/10 pb-4 dark:border-foreground/10">
+                    <span className="cb-snabbfilter__etikett">Sortera</span>
                     {tableSortButtons.map((sortButton) => {
                       /*
                        * Huvudknapparna jämförs på både nyckel och riktning.
@@ -5954,15 +5984,12 @@ export default function CustomBuild() {
                               ? setSortForCategory(sortButton.key, sortButton.direction)
                               : toggleSortForCategory(sortButton.key, sortButton.direction)
                           }
-                          className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-colors ${
-                            isActive
-                              ? "border-primary bg-primary/10 text-primary-foreground dark:bg-primary/10 dark:!text-white"
-                              : "border-foreground/10 bg-foreground/[0.04] text-muted-foreground hover:border-foreground/20 dark:bg-background/70 dark:text-foreground"
-                          }`}
+                          className="cb-chip"
+                          data-aktiv={isActive ? "true" : "false"}
                         >
-                          <span className="flex items-center justify-between gap-3">
+                          <span className="flex items-center gap-1.5">
                             <span>{sortButton.label}</span>
-                            {arrow ? <span>{arrow}</span> : null}
+                            {arrow ? <span className="opacity-60">{arrow}</span> : null}
                           </span>
                         </button>
                       );
@@ -5991,95 +6018,109 @@ export default function CustomBuild() {
                     const showStorePanel = supportsStoreOffersForCategory(activeCategory);
                     const storeOffersForItem = isExpanded ? expandedStoreOffers : [];
 
+                    /*
+                     * Priset kommer inte alltid från en butik.
+                     *
+                     * För 128 av de handplockade posterna har prisjakten
+                     * ingen träff, och då visas katalogens riktpris. Det
+                     * stod ingenstans för kunden förut - etiketten fanns
+                     * men renderades bara i felsökningsläge - så en siffra
+                     * vi satt själva såg ut som ett butikspris.
+                     */
+                    const visarRiktpris = getPriceSource(item) === "no-store" || getPriceSource(item) === "search";
+
                     return (
-                      <div
-                        key={item.id}
-                        className={`rounded-2xl border bg-background/70 p-3 shadow-sm transition-colors dark:bg-background/80 sm:p-4 ${
-                          isSelected ? "border-primary ring-1 ring-primary/30" : "border-foreground/10"
-                        }`}
-                      >
-                        <div className="grid items-center gap-3 grid-cols-[72px_minmax(0,1fr)_auto] sm:grid-cols-[96px_minmax(0,1fr)_auto] md:grid-cols-[160px_minmax(0,1fr)_auto] sm:gap-4">
-                          <div className="relative h-20 w-20 sm:h-24 sm:w-24 md:h-40 md:w-40">
-                            <img
-                              src={imageSrc}
-                              alt={imageAlt}
-                              className="w-full h-full object-contain rounded-xl border border-foreground/10 bg-foreground/[0.04] dark:border-foreground/10 dark:bg-foreground/[0.06]"
-                              loading="lazy"
-                              decoding="async"
-                              onError={(event) => {
-                                const categoryFallbackSrc = categoryImage?.src ?? FALLBACK_COMPONENT_IMAGE;
-                                if (event.currentTarget.src !== backupImageSrc) {
-                                  event.currentTarget.src = backupImageSrc;
-                                  return;
-                                }
-                                if (event.currentTarget.src !== categoryFallbackSrc) {
-                                  event.currentTarget.src = categoryFallbackSrc;
-                                  return;
-                                }
-                                event.currentTarget.onerror = null;
-                                event.currentTarget.src = FALLBACK_COMPONENT_IMAGE;
-                              }}
-                            />
-                            <span className="absolute top-1 left-1 rounded-full bg-white/90 text-gray-700 border border-foreground/10 p-1.5 shadow-sm dark:bg-background/90 dark:text-foreground dark:border-foreground/20 sm:top-2 sm:left-2 sm:p-2">
-                              <ActiveIcon className="h-4 w-4 sm:h-5 sm:w-5" />
-                            </span>
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-start justify-between gap-4">
-                              <div>
-                                <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground sm:text-xs">{item.brand}</p>
-                                <h4 className="mt-1 text-sm font-semibold text-foreground sm:mt-2 sm:text-lg">{item.name}</h4>
-                              </div>
-                              {item.highlight ? (
-                                <span className="text-[10px] font-semibold bg-primary text-primary-foreground px-2 py-0.5 rounded-full sm:text-xs sm:px-3 sm:py-1">
-                                  {item.highlight}
-                                </span>
-                              ) : null}
-                            </div>
-                            <div className="mt-2 flex flex-wrap gap-1.5 sm:mt-3 sm:gap-2">
-                              {item.specs.map((spec, index) => (
-                                <span
-                                  key={spec}
-                                  className={`text-[10px] border border-foreground/10 text-muted-foreground bg-foreground/[0.04] px-2 py-0.5 rounded-full dark:border-foreground/20 dark:text-foreground dark:bg-foreground/[0.06] sm:px-2.5 sm:py-1 sm:text-xs ${
-                                    index > 1 ? "hidden sm:inline-flex" : ""
-                                  }`}
-                                >
-                                  {spec}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="flex flex-col items-end gap-2">
-                            <p className="text-base font-bold text-foreground sm:text-xl">
-                              {getDisplayPriceLabel(item, activeCategory)}
-                            </p>
-                            {customBuildDebugEnabled ? (
-                              <span className="rounded-full border border-sky-300 bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300">
-                                {getPriceSourceLabel(item)}
-                              </span>
+                      <div key={item.id} className="cb-row" data-vald={isSelected ? "true" : "false"}>
+                        <div className="cb-row__media">
+                          <span className="cb-row__ikon">
+                            <ActiveIcon className="h-3.5 w-3.5" />
+                          </span>
+                          <img
+                            src={imageSrc}
+                            alt={imageAlt}
+                            loading="lazy"
+                            decoding="async"
+                            /*
+                             * Reservbilderna provas en gång var, i ordning.
+                             *
+                             * Förut jämfördes bara adressen mot föregående
+                             * steg, och när två adresser i rad misslyckades
+                             * pekade provet tillbaka på den första: reserven
+                             * ledde till kategoribilden, kategoribilden
+                             * tillbaka till reserven, i all oändlighet. Den
+                             * lokala bilden sist i kedjan nåddes aldrig, och
+                             * raden visade webbläsarens trasiga ikon.
+                             *
+                             * Det slog till på riktigt för chassin, vars
+                             * kategoribild ligger på en extern adress. Är den
+                             * nere snurrar varje chassirad.
+                             *
+                             * Räknaren i data-attributet gör kedjan ändlig.
+                             */
+                            onError={(event) => {
+                              const bild = event.currentTarget;
+                              const kedja = [backupImageSrc, categoryImage?.src, FALLBACK_COMPONENT_IMAGE]
+                                .filter((kandidat): kandidat is string => Boolean(kandidat));
+                              const steg = Number(bild.dataset.reserv ?? "0");
+                              if (steg >= kedja.length) {
+                                bild.onerror = null;
+                                return;
+                              }
+                              bild.dataset.reserv = String(steg + 1);
+                              bild.src = kedja[steg];
+                            }}
+                          />
+                        </div>
+
+                        <div className="min-w-0">
+                          <div className="cb-row__brandrad">
+                            <span className="cb-row__brand">{item.brand}</span>
+                            {item.highlight ? (
+                              <span className="cb-row__markning">{item.highlight}</span>
                             ) : null}
-                            <button
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                if (isSelected) {
-                                  setSelected((prev) => ({
-                                    ...prev,
-                                    [activeCategory]: null,
-                                  }));
-                                  return;
-                                }
-                                openStorePickerForComponent(activeCategory, item);
-                              }}
-                              className={`min-w-[84px] rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors sm:min-w-[96px] sm:px-5 sm:py-2 sm:text-sm ${
-                                isSelected
-                                  ? "bg-primary text-primary-foreground"
-                                  : "border border-primary text-primary dark:text-primary hover:bg-secondary hover:text-white hover:border-secondary"
-                              }`}
-                            >
-                              {isSelected ? "Vald" : "Välj"}
-                            </button>
                           </div>
+                          <h4 className="cb-row__namn">{item.name}</h4>
+                          <div className="cb-row__specar">
+                            {/* Fyra räcker. Butiken skriver ibland åtta, och
+                                då blev etiketterna två rader som tryckte ner
+                                nästa rad i listan. */}
+                            {item.specs.slice(0, 4).map((spec) => (
+                              <span key={spec} className="cb-row__spec">
+                                {spec}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="cb-row__hoger">
+                          <p className="cb-row__pris">{getDisplayPriceLabel(item, activeCategory)}</p>
+                          {visarRiktpris ? <span className="cb-row__kalla">Riktpris</span> : null}
+                          {customBuildDebugEnabled ? (
+                            <span className="rounded-full border border-sky-300 bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300">
+                              {getPriceSourceLabel(item)}
+                            </span>
+                          ) : null}
+                          <button
+                            type="button"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              if (isSelected) {
+                                setSelected((prev) => ({
+                                  ...prev,
+                                  [activeCategory]: null,
+                                }));
+                                return;
+                              }
+                              openStorePickerForComponent(activeCategory, item);
+                            }}
+                            className={`w-full rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors ${
+                              isSelected
+                                ? "bg-primary text-primary-foreground"
+                                : "border border-primary/60 text-primary hover:bg-primary hover:text-primary-foreground"
+                            }`}
+                          >
+                            {isSelected ? "Vald" : "Välj"}
+                          </button>
                         </div>
                         {isExpanded ? (
                           <div className="mt-4 border-t border-foreground/10 pt-4 dark:border-foreground/10">
@@ -6263,31 +6304,51 @@ export default function CustomBuild() {
                   >
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Din build</p>
                     <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
-                    <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                      {/* Tillvalen tar ingen plats förrän de valts - "Ej vald"
-                          på två rader som ingen bett om läser sig som en brist. */}
+                    {/*
+                      * Sammanfattningen visar priser, steglistan visar namn.
+                      *
+                      * Båda spalterna räknade upp samma åtta kategorier med
+                      * samma komponentnamn, så den högra var en kopia av den
+                      * vänstra och tjänade inget. Nu är den ett kvitto: vad
+                      * varje del kostar och vad det blir ihop. Namnet står
+                      * kvar men underordnat, för det är priserna man kommer
+                      * hit för att se.
+                      *
+                      * Tillvalen tar ingen plats förrän de valts - "Ej vald"
+                      * på två rader som ingen bett om läser sig som en brist.
+                      */}
+                    <div className="mt-4 space-y-2.5 text-sm">
                       {CATEGORY_LIST.filter(
                         (category) => !category.optional || selected[category.key],
-                      ).map((category) => (
-                        <button
-                          key={category.key}
-                          type="button"
-                          onClick={() => {
-                            handleCategorySelect(category.key);
-                          }}
-                          className="flex w-full items-start justify-between gap-3 text-left transition-colors hover:text-foreground dark:hover:text-white"
-                        >
-                          <span className="text-muted-foreground">{category.label}</span>
-                          <span className="text-right">
-                            {selected[category.key]?.name ?? "Ej vald"}
-                            {selected[category.key]?.selectedStore ? (
-                              <span className="block text-[11px] text-muted-foreground">
-                                {selected[category.key]?.selectedStore}
+                      ).map((category) => {
+                        const vald = selected[category.key];
+                        return (
+                          <button
+                            key={category.key}
+                            type="button"
+                            onClick={() => {
+                              handleCategorySelect(category.key);
+                            }}
+                            className="flex w-full items-baseline justify-between gap-3 text-left transition-colors hover:text-foreground dark:hover:text-white"
+                          >
+                            <span className="min-w-0">
+                              <span className="block text-xs text-muted-foreground">{category.label}</span>
+                              {vald ? (
+                                <span className="block truncate text-[11px] text-muted-foreground/70">
+                                  {vald.name}
+                                </span>
+                              ) : null}
+                            </span>
+                            {vald ? (
+                              <span className="shrink-0 font-semibold tabular-nums text-foreground">
+                                {formatPrice(getComparablePrice(vald, category.key))} kr
                               </span>
-                            ) : null}
-                          </span>
-                        </button>
-                      ))}
+                            ) : (
+                              <span className="shrink-0 text-xs text-muted-foreground">Ej vald</span>
+                            )}
+                          </button>
+                        );
+                      })}
                     </div>
                     <div className="mt-6 border-t border-foreground/10 pt-4 flex items-center justify-between">
                       <span className="text-sm text-muted-foreground">Total</span>
