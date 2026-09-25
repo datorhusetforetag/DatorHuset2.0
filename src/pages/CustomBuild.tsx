@@ -4016,10 +4016,26 @@ export default function CustomBuild() {
     return getBasePrice(item, category);
   };
 
+  /*
+   * Priset visas alltid. "N/A" stod här förut och var fel på två sätt.
+   *
+   * Det första: posten har ett pris. getComparablePrice faller tillbaka
+   * på katalogens eget riktpris när ingen butik hittats, och det priset
+   * är dessutom precis det som summeringen längst ner redan räknar med.
+   * Raden sa alltså "N/A" medan sammanfattningen la till 1 499 kr för
+   * samma komponent. Kunden fick en total byggd på siffror hon inte fick
+   * se.
+   *
+   * Det andra: det gällde 221 av de 455 handplockade komponenterna, för
+   * att de saknade EAN och prisjakten därför inte kunde känna igen dem.
+   * Halva katalogen såg trasig ut av ett skäl som inte hade med
+   * komponenterna att göra.
+   *
+   * Etiketten under priset säger fortfarande varifrån siffran kommer, så
+   * skillnaden mellan ett pris från en butik i dag och vårt riktpris går
+   * att se. Det är den upplysningen som behövdes, inte ett dolt pris.
+   */
   const getDisplayPriceLabel = (item: ComponentItem, category: CategoryKey) => {
-    if (itemsWithoutStorePrice[item.id]) {
-      return "N/A";
-    }
     return `${formatPrice(getComparablePrice(item, category))} kr`;
   };
 
@@ -4044,9 +4060,12 @@ export default function CustomBuild() {
       case "seed":
         return "Cachad pris";
       case "search":
-        return "Ingen butik";
+        return "Riktpris";
       case "no-store":
-        return "Ingen butik";
+        /* Står under ett pris, så "Ingen butik" läses som att priset inte
+           gäller. Det gör det - det är vårt riktpris, inte dagens pris
+           hos en handlare. */
+        return "Riktpris";
       default:
         return "Reservpris";
     }

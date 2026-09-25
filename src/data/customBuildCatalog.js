@@ -1,4 +1,5 @@
 import { STATIC_CUSTOM_BUILD_CATALOG_ITEMS } from "./customBuildStaticCatalog.js";
+import { CATALOG_EAN_BY_ID } from "./customBuildCatalogEans.generated.js";
 
 const cpu = (
   id,
@@ -1930,6 +1931,22 @@ export const REMOVED_CUSTOM_BUILD_ITEM_IDS = new Set([
   "gpu-39",
 ]);
 
+/*
+ * EAN läggs på här i stället för i varje post.
+ *
+ * Posterna byggs av hjälpfunktionerna ovan och skrevs in för hand, medan
+ * EAN-numren hämtas ur Proshops flöde av ett skript. Att blanda de två i
+ * samma text hade betytt att skriptet skriver i handskriven kod. Här
+ * möts de i stället på ett ställe.
+ *
+ * Numret är vad prismatchningen känner igen varan på. En post utan EAN
+ * hittar ingen butik och får visa katalogens riktpris i stället.
+ */
+const withEan = (item) => {
+  const ean = CATALOG_EAN_BY_ID[item.id];
+  return ean ? { ...item, ean } : item;
+};
+
 export const CUSTOM_BUILD_CATALOG_ITEMS = [
   ...AM4_CPUS,
   ...AM5_CPUS,
@@ -1943,7 +1960,9 @@ export const CUSTOM_BUILD_CATALOG_ITEMS = [
   ...ADDITIONAL_LGA1700_MOTHERBOARDS,
   ...LGA1851_MOTHERBOARDS,
   ...STATIC_CUSTOM_BUILD_CATALOG_ITEMS,
-].filter((item) => !REMOVED_CUSTOM_BUILD_ITEM_IDS.has(item.id));
+]
+  .filter((item) => !REMOVED_CUSTOM_BUILD_ITEM_IDS.has(item.id))
+  .map(withEan);
 
 export const CUSTOM_BUILD_CATALOG_BY_ID = Object.fromEntries(
   CUSTOM_BUILD_CATALOG_ITEMS.map((item) => [item.id, item])
