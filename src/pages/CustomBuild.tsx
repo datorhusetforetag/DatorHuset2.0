@@ -5367,6 +5367,27 @@ export default function CustomBuild() {
     return "Ingen träff";
   };
 
+  /*
+   * Lagerstatus skild från priset.
+   *
+   * getStoreOfferStatusLabel returnerar antingen priset eller ett
+   * statusord i samma fält, så butiksraden kunde visa det ena eller det
+   * andra men aldrig båda. Kunden vill veta bådadera: vad det kostar och
+   * om det finns hemma.
+   */
+  const getStoreStockLabel = (offer: StoreOffer) => {
+    if (offer.status !== "available") {
+      if (offer.status === "unavailable") return { text: "Slut", tone: "slut" };
+      if (offer.status === "search_only") return { text: "Sök i butik", tone: "okant" };
+      if (offer.status === "linked_no_price") return { text: "Pris saknas", tone: "okant" };
+      return { text: "Ingen träff", tone: "okant" };
+    }
+    const availability = String(offer.availability || "").toLowerCase();
+    if (availability.includes("out") || availability.includes("slut")) return { text: "Slut", tone: "slut" };
+    if (availability.includes("in_stock") || availability.includes("lager")) return { text: "I lager", tone: "lager" };
+    return { text: "Tillgänglig", tone: "lager" };
+  };
+
   const canSelectStoreOffer = (offer: StoreOffer) =>
     offer.status === "available" && Number.isFinite(offer.total_price ?? offer.price);
 
@@ -5624,10 +5645,21 @@ export default function CustomBuild() {
               </button>
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px] lg:items-start">
-              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block self-start`}>
-                <div className="space-y-4 lg:sticky lg:top-24">
-                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
+            {/* Ingen items-start här. Spalterna ska sträcka sig till
+                radens höjd, annars har det klistrade innehållet ingen
+                plats att glida i och står stilla. */}
+            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+              <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block`}>
+                {/* h-full med flit. Det klistrade kortets rörelseutrymme
+                    bestäms av FÖRÄLDERNS höjd, inte av spaltens. Utan den
+                    här raden är blocket bara så högt som sitt innehåll, och
+                    kortet fastnar i 252 px innan det följer med ändå. */}
+                <div className="space-y-4 lg:h-full">
+                  {/* Bara steglistan är klistrad. Tillsammans med tipsrutan
+                      blev blocket 866 px högt - högre än fönstret minus
+                      sidhuvudet, och då syns aldrig slutet av det. Tipsrutan
+                      får skrolla förbi som vanligt innehåll. */}
+                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80 lg:sticky lg:top-24">
                       <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Komponenter</p>
                       <p className="mt-2 text-sm font-semibold text-foreground">
                         {selectedCount} av {REQUIRED_CATEGORIES.length} valda
@@ -6030,7 +6062,13 @@ export default function CustomBuild() {
                     const visarRiktpris = getPriceSource(item) === "no-store" || getPriceSource(item) === "search";
 
                     return (
-                      <div key={item.id} className="cb-row" data-vald={isSelected ? "true" : "false"}>
+                      <div
+                        key={item.id}
+                        className="cb-row"
+                        data-vald={isSelected ? "true" : "false"}
+                        data-oppen={isExpanded ? "true" : "false"}
+                      >
+                        <div className="cb-row__topp">
                         <div className="cb-row__media">
                           <span className="cb-row__ikon">
                             <ActiveIcon className="h-3.5 w-3.5" />
@@ -6122,148 +6160,169 @@ export default function CustomBuild() {
                             {isSelected ? "Vald" : "Välj"}
                           </button>
                         </div>
+                        </div>
                         {isExpanded ? (
-                          <div className="mt-4 border-t border-foreground/10 pt-4 dark:border-foreground/10">
-                            <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_300px] xl:grid-cols-[minmax(0,1fr)_320px]">
-                              <div className="rounded-xl border border-foreground/10 bg-foreground/[0.04] p-4 dark:border-foreground/10 dark:bg-background/70">
-                                <div className="flex items-start justify-between gap-3">
-                                  <div>
-                                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                                      Produktinfo
-                                    </p>
-                                    <h5 className="mt-2 text-base font-semibold text-foreground">
-                                      {item.name}
-                                    </h5>
-                                  </div>
-                                  {item.selectedProductUrl ? (
-                                    <a
-                                      href={item.selectedProductUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className="rounded-lg border border-foreground/20 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
-                                    >
-                                      Produktsida
-                                    </a>
-                                  ) : null}
-                                </div>
-                                <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                                  {detailEntries.length > 0 ? (
-                                    detailEntries.map(([label, value]) => (
-                                      <div key={`${item.id}-${label}`}>
-                                        <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                                          {label}
-                                        </p>
-                                        <p className="mt-1 text-sm font-medium text-foreground">
-                                          {value}
-                                        </p>
-                                      </div>
-                                    ))
-                                  ) : (
-                                    <div className="sm:col-span-2 xl:col-span-3">
-                                      <p className="text-sm text-muted-foreground">
-                                        Välj komponenten direkt eller öppna butikslänken om den finns.
-                                      </p>
-                                    </div>
-                                  )}
-                                </div>
+                          <div className="cb-panel">
+                            <div className="cb-panel__ovre">
+                              {/* Samma bricka som i raden, tio gånger ytan.
+                                  Här har kunden stannat för att titta närmare. */}
+                              <div className="cb-panel__bild">
+                                <img
+                                  src={imageSrc}
+                                  alt={imageAlt}
+                                  loading="lazy"
+                                  decoding="async"
+                                  onError={(event) => {
+                                    const bild = event.currentTarget;
+                                    const kedja = [backupImageSrc, categoryImage?.src, FALLBACK_COMPONENT_IMAGE]
+                                      .filter((kandidat): kandidat is string => Boolean(kandidat));
+                                    const steg = Number(bild.dataset.reserv ?? "0");
+                                    if (steg >= kedja.length) {
+                                      bild.onerror = null;
+                                      return;
+                                    }
+                                    bild.dataset.reserv = String(steg + 1);
+                                    bild.src = kedja[steg];
+                                  }}
+                                />
                               </div>
-                              <div className="rounded-xl border border-foreground/10 bg-background/70 p-4 dark:border-foreground/10 dark:bg-background/70">
-                                <div className="flex items-center justify-between gap-3">
-                                  <div>
-                                    <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
-                                      Butiker
-                                    </p>
-                                    <p className="mt-1 text-xs text-muted-foreground">
-                                      {showStorePanel
-                                        ? "Valbar butik rangordnad från billigast till dyrast."
-                                        : "Den här komponenten har ingen butiksväljare ännu."}
-                                    </p>
-                                    {customBuildDebugEnabled ? (
-                                      <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
-                                        {"Debug: Live butik = verifierad butikslänk med pris, Cachad pris = senast sparad eller lokal reservprisdata, Reservpris = katalogpris eller aggregatorpris, Ingen butik = inga butiksträffar."}
-                                      </p>
-                                    ) : null}
+
+                              <div className="min-w-0 flex-1">
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="min-w-0">
+                                    <p className="cb-panel__etikett">Specifikation</p>
+                                    <h5 className="cb-panel__namn">{item.name}</h5>
                                   </div>
-                                  <button
-                                    type="button"
-                                    onClick={handleStorePickerClose}
-                                    className="rounded-lg border border-foreground/20 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
-                                  >
-                                    Stäng
-                                  </button>
-                                </div>
-                                {storePickerLoading && isExpanded ? (
-                                  <div className="mt-4 rounded-lg border border-dashed border-foreground/20 px-4 py-5 text-sm text-muted-foreground dark:border-foreground/20 dark:text-muted-foreground">
-                                    Hämtar butikslänkar och priser...
-                                  </div>
-                                ) : null}
-                                {storePickerError && isExpanded ? (
-                                  <p className="mt-4 text-sm text-amber-600">{storePickerError}</p>
-                                ) : null}
-                                {showStorePanel ? (
-                                  <div className="mt-4 space-y-2">
-                                    {storeOffersForItem.map((offer) => (
-                                      <div
-                                        key={`${item.id}-${offer.store_id || offer.store}`}
-                                        className="rounded-lg border border-foreground/10 px-3 py-2.5 dark:border-foreground/10"
+                                  <div className="flex shrink-0 items-center gap-2">
+                                    {item.selectedProductUrl ? (
+                                      <a
+                                        href={item.selectedProductUrl}
+                                        target="_blank"
+                                        rel="noreferrer"
+                                        className="rounded-lg border border-foreground/20 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary hover:text-primary"
                                       >
-                                        <div className="flex items-center justify-between gap-3">
-                                          <div className="min-w-0">
-                                          <p className="truncate text-sm font-semibold text-foreground">
-                                            {offer.store}
-                                          </p>
-                                          <p className="mt-1 text-xs text-muted-foreground">
-                                            {getStoreOfferStatusLabel(offer, item, activeCategory)}
-                                          </p>
-                                        </div>
-                                          <div className="flex items-center gap-2">
-                                        {offer.product_url ? (
-                                          <a
-                                            href={offer.product_url || "#"}
-                                            target="_blank"
-                                            rel="noreferrer"
-                                            className="rounded-lg border border-foreground/20 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-secondary hover:text-primary dark:border-foreground/20 dark:text-foreground"
-                                          >
-                                            Till butik
-                                          </a>
-                                        ) : (
-                                          <span className="rounded-lg border border-foreground/10 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground dark:border-foreground/10 dark:text-muted-foreground">
-                                            Ingen länk
-                                          </span>
-                                        )}
-                                        <button
-                                          type="button"
-                                          disabled={!canSelectStoreOffer(offer)}
-                                          onClick={() => selectComponentAndAdvance(activeCategory, item, offer)}
-                                          className="rounded-lg bg-primary px-2.5 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-                                        >
-                                          Välj
-                                        </button>
-                                          </div>
-                                        </div>
+                                        Produktsida
+                                      </a>
+                                    ) : null}
+                                    <button
+                                      type="button"
+                                      onClick={handleStorePickerClose}
+                                      className="rounded-lg border border-foreground/20 px-3 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                                    >
+                                      Stäng
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {detailEntries.length > 0 ? (
+                                  <dl className="cb-panel__specar">
+                                    {detailEntries.map(([label, value]) => (
+                                      <div key={`${item.id}-${label}`}>
+                                        <dt>{label}</dt>
+                                        <dd>{String(value)}</dd>
                                       </div>
                                     ))}
-                                  </div>
+                                  </dl>
                                 ) : (
-                                  <div className="mt-4 rounded-lg border border-dashed border-foreground/20 px-4 py-5 text-sm text-muted-foreground dark:border-foreground/20 dark:text-muted-foreground">
-                                    Välj komponenten direkt för att fortsätta till nästa steg.
-                                  </div>
+                                  <p className="mt-4 text-sm text-muted-foreground">
+                                    Butiken har inte lämnat några specifikationer för den här varan.
+                                  </p>
                                 )}
-                                {/* Måste stå intill priserna, inte bara i en policy.
-                                    Se AffiliateDisclosure för varför. */}
-                                {showStorePanel ? (
-                                  <AffiliateDisclosure className="mt-4" />
-                                ) : null}
-                                <div className="mt-4 flex justify-end">
-                                  <button
-                                    type="button"
-                                    onClick={handleSelectWithoutStore}
-                                    disabled={!isExpanded}
-                                    className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
-                                  >
-                                    Välj utan butik
-                                  </button>
+                              </div>
+                            </div>
+
+                            <div className="cb-panel__butiker">
+                              <p className="cb-panel__etikett">Butiker</p>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                {showStorePanel
+                                  ? "Rangordnade från billigast till dyrast."
+                                  : "Den här komponenten har ingen butiksväljare ännu."}
+                              </p>
+                              {customBuildDebugEnabled ? (
+                                <p className="mt-2 text-[11px] text-sky-700 dark:text-sky-300">
+                                  {"Debug: Live butik = verifierad butikslänk med pris, Cachad pris = senast sparad eller lokal reservprisdata, Reservpris = katalogpris eller aggregatorpris, Ingen butik = inga butiksträffar."}
+                                </p>
+                              ) : null}
+
+                              {storePickerLoading && isExpanded ? (
+                                <div className="mt-3 rounded-lg border border-dashed border-foreground/20 px-4 py-4 text-sm text-muted-foreground">
+                                  Hämtar butikslänkar och priser...
                                 </div>
+                              ) : null}
+                              {storePickerError && isExpanded ? (
+                                <p className="mt-3 text-sm text-amber-600">{storePickerError}</p>
+                              ) : null}
+
+                              {showStorePanel ? (
+                                storeOffersForItem.length > 0 ? (
+                                  <div className="mt-3">
+                                    {storeOffersForItem.map((offer) => {
+                                      const lager = getStoreStockLabel(offer);
+                                      const pris = Number(offer.total_price ?? offer.price);
+                                      return (
+                                        <div
+                                          key={`${item.id}-${offer.store_id || offer.store}`}
+                                          className="cb-butik"
+                                        >
+                                          <div className="min-w-0">
+                                            <span className="cb-butik__namn block truncate">{offer.store}</span>
+                                            <span className="cb-butik__lager" data-ton={lager.tone}>
+                                              {lager.text}
+                                            </span>
+                                          </div>
+                                          <span className="cb-butik__pris">
+                                            {Number.isFinite(pris) && pris > 0
+                                              ? formatCurrencyPrice(pris, offer.currency || "SEK")
+                                              : "—"}
+                                          </span>
+                                          <div className="flex items-center gap-2">
+                                            {offer.product_url ? (
+                                              <a
+                                                href={offer.product_url}
+                                                target="_blank"
+                                                rel="noreferrer"
+                                                className="rounded-lg border border-foreground/20 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground transition-colors hover:border-primary hover:text-primary"
+                                              >
+                                                Till butik
+                                              </a>
+                                            ) : null}
+                                            <button
+                                              type="button"
+                                              disabled={!canSelectStoreOffer(offer)}
+                                              onClick={() => selectComponentAndAdvance(activeCategory, item, offer)}
+                                              className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+                                            >
+                                              Välj
+                                            </button>
+                                          </div>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+                                ) : !storePickerLoading ? (
+                                  <div className="mt-3 rounded-lg border border-dashed border-foreground/20 px-4 py-4 text-sm text-muted-foreground">
+                                    Ingen butik hittades för den här komponenten i dag.
+                                  </div>
+                                ) : null
+                              ) : (
+                                <div className="mt-3 rounded-lg border border-dashed border-foreground/20 px-4 py-4 text-sm text-muted-foreground">
+                                  Välj komponenten direkt för att fortsätta till nästa steg.
+                                </div>
+                              )}
+
+                              {/* Måste stå intill priserna, inte bara i en policy.
+                                  Se AffiliateDisclosure för varför. */}
+                              {showStorePanel ? <AffiliateDisclosure className="mt-3" /> : null}
+
+                              <div className="mt-3 flex justify-end">
+                                <button
+                                  type="button"
+                                  onClick={handleSelectWithoutStore}
+                                  disabled={!isExpanded}
+                                  className="rounded-lg border border-primary/60 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-40"
+                                >
+                                  Välj utan butik
+                                </button>
                               </div>
                             </div>
                           </div>
@@ -6296,11 +6355,15 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="hidden lg:block self-start">
-                <div className="space-y-4 lg:sticky lg:top-24">
+              <aside className="hidden lg:block">
+                {/* h-full med flit. Det klistrade kortets rörelseutrymme
+                    bestäms av FÖRÄLDERNS höjd, inte av spaltens. Utan den
+                    här raden är blocket bara så högt som sitt innehåll, och
+                    kortet fastnar i 252 px innan det följer med ändå. */}
+                <div className="space-y-4 lg:h-full">
                   <div
                     id="build-summary"
-                    className="rounded-2xl border border-foreground/10 bg-background/70 p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24"
+                    className="rounded-2xl border border-foreground/10 bg-background/70 p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24 lg:sticky lg:top-24"
                   >
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Din build</p>
                     <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>

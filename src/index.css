@@ -2615,19 +2615,7 @@
  * pris, med ett tomrum på hundrafemtio pixlar mitt i. Fem produkter
  * fick plats på en skärm, av tvåhundra i listan.
  */
-.cb-row {
-  position: relative;
-  display: grid;
-  grid-template-columns: 5.25rem minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-radius: 0.75rem;
-  border: 1px solid hsl(220 20% 100% / 0.08);
-  background: var(--pc-card-surface, #232c3b);
-  transition: border-color 0.16s ease-out, transform 0.18s ease-out,
-    box-shadow 0.18s ease-out;
-}
+
 
 :root:not(.dark) .cb-row {
   --pc-card-surface: #eef1f6;
@@ -2814,7 +2802,7 @@
 }
 
 @media (max-width: 640px) {
-  .cb-row {
+  .cb-row__topp {
     grid-template-columns: 4rem minmax(0, 1fr);
     gap: 0.75rem;
   }
@@ -3033,6 +3021,216 @@
   .cb-steg,
   .cb-steg__rensa,
   .cb-forlopp__fyllt {
+    transition: none;
+  }
+}
+
+
+/* Konfiguratorns utfällda panel -------------------------------------
+ *
+ * Raden är ett block med ett rutnät INUTI, inte ett rutnät själv.
+ *
+ * När raden gjordes om till ett rutnät blev den utfällda panelen ett
+ * rutnätsbarn och lades i nästa lediga cell i stället för under raden.
+ * Produktinfon och butikslistan hamnade ovanpå varandra och rubrikerna
+ * flätades ihop till "PRBUTIKERNFO". Därav .cb-row__topp: rutnätet bor
+ * där, och panelen är syskon till det på blocknivå.
+ */
+.cb-row {
+  position: relative;
+  display: block;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(220 20% 100% / 0.08);
+  background: var(--pc-card-surface, #232c3b);
+  transition: border-color 0.16s ease-out, transform 0.18s ease-out,
+    box-shadow 0.18s ease-out;
+}
+
+.cb-row__topp {
+  display: grid;
+  grid-template-columns: 5.25rem minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* En utfälld rad ska inte lyfta under pekaren - den står still och är
+   läge, inte något man är på väg att klicka. */
+.cb-row[data-oppen="true"]:hover {
+  transform: none;
+}
+
+.cb-panel {
+  margin-top: 0.85rem;
+  border-top: 1px solid hsl(var(--foreground) / 0.1);
+  padding-top: 0.85rem;
+}
+
+.cb-panel__ovre {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/*
+ * Större bild, som efterfrågat. Samma ljusa bricka som i raden, men
+ * tio gånger ytan - här har kunden stannat för att titta närmare.
+ */
+.cb-panel__bild {
+  position: relative;
+  display: flex;
+  height: 11rem;
+  width: 11rem;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 0.6rem;
+  padding: 0.75rem;
+  background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7),
+    inset 0 -2px 4px rgb(15 23 42 / 0.1);
+}
+
+:root:not(.dark) .cb-panel__bild {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px hsl(220 20% 20% / 0.08);
+}
+
+.cb-panel__bild img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.cb-panel__etikett {
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-panel__namn {
+  margin-top: 0.3rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: hsl(var(--foreground));
+}
+
+/*
+ * Specifikationerna som en definitionslista i två spalter.
+ *
+ * Etiketten över värdet och inte bredvid: butikens etiketter är olika
+ * långa ("Kapacitet", "ATX-standard", "Bluetooth"), och bredvid varandra
+ * blev värdespalten taggig.
+ */
+.cb-panel__specar {
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.6rem 1.25rem;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+}
+
+.cb-panel__specar dt {
+  font-size: 0.625rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-panel__specar dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.cb-panel__butiker {
+  margin-top: 1.1rem;
+}
+
+.cb-butik {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: 0.55rem;
+  border: 1px solid hsl(var(--foreground) / 0.1);
+  padding: 0.6rem 0.75rem;
+}
+
+.cb-butik + .cb-butik {
+  margin-top: 0.4rem;
+}
+
+.cb-butik__namn {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+/*
+ * Lagerstatus som prick plus ord.
+ *
+ * Bara en färgad prick räcker inte - den som inte skiljer grönt från
+ * rött ser ingen skillnad alls. Ordet står därför kvar och pricken är
+ * en genväg för den som ser den.
+ */
+.cb-butik__lager {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: 0.15rem;
+  font-size: 0.6875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-butik__lager::before {
+  content: "";
+  height: 0.45rem;
+  width: 0.45rem;
+  flex: none;
+  border-radius: 9999px;
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+.cb-butik__lager[data-ton="lager"]::before {
+  background: hsl(152 60% 48%);
+}
+
+.cb-butik__lager[data-ton="slut"]::before {
+  background: hsl(0 65% 58%);
+}
+
+.cb-butik__lager[data-ton="okant"]::before {
+  background: hsl(38 85% 55%);
+}
+
+.cb-butik__pris {
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .cb-panel__bild {
+    height: 8rem;
+    width: 8rem;
+  }
+
+  .cb-butik {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-row {
     transition: none;
   }
 }
