@@ -36,7 +36,7 @@
 import { writeFileSync, createReadStream, existsSync } from "node:fs";
 import { createServer } from "node:http";
 
-import { streamFeed, COMPONENT_CATEGORY_FILTER } from "../server/pricing/sources/feed.mjs";
+import { streamFeed } from "../server/pricing/sources/feed.mjs";
 import { CUSTOM_BUILD_CATALOG_ITEMS } from "../src/data/customBuildCatalog.js";
 
 const args = process.argv.slice(2);
@@ -112,6 +112,32 @@ const formFactor = (title) => {
   return null;
 };
 
+/*
+ * Chassits storlek.
+ *
+ * Egen funktion, inte formFactor ovan. Ett moderkort mäts i ATX-format
+ * och ett chassi i tornhöjd, och Proshop skriver dessutom tornhöjden på
+ * ett halvdussin sätt: "Miditower", "Tower", "Desktop", "Cube", eller
+ * ingenting alls. Att lägga in de orden i den gemensamma funktionen hade
+ * riskerat att ett moderkort plötsligt fick formfaktorn "Desktop".
+ *
+ * 558 riktiga chassin föll tidigare på att bara ATX-formaten kändes igen.
+ */
+const caseFormFactor = (title) => {
+  const t = title.toLowerCase();
+  if (/midi.?tower|midi.?torn/.test(t)) return "Miditower";
+  if (/full.?tower|big.?tower/.test(t)) return "Full tower";
+  if (/mini.?tower/.test(t)) return "Mini tower";
+  if (t.includes("mini-itx") || t.includes("mini itx")) return "Mini-ITX";
+  if (t.includes("micro-atx") || t.includes("matx") || t.includes("m-atx")) return "Micro-ATX";
+  if (/\bcube\b/.test(t)) return "Cube";
+  if (/\bdesktop\b/.test(t)) return "Desktop";
+  if (/\btower\b|\btorn\b/.test(t)) return "Tower";
+  if (t.includes("e-atx") || t.includes("eatx")) return "E-ATX";
+  if (t.includes("atx")) return "ATX";
+  return null;
+};
+
 /** Lagringskapacitet, normaliserad till GB. */
 const capacityGb = (title) => {
   const tb = title.match(/(\d+(?:[.,]\d+)?)\s*TB\b/i);
@@ -139,152 +165,306 @@ const gpuChip = (title) => {
 /* --------------------------------------------------------- kategorier ---- */
 
 /*
- * Vilken kategori raden hör till, och vad som krävs för att den ska få
- * komma in. Kravet är alltid det configuratorn behöver för att kunna
- * säga nej till en omöjlig kombination.
+ * BUTIKENS KATEGORINAMN AVGÖR, INTE TITELN.
+ *
+ * Det här är hela grinden. Flödet har 264 637 produkter i 520 kategorier
+ * - hundmat, LEGO, parfym, borrmaskiner - och exakt tio av kategorierna
+ * innehåller sådant som går i en dator. Allt som inte står i listan
+ * nedan kommer inte in.
+ *
+ * Första försöket läste kategorin ur titeln i stället, och det gick illa
+ * på ett sätt som är värt att minnas. En titel som innehåller "CPU"
+ * behöver inte vara en processor:
+ *
+ *   Corsair ONE a600 Metal Dark PC - AMD Ryzen 9 9900X3D CPU - ...
+ *       kategori "Stationaer", alltså en färdig dator för 59 739 kr
+ *   ASRock Rack 1U2N2G-AM5/2T - rack-mountable no CPU - 0 GB - no HDD
+ *       kategori "Stationaer", ett tomt rackchassi för 41 358 kr
+ *   Thermal Grizzly AM5 Short Backplate Black - CPU monteringsfästen
+ *       kategori "CPU flaektar", en bakplåt för 109 kr
+ *
+ * Alla tre låg i konfiguratorns processorlista. En kund som valde den
+ * första hade fått en färdig dator som "processor" i sitt bygge.
+ * Butiken visste hela tiden vad de var; det var vi som inte frågade.
  */
-const CATEGORIES = [
-  {
-    key: "motherboard",
-    matches: (c, t) => /moderkort|motherboard/i.test(c) || /moderkort/i.test(t),
-    build: (row) => {
-      const socket = statedSocket(row.title);
-      const ram = ramType(row.title);
-      const form = formFactor(row.title);
-      if (!socket) return { reject: "sockel saknas i titeln" };
-      if (!ram) return { reject: "DDR-generation saknas" };
-      return {
-        socket,
-        ramType: ram,
-        specs: [socket, ram, form].filter(Boolean),
-        details: { Sockel: socket, Minne: ram, ...(form ? { Formfaktor: form } : {}) },
-      };
-    },
+const FEED_CATEGORY_MAP = new Map([
+  ["cpu", "cpu"],
+  ["grafikkort", "gpu"],
+  ["moderkort", "motherboard"],
+  ["ram", "ram"],
+  ["ssd", "storage"],
+  ["haarddisk", "storage"],
+  ["chassi", "case"],
+  ["stroemfoersoerjning", "psu"],
+  ["cpu flaektar", "cooling"],
+]);
+
+/*
+ * Kategorier som ligger nära men medvetet lämnas utanför.
+ *
+ *   Chassi flaekt (907)        chassifläktar, inte processorkylare. Steget
+ *                              "Kylning" väljer det som sitter på
+ *                              processorn. Fläktarna hör hemma i ett
+ *                              tillbehörssteg som inte finns än.
+ *   DIY vattenkylning (258)    slang, kopplingar, kylvätska. Byggsatser
+ *                              för den som redan vet vad hon gör.
+ *   Kylning och flaekt (160)   kyldynor till bärbara, fläktstyrningar.
+ *   Rack chassis (2 009)       serverrack, inte datorchassin.
+ *   Stationaer / NAS / Server  färdiga datorer. Vi säljer bygget.
+ *   Stationaer Mini PC Barebone (218)  likaså, med Windows på.
+ *   *tillbehoer (flera)        skruv, ramar, kablar.
+ */
+
+/*
+ * Vad titeln måste säga för att raden ska räknas som varan.
+ *
+ * Två av kategorierna ovan är blandade. "CPU flaektar" rymmer både
+ * kylare och kylpasta och monteringsfästen; "SSD" rymmer både interna
+ * m.2-enheter och portabla USB-diskar. Proshop skriver varutypen sist i
+ * titeln, så det går att kräva den. Ett krav på vad som SKA stå är
+ * säkrare än en lista på vad som inte får stå - den senare är aldrig
+ * färdig.
+ */
+const TITLE_GATE = {
+  cooling: {
+    require: /CPU\s+(?:Luft|Vatten)kylare/i,
+    /* 1U till 5U är höjden i ett serverrack. En sådan kylare är byggd
+       liggande och får inte plats under sidopanelen på ett torn. */
+    /* "- tillbehör" sist i titeln är Proshops eget ord för att raden är
+       en del till en kylare, inte en kylare: fästen, retrofitsatser. */
+    forbid: /\b[1-5]U\b|processor fan|narrow ilm|retrofit|tillbeh(?:ö|oe)r\s*$|mounting kit/i,
+    reason: "inte en processorkylare som passar ett vanligt chassi",
   },
-  {
-    key: "cpu",
+  storage: {
     /*
-     * En CPU-kylare heter "Arctic Liquid Freezer III Pro 360 - CPU
-     * Vattenkylare" och fastnade här på ordet CPU. 1 256 kylare
-     * klassades som processorer och föll sedan på att de saknade
-     * sockel - de hamnade alltså i granskningslistan i stället för i
-     * kylarkategorin där de hör hemma.
+     * SAS, U.2 och U.3 är serverkontakter. Disken finns, den fungerar,
+     * men den går inte att koppla in i ett vanligt moderkort - det finns
+     * ingen sådan port. Xbox- och PS5-korten passar bara i konsolen.
      */
-    matches: (c, t) => {
-      if (!/^cpu$|processor/i.test(c) && !/\bCPU\b/.test(t)) return false;
-      /*
-       * Parentesen tas bort före provet.
-       *
-       * En processor i retailkartong heter "AMD Ryzen 7 5800X3D CPU - 8
-       * kärnor - AMD Boxed (med kylare)". Ett rakt kylarfilter kastade
-       * därför ut 629 riktiga processorer - de levereras med kylare, de
-       * är inte kylare. Det som står inom parentes beskriver förpackningen,
-       * det som står utanför beskriver varan.
-       */
-      const withoutParens = t.replace(/\([^)]*\)/g, " ");
-      return !/kylare|cooler|flaekt|fläkt|vattenkyl|luftkyl/i.test(withoutParens);
-    },
-    build: (row) => {
-      const socket = statedSocket(row.title) || cpuSocket(row.title);
-      if (!socket) return { reject: "sockel går inte att härleda ur modellnamnet" };
-      if (!KNOWN_SOCKETS.includes(socket)) return { reject: `okänd sockel ${socket}` };
-      const cores = row.title.match(/(\d+)\s*(?:kärnor|cores)/i);
-      return {
-        socket,
-        specs: [socket, cores ? `${cores[1]} kärnor` : null].filter(Boolean),
-        details: { Sockel: socket, ...(cores ? { Kärnor: cores[1] } : {}) },
-      };
-    },
+    require: /\bSSD\b|h(?:å|ae)rddisk|\bHDD\b|\bNVMe\b|\bM\.2\b/i,
+    forbid:
+      /\b(?:extern|portable|external)\b|\bsas\b|sas-\d|serial attached scsi|\bu\.[23]\b|xbox|playstation|\bps5\b|expansion card|\busb\s?-?\s?[c43]\b|usb 3|disk cartridge|data cent/i,
+    reason: "passar inte i en vanlig dator (extern, serverkontakt eller konsol)",
   },
-  {
-    key: "gpu",
-    matches: (c, t) => /grafikkort|graphics/i.test(c) || /grafikkort/i.test(t),
-    build: (row) => {
-      const chip = gpuChip(row.title);
-      if (!chip) return { reject: "grafikkretsen går inte att läsa ut" };
-      const vram = row.title.match(/(\d+)\s*GB\s*(GDDR\d)?/i);
-      return {
-        gpuModel: row.title,
-        specs: [chip, vram ? `${vram[1]} GB` : null].filter(Boolean),
-        details: { Krets: chip, ...(vram ? { Minne: `${vram[1]} GB` } : {}) },
-      };
-    },
+  ram: {
+    /*
+     * SO-DIMM är kortare och sitter i bärbara datorer och NAS-lådor. Den
+     * går fysiskt inte ner i en DIMM-plats på ett vanligt moderkort.
+     *
+     * ECC-minne med register kräver stöd i både processor och moderkort,
+     * och inget vi säljer har det. "Unbuffered" står däremot på vanligt
+     * skrivbordsminne och får inte finnas med här - det var nära att
+     * kasta ut hälften av listan.
+     */
+    forbid: /so.?dimm|server premier|\b(?:ecc|registered|registrerad|rdimm|lrdimm|with parity|reg ecc)\b/i,
+    reason: "passar inte i ett vanligt moderkort (bärbart eller serverminne)",
   },
-  {
-    key: "ram",
-    matches: (c, t) => /minne|ram\b|memory/i.test(c),
-    build: (row) => {
-      const ram = ramType(row.title);
-      const size = capacityGb(row.title);
-      const speed = row.title.match(/(\d{4,5})\s*MHz/i);
-      if (!ram) return { reject: "DDR-generation saknas" };
-      if (!size) return { reject: "storlek saknas" };
-      return {
-        ramType: ram,
-        specs: [`${size} GB`, ram, speed ? `${speed[1]} MHz` : null].filter(Boolean),
-        details: { Typ: ram, Storlek: `${size} GB`, ...(speed ? { Hastighet: `${speed[1]} MHz` } : {}) },
-      };
-    },
+  psu: {
+    /*
+     * Ett riktigt ATX-aggregat får sina riktiga värden i mallen:
+     * fläktens diameter i millimeter, ATX-versionen med siffra, eller
+     * 80 Plus med en klass. Ett switchaggregat från HPE Aruba får bara
+     * mallens tomma "ATX - 80 Plus".
+     *
+     * Kravet kostar omkring femton billiga men riktiga aggregat som
+     * Proshop beskrivit slarvigt, och tar bort omkring hundratjugo
+     * nätverks- och serveraggregat. Den bytesaffären är värd att göra:
+     * det som blir kvar är sådant som går att skruva fast i ett chassi.
+     */
+    require: /\d{2,3}\s*mm|ATX\s*\d(?:\.\d)?|80\s*Plus\s*(?:Gold|Bronze|Silver|Platinum|Titanium|White|Standard|Ja)/i,
+    /*
+     * Kravet ovan räcker inte, och det är värt att förklara varför.
+     *
+     * Proshop klistrar på en mall i slutet av titeln på ALLT i den här
+     * kategorin, även på saker som inte är nätaggregat:
+     *
+     *   Schwaiger Slim-Line - solar panel - 200 watt Strömförsörjning - ATX - 80 Plus
+     *   4smarts Wall charger GaN Flex Pro 200W ... Strömförsörjning - 200 Watt - ATX - 80 Plus
+     *   Nedis Power Inverter ... Strömförsörjning - 1000 Watt - ATX - 80 Plus
+     *
+     * Ett krav på ordet "Strömförsörjning" släpper alltså igenom
+     * solpaneler. 24 sådana kom in i första försöket, en av dem en
+     * växelriktare för 4 899 kr som såg ut som ett nätaggregat för en
+     * kund som skummar listan.
+     *
+     * Mallen skriver också alltid "ATX" och "80 Plus" utan siffra eller
+     * klass, medan riktiga nätaggregat får sina riktiga värden. Det går
+     * därför inte att skilja dem åt på mallen - men varutypen står i den
+     * fria delen av titeln, och den går att lista.
+     */
+    forbid: /inverter|v(?:ä|ae)xelriktare|charger|laddare|\bac adapter\b|solar|batteri|battery|splitter|\bpoe\b|surge|power strip|grenuttag|transfer switch|powerbank|power bank|docking|\bups\b|hot.?plug|redundant|\bkva\b|flex slot/i,
+    reason: "inte ett nätaggregat till en dator (laddare, växelriktare eller serveraggregat)",
   },
-  {
-    key: "storage",
-    matches: (c, t) => /ssd|hdd|lagring|hårddisk|storage/i.test(c),
-    build: (row) => {
-      const size = capacityGb(row.title);
-      if (!size) return { reject: "kapacitet saknas" };
-      const iface = /m\.?2|nvme/i.test(row.title) ? "NVMe" : /sata/i.test(row.title) ? "SATA" : null;
-      const gen = row.title.match(/PCIe\s*(\d(?:\.\d)?)/i);
-      return {
-        specs: [size >= 1024 ? `${size / 1024} TB` : `${size} GB`, iface, gen ? `PCIe ${gen[1]}` : null].filter(Boolean),
-        details: {
-          Kapacitet: size >= 1024 ? `${size / 1024} TB` : `${size} GB`,
-          ...(iface ? { Gränssnitt: iface } : {}),
-          ...(gen ? { PCIe: gen[1] } : {}),
-        },
-      };
-    },
+  case: {
+    /* Inter-Tech och Supermicro säljer serverchassin i samma kategori.
+       De är inte datorchassin och passar inget i konfiguratorn. */
+    forbid:
+      /server\s*\(rack\)|server\s*\(tower\)|kan monteras i rack|rack.?mount|\brackmonter|\bcabinet\b|\bsk(?:å|ae)p\b|\b\d{1,2}U\b|wall mount|side panel|sidopanel|raspberry|\bpi [45]\b/i,
+    reason: "serverchassi eller tillbehör, inte ett datorchassi",
   },
-  {
-    key: "psu",
-    matches: (c, t) => /nätagg|natagg|power supply|psu|strömförsörjning/i.test(c),
-    build: (row) => {
-      const w = watts(row.title);
-      if (!w) return { reject: "effekt saknas" };
-      const cert = row.title.match(/80\s*PLUS\s*(\w+)/i);
-      return {
-        specs: [`${w} W`, cert ? `80 Plus ${cert[1]}` : null].filter(Boolean),
-        details: { Effekt: `${w} W`, ...(cert ? { Certifiering: `80 Plus ${cert[1]}` } : {}) },
-      };
-    },
+};
+
+/*
+ * Vad configuratorn behöver veta för att kunna säga nej till en omöjlig
+ * kombination. Kategorin är säker sedan butiken fått avgöra den; det som
+ * står här är enbart egenskaperna.
+ */
+const CATEGORIES = {
+  motherboard: (row) => {
+    const socket = statedSocket(row.title);
+    const ram = ramType(row.title);
+    const form = formFactor(row.title);
+    if (!socket) return { reject: "sockel saknas i titeln" };
+    if (!ram) return { reject: "DDR-generation saknas" };
+    return {
+      socket,
+      ramType: ram,
+      specs: [socket, ram, form].filter(Boolean),
+      details: { Sockel: socket, Minne: ram, ...(form ? { Formfaktor: form } : {}) },
+    };
   },
-  {
-    key: "case",
-    matches: (c, t) => /chassi|kabinett|case\b/i.test(c),
-    build: (row) => {
-      const form = formFactor(row.title);
-      if (!form) return { reject: "formfaktor saknas" };
-      return { specs: [form], details: { Formfaktor: form } };
-    },
+
+  cpu: (row) => {
+    const socket = statedSocket(row.title) || cpuSocket(row.title);
+    if (!socket) return { reject: "sockel går inte att härleda ur modellnamnet" };
+    if (!KNOWN_SOCKETS.includes(socket)) return { reject: `okänd sockel ${socket}` };
+    const cores = row.title.match(/(\d+)\s*(?:kärnor|cores)/i);
+    const ghz = row.title.match(/(\d+(?:[.,]\d+)?)\s*GHz/i);
+    return {
+      socket,
+      specs: [socket, cores ? `${cores[1]} kärnor` : null, ghz ? `${ghz[1].replace(",", ".")} GHz` : null].filter(Boolean),
+      details: {
+        Sockel: socket,
+        ...(cores ? { Kärnor: cores[1] } : {}),
+        ...(ghz ? { Basfrekvens: `${ghz[1].replace(",", ".")} GHz` } : {}),
+      },
+    };
   },
-  {
-    key: "cooling",
-    /* Titeln räknas också. Proshop lägger kylare under kategorier som
-       "CPU flaektar" och "Kabinet koelere", och 1 028 av dem hamnade i
-       högen "ingen kategori" när bara kategorinamnet provades. */
-    matches: (c, t) =>
-      /kylare|kylning|cooler|cooling|flaekt|fläkt/i.test(c) ||
-      /(vatten|luft)kylare|cpu[\s-]*cooler|cpu[\s-]*fl(ä|ae)kt/i.test(t),
-    build: (row) => {
-      const aio = /vattenkyl|aio|liquid|water/i.test(row.title);
-      const size = row.title.match(/\b(120|140|240|280|360|420)\b/);
-      if (!aio && !size) return { reject: "kylartyp och storlek saknas" };
-      return {
-        specs: [aio ? "Vattenkylning" : "Luftkylning", size ? `${size[1]} mm` : null].filter(Boolean),
-        details: { Typ: aio ? "Vattenkylning" : "Luftkylning", ...(size ? { Storlek: `${size[1]} mm` } : {}) },
-      };
-    },
+
+  gpu: (row) => {
+    const chip = gpuChip(row.title);
+    if (!chip) return { reject: "grafikkretsen går inte att läsa ut" };
+    const vram = row.title.match(/(\d+)\s*GB\s*(GDDR\d)?/i);
+    return {
+      gpuModel: row.title,
+      specs: [chip, vram ? `${vram[1]} GB` : null].filter(Boolean),
+      details: { Krets: chip, ...(vram ? { Minne: `${vram[1]} GB` } : {}) },
+    };
   },
-];
+
+  ram: (row) => {
+    const ram = ramType(row.title);
+    const size = capacityGb(row.title);
+    /* Proshop skriver hastigheten som "DDR5-6000", inte som MHz. */
+    const speed = row.title.match(/DDR\d-(\d{4,5})/i) || row.title.match(/(\d{4,5})\s*MHz/i);
+    const latency = row.title.match(/\bCL(\d{2})\b/i);
+    const modules = row.title.match(/\((\d+)\s*pcs?\)/i);
+    if (!ram) return { reject: "DDR-generation saknas" };
+    if (!size) return { reject: "storlek saknas" };
+    return {
+      ramType: ram,
+      specs: [`${size} GB`, ram, speed ? `${speed[1]} MHz` : null].filter(Boolean),
+      details: {
+        Typ: ram,
+        Storlek: `${size} GB`,
+        ...(speed ? { Hastighet: `${speed[1]} MHz` } : {}),
+        ...(latency ? { Latens: `CL${latency[1]}` } : {}),
+        ...(modules ? { Moduler: modules[1] } : {}),
+      },
+    };
+  },
+
+  storage: (row) => {
+    const size = capacityGb(row.title);
+    if (!size) return { reject: "kapacitet saknas" };
+    const iface = /m\.?2|nvme/i.test(row.title) ? "NVMe" : /sata/i.test(row.title) ? "SATA" : null;
+    const gen = row.title.match(/PCIe\s*(\d(?:\.\d)?)/i);
+    const label = size >= 1024 ? `${size / 1024} TB` : `${size} GB`;
+    return {
+      specs: [label, iface, gen ? `PCIe ${gen[1]}` : null].filter(Boolean),
+      details: {
+        Kapacitet: label,
+        ...(iface ? { Gränssnitt: iface } : {}),
+        ...(gen ? { PCIe: gen[1] } : {}),
+      },
+    };
+  },
+
+  psu: (row) => {
+    /* "850 Watt", inte "850W" - Proshop skriver ut ordet. */
+    const w = row.title.match(/(\d{3,4})\s*(?:Watt|W)\b/i);
+    if (!w) return { reject: "effekt saknas" };
+    const cert = row.title.match(/80\s*Plus\s*([A-Za-zÅÄÖåäö]+)/i);
+    const atx = row.title.match(/\bATX\s*(\d(?:\.\d)?)/i);
+    const rating = cert && !/^ja$/i.test(cert[1]) ? `80 Plus ${cert[1]}` : null;
+    return {
+      specs: [`${w[1]} W`, rating].filter(Boolean),
+      details: {
+        Effekt: `${w[1]} W`,
+        ...(rating ? { Certifiering: rating } : {}),
+        ...(atx ? { "ATX-standard": `ATX ${atx[1]}` } : {}),
+      },
+    };
+  },
+
+  case: (row) => {
+    /*
+     * Ingen grind på formfaktorn.
+     *
+     * Chassits storlek styr ingen kompatibilitetskontroll i
+     * konfiguratorn - den är ett filter kunden kan slå på, ingenting
+     * annat. Att kasta ut ett riktigt chassi för att Proshop skrev
+     * "Montech X5 - Chassi - Vit" utan tornhöjd vore att straffa kunden
+     * för butikens slarv. Utan storlek syns chassit i listan men inte
+     * när storleksfiltret är påslaget, vilket är rätt beteende.
+     */
+    const form = caseFormFactor(row.title);
+    return {
+      specs: form ? [form] : [],
+      details: form ? { Formfaktor: form } : {},
+    };
+  },
+
+  cooling: (row) => {
+    const aio = /vattenkylare/i.test(row.title);
+    const size = row.title.match(/\b(120|140|240|280|360|420)\b/);
+    const noise = row.title.match(/Max\s*(\d+)\s*dBA/i);
+    return {
+      specs: [aio ? "Vattenkylning" : "Luftkylning", size ? `${size[1]} mm` : null].filter(Boolean),
+      details: {
+        Typ: aio ? "Vattenkylning" : "Luftkylning",
+        ...(size ? { Storlek: `${size[1]} mm` } : {}),
+        ...(noise ? { Ljudnivå: `${noise[1]} dBA` } : {}),
+      },
+    };
+  },
+};
+
+/*
+ * Prisrimlighet där varan har en mätbar storlek.
+ *
+ * Ett flöde innehåller fel. Ett av dem såg ut så här:
+ *
+ *   Synology - DDR4 - module - 8 GB - DIMM 288-pin - 2666 MHz    194 293 kr
+ *
+ * Det är 24 287 kr per gigabyte. Mätt över hela listan ligger minne
+ * mellan 79 och 955 kr per gigabyte, och 99 av 100 poster under 955.
+ * Lagring ligger mellan 0,4 och 127 kr per gigabyte på samma mått.
+ *
+ * Gränserna nedan är satta strax ovanför den 99:e percentilen. De är
+ * alltså inte en åsikt om vad en vara får kosta, utan ett prov på om
+ * priset alls kan stämma. En post som faller här är antingen ett fel i
+ * flödet eller en vara som inte är det den ser ut att vara - i båda
+ * fallen något en kund inte ska se.
+ */
+const PRICE_SANITY = {
+  ram: { maxPerGb: 1000 },
+  storage: { maxPerGb: 100 },
+};
+
+/** Vår kategori för en rad, eller null om butiken inte säljer den som komponent. */
+const classify = (feedCategory) =>
+  FEED_CATEGORY_MAP.get(String(feedCategory || "").trim().toLowerCase()) || null;
 
 /* -------------------------------------------------------------- körning -- */
 
@@ -303,37 +483,71 @@ const rejects = {};
 const handleRow = (row) => {
   if (accepted.length + review.length >= LIMIT) return;
 
-  const category = String(row.feed_category || "");
-  const hit = CATEGORIES.find((c) => c.matches(category, row.title));
-  if (!hit) {
-    rejects["ingen kategori"] = (rejects["ingen kategori"] || 0) + 1;
-    review.push({ title: row.title, category, reason: "ingen kategori", url: row.product_url });
+  const feedCategory = String(row.feed_category || "");
+  const key = classify(feedCategory);
+  if (!key) {
+    /*
+     * Tyst. Det här är inte en komponent butiken råkade beskriva otydligt,
+     * det är hundmat. Att lägga en kvarts miljon rader i granskningslistan
+     * gör den oläsbar för den som ska gå igenom den för hand.
+     */
+    rejects["annan varugrupp"] = (rejects["annan varugrupp"] || 0) + 1;
     return;
   }
 
-  const key = row.title.toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (seen.has(key)) return;
-  seen.add(key);
-  if (existing.has(key)) {
+  const gate = TITLE_GATE[key];
+  if (gate) {
+    const failsRequire = gate.require && !gate.require.test(row.title);
+    const failsForbid = gate.forbid && gate.forbid.test(row.title);
+    if (failsRequire || failsForbid) {
+      const label = `${key}: ${gate.reason}`;
+      rejects[label] = (rejects[label] || 0) + 1;
+      review.push({ title: row.title, feedCategory, category: key, reason: gate.reason, url: row.product_url });
+      return;
+    }
+  }
+
+  const fingerprint = row.title.toLowerCase().replace(/[^a-z0-9]/g, "");
+  if (seen.has(fingerprint)) return;
+  seen.add(fingerprint);
+  if (existing.has(fingerprint)) {
     rejects["finns redan"] = (rejects["finns redan"] || 0) + 1;
     return;
   }
 
-  const built = hit.build(row);
+  const built = CATEGORIES[key](row);
   if (built.reject) {
-    const label = `${hit.key}: ${built.reject}`;
+    const label = `${key}: ${built.reject}`;
     rejects[label] = (rejects[label] || 0) + 1;
-    review.push({ title: row.title, category: hit.key, reason: built.reject, url: row.product_url });
+    review.push({ title: row.title, feedCategory, category: key, reason: built.reject, url: row.product_url });
     return;
   }
 
-  counts[hit.key] = (counts[hit.key] || 0) + 1;
+  const price = Math.round(row.price_cents / 100);
+  const sanity = PRICE_SANITY[key];
+  if (sanity) {
+    const size = capacityGb(row.title);
+    if (size && price / size > sanity.maxPerGb) {
+      const label = `${key}: orimligt pris per GB`;
+      rejects[label] = (rejects[label] || 0) + 1;
+      review.push({
+        title: row.title,
+        feedCategory,
+        category: key,
+        reason: `${Math.round(price / size)} kr per GB`,
+        url: row.product_url,
+      });
+      return;
+    }
+  }
+
+  counts[key] = (counts[key] || 0) + 1;
   accepted.push({
-    id: `feed-${hit.key}-${row.ean || key.slice(0, 16)}`,
-    category: hit.key,
+    id: `feed-${key}-${row.ean || fingerprint.slice(0, 16)}`,
+    category: key,
     name: row.title,
     brand: row.brand || "",
-    price: Math.round(row.price_cents / 100),
+    price,
     /* Bilden hotlänkas från butiken. Partner-ads villkor säger uttryckligen
        att den inte får sparas eller cachas lokalt - upphovsrätten ligger
        hos annonsören. */
@@ -351,7 +565,9 @@ const config = {
   id: "proshop",
   label: "Proshop",
   network: "partner-ads",
-  categoryFilter: COMPONENT_CATEGORY_FILTER,
+  /* Inget grovfilter här. FEED_CATEGORY_MAP är grinden, och den läser
+     butikens kategorinamn i stället för att gissa ur titeln. */
+  categoryFilter: null,
 };
 
 let server = null;
