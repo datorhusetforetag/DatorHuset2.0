@@ -75,6 +75,16 @@ const EXPECTED = {
     sane: [80, 20000],
     foreign: /kylpasta|thermal (?:paste|compound|grease)|monteringsf(?:ä|ae)st|mounting|backplate|controller|hub/i,
   },
+  chassifan: {
+    marker: /chassi\s*fl(?:ä|ae)kt/i,
+    sane: [40, 6000],
+    foreign: /controller|\bhub\b|grill|filter|kylpasta|\b[1-5]U\b|monteringsf(?:ä|ae)st/i,
+  },
+  networkcard: {
+    marker: /\bpci-?e(?:xpress)?\b|\bpcie\b|\bm\.2\b/i,
+    sane: [80, 1500],
+    foreign: /\busb\b|\bpoe\b|\bswitch\b|router|repeater|sfp|fib(?:re|er) channel|thunderbolt|firewire/i,
+  },
 };
 
 const problems = new Map();

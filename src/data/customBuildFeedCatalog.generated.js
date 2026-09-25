@@ -2639,6 +2639,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-networkcard-0675901877022",
+    "category": "networkcard",
+    "name": "Intel AX210 Wi-Fi 6E 2x2 R2 + BT 5.3 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 173,
+    "image": "https://www.proshop.se/Images/600x800/2930212_a8da64fa51bf.jpg",
+    "ean": "0675901877022",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
+  },
+  {
     "id": "feed-ram-4719692013446",
     "category": "ram",
     "name": "G.Skill AEGIS DDR4-3000 - 16GB - CL16 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -4187,6 +4204,23 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM4"
   },
   {
+    "id": "feed-chassifan-9010018100778",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 G2 PWM Sx2-PP chromax.black - Chassi fläkt - 120mm - Svart - 22 dBA",
+    "brand": "Noctua",
+    "price": 737,
+    "image": "https://www.proshop.se/Images/600x800/3472941_bd789eb1dd88.jpg",
+    "ean": "9010018100778",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4713294223463",
     "category": "ram",
     "name": "G.Skill Trident Z Neo DDR4-3600 - 32GB - CL16 - Dual Channel (2 pcs) - AMD Optimized - Svart med RGB",
@@ -4523,6 +4557,25 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4895213703888",
+    "category": "chassifan",
+    "name": "Arctic P12 Slim PWM PST - 3-pack value pack - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 179,
+    "image": "https://www.proshop.se/Images/600x800/3076219_ea6292e2266e.jpg",
+    "ean": "4895213703888",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-840006650393",
     "category": "case",
     "name": "Corsair iCUE 5000X RGB QL Edition - White - Chassi - Miditower - Vit",
@@ -4843,6 +4896,43 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "3.8 GHz"
     },
     "socket": "AM4"
+  },
+  {
+    "id": "feed-networkcard-4897098687833",
+    "category": "networkcard",
+    "name": "TP-Link TX201 2.5 Gigabit PCIe Network Adapter",
+    "brand": "TP-Link",
+    "price": 251,
+    "image": "https://www.proshop.se/Images/600x800/3383866_e03f4440ba4b.jpg",
+    "ean": "4897098687833",
+    "specs": [
+      "2.5 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "2.5 Gbit/s"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466014399",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD 120 (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 27 dBA",
+    "brand": "Lian Li",
+    "price": 979,
+    "image": "https://www.proshop.se/Images/600x800/3224052_c9540608bc5a.jpg",
+    "ean": "4718466014399",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4711377402859",
@@ -5387,6 +5477,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-networkcard-0675901715744",
+    "category": "networkcard",
+    "name": "Intel AX200 Wi-Fi 6 + BT 5.0 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 177,
+    "image": "https://www.proshop.se/Images/600x800/2771565_cf53231fb847.jpg",
+    "ean": "0675901715744",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
+  },
+  {
     "id": "feed-case-5056547205854",
     "category": "case",
     "name": "NZXT H5 Flow (2024) - Black - Chassi - Miditower - Svart",
@@ -5488,6 +5595,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-networkcard-4711387680681",
+    "category": "networkcard",
+    "name": "ASUS PCE-BE6500 WiFi 7 PCI-E Adapter with 2 external antennas. Supporting 6GHz band 4096-QAM Bluetooth 5.4 WPA3",
+    "brand": "ASUS",
+    "price": 579,
+    "image": "https://www.proshop.se/Images/600x800/3331577_7cda5fb35f2f.png",
+    "ean": "4711387680681",
+    "specs": [
+      "Wi-Fi 7",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "7",
+      "Bluetooth": "5.4"
+    }
+  },
+  {
     "id": "feed-cooling-6931393306711",
     "category": "cooling",
     "name": "ID-Cooling SE-214-XT BLACK - CPU Luftkylare",
@@ -5585,6 +5710,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-networkcard-5032037235860",
+    "category": "networkcard",
+    "name": "Intel Wi-Fi 6E AX210 - IoT Embedded Kit - network adapter - M.2 2230",
+    "brand": "Intel",
+    "price": 359,
+    "image": "https://www.proshop.se/Images/600x800/3255271_35e405cf1605.jpg",
+    "ean": "5032037235860",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
+  },
+  {
     "id": "feed-ram-0740617319903",
     "category": "ram",
     "name": "Kingston FURY Beast DDR4-3200 - 16GB - CL16 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -5664,6 +5806,24 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "4.3 GHz"
     },
     "socket": "AM5"
+  },
+  {
+    "id": "feed-networkcard-4897098688380",
+    "category": "networkcard",
+    "name": "TP-Link ARCHER TXE72E AXE5400 Wi-Fi 6E Bluetooth 5.3 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 412,
+    "image": "https://www.proshop.se/Images/600x800/3250628_3f4fd5bf592e.jpg",
+    "ean": "4897098688380",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.3"
+    }
   },
   {
     "id": "feed-motherboard-4719331854645",
@@ -5855,6 +6015,25 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM5"
   },
   {
+    "id": "feed-chassifan-4895213703291",
+    "category": "chassifan",
+    "name": "Arctic F12 - 5-pack value pack - Chassi fläkt - 120mm - Svart - 22 dBA",
+    "brand": "Arctic",
+    "price": 193,
+    "image": "https://www.proshop.se/Images/600x800/2959275_c9bce8ad227d.jpg",
+    "ean": "4895213703291",
+    "specs": [
+      "120 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Antal": "5",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-7350041081098",
     "category": "case",
     "name": "Fractal Design Core 1000 USB 3.0 - Chassi - Minitower - Svart",
@@ -6038,6 +6217,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-4711387310175",
+    "category": "networkcard",
+    "name": "ASUS PCE-BE92BT WiFi 7 PCI-E Adapter 6GHz band 320MHz Bluetooth 5.4 Only Intel",
+    "brand": "ASUS",
+    "price": 741,
+    "image": "https://www.proshop.se/Images/600x800/3261607_86a7ae95620a.jpg",
+    "ean": "4711387310175",
+    "specs": [
+      "Wi-Fi 7",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "7",
+      "Bluetooth": "5.4"
+    }
+  },
+  {
     "id": "feed-gpu-4711387890288",
     "category": "gpu",
     "name": "ASUS GeForce RTX 5090 ROG Astral OC - 32GB GDDR7 RAM - Grafikkort",
@@ -6077,6 +6274,25 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-0840006684213",
+    "category": "chassifan",
+    "name": "Corsair RS120 3-pack - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 333,
+    "image": "https://www.proshop.se/Images/600x800/3266865_1cb026440ef3.png",
+    "ean": "0840006684213",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-814256013284",
     "category": "cooling",
     "name": "Thermalright AXP-90 X53 Black - CPU Luftkylare - Max 22 dBA",
@@ -6112,6 +6328,23 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4895265000119",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro PST A-RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 122,
+    "image": "https://www.proshop.se/Images/600x800/3358480_343900b307ef.png",
+    "ean": "4895265000119",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0840440496090",
@@ -6640,6 +6873,23 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-9010018100259",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 5V PWM - Chassi fläkt - 120mm - Brun - 21 dBA",
+    "brand": "Noctua",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/2674882_c3ab52c4e8c7.jpg",
+    "ean": "9010018100259",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "21 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-motherboard-4711636446518",
@@ -7630,6 +7880,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4895265000713",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro Reverse - 3 Pack - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 240,
+    "image": "https://www.proshop.se/Images/600x800/3429874_d79829dbdc45.png",
+    "ean": "4895265000713",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4718466017567",
     "category": "case",
     "name": "Lian Li A3 Wood Black - Chassi - Minitower - Svart",
@@ -7697,6 +7965,24 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "6 GB"
     },
     "gpuModel": "ASUS GeForce RTX 3050 Low Profile OC - 6GB GDDR6 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4718466013200",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 349,
+    "image": "https://www.proshop.se/Images/600x800/3184433_dd8c7f78aed2.png",
+    "ean": "4718466013200",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-4711527008160",
@@ -7874,6 +8160,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-4711081463849",
+    "category": "networkcard",
+    "name": "ASUS PCE-AX1800 Dual Band PCI-E WiFi 6 (802.11ax). Bluetooth 5.2 WPA3 network security OFDMA and MU-MIMO",
+    "brand": "ASUS",
+    "price": 322,
+    "image": "https://www.proshop.se/Images/600x800/3070686_b3f77c782d77.jpg",
+    "ean": "4711081463849",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.2"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331809508",
     "category": "motherboard",
     "name": "GIGABYTE B550I AORUS PRO AX Moderkort - AMD B550 - AMD AM4 - DDR4 RAM - Mini-ITX",
@@ -7989,6 +8293,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466018595",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless Reverse (3-Pack) - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3396153_21c1d95d6e61.png",
+    "ean": "4718466018595",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4718466019868",
     "category": "case",
     "name": "Lian Li O11D Mini V2 Flow White - Chassi - Miditower - Vit",
@@ -8016,6 +8340,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017710",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless Reverse (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 1290,
+    "image": "https://www.proshop.se/Images/600x800/3388319_5186ea4567c2.png",
+    "ean": "4718466017710",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -8117,6 +8461,26 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Luftkylning",
       "Storlek": "120 mm",
       "Ljudnivå": "26 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466014405",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD 120 (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "Lian Li",
+    "price": 979,
+    "image": "https://www.proshop.se/Images/600x800/3224053_d789545f271e.jpg",
+    "ean": "4718466014405",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -8646,6 +9010,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4710562744156",
+    "category": "chassifan",
+    "name": "Montech RX120 PWM BK - Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 27 dBA",
+    "brand": "Montech",
+    "price": 79,
+    "image": "https://www.proshop.se/Images/600x800/3221734_bdfc450ad74c.png",
+    "ean": "4710562744156",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-7340172702047",
     "category": "case",
     "name": "Fractal Design Define 7 XL - Black Solid - Chassi - Fulltower - Svart",
@@ -8861,6 +9243,42 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-6931393306995",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120-ARGB-W TRIO - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "ID-Cooling",
+    "price": 229,
+    "image": "https://www.proshop.se/Images/600x800/3293309_35cb22f8d716.jpg",
+    "ean": "6931393306995",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-networkcard-6935364088897",
+    "category": "networkcard",
+    "name": "TP-Link Archer TX3000E WiFi 6 Bluetooth 5.0 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 489,
+    "image": "https://www.proshop.se/Images/600x800/2803834_12975c24bd53.jpg",
+    "ean": "6935364088897",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.0"
+    }
+  },
+  {
     "id": "feed-case-5056547207988",
     "category": "case",
     "name": "NZXT H3 Flow (2025) - All Black - Chassi - Miditower - Svart",
@@ -8970,6 +9388,24 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM4",
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-5704333010273",
+    "category": "chassifan",
+    "name": "DUTZO INF 120 PWM ARGB - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "DUTZO",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3395512_bb51ab39a535.jpg",
+    "ean": "5704333010273",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-gpu-4711636178518",
@@ -9099,6 +9535,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Ljudnivå": "28 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172708841",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 12 - Chassi fläkt - 120mm - Svart",
+    "brand": "Fractal Design",
+    "price": 322,
+    "image": "https://www.proshop.se/Images/600x800/3403332_901a3740f4ed.jpg",
+    "ean": "7340172708841",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -9334,6 +9786,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017253",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD - Chassi fläkt - 120mm - Svart med RGB LED - 27 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3330461_9fb135193173.png",
+    "ean": "4718466017253",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -9604,6 +10074,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895213704199",
+    "category": "chassifan",
+    "name": "Arctic P8 Slim PWM PST - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 78,
+    "image": "https://www.proshop.se/Images/600x800/3435365_5c1c87aae617.png",
+    "ean": "4895213704199",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0718037905778",
     "category": "storage",
     "name": "WD Purple - 4TB - Hårddisk - WD44PURZ - SATA-600 - 3,5&quot;",
@@ -9686,6 +10172,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "12 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000379",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro - Chassi fläkt - 140mm - Svart",
+    "brand": "Arctic",
+    "price": 93,
+    "image": "https://www.proshop.se/Images/600x800/3358483_296287a4eb96.png",
+    "ean": "4895265000379",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -10336,6 +10838,25 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "GIGABYTE GeForce RTX 5090 AORUS AI BOX - 32GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4895265000720",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro Reverse A-RGB - 3 Pack - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 305,
+    "image": "https://www.proshop.se/Images/600x800/3411499_56f87178daff.png",
+    "ean": "4895265000720",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-840440402770",
     "category": "case",
     "name": "Corsair FRAME 4500X RS-R ARGB - Chassi - Miditower - Svart",
@@ -10403,6 +10924,25 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-9010018100655",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25 G2 PWM Sx2-PP (2-pack) - Chassi fläkt - 140mm - Brun - 25 dBA",
+    "brand": "Noctua",
+    "price": 858,
+    "image": "https://www.proshop.se/Images/600x800/3301630_3f3c39d0d404.jpg",
+    "ean": "9010018100655",
+    "specs": [
+      "140 mm",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Antal": "2",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-motherboard-4711387730775",
@@ -10584,6 +11124,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466016751",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless Reverse (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3310544_4be03b5d301d.png",
+    "ean": "4718466016751",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6931393305226",
     "category": "cooling",
     "name": "ID-Cooling IS-67-XT BLACK - CPU Luftkylare - Max 32 dBA",
@@ -10597,6 +11157,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "32 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466011725",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 329,
+    "image": "https://www.proshop.se/Images/600x800/3085689_3c239afa6cba.jpg",
+    "ean": "4718466011725",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -10688,6 +11266,23 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "PNY RTX 2000 Ada Small Box - 16GB GDDR6 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-9010018100327",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x10 5V PWM - Chassi fläkt - 40mm - Brun - 20 dBA",
+    "brand": "Noctua",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/2674878_2d5d0fcb25ef.jpg",
+    "ean": "9010018100327",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331871123",
     "category": "motherboard",
     "name": "GIGABYTE B850M AORUS ELITE WIFI6E Moderkort - AMD B850 - AMD AM5 - DDR5 RAM - Micro-ATX",
@@ -10707,6 +11302,24 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4895265000096",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro PST (5-pack) - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 334,
+    "image": "https://www.proshop.se/Images/600x800/3358475_604dd10a619b.png",
+    "ean": "4895265000096",
+    "specs": [
+      "120 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "5",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-cpu-0730143315296",
@@ -10758,6 +11371,25 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213701617",
+    "category": "chassifan",
+    "name": "Arctic P12 - 5-pack value pack - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 217,
+    "image": "https://www.proshop.se/Images/600x800/2828229_e160c055174d.jpg",
+    "ean": "4895213701617",
+    "specs": [
+      "120 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "5",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -10848,6 +11480,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895213701594",
+    "category": "chassifan",
+    "name": "Arctic P14 - 5-pack value pack - Chassi fläkt - 140mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 256,
+    "image": "https://www.proshop.se/Images/600x800/2735123_015998b3ef8d.jpg",
+    "ean": "4895213701594",
+    "specs": [
+      "140 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "5",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0718037905754",
     "category": "storage",
     "name": "WD Red Plus - 4TB - Hårddisk - WD40EFZZ - SATA-600 - 3,5&quot;",
@@ -10932,6 +11583,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4710562747546",
+    "category": "chassifan",
+    "name": "Montech AX120 PWM WH - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "Montech",
+    "price": 79,
+    "image": "https://www.proshop.se/Images/600x800/3221727_180caebc43ab.png",
+    "ean": "4710562747546",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-5397184878743",
     "category": "ram",
     "name": "Dell - DDR5 - module - 32 GB - DIMM 288-pin - 5600 MHz - unbuffered",
@@ -10995,6 +11664,39 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-9010018100761",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 G2 PWM chromax.black - Chassi fläkt - 120mm - Svart",
+    "brand": "Noctua",
+    "price": 432,
+    "image": "https://www.proshop.se/Images/600x800/3472940_183dd02f9656.jpg",
+    "ean": "9010018100761",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-networkcard-735858552349",
+    "category": "networkcard",
+    "name": "Intel Wi-Fi 7 BE211 - network adapter - M.2 2230 (CNVio3)",
+    "brand": "Intel",
+    "price": 242,
+    "image": "https://www.proshop.se/Images/600x800/3458516_df70f49f5d0b.png",
+    "ean": "735858552349",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
+    }
+  },
+  {
     "id": "feed-psu-4260052192191",
     "category": "psu",
     "name": "be quiet! Pure Power 13 M Strömförsörjning - 850 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -11041,6 +11743,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "25 dBA"
+    }
+  },
+  {
+    "id": "feed-networkcard-0675902058482",
+    "category": "networkcard",
+    "name": "Intel  BE200 Wi-Fi 7 2x2 + BT 5.4 / M.2 2230 / Utan vPro",
+    "brand": "Intel",
+    "price": 233,
+    "image": "https://www.proshop.se/Images/600x800/3228222_17b944e020f0.jpg",
+    "ean": "0675902058482",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
     }
   },
   {
@@ -11178,6 +11897,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466013163",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF - Chassi fläkt - 140mm - Vit med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 349,
+    "image": "https://www.proshop.se/Images/600x800/3139855_37fc1778d6f6.jpg",
+    "ean": "4718466013163",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-4713294231949",
     "category": "ram",
     "name": "G.Skill Trident Z5 RGB DDR5-6000 - 64GB - CL30 - Dual Channel (2 pcs) - Intel XMP - Svart med RGB",
@@ -11232,6 +11969,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000737",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro Reverse A-RGB (White) - 3 Pack - Chassi fläkt - 120mm - Vit",
+    "brand": "Arctic",
+    "price": 364,
+    "image": "https://www.proshop.se/Images/600x800/3429877_299300fbe226.png",
+    "ean": "4895265000737",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6931393308289",
     "category": "cooling",
     "name": "ID-Cooling FX360 LCD PE - CPU Vattenkylare - Max 25 dBA",
@@ -11281,6 +12037,26 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1000 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017697",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1290,
+    "image": "https://www.proshop.se/Images/600x800/3388316_3607d83c64a2.png",
+    "ean": "4718466017697",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -11422,6 +12198,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710562746280",
+    "category": "chassifan",
+    "name": "Montech AX120 PWM BK - Chassi fläkt - 120mm - Svart med RGB LED - 27 dBA",
+    "brand": "Montech",
+    "price": 89,
+    "image": "https://www.proshop.se/Images/600x800/3221726_e2c497e1e527.png",
+    "ean": "4710562746280",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-740617337501",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR4-3200 - 32GB - CL16 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -11444,6 +12238,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-814256004497",
+    "category": "chassifan",
+    "name": "Thermalright TL-C12C-S ARGB - Black (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 26 dBA",
+    "brand": "Thermalright",
+    "price": 233,
+    "image": "https://www.proshop.se/Images/600x800/3180359_5940b34ea635.jpg",
+    "ean": "814256004497",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4719072733667",
     "category": "motherboard",
     "name": "MSI B550-A PRO Moderkort - AMD B550 - AMD AM4 - DDR4 RAM - ATX",
@@ -11463,6 +12277,23 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM4",
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4895213701365",
+    "category": "chassifan",
+    "name": "Arctic P12 Silent - Chassi fläkt - 120mm - Svart - 20 dBA",
+    "brand": "Arctic",
+    "price": 82,
+    "image": "https://www.proshop.se/Images/600x800/2735116_3f6b8817a939.jpg",
+    "ean": "4895213701365",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-psu-4711173874522",
@@ -11646,6 +12477,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466016843",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD Reverse (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1690,
+    "image": "https://www.proshop.se/Images/600x800/3310666_ee8e4f35c411.png",
+    "ean": "4718466016843",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-5056547204185",
     "category": "cooling",
     "name": "NZXT Kraken Elite RGB V2 360 (2024) - Svart med RGB-ljus - CPU Vattenkylare - Max 30 dBA",
@@ -11727,6 +12578,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "2 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-networkcard-4897098688809",
+    "category": "networkcard",
+    "name": "TP-Link Archer TX20E AX1800 Wi-Fi 6 Bluetooth 5.2 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 309,
+    "image": "https://www.proshop.se/Images/600x800/3150670_e4bdddb00af8.jpg",
+    "ean": "4897098688809",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.2"
     }
   },
   {
@@ -11859,6 +12728,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466022585",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless - Chassi fläkt - 140mm - Svart med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3459544_37a12e7656ce.jpg",
+    "ean": "4718466022585",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711636435994",
     "category": "motherboard",
     "name": "ASUS TUF GAMING B850-PRO WIFI7 W NEO Moderkort - AMD B850 - AMD AM5 - DDR5 RAM - ATX",
@@ -11934,6 +12821,25 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "650 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-840033403276",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro Reverse A-RGB (3-pack) - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 389,
+    "image": "https://www.proshop.se/Images/600x800/3409366_655fabc43772.jpg",
+    "ean": "840033403276",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -12554,6 +13460,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4895265000393",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro PST A-RGB - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 139,
+    "image": "https://www.proshop.se/Images/600x800/3358495_8bdd7dbf172c.png",
+    "ean": "4895265000393",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-gpu-4719331355852",
     "category": "gpu",
     "name": "GIGABYTE GeForce RTX 5070 AERO OC - 12GB GDDR7 RAM - Grafikkort",
@@ -12914,6 +13837,26 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466023681",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 Reversed (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1659,
+    "image": "https://www.proshop.se/Images/600x800/3517271_1aeafc9bbfa4.png",
+    "ean": "4718466023681",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-5056547205199",
     "category": "cooling",
     "name": "NZXT Kraken Plus 240 (Black) - CPU Vattenkylare - Max 32 dBA",
@@ -12975,6 +13918,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4895213701549",
+    "category": "chassifan",
+    "name": "Arctic P14 - Chassi fläkt - 140mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 88,
+    "image": "https://www.proshop.se/Images/600x800/2770806_fbb22b34d8a8.jpg",
+    "ean": "4895213701549",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4716123314950",
     "category": "cooling",
     "name": "Noctua NH-U14S - CPU Luftkylare - Max 24 dBA",
@@ -12988,6 +13948,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "24 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023629",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3517808_e239c758ca28.png",
+    "ean": "4718466023629",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -13085,6 +14063,42 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466017673",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3388295_d12b7f613d61.jpg",
+    "ean": "4718466017673",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017659",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 379,
+    "image": "https://www.proshop.se/Images/600x800/3388288_9a0ddf7b9cd5.png",
+    "ean": "4718466017659",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711581490161",
     "category": "motherboard",
     "name": "ASRock B850 Pro RS Moderkort - AMD B850 - AMD AM5 - DDR5 RAM - ATX",
@@ -13104,6 +14118,23 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-networkcard-4719331859558",
+    "category": "networkcard",
+    "name": "GIGABYTE Aorus GC-WIFI7 - network adapter - PCIe",
+    "brand": "GIGABYTE",
+    "price": 618,
+    "image": "https://www.proshop.se/Images/600x800/3306689_ca7509ba7c91.png",
+    "ean": "4719331859558",
+    "specs": [
+      "Wi-Fi 7",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "7"
+    }
   },
   {
     "id": "feed-cooling-6931393307091",
@@ -13142,6 +14173,24 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4710562741285",
+    "category": "chassifan",
+    "name": "Montech RX140 PWM BK - Reverse - Chassi fläkt - 140mm - Svart med RGB LED - 28 dBA",
+    "brand": "Montech",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3221736_bac870b492ba.png",
+    "ean": "4710562741285",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0740617337839",
@@ -13329,6 +14378,41 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466013156",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF - Chassi fläkt - 140mm - Svart med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3139854_ea7d4c515af1.jpg",
+    "ean": "4718466013156",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-networkcard-0675901878760",
+    "category": "networkcard",
+    "name": "Intel AX211 Wi-Fi 6E + BT 5.3 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 371,
+    "image": "https://www.proshop.se/Images/600x800/2930215_3198dc603042.jpg",
+    "ean": "0675901878760",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
+  },
+  {
     "id": "feed-psu-4260455641845",
     "category": "psu",
     "name": "Inter-Tech Argus FA-250 Strömförsörjning - 250 Watt - 40 mm - ATX - 80 Plus",
@@ -13395,6 +14479,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466013194",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 349,
+    "image": "https://www.proshop.se/Images/600x800/3184432_377516074e86.png",
+    "ean": "4718466013194",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711377002660",
     "category": "motherboard",
     "name": "MSI PRO H610M-E DDR4 Moderkort - Intel H610 - Intel LGA1700 - DDR4 RAM - Micro-ATX",
@@ -13436,6 +14538,41 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4895213702966",
+    "category": "chassifan",
+    "name": "Arctic F12 PWM PST - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 87,
+    "image": "https://www.proshop.se/Images/600x800/2933557_816b01c95aa9.png",
+    "ean": "4895213702966",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023308",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 Reversed - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/3518474_038d5caeab77.png",
+    "ean": "4718466023308",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-4718466020666",
@@ -13503,6 +14640,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "750 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.0"
+    }
+  },
+  {
+    "id": "feed-networkcard-4897098687390",
+    "category": "networkcard",
+    "name": "TP-Link Archer TX55E AX3000 Wi-Fi 6 Bluetooth 5.2 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 360,
+    "image": "https://www.proshop.se/Images/600x800/3093104_80300dc8cbd3.jpg",
+    "ean": "4897098687390",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.2"
     }
   },
   {
@@ -13669,6 +14824,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100716",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 G2 PWM Sx2-PP - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 686,
+    "image": "https://www.proshop.se/Images/600x800/3387737_633582623bfc.jpg",
+    "ean": "9010018100716",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-gpu-4719331355708",
     "category": "gpu",
     "name": "GIGABYTE GeForce RTX 5080 AORUS Xtreme WaterForce WB - 16GB GDDR7 RAM - Grafikkort",
@@ -13743,6 +14915,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-0675901877039",
+    "category": "networkcard",
+    "name": "Intel AX210 Wi-Fi 6E 2x2 R2 + BT 5.3 / M.2 2230 / With vPro",
+    "brand": "Intel",
+    "price": 262,
+    "image": "https://www.proshop.se/Images/600x800/2930213_e6fcfd9812ac.jpg",
+    "ean": "0675901877039",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100129",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x20 5V PWM - Chassi fläkt - 40mm - Brun - 15 dBA",
+    "brand": "Noctua",
+    "price": 192,
+    "image": "https://www.proshop.se/Images/600x800/2595709_3608c14bcfd2.jpg",
+    "ean": "9010018100129",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-6970620555690",
     "category": "case",
     "name": "Jonsbo D33 Wood - Chassi - Minitower - Vit",
@@ -13773,6 +14979,38 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100730",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25 G2 PWM Sx2-PP chromax.black - Chassi fläkt - 140mm - Svart",
+    "brand": "Noctua",
+    "price": 807,
+    "image": "https://www.proshop.se/Images/600x800/3422894_276ad7dceb49.jpg",
+    "ean": "9010018100730",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100723",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25 G2 PWM chromax.black - Chassi fläkt - 140mm - Svart",
+    "brand": "Noctua",
+    "price": 420,
+    "image": "https://www.proshop.se/Images/600x800/3422893_e18a408b2396.jpg",
+    "ean": "9010018100723",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -13810,6 +15048,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4718466018540",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless (3-Pack) - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3396154_0ba8dfe86a8b.png",
+    "ean": "4718466018540",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-6931393306476",
@@ -13931,6 +15189,41 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-networkcard-4711081764830",
+    "category": "networkcard",
+    "name": "ASUS PCE-AXE5400 WiFi 6E PCI-E Adapter with 2 external antennas. Supporting 6GHz band 160MHz Bluetooth 5.2 WPA3 network security OFDMA and MU-MIMO",
+    "brand": "ASUS",
+    "price": 418,
+    "image": "https://www.proshop.se/Images/600x800/3129522_47ce6589d10c.jpg",
+    "ean": "4711081764830",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.2"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052188910",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 Pro 140 PWM - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "be quiet!",
+    "price": 385,
+    "image": "https://www.proshop.se/Images/600x800/3090514_0347a7775a87.jpg",
+    "ean": "4260052188910",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0740617318395",
     "category": "ram",
     "name": "Kingston FURY Impact DDR4-3200 - 16GB - CL20 - Single Channel (1 pcs) - Intel XMP - Svart",
@@ -13997,6 +15290,40 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-9010018100075",
+    "category": "chassifan",
+    "name": "Noctua NF-A20 5V PWM - Chassi fläkt - 200mm - Brun - 18 dBA",
+    "brand": "Noctua",
+    "price": 389,
+    "image": "https://www.proshop.se/Images/600x800/2674908_8146e6effd64.jpg",
+    "ean": "9010018100075",
+    "specs": [
+      "200 mm"
+    ],
+    "details": {
+      "Storlek": "200 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100310",
+    "category": "chassifan",
+    "name": "Noctua NF-A8 5V PWM - Chassi fläkt - 80mm - Brun - 18 dBA",
+    "brand": "Noctua",
+    "price": 224,
+    "image": "https://www.proshop.se/Images/600x800/2674895_c7f3238dd5ba.jpg",
+    "ean": "9010018100310",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4719692013439",
     "category": "ram",
     "name": "G.Skill AEGIS DDR4-3000 - 8GB - CL16 - Single Channel (1 pcs) - Intel XMP - Svart",
@@ -14031,6 +15358,118 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Cube"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023346",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 Reversed (3-pack) with controller - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 819,
+    "image": "https://www.proshop.se/Images/600x800/3518472_9eeb10eacd2e.png",
+    "ean": "4718466023346",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023285",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 - Chassi fläkt - 120mm - Svart med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/3518466_04405401c916.png",
+    "ean": "4718466023285",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023643",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 Reversed - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3517815_e965cfbce69a.png",
+    "ean": "4718466023643",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023636",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 Reversed - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3517814_54e0c69140cd.png",
+    "ean": "4718466023636",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023612",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3517807_09626a4118c5.png",
+    "ean": "4718466023612",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023599",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 Reversed (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1549,
+    "image": "https://www.proshop.se/Images/600x800/3517792_ff9beb9872f1.png",
+    "ean": "4718466023599",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -14128,6 +15567,25 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-6977029650636",
+    "category": "chassifan",
+    "name": "Tryx ROTA SL ARGB Reverse (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "Tryx",
+    "price": 699,
+    "image": "https://www.proshop.se/Images/600x800/3436322_98d4df67154d.jpg",
+    "ean": "6977029650636",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6931393308487",
     "category": "cooling",
     "name": "ID-Cooling Frozn A410 TD ARGB - CPU Luftkylare - Max 30 dBA",
@@ -14156,6 +15614,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000744",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro Reverse - Chassi fläkt - 140mm - Svart",
+    "brand": "Arctic",
+    "price": 100,
+    "image": "https://www.proshop.se/Images/600x800/3409345_c0bc1f7b2991.png",
+    "ean": "4895265000744",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -14249,6 +15723,44 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466017307",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3330482_66195e1dc08c.png",
+    "ean": "4718466017307",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017369",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless Reverse (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 34 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3330457_90b02c5b2b7c.png",
+    "ean": "4718466017369",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4710483949326",
     "category": "motherboard",
     "name": "ASRock X870 PRO RS Moderkort - AMD X870 - AMD AM5 - DDR5 RAM - ATX",
@@ -14268,6 +15780,25 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0840006682912",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140 2-pack - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 986,
+    "image": "https://www.proshop.se/Images/600x800/3263064_b0e3fc8160c2.png",
+    "ean": "0840006682912",
+    "specs": [
+      "140 mm",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-case-6933412774976",
@@ -14422,6 +15953,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-9010018100365",
+    "category": "chassifan",
+    "name": "Noctua NF-P12 redux-1700 PWM - Chassi fläkt - 120mm - Svart - 25 dBA",
+    "brand": "Noctua",
+    "price": 183,
+    "image": "https://www.proshop.se/Images/600x800/2662223_b713ec4fee28.png",
+    "ean": "9010018100365",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-0843591050319",
     "category": "psu",
     "name": "Corsair AX1600i Strömförsörjning - 1600 Watt - 140 mm - ATX 2.31 - 80 Plus Titanium certificate (upp till 90% effektivitet)",
@@ -14437,6 +15985,40 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1600 W",
       "Certifiering": "80 Plus Titanium",
       "ATX-standard": "ATX 2.3"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315506",
+    "category": "chassifan",
+    "name": "Noctua NF-A9 FLX - lådfläkt - Chassi fläkt - 92mm - Brun - 17 dBA",
+    "brand": "Noctua",
+    "price": 229,
+    "image": "https://www.proshop.se/Images/600x800/2469403_b2fcefc8462c.jpg",
+    "ean": "4716123315506",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315476",
+    "category": "chassifan",
+    "name": "Noctua NF-A8 PWM - lådfläkt - Chassi fläkt - 80mm - Brun - 17 dBA",
+    "brand": "Noctua",
+    "price": 224,
+    "image": "https://www.proshop.se/Images/600x800/2469401_33e36cefda60.jpg",
+    "ean": "4716123315476",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -14709,6 +16291,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-6971690791322",
+    "category": "networkcard",
+    "name": "Cudy AX5400 Wi-Fi 6E Bluetooth 5.3 PCI-E Adapter",
+    "brand": "Cudy",
+    "price": 383,
+    "image": "https://www.proshop.se/Images/600x800/3349246_5090d4cdee83.jpg",
+    "ean": "6971690791322",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.3"
+    }
+  },
+  {
     "id": "feed-ram-4713294237941",
     "category": "ram",
     "name": "G.Skill Flare X5 DDR5-6000 - 64GB - CL28 - Dual Channel (2 pcs) - AMD EXPO &amp; Intel XMP - Vit",
@@ -14783,6 +16383,46 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "32 GB"
     },
     "gpuModel": "ASUS GeForce RTX 5090 ROG Astral LC OC - 32GB GDDR7 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4718466017383",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD Reverse (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1790,
+    "image": "https://www.proshop.se/Images/600x800/3330795_d4952c29ab0e.png",
+    "ean": "4718466017383",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017314",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3330441_b549668b88dd.png",
+    "ean": "4718466017314",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-gpu-8592978542795",
@@ -14992,6 +16632,80 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4260052188903",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 Pro 120 PWM - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "be quiet!",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3090513_61ca9884091d.jpg",
+    "ean": "4260052188903",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052188859",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 120 PWM - Chassi fläkt - 120mm - Svart - 18 dBA",
+    "brand": "be quiet!",
+    "price": 279,
+    "image": "https://www.proshop.se/Images/600x800/3090508_fee74c685726.jpg",
+    "ean": "4260052188859",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466011749",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1190,
+    "image": "https://www.proshop.se/Images/600x800/3085691_1cfa1104277a.png",
+    "ean": "4718466011749",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466011732",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1190,
+    "image": "https://www.proshop.se/Images/600x800/3085690_ed3df2808e10.png",
+    "ean": "4718466011732",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711081565499",
     "category": "motherboard",
     "name": "ASUS PRIME H610M-K D4 Moderkort - Intel H610 - Intel LGA1700 - DDR4 RAM - Micro-ATX",
@@ -15092,6 +16806,26 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4718466023322",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 (3-pack) with controller - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 819,
+    "image": "https://www.proshop.se/Images/600x800/3518470_c50b894f0427.png",
+    "ean": "4718466023322",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-6970620555607",
@@ -15415,6 +17149,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4718466023926",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 Reversed (3-pack) with controller - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3518422_baa9ab8c3dd9.png",
+    "ean": "4718466023926",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711636179027",
     "category": "motherboard",
     "name": "ASUS TUF GAMING B850M-PLUS WIFI7 Moderkort - AMD B850 - AMD AM5 - DDR5 RAM - Micro-ATX",
@@ -15595,6 +17349,60 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-9010018100044",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x25 5V PWM - Chassi fläkt - 60mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/2674893_67940083de3e.jpg",
+    "ean": "9010018100044",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314707",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x25 FLX - lådfläkt - Chassi fläkt - 60mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/2394152_77a6fe98ceb3.jpg",
+    "ean": "4716123314707",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023667",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1659,
+    "image": "https://www.proshop.se/Images/600x800/3517801_ccbc02875414.png",
+    "ean": "4718466023667",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-840440417880",
@@ -15826,6 +17634,23 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "ASUS GeForce RTX 5070 Ti TUF BTF White OC - 16GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-dutzoinf140white",
+    "category": "chassifan",
+    "name": "DUTZO INF 140 White PWM ARGB - Chassi fläkt - 140mm - Vit",
+    "brand": "DUTZO",
+    "price": 159,
+    "image": "https://www.proshop.se/Images/600x800/3395525_7600d3be2bbf.png",
+    "ean": null,
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-gpu-4711636112086",
     "category": "gpu",
     "name": "ASUS GeForce RTX 5090 ROG Astral White OC - 32GB GDDR7 RAM - Grafikkort",
@@ -16008,6 +17833,46 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "16 GB"
     },
     "gpuModel": "ASUS GeForce RTX 5060 Ti DUAL OC White - 16GB GDDR7 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4718466018533",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless (3-Pack) - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3396155_c89b47503ddf.png",
+    "ean": "4718466018533",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466018601",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless Reverse (3-Pack) - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3396151_236e971799fa.png",
+    "ean": "4718466018601",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-psu-4260052192177",
@@ -16324,6 +18189,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-networkcard-8595247906458",
+    "category": "networkcard",
+    "name": "AXAGON 2.5 Gigabit Ethernet PCI-Express-kort",
+    "brand": "AXAGON",
+    "price": 220,
+    "image": "https://www.proshop.se/Images/600x800/3419395_4a496753f595.jpg",
+    "ean": "8595247906458",
+    "specs": [
+      "2.5 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "2.5 Gbit/s"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331876678",
     "category": "motherboard",
     "name": "GIGABYTE X870 AORUS ELITE X3D ICE Moderkort - AMD X870 - AMD AM5 - DDR5 RAM - ATX",
@@ -16357,6 +18239,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017703",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1290,
+    "image": "https://www.proshop.se/Images/600x800/3388317_df58f81f60d4.png",
+    "ean": "4718466017703",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -16408,6 +18310,44 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017338",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 27 dBA",
+    "brand": "Lian Li",
+    "price": 1790,
+    "image": "https://www.proshop.se/Images/600x800/3330486_19637f5220b2.png",
+    "ean": "4718466017338",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017291",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3330480_19da2b5fc9f9.png",
+    "ean": "4718466017291",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -16556,6 +18496,23 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1851"
   },
   {
+    "id": "feed-chassifan-dutzof120perform",
+    "category": "chassifan",
+    "name": "DUTZO F120 Performance - Chassi fläkt - 120mm - Svart - 32 dBA",
+    "brand": "DUTZO",
+    "price": 89,
+    "image": "https://www.proshop.se/Images/600x800/3441736_bf4ec11ab028.png",
+    "ean": null,
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-886523302742",
     "category": "case",
     "name": "Phanteks Enthoo Pro 2 - Chassi - Tower - Svart",
@@ -16602,6 +18559,26 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466017925",
+    "category": "chassifan",
+    "name": "Lian Li UNI Fan INF 120 (3-pack) - Reverse blade - Chassi fläkt - 120mm - Svart med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3396184_368dca5f41fd.png",
+    "ean": "4718466017925",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-740617350241",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR5-5600 - 128GB - CL40 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -16622,6 +18599,24 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4718466018519",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3395621_492a668e512f.png",
+    "ean": "4718466018519",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-6977029650254",
@@ -16782,6 +18777,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-6931393306797",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120-K TRIO - Chassi fläkt - 120mm - Svart - 27 dBA",
+    "brand": "ID-Cooling",
+    "price": 179,
+    "image": "https://www.proshop.se/Images/600x800/3330899_7c82531e9700.jpg",
+    "ean": "6931393306797",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4713157728920",
     "category": "psu",
     "name": "Enermax CyberG II Strömförsörjning - 650 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -16797,6 +18809,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "650 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017277",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 34 dBA",
+    "brand": "Lian Li",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3330432_223868b51c94.png",
+    "ean": "4718466017277",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -16821,6 +18851,62 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466016836",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD Reverse (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1690,
+    "image": "https://www.proshop.se/Images/600x800/3310665_545af2d5ee6e.png",
+    "ean": "4718466016836",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466016706",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 349,
+    "image": "https://www.proshop.se/Images/600x800/3310516_318dd0aa8404.png",
+    "ean": "4718466016706",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6931393306995",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120-ARGB-K TRIO - Chassi fläkt - 120mm - Svart - 27 dBA",
+    "brand": "ID-Cooling",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/3293308_73c8c1ad2dbb.jpg",
+    "ean": "6931393306995",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617345902",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR5-6000 - 32GB - CL36 - Dual Channel (2 pcs) - AMD EXPO - Svart med RGB",
@@ -16841,6 +18927,24 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0840006684169",
+    "category": "chassifan",
+    "name": "Corsair RS120 ARGB - Chassi fläkt - 120mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3266777_8a54ee17c93e.png",
+    "ean": "0840006684169",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-gpu-4711342290580",
@@ -17137,6 +19241,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "2 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-7350041084396",
+    "category": "chassifan",
+    "name": "Fractal Design Fan Dynamic X2 GP-14 - Chassi fläkt - 140mm - Svart - 18 dBA",
+    "brand": "Fractal Design",
+    "price": 178,
+    "image": "https://www.proshop.se/Images/600x800/2576646_035ed82f106c.jpg",
+    "ean": "7350041084396",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -17555,6 +19676,24 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "ASUS GeForce RTX 5060 Low Profile BRK OC - 8GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4718466017666",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 379,
+    "image": "https://www.proshop.se/Images/600x800/3388290_b0a3dd6df1cd.png",
+    "ean": "4718466017666",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331867942",
     "category": "motherboard",
     "name": "GIGABYTE B650M GAMING WIFI6E Moderkort - AMD B650 - AMD AM5 - DDR5 RAM - Micro-ATX",
@@ -17738,6 +19877,24 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "32 GB"
     },
     "gpuModel": "ASUS GeForce RTX 5090 TUF OC - 32GB GDDR7 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4718466017246",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3330429_e2a1ea048a33.png",
+    "ean": "4718466017246",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-idcoolingfrozna6",
@@ -17966,6 +20123,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-0840006688693",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120-R 3-pack - Chassi fläkt - 120mm - Svart med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 1339,
+    "image": "https://www.proshop.se/Images/600x800/3293489_fe972c7ed4a1.png",
+    "ean": "0840006688693",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6931393307084",
     "category": "cooling",
     "name": "ID-Cooling FX360 INF WHITE - CPU Vattenkylare - Max 27 dBA",
@@ -17996,6 +20173,40 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "8 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-networkcard-0675902058499",
+    "category": "networkcard",
+    "name": "Intel BE200 Wi-Fi 7 2x2 + BT 5.4 / M.2 2230 / With vPro",
+    "brand": "Intel",
+    "price": 294,
+    "image": "https://www.proshop.se/Images/600x800/3228221_a15741a48edf.jpg",
+    "ean": "0675902058499",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703871",
+    "category": "chassifan",
+    "name": "Arctic P14 Slim PWM PST - Chassi fläkt - 140mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 86,
+    "image": "https://www.proshop.se/Images/600x800/3216305_7c340493d9c0.jpg",
+    "ean": "4895213703871",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -18172,6 +20383,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895213703130",
+    "category": "chassifan",
+    "name": "Arctic P12 Slim PWM PST - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 81,
+    "image": "https://www.proshop.se/Images/600x800/2918075_a8dc9e6bc8a1.jpg",
+    "ean": "4895213703130",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0840006629641",
     "category": "ram",
     "name": "Corsair Vengeance RGB PRO DDR4-3200 - 8GB - CL16 - Single Channel (1 pcs) - Intel XMP - Svart med RGB",
@@ -18249,6 +20477,44 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4711636413091",
+    "category": "chassifan",
+    "name": "ASUS ROG EURUX GR120 ARGB Black Reverse (3-pack) - Chassi fläkt - 120mm - Svart - 32 dBA",
+    "brand": "ASUS",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3470147_30fbbe2a7f63.png",
+    "ean": "4711636413091",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5704333010990",
+    "category": "chassifan",
+    "name": "DUTZO INF 120 PWM ARGB Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "DUTZO",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3441687_c8a19128516c.jpg",
+    "ean": "5704333010990",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4719331877798",
@@ -18529,6 +20795,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0840006684138",
+    "category": "chassifan",
+    "name": "Corsair RS120 ARGB 3-pack - Chassi fläkt - 120mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 529,
+    "image": "https://www.proshop.se/Images/600x800/3266771_32a26e7ee918.png",
+    "ean": "0840006684138",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4710483944598",
@@ -18818,6 +21104,24 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-networkcard-4897098687383",
+    "category": "networkcard",
+    "name": "TP-Link Archer TXE75E AXE5400 Wi-Fi 6E Bluetooth 5.2 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 689,
+    "image": "https://www.proshop.se/Images/600x800/3054627_c76bb5220ffc.jpg",
+    "ean": "4897098687383",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.2"
+    }
   },
   {
     "id": "feed-cpu-5032037238458",
@@ -19129,6 +21433,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466017376",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD Reverse (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1790,
+    "image": "https://www.proshop.se/Images/600x800/3330794_17dde1728534.png",
+    "ean": "4718466017376",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331864354",
     "category": "motherboard",
     "name": "GIGABYTE X870E AORUS MASTER Moderkort - AMD X870E - AMD AM5 - DDR5 RAM - ATX",
@@ -19148,6 +21472,24 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-6931393306971",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120-ARGB-K - Chassi fläkt - 120mm - Svart med RGB LED - 27 dBA",
+    "brand": "ID-Cooling",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3293310_26b07a10a871.jpg",
+    "ean": "6931393306971",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-psu-0840006663379",
@@ -19360,6 +21702,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265001055",
+    "category": "chassifan",
+    "name": "Arctic BioniX P12 A-RGB - 3pack - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 382,
+    "image": "https://www.proshop.se/Images/600x800/3509378_b1e4a8f50288.png",
+    "ean": "4895265001055",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4713224528590",
     "category": "psu",
     "name": "FSP Hyper 80+ Pro - power supply - 650 Watt Strömförsörjning - 650 Watt - 120 mm - ATX - 80 Plus Bronze certificate",
@@ -19487,6 +21848,25 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-7340172708933",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 14 RGB (3-pack) - Chassi fläkt - 140mm - Svart",
+    "brand": "Fractal Design",
+    "price": 766,
+    "image": "https://www.proshop.se/Images/600x800/3396333_f7f480f276ef.jpg",
+    "ean": "7340172708933",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4718466013743",
     "category": "cooling",
     "name": "Lian Li GA II LCD SL infinity Black - CPU Vattenkylare - Max 30 dBA",
@@ -19522,6 +21902,41 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4895265000126",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro A-RGB - 3 Pack - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 276,
+    "image": "https://www.proshop.se/Images/600x800/3358481_620c2083f292.png",
+    "ean": "4895265000126",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000089",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro PST - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 88,
+    "image": "https://www.proshop.se/Images/600x800/3358471_c1ce88bfb34c.png",
+    "ean": "4895265000089",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-psu-4718466016232",
@@ -19590,6 +22005,26 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006684176",
+    "category": "chassifan",
+    "name": "Corsair RS120 ARGB 3-pack - Chassi fläkt - 120mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 529,
+    "image": "https://www.proshop.se/Images/600x800/3266785_7f5412b89359.png",
+    "ean": "0840006684176",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4718466014153",
     "category": "case",
     "name": "Lian Li O11D EVO RGB - Chassi - Miditower - Svart",
@@ -19602,6 +22037,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-814256004503",
+    "category": "chassifan",
+    "name": "Thermalright TL-C12CW-S ARGB - White (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 26 dBA",
+    "brand": "Thermalright",
+    "price": 209,
+    "image": "https://www.proshop.se/Images/600x800/3180360_9c3b6a162643.jpg",
+    "ean": "814256004503",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -19656,6 +22111,24 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4718466010155",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN AL120 - Chassi fläkt - 120mm - Vit med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 233,
+    "image": "https://www.proshop.se/Images/600x800/2986093_2618137019ba.jpg",
+    "ean": "4718466010155",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-storage-0718037889481",
@@ -19715,6 +22188,42 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "ASUS Radeon RX 9070 Prime EVO OC - 16GB GDDR6 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4718466018588",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/3396156_2199cbfcb9f7.png",
+    "ean": "4718466018588",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017536",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL-LCD Wireless 140 White - Chassi fläkt - 140mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 629,
+    "image": "https://www.proshop.se/Images/600x800/3388282_e426622e0499.png",
+    "ean": "4718466017536",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4713157729125",
     "category": "psu",
     "name": "Enermax MAXPRO IV Strömförsörjning - 750 Watt - 120 mm - ATX - 80 Plus White certificate (upp till 80% effektivitet)",
@@ -19729,6 +22238,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "750 W",
       "Certifiering": "80 Plus White"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000140",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro PST CO - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3358476_b8d7e8375ff7.png",
+    "ean": "4895265000140",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -19908,6 +22433,46 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466023650",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1659,
+    "image": "https://www.proshop.se/Images/600x800/3517800_474183bc75b6.png",
+    "ean": "4718466023650",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023575",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 26 dBA",
+    "brand": "Lian Li",
+    "price": 1549,
+    "image": "https://www.proshop.se/Images/600x800/3517779_7b0be89ee839.png",
+    "ean": "4718466023575",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-darkflashk430wit",
     "category": "case",
     "name": "Darkflash K430 (with 5x ARGB PWM fans) - Chassi - Miditower - Svart",
@@ -19920,6 +22485,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-5704333011003",
+    "category": "chassifan",
+    "name": "DUTZO INF 120 PWM ARGB Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "DUTZO",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3441688_7def763f704b.png",
+    "ean": "5704333011003",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -19955,6 +22538,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466018526",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3395628_f84876cb6561.png",
+    "ean": "4718466018526",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -20028,6 +22629,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466017550",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL-LCD Wireless Reverse 140 White - Chassi fläkt - 140mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 629,
+    "image": "https://www.proshop.se/Images/600x800/3388285_f1184b5a9ce4.png",
+    "ean": "4718466017550",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cpu-5054444695839",
     "category": "cpu",
     "name": "AMD EPYC 4585PX / 4.3 GHz processor - OEM CPU - 16 kärnor - 4.3 GHz - AMD AM5 - Bulk (utan kylare)",
@@ -20095,6 +22714,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-arcticp12propsta",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro PST A-RGB - Chassi fläkt - 120mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 166,
+    "image": "https://www.proshop.se/Images/600x800/3358485_0a7a28160a83.png",
+    "ean": null,
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -20340,6 +22976,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710562747287",
+    "category": "chassifan",
+    "name": "Montech AX140 PWM BK - Chassi fläkt - 140mm - Svart med RGB LED - 28 dBA",
+    "brand": "Montech",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3221728_ea2027767043.png",
+    "ean": "4710562747287",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617340204",
     "category": "ram",
     "name": "Kingston FURY Renegade Pro DDR5-6400 - 16GB - CL32 - Single Channel (1 pcs) - AMD EXPO &amp; Intel EXPO - Svart",
@@ -20360,6 +23014,24 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0840006697985",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX120 RGB Starter Kit - White - Chassi fläkt - 120mm - Vit med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 1620,
+    "image": "https://www.proshop.se/Images/600x800/3176592_71b0d7e868b6.png",
+    "ean": "0840006697985",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-9010018000337",
@@ -20460,6 +23132,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636412926",
+    "category": "chassifan",
+    "name": "ASUS ROG EURUX GR120 ARGB Black (3-pack) - Chassi fläkt - 120mm - Svart - 33 dBA",
+    "brand": "ASUS",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3470120_03b9934d638f.png",
+    "ean": "4711636412926",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -20576,6 +23268,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000768",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro Reverse - 3-Pack - Chassi fläkt - 140mm - Svart",
+    "brand": "Arctic",
+    "price": 202,
+    "image": "https://www.proshop.se/Images/600x800/3409348_8951af354d1d.png",
+    "ean": "4895265000768",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-814256018272",
     "category": "cooling",
     "name": "Thermalright Royal Pretor 130 Ultra Black - CPU Luftkylare - Max 28 dBA",
@@ -20610,6 +23320,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-840440494652",
+    "category": "chassifan",
+    "name": "Corsair RS120-R - Reverse - Chassi fläkt - 120mm - Svart",
+    "brand": "Corsair",
+    "price": 513,
+    "image": "https://www.proshop.se/Images/600x800/3405188_4be69dd62e47.jpg",
+    "ean": "840440494652",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4260052193204",
     "category": "cooling",
     "name": "be quiet! PURE LOOP 3 LX 360 - CPU Vattenkylare",
@@ -20624,6 +23350,41 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Storlek": "360 mm"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172708902",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 14 RGB - Chassi fläkt - 140mm - Svart",
+    "brand": "Fractal Design",
+    "price": 374,
+    "image": "https://www.proshop.se/Images/600x800/3396332_25db08f1f085.jpg",
+    "ean": "7340172708902",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5704333010280",
+    "category": "chassifan",
+    "name": "DUTZO INF 120 PWM ARGB - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "DUTZO",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3395515_68dd58ebab94.png",
+    "ean": "5704333010280",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -20642,6 +23403,76 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1000 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017543",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL-LCD Wireless Reverse 140 Black - Chassi fläkt - 140mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 693,
+    "image": "https://www.proshop.se/Images/600x800/3388283_7e3b527074e3.png",
+    "ean": "4718466017543",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017529",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL-LCD Wireless 140 Black - Chassi fläkt - 140mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 629,
+    "image": "https://www.proshop.se/Images/600x800/3388281_c7f6b842dd67.png",
+    "ean": "4718466017529",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017512",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless Reverse - Chassi fläkt - 140mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 429,
+    "image": "https://www.proshop.se/Images/600x800/3388280_ce0775fb2ba2.png",
+    "ean": "4718466017512",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191057",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 - Chassi fläkt - 120mm - Vit",
+    "brand": "be quiet!",
+    "price": 297,
+    "image": "https://www.proshop.se/Images/600x800/3371571_6797fbdaf651.jpg",
+    "ean": "4260052191057",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -20731,6 +23562,66 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-6933412711087",
+    "category": "chassifan",
+    "name": "DeepCool FL12 3in1 (3-Pack) - Chassi fläkt - 120mm - Svart med RGB LED - 32 dBA",
+    "brand": "DeepCool",
+    "price": 685,
+    "image": "https://www.proshop.se/Images/600x800/3338902_d311b7258d88.png",
+    "ean": "6933412711087",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6931393307046",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-140-ARGB-W (2-pack) - Chassi fläkt - 140mm - Vit med RGB LED - 25 dBA",
+    "brand": "ID-Cooling",
+    "price": 229,
+    "image": "https://www.proshop.se/Images/600x800/3330897_79ce9ca7250e.jpg",
+    "ean": "6931393307046",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017321",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3330452_cfdb751d0f27.png",
+    "ean": "4718466017321",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711581490079",
     "category": "motherboard",
     "name": "ASRock B850 Riptide WiFi Moderkort - AMD B850 - AMD AM5 - DDR5 RAM - ATX",
@@ -20772,6 +23663,41 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4718466014894",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL INF PWM Black Reverse - Chassi fläkt - 140mm - Svart - 28 dBA",
+    "brand": "Lian Li",
+    "price": 388,
+    "image": "https://www.proshop.se/Images/600x800/3310488_36225d9809e2.png",
+    "ean": "4718466014894",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191583",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 120mm PWM - Chassi fläkt - 120mm - Svart med RGB LED - 25 dBA",
+    "brand": "be quiet!",
+    "price": 192,
+    "image": "https://www.proshop.se/Images/600x800/3304796_2723f7d13812.jpg",
+    "ean": "4260052191583",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-6931393303505",
@@ -20996,6 +23922,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006698005",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX140 RGB Starter Kit - White - Chassi fläkt - 140mm - Vit med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 1133,
+    "image": "https://www.proshop.se/Images/600x800/3176594_f87de8b34217.png",
+    "ean": "0840006698005",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0840006666110",
     "category": "ram",
     "name": "Corsair Vengeance RGB DDR5-6000 - 32GB - CL36 - Dual Channel (2 pcs) - Intel XMP - Svart med RGB",
@@ -21037,6 +23981,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1200",
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-5056547200897",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB DUO 3-pack &amp; RGB Controller - Black - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "NZXT",
+    "price": 1290,
+    "image": "https://www.proshop.se/Images/600x800/3139873_5bdd36602884.png",
+    "ean": "5056547200897",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-7340172704737",
@@ -21149,6 +24113,24 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
+    "id": "feed-chassifan-4718466011718",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INF 120 Svart - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 329,
+    "image": "https://www.proshop.se/Images/600x800/3085688_d01e67af05e3.jpg",
+    "ean": "4718466011718",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6933412727446",
     "category": "cooling",
     "name": "DeepCool AK400 - CPU Luftkylare - Max 29 dBA",
@@ -21251,6 +24233,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100488",
+    "category": "chassifan",
+    "name": "Noctua NF-A9 PWM chromax.black.swap - Chassi fläkt - 92mm - Svart - 23 dBA",
+    "brand": "Noctua",
+    "price": 278,
+    "image": "https://www.proshop.se/Images/600x800/2827993_3c0b5c7fe5d8.jpg",
+    "ean": "9010018100488",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100457",
+    "category": "chassifan",
+    "name": "Noctua NF-A20 PWM chromax.black.swap - Chassi fläkt - 200mm - Svart - 18 dBA",
+    "brand": "Noctua",
+    "price": 436,
+    "image": "https://www.proshop.se/Images/600x800/2827934_dfcf9109b565.jpg",
+    "ean": "9010018100457",
+    "specs": [
+      "200 mm"
+    ],
+    "details": {
+      "Storlek": "200 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000160",
     "category": "cooling",
     "name": "Noctua NH-U12A - CPU Luftkylare - Max 22 dBA",
@@ -21282,6 +24298,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100235",
+    "category": "chassifan",
+    "name": "Noctua NF-A14 5V PWM - Chassi fläkt - 140mm - Brun - 25 dBA",
+    "brand": "Noctua",
+    "price": 312,
+    "image": "https://www.proshop.se/Images/600x800/2674905_98691f308233.jpg",
+    "ean": "9010018100235",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4716123315629",
     "category": "cooling",
     "name": "Noctua NH-L9x65 - CPU Luftkylare - Max 23 dBA",
@@ -21295,6 +24328,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "23 dBA"
+    }
+  },
+  {
+    "id": "feed-networkcard-6935364001049",
+    "category": "networkcard",
+    "name": "TP-Link Gigabit Ethernet PCIe x1 NIC",
+    "brand": "TP-Link",
+    "price": 147,
+    "image": "https://www.proshop.se/Images/600x800/2214694_d70b8e0455ed.jpg",
+    "ean": "6935364001049",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
     }
   },
   {
@@ -21506,6 +24556,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-8595247906120",
+    "category": "networkcard",
+    "name": "AXAGON Gigabit Ethernet PCI-Express-kort",
+    "brand": "AXAGON",
+    "price": 164,
+    "image": "https://www.proshop.se/Images/600x800/3419399_78ff4006ffcd.jpg",
+    "ean": "8595247906120",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
+    }
+  },
+  {
     "id": "feed-cooling-4260052193150",
     "category": "cooling",
     "name": "be quiet! Pure Rock Slim 3 - CPU Luftkylare - Max 25 dBA",
@@ -21695,6 +24762,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-dutzoinf140black",
+    "category": "chassifan",
+    "name": "DUTZO INF 140 Black PWM ARGB - Chassi fläkt - 140mm - Svart",
+    "brand": "DUTZO",
+    "price": 159,
+    "image": "https://www.proshop.se/Images/600x800/3395524_8bc4742979d8.jpg",
+    "ean": null,
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-0840440400363",
     "category": "cooling",
     "name": "Corsair NAUTILUS 360 LCD White - CPU Vattenkylare - Max 36 dBA",
@@ -21710,6 +24794,41 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "360 mm",
       "Ljudnivå": "36 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017482",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless - Chassi fläkt - 140mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 489,
+    "image": "https://www.proshop.se/Images/600x800/3388277_cd43d7f38c07.png",
+    "ean": "4718466017482",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100686",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 G2 PWM - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 371,
+    "image": "https://www.proshop.se/Images/600x800/3387729_c724677674ea.jpg",
+    "ean": "9010018100686",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -21907,6 +25026,26 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "GIGABYTE GeForce RTX 5090 WindForce 3 OC - 32GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-6931393307039",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-140-ARGB-K (2-pack) - Chassi fläkt - 140mm - Svart med RGB LED - 25 dBA",
+    "brand": "ID-Cooling",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/3330898_58ec0e31fb84.jpg",
+    "ean": "6931393307039",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4713157728883",
     "category": "psu",
     "name": "Enermax REVOLUTION III Strömförsörjning - 850 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -21922,6 +25061,43 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017345",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "Lian Li",
+    "price": 1790,
+    "image": "https://www.proshop.se/Images/600x800/3330791_4d109c7209d9.png",
+    "ean": "4718466017345",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6931393307732",
+    "category": "chassifan",
+    "name": "ID-Cooling AF-127-PINK - Chassi fläkt - 120mm - Rosa - 30 dBA",
+    "brand": "ID-Cooling",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/3326565_4cbbe48aa1e9.jpg",
+    "ean": "6931393307732",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -21998,6 +25174,23 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1000 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100150",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x15 FLX - Chassi fläkt - 60mm - Svart - 19 dBA",
+    "brand": "Noctua",
+    "price": 198,
+    "image": "https://www.proshop.se/Images/600x800/3315689_1a9450282ab3.jpg",
+    "ean": "9010018100150",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -22104,6 +25297,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680956",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 RGB - Chassi fläkt - 120mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 341,
+    "image": "https://www.proshop.se/Images/600x800/3242221_49c2af322b5a.png",
+    "ean": "0840006680956",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -22335,6 +25546,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4260052190265",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 140mm PWM high-speed Triple-Pack - Chassi fläkt - 140mm - Vit med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 911,
+    "image": "https://www.proshop.se/Images/600x800/3156737_7b993a905b4e.jpg",
+    "ean": "4260052190265",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0195892077145",
     "category": "ram",
     "name": "Lenovo - DDR5 - module - 16 GB - DIMM 288-pin - 4800 MHz / PC4-38400",
@@ -22403,6 +25632,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052188880",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 140 PWM - Chassi fläkt - 140mm - Svart - 13 dBA",
+    "brand": "be quiet!",
+    "price": 292,
+    "image": "https://www.proshop.se/Images/600x800/3090511_1bb60c27043f.jpg",
+    "ean": "4260052188880",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "13 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-0753263077493",
     "category": "psu",
     "name": "Chieftec BFX Smart Series 450W Strömförsörjning - 450 Watt - 90 mm - ATX 2.3 - 80 Plus Bronze certificate",
@@ -22453,6 +25699,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006637790",
+    "category": "chassifan",
+    "name": "Corsair iCUE SP140 RGB Elite Performance White - Kit with iCUE Lighting Node CORE - Chassi fläkt - 140mm - Vit med RGB LED - 27 dBA",
+    "brand": "Corsair",
+    "price": 682,
+    "image": "https://www.proshop.se/Images/600x800/2940234_5728ae28e126.png",
+    "ean": "0840006637790",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000092",
     "category": "cooling",
     "name": "Noctua NH-L9a-AM4 - CPU Luftkylare - Max 24 dBA",
@@ -22482,6 +25746,57 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "24 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100112",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x20 FLX - Chassi fläkt - 40mm - Brun - 15 dBA",
+    "brand": "Noctua",
+    "price": 194,
+    "image": "https://www.proshop.se/Images/600x800/2595710_b68aeb3cb61e.jpg",
+    "ean": "9010018100112",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-7350041084372",
+    "category": "chassifan",
+    "name": "Fractal Design Fan Dynamic X2 GP-12 - Chassi fläkt - 120mm - Svart - 19 dBA",
+    "brand": "Fractal Design",
+    "price": 162,
+    "image": "https://www.proshop.se/Images/600x800/2588185_2294b35d1d12.jpg",
+    "ean": "7350041084372",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314981",
+    "category": "chassifan",
+    "name": "Noctua NF-A14 PWM - lådfläkt - Chassi fläkt - 140mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 303,
+    "image": "https://www.proshop.se/Images/600x800/2433231_e65000687143.jpg",
+    "ean": "4716123314981",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -22594,6 +25909,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-886523003656",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-140 Reverse (3-pack) - Chassi fläkt - 140mm - Vit",
+    "brand": "Phanteks",
+    "price": 405,
+    "image": "https://www.proshop.se/Images/600x800/3419665_0f24dcc460ef.jpg",
+    "ean": "886523003656",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-7340172711179",
     "category": "case",
     "name": "Fractal Design North Momentum Edition - Chassi - Miditower - Svart",
@@ -22606,6 +25939,41 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000751",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro Reverse A-RGB (White) - Chassi fläkt - 140mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 160,
+    "image": "https://www.proshop.se/Images/600x800/3409363_0906bd9b267b.png",
+    "ean": "4895265000751",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412785316",
+    "category": "chassifan",
+    "name": "DeepCool FL12 SE 3-1 - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "DeepCool",
+    "price": 439,
+    "image": "https://www.proshop.se/Images/600x800/3408200_76dbcd63eb50.jpg",
+    "ean": "6933412785316",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -22702,6 +26070,40 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "ASUS GeForce RTX 5060 DUAL OC - 8GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4895265000430",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro PST - 5 Pack - Chassi fläkt - 140mm - Svart m. tvåfärgat led-ljus",
+    "brand": "Arctic",
+    "price": 340,
+    "image": "https://www.proshop.se/Images/600x800/3358501_b8122160a1df.png",
+    "ean": "4895265000430",
+    "specs": [
+      "140 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "5",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000072",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 81,
+    "image": "https://www.proshop.se/Images/600x800/3358446_ae07e5d41e89.png",
+    "ean": "4895265000072",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-840440496588",
     "category": "case",
     "name": "Corsair FRAME 4000D RS (3 white fans) - Chassi - Miditower - Vit",
@@ -22750,6 +26152,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466017284",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 34 dBA",
+    "brand": "Lian Li",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3330434_2c5437605cde.png",
+    "ean": "4718466017284",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4711173878476",
     "category": "psu",
     "name": "Seasonic Core GX-850 Strömförsörjning - 850 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -22765,6 +26185,44 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680987",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 RGB 2-pack - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 875,
+    "image": "https://www.proshop.se/Images/600x800/3242224_43f20cfd6855.png",
+    "ean": "0840006680987",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680918",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 RGB - Chassi fläkt - 120mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 330,
+    "image": "https://www.proshop.se/Images/600x800/3242217_4f47f7a88e42.png",
+    "ean": "0840006680918",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -22802,6 +26260,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-886523003052",
+    "category": "chassifan",
+    "name": "Phanteks PH-F120D30 - 3-pack - reverse - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "Phanteks",
+    "price": 1048,
+    "image": "https://www.proshop.se/Images/600x800/3225279_d46a4452b728.jpg",
+    "ean": "886523003052",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4718466014160",
     "category": "case",
     "name": "Lian Li O11D EVO RGB - Chassi - Miditower - Vit",
@@ -22829,6 +26306,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213704090",
+    "category": "chassifan",
+    "name": "Arctic P8 Max - Chassi fläkt - 80mm - Svart - 26 dBA",
+    "brand": "Arctic",
+    "price": 96,
+    "image": "https://www.proshop.se/Images/600x800/3216237_b1e64adb1ead.jpg",
+    "ean": "4895213704090",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -23003,6 +26497,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100471",
+    "category": "chassifan",
+    "name": "Noctua NF-A9x14 HS-PWM chromax.black.swap - Chassi fläkt - 92mm - Svart - 19 dBA",
+    "brand": "Noctua",
+    "price": 254,
+    "image": "https://www.proshop.se/Images/600x800/2828001_630de7c6c475.jpg",
+    "ean": "9010018100471",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4713294223302",
     "category": "ram",
     "name": "G.Skill Trident Z Neo DDR4-3200 - 32GB - CL16 - Dual Channel (2 pcs) - AMD Optimized - Svart med RGB",
@@ -23023,6 +26534,40 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-9010018100105",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x20 PWM - Chassi fläkt - 40mm - Brun - 15 dBA",
+    "brand": "Noctua",
+    "price": 180,
+    "image": "https://www.proshop.se/Images/600x800/2595711_f7baee8158da.jpg",
+    "ean": "9010018100105",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265001031",
+    "category": "chassifan",
+    "name": "Arctic BioniX P12 A-RGB - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 186,
+    "image": "https://www.proshop.se/Images/600x800/3509370_e49d9f029d34.png",
+    "ean": "4895265001031",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-4711636626859",
@@ -23245,6 +26790,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000386",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro PST - Chassi fläkt - 140mm - Svart",
+    "brand": "Arctic",
+    "price": 94,
+    "image": "https://www.proshop.se/Images/600x800/3358494_b50bdb2c7950.png",
+    "ean": "4895265000386",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4260052192504",
     "category": "cooling",
     "name": "be quiet! Pure Rock Pro 3 - CPU Luftkylare - Max 34 dBA",
@@ -23309,6 +26870,41 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "360 mm",
       "Ljudnivå": "36 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100624",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25 G2 LS-PWM - Chassi fläkt - 140mm - Brun - 11 dBA",
+    "brand": "Noctua",
+    "price": 458,
+    "image": "https://www.proshop.se/Images/600x800/3301622_82ac5786ff9c.jpg",
+    "ean": "9010018100624",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "11 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-idcoolingas120ar",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120-ARGB-W - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "ID-Cooling",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3293311_0c2d02592321.jpg",
+    "ean": null,
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -23383,6 +26979,24 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
+    "id": "feed-chassifan-4895213704311",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S8038-10K - 4-pack - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 449,
+    "image": "https://www.proshop.se/Images/600x800/3216236_bc7f80c12374.png",
+    "ean": "4895213704311",
+    "specs": [
+      "80 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Antal": "4",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000498",
     "category": "cooling",
     "name": "Noctua NH-L9x65 chromax.black - CPU Luftkylare - Max 24 dBA",
@@ -23396,6 +27010,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "24 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190777",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 120mm PWM - Chassi fläkt - 120mm - Svart - 26 dBA",
+    "brand": "be quiet!",
+    "price": 161,
+    "image": "https://www.proshop.se/Images/600x800/3207815_93946fa8a0e4.jpg",
+    "ean": "4260052190777",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -23452,6 +27083,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-7340172703358",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 14 PWM - Chassi fläkt - 140mm - Svart",
+    "brand": "Fractal Design",
+    "price": 212,
+    "image": "https://www.proshop.se/Images/600x800/2994313_7b5b2ad7c993.jpg",
+    "ean": "7340172703358",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0740617310986",
     "category": "ram",
     "name": "Kingston System Specific Memory DDR4-3200 - 16GB - CL22 - Single Channel (1 pcs) - Grön",
@@ -23474,6 +27121,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4895213701372",
+    "category": "chassifan",
+    "name": "Arctic P12 - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 78,
+    "image": "https://www.proshop.se/Images/600x800/2770804_b744b0e6d6fd.jpg",
+    "ean": "4895213701372",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-0855700001556",
     "category": "cooling",
     "name": "Inter-Tech DYNATRON A-26 - CPU Luftkylare",
@@ -23486,6 +27150,40 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100013",
+    "category": "chassifan",
+    "name": "Noctua NF-A20 PWM - Chassi fläkt - 200mm - Brun - 18 dBA",
+    "brand": "Noctua",
+    "price": 386,
+    "image": "https://www.proshop.se/Images/600x800/2595716_b3a474220179.jpg",
+    "ean": "9010018100013",
+    "specs": [
+      "200 mm"
+    ],
+    "details": {
+      "Storlek": "200 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100082",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x15 PWM - Chassi fläkt - 120mm - Brun - 24 dBA",
+    "brand": "Noctua",
+    "price": 279,
+    "image": "https://www.proshop.se/Images/600x800/2595714_34cb2f16f2c5.jpg",
+    "ean": "9010018100082",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -23502,6 +27200,62 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "25 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265001093",
+    "category": "chassifan",
+    "name": "Arctic BioniX P14 A-RGB - 3pack - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 477,
+    "image": "https://www.proshop.se/Images/600x800/3509387_b2af46449798.png",
+    "ean": "4895265001093",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636413008",
+    "category": "chassifan",
+    "name": "ASUS ROG EURUX GR120 ARGB White (3-pack) - Chassi fläkt - 120mm - Vit - 33 dBA",
+    "brand": "ASUS",
+    "price": 1290,
+    "image": "https://www.proshop.se/Images/600x800/3470108_e129e66ca47b.png",
+    "ean": "4711636413008",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6931 3933 08524",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120 ARGB Reverse - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "ID-Cooling",
+    "price": 139,
+    "image": "https://www.proshop.se/Images/600x800/3464769_2ab0b54d2777.jpg",
+    "ean": "6931 3933 08524",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -23573,6 +27327,41 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000591",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro Reverse A-RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 130,
+    "image": "https://www.proshop.se/Images/600x800/3411410_cb4fe7f79cab.png",
+    "ean": "4895265000591",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412785309",
+    "category": "chassifan",
+    "name": "DeepCool FL12 SE - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "DeepCool",
+    "price": 168,
+    "image": "https://www.proshop.se/Images/600x800/3408198_19e302c54361.jpg",
+    "ean": "6933412785309",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-0761345101776",
     "category": "case",
     "name": "Antec FLUX SE - Chassi",
@@ -23582,6 +27371,22 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "0761345101776",
     "specs": [],
     "details": {}
+  },
+  {
+    "id": "feed-chassifan-840440494676",
+    "category": "chassifan",
+    "name": "Corsair RS120-R - Chassi fläkt - 120mm - Vit",
+    "brand": "Corsair",
+    "price": 494,
+    "image": "https://www.proshop.se/Images/600x800/3405208_1446807c1b37.jpg",
+    "ean": "840440494676",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-cooling-4718466016669",
@@ -23615,6 +27420,22 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "500 W",
       "Certifiering": "80 Plus White",
       "ATX-standard": "ATX 2.4"
+    }
+  },
+  {
+    "id": "feed-chassifan-4719331555214",
+    "category": "chassifan",
+    "name": "GIGABYTE AORUS - case fan - Chassi fläkt - 120mm - Vit",
+    "brand": "GIGABYTE",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3373058_8d52c33a71ab.jpg",
+    "ean": "4719331555214",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -23652,6 +27473,40 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "16 GB"
     },
     "gpuModel": "ZOTAC GeForce RTX 5060 Ti Twin Edge OC - 16GB GDDR7 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4895265000416",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro PST (White) - Chassi fläkt - 140mm - Vit med svarta vingar",
+    "brand": "Arctic",
+    "price": 114,
+    "image": "https://www.proshop.se/Images/600x800/3358497_a1ede7b20c71.jpg",
+    "ean": "4895265000416",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-idcoolingas140ar",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-140-ARGB-K - Chassi fläkt - 140mm - Svart med RGB LED - 25 dBA",
+    "brand": "ID-Cooling",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3357764_0ff21b302e91.jpg",
+    "ean": null,
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-5056547207650",
@@ -23704,6 +27559,59 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-6971690791162",
+    "category": "networkcard",
+    "name": "Cudy AX3000 Wi-Fi 6 Bluetooth 5.2 PCI-E Adapter",
+    "brand": "Cudy",
+    "price": 334,
+    "image": "https://www.proshop.se/Images/600x800/3326720_75a80e67616e.jpg",
+    "ean": "6971690791162",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.2"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547204321",
+    "category": "chassifan",
+    "name": "NZXT F120Q V2 Quiet Airflow - Chassi fläkt - 120mm - Vit - 25 dBA",
+    "brand": "NZXT",
+    "price": 137,
+    "image": "https://www.proshop.se/Images/600x800/3267160_12a97d89b037.png",
+    "ean": "5056547204321",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684121",
+    "category": "chassifan",
+    "name": "Corsair RS120 ARGB - Chassi fläkt - 120mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3266762_15eec25f0e49.png",
+    "ean": "0840006684121",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-0840006663287",
     "category": "psu",
     "name": "Corsair SF Series SF850 (2024) Strömförsörjning - 850 Watt - 92 mm - ATX 3.1 - 80 Plus Platinum certificate",
@@ -23719,6 +27627,25 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387543436",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 REVERSE 3-pack - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "ASUS",
+    "price": 580,
+    "image": "https://www.proshop.se/Images/600x800/3254006_86a3202d3672.png",
+    "ean": "4711387543436",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -23794,6 +27721,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006697961",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX140 RGB Starter Kit - Black - Chassi fläkt - 140mm - Svart med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 944,
+    "image": "https://www.proshop.se/Images/600x800/3176590_f1da17b8ccba.png",
+    "ean": "0840006697961",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711387164303",
     "category": "motherboard",
     "name": "ASUS TUF GAMING A620M-PLUS Moderkort - AMD A620 - AMD AM5 - DDR5 RAM - Micro-ATX",
@@ -23813,6 +27758,42 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-5056547202983",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB Core - Black - Chassi fläkt - 140mm - Svart med RGB LED - 35 dBA",
+    "brand": "NZXT",
+    "price": 222,
+    "image": "https://www.proshop.se/Images/600x800/3158129_35d1319b603b.jpg",
+    "ean": "5056547202983",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "35 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547202969",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB Core - Black - Chassi fläkt - 120mm - Svart med RGB LED - 34 dBA",
+    "brand": "NZXT",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/3158125_4c720bc029a6.jpg",
+    "ean": "5056547202969",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-gpu-4711081772453",
@@ -23891,6 +27872,142 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100549",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 PWM chromax.black.swap - Chassi fläkt - 120mm - Svart - 22 dBA",
+    "brand": "Noctua",
+    "price": 384,
+    "image": "https://www.proshop.se/Images/600x800/3009822_ec257393603c.jpg",
+    "ean": "9010018100549",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044953500848",
+    "category": "chassifan",
+    "name": "Xilence WhiteBox 80 - Chassi fläkt - 80mm - Svart",
+    "brand": "Xilence",
+    "price": 65,
+    "image": "https://www.proshop.se/Images/600x800/2970015_d3889d94cef8.jpg",
+    "ean": "4044953500848",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-networkcard-6935364052867",
+    "category": "networkcard",
+    "name": "TP-Link Archer TX50E AX3000 Wi-Fi 6 Bluetooth 5.0 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 499,
+    "image": "https://www.proshop.se/Images/600x800/2858693_9f007583c951.jpg",
+    "ean": "6935364052867",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6",
+      "Bluetooth": "5.0"
+    }
+  },
+  {
+    "id": "feed-networkcard-4260455645140",
+    "category": "networkcard",
+    "name": "Inter-Tech DMG-31 Wi-Fi 4 PCIe Adapter - 300 Mbps",
+    "brand": "Inter-Tech",
+    "price": 185,
+    "image": "https://www.proshop.se/Images/600x800/2842002_6b044a65b15c.jpg",
+    "ean": "4260455645140",
+    "specs": [
+      "Wi-Fi 4",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "4"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052187357",
+    "category": "chassifan",
+    "name": "be quiet! Shadow Wings 2 PWM White 140 - Chassi fläkt - 140mm - Vit - 15 dBA",
+    "brand": "be quiet!",
+    "price": 184,
+    "image": "https://www.proshop.se/Images/600x800/2835857_b6212463cb47.jpg",
+    "ean": "4260052187357",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702041",
+    "category": "chassifan",
+    "name": "Arctic P8 PWM PST CO - Chassi fläkt - 80mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 106,
+    "image": "https://www.proshop.se/Images/600x800/2828192_b134d6f3ebef.jpg",
+    "ean": "4895213702041",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100464",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x15 PWM Chromax.black.swap - Chassi fläkt - 120mm - Svart - 24 dBA",
+    "brand": "Noctua",
+    "price": 304,
+    "image": "https://www.proshop.se/Images/600x800/2827958_b710e90373f2.jpg",
+    "ean": "9010018100464",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100396",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 PWM - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 364,
+    "image": "https://www.proshop.se/Images/600x800/2661526_f1cf78bf52cf.png",
+    "ean": "9010018100396",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000115",
     "category": "cooling",
     "name": "Noctua NH-U12S TR4-SP3 - CPU Luftkylare - Max 23 dBA",
@@ -23920,6 +28037,115 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "22 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315513",
+    "category": "chassifan",
+    "name": "Noctua NF-A9 PWM - lådfläkt - Chassi fläkt - 92mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 234,
+    "image": "https://www.proshop.se/Images/600x800/2469404_4b4bf9982abb.jpg",
+    "ean": "4716123315513",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315285",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-S12B - lådfläkt - Chassi fläkt - 120mm - Grå - 18 dBA",
+    "brand": "Noctua",
+    "price": 182,
+    "image": "https://www.proshop.se/Images/600x800/2449125_ea98503d2e0b.jpg",
+    "ean": "4716123315285",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315445",
+    "category": "chassifan",
+    "name": "Noctua IndustrialPPC NF-A14 - lådfläkt - Chassi fläkt - 140mm - Svart - 31 dBA",
+    "brand": "Noctua",
+    "price": 389,
+    "image": "https://www.proshop.se/Images/600x800/2449110_6ba655e7e1b6.jpg",
+    "ean": "4716123315445",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023674",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF LCD FLEX 120 Reversed (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1659,
+    "image": "https://www.proshop.se/Images/600x800/3517796_849da805b242.png",
+    "ean": "4718466023674",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023544",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 - Chassi fläkt - 120mm - Vit med RGB LED - 26 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3517783_666ee93302a4.png",
+    "ean": "4718466023544",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023490",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 (3-pack) with controller - Chassi fläkt - 120mm - Svart med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1149,
+    "image": "https://www.proshop.se/Images/600x800/3517352_c933963fb22b.png",
+    "ean": "4718466023490",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -24018,6 +28244,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-6931393305387",
+    "category": "chassifan",
+    "name": "ID-Cooling AT-120-K - Chassi fläkt - 120mm - Svart",
+    "brand": "ID-Cooling",
+    "price": 115,
+    "image": "https://www.proshop.se/Images/600x800/3439466_f87649fdf4a4.jpg",
+    "ean": "6931393305387",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4711527000980",
     "category": "cooling",
     "name": "Darkflash DV360S CPU Water Cooler - CPU Vattenkylare",
@@ -24030,6 +28272,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-6977029650629",
+    "category": "chassifan",
+    "name": "Tryx ROTA SL ARGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Tryx",
+    "price": 250,
+    "image": "https://www.proshop.se/Images/600x800/3436321_b3433d466d80.jpg",
+    "ean": "6977029650629",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -24054,6 +28313,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-886523003588",
+    "category": "chassifan",
+    "name": "Phanteks M25 Gen2 Reverse - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 201,
+    "image": "https://www.proshop.se/Images/600x800/3419653_5f0199530a8a.jpg",
+    "ean": "886523003588",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4719331556310",
     "category": "psu",
     "name": "GIGABYTE UD750GM PG5 V2 ICE Strömförsörjning - 750 Watt - 120 mm - ATX - 80 Plus Gold certificate",
@@ -24068,6 +28343,40 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "750 W",
       "Certifiering": "80 Plus Gold"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000607",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro Reverse A-RGB - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 147,
+    "image": "https://www.proshop.se/Images/600x800/3409359_c4b73b9aaa99.png",
+    "ean": "4895265000607",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4251442513702",
+    "category": "chassifan",
+    "name": "Havn H14 - Chassi fläkt - 140mm - Svart - 31 dBA",
+    "brand": "Havn",
+    "price": 231,
+    "image": "https://www.proshop.se/Images/600x800/3408440_65b33209d11b.png",
+    "ean": "4251442513702",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -24155,6 +28464,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466018571",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL Wireless Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/3396157_5194a7dacfcf.png",
+    "ean": "4718466018571",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-0753263078940",
     "category": "case",
     "name": "Chieftec Pro Midi Q - Chassi",
@@ -24164,6 +28491,23 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "0753263078940",
     "specs": [],
     "details": {}
+  },
+  {
+    "id": "feed-chassifan-9010018100693",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 G2 LS-PWM - Chassi fläkt - 120mm - Brun - 11 dBA",
+    "brand": "Noctua",
+    "price": 372,
+    "image": "https://www.proshop.se/Images/600x800/3387725_2240d69e2917.jpg",
+    "ean": "9010018100693",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "11 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-psu-0840006687276",
@@ -24306,6 +28650,23 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "GIGABYTE GeForce RTX 5090 AORUS Master ICE - 32GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4718466014900",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL INF PWM White Reverse - Chassi fläkt - 140mm - Vit - 28 dBA",
+    "brand": "Lian Li",
+    "price": 388,
+    "image": "https://www.proshop.se/Images/600x800/3310502_b223ec276bc0.png",
+    "ean": "4718466014900",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-0840006687566",
     "category": "cooling",
     "name": "Corsair NAUTILUS 240 ARGB Black - CPU Vattenkylare - Max 36 dBA",
@@ -24342,6 +28703,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100617",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25 G2 PWM - Chassi fläkt - 140mm - Brun - 25 dBA",
+    "brand": "Noctua",
+    "price": 445,
+    "image": "https://www.proshop.se/Images/600x800/3301636_13884d737a4c.jpg",
+    "ean": "9010018100617",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-6931393307107",
     "category": "cooling",
     "name": "ID-Cooling FX280 PRO SE - CPU Vattenkylare - Max 25 dBA",
@@ -24355,6 +28733,39 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Ljudnivå": "25 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100648",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25r G2 - Chassi fläkt - 140mm - Brun - 24 dBA",
+    "brand": "Noctua",
+    "price": 478,
+    "image": "https://www.proshop.se/Images/600x800/3278967_217e09ae8bcf.jpg",
+    "ean": "9010018100648",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227539395",
+    "category": "chassifan",
+    "name": "Thermaltake TOUGHFAN EX12 Pro - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 1131,
+    "image": "https://www.proshop.se/Images/600x800/3277967_dc9f9e82061a.jpg",
+    "ean": "4713227539395",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -24398,6 +28809,59 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-0840006684268",
+    "category": "chassifan",
+    "name": "Corsair RS140 - Chassi fläkt - 140mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 224,
+    "image": "https://www.proshop.se/Images/600x800/3266881_4caccc9733c2.png",
+    "ean": "0840006684268",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684206",
+    "category": "chassifan",
+    "name": "Corsair RS120 - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 153,
+    "image": "https://www.proshop.se/Images/600x800/3266835_d6b29a06e902.jpg",
+    "ean": "0840006684206",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006682936",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120 3-pack - Chassi fläkt - 120mm - Vit - 37 dBA",
+    "brand": "Corsair",
+    "price": 1540,
+    "image": "https://www.proshop.se/Images/600x800/3263055_707b26b245ef.png",
+    "ean": "0840006682936",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4711387478790",
     "category": "case",
     "name": "ASUS TUF Gaming GT302 - Chassi - Tower - Vit",
@@ -24439,6 +28903,25 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-1220000350670",
+    "category": "chassifan",
+    "name": "HYTE THICC FP12 Fan 3 Pack - Chassi fläkt - 120mm - Vit med svarta vingar - 47 dBA",
+    "brand": "HYTE",
+    "price": 1776,
+    "image": "https://www.proshop.se/Images/600x800/3234624_bb7572342bdb.png",
+    "ean": "1220000350670",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "47 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cpu-intelxeone243434",
     "category": "cpu",
     "name": "Intel Xeon E-2434 / 3.4 GHz processor - OEM CPU - 4 kärnor - 3.4 GHz - Intel LGA1700 - Bulk (utan kylare)",
@@ -24459,6 +28942,59 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
+    "id": "feed-chassifan-4710562742282",
+    "category": "chassifan",
+    "name": "Montech RX140 PWM WH - Reverse - Chassi fläkt - 140mm - Vit med RGB LED - 28 dBA",
+    "brand": "Montech",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3221737_f07359dd3308.png",
+    "ean": "4710562742282",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710562748949",
+    "category": "chassifan",
+    "name": "Montech RX120 PWM WH - Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "Montech",
+    "price": 79,
+    "image": "https://www.proshop.se/Images/600x800/3221735_4c2b5dadfcc4.png",
+    "ean": "4710562748949",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190784",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 120mm PWM high-speed - Chassi fläkt - 120mm - Svart - 31 dBA",
+    "brand": "be quiet!",
+    "price": 169,
+    "image": "https://www.proshop.se/Images/600x800/3207817_e90dc9ff6daf.jpg",
+    "ean": "4260052190784",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-0753263077837",
     "category": "case",
     "name": "Chieftec Pro Cube Mini CN-01B-OP - Chassi - Tower - Svart",
@@ -24471,6 +29007,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Cube"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547200910",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB DUO 2-pack &amp; RGB Controller - Black - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "NZXT",
+    "price": 949,
+    "image": "https://www.proshop.se/Images/600x800/3139877_57578e1c9be8.png",
+    "ean": "5056547200910",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
     }
   },
   {
@@ -24536,6 +29092,59 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4260052188897",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 140 PWM High-Speed - Chassi fläkt - 140mm - Svart - 29 dBA",
+    "brand": "be quiet!",
+    "price": 292,
+    "image": "https://www.proshop.se/Images/600x800/3090512_dc9d7f60378c.jpg",
+    "ean": "4260052188897",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703819",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S4028-6K - 5 Pack - Chassi fläkt - 40mm - Svart",
+    "brand": "Arctic",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3076218_b439dbc57d27.jpg",
+    "ean": "4895213703819",
+    "specs": [
+      "40 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Antal": "5",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-5060301699872",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB - Black - Chassi fläkt - 120mm - Svart med RGB LED - 28 dBA",
+    "brand": "NZXT",
+    "price": 299,
+    "image": "https://www.proshop.se/Images/600x800/3076041_8ca9944eb578.jpg",
+    "ean": "5060301699872",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-8719706028288",
     "category": "storage",
     "name": "Seagate SkyHawk - 4TB - Hårddisk - ST4000VX016 - SATA-600 - 3,5&quot;",
@@ -24587,6 +29196,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "8 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951034307",
+    "category": "chassifan",
+    "name": "Sharkoon SHARK Blades PWM RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Sharkoon",
+    "price": 159,
+    "image": "https://www.proshop.se/Images/600x800/3017888_0842a90d6e4c.jpg",
+    "ean": "4044951034307",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -24646,6 +29272,58 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-672042106103",
+    "category": "chassifan",
+    "name": "Supermicro FAN 0141L4 - Chassi fläkt - 40mm",
+    "brand": "Supermicro",
+    "price": 448,
+    "image": "https://www.proshop.se/Images/600x800/2835425_48b0b8703fed.jpg",
+    "ean": "672042106103",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702072",
+    "category": "chassifan",
+    "name": "Arctic P8 PWM PST - 5-pack value pack - Chassi fläkt - 80mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 238,
+    "image": "https://www.proshop.se/Images/600x800/2828182_b7529d88c4b1.jpg",
+    "ean": "4895213702072",
+    "specs": [
+      "80 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "5",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702034",
+    "category": "chassifan",
+    "name": "Arctic P8 PWM PST - Chassi fläkt - 80mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 86,
+    "image": "https://www.proshop.se/Images/600x800/2828181_971d6cbde466.jpg",
+    "ean": "4895213702034",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4713227521291",
     "category": "psu",
     "name": "Thermaltake ToughPower GF1 ARGB 750W Strömförsörjning - 750 Watt - ATX - 80 Plus Gold certificate",
@@ -24660,6 +29338,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "750 W",
       "Certifiering": "80 Plus Gold"
+    }
+  },
+  {
+    "id": "feed-networkcard-0675901714471",
+    "category": "networkcard",
+    "name": "Intel AX201 Wi-Fi 6 2x2 + BT 5.2 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/2798401_c65b3d41be99.jpg",
+    "ean": "0675901714471",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
     }
   },
   {
@@ -24678,6 +29373,108 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100266",
+    "category": "chassifan",
+    "name": "Noctua NF-F12 5V - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 284,
+    "image": "https://www.proshop.se/Images/600x800/2674886_a24577a5f494.jpg",
+    "ean": "9010018100266",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100440",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x10 12V PWM - Chassi fläkt - 40mm - Brun - 20 dBA",
+    "brand": "Noctua",
+    "price": 187,
+    "image": "https://www.proshop.se/Images/600x800/2674879_1055e1544a08.jpg",
+    "ean": "9010018100440",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100358",
+    "category": "chassifan",
+    "name": "Noctua NF-P12 redux-1300 PWM - Chassi fläkt - 120mm - Svart - 20 dBA",
+    "brand": "Noctua",
+    "price": 182,
+    "image": "https://www.proshop.se/Images/600x800/2662222_a701ca4cd029.png",
+    "ean": "9010018100358",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100334",
+    "category": "chassifan",
+    "name": "Noctua NF-P12 redux-900 - Chassi fläkt - 120mm - Svart - 13 dBA",
+    "brand": "Noctua",
+    "price": 182,
+    "image": "https://www.proshop.se/Images/600x800/2662220_9087a4872054.png",
+    "ean": "9010018100334",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "13 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100419",
+    "category": "chassifan",
+    "name": "Noctua NF-S12A PWM chromax.black.swap - Chassi fläkt - 120mm - Svart - 17 dBA",
+    "brand": "Noctua",
+    "price": 314,
+    "image": "https://www.proshop.se/Images/600x800/2626230_ef541f35c4e0.jpg",
+    "ean": "9010018100419",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100426",
+    "category": "chassifan",
+    "name": "Noctua NF-A14 PWM chromax.black.swap - Chassi fläkt - 140mm - Svart - 25 dBA",
+    "brand": "Noctua",
+    "price": 334,
+    "image": "https://www.proshop.se/Images/600x800/2626227_f8cb28d00ca2.jpg",
+    "ean": "9010018100426",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000108",
     "category": "cooling",
     "name": "Noctua NH-U14S TR4-SP3 - CPU Luftkylare - Max 25 dBA",
@@ -24691,6 +29488,91 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "25 dBA"
+    }
+  },
+  {
+    "id": "feed-networkcard-4712900620061",
+    "category": "networkcard",
+    "name": "ASUS XG-C100C 10GBase-T PCIe Network Adapter RJ-45 (5/2.5/1GB Compatible)",
+    "brand": "ASUS",
+    "price": 1057,
+    "image": "https://www.proshop.se/Images/600x800/2608163_bd7efdc341f0.jpg",
+    "ean": "4712900620061",
+    "specs": [
+      "10 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "10 Gbit/s"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315452",
+    "category": "chassifan",
+    "name": "Noctua IndustrialPPC NF-A14 - lådfläkt - Chassi fläkt - 140mm - Svart - 41 dBA",
+    "brand": "Noctua",
+    "price": 364,
+    "image": "https://www.proshop.se/Images/600x800/2449111_b8ca1261fd12.jpg",
+    "ean": "4716123315452",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314820",
+    "category": "chassifan",
+    "name": "Noctua NF-A14 ULN - lådfläkt - Chassi fläkt - 140mm - Brun - 11 dBA",
+    "brand": "Noctua",
+    "price": 306,
+    "image": "https://www.proshop.se/Images/600x800/2420677_d81e742cb408.jpg",
+    "ean": "4716123314820",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "11 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314912",
+    "category": "chassifan",
+    "name": "Noctua NF-S12A ULN - lådfläkt - Chassi fläkt - 120mm - Brun - 8 dBA",
+    "brand": "Noctua",
+    "price": 275,
+    "image": "https://www.proshop.se/Images/600x800/2407423_852ee68c1c27.jpg",
+    "ean": "4716123314912",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "8 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314660",
+    "category": "chassifan",
+    "name": "Noctua NF-F12 PWM - lådfläkt - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 278,
+    "image": "https://www.proshop.se/Images/600x800/2319885_7b39623164a3.jpg",
+    "ean": "4716123314660",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -24772,6 +29654,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-6931 3933 08531",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-120 ARGB Reverse - Chassi fläkt - 120mm - Vit med RGB LED",
+    "brand": "ID-Cooling",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3464768_46bfafd08315.jpg",
+    "ean": "6931 3933 08531",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -24918,6 +29817,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "8 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4251442513795",
+    "category": "chassifan",
+    "name": "Havn H12 - Triple pack - Chassi fläkt - 120mm - Svart - 32 dBA",
+    "brand": "Havn",
+    "price": 459,
+    "image": "https://www.proshop.se/Images/600x800/3408422_deb1b29f7ae6.png",
+    "ean": "4251442513795",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -25090,6 +30006,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000423",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro A-RGB (White) - Chassi fläkt - 140mm - Vit",
+    "brand": "Arctic",
+    "price": 147,
+    "image": "https://www.proshop.se/Images/600x800/3358499_931b6da2aa31.jpg",
+    "ean": "4895265000423",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6931393308098",
     "category": "cooling",
     "name": "ID-Cooling FROZN A410 SE ARGB WHITE - CPU Luftkylare",
@@ -25177,6 +30110,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052191644",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 140mm PWM - Chassi fläkt - 140mm - Svart - 23 dBA",
+    "brand": "be quiet!",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/3305360_ed1b16bb0d8d.jpg",
+    "ean": "4260052191644",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cpu-5054444636153",
     "category": "cpu",
     "name": "Intel Core Ultra 9 285K Arrow Lake-S - Tray CPU - 24 kärnor - 3.7 GHz - Intel LGA1851 - Bulk (utan kylare)",
@@ -25195,6 +30145,23 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "3.7 GHz"
     },
     "socket": "LGA1851"
+  },
+  {
+    "id": "feed-chassifan-0840006688723",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120-R - Chassi fläkt - 120mm - Vit - 66 dBA",
+    "brand": "Corsair",
+    "price": 403,
+    "image": "https://www.proshop.se/Images/600x800/3293497_514e54b15cb5.png",
+    "ean": "0840006688723",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "66 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-0740617345865",
@@ -25255,6 +30222,26 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "NVIDIA RTX 4000 Ada - 20GB GDDR6 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-0840006684152",
+    "category": "chassifan",
+    "name": "Corsair RS140 ARGB 2-pack - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 465,
+    "image": "https://www.proshop.se/Images/600x800/3266791_4bfdeab56886.png",
+    "ean": "0840006684152",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-0814256003773",
     "category": "cooling",
     "name": "Thermalright Assassin X120 R SE Black - CPU Luftkylare",
@@ -25282,6 +30269,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680949",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 RGB 2-pack - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 544,
+    "image": "https://www.proshop.se/Images/600x800/3242220_fb6a2f3529ba.png",
+    "ean": "0840006680949",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
     }
   },
   {
@@ -25320,6 +30327,41 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4260052190807",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 140mm PWM - Chassi fläkt - 140mm - Svart - 22 dBA",
+    "brand": "be quiet!",
+    "price": 168,
+    "image": "https://www.proshop.se/Images/600x800/3207819_ccca62e5060d.jpg",
+    "ean": "4260052190807",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006697954",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX140 RGB Expansion Fan - Black - Chassi fläkt - 140mm - Svart med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 567,
+    "image": "https://www.proshop.se/Images/600x800/3176589_b27b52afc1ea.png",
+    "ean": "0840006697954",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0740617333398",
@@ -25459,6 +30501,90 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-886523001829",
+    "category": "chassifan",
+    "name": "Phanteks T30-120 - Chassi fläkt - 120mm - Grå - 40 dBA",
+    "brand": "Phanteks",
+    "price": 358,
+    "image": "https://www.proshop.se/Images/600x800/3006643_90e08ea69fec.jpg",
+    "ean": "886523001829",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "40 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702942",
+    "category": "chassifan",
+    "name": "Arctic F12 - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 83,
+    "image": "https://www.proshop.se/Images/600x800/2986953_4b03f2438b80.jpg",
+    "ean": "4895213702942",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-networkcard-4718017635318",
+    "category": "networkcard",
+    "name": "ASUS M.2 CNVI WIFI CARD/INTEL AX201",
+    "brand": "ASUS",
+    "price": 597,
+    "image": "https://www.proshop.se/Images/600x800/2867826_3b2295bf0d7d.jpg",
+    "ean": "4718017635318",
+    "specs": [
+      "Wi-Fi",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2"
+    }
+  },
+  {
+    "id": "feed-networkcard-0710931140576",
+    "category": "networkcard",
+    "name": "TRENDnet TEG-25GECTX 2.5GBASE-T PCIe Network Adapter",
+    "brand": "TRENDnet",
+    "price": 296,
+    "image": "https://www.proshop.se/Images/600x800/2829045_d8a6eb8b01a6.jpg",
+    "ean": "0710931140576",
+    "specs": [
+      "2.5 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "2.5 Gbit/s"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100495",
+    "category": "chassifan",
+    "name": "Noctua NF-A8 PWM chromax.black.swap - Chassi fläkt - 80mm - Svart - 17 dBA",
+    "brand": "Noctua",
+    "price": 279,
+    "image": "https://www.proshop.se/Images/600x800/2828041_fc7073b71938.jpg",
+    "ean": "9010018100495",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000184",
     "category": "cooling",
     "name": "Noctua NH-D15 chromax.black - CPU Luftkylare - Max 24 dBA",
@@ -25514,6 +30640,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100037",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x25 5V - Chassi fläkt - 60mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/2674892_ab5cfa31c28f.jpg",
+    "ean": "9010018100037",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0763649094426",
     "category": "storage",
     "name": "Seagate BarraCuda - 6TB - Hårddisk - ST6000DM003 - SATA-600 - 3,5&quot;",
@@ -25562,6 +30705,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4716123315636",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x25 PWM - lådfläkt - Chassi fläkt - 60mm - Vit - 19 dBA",
+    "brand": "Noctua",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/2518250_3defc9fcd9be.jpg",
+    "ean": "4716123315636",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315247",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-P14s - lådfläkt - Chassi fläkt - 140mm - Grå - 19 dBA",
+    "brand": "Noctua",
+    "price": 208,
+    "image": "https://www.proshop.se/Images/600x800/2449118_4b103543683f.jpg",
+    "ean": "4716123315247",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4716123315360",
     "category": "cooling",
     "name": "Noctua NH-D15 - CPU Luftkylare - Max 24 dBA",
@@ -25575,6 +30752,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "24 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265001079",
+    "category": "chassifan",
+    "name": "Arctic BioniX P14 A-RGB - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 206,
+    "image": "https://www.proshop.se/Images/600x800/3509383_5f9c57623945.png",
+    "ean": "4895265001079",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -25762,6 +30956,24 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "2.7 GHz"
     },
     "socket": "LGA1700"
+  },
+  {
+    "id": "feed-chassifan-idcoolingas140ar",
+    "category": "chassifan",
+    "name": "ID-Cooling AS-140 ARGB WHITE - Chassi fläkt - 140mm - Vit med RGB LED - 25 dBA",
+    "brand": "ID-Cooling",
+    "price": 129,
+    "image": "https://www.proshop.se/Images/600x800/3357771_5b98fba3fee8.jpg",
+    "ean": null,
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-storage-4260557512630",
@@ -25997,6 +31209,62 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547204390",
+    "category": "chassifan",
+    "name": "NZXT F240 RGB CORE UNIBODY - 240mm - Chassi fläkt - 120mm - Svart - 30 dBA",
+    "brand": "NZXT",
+    "price": 339,
+    "image": "https://www.proshop.se/Images/600x800/3266999_3ad027953b4a.png",
+    "ean": "5056547204390",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684145",
+    "category": "chassifan",
+    "name": "Corsair RS140 ARGB - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 271,
+    "image": "https://www.proshop.se/Images/600x800/3266788_9f8b506c85a5.png",
+    "ean": "0840006684145",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680925",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 RGB 3-pack - Chassi fläkt - 120mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 1109,
+    "image": "https://www.proshop.se/Images/600x800/3242218_70cb515bbe7f.png",
+    "ean": "0840006680925",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cpu-5032037279710",
     "category": "cpu",
     "name": "Intel Xeon E-2414 / 2.6 GHz processor - Box CPU - 4 kärnor - 2.6 GHz - Intel LGA1700 - Intel Boxed (med kylare)",
@@ -26032,6 +31300,41 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "650 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213704304",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S8038-7K - 4-pack - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 541,
+    "image": "https://www.proshop.se/Images/600x800/3216234_1746026dbe75.png",
+    "ean": "4895213704304",
+    "specs": [
+      "80 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Antal": "4",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190814",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 140mm PWM high-speed - Chassi fläkt - 140mm - Svart - 31 dBA",
+    "brand": "be quiet!",
+    "price": 168,
+    "image": "https://www.proshop.se/Images/600x800/3207820_2cacec790d3c.jpg",
+    "ean": "4260052190814",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -26214,6 +31517,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-9010018100129",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x20 5V - Chassi fläkt - 40mm - Brun - 15 dBA",
+    "brand": "Noctua",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/2595708_ba9795abf93c.jpg",
+    "ean": "9010018100129",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4260133126039",
     "category": "psu",
     "name": "Inter-Tech Argus APS-720W Strömförsörjning - 720 Watt - 120 mm - ATX - 80 Plus",
@@ -26226,6 +31546,232 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Effekt": "720 W"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023605",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 Reversed (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1549,
+    "image": "https://www.proshop.se/Images/600x800/3517793_dd8d57fadacb.png",
+    "ean": "4718466023605",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023568",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 Reversed - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3517790_d982728fd150.png",
+    "ean": "4718466023568",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023551",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 Reversed - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3517789_b253cbfd100a.png",
+    "ean": "4718466023551",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023537",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 - Chassi fläkt - 120mm - Svart med RGB LED - 26 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3517782_0a6e617a4789.png",
+    "ean": "4718466023537",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023582",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL LCD FLEX 120 (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 26 dBA",
+    "brand": "Lian Li",
+    "price": 1549,
+    "image": "https://www.proshop.se/Images/600x800/3517780_5dcbc49480bc.png",
+    "ean": "4718466023582",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023520",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 Reversed (3-pack) with controller - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1149,
+    "image": "https://www.proshop.se/Images/600x800/3517386_ed669db5b9df.png",
+    "ean": "4718466023520",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023513",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 Reversed (3-pack) with controller - Chassi fläkt - 120mm - Svart med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1149,
+    "image": "https://www.proshop.se/Images/600x800/3517385_6e631098932d.png",
+    "ean": "4718466023513",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023483",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 Reversed - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 359,
+    "image": "https://www.proshop.se/Images/600x800/3517379_0c28775cb287.png",
+    "ean": "4718466023483",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023476",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 Reversed - Chassi fläkt - 120mm - Svart med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 359,
+    "image": "https://www.proshop.se/Images/600x800/3517378_ef46176f9f72.png",
+    "ean": "4718466023476",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023469",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 359,
+    "image": "https://www.proshop.se/Images/600x800/3517371_2553bce5a807.png",
+    "ean": "4718466023469",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023452",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 - Chassi fläkt - 120mm - Svart med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 359,
+    "image": "https://www.proshop.se/Images/600x800/3517366_742e3287858f.png",
+    "ean": "4718466023452",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023506",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL FLEX 120 (3-pack) with controller - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1149,
+    "image": "https://www.proshop.se/Images/600x800/3517358_b33f52aac930.png",
+    "ean": "4718466023506",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -26283,6 +31829,63 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4711636413206",
+    "category": "chassifan",
+    "name": "ASUS ROG EURUX GR120 ARGB White Reverse (3-pack) - Chassi fläkt - 120mm - Vit - 32 dBA",
+    "brand": "ASUS",
+    "price": 1244,
+    "image": "https://www.proshop.se/Images/600x800/3470134_643cdf255a69.png",
+    "ean": "4711636413206",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412785132",
+    "category": "chassifan",
+    "name": "DeepCool FL12R Triple-Pack - Chassi fläkt - 120mm - Svart med RGB LED - 34 dBA",
+    "brand": "DeepCool",
+    "price": 955,
+    "image": "https://www.proshop.se/Images/600x800/3369451_4c686cfdf1d2.jpg",
+    "ean": "6933412785132",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265000447",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro A-RGB - 3 Pack - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 347,
+    "image": "https://www.proshop.se/Images/600x800/3358502_e042a95a8fd4.png",
+    "ean": "4895265000447",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4718466017024",
     "category": "psu",
     "name": "Lian Li Edge Gold 1200W Black Strömförsörjning - 1200 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -26334,6 +31937,74 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1300 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100754",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25r G2 PWM Sx2-PP chromax.black - Chassi fläkt - 120mm - Svart",
+    "brand": "Noctua",
+    "price": 814,
+    "image": "https://www.proshop.se/Images/600x800/3278962_713fd8e1e83e.jpg",
+    "ean": "9010018100754",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006682929",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120 - Chassi fläkt - 120mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 390,
+    "image": "https://www.proshop.se/Images/600x800/3263049_998c81a422ec.png",
+    "ean": "0840006682929",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006682882",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120 - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 409,
+    "image": "https://www.proshop.se/Images/600x800/3263040_a97615bdc25a.png",
+    "ean": "0840006682882",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-networkcard-4895252507836",
+    "category": "networkcard",
+    "name": "TP-Link Archer TBE550E BE9300 Wi-Fi 7 Bluetooth 5.4 PCIe Adapter",
+    "brand": "TP-Link",
+    "price": 999,
+    "image": "https://www.proshop.se/Images/600x800/3255064_df61be9ed0e9.jpg",
+    "ean": "4895252507836",
+    "specs": [
+      "Wi-Fi 7",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "7",
+      "Bluetooth": "5.4"
     }
   },
   {
@@ -26406,6 +32077,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895213704298",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S8038-10K - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 133,
+    "image": "https://www.proshop.se/Images/600x800/3216235_de2e9614dddf.jpg",
+    "ean": "4895213704298",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-9010018000481",
     "category": "cooling",
     "name": "Noctua NH-D9L chromax.black - CPU Luftkylare - Max 23 dBA",
@@ -26439,6 +32126,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006697930",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX120 RGB Expansion Fan - Black - Chassi fläkt - 120mm - Svart med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 507,
+    "image": "https://www.proshop.se/Images/600x800/3176587_22062d7e61af.png",
+    "ean": "0840006697930",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6933412727989",
     "category": "cooling",
     "name": "DeepCool LS520 SE - Black - CPU Vattenkylare - Max 33 dBA",
@@ -26452,6 +32157,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Ljudnivå": "33 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547200859",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB DUO - Black - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "NZXT",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3139871_77caa490d9f7.png",
+    "ean": "5056547200859",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -26599,6 +32322,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100297",
+    "category": "chassifan",
+    "name": "Noctua NF-A9 5V PWM - Chassi fläkt - 92mm - Brun - 23 dBA",
+    "brand": "Noctua",
+    "price": 233,
+    "image": "https://www.proshop.se/Images/600x800/2674902_addf3b8f2461.jpg",
+    "ean": "9010018100297",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100273",
+    "category": "chassifan",
+    "name": "Noctua NF-F12 5V PWM - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 279,
+    "image": "https://www.proshop.se/Images/600x800/2674887_2f2129fa3ddb.jpg",
+    "ean": "9010018100273",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4710713234499",
     "category": "psu",
     "name": "Chieftec Smart Series Strömförsörjning - 400 Watt - 80 mm - ATX - 80 Plus Bronze certificate",
@@ -26616,6 +32373,57 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4716123315490",
+    "category": "chassifan",
+    "name": "Noctua NF-A8 ULN - lådfläkt - Chassi fläkt - 80mm - Brun - 10 dBA",
+    "brand": "Noctua",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/2469402_833bf80f4959.jpg",
+    "ean": "4716123315490",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "10 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315483",
+    "category": "chassifan",
+    "name": "Noctua NF-A8 FLX - lådfläkt - Chassi fläkt - 80mm - Brun - 16 dBA",
+    "brand": "Noctua",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/2469400_7783d3686329.jpg",
+    "ean": "4716123315483",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "16 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315339",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-R8 - lådfläkt - Chassi fläkt - 80mm - Grå - 17 dBA",
+    "brand": "Noctua",
+    "price": 172,
+    "image": "https://www.proshop.se/Images/600x800/2449123_03dfc048605a.jpg",
+    "ean": "4716123315339",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4716123314875",
     "category": "cooling",
     "name": "Noctua NH-L9i - CPU Luftkylare - Max 23 dBA",
@@ -26629,6 +32437,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "23 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314691",
+    "category": "chassifan",
+    "name": "Noctua NF-A4x10 FLX - lådfläkt - Chassi fläkt - 40mm - Brun - 17 dBA",
+    "brand": "Noctua",
+    "price": 184,
+    "image": "https://www.proshop.se/Images/600x800/2393023_60d7b9849405.jpg",
+    "ean": "4716123314691",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -31370,6 +37195,23 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "Sapphire Radeon RX 9070 XT NITRO+ - 16GB GDDR6 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4716123315414",
+    "category": "chassifan",
+    "name": "Noctua IndustrialPPC NF-F12 - Chassi fläkt - 120mm - Svart - 43 dBA",
+    "brand": "Noctua",
+    "price": 325,
+    "image": "https://www.proshop.se/Images/600x800/2449115_85941a57dec8.jpg",
+    "ean": "4716123315414",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "43 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-765441766433",
     "category": "ram",
     "name": "Team Group T-Create Expert DDR5-6000 - 32GB - CL30 - Dual Channel (2 pcs) - AMD EXPO &amp; Intel XMP - Vit",
@@ -32669,6 +38511,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4895265000683",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro A-RGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Arctic",
+    "price": 287,
+    "image": "https://www.proshop.se/Images/600x800/3419917_3190252dbab8.jpg",
+    "ean": "4895265000683",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-gpu-4719331356675",
     "category": "gpu",
     "name": "GIGABYTE GeForce RTX 5060 Ti WindForce 2 MAX OC - 16GB GDDR7 RAM - Grafikkort",
@@ -33470,6 +39329,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466016812",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1690,
+    "image": "https://www.proshop.se/Images/600x800/3310663_7c5ffe93550e.png",
+    "ean": "4718466016812",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-asrockrackb650d4",
     "category": "motherboard",
     "name": "ASRock Rack B650D4U-2L2T/BCM - motherboard - micro ATX - Socket AM5 - Moderkort - AMD B650E - AMD AM5 - DDR5 RAM - Micro-ATX",
@@ -34055,6 +39934,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4716123314929",
+    "category": "chassifan",
+    "name": "Noctua NF-S12A PWM - lådfläkt - Chassi fläkt - 120mm - Brun - 17 dBA",
+    "brand": "Noctua",
+    "price": 279,
+    "image": "https://www.proshop.se/Images/600x800/2407422_882daaaa3290.jpg",
+    "ean": "4716123314929",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4711527001871",
     "category": "case",
     "name": "Darkflash DB330M Computer Case + 3 Fans - Chassi - Svart",
@@ -34471,6 +40367,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-4716123315230",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-P14s - lådfläkt - Chassi fläkt - 140mm - Grå - 25 dBA",
+    "brand": "Noctua",
+    "price": 208,
+    "image": "https://www.proshop.se/Images/600x800/2449119_089ac6c12099.jpg",
+    "ean": "4716123315230",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cpu-4251538816953",
     "category": "cpu",
     "name": "Intel Core i7 i7-14700T / 1.3 GHz processor - OEM CPU - 20 kärnor - 1.3 GHz - Intel LGA1700 - Bulk (utan kylare)",
@@ -34502,6 +40415,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Full tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017680",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3388306_ef7ffc3ab53a.jpg",
+    "ean": "4718466017680",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -34704,6 +40635,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-814256015660",
+    "category": "chassifan",
+    "name": "Thermalright TL-C12C-S ARGB - Black - Chassi fläkt - 120mm - Svart med RGB LED - 26 dBA",
+    "brand": "Thermalright",
+    "price": 113,
+    "image": "https://www.proshop.se/Images/600x800/3180358_44b10e6846a2.jpg",
+    "ean": "814256015660",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711377010146",
     "category": "motherboard",
     "name": "MSI MPG B650I EDGE WIFI Moderkort - AMD B650 - AMD AM5 - DDR5 RAM - Mini-ITX",
@@ -34766,6 +40715,60 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4260052188781",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 140mm PWM - Chassi fläkt - 140mm - Svart med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 322,
+    "image": "https://www.proshop.se/Images/600x800/3021769_6b6f979a56a7.jpg",
+    "ean": "4260052188781",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052188804",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 120mm PWM - triple pack - Chassi fläkt - 120mm - Svart med RGB LED - 21 dBA",
+    "brand": "be quiet!",
+    "price": 806,
+    "image": "https://www.proshop.se/Images/600x800/3021767_6b92d53f177c.jpg",
+    "ean": "4260052188804",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "21 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052188828",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 140mm PWM - triple pack - Chassi fläkt - 140mm - Svart med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 856,
+    "image": "https://www.proshop.se/Images/600x800/3021725_b0992cd5aba4.jpg",
+    "ean": "4260052188828",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0740617319798",
@@ -34878,6 +40881,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100389",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 FLX - Chassi fläkt - 120mm - Brun - 22 dBA",
+    "brand": "Noctua",
+    "price": 358,
+    "image": "https://www.proshop.se/Images/600x800/2662218_5054293e73fb.png",
+    "ean": "9010018100389",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4044951016426",
     "category": "case",
     "name": "Sharkoon SHARK ZONE C10 - tower - mini ITX - Chassi - Miditower - Gul",
@@ -34890,6 +40910,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030786355",
+    "category": "chassifan",
+    "name": "StarTech.com 60x10mm Byte kullager Computer Case Fan w / TX3-kontakt - Chassi fläkt - 60mm - Svart",
+    "brand": "StarTech.com",
+    "price": 115,
+    "image": "https://www.proshop.se/Images/600x800/2292591_b19ef3a22577.jpg",
+    "ean": "0065030786355",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -35043,6 +41079,22 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-arcticp12propstw",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro PST (White) - Chassi fläkt - 120mm - Vit",
+    "brand": "Arctic",
+    "price": 107,
+    "image": "https://www.proshop.se/Images/600x800/3358474_351cca6d2fbe.png",
+    "ean": null,
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-gpu-4711581490451",
@@ -35840,6 +41892,43 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4718466016744",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3310539_807cc11b3ba0.png",
+    "ean": "4718466016744",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-networkcard-0675902059328",
+    "category": "networkcard",
+    "name": "Intel BE201 (1st gen) Wi-Fi 7 2x2 + BT 5.4 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 201,
+    "image": "https://www.proshop.se/Images/600x800/3280993_cca17b97bd93.jpg",
+    "ean": "0675902059328",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
+    }
   },
   {
     "id": "feed-motherboard-4711387330500",
@@ -37647,6 +43736,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466016775",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 549,
+    "image": "https://www.proshop.se/Images/600x800/3310585_f9de98c8cbce.png",
+    "ean": "4718466016775",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4711475645745",
     "category": "case",
     "name": "Thermaltake The Tower 300 (Peach Fuzz) - Chassi - Tower - Orange",
@@ -38904,6 +45011,26 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052191606",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX White (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 25 dBA",
+    "brand": "be quiet!",
+    "price": 628,
+    "image": "https://www.proshop.se/Images/600x800/3304805_7aa50c817480.jpg",
+    "ean": "4260052191606",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "25 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-0718037904924",
     "category": "storage",
     "name": "SANDISK WD Black SN850X SSD - 8TB - M.2 2280 - PCIe 4.0 - Med värmespridare",
@@ -39675,6 +45802,42 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-4718466022615",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless Reverse - Chassi fläkt - 140mm - Vit med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3459578_4166079adf59.jpg",
+    "ean": "4718466022615",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466022608",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless Reverse - Chassi fläkt - 140mm - Svart med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3459576_10d861cedc5c.jpg",
+    "ean": "4718466022608",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-8719706441339",
     "category": "storage",
     "name": "Seagate SkyHawk AI - 20TB - Hårddisk - ST20000VE004 - SATA-600 - 3,5&quot;",
@@ -39893,6 +46056,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4718466017260",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL Wireless LCD - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "Lian Li",
+    "price": 559,
+    "image": "https://www.proshop.se/Images/600x800/3330478_3871e2460af7.png",
+    "ean": "4718466017260",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4711173878469",
     "category": "psu",
     "name": "Seasonic Core GX-750 Strömförsörjning - 750 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -39958,6 +46139,26 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "750 W",
       "Certifiering": "80 Plus Gold"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466014382",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN TL 120 (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "Lian Li",
+    "price": 1288,
+    "image": "https://www.proshop.se/Images/600x800/3224034_70dce851fe8d.jpg",
+    "ean": "4718466014382",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -40481,6 +46682,24 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "16 GB"
     },
     "gpuModel": "Inno3D GeForce RTX 5070 Ti X3 OC - 16GB GDDR7 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4718466016805",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 549,
+    "image": "https://www.proshop.se/Images/600x800/3310667_056c74c38caf.png",
+    "ean": "4718466016805",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cpu-5032037282109",
@@ -41018,6 +47237,44 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM4"
   },
   {
+    "id": "feed-chassifan-4718466016829",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1690,
+    "image": "https://www.proshop.se/Images/600x800/3310664_32b529e189ec.png",
+    "ean": "4718466016829",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466016713",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless Reverse Black - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 349,
+    "image": "https://www.proshop.se/Images/600x800/3310530_b0a8390ed9c3.png",
+    "ean": "4718466016713",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4711475645738",
     "category": "case",
     "name": "Thermaltake The Tower 300 (Gravel Sand) - Chassi - Tower - Brun",
@@ -41295,6 +47552,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466022592",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL-INFINITY Wireless - Chassi fläkt - 140mm - Vit med RGB LED - 28 dBA",
+    "brand": "Lian Li",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3459574_61a2697a33f5.jpg",
+    "ean": "4718466022592",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4711475648715",
     "category": "cooling",
     "name": "Thermaltake AW420 - CPU Vattenkylare",
@@ -41447,6 +47722,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547206608",
+    "category": "chassifan",
+    "name": "NZXT F120X - Chassi fläkt - 120mm - Vit med RGB LED - 41 dBA",
+    "brand": "NZXT",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/3405028_812d8392a3f1.png",
+    "ean": "5056547206608",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-gpu-4710562245660",
     "category": "gpu",
     "name": "Palit GeForce RTX 5060 Ti White OC - 8GB GDDR7 RAM - Grafikkort",
@@ -41463,6 +47756,23 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "8 GB"
     },
     "gpuModel": "Palit GeForce RTX 5060 Ti White OC - 8GB GDDR7 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4719512151938",
+    "category": "chassifan",
+    "name": "Cooler Master SickleFlow Edge 120 ARGB Fan - Black - Chassi fläkt - 120mm - Svart",
+    "brand": "Cooler Master",
+    "price": 124,
+    "image": "https://www.proshop.se/Images/600x800/3399723_91aceeff05ef.png",
+    "ean": "4719512151938",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-gpu-4719331356736",
@@ -41643,6 +47953,26 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-6933412711094",
+    "category": "chassifan",
+    "name": "DeepCool FL12 3in1 White (3-Pack) - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "DeepCool",
+    "price": 492,
+    "image": "https://www.proshop.se/Images/600x800/3338907_dcbcad0db1b5.png",
+    "ean": "6933412711094",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711377281201",
     "category": "motherboard",
     "name": "MSI X870 GAMING PLUS WIFI Moderkort - AMD X870 - AMD AM5 - DDR5 RAM - ATX",
@@ -41683,6 +48013,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1700",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4718466016737",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3310537_7506dc3a1c68.png",
+    "ean": "4718466016737",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4719331864798",
@@ -41846,6 +48196,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1700",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-5056547200927",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB DUO 2-pack &amp; RGB Controller - White - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "NZXT",
+    "price": 949,
+    "image": "https://www.proshop.se/Images/600x800/3139878_ac4159b78144.png",
+    "ean": "5056547200927",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-5056547202686",
@@ -42247,6 +48617,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Storlek": "360 mm"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412785323",
+    "category": "chassifan",
+    "name": "DeepCool FL12 SE 3-1 - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "DeepCool",
+    "price": 360,
+    "image": "https://www.proshop.se/Images/600x800/3408202_35e5302d35ec.jpg",
+    "ean": "6933412785323",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -42739,6 +49127,26 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-4260052191699",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 140mm high-speed White (3-pack) - Chassi fläkt - 140mm - Vit med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 578,
+    "image": "https://www.proshop.se/Images/600x800/3305371_2667232065c7.jpg",
+    "ean": "4260052191699",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617345896",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR5-6000 - 16GB - CL36 - Single Channel (1 pcs) - AMD EXPO - Vit med RGB",
@@ -42929,6 +49337,60 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052190258",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 140mm PWM - triple pack - Chassi fläkt - 140mm - Vit med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 852,
+    "image": "https://www.proshop.se/Images/600x800/3156736_bb2d6e6fc24d.jpg",
+    "ean": "4260052190258",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190234",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 120mm PWM high-speed Triple-Pack - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 805,
+    "image": "https://www.proshop.se/Images/600x800/3156734_025917556309.jpg",
+    "ean": "4260052190234",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190241",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 120mm PWM - triple pack - Chassi fläkt - 120mm - Vit med RGB LED - 22 dBA",
+    "brand": "be quiet!",
+    "price": 792,
+    "image": "https://www.proshop.se/Images/600x800/3156733_771acbf2145a.jpg",
+    "ean": "4260052190241",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617333480",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR5-6000 - 64GB - CL36 - Dual Channel (2 pcs) - AMD EXPO - Vit med RGB",
@@ -42986,6 +49448,42 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4711081845430",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TF120 White ARGB - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "ASUS",
+    "price": 202,
+    "image": "https://www.proshop.se/Images/600x800/3142082_543c76fef2f1.png",
+    "ean": "4711081845430",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547200880",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB DUO - White - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "NZXT",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3139876_4c1558254fd5.png",
+    "ean": "5056547200880",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0740617331714",
@@ -43053,6 +49551,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-7340172703563",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 14 RGB White Frame - Chassi fläkt - 140mm - Vit",
+    "brand": "Fractal Design",
+    "price": 141,
+    "image": "https://www.proshop.se/Images/600x800/3049343_30f1a5f08f96.jpg",
+    "ean": "7340172703563",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4710562758597",
     "category": "case",
     "name": "AeroCool Atomic Lite - MT - micro ATX - Chassi - Tower - Svart",
@@ -43107,6 +49622,40 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4895213701310",
+    "category": "chassifan",
+    "name": "Arctic P12 PWM PST - Black/Black - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 136,
+    "image": "https://www.proshop.se/Images/600x800/2734494_590abe1c6062.jpg",
+    "ean": "4895213701310",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314776",
+    "category": "chassifan",
+    "name": "Noctua NF-A9x14 PWM - lådfläkt - Chassi fläkt - 92mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 225,
+    "image": "https://www.proshop.se/Images/600x800/2394153_4d321b0976d0.jpg",
+    "ean": "4716123314776",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0649528944528",
     "category": "ram",
     "name": "Crucial Pro - Overclocking Edition - DDR5 - module - 16 GB - DIMM 288-pin - 6400 MHz / PC5-51200 - unbuffered",
@@ -43139,6 +49688,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951040162",
+    "category": "chassifan",
+    "name": "Sharkoon Rebel - case fan - Chassi fläkt - 120mm - Vit",
+    "brand": "Sharkoon",
+    "price": 297,
+    "image": "https://www.proshop.se/Images/600x800/3512790_a54c8c82afa0.jpg",
+    "ean": "4044951040162",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -43330,6 +49895,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-networkcard-735858552431",
+    "category": "networkcard",
+    "name": "Intel Wi-Fi 7 BE213 - network adapter - M.2 2230 (CNVio3)",
+    "brand": "Intel",
+    "price": 287,
+    "ean": "735858552431",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
     }
   },
   {
@@ -43584,6 +50165,38 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Mini tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003601",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-120 Reverse - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 428,
+    "image": "https://www.proshop.se/Images/600x800/3419654_47579672f30a.jpg",
+    "ean": "886523003601",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003472",
+    "category": "chassifan",
+    "name": "Phanteks M25 Gen2 - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 165,
+    "image": "https://www.proshop.se/Images/600x800/3419649_fa46beef8c11.jpg",
+    "ean": "886523003472",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -43956,6 +50569,42 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-6933412785163",
+    "category": "chassifan",
+    "name": "DeepCool FL12R WH - Chassi fläkt - 120mm - Vit med RGB LED - 34 dBA",
+    "brand": "DeepCool",
+    "price": 241,
+    "image": "https://www.proshop.se/Images/600x800/3369508_03b73113929f.jpg",
+    "ean": "6933412785163",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412711070",
+    "category": "chassifan",
+    "name": "DeepCool FL12 WH - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "DeepCool",
+    "price": 274,
+    "image": "https://www.proshop.se/Images/600x800/3369437_07734e853afe.png",
+    "ean": "6933412711070",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-gpu-0751492795072",
     "category": "gpu",
     "name": "PNY GeForce RTX 5060 Ti Dual Fan OC - 16GB GDDR7 RAM - Grafikkort",
@@ -44029,6 +50678,25 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1851",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4895265000478",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro A-RGB (White) - 3 Pack - Chassi fläkt - 140mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 338,
+    "image": "https://www.proshop.se/Images/600x800/3358503_cdaecd2297cd.jpg",
+    "ean": "4895265000478",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-6933412774228",
@@ -44433,6 +51101,64 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
+    "id": "feed-chassifan-0840006688754",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140-R 2-pack - Chassi fläkt - 140mm - Vit med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 1118,
+    "image": "https://www.proshop.se/Images/600x800/3293568_952d004bb24f.png",
+    "ean": "0840006688754",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "37 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006688747",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140-R - Chassi fläkt - 140mm - Vit med RGB LED - 38 dBA",
+    "brand": "Corsair",
+    "price": 552,
+    "image": "https://www.proshop.se/Images/600x800/3293567_b02b316db969.png",
+    "ean": "0840006688747",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "38 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006688730",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120-R 3-pack - Chassi fläkt - 120mm - Vit med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 1382,
+    "image": "https://www.proshop.se/Images/600x800/3293560_bb8dffb4c637.jpg",
+    "ean": "0840006688730",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-0886523303145",
     "category": "case",
     "name": "Phanteks XT Pro Ultra - extended ATX - Chassi - Tower - Vit",
@@ -44553,6 +51279,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-0840006684190",
+    "category": "chassifan",
+    "name": "Corsair RS140 ARGB - dual pack - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 480,
+    "image": "https://www.proshop.se/Images/600x800/3266804_714feb98aedd.jpg",
+    "ean": "0840006684190",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4711387204344",
     "category": "motherboard",
     "name": "ASUS P13R-M Moderkort - Intel C262 - Intel LGA1700 - DDR5 RAM - Micro-ATX",
@@ -44572,6 +51316,25 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1700",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0840006682899",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120 3-pack - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 1370,
+    "image": "https://www.proshop.se/Images/600x800/3263048_0a029538c094.png",
+    "ean": "0840006682899",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-4713294235596",
@@ -44702,6 +51465,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-networkcard-0675902093544",
+    "category": "networkcard",
+    "name": "Intel BE202 Wi-Fi 7 2x2 + BT 5.4 / M.2 2230 / With vPro",
+    "brand": "Intel",
+    "price": 191,
+    "image": "https://www.proshop.se/Images/600x800/3232565_5f51cfe6e7fb.jpg",
+    "ean": "0675902093544",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
+    }
+  },
+  {
     "id": "feed-cpu-8592978422349",
     "category": "cpu",
     "name": "Intel Core i7 13700F / 2.1 GHz processor - OEM CPU - 16 kärnor - 2.1 GHz - Intel LGA1700 - Bulk (utan kylare)",
@@ -44754,6 +51534,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Mini tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-814256015554",
+    "category": "chassifan",
+    "name": "Thermalright TL-C12CW-S ARGB - White - Chassi fläkt - 120mm - Vit med RGB LED - 26 dBA",
+    "brand": "Thermalright",
+    "price": 139,
+    "image": "https://www.proshop.se/Images/600x800/3221754_956e6dba4a6f.jpg",
+    "ean": "814256015554",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -45088,6 +51886,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-0840006697978",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX120 RGB Expansion Fan - White - Chassi fläkt - 120mm - Vit med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 472,
+    "image": "https://www.proshop.se/Images/600x800/3176591_83147e1c8051.png",
+    "ean": "0840006697978",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4260052189443",
     "category": "psu",
     "name": "be quiet! Straight Power 12 Platinum 1200W Strömförsörjning - 1200 Watt - 135 mm - ATX 3.1 - 80 Plus Platinum certificate",
@@ -45185,6 +52001,26 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-5056547200903",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB DUO 3-pack &amp; RGB Controller - White - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "NZXT",
+    "price": 1290,
+    "image": "https://www.proshop.se/Images/600x800/3139874_55f671314791.png",
+    "ean": "5056547200903",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0740617331738",
@@ -46384,6 +53220,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547206622",
+    "category": "chassifan",
+    "name": "NZXT F140X - Chassi fläkt - 140mm - Vit med RGB LED - 41 dBA",
+    "brand": "NZXT",
+    "price": 523,
+    "image": "https://www.proshop.se/Images/600x800/3405030_1d5d8c5517b2.png",
+    "ean": "5056547206622",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331872809",
     "category": "motherboard",
     "name": "GIGABYTE B760M DS3H WIFI6E GEN5 Moderkort - Intel B760 - Intel LGA1700 - DDR5 RAM - Micro-ATX",
@@ -46628,6 +53482,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "750 W",
       "Certifiering": "80 Plus Bronze",
       "ATX-standard": "ATX 3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412785149",
+    "category": "chassifan",
+    "name": "DeepCool FL12R White Triple-Pack - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "DeepCool",
+    "price": 948,
+    "image": "https://www.proshop.se/Images/600x800/3369515_7a64f1b3b1df.jpg",
+    "ean": "6933412785149",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -48503,6 +55375,42 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-5060301699902",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB - White - Chassi fläkt - 140mm - Vit med RGB LED - 33 dBA",
+    "brand": "NZXT",
+    "price": 299,
+    "image": "https://www.proshop.se/Images/600x800/3076044_fbe45c2b1fc6.jpg",
+    "ean": "5060301699902",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5060301699896",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB - White - Chassi fläkt - 120mm - Vit med RGB LED - 28 dBA",
+    "brand": "NZXT",
+    "price": 299,
+    "image": "https://www.proshop.se/Images/600x800/3076042_b8cc9c6c82f7.jpg",
+    "ean": "5060301699896",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617328493",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR5-5600 - 32GB - CL40 - Dual Channel (2 pcs) - Intel XMP - Svart med RGB",
@@ -48708,6 +55616,41 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-0840006637776",
+    "category": "chassifan",
+    "name": "Corsair iCUE SP120 RGB Elite Performance White - Kit with iCUE Lighting Node CORE - Chassi fläkt - 120mm - Vit med RGB LED - 27 dBA",
+    "brand": "Corsair",
+    "price": 854,
+    "image": "https://www.proshop.se/Images/600x800/2940232_69297ee493f3.png",
+    "ean": "0840006637776",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-networkcard-0675901876773",
+    "category": "networkcard",
+    "name": "Intel AX211 Wi-Fi 6E + BT 5.3 / M.2 2230 / vPro",
+    "brand": "Intel",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/2930214_8bb0fc3121b9.jpg",
+    "ean": "0675901876773",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
   },
   {
     "id": "feed-ram-765441651777",
@@ -49307,6 +56250,24 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "GIGABYTE GeForce RTX 5060 WindForce 2 MAX OC - 8GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-5056547206660",
+    "category": "chassifan",
+    "name": "NZXT F280X - Chassi fläkt - 140mm - Vit med RGB LED - 41 dBA",
+    "brand": "NZXT",
+    "price": 1045,
+    "image": "https://www.proshop.se/Images/600x800/3405034_5d510f6258f0.png",
+    "ean": "5056547206660",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-7340172710387",
     "category": "case",
     "name": "Fractal Design Epoch XL Black TG - Chassi - Tower - Svart",
@@ -49319,6 +56280,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466017932",
+    "category": "chassifan",
+    "name": "Lian Li UNI Fan INF 120 (3-pack) - Reverse blade - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "Lian Li",
+    "price": 1391,
+    "image": "https://www.proshop.se/Images/600x800/3396192_22196435afdd.png",
+    "ean": "4718466017932",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -49420,6 +56401,23 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "4.3 GHz"
     },
     "socket": "AM5"
+  },
+  {
+    "id": "feed-networkcard-0065030911337",
+    "category": "networkcard",
+    "name": "StarTech.com 1-Port 5G Gigabit PCIe Network Adapter Card TAA Compliant - network adapter - PCI Express 3.1 x1 - 5GBase-T x 1 - TAA Compliant",
+    "brand": "StarTech.com",
+    "price": 750,
+    "image": "https://www.proshop.se/Images/600x800/3380259_1e7614822b13.jpg",
+    "ean": "0065030911337",
+    "specs": [
+      "5 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "5 Gbit/s"
+    }
   },
   {
     "id": "feed-ram-0740617350265",
@@ -49887,6 +56885,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547204314",
+    "category": "chassifan",
+    "name": "NZXT F120Q V2 Quiet Airflow - Chassi fläkt - 120mm - Svart - 25 dBA",
+    "brand": "NZXT",
+    "price": 186,
+    "image": "https://www.proshop.se/Images/600x800/3267159_03e10b118a9f.png",
+    "ean": "5056547204314",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-gpu-812674025391",
     "category": "gpu",
     "name": "NVIDIA RTX 5000 Ada - 32GB GDDR6 RAM - Grafikkort",
@@ -49942,6 +56957,25 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-0840006669951",
+    "category": "chassifan",
+    "name": "Corsair RS120 MAX 3-pack - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "Corsair",
+    "price": 712,
+    "image": "https://www.proshop.se/Images/600x800/3249301_abcae83a2da6.png",
+    "ean": "0840006669951",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331859985",
     "category": "motherboard",
     "name": "GIGABYTE H610M H V2 Moderkort - Intel H610 - Intel LGA1700 - DDR5 RAM - Micro-ATX",
@@ -49982,6 +57016,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1700",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0840006680963",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 RGB 3-pack - Chassi fläkt - 120mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 1150,
+    "image": "https://www.proshop.se/Images/600x800/3242222_a8ee5e1f01fd.png",
+    "ean": "0840006680963",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4719331860592",
@@ -50091,6 +57145,24 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "360 mm",
       "Ljudnivå": "28 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710562749281",
+    "category": "chassifan",
+    "name": "Montech AX140 PWM WH - Chassi fläkt - 140mm - Vit med RGB LED - 28 dBA",
+    "brand": "Montech",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3221729_d92481a4a778.png",
+    "ean": "4710562749281",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -50671,6 +57743,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466023292",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 - Chassi fläkt - 120mm - Vit - 28 dBA",
+    "brand": "Lian Li",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/3518467_084ad986fa4e.png",
+    "ean": "4718466023292",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-0753263079404",
     "category": "case",
     "name": "Chieftec Flyer Series DT-10B-300 - SFF - mini ITX - Chassi - Desktop slimline - Svart",
@@ -50701,6 +57790,23 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711658547552",
+    "category": "chassifan",
+    "name": "Thermaltake SWAFAN EX INFINITY 120 ARGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Thermaltake",
+    "price": 1279,
+    "image": "https://www.proshop.se/Images/600x800/3510689_f97549e8035e.jpg",
+    "ean": "4711658547552",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -51156,6 +58262,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710562741544",
+    "category": "chassifan",
+    "name": "Montech HP140 ARGB PWM Black - Chassi fläkt - 140mm - Svart med RGB LED - 30 dBA",
+    "brand": "Montech",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3382349_3afb2ca5b13b.jpg",
+    "ean": "4710562741544",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-0718037907888",
     "category": "storage",
     "name": "WD Blue - 12TB - Hårddisk - WD120EAGZ - SATA-600 - 3,5&quot;",
@@ -51497,6 +58621,43 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006684251",
+    "category": "chassifan",
+    "name": "Corsair RS120 - 3-pack - Chassi fläkt - 120mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 354,
+    "image": "https://www.proshop.se/Images/600x800/3266870_2a1ee60dbacb.png",
+    "ean": "0840006684251",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684183",
+    "category": "chassifan",
+    "name": "Corsair RS140 ARGB - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 267,
+    "image": "https://www.proshop.se/Images/600x800/3266793_9475eaea8059.png",
+    "ean": "0840006684183",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-0753263078438",
     "category": "psu",
     "name": "Chieftec EON Series ZPU-600S - power supply - 600 Watt Strömförsörjning - 600 Watt - 120 mm - ATX 2.3 - 80 Plus White certificate (upp till 80% effektivitet)",
@@ -51823,6 +58984,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006697992",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK QX140 RGB Expansion Fan - White - Chassi fläkt - 140mm - Vit med RGB LED - 37 dBA",
+    "brand": "Corsair",
+    "price": 605,
+    "image": "https://www.proshop.se/Images/600x800/3176593_77569af943e4.png",
+    "ean": "0840006697992",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331854096",
     "category": "motherboard",
     "name": "GIGABYTE A620M GAMING X Moderkort - AMD A620 - AMD AM5 - DDR5 RAM - Micro-ATX",
@@ -52022,6 +59201,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-5060301699971",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB 3-pack &amp; RGB Controller - White - Chassi fläkt - 120mm - Vit med RGB LED - 28 dBA",
+    "brand": "NZXT",
+    "price": 999,
+    "image": "https://www.proshop.se/Images/600x800/3076047_b6cc4e67abe0.jpg",
+    "ean": "5060301699971",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -52286,6 +59485,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-7340172701880",
+    "category": "chassifan",
+    "name": "Fractal Design Dynamic X2 GP-12 PWM - Chassi fläkt - 120mm - Svart",
+    "brand": "Fractal Design",
+    "price": 202,
+    "image": "https://www.proshop.se/Images/600x800/2803804_7703b67490da.jpg",
+    "ean": "7340172701880",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-0753263076281",
     "category": "case",
     "name": "Chieftec Gamer Series Hawk - Chassi - Tower - Svart",
@@ -52447,6 +59662,40 @@ export const FEED_CATALOG_ITEMS = [
       "Hastighet": "4800 MHz"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4711658547460",
+    "category": "chassifan",
+    "name": "Thermaltake SWAFAN EX INFINITY 120 ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 1279,
+    "image": "https://www.proshop.se/Images/600x800/3502075_d7a8ccfa526d.jpg",
+    "ean": "4711658547460",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4719512154915",
+    "category": "chassifan",
+    "name": "Cooler Master MasterFan MF120 Lite ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Cooler Master",
+    "price": 350,
+    "image": "https://www.proshop.se/Images/600x800/3500945_5843ef911b86.jpg",
+    "ean": "4719512154915",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4719331879662",
@@ -52785,6 +60034,23 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "ZOTAC GeForce RTX 5070 Twin Edge OC White - 12GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-7340172708896",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 12 RGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Fractal Design",
+    "price": 428,
+    "image": "https://www.proshop.se/Images/600x800/3427714_0306a6c47118.jpg",
+    "ean": "7340172708896",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4044951039111",
     "category": "case",
     "name": "Sharkoon VS9 - ATX case - Chassi - Tower - Svart",
@@ -52819,6 +60085,23 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0886523002949",
+    "category": "chassifan",
+    "name": "Phanteks D30-120 D-RGB Regular - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 1074,
+    "image": "https://www.proshop.se/Images/600x800/3419250_f7222903f5fd.jpg",
+    "ean": "0886523002949",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-4262443280371",
@@ -52933,6 +60216,59 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "360 mm",
       "Ljudnivå": "37 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636043960",
+    "category": "chassifan",
+    "name": "ASUS Prime MR120 Fan ARGB Black - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "ASUS",
+    "price": 180,
+    "image": "https://www.proshop.se/Images/600x800/3409206_e2b161455152.png",
+    "ean": "4711636043960",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6977029650506",
+    "category": "chassifan",
+    "name": "Tryx ROTA SL ARGB (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED",
+    "brand": "Tryx",
+    "price": 699,
+    "image": "https://www.proshop.se/Images/600x800/3403424_defaa9c52b4a.jpg",
+    "ean": "6977029650506",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172708889",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 12 RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Fractal Design",
+    "price": 388,
+    "image": "https://www.proshop.se/Images/600x800/3396331_3b4f42304e9c.jpg",
+    "ean": "7340172708889",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -53053,6 +60389,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4719331555191",
+    "category": "chassifan",
+    "name": "GIGABYTE AORUS - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "GIGABYTE",
+    "price": 625,
+    "image": "https://www.proshop.se/Images/600x800/3373059_e1c66c75b5ef.jpg",
+    "ean": "4719331555191",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -53234,6 +60586,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4711527000461",
+    "category": "chassifan",
+    "name": "Darkflash DM20 computer fan (white) - Chassi fläkt - 120mm - Vit - 32 dBA",
+    "brand": "Darkflash",
+    "price": 137,
+    "image": "https://www.proshop.se/Images/600x800/3321677_f92e121bf76e.jpg",
+    "ean": "4711527000461",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-msimagforge321ra",
     "category": "case",
     "name": "MSI MAG FORGE 321R AIRFLOW - Chassi - Tower - Svart",
@@ -53249,6 +60618,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4718466016799",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL Wireless LCD Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 549,
+    "image": "https://www.proshop.se/Images/600x800/3310662_f05482668448.png",
+    "ean": "4718466016799",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4711475644960",
     "category": "case",
     "name": "Thermaltake The Tower 300 (Limestone) - Chassi - Tower - Grå",
@@ -53261,6 +60648,65 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191668",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 140mm White (3-pack) - Chassi fläkt - 140mm - Vit - 23 dBA",
+    "brand": "be quiet!",
+    "price": 633,
+    "image": "https://www.proshop.se/Images/600x800/3305368_d29e7ddac2f8.jpg",
+    "ean": "4260052191668",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191620",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX high-speed (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 568,
+    "image": "https://www.proshop.se/Images/600x800/3305357_d258f64b5eff.jpg",
+    "ean": "4260052191620",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191590",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 120 (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 25 dBA",
+    "brand": "be quiet!",
+    "price": 558,
+    "image": "https://www.proshop.se/Images/600x800/3304802_5670550dd289.jpg",
+    "ean": "4260052191590",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "25 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -53459,6 +60905,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387297261",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 - Chassi fläkt - 120mm - Svart med RGB LED - 29 dBA",
+    "brand": "ASUS",
+    "price": 253,
+    "image": "https://www.proshop.se/Images/600x800/3254011_e0f0755bcf02.png",
+    "ean": "4711387297261",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -53864,6 +61328,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-5056547202976",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB Core - White - Chassi fläkt - 120mm - Vit med RGB LED - 34 dBA",
+    "brand": "NZXT",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/3158126_8643271052ef.jpg",
+    "ean": "5056547202976",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "34 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0840006666745",
     "category": "ram",
     "name": "Corsair Vengeance DDR5-5200 - 16GB - CL40 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -53960,6 +61442,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711081845447",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TF120 White ARGB 3IN1 - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "ASUS",
+    "price": 621,
+    "image": "https://www.proshop.se/Images/600x800/3142083_3b194491e9ec.png",
+    "ean": "4711081845447",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -54147,6 +61647,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4044953500893",
+    "category": "chassifan",
+    "name": "Xilence Performance C Series XPF92.R.PWM - Chassi fläkt - 92mm - Röd",
+    "brand": "Xilence",
+    "price": 85,
+    "image": "https://www.proshop.se/Images/600x800/3076106_6d83e43fccb0.jpg",
+    "ean": "4044953500893",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0765441659582",
     "category": "ram",
     "name": "Team Group T-Force DELTAÎ± RGB DDR5-6400 - 32GB - CL40 - Dual Channel (2 pcs) - Intel XMP - Svart med RGB",
@@ -54241,6 +61757,42 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
+    "id": "feed-chassifan-4260052188767",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 120mm PWM - Chassi fläkt - 120mm - Svart med RGB LED - 21 dBA",
+    "brand": "be quiet!",
+    "price": 308,
+    "image": "https://www.proshop.se/Images/600x800/3021772_5dbf2c788ff1.jpg",
+    "ean": "4260052188767",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "21 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052188774",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 120mm PWM high-speed - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 274,
+    "image": "https://www.proshop.se/Images/600x800/3021770_e2fc43741b44.jpg",
+    "ean": "4260052188774",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4260455647175",
     "category": "cooling",
     "name": "Inter-Tech Kühler A-38 2HE aktiv AMD sTRX4 TR4 - CPU Luftkylare",
@@ -54321,6 +61873,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-4710562755978",
+    "category": "chassifan",
+    "name": "AeroCool Mirage 12 ARGB Pro - Chassi fläkt - 120mm - Svart med RGB LED - 18 dBA",
+    "brand": "AeroCool",
+    "price": 497,
+    "image": "https://www.proshop.se/Images/600x800/2883826_9c2a0e4f0918.png",
+    "ean": "4710562755978",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4718017245777",
     "category": "case",
     "name": "ASUS ROG STRIX Helios GX601 - Chassi - Miditower - Vit",
@@ -54365,6 +61935,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-networkcard-0065030882040",
+    "category": "networkcard",
+    "name": "StarTech.com 1 Port 2.5Gbps 2.5GBASE-T PCIe Network Card - network adapter",
+    "brand": "StarTech.com",
+    "price": 456,
+    "image": "https://www.proshop.se/Images/600x800/2811793_992038a010c2.jpg",
+    "ean": "0065030882040",
+    "specs": [
+      "2.5 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "2.5 Gbit/s"
     }
   },
   {
@@ -54611,6 +62198,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-0065030849265",
+    "category": "networkcard",
+    "name": "StarTech.com 1 Port PCI Express PCIe Gigabit Network",
+    "brand": "StarTech.com",
+    "price": 317,
+    "image": "https://www.proshop.se/Images/600x800/2402407_98405d3535f0.jpg",
+    "ean": "0065030849265",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
+    }
+  },
+  {
     "id": "feed-case-4710713968806",
     "category": "case",
     "name": "SilverStone Grandia SST-GD05B Svart - Chassi - Desktop - Svart",
@@ -54623,6 +62227,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Desktop"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023872",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 Reversed - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 379,
+    "image": "https://www.proshop.se/Images/600x800/3518426_9fc8a71a1b57.png",
+    "ean": "4718466023872",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -54696,6 +62318,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-6977029650803",
+    "category": "chassifan",
+    "name": "Tryx FOBR ARGB 360 Fan White - Chassi fläkt - 120mm - Vit med RGB LED",
+    "brand": "Tryx",
+    "price": 589,
+    "image": "https://www.proshop.se/Images/600x800/3511493_118b032d6755.png",
+    "ean": "6977029650803",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6977029650742",
     "category": "cooling",
     "name": "Tryx HOLO ARGB 360mm - Black - CPU Vattenkylare - Max 30 dBA",
@@ -54742,6 +62381,39 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-6933412785354",
+    "category": "chassifan",
+    "name": "DeepCool FL12R SE 3IN1 - Chassi fläkt - 120mm - Svart",
+    "brand": "DeepCool",
+    "price": 288,
+    "image": "https://www.proshop.se/Images/600x800/3509671_c6d811cb47cd.jpg",
+    "ean": "6933412785354",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387568576",
+    "category": "chassifan",
+    "name": "ASUS AR120 ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "ASUS",
+    "price": 233,
+    "image": "https://www.proshop.se/Images/600x800/3509661_cc15fae34b64.jpg",
+    "ean": "4711387568576",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-motherboard-4719331880750",
     "category": "motherboard",
     "name": "GIGABYTE Z890 EAGLE PLUS - motherboard - LGA1851 Socket - Z890 Moderkort - Intel Z890 - Intel LGA1851 - DDR5 RAM - ATX",
@@ -54761,6 +62433,22 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1851",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4895265001123",
+    "category": "chassifan",
+    "name": "Arctic LN Series P12 Pro - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 223,
+    "image": "https://www.proshop.se/Images/600x800/3504666_086ecb090b2a.jpg",
+    "ean": "4895265001123",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-cooling-4260052193242",
@@ -54795,6 +62483,39 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "650 W",
       "Certifiering": "80 Plus Bronze"
+    }
+  },
+  {
+    "id": "feed-networkcard-4712900620061",
+    "category": "networkcard",
+    "name": "ASUS XG-C100C 10GBase-T PCIe Network Adapter",
+    "brand": "ASUS",
+    "price": 1244,
+    "image": "https://www.proshop.se/Images/600x800/3498863_6401cfde60c5.jpg",
+    "ean": "4712900620061",
+    "specs": [
+      "10 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "10 Gbit/s"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213704717",
+    "category": "chassifan",
+    "name": "Arctic S12038-4K - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 342,
+    "image": "https://www.proshop.se/Images/600x800/3498111_e413519d2322.jpg",
+    "ean": "4895213704717",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -54960,6 +62681,42 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-761345400619",
+    "category": "chassifan",
+    "name": "Antec Vision 120R - Reverse - Chassi fläkt - 120mm - Svart med RGB LED - 28 dBA",
+    "brand": "Antec",
+    "price": 541,
+    "image": "https://www.proshop.se/Images/600x800/3480862_477cd0e0bec4.jpg",
+    "ean": "761345400619",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-761345400602",
+    "category": "chassifan",
+    "name": "Antec Vision 120 - Chassi fläkt - 120mm - Svart med RGB LED - 28 dBA",
+    "brand": "Antec",
+    "price": 486,
+    "image": "https://www.proshop.se/Images/600x800/3480861_a9f98a56fc6a.jpg",
+    "ean": "761345400602",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-761345102070",
     "category": "case",
     "name": "Antec AX67 ARGB - mid tower - ATX - Chassi - Tower - Svart",
@@ -55072,6 +62829,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4719512156506",
+    "category": "chassifan",
+    "name": "Cooler Master SickleFlow Edge 120 ARGB 3-Pack Fan Kit - Chassi fläkt - 120mm - Svart",
+    "brand": "Cooler Master",
+    "price": 455,
+    "image": "https://www.proshop.se/Images/600x800/3476137_6fc51b50a69b.png",
+    "ean": "4719512156506",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4711658544421",
     "category": "case",
     "name": "Thermaltake View 600 TG Full Tower Case - Butter C - Chassi - Fulltower - Gul",
@@ -55084,6 +62860,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Full tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475648777",
+    "category": "chassifan",
+    "name": "Thermaltake TS140 EX RGB PC Cooling Fan - White (3pack) - Chassi fläkt - 140mm - Vit - 32 dBA",
+    "brand": "Thermaltake",
+    "price": 1453,
+    "image": "https://www.proshop.se/Images/600x800/3474182_92c97c088e17.jpg",
+    "ean": "4711475648777",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -55293,6 +63089,38 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-753263077257",
+    "category": "chassifan",
+    "name": "Chieftec Chieftronic Nova NF-1225RGB - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Chieftec",
+    "price": 244,
+    "image": "https://www.proshop.se/Images/600x800/3457896_bd82f7e10aae.jpg",
+    "ean": "753263077257",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-753263077608",
+    "category": "chassifan",
+    "name": "Chieftec Chieftronic Nova NF-1225RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Chieftec",
+    "price": 651,
+    "image": "https://www.proshop.se/Images/600x800/3457895_b1dddce5a4bc.jpg",
+    "ean": "753263077608",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-gpu-8886307701503",
     "category": "gpu",
     "name": "ZOTAC GeForce RTX 5060 Ti White - 8GB GDDR7 RAM - Grafikkort",
@@ -55347,6 +63175,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4711636264266",
+    "category": "chassifan",
+    "name": "ASUS ProArt PF120 - Chassi fläkt - 120mm - Vit",
+    "brand": "ASUS",
+    "price": 1088,
+    "image": "https://www.proshop.se/Images/600x800/3454785_1037ddcca505.jpg",
+    "ean": "4711636264266",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cpu-0675901979184",
     "category": "cpu",
     "name": "Intel Core i5 12400F / 2.5 GHz processor - OEM CPU - 6 kärnor - 2.5 GHz - Intel LGA1700 - Bulk (utan kylare)",
@@ -55367,6 +63211,38 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1700"
   },
   {
+    "id": "feed-chassifan-0753263078827",
+    "category": "chassifan",
+    "name": "Chieftec ZF-1425RGB - case fan - Chassi fläkt - 140mm - Svart",
+    "brand": "Chieftec",
+    "price": 228,
+    "image": "https://www.proshop.se/Images/600x800/3454010_1d68819667a1.jpg",
+    "ean": "0753263078827",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0753263078551",
+    "category": "chassifan",
+    "name": "Chieftec ZF-1225RGB - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Chieftec",
+    "price": 322,
+    "image": "https://www.proshop.se/Images/600x800/3454009_648e20de06a0.jpg",
+    "ean": "0753263078551",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4044951041237",
     "category": "case",
     "name": "Sharkoon VK3 RGB - tower - ATX - Chassi - Tower - Svart",
@@ -55379,6 +63255,25 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636046138",
+    "category": "chassifan",
+    "name": "ASUS Prime MR120 White Reverse (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED",
+    "brand": "ASUS",
+    "price": 494,
+    "image": "https://www.proshop.se/Images/600x800/3452088_b9d461a1ecb1.jpg",
+    "ean": "4711636046138",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -55467,6 +63362,25 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-886523003946",
+    "category": "chassifan",
+    "name": "Phanteks T30 140 PWM (3-pack) - Chassi fläkt - 140mm - Grå - 44 dBA",
+    "brand": "Phanteks",
+    "price": 1328,
+    "image": "https://www.proshop.se/Images/600x800/3438034_38285a8f822a.jpg",
+    "ean": "886523003946",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "44 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-4262543010823",
     "category": "storage",
     "name": "Samsung PM9D3a MZWL6960HFJA - SSD - 960 GB - PCI Express 5.0 x4 (NVMe)",
@@ -55481,6 +63395,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "960 GB",
       "Gränssnitt": "NVMe"
+    }
+  },
+  {
+    "id": "feed-chassifan-6977029650186",
+    "category": "chassifan",
+    "name": "Tryx ROTA PRO - Chassi fläkt - 140mm - Vit",
+    "brand": "Tryx",
+    "price": 355,
+    "image": "https://www.proshop.se/Images/600x800/3436318_7fb7de47156a.jpg",
+    "ean": "6977029650186",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -55689,6 +63619,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-1230000071208",
+    "category": "chassifan",
+    "name": "ICEberg Thermal IceGale - case fan - ARGB - Chassi fläkt - 140mm - Blå",
+    "brand": "ICEberg",
+    "price": 141,
+    "image": "https://www.proshop.se/Images/600x800/3434094_9674e889980f.jpg",
+    "ean": "1230000071208",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-4713294239013",
     "category": "ram",
     "name": "G.Skill Ripjaws S5 DDR5-5600 - 32GB - CL46 - Single Channel (1 pcs) - Svart",
@@ -55733,6 +63680,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-7340172708865",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 14 - Chassi fläkt - 140mm - Svart",
+    "brand": "Fractal Design",
+    "price": 328,
+    "image": "https://www.proshop.se/Images/600x800/3431308_ae47511faed5.jpg",
+    "ean": "7340172708865",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-motherboard-4711430521916",
     "category": "motherboard",
     "name": "ASRock Rack EC266D4ID-2T/X550 - motherboard - mini ITX - LGA1700 Socket - C266 Moderkort - Intel C266 - Intel LGA1700 - DDR5 RAM - Deep mini-ITX",
@@ -55752,6 +63715,22 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1700",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-9010018100747",
+    "category": "chassifan",
+    "name": "Noctua NF-A14x25r G2 PWM chromax.black - Chassi fläkt - 140mm - Svart",
+    "brand": "Noctua",
+    "price": 416,
+    "image": "https://www.proshop.se/Images/600x800/3422895_a16776f093c5.jpg",
+    "ean": "9010018100747",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-0840440421733",
@@ -55830,6 +63809,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-886523003625",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-140 Reverse - Chassi fläkt - 140mm - Svart",
+    "brand": "Phanteks",
+    "price": 168,
+    "image": "https://www.proshop.se/Images/600x800/3419662_b50625fac916.jpg",
+    "ean": "886523003625",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-886523703242",
     "category": "cooling",
     "name": "Phanteks Glacier One 360M25G2 - CPU Vattenkylare",
@@ -55842,6 +63837,25 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-1220000352674",
+    "category": "chassifan",
+    "name": "HYTE FA12 FAN - (Strawberry Milk / Pink) 4-pack - Chassi fläkt - 120mm - Rosa - 28 dBA",
+    "brand": "HYTE",
+    "price": 599,
+    "image": "https://www.proshop.se/Images/600x800/3419379_eed705dbb862.png",
+    "ean": "1220000352674",
+    "specs": [
+      "120 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "4",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -56057,6 +64071,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052193822",
+    "category": "chassifan",
+    "name": "be quiet! PURE WINGS 3 120 White Reverse (3-pack) - Chassi fläkt - 120mm - Vit - 30 dBA",
+    "brand": "be quiet!",
+    "price": 378,
+    "image": "https://www.proshop.se/Images/600x800/3413916_fc9ec7b5122a.jpg",
+    "ean": "4260052193822",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4260052193808",
     "category": "case",
     "name": "be quiet! LIGHT BASE 500 - Chassi - Miditower - Svart",
@@ -56155,6 +64188,74 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4251442513801",
+    "category": "chassifan",
+    "name": "Havn H14 - Tripple pack - Chassi fläkt - 140mm - Vit - 31 dBA",
+    "brand": "Havn",
+    "price": 519,
+    "image": "https://www.proshop.se/Images/600x800/3408449_2b8b9ffefe41.png",
+    "ean": "4251442513801",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4251442513818",
+    "category": "chassifan",
+    "name": "Havn H14 - Tripple pack - Chassi fläkt - 140mm - Svart - 31 dBA",
+    "brand": "Havn",
+    "price": 508,
+    "image": "https://www.proshop.se/Images/600x800/3408446_f2957a0b2fdb.png",
+    "ean": "4251442513818",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4251442513788",
+    "category": "chassifan",
+    "name": "Havn H12 - Triple pack - Chassi fläkt - 120mm - Vit - 32 dBA",
+    "brand": "Havn",
+    "price": 459,
+    "image": "https://www.proshop.se/Images/600x800/3408436_d17d154aec98.png",
+    "ean": "4251442513788",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-havnh12chassiflk",
+    "category": "chassifan",
+    "name": "Havn H12 - Chassi fläkt - 120mm - Vit - 32 dBA",
+    "brand": "Havn",
+    "price": 221,
+    "image": "https://www.proshop.se/Images/600x800/3408431_73e77425a7be.png",
+    "ean": null,
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4719512158340",
     "category": "case",
     "name": "Cooler Master Elite 302 - Chassi - Tower - Svart",
@@ -56245,6 +64346,60 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547206653",
+    "category": "chassifan",
+    "name": "NZXT F280X - Chassi fläkt - 140mm - Svart med RGB LED - 41 dBA",
+    "brand": "NZXT",
+    "price": 754,
+    "image": "https://www.proshop.se/Images/600x800/3405033_7364f9aea018.png",
+    "ean": "5056547206653",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547206615",
+    "category": "chassifan",
+    "name": "NZXT F140X - Chassi fläkt - 140mm - Svart med RGB LED - 41 dBA",
+    "brand": "NZXT",
+    "price": 487,
+    "image": "https://www.proshop.se/Images/600x800/3405029_5277c736d0be.png",
+    "ean": "5056547206615",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547206592",
+    "category": "chassifan",
+    "name": "NZXT F120X Performance Fan - Chassi fläkt - 120mm - Svart med RGB LED - 41 dBA",
+    "brand": "NZXT",
+    "price": 354,
+    "image": "https://www.proshop.se/Images/600x800/3405027_ebfa0a51ee0f.png",
+    "ean": "5056547206592",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "41 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4711377297738",
     "category": "psu",
     "name": "MSI MAG A1000GLS PCIE5 Strömförsörjning - 1000 Watt - 135 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -56275,6 +64430,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172708858",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 12 - Chassi fläkt - 120mm - Vit",
+    "brand": "Fractal Design",
+    "price": 220,
+    "image": "https://www.proshop.se/Images/600x800/3402432_04e77b248be6.jpg",
+    "ean": "7340172708858",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -56495,6 +64666,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Storlek": "360 mm"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172708872",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 14 - Chassi fläkt - 140mm - Vit",
+    "brand": "Fractal Design",
+    "price": 217,
+    "image": "https://www.proshop.se/Images/600x800/3396330_43f2bd87bd2d.jpg",
+    "ean": "7340172708872",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -57248,6 +65435,23 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "ZOTAC GeForce RTX 5060 Ti Twin Edge - 8GB GDDR7 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4895265000409",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro PST CO - Chassi fläkt - 140mm - Svart med RGB LED",
+    "brand": "Arctic",
+    "price": 121,
+    "image": "https://www.proshop.se/Images/600x800/3358496_37904de3ef47.jpg",
+    "ean": "4895265000409",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cpu-4251538816885",
     "category": "cpu",
     "name": "Intel Core i5 i5-14400T / 1.5 GHz processor - OEM CPU - 10 kärnor - 1.5 GHz - Intel LGA1700 - Bulk (utan kylare)",
@@ -57286,6 +65490,22 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1851",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0753263078568",
+    "category": "chassifan",
+    "name": "Chieftec ZF-1425PWM - case fan - Chassi fläkt - 140mm - Svart",
+    "brand": "Chieftec",
+    "price": 120,
+    "image": "https://www.proshop.se/Images/600x800/3349143_6a5fd043ed3c.jpg",
+    "ean": "0753263078568",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-storage-0718037877310",
@@ -57354,6 +65574,41 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-networkcard-5032037183918",
+    "category": "networkcard",
+    "name": "Intel Wi-Fi 6 AX201 - network adapter - M.2 2230 (CNVio2)",
+    "brand": "Intel",
+    "price": 238,
+    "image": "https://www.proshop.se/Images/600x800/3341032_4d4d6f8761d6.jpg",
+    "ean": "5032037183918",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711527001444",
+    "category": "chassifan",
+    "name": "Darkflash DM8 ARGB Cooling Fan (Black) - Chassi fläkt - 120mm - Svart - 28 dBA",
+    "brand": "Darkflash",
+    "price": 134,
+    "image": "https://www.proshop.se/Images/600x800/3337669_4aa1fb25ea58.jpg",
+    "ean": "4711527001444",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-4711387624630",
@@ -57792,6 +66047,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-6926170075188",
+    "category": "chassifan",
+    "name": "Darkflash DR12 PRO computer cooling system - Chassi fläkt - 120mm - Svart - 16 dBA",
+    "brand": "Darkflash",
+    "price": 112,
+    "image": "https://www.proshop.se/Images/600x800/3307951_bf0eb65c24da.jpg",
+    "ean": "6926170075188",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "16 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-8716309131803",
     "category": "case",
     "name": "Gembird Fornax M200 - ATX case - Chassi - Tower - Svart",
@@ -57804,6 +66076,26 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191651",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 140 (3-pack) - Chassi fläkt - 140mm - Svart med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 638,
+    "image": "https://www.proshop.se/Images/600x800/3305367_f3fbf072a129.jpg",
+    "ean": "4260052191651",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -57989,6 +66281,24 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-0840006688709",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140-R - Chassi fläkt - 140mm - Svart med RGB LED - 38 dBA",
+    "brand": "Corsair",
+    "price": 535,
+    "image": "https://www.proshop.se/Images/600x800/3293565_f7a8f67ef95e.png",
+    "ean": "0840006688709",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "38 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-samsungddr4modul",
     "category": "ram",
     "name": "Samsung - DDR4 - module - 16 GB - DIMM 260-pin - 3200 MHz - unbuffered",
@@ -58055,6 +66365,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "500 W",
       "Certifiering": "80 Plus White"
+    }
+  },
+  {
+    "id": "feed-networkcard-5032037281638",
+    "category": "networkcard",
+    "name": "Intel Killer BE1750 Wi-Fi 7 2x2 + BT 5.4 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 261,
+    "image": "https://www.proshop.se/Images/600x800/3285626_a3ff5343109b.jpg",
+    "ean": "5032037281638",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
     }
   },
   {
@@ -58129,6 +66456,23 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-networkcard-0675902056211",
+    "category": "networkcard",
+    "name": "Intel BE201 (1st gen) Wi-Fi 7 2x2 + BT 5.4 / M.2 2230 / With vPro",
+    "brand": "Intel",
+    "price": 291,
+    "image": "https://www.proshop.se/Images/600x800/3280992_61e45a4a696e.jpg",
+    "ean": "0675902056211",
+    "specs": [
+      "Wi-Fi 7",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "7"
+    }
   },
   {
     "id": "feed-case-4719512146897",
@@ -58297,6 +66641,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547204352",
+    "category": "chassifan",
+    "name": "NZXT F120P V2 - Static Pressure - Chassi fläkt - 120mm - Svart - 30 dBA",
+    "brand": "NZXT",
+    "price": 212,
+    "image": "https://www.proshop.se/Images/600x800/3267163_26d8ca24a994.png",
+    "ean": "5056547204352",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684244",
+    "category": "chassifan",
+    "name": "Corsair RS120 - Chassi fläkt - 120mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 162,
+    "image": "https://www.proshop.se/Images/600x800/3266868_f95b6cc3dbf1.png",
+    "ean": "0840006684244",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-0814256002493",
     "category": "cooling",
     "name": "Thermalright HR-02 Plus - processor cooler - CPU Luftkylare",
@@ -58309,6 +66687,42 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006682950",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140 2-pack - Chassi fläkt - 140mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 1117,
+    "image": "https://www.proshop.se/Images/600x800/3263069_ce2e31d2befc.png",
+    "ean": "0840006682950",
+    "specs": [
+      "140 mm",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006682905",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140 - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 518,
+    "image": "https://www.proshop.se/Images/600x800/3263060_359ef2c4ff07.png",
+    "ean": "0840006682905",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -58376,6 +66790,93 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4711387543399",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 REVERSE - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "ASUS",
+    "price": 314,
+    "image": "https://www.proshop.se/Images/600x800/3254007_16da7da2f2f0.png",
+    "ean": "4711387543399",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387543511",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 REVERSE 3-pack - Chassi fläkt - 120mm - Vit - 29 dBA",
+    "brand": "ASUS",
+    "price": 618,
+    "image": "https://www.proshop.se/Images/600x800/3254004_464a5ee687dd.png",
+    "ean": "4711387543511",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191071",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 - Chassi fläkt - 140mm - Vit - 13 dBA",
+    "brand": "be quiet!",
+    "price": 308,
+    "image": "https://www.proshop.se/Images/600x800/3250917_ca244a3c4625.jpg",
+    "ean": "4260052191071",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "13 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191095",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings Pro 4 - Chassi fläkt - 120mm - Vit - 36 dBA",
+    "brand": "be quiet!",
+    "price": 516,
+    "image": "https://www.proshop.se/Images/600x800/3250911_fdfe6da2ca74.jpg",
+    "ean": "4260052191095",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711173878087",
+    "category": "chassifan",
+    "name": "Seasonic MagFlow ARGB 1-fan kit - Chassi fläkt - 120mm - Svart",
+    "brand": "Seasonic",
+    "price": 404,
+    "image": "https://www.proshop.se/Images/600x800/3247459_67caeb961b69.jpg",
+    "ean": "4711173878087",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617342123",
     "category": "ram",
     "name": "Kingston FURY Renegade Pro DDR5-6400 - 256GB - CL32 - Octa Channel (8 pcs) - AMD EXPO &amp; Intel EXPO - Svart",
@@ -58438,6 +66939,43 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680970",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 RGB - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 415,
+    "image": "https://www.proshop.se/Images/600x800/3242223_1734542d015c.png",
+    "ean": "0840006680970",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680840",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 3-pack - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 785,
+    "image": "https://www.proshop.se/Images/600x800/3242214_125f6b5a606e.png",
+    "ean": "0840006680840",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -59018,6 +67556,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4713227536318",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 ARGB Sync - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 485,
+    "image": "https://www.proshop.se/Images/600x800/3157652_3954d2d002c4.jpg",
+    "ean": "4713227536318",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0840006667216",
     "category": "ram",
     "name": "Corsair Vengeance DDR5-6400 - 48GB - CL36 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -59264,6 +67819,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4044953502934",
+    "category": "chassifan",
+    "name": "Xilence Performance A+ Series XPF120.ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Xilence",
+    "price": 98,
+    "image": "https://www.proshop.se/Images/600x800/3134399_c25756bf6e7c.jpg",
+    "ean": "4044953502934",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-6933412727651",
     "category": "cooling",
     "name": "DeepCool LS520 - White - CPU Vattenkylare - Max 33 dBA",
@@ -59420,6 +67992,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-7340172704027",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 14 RGB PWM - Chassi fläkt - 140mm - Vit",
+    "brand": "Fractal Design",
+    "price": 659,
+    "image": "https://www.proshop.se/Images/600x800/3090050_17769adb585a.jpg",
+    "ean": "7340172704027",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4710679813981",
     "category": "case",
     "name": "SilverStone MILO ML10 - Chassi - Ultra small form factor - Svart",
@@ -59429,6 +68018,42 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "4710679813981",
     "specs": [],
     "details": {}
+  },
+  {
+    "id": "feed-chassifan-5060301699995",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB 2-pack &amp; RGB Controller - White - Chassi fläkt - 140mm - Vit med RGB LED - 33 dBA",
+    "brand": "NZXT",
+    "price": 799,
+    "image": "https://www.proshop.se/Images/600x800/3076053_f444ca6a821a.jpg",
+    "ean": "5060301699995",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044953500824",
+    "category": "chassifan",
+    "name": "Xilence Case Fan 40x40x10 MM / XF031 - Chassi fläkt - 40mm - Svart",
+    "brand": "Xilence",
+    "price": 124,
+    "image": "https://www.proshop.se/Images/600x800/3070545_d7c192f0cc50.jpg",
+    "ean": "4044953500824",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-cooling-4895213703901",
@@ -59458,6 +68083,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951035335",
+    "category": "chassifan",
+    "name": "Sharkoon SilentStorm - Chassi fläkt - 120mm - Vit",
+    "brand": "Sharkoon",
+    "price": 161,
+    "image": "https://www.proshop.se/Images/600x800/3063830_a6afa9fafd8f.jpg",
+    "ean": "4044951035335",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -59528,6 +68169,22 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "7340172702900",
     "specs": [],
     "details": {}
+  },
+  {
+    "id": "feed-chassifan-6933412710400",
+    "category": "chassifan",
+    "name": "DeepCool RF 120 R - Chassi fläkt - 120mm - Svart",
+    "brand": "DeepCool",
+    "price": 120,
+    "image": "https://www.proshop.se/Images/600x800/3049366_3c6276b4384a.png",
+    "ean": "6933412710400",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-storage-8719706427821",
@@ -59612,6 +68269,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4711103080184",
+    "category": "chassifan",
+    "name": "QNAP 140x140x25mm fan 12V 4PIN - Chassi fläkt - 140mm - Svart",
+    "brand": "QNAP",
+    "price": 345,
+    "image": "https://www.proshop.se/Images/600x800/3017354_cbf461cb92c7.jpg",
+    "ean": "4711103080184",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-0753263077417",
     "category": "psu",
     "name": "Chieftec Chieftronic SteelPower Series Strömförsörjning - 550 Watt - 120 mm - ATX 2.3 - 80 Plus Bronze certificate",
@@ -59673,6 +68346,39 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-7340172703525",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 12 RGB PWM - Chassi fläkt - 120mm - Svart",
+    "brand": "Fractal Design",
+    "price": 428,
+    "image": "https://www.proshop.se/Images/600x800/2978355_ab33dd2cb4bc.jpg",
+    "ean": "7340172703525",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172703303",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 12 PWM Black - Chassi fläkt - 120mm - Svart",
+    "brand": "Fractal Design",
+    "price": 188,
+    "image": "https://www.proshop.se/Images/600x800/2978352_e1c01be531fb.jpg",
+    "ean": "7340172703303",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4260133128484",
     "category": "psu",
     "name": "Inter-Tech HiPower SP-750CM Strömförsörjning - 750 Watt - 140 mm - ATX 2.3 - 80 Plus Not certified",
@@ -59726,6 +68432,22 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4260455644501",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus L-12025 - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 73,
+    "image": "https://www.proshop.se/Images/600x800/2922174_0ed24b2bc5cb.jpg",
+    "ean": "4260455644501",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-0765441654174",
@@ -59792,6 +68514,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340172700203",
+    "category": "chassifan",
+    "name": "Fractal Design Venturi Series HP-12 PWM - Chassi fläkt - 120mm - Vit",
+    "brand": "Fractal Design",
+    "price": 293,
+    "image": "https://www.proshop.se/Images/600x800/2887644_1b62cb317ac2.jpg",
+    "ean": "7340172700203",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -60388,6 +69126,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4717964405357",
+    "category": "chassifan",
+    "name": "Thermaltake Riing 12 RGB Fan TT Premium Edition - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 915,
+    "image": "https://www.proshop.se/Images/600x800/2570231_957c45edcfba.jpg",
+    "ean": "4717964405357",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-0889894245564",
     "category": "storage",
     "name": "HP E Midline - 8TB - Hårddisk - 834028-B21 - SATA-600 - 3.5&quot; LFF Low Profile",
@@ -60523,6 +69278,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-7350041083344",
+    "category": "chassifan",
+    "name": "Fractal Design Venturi Series lådfläkt - Chassi fläkt - 140mm - Svart - 26 dBA",
+    "brand": "Fractal Design",
+    "price": 242,
+    "image": "https://www.proshop.se/Images/600x800/2483526_b4741a762816.jpg",
+    "ean": "7350041083344",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4710713238213",
     "category": "psu",
     "name": "Chieftec Smart Series GPS-700A8 Strömförsörjning - 400 Watt - 120 mm - ATX - 80 Plus",
@@ -60535,6 +69307,57 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Effekt": "400 W"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315384",
+    "category": "chassifan",
+    "name": "Noctua IndustrialPPC NF-F12 - lådfläkt - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "Noctua",
+    "price": 325,
+    "image": "https://www.proshop.se/Images/600x800/2449114_fcdc63792f29.jpg",
+    "ean": "4716123315384",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314813",
+    "category": "chassifan",
+    "name": "Noctua NF-A14 FLX - lådfläkt - Chassi fläkt - 140mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 300,
+    "image": "https://www.proshop.se/Images/600x800/2420695_71005719bae4.jpg",
+    "ean": "4716123314813",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123314905",
+    "category": "chassifan",
+    "name": "Noctua NF-S12A FLX - lådfläkt - Chassi fläkt - 120mm - Brun - 17 dBA",
+    "brand": "Noctua",
+    "price": 275,
+    "image": "https://www.proshop.se/Images/600x800/2407421_a519c36e8ee2.jpg",
+    "ean": "4716123314905",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -60570,6 +69393,38 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0065030845311",
+    "category": "chassifan",
+    "name": "StarTech.com 80x25mm Computer Case Fan with PWM - låd - Chassi fläkt - 80mm - Svart",
+    "brand": "StarTech.com",
+    "price": 139,
+    "image": "https://www.proshop.se/Images/600x800/2348914_736f647a6968.jpg",
+    "ean": "0065030845311",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030786591",
+    "category": "chassifan",
+    "name": "StarTech.com 60x20mm Byte kullager Computer Case Fan w / TX3-kontakt - Chassi fläkt - 60mm - Svart",
+    "brand": "StarTech.com",
+    "price": 473,
+    "image": "https://www.proshop.se/Images/600x800/2292589_ec010c717e37.jpg",
+    "ean": "0065030786591",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4710713967649",
     "category": "case",
     "name": "SilverStone Grandia GD06 Svart - Chassi - Desktop - Svart",
@@ -60600,6 +69455,23 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "600 W",
       "Certifiering": "80 Plus White",
       "ATX-standard": "ATX 2.3"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265001086",
+    "category": "chassifan",
+    "name": "Arctic BioniX P14 A-RGB - Chassi fläkt - 140mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 212,
+    "image": "https://www.proshop.se/Images/600x800/3509386_e65d0a40fe47.png",
+    "ean": "4895265001086",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -60745,6 +69617,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702065",
+    "category": "chassifan",
+    "name": "Arctic P Series 8 - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 450,
+    "image": "https://www.proshop.se/Images/600x800/3498107_c3d50762b260.jpg",
+    "ean": "4895213702065",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -61007,6 +69895,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840440425472",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 II - Chassi fläkt - 140mm - Svart - 32 dBA",
+    "brand": "Corsair",
+    "price": 474,
+    "image": "https://www.proshop.se/Images/600x800/3482297_024559c854da.png",
+    "ean": "0840440425472",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4719512161999",
     "category": "cooling",
     "name": "Cooler Master MasterLiquid Core Nex - CPU Vattenkylare",
@@ -61066,6 +69971,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0761345400503",
+    "category": "chassifan",
+    "name": "Antec NOVA 12025 - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Antec",
+    "price": 400,
+    "image": "https://www.proshop.se/Images/600x800/3480877_7ab2f150f648.jpg",
+    "ean": "0761345400503",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -61279,6 +70200,26 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4711475648753",
+    "category": "chassifan",
+    "name": "Thermaltake TS120 EX RGB PC Cooling Fan - White (3pack) - Chassi fläkt - 120mm - Vit - 21 dBA",
+    "brand": "Thermaltake",
+    "price": 1400,
+    "image": "https://www.proshop.se/Images/600x800/3474181_5ad28e6b9cca.jpg",
+    "ean": "4711475648753",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "21 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-motherboard-4711581493841",
@@ -61500,6 +70441,22 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "LGA1851",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4711636264143",
+    "category": "chassifan",
+    "name": "ASUS ProArt PF120 - Chassi fläkt - 120mm - Svart",
+    "brand": "ASUS",
+    "price": 369,
+    "image": "https://www.proshop.se/Images/600x800/3454783_71a4c81b439f.jpg",
+    "ean": "4711636264143",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-case-6933412765295",
@@ -62298,6 +71255,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000706",
+    "category": "chassifan",
+    "name": "Arctic P12 Pro Reverse A-RGB (White) - Chassi fläkt - 120mm - Vit",
+    "brand": "Arctic",
+    "price": 164,
+    "image": "https://www.proshop.se/Images/600x800/3429876_5108fa114c9d.png",
+    "ean": "4895265000706",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-4063872722056",
     "category": "storage",
     "name": "Fujitsu - SSD - 512 GB - SATA 6Gb/s",
@@ -62530,6 +71504,72 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-886523003632",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-140 Reverse - Chassi fläkt - 140mm - Vit",
+    "brand": "Phanteks",
+    "price": 171,
+    "image": "https://www.proshop.se/Images/600x800/3419664_0defdb60f3e3.jpg",
+    "ean": "886523003632",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003526",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-140 - Chassi fläkt - 140mm - Svart",
+    "brand": "Phanteks",
+    "price": 155,
+    "image": "https://www.proshop.se/Images/600x800/3419657_f3ba909562ad.jpg",
+    "ean": "886523003526",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003496",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-120 (3-pack) - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 267,
+    "image": "https://www.proshop.se/Images/600x800/3419648_d53f706b930a.jpg",
+    "ean": "886523003496",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003465",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-120 - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 123,
+    "image": "https://www.proshop.se/Images/600x800/3419647_3e7be0d03b01.jpg",
+    "ean": "886523003465",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-886523703259",
     "category": "cooling",
     "name": "Phanteks Glacier One 360M25 G2 AIO - CPU Vattenkylare",
@@ -62758,6 +71798,43 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM5"
   },
   {
+    "id": "feed-chassifan-4260052193877",
+    "category": "chassifan",
+    "name": "be quiet! PURE WINGS 3 120 (3-pack) - Chassi fläkt - 120mm - Svart",
+    "brand": "be quiet!",
+    "price": 376,
+    "image": "https://www.proshop.se/Images/600x800/3413886_57478421771e.jpg",
+    "ean": "4260052193877",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052193853",
+    "category": "chassifan",
+    "name": "be quiet! PURE WINGS 3 140 (3-pack) - Chassi fläkt - 140mm - Svart - 21 dBA",
+    "brand": "be quiet!",
+    "price": 398,
+    "image": "https://www.proshop.se/Images/600x800/3413879_7ca1a957a7ee.jpg",
+    "ean": "4260052193853",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "21 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4260052193891",
     "category": "case",
     "name": "be quiet! Light Base 500 LX White - Chassi - Miditower - Vit",
@@ -62975,6 +72052,23 @@ export const FEED_CATALOG_ITEMS = [
       "Kapacitet": "4 TB",
       "Gränssnitt": "NVMe",
       "PCIe": "5.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-4251442513696",
+    "category": "chassifan",
+    "name": "Havn H14 - Chassi fläkt - 140mm - Vit - 31 dBA",
+    "brand": "Havn",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/3408443_58d3d357191c.png",
+    "ean": "4251442513696",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -63498,6 +72592,23 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4711475641518",
+    "category": "chassifan",
+    "name": "Thermaltake SWAFAN EX14 ARGB - Chassi fläkt - 140mm - Blå",
+    "brand": "Thermaltake",
+    "price": 1147,
+    "image": "https://www.proshop.se/Images/600x800/3382844_4a05f168a2a5.jpg",
+    "ean": "4711475641518",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-8809213764271",
@@ -64300,6 +73411,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0886523002956",
+    "category": "chassifan",
+    "name": "Phanteks PH-F120D30 - case fan - Chassi fläkt - 120mm - Vit",
+    "brand": "Phanteks",
+    "price": 1028,
+    "image": "https://www.proshop.se/Images/600x800/3338995_d20bd9ababe6.jpg",
+    "ean": "0886523002956",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0840440491101",
     "category": "ram",
     "name": "Corsair Vengeance DDR5-6000 - 32GB - CL28 - Dual Channel (2 pcs) - Intel XMP - Black",
@@ -64583,6 +73710,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4711527000454",
+    "category": "chassifan",
+    "name": "Darkflash DM20 computer fan (black) - Chassi fläkt - 120mm - Svart - 32 dBA",
+    "brand": "Darkflash",
+    "price": 135,
+    "image": "https://www.proshop.se/Images/600x800/3321678_74095c16ae72.jpg",
+    "ean": "4711527000454",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0740617346879",
     "category": "ram",
     "name": "Kingston FURY Renegade RGB DDR5-8400 - 48GB - CUDIMM för Intel - CL40 - Dual Channel (2 pcs) - Intel XMP - Vit med RGB",
@@ -64627,6 +73771,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4711475644694",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 EX Reverse ARGB Sync - Chassi fläkt - 120mm - Vit",
+    "brand": "Thermaltake",
+    "price": 874,
+    "image": "https://www.proshop.se/Images/600x800/3318453_eb8804d6e2d3.jpg",
+    "ean": "4711475644694",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4711527000492",
     "category": "cooling",
     "name": "Darkflash Computer Radiator DN-D240 BLACK - CPU Vattenkylare",
@@ -64654,6 +73815,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711527000256",
+    "category": "chassifan",
+    "name": "Darkflash DR08 Cooling Fan (White) - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Darkflash",
+    "price": 128,
+    "image": "https://www.proshop.se/Images/600x800/3318132_294023d891a1.jpg",
+    "ean": "4711527000256",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -64705,6 +73884,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475644618",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 EX ARGB Sync - Chassi fläkt - 120mm - Vit",
+    "brand": "Thermaltake",
+    "price": 844,
+    "image": "https://www.proshop.se/Images/600x800/3314324_fecd12fa4d24.jpg",
+    "ean": "4711475644618",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -64794,6 +73990,64 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006682998",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 MAX RGB (2-pack) - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 1469,
+    "image": "https://www.proshop.se/Images/600x800/3307293_9b35118797e1.png",
+    "ean": "0840006682998",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006683070",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 MAX (2-pack starter kit) - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 1224,
+    "image": "https://www.proshop.se/Images/600x800/3306580_8904da611529.png",
+    "ean": "0840006683070",
+    "specs": [
+      "140 mm",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006683056",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 MAX (3-pack starter kit) - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 904,
+    "image": "https://www.proshop.se/Images/600x800/3306576_6b277408119d.png",
+    "ean": "0840006683056",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-0840440482987",
     "category": "cooling",
     "name": "Corsair iCUE LINK TITAN 360 RX LCD White - CPU Vattenkylare - Max 36 dBA",
@@ -64809,6 +74063,24 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "360 mm",
       "Ljudnivå": "36 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191613",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX high-speed - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 225,
+    "image": "https://www.proshop.se/Images/600x800/3304806_337c4cd3f7a0.jpg",
+    "ean": "4260052191613",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -65267,6 +74539,74 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5056547204383",
+    "category": "chassifan",
+    "name": "NZXT F140P V2 - Static Pressure - Chassi fläkt - 140mm - Vit - 30 dBA",
+    "brand": "NZXT",
+    "price": 151,
+    "image": "https://www.proshop.se/Images/600x800/3267166_6848dc4cf7ca.png",
+    "ean": "5056547204383",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547204369",
+    "category": "chassifan",
+    "name": "NZXT F120P V2 - Static Pressure - Chassi fläkt - 120mm - Vit - 30 dBA",
+    "brand": "NZXT",
+    "price": 178,
+    "image": "https://www.proshop.se/Images/600x800/3267164_22fdcf161355.png",
+    "ean": "5056547204369",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684275",
+    "category": "chassifan",
+    "name": "Corsair RS140 - dual-pack - Chassi fläkt - 140mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 354,
+    "image": "https://www.proshop.se/Images/600x800/3266884_6a60c3cb569b.png",
+    "ean": "0840006684275",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006682943",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX140 - Chassi fläkt - 140mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 478,
+    "image": "https://www.proshop.se/Images/600x800/3263065_ce0060b87d74.png",
+    "ean": "0840006682943",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4044953503368",
     "category": "psu",
     "name": "Xilence Gaming GOLD Series XP850R12 Strömförsörjning - 850 Watt - 120 mm - ATX 2.52 - 80 Plus Gold certificate",
@@ -65282,6 +74622,39 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "850 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 2.5"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523002932",
+    "category": "chassifan",
+    "name": "Phanteks D30-120 D-RGB Regular - case fan - Chassi fläkt - 120mm - Vit",
+    "brand": "Phanteks",
+    "price": 398,
+    "image": "https://www.proshop.se/Images/600x800/3262012_e19925f690fa.jpg",
+    "ean": "886523002932",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523002925",
+    "category": "chassifan",
+    "name": "Phanteks PH-F120D30 - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 418,
+    "image": "https://www.proshop.se/Images/600x800/3262011_dac59ffee0e2.jpg",
+    "ean": "886523002925",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -65359,6 +74732,25 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387297353",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 3-pack - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "ASUS",
+    "price": 618,
+    "image": "https://www.proshop.se/Images/600x800/3254010_f68ef85228e7.png",
+    "ean": "4711387297353",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -65626,6 +75018,24 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006680932",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 RGB - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 415,
+    "image": "https://www.proshop.se/Images/600x800/3242219_e5349e929190.png",
+    "ean": "0840006680932",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4719331553951",
     "category": "cooling",
     "name": "GIGABYTE AORUS WATERFORCE X II 360 - CPU Vattenkylare - Max 38 dBA",
@@ -65641,6 +75051,23 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "360 mm",
       "Ljudnivå": "38 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190982",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 120mm PWM high-speed White - Chassi fläkt - 120mm - Vit - 31 dBA",
+    "brand": "be quiet!",
+    "price": 150,
+    "image": "https://www.proshop.se/Images/600x800/3238044_c4ea47020be3.jpg",
+    "ean": "4260052190982",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -66602,6 +76029,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-5903018665948",
+    "category": "chassifan",
+    "name": "ENDORFY Fluctus 120 PWM - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "ENDORFY",
+    "price": 201,
+    "image": "https://www.proshop.se/Images/600x800/3185343_05aa39a387ca.jpg",
+    "ean": "5903018665948",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-5903018666310",
     "category": "case",
     "name": "ENDORFY Arx 700 Air - Chassi - Tower - Svart",
@@ -66722,6 +76165,22 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-5901969439137",
+    "category": "chassifan",
+    "name": "Genesis Oxal 120 - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Genesis",
+    "price": 95,
+    "image": "https://www.proshop.se/Images/600x800/3166480_c2498686b59a.jpg",
+    "ean": "5901969439137",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-0840006671282",
@@ -66848,6 +76307,40 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-4044953500831",
+    "category": "chassifan",
+    "name": "Xilence WhiteBox 60 - Chassi fläkt - 60mm - Svart",
+    "brand": "Xilence",
+    "price": 64,
+    "image": "https://www.proshop.se/Images/600x800/3152686_5421690d75ca.jpg",
+    "ean": "4044953500831",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523002444",
+    "category": "chassifan",
+    "name": "Phanteks M25 140mm PWM Fan DRGB Black 3 Pack - Chassi fläkt - 140mm - Svart",
+    "brand": "Phanteks",
+    "price": 529,
+    "image": "https://www.proshop.se/Images/600x800/3152676_d73bd624bedc.jpg",
+    "ean": "886523002444",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-0840006667094",
@@ -67544,6 +77037,38 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4710713234796",
+    "category": "chassifan",
+    "name": "Chieftec Wentylator AF-1225S (120 mm) - Chassi fläkt - 120mm",
+    "brand": "Chieftec",
+    "price": 120,
+    "image": "https://www.proshop.se/Images/600x800/3089724_41de50c2bc96.jpg",
+    "ean": "4710713234796",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710713234772",
+    "category": "chassifan",
+    "name": "Chieftec Wentylator AF-0825S (80 mm) - Chassi fläkt",
+    "brand": "Chieftec",
+    "price": 98,
+    "image": "https://www.proshop.se/Images/600x800/3089723_eb86027d88c4.jpg",
+    "ean": "4710713234772",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4710679814742",
     "category": "case",
     "name": "SilverStone CS351 - Chassi - Desk - Svart",
@@ -67553,6 +77078,23 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "4710679814742",
     "specs": [],
     "details": {}
+  },
+  {
+    "id": "feed-chassifan-7340172704010",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 12 RGB PWM - Chassi fläkt - 120mm - Vit",
+    "brand": "Fractal Design",
+    "price": 263,
+    "image": "https://www.proshop.se/Images/600x800/3079137_f3894444ffc8.jpg",
+    "ean": "7340172704010",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-7340172703884",
@@ -67567,6 +77109,38 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703802",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S4028-15K - Chassi fläkt - 40mm - Svart",
+    "brand": "Arctic",
+    "price": 106,
+    "image": "https://www.proshop.se/Images/600x800/3076217_72ab0e70dde6.jpg",
+    "ean": "4895213703802",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703796",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S4028-6K - Chassi fläkt - 40mm - Svart",
+    "brand": "Arctic",
+    "price": 124,
+    "image": "https://www.proshop.se/Images/600x800/3076206_544351b1d25c.jpg",
+    "ean": "4895213703796",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -67627,6 +77201,23 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-9010018100563",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25r PWM - Chassi fläkt - 120mm - Brun - 23 dBA",
+    "brand": "Noctua",
+    "price": 358,
+    "image": "https://www.proshop.se/Images/600x800/3065162_5b147248b594.jpg",
+    "ean": "9010018100563",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-740617326147",
@@ -67767,6 +77358,42 @@ export const FEED_CATALOG_ITEMS = [
       "Basfrekvens": "2.4 GHz"
     },
     "socket": "LGA1700"
+  },
+  {
+    "id": "feed-chassifan-4260052188798",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 140mm PWM high-speed - Chassi fläkt - 140mm - Svart med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 322,
+    "image": "https://www.proshop.se/Images/600x800/3021771_f192b8cb37c8.jpg",
+    "ean": "4260052188798",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052188835",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 140mm PWM high-speed Triple-Pack - Chassi fläkt - 140mm - Svart med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 949,
+    "image": "https://www.proshop.se/Images/600x800/3021723_83245bcf03f4.jpg",
+    "ean": "4260052188835",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-cooling-4719072858230",
@@ -67911,6 +77538,25 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-0886523001836",
+    "category": "chassifan",
+    "name": "Phanteks T30-120 - 3 pack - Chassi fläkt - 120mm - Grå - 40 dBA",
+    "brand": "Phanteks",
+    "price": 1134,
+    "image": "https://www.proshop.se/Images/600x800/3006618_5445978db360.jpg",
+    "ean": "0886523001836",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "40 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4260455646789",
     "category": "psu",
     "name": "Inter-Tech SAMA FTX-1200-A Armor Strömförsörjning - 1200 Watt - 120 mm - ATX 2.4 - 80 Plus Platinum certificate",
@@ -68041,6 +77687,38 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4044953501142",
+    "category": "chassifan",
+    "name": "Xilence Performance C Series XPF140.R.PWM - Chassi fläkt - 140mm - Röd",
+    "brand": "Xilence",
+    "price": 104,
+    "image": "https://www.proshop.se/Images/600x800/2970019_cd1fac711db2.jpg",
+    "ean": "4044953501142",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044953501135",
+    "category": "chassifan",
+    "name": "Xilence Performance C Series XPF140.R - Chassi fläkt - 140mm - Röd",
+    "brand": "Xilence",
+    "price": 91,
+    "image": "https://www.proshop.se/Images/600x800/2970018_88a869ec5003.jpg",
+    "ean": "4044953501135",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4044953501197",
     "category": "cooling",
     "name": "Xilence Performance C Series M504D - CPU Luftkylare",
@@ -68098,6 +77776,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4719512113783",
+    "category": "chassifan",
+    "name": "Cooler Master MasterFan MF120 HALO White 3in1 - Chassi fläkt - 120mm - Vit - 30 dBA",
+    "brand": "Cooler Master",
+    "price": 436,
+    "image": "https://www.proshop.se/Images/600x800/2940289_0c8e23797dc4.png",
+    "ean": "4719512113783",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -68231,6 +77926,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4260455646178",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RS-071 RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 255,
+    "image": "https://www.proshop.se/Images/600x800/2924047_dddb236a1976.jpg",
+    "ean": "4260455646178",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-0718037877501",
     "category": "storage",
     "name": "WD Blue - 2TB - Hårddisk - WD20EZBX - SATA-600 - 3,5&quot;",
@@ -68318,6 +78030,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260455646185",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RS-141 RGB - Chassi fläkt - 140mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 165,
+    "image": "https://www.proshop.se/Images/600x800/2911701_70632c7f21b9.jpg",
+    "ean": "4260455646185",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-7340172702443",
     "category": "case",
     "name": "Fractal Design Meshify 2 - Black TG Light Tint - Chassi - Miditower - Svart",
@@ -68400,6 +78129,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4713227525626",
+    "category": "chassifan",
+    "name": "Thermaltake Pure Duo 14 ARGB Sync Radiator Fan - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 718,
+    "image": "https://www.proshop.se/Images/600x800/2883023_fef9d941477f.jpg",
+    "ean": "4713227525626",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4710679810034",
     "category": "case",
     "name": "SilverStone Seta A1 - Chassi - Tower - Sølv",
@@ -68445,6 +78191,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4713213516287",
+    "category": "chassifan",
+    "name": "QNAP 92X92X25MM FAN 12V 4PIN - Chassi fläkt - 92mm - Svart",
+    "brand": "QNAP",
+    "price": 301,
+    "image": "https://www.proshop.se/Images/600x800/2854739_340f54815cd3.jpg",
+    "ean": "4713213516287",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4713294224842",
     "category": "ram",
     "name": "G.Skill Trident Z Neo DDR4-3600 - 128GB - CL18 - Quad Channel (4 pcs) - AMD Optimized - Svart med RGB",
@@ -68482,6 +78244,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-4260455645164",
+    "category": "networkcard",
+    "name": "Inter-Tech DMG-35 WiFi 6 + BT 5.0 PCIe Adapter",
+    "brand": "Inter-Tech",
+    "price": 417,
+    "image": "https://www.proshop.se/Images/600x800/2843722_c8ac2381d2c4.jpg",
+    "ean": "4260455645164",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6"
+    }
+  },
+  {
     "id": "feed-psu-4260455644921",
     "category": "psu",
     "name": "Inter-Tech Argus RGB-600W II Strömförsörjning - 600 Watt - 140 mm - ATX 2.3 - 80 Plus Bronze certificate",
@@ -68514,6 +78293,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "750 W",
       "Certifiering": "80 Plus Gold"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052187340",
+    "category": "chassifan",
+    "name": "be quiet! Shadow Wings 2 White 140 - Chassi fläkt - 140mm - Vit - 15 dBA",
+    "brand": "be quiet!",
+    "price": 220,
+    "image": "https://www.proshop.se/Images/600x800/2835854_45252058f007.jpg",
+    "ean": "4260052187340",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -68996,6 +78792,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-9010018100068",
+    "category": "chassifan",
+    "name": "Noctua NF-A20 5V - Chassi fläkt - 200mm - Brun - 18 dBA",
+    "brand": "Noctua",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/2674907_85d0684ded41.jpg",
+    "ean": "9010018100068",
+    "specs": [
+      "200 mm"
+    ],
+    "details": {
+      "Storlek": "200 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-4547808810739",
     "category": "storage",
     "name": "Toshiba L200 Laptop PC - 1TB - Hårddisk - HDWL110UZSVA - SATA-600 - 2,5&quot;",
@@ -69180,6 +78993,23 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-9010018100020",
+    "category": "chassifan",
+    "name": "Noctua NF-A20 FLX - Chassi fläkt - 200mm - Brun - 18 dBA",
+    "brand": "Noctua",
+    "price": 379,
+    "image": "https://www.proshop.se/Images/600x800/2595715_d9dba800338f.jpg",
+    "ean": "9010018100020",
+    "specs": [
+      "200 mm"
+    ],
+    "details": {
+      "Storlek": "200 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-case-4260070125850",
@@ -69463,6 +79293,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4716123314806",
+    "category": "chassifan",
+    "name": "Noctua NF-A15 PWM - lådfläkt - Chassi fläkt - 140mm - Brun - 19 dBA",
+    "brand": "Noctua",
+    "price": 300,
+    "image": "https://www.proshop.se/Images/600x800/2420696_7a11eaca2727.jpg",
+    "ean": "4716123314806",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-4948382926265",
     "category": "storage",
     "name": "HP Midline - 4TB - Hårddisk - 693687-B21 - SATA-600 - 3,5 &quot;LFF",
@@ -69525,6 +79372,42 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840440428855",
+    "category": "chassifan",
+    "name": "Corsair RS120 II ARGB - Chassi fläkt - 120mm - Vit - 36 dBA",
+    "brand": "Corsair",
+    "price": 266,
+    "image": "https://www.proshop.se/Images/600x800/3519604_8df5abd1100a.jpg",
+    "ean": "0840440428855",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440428879",
+    "category": "chassifan",
+    "name": "Corsair RS360 II Unified Frame ARGB - Chassi fläkt - 120mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 574,
+    "image": "https://www.proshop.se/Images/600x800/3519602_bd414eb38321.jpg",
+    "ean": "0840440428879",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-gpu-8886307704399",
     "category": "gpu",
     "name": "ZOTAC GeForce RTX 3060 - 12GB GDDR6 RAM - Grafikkort",
@@ -69541,6 +79424,44 @@ export const FEED_CATALOG_ITEMS = [
       "Minne": "12 GB"
     },
     "gpuModel": "ZOTAC GeForce RTX 3060 - 12GB GDDR6 RAM - Grafikkort"
+  },
+  {
+    "id": "feed-chassifan-4718466023339",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 (3-pack) with controller - Chassi fläkt - 120mm - Vit med RGB LED - 29 dBA",
+    "brand": "Lian Li",
+    "price": 819,
+    "image": "https://www.proshop.se/Images/600x800/3518471_de9d7cc55056.png",
+    "ean": "4718466023339",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023780",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX 120 - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3518445_efe85fcf3481.png",
+    "ean": "4718466023780",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0649528940797",
@@ -69611,6 +79532,42 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "750 W",
       "Certifiering": "80 Plus Bronze"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265001109",
+    "category": "chassifan",
+    "name": "Arctic BioniX P14 A-RGB - 3pack - Chassi fläkt - 140mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 486,
+    "image": "https://www.proshop.se/Images/600x800/3509388_1b3fee692ce4.png",
+    "ean": "4895265001109",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895265001048",
+    "category": "chassifan",
+    "name": "Arctic BioniX P12 A-RGB - Chassi fläkt - 120mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 186,
+    "image": "https://www.proshop.se/Images/600x800/3509374_05127ff989bc.png",
+    "ean": "4895265001048",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -69712,6 +79669,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213704724",
+    "category": "chassifan",
+    "name": "Arctic S12038-8K - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Arctic",
+    "price": 373,
+    "image": "https://www.proshop.se/Images/600x800/3498110_c50c61b11e7f.jpg",
+    "ean": "4895213704724",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -69862,6 +79835,23 @@ export const FEED_CATALOG_ITEMS = [
     },
     "socket": "AM5",
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-0761345400466",
+    "category": "chassifan",
+    "name": "Antec CONNECT 120 ARGB - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Antec",
+    "price": 384,
+    "image": "https://www.proshop.se/Images/600x800/3480999_91252a1cd4f3.jpg",
+    "ean": "0761345400466",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-case-8718469091560",
@@ -70174,6 +80164,62 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951040155",
+    "category": "chassifan",
+    "name": "Sharkoon Rebel F50 PWM - Chassi fläkt - 120mm - Svart",
+    "brand": "Sharkoon",
+    "price": 297,
+    "image": "https://www.proshop.se/Images/600x800/3476115_a4c688a1f86b.jpg",
+    "ean": "4044951040155",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475648760",
+    "category": "chassifan",
+    "name": "Thermaltake TS140 EX RGB PC Cooling Fan - Black (3pack) - Chassi fläkt - 140mm - Svart - 32 dBA",
+    "brand": "Thermaltake",
+    "price": 1438,
+    "image": "https://www.proshop.se/Images/600x800/3474180_7f69e9609f89.jpg",
+    "ean": "4711475648760",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "32 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475648746",
+    "category": "chassifan",
+    "name": "Thermaltake TS120 EX RGB PC Cooling Fan - Black (3pack) - Chassi fläkt - 120mm - Svart - 21 dBA",
+    "brand": "Thermaltake",
+    "price": 1384,
+    "image": "https://www.proshop.se/Images/600x800/3474179_67649fc61226.jpg",
+    "ean": "4711475648746",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "21 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -70727,6 +80773,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-886523003939",
+    "category": "chassifan",
+    "name": "Phanteks T30 140 (3-mode) - Chassi fläkt - 140mm - Svart m. tvåfärgat led-ljus - 44 dBA",
+    "brand": "Phanteks",
+    "price": 484,
+    "image": "https://www.proshop.se/Images/600x800/3438033_c7c29d94e41b.png",
+    "ean": "886523003939",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "44 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4711527007033",
     "category": "case",
     "name": "Darkflash AIRNOVA Computer Case with 3 Fans - Chassi - Vit",
@@ -71168,6 +81231,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100662",
+    "category": "chassifan",
+    "name": "Noctua NF-A14X25R G2 PWM SX2 PP - system fan kit - Chassi fläkt - 140mm - Brun",
+    "brand": "Noctua",
+    "price": 862,
+    "image": "https://www.proshop.se/Images/600x800/3425254_be20e220db46.jpg",
+    "ean": "9010018100662",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-8800263650545",
     "category": "cooling",
     "name": "Zalman ZET 5 - processor cooler - CPU Luftkylare",
@@ -71283,6 +81362,122 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-chassifan-886523003649",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-140 Reverse (3-pack) - Chassi fläkt - 140mm - Svart",
+    "brand": "Phanteks",
+    "price": 432,
+    "image": "https://www.proshop.se/Images/600x800/3419663_21ec41b16e89.jpg",
+    "ean": "886523003649",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003540",
+    "category": "chassifan",
+    "name": "Phanteks M25 Gen2 - Chassi fläkt - 140mm - Vit",
+    "brand": "Phanteks",
+    "price": 221,
+    "image": "https://www.proshop.se/Images/600x800/3419660_334546161697.jpg",
+    "ean": "886523003540",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003557",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-140 (3-pack) - Chassi fläkt - 140mm - Svart",
+    "brand": "Phanteks",
+    "price": 275,
+    "image": "https://www.proshop.se/Images/600x800/3419658_c0925e187a4f.jpg",
+    "ean": "886523003557",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003618",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-120 Reverse - Chassi fläkt - 120mm - Vit",
+    "brand": "Phanteks",
+    "price": 428,
+    "image": "https://www.proshop.se/Images/600x800/3419656_0d6f9ecada65.jpg",
+    "ean": "886523003618",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003595",
+    "category": "chassifan",
+    "name": "Phanteks M25 Gen2 Reverse - Chassi fläkt - 120mm - Vit",
+    "brand": "Phanteks",
+    "price": 201,
+    "image": "https://www.proshop.se/Images/600x800/3419655_a65784c0134b.jpg",
+    "ean": "886523003595",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003519",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-120 - Chassi fläkt - 120mm - Vit",
+    "brand": "Phanteks",
+    "price": 428,
+    "image": "https://www.proshop.se/Images/600x800/3419652_853fa30ff4fe.jpg",
+    "ean": "886523003519",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003502",
+    "category": "chassifan",
+    "name": "Phanteks M25G2-120 - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 386,
+    "image": "https://www.proshop.se/Images/600x800/3419650_eb74a380f474.jpg",
+    "ean": "886523003502",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-case-4711527002595",
@@ -71437,6 +81632,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0886523003069",
+    "category": "chassifan",
+    "name": "Phanteks PH-F120D30 - case fan - reverse - Chassi fläkt - 120mm - Vit",
+    "brand": "Phanteks",
+    "price": 1048,
+    "image": "https://www.proshop.se/Images/600x800/3415725_5d6631622994.jpg",
+    "ean": "0886523003069",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-6933412774174",
     "category": "case",
     "name": "DeepCool CC560 MESH V2 - Chassi - Tower - Vit",
@@ -71569,6 +81780,43 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM5"
   },
   {
+    "id": "feed-chassifan-4260052193839",
+    "category": "chassifan",
+    "name": "be quiet! PURE WINGS 3 120 Reverse (3-pack) - Chassi fläkt - 120mm - Svart",
+    "brand": "be quiet!",
+    "price": 388,
+    "image": "https://www.proshop.se/Images/600x800/3413908_287955fe02f3.jpg",
+    "ean": "4260052193839",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052193860",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 120 HS (3-pack) - Chassi fläkt - 120mm - Svart - 30 dBA",
+    "brand": "be quiet!",
+    "price": 414,
+    "image": "https://www.proshop.se/Images/600x800/3413882_c461ea06fe71.jpg",
+    "ean": "4260052193860",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4718466019660",
     "category": "psu",
     "name": "Lian Li RB 750W Strömförsörjning - 750 Watt - 135 mm - ATX 3.1 - 80 Plus Bronze certificate",
@@ -71673,6 +81921,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265000775",
+    "category": "chassifan",
+    "name": "Arctic P14 Pro Reverse A-RGB (White) - Chassi fläkt - 140mm - Vit",
+    "brand": "Arctic",
+    "price": 338,
+    "image": "https://www.proshop.se/Images/600x800/3409368_612bf1a177a4.png",
+    "ean": "4895265000775",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-814256018289",
     "category": "cooling",
     "name": "Thermalright Royal Pretor 130 Ultra White - CPU Luftkylare - Max 28 dBA",
@@ -71755,6 +82020,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Luftkylning",
       "Ljudnivå": "31 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4251442513689",
+    "category": "chassifan",
+    "name": "Havn H12 - Chassi fläkt - 120mm - Svart - 32 dBA",
+    "brand": "Havn",
+    "price": 221,
+    "image": "https://www.proshop.se/Images/600x800/3408428_a9ece1d9c619.png",
+    "ean": "4251442513689",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -71867,6 +82149,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-6977029650513",
+    "category": "chassifan",
+    "name": "Tryx ROTA SL ARGB 120mm Fan Triple Pack White - Chassi fläkt - 120mm - Vit med RGB LED - 28 dBA",
+    "brand": "Tryx",
+    "price": 699,
+    "image": "https://www.proshop.se/Images/600x800/3403426_e4192c49cd3c.jpg",
+    "ean": "6977029650513",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -72490,6 +82790,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "600 W",
       "Certifiering": "80 Plus Bronze"
+    }
+  },
+  {
+    "id": "feed-networkcard-startechcom2port",
+    "category": "networkcard",
+    "name": "StarTech.com 2-Port Gigabit PCIe Network Adapter Card TAA Compliant - network adapter - PCIe - Gigabit Ethernet x 2 - TAA Compliant",
+    "brand": "StarTech.com",
+    "price": 1361,
+    "image": "https://www.proshop.se/Images/600x800/3387413_14b56b06ca43.jpg",
+    "ean": null,
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
     }
   },
   {
@@ -73735,6 +84052,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-6971690791407",
+    "category": "networkcard",
+    "name": "Cudy Adapter PCI-E WE4000 AX5400 WiFi 6E Magnetic Antennas",
+    "brand": "Cudy",
+    "price": 495,
+    "image": "https://www.proshop.se/Images/600x800/3336542_899d4a83f9fd.jpg",
+    "ean": "6971690791407",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6"
+    }
+  },
+  {
     "id": "feed-case-7340172709510",
     "category": "case",
     "name": "Fractal Design Meshify 3 White RGB - Chassi - Miditower - Vit",
@@ -74115,6 +84449,24 @@ export const FEED_CATALOG_ITEMS = [
     "details": {}
   },
   {
+    "id": "feed-chassifan-4711527000263",
+    "category": "chassifan",
+    "name": "Darkflash DR08 3-in-1 Cooling Fan (Black) - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Darkflash",
+    "price": 210,
+    "image": "https://www.proshop.se/Images/600x800/3318159_eaf395449ed5.jpg",
+    "ean": "4711527000263",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4710343796749",
     "category": "case",
     "name": "Darkflash C285MP Computer Case (Black) - Chassi - Miditower",
@@ -74247,6 +84599,91 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100174",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x15 5V PWM - Chassi fläkt - 60mm - Brun - 20 dBA",
+    "brand": "Noctua",
+    "price": 233,
+    "image": "https://www.proshop.se/Images/600x800/3315692_8e65b397957d.jpg",
+    "ean": "9010018100174",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100167",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x15 5V - Chassi fläkt - 60mm - Brun - 20 dBA",
+    "brand": "Noctua",
+    "price": 412,
+    "image": "https://www.proshop.se/Images/600x800/3315691_c946ca35b715.jpg",
+    "ean": "9010018100167",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100143",
+    "category": "chassifan",
+    "name": "Noctua NF-A6x15 PWM - Chassi fläkt - 60mm - Brun - 20 dBA",
+    "brand": "Noctua",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/3315690_843ac9b7a993.jpg",
+    "ean": "9010018100143",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475644670",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 EX Reverse ARGB Sync - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 572,
+    "image": "https://www.proshop.se/Images/600x800/3314326_26e07538d8d8.jpg",
+    "ean": "4711475644670",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475644625",
+    "category": "chassifan",
+    "name": "Thermaltake CT140 EX ARGB Sync - Chassi fläkt - 140mm - Vit",
+    "brand": "Thermaltake",
+    "price": 864,
+    "image": "https://www.proshop.se/Images/600x800/3314325_1d98f7c20447.jpg",
+    "ean": "4711475644625",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-0753263078766",
     "category": "cooling",
     "name": "Chieftec Iceberg 360 DARK - CPU Vattenkylare",
@@ -74276,6 +84713,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006683049",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 MAX - Expansion Fan - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 513,
+    "image": "https://www.proshop.se/Images/600x800/3306573_de2fb2740d85.png",
+    "ean": "0840006683049",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -74312,6 +84766,63 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "240 mm",
       "Ljudnivå": "36 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191682",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 140mm high-speed (3-pack) - Chassi fläkt - 140mm - Svart med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 558,
+    "image": "https://www.proshop.se/Images/600x800/3305370_b566122869e7.jpg",
+    "ean": "4260052191682",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191675",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX 140mm PWM high-speed - Chassi fläkt - 140mm - Svart med RGB LED - 23 dBA",
+    "brand": "be quiet!",
+    "price": 226,
+    "image": "https://www.proshop.se/Images/600x800/3305369_b17c27ce3c14.jpg",
+    "ean": "4260052191675",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191637",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS LX White High Speed (3-pack) - Chassi fläkt - 120mm - Svart - 31 dBA",
+    "brand": "be quiet!",
+    "price": 716,
+    "image": "https://www.proshop.se/Images/600x800/3305359_7d78f6e05ab6.jpg",
+    "ean": "4260052191637",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -74529,6 +85040,24 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "LGA1851"
   },
   {
+    "id": "feed-chassifan-6926170082032",
+    "category": "chassifan",
+    "name": "Darkflash Computer Fan RGB D1 (120x120) - Chassi fläkt - 120mm - Svart - 22 dBA",
+    "brand": "Darkflash",
+    "price": 131,
+    "image": "https://www.proshop.se/Images/600x800/3295453_39e6e5aa8573.jpg",
+    "ean": "6926170082032",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-5056547204796",
     "category": "psu",
     "name": "NZXT C-Series C850 (2024) Black Strömförsörjning - 850 Watt - 135 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -74706,6 +85235,22 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM5"
   },
   {
+    "id": "feed-chassifan-6933412703624",
+    "category": "chassifan",
+    "name": "DeepCool XFAN 120 - Chassi fläkt - 120mm - Svart",
+    "brand": "DeepCool",
+    "price": 84,
+    "image": "https://www.proshop.se/Images/600x800/3280307_9bbe046f60dd.jpg",
+    "ean": "6933412703624",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cpu-0730143316781",
     "category": "cpu",
     "name": "AMD EPYC 4564P CPU - 16 kärnor - 4.5 GHz - AMD AM5 - AMD Boxed (utan kylare)",
@@ -74773,6 +85318,55 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Typ": "Vattenkylning",
       "Ljudnivå": "30 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475641341",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 EX ARGB Sync - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 696,
+    "image": "https://www.proshop.se/Images/600x800/3277975_539c28344ed9.jpg",
+    "ean": "4711475641341",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227539401",
+    "category": "chassifan",
+    "name": "Thermaltake TOUGHFAN EX14 Pro - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 1358,
+    "image": "https://www.proshop.se/Images/600x800/3277968_48dcf246cc34.jpg",
+    "ean": "4713227539401",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547204345",
+    "category": "chassifan",
+    "name": "NZXT F140Q V2 Quiet Airflow - Chassi fläkt - 140mm - Vit",
+    "brand": "NZXT",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/3276100_7bed8383c214.png",
+    "ean": "5056547204345",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -74896,6 +85490,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4711475641358",
+    "category": "chassifan",
+    "name": "Thermaltake CT140 EX ARGB Sync - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 848,
+    "image": "https://www.proshop.se/Images/600x800/3273450_5bce087f1886.jpg",
+    "ean": "4711475641358",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4711475641181",
     "category": "cooling",
     "name": "Thermaltake TOUGHLIQUID 420 EX Pro ARGB - CPU Vattenkylare",
@@ -74935,6 +85546,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-5056547204338",
+    "category": "chassifan",
+    "name": "NZXT F140Q V2 Quiet Airflow - Chassi fläkt - 140mm - Svart - 25 dBA",
+    "brand": "NZXT",
+    "price": 203,
+    "image": "https://www.proshop.se/Images/600x800/3267161_cc9cb9621240.png",
+    "ean": "5056547204338",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-0753263078391",
     "category": "psu",
     "name": "Chieftec ATMOS Series CPX-750FC - power supply - 750 Watt Strömförsörjning - 750 Watt - 120 mm - ATX 3.0 - 80 Plus Gold certificate",
@@ -74965,6 +85593,24 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213704205",
+    "category": "chassifan",
+    "name": "Arctic P8 Silent (Black) - 5 Pack - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 184,
+    "image": "https://www.proshop.se/Images/600x800/3263344_04173c285aaa.jpg",
+    "ean": "4895213704205",
+    "specs": [
+      "80 mm",
+      "5-pack"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Antal": "5",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -75010,6 +85656,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003038",
+    "category": "chassifan",
+    "name": "Phanteks PH-F120D30 - case fan - reverse - Chassi fläkt - 120mm - Svart",
+    "brand": "Phanteks",
+    "price": 388,
+    "image": "https://www.proshop.se/Images/600x800/3262013_11175be51d98.jpg",
+    "ean": "886523003038",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -75085,6 +85747,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-886523003311",
+    "category": "chassifan",
+    "name": "Phanteks PH-F140D30 - case fan - reverse - Chassi fläkt - 140mm - Vit",
+    "brand": "Phanteks",
+    "price": 1089,
+    "image": "https://www.proshop.se/Images/600x800/3255822_5d63a5b1184e.jpg",
+    "ean": "886523003311",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4713157727923",
     "category": "psu",
     "name": "Enermax Revolution D.F.12 ETV850G Strömförsörjning - 850 Watt - 100 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -75130,6 +85808,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387297438",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 - Chassi fläkt - 120mm - Vit - 29 dBA",
+    "brand": "ASUS",
+    "price": 253,
+    "image": "https://www.proshop.se/Images/600x800/3254009_e60640fb8a8f.png",
+    "ean": "4711387297438",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -75200,6 +85895,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052191064",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 - Chassi fläkt - 120mm - Vit - 31 dBA",
+    "brand": "be quiet!",
+    "price": 298,
+    "image": "https://www.proshop.se/Images/600x800/3251483_1e3ecdb9f6e8.jpg",
+    "ean": "4260052191064",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4711387414576",
     "category": "cooling",
     "name": "ASUS ROG STRIX LC III 360 - Black - CPU Vattenkylare - Max 36 dBA",
@@ -75218,6 +85930,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710679815367",
+    "category": "chassifan",
+    "name": "SilverStone Air Penetrator 120SK ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "SilverStone",
+    "price": 385,
+    "image": "https://www.proshop.se/Images/600x800/3248018_b2f71dbef30b.jpg",
+    "ean": "4710679815367",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-4711387406274",
     "category": "case",
     "name": "ASUS A21 PLUS - Chassi - Miditower - Svart",
@@ -75230,6 +85959,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680833",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 320,
+    "image": "https://www.proshop.se/Images/600x800/3242213_e4c3672f56c4.png",
+    "ean": "0840006680833",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -75279,6 +86025,72 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Kapacitet": "8 TB"
+    }
+  },
+  {
+    "id": "feed-chassifan-nutanixcasefanch",
+    "category": "chassifan",
+    "name": "Nutanix - case fan - Chassi fläkt - 80mm",
+    "brand": "Nutanix",
+    "price": 1127,
+    "ean": null,
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191002",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 140mm PWM high-speed White - Chassi fläkt - 120mm - Vit - 32 dBA",
+    "brand": "be quiet!",
+    "price": 168,
+    "image": "https://www.proshop.se/Images/600x800/3238050_b1d61ad6cdc4.jpg",
+    "ean": "4260052191002",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190999",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 140mm PWM White - Chassi fläkt - 120mm - Vit - 26 dBA",
+    "brand": "be quiet!",
+    "price": 168,
+    "image": "https://www.proshop.se/Images/600x800/3238047_8e9cc70a759c.jpg",
+    "ean": "4260052190999",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190975",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 120mm PWM White - Chassi fläkt - 120mm - Vit - 26 dBA",
+    "brand": "be quiet!",
+    "price": 157,
+    "image": "https://www.proshop.se/Images/600x800/3238041_560f9185f238.jpg",
+    "ean": "4260052190975",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -75418,6 +86230,40 @@ export const FEED_CATALOG_ITEMS = [
     "gpuModel": "Lenovo RTX 5000 Ada - 32GB GDDR6 RAM - Grafikkort"
   },
   {
+    "id": "feed-chassifan-4250197138246",
+    "category": "chassifan",
+    "name": "Alphacool Apex Stealth Metal - 2000 RPM - Black - Chassi fläkt - 120mm - Silver - 40 dBA",
+    "brand": "Alphacool",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3221717_886ac248b7fe.jpg",
+    "ean": "4250197138246",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "40 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4250197138192",
+    "category": "chassifan",
+    "name": "Alphacool Apex Stealth Metal - 2000 RPM - Black - Chassi fläkt - 120mm - Svart - 30 dBA",
+    "brand": "Alphacool",
+    "price": 377,
+    "image": "https://www.proshop.se/Images/600x800/3221708_1ebd7a3b0ed8.jpg",
+    "ean": "4250197138192",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4710562741940",
     "category": "case",
     "name": "Montech King 95 - White - Chassi - Miditower - Vit",
@@ -75511,6 +86357,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895213704281",
+    "category": "chassifan",
+    "name": "Arctic Server Fan S8038-7K - Chassi fläkt - 80mm - Svart",
+    "brand": "Arctic",
+    "price": 224,
+    "image": "https://www.proshop.se/Images/600x800/3216233_57dbe8b1cc69.jpg",
+    "ean": "4895213704281",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-5999094005419",
     "category": "psu",
     "name": "Kolink Regulator 1000W ATX 3.0 Strömförsörjning - 1000 Watt - 120 mm - ATX 3.0 - 80 Plus Gold certificate",
@@ -75526,6 +86388,39 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1000 W",
       "Certifiering": "80 Plus Gold",
       "ATX-standard": "ATX 3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-5903018667225",
+    "category": "chassifan",
+    "name": "ENDORFY Zephyr 120 - Chassi fläkt - 120mm - Svart",
+    "brand": "ENDORFY",
+    "price": 113,
+    "image": "https://www.proshop.se/Images/600x800/3209766_a842fd365d14.jpg",
+    "ean": "5903018667225",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227539364",
+    "category": "chassifan",
+    "name": "Thermaltake SWAFAN EX14 ARGB - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 1209,
+    "image": "https://www.proshop.se/Images/600x800/3209244_316e622cd2dc.jpg",
+    "ean": "4713227539364",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -75562,6 +86457,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052190791",
+    "category": "chassifan",
+    "name": "be quiet! Pure Wings 3 140mm - Chassi fläkt - 140mm - Svart - 22 dBA",
+    "brand": "be quiet!",
+    "price": 245,
+    "image": "https://www.proshop.se/Images/600x800/3207818_de402c60b8e6.jpg",
+    "ean": "4260052190791",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -75753,6 +86665,23 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-networkcard-0675901877053",
+    "category": "networkcard",
+    "name": "Intel Killer AX1675 Wi-Fi 6E 2x2 R2 + BT 5.3 / M.2 2230 / Without vPro",
+    "brand": "Intel",
+    "price": 278,
+    "image": "https://www.proshop.se/Images/600x800/3200163_6eeccf165333.jpg",
+    "ean": "0675901877053",
+    "specs": [
+      "Wi-Fi 6",
+      "M.2"
+    ],
+    "details": {
+      "Fack": "M.2",
+      "Wi-Fi": "6"
+    }
   },
   {
     "id": "feed-ram-740617337426",
@@ -76010,6 +86939,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4713227539371",
+    "category": "chassifan",
+    "name": "Thermaltake SWAFAN EX12 ARGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Thermaltake",
+    "price": 1245,
+    "image": "https://www.proshop.se/Images/600x800/3193769_b711be05465e.jpg",
+    "ean": "4713227539371",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0840006676737",
     "category": "ram",
     "name": "Corsair Vengeance DDR5-5600 - 128GB - CL40 - Quad Channel (4 pcs) - Intel XMP - Svart",
@@ -76198,6 +87144,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-5903018665979",
+    "category": "chassifan",
+    "name": "ENDORFY Fluctus 140 PWM ARGB - case fan - Chassi fläkt - 140mm - Svart",
+    "brand": "ENDORFY",
+    "price": 248,
+    "image": "https://www.proshop.se/Images/600x800/3185344_95abed848d70.jpg",
+    "ean": "5903018665979",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -76455,6 +87418,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710679551616",
+    "category": "chassifan",
+    "name": "Akasa Alucia SC AK-FN117 - case fan - Chassi fläkt - 120mm - Blå",
+    "brand": "Akasa",
+    "price": 527,
+    "image": "https://www.proshop.se/Images/600x800/3165972_326e3b7010f8.jpg",
+    "ean": "4710679551616",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0740617335743",
     "category": "ram",
     "name": "Kingston FURY Impact DDR5-6400 - 32GB - CL38 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -76537,6 +87516,57 @@ export const FEED_CATALOG_ITEMS = [
       "Kapacitet": "500 GB",
       "Gränssnitt": "NVMe",
       "PCIe": "3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227536363",
+    "category": "chassifan",
+    "name": "Thermaltake CT140 ARGB Sync - Chassi fläkt - 140mm - Vit",
+    "brand": "Thermaltake",
+    "price": 524,
+    "image": "https://www.proshop.se/Images/600x800/3157657_52cb20925f3e.jpg",
+    "ean": "4713227536363",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227536356",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 ARGB Sync - Chassi fläkt - 120mm - Vit",
+    "brand": "Thermaltake",
+    "price": 421,
+    "image": "https://www.proshop.se/Images/600x800/3157654_306168f4802a.jpg",
+    "ean": "4713227536356",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227536325",
+    "category": "chassifan",
+    "name": "Thermaltake CT140 ARGB Sync - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 421,
+    "image": "https://www.proshop.se/Images/600x800/3157653_60b36c1a3f29.jpg",
+    "ean": "4713227536325",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -76921,6 +87951,58 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "4"
     },
     "ramType": "DDR5"
+  },
+  {
+    "id": "feed-networkcard-672042110810",
+    "category": "networkcard",
+    "name": "Supermicro AOC-CGP-I2 - network adapter - PCIe 2.1 x4 - Gigabit Ethernet x 2",
+    "brand": "Supermicro",
+    "price": 1147,
+    "image": "https://www.proshop.se/Images/600x800/3140071_de09e7a35d55.jpg",
+    "ean": "672042110810",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
+    }
+  },
+  {
+    "id": "feed-chassifan-5056547200866",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB DUO - White - Chassi fläkt - 120mm - Vit - 29 dBA",
+    "brand": "NZXT",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3139872_d7b2ebf50d9a.png",
+    "ean": "5056547200866",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044953502958",
+    "category": "chassifan",
+    "name": "Xilence Performance A+ Series XPF120.W.ARGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Xilence",
+    "price": 101,
+    "image": "https://www.proshop.se/Images/600x800/3134398_a6abd8024e2c.jpg",
+    "ean": "4044953502958",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-ram-0840006600879",
@@ -77497,6 +88579,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710713235748",
+    "category": "chassifan",
+    "name": "Chieftec AF-0625S - Chassi fläkt - 60mm - Svart",
+    "brand": "Chieftec",
+    "price": 78,
+    "image": "https://www.proshop.se/Images/600x800/3087264_8fcf4c9cf80a.jpg",
+    "ean": "4710713235748",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-0761345109130",
     "category": "cooling",
     "name": "Antec A400i - processor cooler - CPU Luftkylare",
@@ -77509,6 +88607,54 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710679551449",
+    "category": "chassifan",
+    "name": "Akasa Soho AR - Chassi fläkt - 120mm - Svart",
+    "brand": "Akasa",
+    "price": 238,
+    "image": "https://www.proshop.se/Images/600x800/3084030_abb3b61a0e42.jpg",
+    "ean": "4710679551449",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710614538962",
+    "category": "chassifan",
+    "name": "Akasa Vegas TLY - Chassi fläkt - 140mm - Svart",
+    "brand": "Akasa",
+    "price": 224,
+    "image": "https://www.proshop.se/Images/600x800/3083936_10dbadba6a4a.jpg",
+    "ean": "4710614538962",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711103080627",
+    "category": "chassifan",
+    "name": "QNAP Fan 120x120x25mm 12V 4PIN 2200 RPM - Chassi fläkt - 120mm - Svart",
+    "brand": "QNAP",
+    "price": 270,
+    "image": "https://www.proshop.se/Images/600x800/3080110_eda49a91bd29.jpg",
+    "ean": "4711103080627",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -77528,6 +88674,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710679811390",
+    "category": "chassifan",
+    "name": "SilverStone Air Penetrator 140i ARGB - Chassi fläkt - 140mm - Svart",
+    "brand": "SilverStone",
+    "price": 313,
+    "image": "https://www.proshop.se/Images/600x800/3077004_3a4d916a81d1.jpg",
+    "ean": "4710679811390",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-4711085937841",
     "category": "storage",
     "name": "A-Data Legend 710 SSD - 1TB - M.2 2280 (80mm) PCIe 3.0",
@@ -77544,6 +88707,24 @@ export const FEED_CATALOG_ITEMS = [
       "Kapacitet": "1 TB",
       "Gränssnitt": "NVMe",
       "PCIe": "3.0"
+    }
+  },
+  {
+    "id": "feed-chassifan-5060301699889",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB - Black - Chassi fläkt - 140mm - Svart med RGB LED - 33 dBA",
+    "brand": "NZXT",
+    "price": 200,
+    "image": "https://www.proshop.se/Images/600x800/3076043_96993bf659f2.jpg",
+    "ean": "5060301699889",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -77747,6 +88928,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4260455647489",
+    "category": "chassifan",
+    "name": "Inter-Tech Lüfter 120*120*38 IPC Fan Set 3xLüfter - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 301,
+    "image": "https://www.proshop.se/Images/600x800/3032493_040a3a2e776c.jpg",
+    "ean": "4260455647489",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4713294230829",
     "category": "ram",
     "name": "G.Skill Trident Z5 DDR5-5600 - 32GB - CL36 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -77845,6 +89042,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-8886419337898",
+    "category": "chassifan",
+    "name": "Razer Kunai Chroma 140mm - 3 pack - Chassi fläkt - 140mm - Svart - 30 dBA",
+    "brand": "Razer",
+    "price": 2098,
+    "image": "https://www.proshop.se/Images/600x800/3025040_c01228e43731.jpg",
+    "ean": "8886419337898",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0740617325713",
     "category": "ram",
     "name": "Kingston FURY Beast DDR5-5600 - 16GB - CL40 - Single Channel (1 pcs) - Intel XMP - Svart",
@@ -77899,6 +89115,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951034314",
+    "category": "chassifan",
+    "name": "Sharkoon SHARK Disc PWM - Chassi fläkt - 120mm - Vit",
+    "brand": "Sharkoon",
+    "price": 167,
+    "image": "https://www.proshop.se/Images/600x800/3014114_91b57574a59a.jpg",
+    "ean": "4044951034314",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -78037,6 +89269,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-7340172700197",
+    "category": "chassifan",
+    "name": "Fractal Design Venturi Series HF-14 - Chassi fläkt - 140mm - Vit",
+    "brand": "Fractal Design",
+    "price": 241,
+    "image": "https://www.proshop.se/Images/600x800/2991407_6cffbc0b3b81.jpg",
+    "ean": "7340172700197",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4713224523649",
     "category": "psu",
     "name": "FSP 720-20RAB Strömförsörjning - 720 Watt - ATX - 80 Plus Gold certificate",
@@ -78149,6 +89397,22 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "500 W",
       "Certifiering": "80 Plus Bronze",
       "ATX-standard": "ATX 2.4"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044953500930",
+    "category": "chassifan",
+    "name": "Xilence Performance C Series XPF120.TR - Chassi fläkt - 120mm - Röd",
+    "brand": "Xilence",
+    "price": 113,
+    "image": "https://www.proshop.se/Images/600x800/2970016_293877a20ad4.jpg",
+    "ean": "4044953500930",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -78291,6 +89555,23 @@ export const FEED_CATALOG_ITEMS = [
       "Hastighet": "3200 MHz"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4250280386998",
+    "category": "chassifan",
+    "name": "Alpenföhn Wing Boost 3 ARGB High Speed - Chassi fläkt - 120mm - Vit",
+    "brand": "Alpenföhn",
+    "price": 469,
+    "image": "https://www.proshop.se/Images/600x800/2922183_88bd833cab2b.jpg",
+    "ean": "4250280386998",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
   },
   {
     "id": "feed-storage-4711174724130",
@@ -78553,6 +89834,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260455644914",
+    "category": "chassifan",
+    "name": "Inter-Tech Lüfter 120*120*25 IPC Fan Set 3xLüfter - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 178,
+    "image": "https://www.proshop.se/Images/600x800/2865533_fdc23a296b55.jpg",
+    "ean": "4260455644914",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-motherboard-672042414321",
     "category": "motherboard",
     "name": "Supermicro X12SAE Moderkort - Intel W480 - Intel LGA1200 - DDR4 RAM - ATX",
@@ -78605,6 +89902,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713213516157",
+    "category": "chassifan",
+    "name": "QNAP 80X80X25MM FAN 12V 4PIN - Chassi fläkt - 80mm - Svart",
+    "brand": "QNAP",
+    "price": 230,
+    "image": "https://www.proshop.se/Images/600x800/2854738_988faafa4c15.jpg",
+    "ean": "4713213516157",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -78697,6 +90010,57 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702195",
+    "category": "chassifan",
+    "name": "Arctic BioniX P120 - Grey/White - Chassi fläkt - 120mm - Vit - 24 dBA",
+    "brand": "Arctic",
+    "price": 158,
+    "image": "https://www.proshop.se/Images/600x800/2828221_5c5a8059af8b.jpg",
+    "ean": "4895213702195",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213701990",
+    "category": "chassifan",
+    "name": "Arctic P8 - Chassi fläkt - 80mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 77,
+    "image": "https://www.proshop.se/Images/600x800/2828183_d2f0987ea1d4.jpg",
+    "ean": "4895213701990",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702003",
+    "category": "chassifan",
+    "name": "Arctic P8 Silent - Chassi fläkt - 80mm - Svart - 17 dBA",
+    "brand": "Arctic",
+    "price": 77,
+    "image": "https://www.proshop.se/Images/600x800/2828175_b788d5e55fc3.jpg",
+    "ean": "4895213702003",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -79413,6 +90777,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100372",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 ULN - Chassi fläkt - 120mm - Brun - 12 dBA",
+    "brand": "Noctua",
+    "price": 358,
+    "image": "https://www.proshop.se/Images/600x800/2662219_03d086a0cf6f.png",
+    "ean": "9010018100372",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "12 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0760557841722",
     "category": "storage",
     "name": "Transcend 110S SSD - 128GB - PCIe 3.0 - M.2 2280",
@@ -79828,6 +91209,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4250051901306",
+    "category": "chassifan",
+    "name": "Blacknoise BlackSilentFan X-1 - Chassi fläkt - 80mm - Svart med blåa vingar - 10 dBA",
+    "brand": "Blacknoise",
+    "price": 135,
+    "image": "https://www.proshop.se/Images/600x800/2518043_8b97548c1c2b.jpg",
+    "ean": "4250051901306",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "10 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4250051904055",
+    "category": "chassifan",
+    "name": "Blacknoise Multiframe M8-S3 HS - Chassi fläkt - 80mm - Svart med vita vingar - 19 dBA",
+    "brand": "Blacknoise",
+    "price": 206,
+    "image": "https://www.proshop.se/Images/600x800/2517918_62eb09fa223d.jpg",
+    "ean": "4250051904055",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4716123315681",
     "category": "cooling",
     "name": "Noctua NH-D15S - CPU Luftkylare - Max 25 dBA",
@@ -80098,6 +91513,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4716123315278",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-P14r - lådfläkt - Chassi fläkt - 140mm - Grå - 25 dBA",
+    "brand": "Noctua",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/2449116_dca2611e1c98.jpg",
+    "ean": "4716123315278",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "25 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-883436308694",
     "category": "storage",
     "name": "IBM harddisk - 900GB - Hårddisk - 00W1236 - SAS2 - 2,5&quot;",
@@ -80242,6 +91674,70 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0065030789011",
+    "category": "chassifan",
+    "name": "StarTech.com 60x25mm högt luftflöde med dubbla kullager Computer Case Fan w / TX3 - Chassi fläkt - 60mm",
+    "brand": "StarTech.com",
+    "price": 253,
+    "image": "https://www.proshop.se/Images/600x800/2292620_050b447984bc.jpg",
+    "ean": "0065030789011",
+    "specs": [
+      "60 mm"
+    ],
+    "details": {
+      "Storlek": "60 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030788885",
+    "category": "chassifan",
+    "name": "StarTech.com 80x25mm kullager Tyst Computer Case Fan w / TX3-kontakt - Chassi fläkt - 80mm - Svart",
+    "brand": "StarTech.com",
+    "price": 178,
+    "image": "https://www.proshop.se/Images/600x800/2292606_e71dcb9cf422.jpg",
+    "ean": "0065030788885",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030783446",
+    "category": "chassifan",
+    "name": "StarTech.com 120x25mm med dubbla kullager Computer Case Fan w / LP4 Connector - Chassi fläkt - 120mm - Svart",
+    "brand": "StarTech.com",
+    "price": 297,
+    "image": "https://www.proshop.se/Images/600x800/2292587_b83e34648d65.jpg",
+    "ean": "0065030783446",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030788953",
+    "category": "chassifan",
+    "name": "StarTech.com 92x25mm kullager Tyst Computer Case Fan w / TX3-kontakt - Chassi fläkt - 92mm - Svart",
+    "brand": "StarTech.com",
+    "price": 116,
+    "image": "https://www.proshop.se/Images/600x800/2292546_844e372d414a.jpg",
+    "ean": "0065030788953",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-5704327462620",
     "category": "storage",
     "name": "HP - 500GB - Hårddisk - 395501-002 - SATA-150 - 3,5&quot;",
@@ -80273,6 +91769,148 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "750 GB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440428848",
+    "category": "chassifan",
+    "name": "Corsair RS120 II ARGB - Chassi fläkt - 120mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 266,
+    "image": "https://www.proshop.se/Images/600x800/3519605_578e14db6a63.jpg",
+    "ean": "0840440428848",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440431480",
+    "category": "chassifan",
+    "name": "Corsair RS140 II ARGB - Chassi fläkt - 140mm - Svart m. tvåfärgat led-ljus - 36 dBA",
+    "brand": "Corsair",
+    "price": 343,
+    "image": "https://www.proshop.se/Images/600x800/3519601_b2a8b573638e.jpg",
+    "ean": "0840440431480",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440431497",
+    "category": "chassifan",
+    "name": "Corsair RS140 II ARGB White - Chassi fläkt - 140mm - Vit med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 343,
+    "image": "https://www.proshop.se/Images/600x800/3519600_36a6c7eb1f84.jpg",
+    "ean": "0840440431497",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440428886",
+    "category": "chassifan",
+    "name": "Corsair RS120 II 120mm Fan Single Pack - Chassi fläkt - 120mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 178,
+    "image": "https://www.proshop.se/Images/600x800/3519599_3487394299f0.jpg",
+    "ean": "0840440428886",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440428893",
+    "category": "chassifan",
+    "name": "Corsair RS360 II Unified Frame - Chassi fläkt - 120mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 420,
+    "image": "https://www.proshop.se/Images/600x800/3519598_c9ec3e36da71.jpg",
+    "ean": "0840440428893",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440431503",
+    "category": "chassifan",
+    "name": "Corsair RS140 II 140mm - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 266,
+    "image": "https://www.proshop.se/Images/600x800/3519597_5ed28ccbfdb3.jpg",
+    "ean": "0840440431503",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636413138",
+    "category": "chassifan",
+    "name": "ASUS ROG Eurux GR120 Reverse - Chassi fläkt - 120mm - Vit med RGB LED - 32 dBA",
+    "brand": "ASUS",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3519494_e5f5a258225a.png",
+    "ean": "4711636413138",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636412964",
+    "category": "chassifan",
+    "name": "ASUS ROG Eurux GR120 - Chassi fläkt - 120mm - Vit med RGB LED - 33 dBA",
+    "brand": "ASUS",
+    "price": 393,
+    "image": "https://www.proshop.se/Images/600x800/3519430_b085f13b579d.png",
+    "ean": "4711636412964",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -80386,6 +92024,274 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4718466023315",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 Reversed - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 259,
+    "image": "https://www.proshop.se/Images/600x800/3518475_5193b2c0a5b3.png",
+    "ean": "4718466023315",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023353",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SL FLEX 120 Reversed (3-pack) with controller - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 819,
+    "image": "https://www.proshop.se/Images/600x800/3518473_f977d140b0f1.png",
+    "ean": "4718466023353",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023803",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX Reverse 120 - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3518463_43891004cac2.png",
+    "ean": "4718466023803",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023797",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX Reverse 120 - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3518462_59358266de3e.png",
+    "ean": "4718466023797",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023841",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX Reverse 120 (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 639,
+    "image": "https://www.proshop.se/Images/600x800/3518458_fe734933cb12.png",
+    "ean": "4718466023841",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023834",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX Reverse 120 (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 733,
+    "image": "https://www.proshop.se/Images/600x800/3518457_bf69e73cdc25.png",
+    "ean": "4718466023834",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023827",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX 120 (3-pack) - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 639,
+    "image": "https://www.proshop.se/Images/600x800/3518454_778c0b7e4990.png",
+    "ean": "4718466023827",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023810",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX 120 (3-pack) - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 639,
+    "image": "https://www.proshop.se/Images/600x800/3518453_795361363d4e.png",
+    "ean": "4718466023810",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023773",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN CL FLEX 120 - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 199,
+    "image": "https://www.proshop.se/Images/600x800/3518444_e57707619d95.png",
+    "ean": "4718466023773",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023919",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 Reversed (3-pack) with controller - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3518421_734117a9b352.png",
+    "ean": "4718466023919",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023902",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 (3-pack) with controller - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3518416_77a803b42c15.png",
+    "ean": "4718466023902",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023896",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 (3-pack) with controller - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 1199,
+    "image": "https://www.proshop.se/Images/600x800/3518415_29f9be57c0f1.png",
+    "ean": "4718466023896",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023865",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 - Chassi fläkt - 120mm - Vit med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 379,
+    "image": "https://www.proshop.se/Images/600x800/3518413_7bbcf6279847.png",
+    "ean": "4718466023865",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718466023858",
+    "category": "chassifan",
+    "name": "Lian Li UNI FAN SLINF FLEX 120 - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Lian Li",
+    "price": 379,
+    "image": "https://www.proshop.se/Images/600x800/3518412_00d4a81a6552.png",
+    "ean": "4718466023858",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-4066733540189",
     "category": "storage",
     "name": "Fujitsu - SSD - Enterprise Mixed Use - 960 GB - SATA 6Gb/s",
@@ -80400,6 +92306,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "960 GB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-networkcard-5715328014633",
+    "category": "networkcard",
+    "name": "MicroConnect - network adapter - PCIe 2.0 x4 - Gigabit Ethernet x 2",
+    "brand": "MicroConnect",
+    "price": 622,
+    "image": "https://www.proshop.se/Images/600x800/3517141_eff051892882.jpg",
+    "ean": "5715328014633",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
     }
   },
   {
@@ -80733,6 +92656,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4044951037971",
+    "category": "chassifan",
+    "name": "Sharkoon SilentStorm BW120 - Chassi fläkt - 120mm - Svart",
+    "brand": "Sharkoon",
+    "price": 207,
+    "image": "https://www.proshop.se/Images/600x800/3512789_697d95af0d9b.jpg",
+    "ean": "4044951037971",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0760557866961",
     "category": "ram",
     "name": "Transcend JetRAM - DDR5 - module - 8 GB - DIMM 288-pin - 2800 MHz / PC5-44800 - unbuffered",
@@ -80839,6 +92778,25 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4895265001062",
+    "category": "chassifan",
+    "name": "Arctic BioniX P12 A-RGB - 3pack - Chassi fläkt - 120mm - Vit med RGB LED",
+    "brand": "Arctic",
+    "price": 402,
+    "image": "https://www.proshop.se/Images/600x800/3509380_4ba7bec22279.png",
+    "ean": "4895265001062",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-4711378429855",
     "category": "ram",
     "name": "Patriot Signature Premium Line - DDR4 - module - 8 GB - DIMM 288-pin / PC4-12800 - unbuffered",
@@ -80916,6 +92874,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Kapacitet": "12 TB"
+    }
+  },
+  {
+    "id": "feed-networkcard-4718937654604",
+    "category": "networkcard",
+    "name": "ZyXEL XGN100C - network adapter - PCIe 3.0 x2 - 10Gb Ethernet",
+    "brand": "ZyXEL",
+    "price": 1088,
+    "image": "https://www.proshop.se/Images/600x800/3500312_501d3b48c774.jpg",
+    "ean": "4718937654604",
+    "specs": [
+      "10 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "10 Gbit/s"
     }
   },
   {
@@ -81232,6 +93207,42 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840440420835",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 II RGB - Chassi fläkt - 120mm - Vit - 32 dBA",
+    "brand": "Corsair",
+    "price": 420,
+    "image": "https://www.proshop.se/Images/600x800/3482295_ae3c3def53ac.png",
+    "ean": "0840440420835",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840440420828",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX120 II RGB - Chassi fläkt - 120mm - Svart - 32 dBA",
+    "brand": "Corsair",
+    "price": 402,
+    "image": "https://www.proshop.se/Images/600x800/3482282_e4f444f7faaf.png",
+    "ean": "0840440420828",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "32 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-840440424925",
     "category": "case",
     "name": "Corsair 2800X RS-R White - Chassi - Miditower - Vit",
@@ -81436,6 +93447,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-7340172708919",
+    "category": "chassifan",
+    "name": "Fractal Design Momentum 14 RGB - Chassi fläkt - 140mm - Vit",
+    "brand": "Fractal Design",
+    "price": 311,
+    "image": "https://www.proshop.se/Images/600x800/3445969_23a81b18f972.jpg",
+    "ean": "7340172708919",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-0784847024275",
     "category": "cooling",
     "name": "Inter-Tech A-47 - CPU Luftkylare",
@@ -81502,6 +93530,41 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711636044127",
+    "category": "chassifan",
+    "name": "ASUS Prime MR120 White (3-pack) - Chassi fläkt - 120mm - Vit",
+    "brand": "ASUS",
+    "price": 566,
+    "image": "https://www.proshop.se/Images/600x800/3437100_14851c2e0a40.jpg",
+    "ean": "4711636044127",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-6977029650612",
+    "category": "chassifan",
+    "name": "Tryx ROTA SL ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Tryx",
+    "price": 299,
+    "image": "https://www.proshop.se/Images/600x800/3436320_c88bb40b34a5.jpg",
+    "ean": "6977029650612",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -81840,6 +93903,117 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-8800263650279",
+    "category": "chassifan",
+    "name": "Zalman ZM-AF120R - case fan - ARGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Zalman",
+    "price": 155,
+    "image": "https://www.proshop.se/Images/600x800/3419926_aeb25d8ed0b5.jpg",
+    "ean": "8800263650279",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-886523003571",
+    "category": "chassifan",
+    "name": "Phanteks M25 Gen2 (3-pack) - Chassi fläkt - 140mm - Vit",
+    "brand": "Phanteks",
+    "price": 432,
+    "image": "https://www.proshop.se/Images/600x800/3419661_ac3d833cddeb.jpg",
+    "ean": "886523003571",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-1220000352698",
+    "category": "chassifan",
+    "name": "HYTE FA12 FAN - (Matcha Milk / Green) 4-pack - Chassi fläkt - 120mm - Grön - 28 dBA",
+    "brand": "HYTE",
+    "price": 494,
+    "image": "https://www.proshop.se/Images/600x800/3419384_86f5a7707b32.png",
+    "ean": "1220000352698",
+    "specs": [
+      "120 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "4",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-1220000352681",
+    "category": "chassifan",
+    "name": "HYTE FA12 FAN (Taro Milk / Purple) 4-pack - Chassi fläkt - 120mm - Lila - 28 dBA",
+    "brand": "HYTE",
+    "price": 486,
+    "image": "https://www.proshop.se/Images/600x800/3419381_bbe50961387c.png",
+    "ean": "1220000352681",
+    "specs": [
+      "120 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "4",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-1220000352667",
+    "category": "chassifan",
+    "name": "HYTE FA12 FAN (Snow White) - 4-pack - Chassi fläkt - 120mm - Vit - 28 dBA",
+    "brand": "HYTE",
+    "price": 529,
+    "image": "https://www.proshop.se/Images/600x800/3419378_a55d1da5bb37.png",
+    "ean": "1220000352667",
+    "specs": [
+      "120 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "4",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-1220000352650",
+    "category": "chassifan",
+    "name": "HYTE FA12 FAN (Pitch Black) - 4-pack - Chassi fläkt - 120mm - Svart - 28 dBA",
+    "brand": "HYTE",
+    "price": 459,
+    "image": "https://www.proshop.se/Images/600x800/3419377_276396073c12.png",
+    "ean": "1220000352650",
+    "specs": [
+      "120 mm",
+      "4-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "4",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4262443281033",
     "category": "psu",
     "name": "LC Power Super Silent Modular Series LC6750M V3.1 - power supply - 750 Watt Strömförsörjning - 750 Watt - 135 mm - ATX - 80 Plus Gold certificate",
@@ -82032,6 +94206,25 @@ export const FEED_CATALOG_ITEMS = [
     "socket": "AM5"
   },
   {
+    "id": "feed-chassifan-4260052193846",
+    "category": "chassifan",
+    "name": "be quiet! PURE WINGS 3 HS 140 (3-pack) - Chassi fläkt - 140mm - Svart - 30 dBA",
+    "brand": "be quiet!",
+    "price": 443,
+    "image": "https://www.proshop.se/Images/600x800/3413875_6bdf86e22694.jpg",
+    "ean": "4260052193846",
+    "specs": [
+      "140 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4718466019264",
     "category": "psu",
     "name": "Lian Li RB 550W Strömförsörjning - 550 Watt - 135 mm - ATX 3.1 - 80 Plus Bronze certificate",
@@ -82047,6 +94240,22 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "550 W",
       "Certifiering": "80 Plus Bronze",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710679551623",
+    "category": "chassifan",
+    "name": "Akasa Alucia SC AK-FN118 - case fan - Chassi fläkt - 140mm - Blå",
+    "brand": "Akasa",
+    "price": 333,
+    "image": "https://www.proshop.se/Images/600x800/3410470_f52ad0191756.jpg",
+    "ean": "4710679551623",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -82160,6 +94369,21 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711103088982",
+    "category": "chassifan",
+    "name": "QNAP FAN-8CM-T03 - case fan - Chassi fläkt - 80mm - Svart",
+    "brand": "QNAP",
+    "price": 464,
+    "ean": "4711103088982",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -83172,6 +95396,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4044953503641",
+    "category": "chassifan",
+    "name": "Xilence XPF120G.ARGB.PWM - Chassi fläkt - 120mm - Genomsiktlig",
+    "brand": "Xilence",
+    "price": 164,
+    "ean": "4044953503641",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-psu-4713157728944",
     "category": "psu",
     "name": "Enermax CyberG II Strömförsörjning - 750 Watt - 120 mm - ATX 3.1 - 80 Plus Gold certificate",
@@ -83219,6 +95459,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "850 W",
       "Certifiering": "80 Plus Bronze"
+    }
+  },
+  {
+    "id": "feed-chassifan-0753263078650",
+    "category": "chassifan",
+    "name": "Chieftec - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "Chieftec",
+    "price": 120,
+    "image": "https://www.proshop.se/Images/600x800/3326541_74807a84eb4d.jpg",
+    "ean": "0753263078650",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -83295,6 +95551,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710343799849",
+    "category": "chassifan",
+    "name": "Darkflash Gauss G24 3-in-1 computer fans (white) - Chassi fläkt - 120mm - Vit - 33 dBA",
+    "brand": "Darkflash",
+    "price": 483,
+    "image": "https://www.proshop.se/Images/600x800/3321711_de88b2e1e361.jpg",
+    "ean": "4710343799849",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "33 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-6926170048229",
     "category": "case",
     "name": "Darkflash FT418 computer case + 6 aRGB fans (black) - Chassi - Minitower - Svart",
@@ -83322,6 +95595,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Mini tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711527000249",
+    "category": "chassifan",
+    "name": "Darkflash DR08 Cooling Fan (Black) - Chassi fläkt - 120mm - Svart - 30 dBA",
+    "brand": "Darkflash",
+    "price": 119,
+    "image": "https://www.proshop.se/Images/600x800/3320336_8b3b0c0338d3.jpg",
+    "ean": "4711527000249",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -83968,6 +96258,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4710343793465",
+    "category": "chassifan",
+    "name": "Darkflash Computer Fan CL12 LED (120x120) - Chassi fläkt - 120mm - Svart - 26 dBA",
+    "brand": "Darkflash",
+    "price": 101,
+    "image": "https://www.proshop.se/Images/600x800/3308728_45c3e7fe33ae.jpg",
+    "ean": "4710343793465",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "26 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4710343794141",
     "category": "case",
     "name": "Darkflash DK352 Plus computer case + 4 fans (black and white) - Chassi",
@@ -83977,6 +96284,23 @@ export const FEED_CATALOG_ITEMS = [
     "ean": "4710343794141",
     "specs": [],
     "details": {}
+  },
+  {
+    "id": "feed-networkcard-0065030911023",
+    "category": "networkcard",
+    "name": "StarTech.com 1-Port Gigabit PCIe Network Adapter Card TAA Compliant - network adapter - PCIe - Gigabit Ethernet x 1 - TAA Compliant",
+    "brand": "StarTech.com",
+    "price": 393,
+    "image": "https://www.proshop.se/Images/600x800/3306635_5f08e8b039c3.jpg",
+    "ean": "0065030911023",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
+    }
   },
   {
     "id": "feed-case-4711475645257",
@@ -84286,6 +96610,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006688686",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK LX120-R - Chassi fläkt - 120mm - Svart - 37 dBA",
+    "brand": "Corsair",
+    "price": 415,
+    "image": "https://www.proshop.se/Images/600x800/3293485_552d64973f20.png",
+    "ean": "0840006688686",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "37 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -84883,6 +97224,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006684237",
+    "category": "chassifan",
+    "name": "Corsair RS140 - dual-pack - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 394,
+    "image": "https://www.proshop.se/Images/600x800/3266877_57845d808ae6.png",
+    "ean": "0840006684237",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006684220",
+    "category": "chassifan",
+    "name": "Corsair RS140 - Chassi fläkt - 140mm - Svart - 36 dBA",
+    "brand": "Corsair",
+    "price": 247,
+    "image": "https://www.proshop.se/Images/600x800/3266873_e35d88c9866a.png",
+    "ean": "0840006684220",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-0840006674986",
     "category": "case",
     "name": "Corsair iCUE LINK 2500X RGB - Chassi - Tower - Svart",
@@ -85290,6 +97665,42 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4711387297513",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 3-pack - Chassi fläkt - 120mm - Vit - 29 dBA",
+    "brand": "ASUS",
+    "price": 750,
+    "image": "https://www.proshop.se/Images/600x800/3254008_b29cf8afe64f.png",
+    "ean": "4711387297513",
+    "specs": [
+      "120 mm",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Antal": "3",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711387543474",
+    "category": "chassifan",
+    "name": "ASUS TUF GAMING TR120 REVERSE - Chassi fläkt - 120mm - Vit - 29 dBA",
+    "brand": "ASUS",
+    "price": 237,
+    "image": "https://www.proshop.se/Images/600x800/3254005_f8dd861d5858.png",
+    "ean": "4711387543474",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-0740617342987",
     "category": "ram",
     "name": "Kingston FURY Beast RGB DDR5-6400 - 32GB - CL32 - Single Channel (1 pcs) - AMD EXPO &amp; Intel XMP - Vit med RGB",
@@ -85470,6 +97881,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052191088",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 High Speed - Chassi fläkt - 140mm - Vit - 29 dBA",
+    "brand": "be quiet!",
+    "price": 417,
+    "image": "https://www.proshop.se/Images/600x800/3250915_8bf6caf8551a.jpg",
+    "ean": "4260052191088",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052191101",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings pro 4 - Chassi fläkt - 140mm - Vit - 36 dBA",
+    "brand": "be quiet!",
+    "price": 408,
+    "image": "https://www.proshop.se/Images/600x800/3250905_9e96c4fbfc91.jpg",
+    "ean": "4260052191101",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0718037899923",
     "category": "storage",
     "name": "WD Gold - 6TB - Hårddisk - WD6004FRYZ - SATA-600 - 3,5&quot;",
@@ -85634,6 +98079,44 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-0840006680864",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 2-pack - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 653,
+    "image": "https://www.proshop.se/Images/600x800/3242216_b4a513b6c859.png",
+    "ean": "0840006680864",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0840006680857",
+    "category": "chassifan",
+    "name": "Corsair iCUE LINK RX140 - Chassi fläkt - 140mm - Svart med RGB LED - 36 dBA",
+    "brand": "Corsair",
+    "price": 378,
+    "image": "https://www.proshop.se/Images/600x800/3242215_d48fe1245064.png",
+    "ean": "0840006680857",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "36 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-storage-0840006675174",
     "category": "storage",
     "name": "Corsair MP700 Pro HydroX SSD - 4TB - M.2 2280 - PCIe 5.0",
@@ -85759,6 +98242,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "4 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-networkcard-0065030906203",
+    "category": "networkcard",
+    "name": "StarTech.com PR12GI-NETWORK-CARD 1-Port 2.5Gbps NBASE-T PCIe Network Card Intel I225-V",
+    "brand": "StarTech.com",
+    "price": 643,
+    "image": "https://www.proshop.se/Images/600x800/3239382_0abb9e27235b.jpg",
+    "ean": "0065030906203",
+    "specs": [
+      "2.5 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "2.5 Gbit/s"
     }
   },
   {
@@ -86198,6 +98698,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4250197138567",
+    "category": "chassifan",
+    "name": "Alphacool Apex Stealth Metal - 2000 RPM - Black - Chassi fläkt - 120mm - Guld - 40 dBA",
+    "brand": "Alphacool",
+    "price": 377,
+    "image": "https://www.proshop.se/Images/600x800/3221718_c15d932e5db4.jpg",
+    "ean": "4250197138567",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "40 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4250197138239",
+    "category": "chassifan",
+    "name": "Alphacool Apex Stealth Metal - 2000 RPM - Black - Chassi fläkt - 120mm - Svart - 40 dBA",
+    "brand": "Alphacool",
+    "price": 399,
+    "image": "https://www.proshop.se/Images/600x800/3221716_d4bacbae13bb.jpg",
+    "ean": "4250197138239",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "40 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4710562747942",
     "category": "case",
     "name": "Montech King 95 Pro - Red - Chassi - Miditower - Röd",
@@ -86539,6 +99073,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4713227539388",
+    "category": "chassifan",
+    "name": "Thermaltake SWAFAN EX14 ARGB - Chassi fläkt - 140mm - Vit",
+    "brand": "Thermaltake",
+    "price": 1328,
+    "image": "https://www.proshop.se/Images/600x800/3208765_71bdf5edd9c2.jpg",
+    "ean": "4713227539388",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-cooling-4713227537940",
     "category": "cooling",
     "name": "Thermaltake TH360 V2 Ultra ARGB Sync - CPU Luftkylare",
@@ -86581,6 +99132,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4719867045548",
+    "category": "chassifan",
+    "name": "AZZA Hurricane II - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "AZZA",
+    "price": 923,
+    "image": "https://www.proshop.se/Images/600x800/3208708_1b15b1488b0e.jpg",
+    "ean": "4719867045548",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -87181,6 +99748,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4713227531061",
+    "category": "chassifan",
+    "name": "Thermaltake TOUGHFAN 14 RGB - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 1375,
+    "image": "https://www.proshop.se/Images/600x800/3189346_8edd4d913259.jpg",
+    "ean": "4713227531061",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0840006666134",
     "category": "ram",
     "name": "Corsair Vengeance DDR5-6600 - 32GB - CL38 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -87312,6 +99896,39 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-5903018665955",
+    "category": "chassifan",
+    "name": "ENDORFY Fluctus 120 PWM ARGB - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "ENDORFY",
+    "price": 212,
+    "image": "https://www.proshop.se/Images/600x800/3185352_56341b8cc6a1.jpg",
+    "ean": "5903018665955",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5903018665962",
+    "category": "chassifan",
+    "name": "ENDORFY Fluctus 140 PWM - case fan - Chassi fläkt - 140mm - Svart",
+    "brand": "ENDORFY",
+    "price": 193,
+    "image": "https://www.proshop.se/Images/600x800/3185337_dd3962b2ad3e.jpg",
+    "ean": "5903018665962",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -88039,6 +100656,54 @@ export const FEED_CATALOG_ITEMS = [
       "Typ": "Vattenkylning",
       "Storlek": "240 mm",
       "Ljudnivå": "37 dBA"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227536332",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 - Chassi fläkt - 120mm - Vit",
+    "brand": "Thermaltake",
+    "price": 308,
+    "image": "https://www.proshop.se/Images/600x800/3157650_91e97a137bc7.jpg",
+    "ean": "4713227536332",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227536301",
+    "category": "chassifan",
+    "name": "Thermaltake CT140 - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 394,
+    "image": "https://www.proshop.se/Images/600x800/3157649_c25822570519.jpg",
+    "ean": "4713227536301",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227536295",
+    "category": "chassifan",
+    "name": "Thermaltake CT120 - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 315,
+    "image": "https://www.proshop.se/Images/600x800/3157648_479312b044f6.jpg",
+    "ean": "4713227536295",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -89586,6 +102251,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-4719331803513",
+    "category": "networkcard",
+    "name": "GIGABYTE GC-WB1733D-I / PCIe NIC AC WLAN &amp; Bluetooth",
+    "brand": "GIGABYTE",
+    "price": 311,
+    "image": "https://www.proshop.se/Images/600x800/3100481_d098747ce748.jpg",
+    "ean": "4719331803513",
+    "specs": [
+      "Wi-Fi",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe"
+    }
+  },
+  {
     "id": "feed-cooling-6933412727477",
     "category": "cooling",
     "name": "DeepCool LS720 - Black - CPU Vattenkylare - Max 33 dBA",
@@ -89730,6 +102411,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052188866",
+    "category": "chassifan",
+    "name": "be quiet! Silent Wings 4 120 High-Speed - Chassi fläkt - 120mm - Svart - 31 dBA",
+    "brand": "be quiet!",
+    "price": 279,
+    "image": "https://www.proshop.se/Images/600x800/3090509_48f56ee75075.jpg",
+    "ean": "4260052188866",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4712839551931",
     "category": "case",
     "name": "AZZA Elise - Chassi - Tower - Transparent",
@@ -89757,6 +102455,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-networkcard-4260455647755",
+    "category": "networkcard",
+    "name": "Inter-Tech DMG-36 Wi-Fi 6E + BT 5.2 PCIe adapter - 5400Mbps",
+    "brand": "Inter-Tech",
+    "price": 527,
+    "image": "https://www.proshop.se/Images/600x800/3085747_5bb2b1f08b34.jpg",
+    "ean": "4260455647755",
+    "specs": [
+      "Wi-Fi 6",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "6"
     }
   },
   {
@@ -89795,6 +102510,38 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR4"
   },
   {
+    "id": "feed-chassifan-4710614526884",
+    "category": "chassifan",
+    "name": "Akasa AK 174BKT-B - Chassi fläkt - 120mm - Svart",
+    "brand": "Akasa",
+    "price": 302,
+    "image": "https://www.proshop.se/Images/600x800/3083939_10d6280d6932.jpg",
+    "ean": "4710614526884",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710679551272",
+    "category": "chassifan",
+    "name": "Akasa OTTO SC12 - Chassi fläkt - 120mm - Grå",
+    "brand": "Akasa",
+    "price": 389,
+    "image": "https://www.proshop.se/Images/600x800/3083926_3951909c107a.jpg",
+    "ean": "4710679551272",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-cooling-4710679814667",
     "category": "cooling",
     "name": "SilverStone NT09-1700 - CPU Luftkylare",
@@ -89807,6 +102554,39 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Luftkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951026876",
+    "category": "chassifan",
+    "name": "Sharkoon SHARK Blades RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Sharkoon",
+    "price": 204,
+    "image": "https://www.proshop.se/Images/600x800/3083066_1506209b44ac.jpg",
+    "ean": "4044951026876",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-6933412710424",
+    "category": "chassifan",
+    "name": "DeepCool RF 120 W - Chassi fläkt - 120mm - Vit",
+    "brand": "DeepCool",
+    "price": 180,
+    "image": "https://www.proshop.se/Images/600x800/3082532_53d2ddb61aeb.jpg",
+    "ean": "6933412710424",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -89844,6 +102624,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4250051906257",
+    "category": "chassifan",
+    "name": "Blacknoise Noiseblocker BlackSilentPRO PL-1 - Chassi fläkt - 120mm - Svart",
+    "brand": "Blacknoise",
+    "price": 235,
+    "image": "https://www.proshop.se/Images/600x800/3081904_1180d973cb89.jpg",
+    "ean": "4250051906257",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0734646397148",
     "category": "storage",
     "name": "Lexmark Hard Disk Drive (320+GB) HDD - 500GB - Hårddisk - 27X0210",
@@ -89859,6 +102655,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-8716309033350",
+    "category": "chassifan",
+    "name": "Gembird FANCASE3/Ball - case fan - Chassi fläkt - 120mm",
+    "brand": "Gembird",
+    "price": 144,
+    "image": "https://www.proshop.se/Images/600x800/3077745_f4ceb7dbfe0a.jpg",
+    "ean": "8716309033350",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-7340172703891",
     "category": "case",
     "name": "Fractal Design Meshify 2 Lite RGB - Black TG Light Tint - Chassi - Miditower - Svart",
@@ -89871,6 +102683,119 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4044951028924",
+    "category": "chassifan",
+    "name": "Sharkoon RGB SHARK Lights - Chassi fläkt - 120mm - Svart",
+    "brand": "Sharkoon",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/3077000_6c16de9d28a2.jpg",
+    "ean": "4044951028924",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-7340004665229",
+    "category": "chassifan",
+    "name": "TOTEN SA.3322.0102 fan unit - Chassi fläkt - 120mm",
+    "brand": "TOTEN",
+    "price": 718,
+    "image": "https://www.proshop.se/Images/600x800/3076932_edbb759560dc.jpg",
+    "ean": "7340004665229",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703482",
+    "category": "chassifan",
+    "name": "Arctic P14 PWM PST RGB - 3-pack + Controller - Chassi fläkt - 140mm - Svart med RGB LED - 23 dBA",
+    "brand": "Arctic",
+    "price": 1011,
+    "image": "https://www.proshop.se/Images/600x800/3076214_b50c7ea2b7dc.jpg",
+    "ean": "4895213703482",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703260",
+    "category": "chassifan",
+    "name": "Arctic Case Acc P12 Fan 12cm PWM PST RGB Black 3-Pack - Chassi fläkt - 120mm - 0 dBA",
+    "brand": "Arctic",
+    "price": 1188,
+    "image": "https://www.proshop.se/Images/600x800/3076209_a30dea861b28.png",
+    "ean": "4895213703260",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "0 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5060301699988",
+    "category": "chassifan",
+    "name": "NZXT F140 RGB 2-pack &amp; RGB Controller - Black - Chassi fläkt - 140mm - Svart med RGB LED - 33 dBA",
+    "brand": "NZXT",
+    "price": 682,
+    "image": "https://www.proshop.se/Images/600x800/3076051_627e86e2e539.jpg",
+    "ean": "5060301699988",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "33 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-5060301699964",
+    "category": "chassifan",
+    "name": "NZXT F120 RGB 3-pack &amp; RGB Controller - Black - Chassi fläkt - 120mm - Svart med RGB LED - 28 dBA",
+    "brand": "NZXT",
+    "price": 999,
+    "image": "https://www.proshop.se/Images/600x800/3076046_d481c89ff84c.jpg",
+    "ean": "5060301699964",
+    "specs": [
+      "120 mm",
+      "RGB",
+      "3-pack"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "28 dBA",
+      "Antal": "3",
+      "Belysning": "RGB"
     }
   },
   {
@@ -89918,6 +102843,23 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-networkcard-4016032478645",
+    "category": "networkcard",
+    "name": "DIGITUS - network adapter - PCIe - Gigabit Ethernet x 1",
+    "brand": "DIGITUS",
+    "price": 194,
+    "image": "https://www.proshop.se/Images/600x800/3073348_64c721caa465.jpg",
+    "ean": "4016032478645",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
+    }
+  },
+  {
     "id": "feed-cooling-4044953502675",
     "category": "cooling",
     "name": "Xilence Performance A+ Series LiQuRizer LQ360 400W Watercooling - CPU Vattenkylare",
@@ -89947,6 +102889,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "400 W",
       "Certifiering": "80 Plus Silver"
+    }
+  },
+  {
+    "id": "feed-chassifan-4710562752595",
+    "category": "chassifan",
+    "name": "AeroCool Duo 14 - Chassi fläkt - 140mm - Vit",
+    "brand": "AeroCool",
+    "price": 188,
+    "image": "https://www.proshop.se/Images/600x800/3066782_d39420dfdf53.jpg",
+    "ean": "4710562752595",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -89994,6 +102952,22 @@ export const FEED_CATALOG_ITEMS = [
     "ramType": "DDR5"
   },
   {
+    "id": "feed-chassifan-4044951035342",
+    "category": "chassifan",
+    "name": "Sharkoon SilentStorm - Chassi fläkt - 140mm - Vit",
+    "brand": "Sharkoon",
+    "price": 185,
+    "image": "https://www.proshop.se/Images/600x800/3063831_2c16268abd6b.jpg",
+    "ean": "4044951035342",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-4710713230958",
     "category": "psu",
     "name": "Chieftec ELEMENT Series Strömförsörjning - 500 Watt - 120 mm - ATX - 80 Plus Bronze certificate",
@@ -90008,6 +102982,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "500 W",
       "Certifiering": "80 Plus Bronze"
+    }
+  },
+  {
+    "id": "feed-chassifan-4718009158597",
+    "category": "chassifan",
+    "name": "AeroCool Cosmo 12 - case fan - Chassi fläkt - 120mm - Svart",
+    "brand": "AeroCool",
+    "price": 356,
+    "image": "https://www.proshop.se/Images/600x800/3060677_3c8d58e24001.jpg",
+    "ean": "4718009158597",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -90426,6 +103416,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260052188811",
+    "category": "chassifan",
+    "name": "be quiet! LIGHT WINGS 120mm PWM high-speed Triple-Pack - Chassi fläkt - 120mm - Svart med RGB LED - 31 dBA",
+    "brand": "be quiet!",
+    "price": 899,
+    "image": "https://www.proshop.se/Images/600x800/3021726_5c413b3dbc3d.jpg",
+    "ean": "4260052188811",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4250051906523",
+    "category": "chassifan",
+    "name": "Blacknoise Noiseblocker NB-eLoop B14-PS - Chassi fläkt - 140mm - Svart",
+    "brand": "Blacknoise",
+    "price": 398,
+    "image": "https://www.proshop.se/Images/600x800/3019670_4ce64e6be0c6.jpg",
+    "ean": "4250051906523",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4710562758528",
     "category": "case",
     "name": "AeroCool Quantum - MDT - ATX - Chassi - Tower - Svart",
@@ -90714,6 +103738,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4044951032372",
+    "category": "chassifan",
+    "name": "Sharkoon SHARK Disc - Chassi fläkt - 120mm - Vit",
+    "brand": "Sharkoon",
+    "price": 227,
+    "image": "https://www.proshop.se/Images/600x800/2990216_0617418415e4.jpg",
+    "ean": "4044951032372",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4713294227300",
     "category": "ram",
     "name": "G.Skill Value DDR4-2666 - 32GB - CL19 - Single Channel (1 pcs) - Intel XMP - Svart",
@@ -90768,6 +103808,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-7340172703549",
+    "category": "chassifan",
+    "name": "Fractal Design Aspect 14 RGB PWM - Chassi fläkt - 140mm - Svart",
+    "brand": "Fractal Design",
+    "price": 659,
+    "image": "https://www.proshop.se/Images/600x800/2979060_ff9293815152.jpg",
+    "ean": "7340172703549",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-ram-0740617318449",
     "category": "ram",
     "name": "Kingston FURY Impact DDR4-3200 - 8GB - CL20 - Single Channel (1 pcs) - Intel XMP - Svart",
@@ -90802,6 +103859,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227520003",
+    "category": "chassifan",
+    "name": "Thermaltake TOUGHFAN 12 - Chassi fläkt - 120mm - Svart",
+    "brand": "Thermaltake",
+    "price": 426,
+    "image": "https://www.proshop.se/Images/600x800/2975718_0471424dfc95.jpg",
+    "ean": "4713227520003",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -90853,6 +103926,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "650 W",
       "Certifiering": "80 Plus Gold"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100556",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x25 LS-PWM - Chassi fläkt - 120mm - Brun - 12 dBA",
+    "brand": "Noctua",
+    "price": 358,
+    "image": "https://www.proshop.se/Images/600x800/2970796_6c2b57836ed9.jpg",
+    "ean": "9010018100556",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "12 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -90931,6 +104021,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-networkcard-4260455646628",
+    "category": "networkcard",
+    "name": "Inter-Tech Argus ST-705 Gigabit Ethernet Network Adapter PCIe x1",
+    "brand": "Inter-Tech",
+    "price": 148,
+    "image": "https://www.proshop.se/Images/600x800/2954967_7eff6f4794e6.jpg",
+    "ean": "4260455646628",
+    "specs": [
+      "1 Gbit",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Hastighet": "1 Gbit/s"
+    }
+  },
+  {
     "id": "feed-storage-lenovothinksyste",
     "category": "storage",
     "name": "Lenovo ThinkSystem - 14TB - Hårddisk - 4XB7A13907 - SATA-600 - 3,5&quot;",
@@ -90996,6 +104103,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227526821",
+    "category": "chassifan",
+    "name": "Thermaltake TOUGHFAN - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 549,
+    "image": "https://www.proshop.se/Images/600x800/2936180_dcc710676724.jpg",
+    "ean": "4713227526821",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -91101,6 +104224,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260070124273",
+    "category": "chassifan",
+    "name": "LC Power case fan - Chassi fläkt - 80mm - Svart",
+    "brand": "LC Power",
+    "price": 97,
+    "image": "https://www.proshop.se/Images/600x800/2929538_8b7ce93ed56a.jpg",
+    "ean": "4260070124273",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-ram-4713294227317",
     "category": "ram",
     "name": "G.Skill Value DDR4-2666 - 64GB - CL19 - Dual Channel (2 pcs) - Intel XMP - Svart",
@@ -91121,6 +104260,22 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "2"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4713213516294",
+    "category": "chassifan",
+    "name": "QNAP 40X40X20MM FAN 12V - Chassi fläkt - 40mm - Svart",
+    "brand": "QNAP",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/2926281_7323d5708fb1.jpg",
+    "ean": "4713213516294",
+    "specs": [
+      "40 mm"
+    ],
+    "details": {
+      "Storlek": "40 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-ram-4713294224767",
@@ -91187,6 +104342,55 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "1"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4260455646161",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RGB-FAN SET RS-07 - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 336,
+    "image": "https://www.proshop.se/Images/600x800/2924048_10c4da6379ce.jpg",
+    "ean": "4260455646161",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4897059872469",
+    "category": "chassifan",
+    "name": "Inter-Tech ALSEYE X12 KIT - Chassi fläkt - 120mm - Grå",
+    "brand": "Inter-Tech",
+    "price": 607,
+    "image": "https://www.proshop.se/Images/600x800/2922176_57c0025dc48c.jpg",
+    "ean": "4897059872469",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260455644938",
+    "category": "chassifan",
+    "name": "Inter-Tech IPC Fan Set  80x80x25mm | 8888729 - Chassi fläkt - 80mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 280,
+    "image": "https://www.proshop.se/Images/600x800/2922167_d2e934e88268.jpg",
+    "ean": "4260455644938",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-psu-4260133125940",
@@ -91283,6 +104487,57 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260455646208",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RGB-FAN SET RS-08 - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 332,
+    "image": "https://www.proshop.se/Images/600x800/2917078_82085e5532df.jpg",
+    "ean": "4260455646208",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213703109",
+    "category": "chassifan",
+    "name": "Arctic F14 PWM - White/Transparent - Chassi fläkt - 140mm - Vit - 23 dBA",
+    "brand": "Arctic",
+    "price": 158,
+    "image": "https://www.proshop.se/Images/600x800/2915615_e70a1e7ea2e7.png",
+    "ean": "4895213703109",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260455645119",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RS-051 RGB - Chassi fläkt - 120mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 109,
+    "image": "https://www.proshop.se/Images/600x800/2915243_f7980308c4f9.jpg",
+    "ean": "4260455645119",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
     "id": "feed-case-5901885248387",
     "category": "case",
     "name": "MODECOM OBERON Pro - Chassi - Tower - Svart",
@@ -91356,6 +104611,56 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "450 W",
       "ATX-standard": "ATX 2.3"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702959",
+    "category": "chassifan",
+    "name": "Arctic F12 PWM - Chassi fläkt - 120mm - Svart - 23 dBA",
+    "brand": "Arctic",
+    "price": 85,
+    "image": "https://www.proshop.se/Images/600x800/2912834_53ef3e2b95bb.png",
+    "ean": "4895213702959",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "23 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4713227526845",
+    "category": "chassifan",
+    "name": "Thermaltake Riing Quad 14 RGB Radiator Fan TT - Chassi fläkt - 140mm - Svart",
+    "brand": "Thermaltake",
+    "price": 354,
+    "image": "https://www.proshop.se/Images/600x800/2912673_50528bf83b70.jpg",
+    "ean": "4713227526845",
+    "specs": [
+      "140 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260455646154",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RS-14 - Chassi fläkt - 140mm - Svart",
+    "brand": "Inter-Tech",
+    "price": 460,
+    "image": "https://www.proshop.se/Images/600x800/2911702_f9f6b6141035.jpg",
+    "ean": "4260455646154",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -91435,6 +104740,40 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260455645607",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RS-06 RGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Inter-Tech",
+    "price": 617,
+    "image": "https://www.proshop.se/Images/600x800/2890582_7a30cdf028fc.jpg",
+    "ean": "4260455645607",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260455645614",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus RS-061 RGB - Chassi fläkt - 120mm - Vit",
+    "brand": "Inter-Tech",
+    "price": 109,
+    "image": "https://www.proshop.se/Images/600x800/2890581_05bfa8639c50.jpg",
+    "ean": "4260455645614",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "RGB"
     }
   },
   {
@@ -91691,6 +105030,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Typ": "Vattenkylning"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260455642057",
+    "category": "chassifan",
+    "name": "Inter-Tech Argus L-12025 - Chassi fläkt - 120mm - Röd",
+    "brand": "Inter-Tech",
+    "price": 140,
+    "image": "https://www.proshop.se/Images/600x800/2871970_0c5bf28f09a7.jpg",
+    "ean": "4260455642057",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -91960,6 +105315,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4713213515761",
+    "category": "chassifan",
+    "name": "QNAP 120X120X25MM FAN 12V 4PIN - Chassi fläkt - 120mm - Svart",
+    "brand": "QNAP",
+    "price": 265,
+    "image": "https://www.proshop.se/Images/600x800/2854744_52a02e03a02f.jpg",
+    "ean": "4713213515761",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-0194441566956",
     "category": "storage",
     "name": "HP 512GB M.2 2280PCIeTLCSSD Z2/4/",
@@ -91993,6 +105364,23 @@ export const FEED_CATALOG_ITEMS = [
       "Storlek": "16 GB"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-networkcard-4260455645157",
+    "category": "networkcard",
+    "name": "Inter-Tech DMG-32 Wi-Fi 5 PCIe Adapter",
+    "brand": "Inter-Tech",
+    "price": 239,
+    "image": "https://www.proshop.se/Images/600x800/2843719_898cbda160b6.jpg",
+    "ean": "4260455645157",
+    "specs": [
+      "Wi-Fi 5",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "5"
+    }
   },
   {
     "id": "feed-ram-0740617305975",
@@ -92064,6 +105452,41 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4719512095010",
+    "category": "chassifan",
+    "name": "Cooler Master MasterFan MF120 HALO - Chassi fläkt - 120mm - Svart med RGB LED - 30 dBA",
+    "brand": "Cooler Master",
+    "price": 347,
+    "image": "https://www.proshop.se/Images/600x800/2841221_611523da805f.png",
+    "ean": "4719512095010",
+    "specs": [
+      "120 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "RGB"
+    }
+  },
+  {
+    "id": "feed-chassifan-4260052186893",
+    "category": "chassifan",
+    "name": "be quiet! Shadow Wings 2 PWM 140 - Chassi fläkt - 140mm - Svart - 15 dBA",
+    "brand": "be quiet!",
+    "price": 209,
+    "image": "https://www.proshop.se/Images/600x800/2835855_3d245a752023.jpg",
+    "ean": "4260052186893",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "15 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4260455645034",
     "category": "case",
     "name": "Inter-Tech 3411 Creek - Chassi - Tower - Svart",
@@ -92091,6 +105514,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Tower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4895213702331",
+    "category": "chassifan",
+    "name": "Arctic BioniX P140 - Grey/White - Chassi fläkt - 140mm - Vit - 24 dBA",
+    "brand": "Arctic",
+    "price": 184,
+    "image": "https://www.proshop.se/Images/600x800/2829104_3f4420fe8ab0.jpg",
+    "ean": "4895213702331",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -92245,6 +105685,26 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "400 W",
       "Certifiering": "80 Plus Bronze",
       "ATX-standard": "ATX 2.3"
+    }
+  },
+  {
+    "id": "feed-chassifan-840006611707",
+    "category": "chassifan",
+    "name": "Corsair iCUE QL140 RGB - Black - 2-pack - Chassi fläkt - 140mm - Svart med RGB LED - 26 dBA",
+    "brand": "Corsair",
+    "price": 1462,
+    "image": "https://www.proshop.se/Images/600x800/2809666_765268c33afe.png",
+    "ean": "840006611707",
+    "specs": [
+      "140 mm",
+      "RGB",
+      "2-pack"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "26 dBA",
+      "Antal": "2",
+      "Belysning": "RGB"
     }
   },
   {
@@ -93469,6 +106929,23 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100303",
+    "category": "chassifan",
+    "name": "Noctua NF-A8 5V - Chassi fläkt - 80mm - Brun - 18 dBA",
+    "brand": "Noctua",
+    "price": 219,
+    "image": "https://www.proshop.se/Images/600x800/2674894_98e087f9bb88.jpg",
+    "ean": "9010018100303",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "18 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-psu-0190017180366",
     "category": "psu",
     "name": "HP E Power Supply Kit Strömförsörjning - 3400 Watt - ATX - 80 Plus Platinum certificate",
@@ -93515,6 +106992,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "960 GB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100341",
+    "category": "chassifan",
+    "name": "Noctua NF-P12 redux-1300 - Chassi fläkt - 120mm - Svart - 20 dBA",
+    "brand": "Noctua",
+    "price": 182,
+    "image": "https://www.proshop.se/Images/600x800/2662221_30972626d722.png",
+    "ean": "9010018100341",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "20 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -93614,6 +107108,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "12 TB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030788946",
+    "category": "chassifan",
+    "name": "StarTech.com High Flow Case Fan with TX3 Connector - Chassi fläkt - 92mm",
+    "brand": "StarTech.com",
+    "price": 183,
+    "image": "https://www.proshop.se/Images/600x800/2654949_70291107530c.jpg",
+    "ean": "0065030788946",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -93818,6 +107328,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-9010018100402",
+    "category": "chassifan",
+    "name": "Noctua NF-F12 PWM chromax.black.swap - Chassi fläkt - 120mm - Svart - 22 dBA",
+    "brand": "Noctua",
+    "price": 308,
+    "image": "https://www.proshop.se/Images/600x800/2626229_bf041e37e9a7.jpg",
+    "ean": "9010018100402",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "22 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100433",
+    "category": "chassifan",
+    "name": "Noctua NF-A15 HS-PWM chromax.black.swap - Chassi fläkt - 140mm - Svart - 24 dBA",
+    "brand": "Noctua",
+    "price": 364,
+    "image": "https://www.proshop.se/Images/600x800/2626228_b0b6972c7481.jpg",
+    "ean": "9010018100433",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-case-4717964406545",
     "category": "case",
     "name": "Thermaltake Suppressor F31 TG - Chassi - Miditower - Svart",
@@ -94011,6 +107555,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Kapacitet": "320 GB"
+    }
+  },
+  {
+    "id": "feed-chassifan-9010018100099",
+    "category": "chassifan",
+    "name": "Noctua NF-A12x15 FLX - Chassi fläkt - 120mm - Brun - 24 dBA",
+    "brand": "Noctua",
+    "price": 274,
+    "image": "https://www.proshop.se/Images/600x800/2595713_fa417588a89b.jpg",
+    "ean": "9010018100099",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "24 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -94700,6 +108261,40 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-7350041083368",
+    "category": "chassifan",
+    "name": "Fractal Design Venturi Series lådfläkt - Chassi fläkt - 140mm - Svart - 30 dBA",
+    "brand": "Fractal Design",
+    "price": 252,
+    "image": "https://www.proshop.se/Images/600x800/2483528_09b32a95177a.jpg",
+    "ean": "7350041083368",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "30 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-7350041083344",
+    "category": "chassifan",
+    "name": "Fractal Design Venturi Series lådfläkt - Chassi fläkt - 120mm - Svart - 31 dBA",
+    "brand": "Fractal Design",
+    "price": 245,
+    "image": "https://www.proshop.se/Images/600x800/2483527_23ec7f8d90ea.jpg",
+    "ean": "7350041083344",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "31 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-888182848395",
     "category": "storage",
     "name": "HP Midline - 4TB - Hårddisk - 765253-B21 - SATA-600 - 3,5 &quot;LFF",
@@ -94746,6 +108341,23 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Formfaktor": "Miditower"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315315",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-B9 redux-1600 PWM - lådfläkt - Chassi fläkt - 92mm - Grå - 17 dBA",
+    "brand": "Noctua",
+    "price": 172,
+    "image": "https://www.proshop.se/Images/600x800/2470596_e827a2bce191.jpg",
+    "ean": "4716123315315",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -94813,6 +108425,125 @@ export const FEED_CATALOG_ITEMS = [
       "Moduler": "4"
     },
     "ramType": "DDR4"
+  },
+  {
+    "id": "feed-chassifan-4716123315391",
+    "category": "chassifan",
+    "name": "Noctua IndustrialPPC NF-F12 PWM - lådfläkt - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "Noctua",
+    "price": 325,
+    "image": "https://www.proshop.se/Images/600x800/2454743_f461fff51af9.jpg",
+    "ean": "4716123315391",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315407",
+    "category": "chassifan",
+    "name": "Noctua IndustrialPPC NF-F12 IP67 - lådfläkt - Chassi fläkt - 120mm - Svart - 29 dBA",
+    "brand": "Noctua",
+    "price": 383,
+    "image": "https://www.proshop.se/Images/600x800/2452210_40cddc6fe968.jpg",
+    "ean": "4716123315407",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "29 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315308",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-S12B - lådfläkt - Chassi fläkt - 120mm - Grå - 6 dBA",
+    "brand": "Noctua",
+    "price": 182,
+    "image": "https://www.proshop.se/Images/600x800/2449126_82bbe107091d.jpg",
+    "ean": "4716123315308",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Ljudnivå": "6 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315346",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-R8 - lådfläkt - Chassi fläkt - 80mm - Grå - 19 dBA",
+    "brand": "Noctua",
+    "price": 172,
+    "image": "https://www.proshop.se/Images/600x800/2449122_06d1bca2db9c.jpg",
+    "ean": "4716123315346",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "19 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315353",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-R8 - lådfläkt - Chassi fläkt - 80mm - Grå - 9 dBA",
+    "brand": "Noctua",
+    "price": 172,
+    "image": "https://www.proshop.se/Images/600x800/2449121_32425f8f0ef6.jpg",
+    "ean": "4716123315353",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Ljudnivå": "9 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315261",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-P14s - lådfläkt - Chassi fläkt - 140mm - Grå - 13 dBA",
+    "brand": "Noctua",
+    "price": 208,
+    "image": "https://www.proshop.se/Images/600x800/2449120_44c4820e4dd0.jpg",
+    "ean": "4716123315261",
+    "specs": [
+      "140 mm"
+    ],
+    "details": {
+      "Storlek": "140 mm",
+      "Ljudnivå": "13 dBA",
+      "Belysning": "Ingen"
+    }
+  },
+  {
+    "id": "feed-chassifan-4716123315322",
+    "category": "chassifan",
+    "name": "Noctua Redux NF-B9 - lådfläkt - Chassi fläkt - 92mm - Grå - 17 dBA",
+    "brand": "Noctua",
+    "price": 172,
+    "image": "https://www.proshop.se/Images/600x800/2449113_aef233ce3eb2.jpg",
+    "ean": "4716123315322",
+    "specs": [
+      "92 mm"
+    ],
+    "details": {
+      "Storlek": "92 mm",
+      "Ljudnivå": "17 dBA",
+      "Belysning": "Ingen"
+    }
   },
   {
     "id": "feed-storage-0888631101231",
@@ -94968,6 +108699,22 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Kapacitet": "160 GB",
       "Gränssnitt": "SATA"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030845335",
+    "category": "chassifan",
+    "name": "StarTech.com 120x25mm Computer Case Fan with PWM - lå - Chassi fläkt - 120mm - Svart",
+    "brand": "StarTech.com",
+    "price": 201,
+    "image": "https://www.proshop.se/Images/600x800/2350292_5eeac5c8f95c.jpg",
+    "ean": "0065030845335",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -95159,6 +108906,22 @@ export const FEED_CATALOG_ITEMS = [
     }
   },
   {
+    "id": "feed-chassifan-4260113567616",
+    "category": "chassifan",
+    "name": "LogiLink PC case cooler 120 x 120 x 25 mm black - Chassi fläkt - 120mm",
+    "brand": "LogiLink",
+    "price": 81,
+    "image": "https://www.proshop.se/Images/600x800/2302112_0bc17bf5c681.jpg",
+    "ean": "4260113567616",
+    "specs": [
+      "120 mm"
+    ],
+    "details": {
+      "Storlek": "120 mm",
+      "Belysning": "Ingen"
+    }
+  },
+  {
     "id": "feed-storage-883436100137",
     "category": "storage",
     "name": "IBM - 600GB - Hårddisk - 49Y2078 - SAS2 - 2,5&quot;",
@@ -95171,6 +108934,22 @@ export const FEED_CATALOG_ITEMS = [
     ],
     "details": {
       "Kapacitet": "600 GB"
+    }
+  },
+  {
+    "id": "feed-chassifan-0065030782302",
+    "category": "chassifan",
+    "name": "StarTech.com 80x25mm dubbla kullager Computer Case Fan w / TX3-kontakt - Chassi fläkt - 80mm - Svart",
+    "brand": "StarTech.com",
+    "price": 234,
+    "image": "https://www.proshop.se/Images/600x800/2292593_f58ac2ef77cf.jpg",
+    "ean": "0065030782302",
+    "specs": [
+      "80 mm"
+    ],
+    "details": {
+      "Storlek": "80 mm",
+      "Belysning": "Ingen"
     }
   },
   {
@@ -95659,6 +109438,24 @@ export const FEED_CATALOG_ITEMS = [
       "Effekt": "1000 W",
       "Certifiering": "80 Plus Platinum",
       "ATX-standard": "ATX 3.1"
+    }
+  },
+  {
+    "id": "feed-chassifan-4711475641334",
+    "category": "chassifan",
+    "name": "Thermaltake CT200 - Chassi fläkt - 200mm - Vit med RGB LED - 27 dBA",
+    "brand": "Thermaltake",
+    "price": 391,
+    "image": "https://www.proshop.se/Images/600x800/3519521_a6ef001de2b2.jpg",
+    "ean": "4711475641334",
+    "specs": [
+      "200 mm",
+      "RGB"
+    ],
+    "details": {
+      "Storlek": "200 mm",
+      "Ljudnivå": "27 dBA",
+      "Belysning": "RGB"
     }
   },
   {
@@ -99678,6 +113475,23 @@ export const FEED_CATALOG_ITEMS = [
     "details": {
       "Effekt": "550 W",
       "Certifiering": "80 Plus Bronze"
+    }
+  },
+  {
+    "id": "feed-networkcard-4260455645577",
+    "category": "networkcard",
+    "name": "Inter-Tech DMG-33 Wi-Fi 5 PCIe Adapter",
+    "brand": "Inter-Tech",
+    "price": 254,
+    "image": "https://www.proshop.se/Images/600x800/2911698_ece59134f423.jpg",
+    "ean": "4260455645577",
+    "specs": [
+      "Wi-Fi 5",
+      "PCIe"
+    ],
+    "details": {
+      "Fack": "PCIe",
+      "Wi-Fi": "5"
     }
   },
   {

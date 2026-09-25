@@ -22,6 +22,7 @@ import {
   Menu,
   Monitor,
   Power,
+  Wifi,
   ChevronRight,
 } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
@@ -122,7 +123,17 @@ import coolingCoolerMasterMasterLiquid360Image from "../../images/product images
 import coolingThermalrightPeerlessAssassinImage from "../../images/product images/cooler/Thermalright Peerless Assassin.png";
 import coolingCorsairIcUEH100iImage from "../../images/product images/cooler/Corsair iCUE H100i.png";
 
-type CategoryKey = "cpu" | "gpu" | "motherboard" | "ram" | "storage" | "case" | "psu" | "cooling";
+type CategoryKey =
+  | "cpu"
+  | "gpu"
+  | "motherboard"
+  | "ram"
+  | "storage"
+  | "case"
+  | "psu"
+  | "cooling"
+  | "chassifan"
+  | "networkcard";
 
 type ComponentItem = {
   id: string;
@@ -199,6 +210,15 @@ type CategoryConfig = {
   label: string;
   description: string;
   icon: typeof Cpu;
+  /*
+   * Ett valfritt steg räknas inte som en komponent kunden måste välja.
+   *
+   * Datorn startar utan chassifläktar och utan nätverkskort - moderkortet
+   * har ett nätverksuttag och chassit har oftast en fläkt med sig. Att
+   * kräva dem hade betytt att ingen kund någonsin kom fram till
+   * offertknappen, eftersom den öppnas först när allt är valt.
+   */
+  optional?: boolean;
 };
 
 const CATEGORY_LIST: CategoryConfig[] = [
@@ -250,7 +270,24 @@ const CATEGORY_LIST: CategoryConfig[] = [
     description: "Tysta lösningar",
     icon: Fan,
   },
+  {
+    key: "chassifan",
+    label: "Chassifläktar",
+    description: "Luft genom lådan",
+    icon: Fan,
+    optional: true,
+  },
+  {
+    key: "networkcard",
+    label: "Nätverkskort",
+    description: "Wi-Fi och snabbare nät",
+    icon: Wifi,
+    optional: true,
+  },
 ];
+
+/* Stegen kunden måste gå igenom. De valfria ligger sist och räknas inte. */
+const REQUIRED_CATEGORIES = CATEGORY_LIST.filter((category) => !category.optional);
 
 const FALLBACK_COMPONENT_IMAGE = cpu12400fImage;
 const buildPricespyProductImageUrl = (productId: number | string) =>
@@ -346,6 +383,10 @@ const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
   case: { src: CASE_REMOTE_IMAGE_BY_ID["case-1"], alt: "Chassi" },
   psu: { src: psuCorsairRm750eImage, alt: "Nätaggregat" },
   cooling: { src: coolingNzxtKraken360Image, alt: "Kylning" },
+  /* Reservbilder. Nästan varje post i de två kategorierna har en egen
+     bild från butiken; de här syns bara när den saknas. */
+  chassifan: { src: coolingNzxtKraken360Image, alt: "Chassifläkt" },
+  networkcard: { src: moboAsusRogB650EImage, alt: "Nätverkskort" },
 };
 const CATEGORY_ORDER: CategoryKey[] = [
   "cpu",
@@ -356,6 +397,8 @@ const CATEGORY_ORDER: CategoryKey[] = [
   "case",
   "psu",
   "cooling",
+  "chassifan",
+  "networkcard",
 ];
 const CATEGORY_ID_PREFIX: Record<CategoryKey, string> = {
   cpu: "cpu",
@@ -366,6 +409,8 @@ const CATEGORY_ID_PREFIX: Record<CategoryKey, string> = {
   case: "case",
   psu: "psu",
   cooling: "cool",
+  chassifan: "fan",
+  networkcard: "nic",
 };
 
 const CATALOG_IMAGE_MAP: Record<string, string> = {
@@ -1068,6 +1113,30 @@ const getCoolingSocketLabels = (item: ComponentItem) => {
  * framme - det är bara ritandet som är begränsat.
  */
 const ROWS_PER_PAGE = 30;
+
+/*
+ * Fläktens storlek, i millimeter.
+ *
+ * Det är det enda valet som spelar roll när man bläddrar bland 730
+ * fläktar: 120 eller 140 är vad ett chassi har plats för, och resten är
+ * smak. Värdet står både i specs och i titeln, och titeln läses som
+ * reserv eftersom en handplockad post kan sakna specs.
+ */
+const getChassiFanSizeMm = (item: ComponentItem) => {
+  const fromDetails = item.details?.["Storlek"];
+  const found = String(fromDetails || item.name).match(/\b(40|60|80|92|120|140|200)\s*mm\b/i);
+  return found ? Number(found[1]) : null;
+};
+
+/** Facket kortet sitter i: M.2 sitter platt på moderkortet, PCIe står upp. */
+const getNetworkCardSlot = (item: ComponentItem) => {
+  const fromDetails = item.details?.["Fack"];
+  if (fromDetails) return String(fromDetails);
+  return /\bm\.2\b/i.test(item.name) ? "M.2" : "PCIe";
+};
+
+const CHASSI_FAN_SIZE_OPTIONS = ["80 mm", "92 mm", "120 mm", "140 mm", "200 mm"];
+const NETWORK_CARD_SLOT_OPTIONS = ["PCIe", "M.2"];
 
 const getItemPopularityScore = (item: ComponentItem, category: CategoryKey, index: number) => {
   let score = 1000 - index;
@@ -3590,6 +3659,14 @@ const CURATED_COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
       specs: ["Luftkylare", "120mm", "Dual tower"],
     },
   ],
+  /*
+   * Tomma med flit. Chassifläktar och nätverkskort kom in med Proshops
+   * flöde och har ingen handplockad förlaga. Listorna finns för att
+   * kategorierna ska se likadana ut som de andra - en handplockad post
+   * kan läggas här när det blir aktuellt.
+   */
+  chassifan: [],
+  networkcard: [],
 };
 
 /*
@@ -3666,6 +3743,8 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   case: mergeCategory("case"),
   psu: mergeCategory("psu"),
   cooling: mergeCategory("cooling"),
+  chassifan: mergeCategory("chassifan"),
+  networkcard: mergeCategory("networkcard"),
 };
 
 /*
@@ -3692,6 +3771,8 @@ const displayComponentItems: Record<CategoryKey, ComponentItem[]> = {
   case: COMPONENTS.case.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
   psu: COMPONENTS.psu.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
   cooling: COMPONENTS.cooling.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  chassifan: COMPONENTS.chassifan.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
+  networkcard: COMPONENTS.networkcard.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
 };
 
 const getResolvedComponentImage = (
@@ -3737,6 +3818,8 @@ const CATEGORY_BASE_PRICE: Record<CategoryKey, number> = {
   case: 1290,
   psu: 1290,
   cooling: 990,
+  chassifan: 250,
+  networkcard: 350,
 };
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const normalizeApiBase = (value: string) => value.replace(/\/+$/, "");
@@ -3764,7 +3847,15 @@ const encodeBuildSelection = (selection: Record<CategoryKey, ComponentItem | nul
 
 const decodeBuildSelection = (encoded: string) => {
   const parts = encoded.split(".");
-  if (parts.length !== CATEGORY_ORDER.length) return null;
+  /*
+   * Kortare är tillåtet, längre inte.
+   *
+   * En länk som delades innan chassifläktarna och nätverkskorten fanns
+   * har åtta fält i stället för tio. Ett krav på exakt längd hade gjort
+   * varje sådan länk ogiltig i samma stund som stegen lades till, och de
+   * ligger i folks chattar och bokmärken.
+   */
+  if (parts.length > CATEGORY_ORDER.length) return null;
   const result: Partial<Record<CategoryKey, string>> = {};
   parts.forEach((part, index) => {
     if (!part || part === "-") return;
@@ -3809,6 +3900,8 @@ export default function CustomBuild() {
     case: { key: "price", direction: "asc" },
     psu: { key: "price", direction: "asc" },
     cooling: { key: "price", direction: "asc" },
+    chassifan: { key: "price", direction: "asc" },
+    networkcard: { key: "price", direction: "asc" },
   });
   const [cpuPerformanceFilters, setCpuPerformanceFilters] = useState<string[]>([]);
   const [cpuModelFilters, setCpuModelFilters] = useState<string[]>([]);
@@ -3844,6 +3937,9 @@ export default function CustomBuild() {
   const [coolingManufacturerFilters, setCoolingManufacturerFilters] = useState<string[]>([]);
   const [coolingSocketFilters, setCoolingSocketFilters] = useState<string[]>([]);
   const [coolingHeightRange, setCoolingHeightRange] = useState<[number, number]>([0, 0]);
+  const [chassiFanSizeFilters, setChassiFanSizeFilters] = useState<string[]>([]);
+  const [chassiFanRgbFilter, setChassiFanRgbFilter] = useState<"Alla" | "RGB" | "Utan RGB">("Alla");
+  const [networkCardSlotFilters, setNetworkCardSlotFilters] = useState<string[]>([]);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
@@ -3854,6 +3950,8 @@ export default function CustomBuild() {
     case: null,
     psu: null,
     cooling: null,
+    chassifan: null,
+    networkcard: null,
   });
   const [visibleCount, setVisibleCount] = useState(ROWS_PER_PAGE);
   const [expandedItemId, setExpandedItemId] = useState("");
@@ -3922,6 +4020,8 @@ export default function CustomBuild() {
       case: null,
       psu: null,
       cooling: null,
+      chassifan: null,
+      networkcard: null,
     };
     let firstKey: CategoryKey | null = null;
 
@@ -4390,6 +4490,9 @@ export default function CustomBuild() {
     setPsuFormFactorFilters([]);
     setCoolingManufacturerFilters([]);
     setCoolingSocketFilters([]);
+    setChassiFanSizeFilters([]);
+    setChassiFanRgbFilter("Alla");
+    setNetworkCardSlotFilters([]);
     setRamMinimumSizeCard(null);
     setStorageMinimumSizeCard(null);
     setPsuMinimumWattCard(null);
@@ -4435,6 +4538,9 @@ export default function CustomBuild() {
     psuFormFactorFilters.length > 0 ||
     coolingManufacturerFilters.length > 0 ||
     coolingSocketFilters.length > 0 ||
+    chassiFanSizeFilters.length > 0 ||
+    chassiFanRgbFilter !== "Alla" ||
+    networkCardSlotFilters.length > 0 ||
     ramMinimumSizeCard !== null ||
     storageMinimumSizeCard !== null ||
     psuMinimumWattCard !== null ||
@@ -4568,6 +4674,20 @@ export default function CustomBuild() {
         return true;
       }
 
+      if (activeCategory === "chassifan") {
+        const size = getChassiFanSizeMm(item);
+        const rgb = /\bargb\b|\brgb\b/i.test(item.name);
+        if (chassiFanSizeFilters.length > 0 && (size === null || !chassiFanSizeFilters.includes(`${size} mm`))) return false;
+        if (chassiFanRgbFilter === "RGB" && !rgb) return false;
+        if (chassiFanRgbFilter === "Utan RGB" && rgb) return false;
+        return true;
+      }
+
+      if (activeCategory === "networkcard") {
+        if (networkCardSlotFilters.length > 0 && !networkCardSlotFilters.includes(getNetworkCardSlot(item))) return false;
+        return true;
+      }
+
       if (activeCategory === "psu") {
         const manufacturer = normalizeBrandLabel(item.brand);
         const wattage = getItemPsuWattage(item);
@@ -4659,6 +4779,9 @@ export default function CustomBuild() {
     coolingManufacturerFilters,
     coolingSocketFilters,
     coolingHeightRange,
+    chassiFanSizeFilters,
+    chassiFanRgbFilter,
+    networkCardSlotFilters,
     gpuVramRange,
     gpuLengthRange,
   ]);
@@ -4886,8 +5009,17 @@ export default function CustomBuild() {
     return `${value}GB`;
   };
   const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
-  const selectedCount = Object.values(selected).filter(Boolean).length;
-  const allComponentsSelected = selectedCount === CATEGORY_LIST.length;
+  /*
+   * Bara de obligatoriska stegen räknas.
+   *
+   * allComponentsSelected öppnar offertknappen. Räknades de valfria
+   * stegen med skulle knappen förbli låst för varje kund som inte
+   * dessutom valde chassifläktar och nätverkskort, alltså för nästan
+   * alla. Fläktarna syns fortfarande i sammanfattningen och i totalen
+   * när de valts - de är bara inte ett krav.
+   */
+  const selectedCount = REQUIRED_CATEGORIES.filter((category) => selected[category.key]).length;
+  const allComponentsSelected = selectedCount === REQUIRED_CATEGORIES.length;
   const activeCategoryIndex = CATEGORY_LIST.findIndex((category) => category.key === activeCategory);
   const nextCategory = activeCategoryIndex >= 0 ? CATEGORY_LIST[activeCategoryIndex + 1] : null;
   const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
@@ -5341,7 +5473,7 @@ export default function CustomBuild() {
                 </p>
               </div>
               <div className="rounded-2xl border border-foreground/10 bg-background/70 px-4 py-3 text-sm text-muted-foreground shadow-sm dark:border-foreground/10 dark:bg-background/70 dark:text-muted-foreground">
-                {selectedCount} av {CATEGORY_LIST.length} komponenter valda · Totalt {formatPrice(totalPrice)} kr
+                {selectedCount} av {REQUIRED_CATEGORIES.length} komponenter valda · Totalt {formatPrice(totalPrice)} kr
               </div>
             </div>
 
@@ -5657,6 +5789,39 @@ export default function CustomBuild() {
                         {activeCategory === "case" ? (
                           <>
                             {renderToggleChipGroup("Formfaktor", CASE_FORM_FACTOR_OPTIONS.filter((option) => caseFormFactorOptions.includes(option)), formFactorFilters, (option) => toggleArrayFilter(option, setFormFactorFilters))}
+                          </>
+                        ) : null}
+                        {activeCategory === "chassifan" ? (
+                          <>
+                            {renderToggleChipGroup(
+                              "Storlek",
+                              CHASSI_FAN_SIZE_OPTIONS.filter((option) =>
+                                items.some((item) => `${getChassiFanSizeMm(item)} mm` === option),
+                              ),
+                              chassiFanSizeFilters,
+                              (option) => toggleArrayFilter(option, setChassiFanSizeFilters),
+                            )}
+                            {renderToggleChipGroup(
+                              "Belysning",
+                              ["RGB", "Utan RGB"],
+                              chassiFanRgbFilter === "Alla" ? [] : [chassiFanRgbFilter],
+                              (option) =>
+                                setChassiFanRgbFilter((prev) =>
+                                  prev === option ? "Alla" : (option as "RGB" | "Utan RGB"),
+                                ),
+                            )}
+                          </>
+                        ) : null}
+                        {activeCategory === "networkcard" ? (
+                          <>
+                            {renderToggleChipGroup(
+                              "Fack",
+                              NETWORK_CARD_SLOT_OPTIONS.filter((option) =>
+                                items.some((item) => getNetworkCardSlot(item) === option),
+                              ),
+                              networkCardSlotFilters,
+                              (option) => toggleArrayFilter(option, setNetworkCardSlotFilters),
+                            )}
                           </>
                         ) : null}
                       </div>

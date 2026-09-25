@@ -197,15 +197,13 @@ const FEED_CATEGORY_MAP = new Map([
   ["chassi", "case"],
   ["stroemfoersoerjning", "psu"],
   ["cpu flaektar", "cooling"],
+  ["chassi flaekt", "chassifan"],
+  ["naetverkskort adaptrar osv", "networkcard"],
 ]);
 
 /*
  * Kategorier som ligger nära men medvetet lämnas utanför.
  *
- *   Chassi flaekt (907)        chassifläktar, inte processorkylare. Steget
- *                              "Kylning" väljer det som sitter på
- *                              processorn. Fläktarna hör hemma i ett
- *                              tillbehörssteg som inte finns än.
  *   DIY vattenkylning (258)    slang, kopplingar, kylvätska. Byggsatser
  *                              för den som redan vet vad hon gör.
  *   Kylning och flaekt (160)   kyldynor till bärbara, fläktstyrningar.
@@ -245,6 +243,32 @@ const TITLE_GATE = {
     forbid:
       /\b(?:extern|portable|external)\b|\bsas\b|sas-\d|serial attached scsi|\bu\.[23]\b|xbox|playstation|\bps5\b|expansion card|\busb\s?-?\s?[c43]\b|usb 3|disk cartridge|data cent/i,
     reason: "passar inte i en vanlig dator (extern, serverkontakt eller konsol)",
+  },
+  chassifan: {
+    /* Kategorin rymmer också fläktstyrningar, hubbar och galler. Proshop
+       skriver "- Chassi fläkt -" på själva fläkten. */
+    require: /chassi\s*fl(?:ä|ae)kt/i,
+    reason: "inte en chassifläkt (styrning, hubb eller tillbehör)",
+  },
+  networkcard: {
+    /*
+     * Ett kort som sitter i datorn, inte en dosa bredvid den.
+     *
+     * Kategorin "Naetverkskort adaptrar osv" har 1 068 rader och rymmer
+     * allt från ett wifi-kort för 173 kr till ett NVIDIA ConnectX-7 för
+     * 87 910 kr. Det senare är ett datacenterkort med 400 gigabit och
+     * hör inte hemma i en speldator.
+     *
+     * Tre krav: ett fack inuti datorn, en användning en speldator har
+     * nytta av, och ingen av de märkningar som betyder serverutrustning.
+     * Prisprovet längre ner tar resten - över 1 500 kr finns inga
+     * konsumentkort kvar i den här kategorin, bara Lenovo ThinkSystem
+     * och SFP28.
+     */
+    require: /(?=.*\b(?:pci-?e(?:xpress)?|pcie|m\.2)\b)(?=.*(?:wi-?fi|wlan|bluetooth|ethernet|\blan\b|n(?:ä|ae)tverk|network))/is,
+    forbid:
+      /fib(?:re|er) channel|host bus adapter|\bhba\b|infiniband|connectx|mellanox|emulex|qlogic|\bsfp\b|qsfp|\b(?:25|40|50|100|200|400)\s*gb\b|\bocp\b|thunderbolt|firewire|\busb\b|\bpoe\b|\bswitch\b|router|repeater|extender|powerline|nutanix|synology|qnap|asustor|\bnas\b/i,
+    reason: "inte ett nätverkskort till en speldator",
   },
   ram: {
     /*
@@ -425,6 +449,59 @@ const CATEGORIES = {
     };
   },
 
+  chassifan: (row) => {
+    /* "Noctua NF-A12x25 - Chassi fläkt - 120mm - Svart - 22 dBA" */
+    const size = row.title.match(/\b(40|60|80|92|120|140|200)\s*mm\b/i);
+    const noise = row.title.match(/(\d+(?:[.,]\d+)?)\s*dBA/i);
+    const pack = row.title.match(/(\d+)[\s-]*pack/i);
+    const rgb = /\bargb\b|\brgb\b/i.test(row.title);
+    if (!size) return { reject: "storlek saknas" };
+    return {
+      specs: [`${size[1]} mm`, rgb ? "RGB" : null, pack ? `${pack[1]}-pack` : null].filter(Boolean),
+      details: {
+        Storlek: `${size[1]} mm`,
+        ...(noise ? { Ljudnivå: `${noise[1].replace(",", ".")} dBA` } : {}),
+        ...(pack ? { Antal: pack[1] } : {}),
+        Belysning: rgb ? "RGB" : "Ingen",
+      },
+    };
+  },
+
+  networkcard: (row) => {
+    const wifi = row.title.match(/wi-?fi\s*([4567])/i);
+    const hasWifi = /wi-?fi|wlan|802\.11/i.test(row.title);
+    /*
+     * Hastigheten skrivs på fyra sätt och alla fyra förekommer:
+     *
+     *   ASUS XG-C100C 10GBase-T PCIe Network Adapter
+     *   TRENDnet TEG-25GECTX 2.5GBASE-T PCIe Network Adapter
+     *   QNAP QXG-10G2T - ... - 10 Gigabit Ethernet x 2
+     *   TP-Link Gigabit Ethernet PCIe x1 NIC
+     *
+     * Ett krav på "10 Gigabit" med mellanslag missade tre av fyra, och 39
+     * riktiga kort hamnade i granskningslistan med motiveringen att de
+     * saknade hastighet. De stod där hela tiden.
+     */
+    const multi = row.title.match(/\b(2\.5|5|10)\s*G(?:BASE|BE|b|igabit)/i);
+    const speed = multi ? multi[1] : /\bgigabit\b/i.test(row.title) ? "1" : null;
+    const slot = /\bm\.2\b/i.test(row.title) ? "M.2" : "PCIe";
+    const bluetooth = row.title.match(/bluetooth\s*(\d\.\d)/i);
+    if (!hasWifi && !speed) return { reject: "varken wifi eller hastighet går att läsa ut" };
+    return {
+      specs: [
+        wifi ? `Wi-Fi ${wifi[1]}` : hasWifi ? "Wi-Fi" : null,
+        speed ? `${speed} Gbit` : null,
+        slot,
+      ].filter(Boolean),
+      details: {
+        Fack: slot,
+        ...(wifi ? { "Wi-Fi": wifi[1] } : {}),
+        ...(speed ? { Hastighet: `${speed} Gbit/s` } : {}),
+        ...(bluetooth ? { Bluetooth: bluetooth[1] } : {}),
+      },
+    };
+  },
+
   cooling: (row) => {
     const aio = /vattenkylare/i.test(row.title);
     const size = row.title.match(/\b(120|140|240|280|360|420)\b/);
@@ -460,6 +537,10 @@ const CATEGORIES = {
 const PRICE_SANITY = {
   ram: { maxPerGb: 1000 },
   storage: { maxPerGb: 100 },
+  /* Inget att mäta per gigabyte här, bara ett tak. Ett nätverkskort till
+     en speldator kostar under tusenlappen; däröver börjar Lenovos och
+     Broadcoms serverkort. */
+  networkcard: { maxPrice: 1500 },
 };
 
 /** Vår kategori för en rad, eller null om butiken inte säljer den som komponent. */
@@ -525,7 +606,13 @@ const handleRow = (row) => {
 
   const price = Math.round(row.price_cents / 100);
   const sanity = PRICE_SANITY[key];
-  if (sanity) {
+  if (sanity?.maxPrice && price > sanity.maxPrice) {
+    const label = `${key}: över takpriset`;
+    rejects[label] = (rejects[label] || 0) + 1;
+    review.push({ title: row.title, feedCategory, category: key, reason: `${price} kr`, url: row.product_url });
+    return;
+  }
+  if (sanity?.maxPerGb) {
     const size = capacityGb(row.title);
     if (size && price / size > sanity.maxPerGb) {
       const label = `${key}: orimligt pris per GB`;
