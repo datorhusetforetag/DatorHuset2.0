@@ -2914,7 +2914,10 @@
   gap: 0.65rem;
   border-radius: 0.6rem;
   border: 1px solid transparent;
-  padding: 0.5rem 2.1rem 0.5rem 0.55rem;
+  /* Höger utrymme rymmer papperskorgen OCH luft till priset. Med
+     2,1rem låg prissiffran fyra pixlar från knappen och såg ihopklistrad
+     ut så fort en komponent var vald. */
+  padding: 0.5rem 2.6rem 0.5rem 0.55rem;
   text-align: left;
   transition: background-color 0.14s ease-out, border-color 0.14s ease-out;
 }
@@ -2959,6 +2962,21 @@
   color: hsl(var(--foreground));
 }
 
+/*
+ * Namnet och priset på samma rad.
+ *
+ * Spalten till höger räknade upp samma åtta kategorier med samma
+ * komponentnamn som steglistan, och skilde sig bara på att den visade
+ * pris. Två spalter för en uppgift. Priset flyttade hit i stället, och
+ * högerspalten försvann - listan i mitten fick bredden.
+ */
+.cb-steg__rad {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
 .cb-steg__vald {
   margin-top: 0.1rem;
   font-size: 0.6875rem;
@@ -2968,6 +2986,14 @@
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.cb-steg__pris {
+  flex: none;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
 }
 
 .cb-steg__tom {

@@ -5120,7 +5120,12 @@ export default function CustomBuild() {
           <span className="min-w-0 flex-1">
             <span className="cb-steg__namn block">{category.label}</span>
             {selectedItem ? (
-              <span className="cb-steg__vald">{selectedItem.name}</span>
+              <span className="cb-steg__rad">
+                <span className="cb-steg__vald">{selectedItem.name}</span>
+                <span className="cb-steg__pris">
+                  {formatPrice(getComparablePrice(selectedItem, category.key))} kr
+                </span>
+              </span>
             ) : (
               <span className="cb-steg__tom block">{category.description}</span>
             )}
@@ -5785,7 +5790,11 @@ export default function CustomBuild() {
             {/* Ingen items-start här. Spalterna ska sträcka sig till
                 radens höjd, annars har det klistrade innehållet ingen
                 plats att glida i och står stilla. */}
-            <div className="grid gap-6 lg:grid-cols-[300px_minmax(0,1fr)_340px]">
+            {/* Två spalter, inte tre. Bygget och priserna bor i samma
+                lista till vänster, och mittenspalten växer från omkring
+                680 till drygt 1 000 pixlar - komponentnamnen får plats på
+                en rad och specifikationerna behöver inte kapas. */}
+            <div className="grid gap-6 lg:grid-cols-[330px_minmax(0,1fr)]">
               <aside className={`${mobileSidebarOpen ? "block" : "hidden"} lg:block`}>
                 {/* h-full med flit. Det klistrade kortets rörelseutrymme
                     bestäms av FÖRÄLDERNS höjd, inte av spaltens. Utan den
@@ -5796,8 +5805,11 @@ export default function CustomBuild() {
                       blev blocket 866 px högt - högre än fönstret minus
                       sidhuvudet, och då syns aldrig slutet av det. Tipsrutan
                       får skrolla förbi som vanligt innehåll. */}
-                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80 lg:sticky lg:top-24">
-                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Komponenter</p>
+                  <div
+                    id="build-summary"
+                    className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24 lg:sticky lg:top-24"
+                  >
+                      <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Ditt bygge</p>
                       <p className="mt-2 text-sm font-semibold text-foreground">
                         {selectedCount} av {REQUIRED_CATEGORIES.length} valda
                       </p>
@@ -5836,6 +5848,47 @@ export default function CustomBuild() {
                           ) : null}
                         </div>
                       </div>
+
+                      <div className="mt-4 flex items-center justify-between border-t border-foreground/10 pt-3">
+                        <span className="text-sm text-muted-foreground">Totalt</span>
+                        <span className="text-lg font-bold tabular-nums text-foreground">
+                          {formatPrice(totalPrice)} kr
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setOfferOpen(true)}
+                        disabled={!allComponentsSelected}
+                        className="mt-3 w-full rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground transition-colors hover:bg-secondary hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        Skicka offertförfrågan
+                      </button>
+                      {!allComponentsSelected ? (
+                        <p className="mt-2 text-xs text-amber-600">
+                          Välj alla komponenter innan du skickar offertförfrågan.
+                        </p>
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={handleShareBuild}
+                        className="mt-2 w-full rounded-lg border border-primary px-6 py-2.5 font-semibold text-primary transition-colors hover:border-secondary hover:bg-secondary hover:text-white"
+                      >
+                        Spara build
+                      </button>
+                      {shareStatus ? (
+                        <p className="mt-2 text-xs text-muted-foreground">{shareStatus}</p>
+                      ) : null}
+                  </div>
+                  {/* Flyttad hit från den borttagna högerspalten. Texten
+                      svarar på vad som händer efter att knappen tryckts, så
+                      den hör hemma nära knappen. */}
+                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 text-sm text-muted-foreground shadow-sm dark:border-foreground/10 dark:bg-background/80">
+                    <p className="font-semibold text-foreground">{"Vad h\u00e4nder sen?"}</p>
+                    <ul className="mt-3 space-y-2">
+                      <li>{"Vi granskar dina val och s\u00e4kerst\u00e4ller kompatibilitet."}</li>
+                      <li>{"Du f\u00e5r en offert med bygg- och leveranstid."}</li>
+                      <li>{"N\u00e4r du godk\u00e4nt startar vi bygget."}</li>
+                    </ul>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Tips</p>
@@ -6525,100 +6578,6 @@ export default function CustomBuild() {
                 </div>
               </div>
 
-              <aside className="hidden lg:block">
-                {/* h-full med flit. Det klistrade kortets rörelseutrymme
-                    bestäms av FÖRÄLDERNS höjd, inte av spaltens. Utan den
-                    här raden är blocket bara så högt som sitt innehåll, och
-                    kortet fastnar i 252 px innan det följer med ändå. */}
-                <div className="space-y-4 lg:h-full">
-                  <div
-                    id="build-summary"
-                    className="rounded-2xl border border-foreground/10 bg-background/70 p-6 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24 lg:sticky lg:top-24"
-                  >
-                    <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Din build</p>
-                    <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
-                    {/*
-                      * Sammanfattningen visar priser, steglistan visar namn.
-                      *
-                      * Båda spalterna räknade upp samma åtta kategorier med
-                      * samma komponentnamn, så den högra var en kopia av den
-                      * vänstra och tjänade inget. Nu är den ett kvitto: vad
-                      * varje del kostar och vad det blir ihop. Namnet står
-                      * kvar men underordnat, för det är priserna man kommer
-                      * hit för att se.
-                      *
-                      * Tillvalen tar ingen plats förrän de valts - "Ej vald"
-                      * på två rader som ingen bett om läser sig som en brist.
-                      */}
-                    <div className="mt-4 space-y-2.5 text-sm">
-                      {CATEGORY_LIST.filter(
-                        (category) => !category.optional || selected[category.key],
-                      ).map((category) => {
-                        const vald = selected[category.key];
-                        return (
-                          <button
-                            key={category.key}
-                            type="button"
-                            onClick={() => {
-                              handleCategorySelect(category.key);
-                            }}
-                            className="flex w-full items-baseline justify-between gap-3 text-left transition-colors hover:text-foreground dark:hover:text-white"
-                          >
-                            <span className="min-w-0">
-                              <span className="block text-xs text-muted-foreground">{category.label}</span>
-                              {vald ? (
-                                <span className="block truncate text-[11px] text-muted-foreground/70">
-                                  {vald.name}
-                                </span>
-                              ) : null}
-                            </span>
-                            {vald ? (
-                              <span className="shrink-0 font-semibold tabular-nums text-foreground">
-                                {formatPrice(getComparablePrice(vald, category.key))} kr
-                              </span>
-                            ) : (
-                              <span className="shrink-0 text-xs text-muted-foreground">Ej vald</span>
-                            )}
-                          </button>
-                        );
-                      })}
-                    </div>
-                    <div className="mt-6 border-t border-foreground/10 pt-4 flex items-center justify-between">
-                      <span className="text-sm text-muted-foreground">Total</span>
-                      <span className="text-lg font-bold text-foreground">{formatPrice(totalPrice)} kr</span>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => setOfferOpen(true)}
-                      disabled={!allComponentsSelected}
-                      className="mt-4 w-full bg-primary text-primary-foreground font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
-                    >
-                      Skicka offertförfrågan
-                    </button>
-                    {!allComponentsSelected ? (
-                      <p className="mt-2 text-xs text-amber-600">Välj alla komponenter innan du skickar offertförfrågan.</p>
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={handleShareBuild}
-                      className="mt-3 w-full border border-primary text-primary dark:text-primary font-semibold px-6 py-3 rounded-lg hover:bg-secondary hover:text-white hover:border-secondary transition-colors"
-                    >
-                      Spara build
-                    </button>
-                    {shareStatus ? (
-                      <p className="mt-2 text-xs text-muted-foreground">{shareStatus}</p>
-                    ) : null}
-                  </div>
-                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-6 text-sm text-muted-foreground shadow-sm dark:border-foreground/10 dark:bg-background/80 dark:text-muted-foreground">
-                    <p className="font-semibold text-foreground">{"Vad h\u00e4nder sen?"}</p>
-                    <ul className="mt-3 space-y-2">
-                      <li>{"Vi granskar dina val och s\u00e4kerst\u00e4ller kompatibilitet."}</li>
-                      <li>{"Du f\u00e5r en offert med bygg- och leveranstid."}</li>
-                      <li>{"N\u00e4r du godk\u00e4nt startar vi bygget."}</li>
-                    </ul>
-                  </div>
-                </div>
-              </aside>
             </div>
           </div>
         </section>
