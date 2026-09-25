@@ -543,6 +543,37 @@ const PRICE_SANITY = {
   networkcard: { maxPrice: 1500 },
 };
 
+/*
+ * Ett kort, stabilt fingeravtryck av hela namnet.
+ *
+ * Id:t byggdes förut av EAN, med de första sexton tecknen av namnet som
+ * reserv. Båda delarna kolliderade:
+ *
+ *   Montech X5 och Montech X2 Plus delar EAN 4710562748376 i flödet -
+ *   butikens eget fel, men vårt problem.
+ *
+ *   DUTZO C740 Airflow Wood, Vit och ARGB blir alla "dutzoc740airflow"
+ *   när namnet kapas vid sexton tecken.
+ *
+ * 42 id:n av 6 326 fanns i flera exemplar, och två komponenter med samma
+ * id blir två React-element med samma nyckel. Då kan listan inte sorteras
+ * om: elementen byter inte plats, och sorteringen ser ut att ha fastnat.
+ *
+ * Fingeravtrycket är hela det normaliserade namnet, och namnen är redan
+ * unika eftersom importen avvisar dubbletter på just det. En hash av dem
+ * är därför också unik - och till skillnad från en räknare beror den inte
+ * på i vilken ordning flödet råkar komma.
+ */
+const kortHash = (text) => {
+  /* FNV-1a, 32 bitar. Liten, snabb, och sprider korta strängar väl. */
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < text.length; i += 1) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193) >>> 0;
+  }
+  return hash.toString(36).padStart(7, "0");
+};
+
 /** Vår kategori för en rad, eller null om butiken inte säljer den som komponent. */
 const classify = (feedCategory) =>
   FEED_CATEGORY_MAP.get(String(feedCategory || "").trim().toLowerCase()) || null;
@@ -649,7 +680,9 @@ const handleRow = (row) => {
 
   counts[key] = (counts[key] || 0) + 1;
   accepted.push({
-    id: `feed-${key}-${row.ean || fingerprint.slice(0, 16)}`,
+    /* EAN står kvar som eget fält - prismatchningen känner igen varan på
+       det. Id:t behöver bara vara unikt och stabilt. */
+    id: `feed-${key}-${kortHash(fingerprint)}`,
     category: key,
     name: row.title,
     brand: row.brand || "",
@@ -712,6 +745,29 @@ const header = `/**
  */
 
 export const FEED_CATALOG_ITEMS = `;
+
+/*
+ * Inga dubbletter får passera.
+ *
+ * Det här hade fångat felet direkt i stället för att det upptäcktes som
+ * en sorteringslista som vägrade sortera om. Ett byggsteg som tyst
+ * släpper igenom trasig data är värre än ett som stannar.
+ */
+{
+  const sett = new Map();
+  const krockar = [];
+  for (const post of accepted) {
+    if (sett.has(post.id)) krockar.push([post.id, sett.get(post.id), post.name]);
+    else sett.set(post.id, post.name);
+  }
+  if (krockar.length > 0) {
+    console.error(`\n${krockar.length} id förekommer i flera exemplar:`);
+    for (const [id, forst, sedan] of krockar.slice(0, 10)) {
+      console.error(`  ${id}\n    ${forst}\n    ${sedan}`);
+    }
+    throw new Error("Id måste vara unika - inget skrevs.");
+  }
+}
 
 writeFileSync(
   "src/data/customBuildFeedCatalog.generated.js",
