@@ -29,6 +29,7 @@ import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { CUSTOM_BUILD_CATALOG_ITEMS } from "@/data/customBuildCatalog.js";
 import { CUSTOM_BUILD_PRELOADED_PRICE_BY_ID } from "@/data/customBuildPreloadedPrices.js";
+import { FEED_CATALOG_ITEMS } from "@/data/customBuildFeedCatalog.generated.js";
 import cpu7600Image from "../../images/product images/cpu/7600.png";
 import cpu7600x3dImage from "../../images/product images/cpu/7600x3d.png";
 import cpu7700Image from "../../images/product images/cpu/7700.png";
@@ -131,7 +132,7 @@ type ComponentItem = {
   specs: string[];
   image?: string;
   highlight?: string;
-  socket?: "AM4" | "AM5" | "LGA1700" | "LGA1200";
+  socket?: "AM4" | "AM5" | "LGA1700" | "LGA1200" | "LGA1851";
   ramType?: "DDR4" | "DDR5";
   gpuModel?: string;
   performanceClass?: "Budget" | "Entry" | "Performance" | "Sweet-Spot" | "Extreme" | "Overkill";
@@ -334,6 +335,7 @@ const SOCKET_RAM_TYPE: Record<string, "DDR4" | "DDR5"> = {
   AM5: "DDR5",
   LGA1700: "DDR5",
   LGA1200: "DDR4",
+  LGA1851: "DDR5",
 };
 const CATEGORY_IMAGES: Record<CategoryKey, { src: string; alt: string }> = {
   cpu: { src: cpu12400fImage, alt: "Processor" },
@@ -401,7 +403,7 @@ const catalogItems = CUSTOM_BUILD_CATALOG_ITEMS as Array<{
   category: "cpu" | "motherboard";
   name: string;
   brand: string;
-  socket: "AM4" | "AM5" | "LGA1700" | "LGA1200";
+  socket: "AM4" | "AM5" | "LGA1700" | "LGA1200" | "LGA1851";
   price: number;
   imageKey?: string;
   specs: string[];
@@ -1053,6 +1055,20 @@ const getCoolingSocketLabels = (item: ComponentItem) => {
   return matches;
 };
 
+/*
+ * Hur många rader som ritas innan "Visa fler".
+ *
+ * Listan kan inte längre ritas hel. Minneskategorin har 1 275 poster och
+ * varje rad är ett fyrtiotal element - hela kategorin blir ungefär hundra
+ * tusen noder och webbläsaren hänger sig innan något syns. Bilderna klarar
+ * sig på loading="lazy", men noderna finns ändå.
+ *
+ * Trettio är vad som ryms på ett par skrollningar. Sökrutan och filtren
+ * arbetar alltid mot hela listan, inte mot de trettio som råkar vara
+ * framme - det är bara ritandet som är begränsat.
+ */
+const ROWS_PER_PAGE = 30;
+
 const getItemPopularityScore = (item: ComponentItem, category: CategoryKey, index: number) => {
   let score = 1000 - index;
   const highlight = normalizeFilterToken(item.highlight || "");
@@ -1091,7 +1107,7 @@ const UNSUPPORTED_RAM_ITEM_IDS = new Set([
   "ram-30",
 ]);
 
-const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
+const CURATED_COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   cpu: [
     {
       id: "cpu-1",
@@ -3576,10 +3592,100 @@ const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
   ],
 };
 
-const staticComponentItemsWithPreloadedPrices: Record<
-  Exclude<CategoryKey, "cpu" | "motherboard">,
-  ComponentItem[]
-> = {
+/*
+ * Handplockade komponenter först, Proshops flöde efter.
+ *
+ * CURATED_COMPONENTS ovan är de dryga 280 som valts för hand. Flödet
+ * lägger till drygt fyra tusen till, alla med specifikationer som gått
+ * att läsa ut säkert ur butikens titel - se scripts/import-feed-catalog.mjs
+ * för var gränsen går och varför.
+ *
+ * ORDNINGEN BÄR MER ÄN DEN TÅL
+ *
+ * De handplockade ligger först i varje lista, och popularitetssorteringen
+ * räknar fram sin poäng ur just den platsen - 1000 minus index. Där den
+ * sorteringen är förvald syns alltså våra val överst.
+ *
+ * Men den är bara förvald för processorer, grafikkort och moderkort.
+ * Minne, lagring, chassi, nätaggregat och kylning öppnar på billigast
+ * först, och billigast i flödet är en fyra gigabyte DDR4-sticka för
+ * några hundralappar. Det var ofarligt när listan var trettiofem poster
+ * lång och är det inte längre när den är tolvhundra.
+ *
+ * Ordningen är i dag den enda kvarvarande kureringen, och den räcker
+ * uppenbart inte. Den uttryckliga taggen är det som ska ersätta den.
+ *
+ * Dubbletter rensas på normaliserat namn: samma produkt två gånger ser
+ * ut som ett fel, inte som två alternativ.
+ */
+const feedByCategory = FEED_CATALOG_ITEMS.reduce<Record<string, ComponentItem[]>>(
+  (acc, item) => {
+    const list = acc[item.category] || (acc[item.category] = []);
+    list.push({
+      id: item.id,
+      name: item.name,
+      brand: item.brand || "",
+      price: item.price,
+      specs: Array.isArray(item.specs) ? item.specs : [],
+      image: item.image,
+      details: item.details || {},
+      ...(item.socket ? { socket: item.socket as ComponentItem["socket"] } : {}),
+      ...(item.ramType ? { ramType: item.ramType as ComponentItem["ramType"] } : {}),
+      ...(item.gpuModel ? { gpuModel: item.gpuModel } : {}),
+    });
+    return acc;
+  },
+  {},
+);
+
+const normalizeName = (name: string) => name.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const mergeFeedInto = (base: ComponentItem[], category: CategoryKey): ComponentItem[] => {
+  const seen = new Set(base.map((item) => normalizeName(item.name)));
+  const merged = [...base];
+
+  for (const item of feedByCategory[category] || []) {
+    const key = normalizeName(item.name);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(item);
+  }
+
+  return merged;
+};
+
+const mergeCategory = (category: CategoryKey): ComponentItem[] =>
+  mergeFeedInto(CURATED_COMPONENTS[category], category);
+
+const COMPONENTS: Record<CategoryKey, ComponentItem[]> = {
+  cpu: mergeCategory("cpu"),
+  gpu: mergeCategory("gpu"),
+  motherboard: mergeCategory("motherboard"),
+  ram: mergeCategory("ram"),
+  storage: mergeCategory("storage"),
+  case: mergeCategory("case"),
+  psu: mergeCategory("psu"),
+  cooling: mergeCategory("cooling"),
+};
+
+/*
+ * Det kunden ser i en kategori.
+ *
+ * PROCESSORER OCH MODERKORT KOMMER INTE FRÅN CURATED_COMPONENTS
+ *
+ * De två bygger på catalogComponentItems, alltså samma katalog som
+ * administrationen och prisjakten arbetar mot, för att ett id ska betyda
+ * samma sak överallt. CURATED_COMPONENTS.cpu och .motherboard finns kvar
+ * men ritas inte ut. Den som lägger flödet enbart på COMPONENTS får därför
+ * fyra tusen nya minnen och chassin, och exakt noll nya processorer - det
+ * var så det såg ut här innan.
+ *
+ * getPreloadedPrice lämnar priset orört när posten inte finns i
+ * reservpristabellen, så flödets egna priser klarar sig igenom.
+ */
+const displayComponentItems: Record<CategoryKey, ComponentItem[]> = {
+  cpu: mergeFeedInto(catalogComponentItems.cpu, "cpu"),
+  motherboard: mergeFeedInto(catalogComponentItems.motherboard, "motherboard"),
   gpu: COMPONENTS.gpu.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
   ram: COMPONENTS.ram.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
   storage: COMPONENTS.storage.map((item) => ({ ...item, price: getPreloadedPrice(item.id, item.price) })),
@@ -3609,9 +3715,7 @@ const getResolvedComponentImage = (
 };
 
 const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
-  if (category === "cpu") return catalogComponentItems.cpu;
-  if (category === "motherboard") return catalogComponentItems.motherboard;
-  return staticComponentItemsWithPreloadedPrices[category];
+  return displayComponentItems[category];
 };
 
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
@@ -3751,6 +3855,7 @@ export default function CustomBuild() {
     psu: null,
     cooling: null,
   });
+  const [visibleCount, setVisibleCount] = useState(ROWS_PER_PAGE);
   const [expandedItemId, setExpandedItemId] = useState("");
   const [expandedItemCategory, setExpandedItemCategory] = useState<CategoryKey | null>(null);
   const [storePickerComponent, setStorePickerComponent] = useState<ComponentItem | null>(null);
@@ -4590,6 +4695,22 @@ export default function CustomBuild() {
       return ((aValue as number) - (bValue as number)) * direction;
     });
   }, [filteredItems, activeSort, activeCategory, itemIndexLookup, lowestOfferPriceByItemId]);
+
+  /*
+   * Tillbaka till trettio när urvalet ändras.
+   *
+   * Avsiktligt inte beroende av filteredItems i sig: den listan byter
+   * identitet även när priserna kommer in från butiken i bakgrunden, och
+   * då skulle kunden som just tryckt "Visa fler" kastas tillbaka. Antalet
+   * räcker som signal - ett filter som byts utan att antalet ändras lämnar
+   * bara fler rader framme än vanligt, vilket är det ofarliga felet.
+   */
+  useEffect(() => {
+    setVisibleCount(ROWS_PER_PAGE);
+  }, [activeCategory, searchTerm, sortedItems.length, activeSort]);
+
+  const visibleItems = useMemo(() => sortedItems.slice(0, visibleCount), [sortedItems, visibleCount]);
+  const hiddenItemCount = sortedItems.length - visibleItems.length;
 
   const tableSortButtons = useMemo(() => {
     switch (activeCategory) {
@@ -5548,7 +5669,7 @@ export default function CustomBuild() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {sortedItems.map((item) => {
+                  {visibleItems.map((item) => {
                     const isSelected = selected[activeCategory]?.id === item.id;
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
@@ -5808,6 +5929,28 @@ export default function CustomBuild() {
                       </div>
                     );
                   })}
+                  {hiddenItemCount > 0 ? (
+                    <div className="pt-2 text-center">
+                      <button
+                        type="button"
+                        onClick={() => setVisibleCount((count) => count + ROWS_PER_PAGE)}
+                        className="rounded-xl border border-foreground/15 bg-foreground/[0.04] px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary dark:bg-background/70"
+                      >
+                        Visa fler ({hiddenItemCount} kvar)
+                      </button>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Sök eller filtrera för att smalna av listan.
+                      </p>
+                    </div>
+                  ) : null}
+                  {sortedItems.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-foreground/15 px-6 py-10 text-center">
+                      <p className="text-sm font-semibold text-foreground">Inga komponenter matchar</p>
+                      <p className="mt-2 text-xs text-muted-foreground">
+                        Prova en bredare sökning eller nollställ prisintervallet.
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
