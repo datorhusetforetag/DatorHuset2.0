@@ -23,6 +23,7 @@ import {
   Monitor,
   Power,
   Wifi,
+  ChevronDown,
   ChevronRight,
 } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
@@ -288,6 +289,25 @@ const CATEGORY_LIST: CategoryConfig[] = [
 
 /* Stegen kunden måste gå igenom. De valfria ligger sist och räknas inte. */
 const REQUIRED_CATEGORIES = CATEGORY_LIST.filter((category) => !category.optional);
+
+/*
+ * De valfria ligger i en egen utfällbar lista, inte bland stegen.
+ *
+ * Chassifläktar och nätverkskort är tillval till ett bygge, inte ett steg
+ * på vägen genom det. Som egna steg i kedjan såg de ut som något kunden
+ * hade glömt; hopfällda under en rubrik ser de ut som det de är.
+ */
+const OPTIONAL_CATEGORIES = CATEGORY_LIST.filter((category) => category.optional);
+
+/**
+ * Den kedja ett steg tillhör.
+ *
+ * "Nästa"-knappen ska inte leda från Kylning in i tillvalen - där tar det
+ * obligatoriska slut och sammanfattningen tar vid. Inne bland tillvalen
+ * ska den däremot leda vidare till nästa tillval.
+ */
+const getCategoryGroup = (key: CategoryKey) =>
+  OPTIONAL_CATEGORIES.some((category) => category.key === key) ? OPTIONAL_CATEGORIES : REQUIRED_CATEGORIES;
 
 const FALLBACK_COMPONENT_IMAGE = cpu12400fImage;
 const buildPricespyProductImageUrl = (productId: number | string) =>
@@ -3941,6 +3961,7 @@ export default function CustomBuild() {
   const [chassiFanRgbFilter, setChassiFanRgbFilter] = useState<"Alla" | "RGB" | "Utan RGB">("Alla");
   const [networkCardSlotFilters, setNetworkCardSlotFilters] = useState<string[]>([]);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
+  const [extraOpen, setExtraOpen] = useState(false);
   const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
     cpu: null,
     gpu: null,
@@ -4052,6 +4073,11 @@ export default function CustomBuild() {
     }
 
     setSelected(next);
+    /* En delad länk kan innehålla en fläkt eller ett nätverkskort. Då ska
+       tillvalslistan stå öppen, annars ser bygget ut att sakna något. */
+    if (OPTIONAL_CATEGORIES.some((category) => next[category.key])) {
+      setExtraOpen(true);
+    }
     if (firstKey) {
       setActiveCategory(firstKey);
     }
@@ -4909,6 +4935,68 @@ export default function CustomBuild() {
     }
   }, [activeCategory]);
 
+  /*
+   * En rad i vänsterlistan.
+   *
+   * Samma markup används för de åtta stegen och för tillvalen under dem;
+   * det enda som skiljer är en indragning. Två nästan-lika kopior av det
+   * här hade garanterat glidit isär.
+   */
+  const renderCategoryRow = (category: CategoryConfig, options?: { nested?: boolean }) => {
+    const Icon = category.icon;
+    const isActive = category.key === activeCategory;
+    const selectedItem = selected[category.key];
+    const nested = options?.nested === true;
+
+    return (
+      <div key={category.key} className="relative">
+        <button
+          type="button"
+          onClick={() => handleCategorySelect(category.key)}
+          className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
+            isActive
+              ? "border-primary bg-primary/10 dark:bg-primary/10"
+              : "border-foreground/10 bg-background/60 hover:border-primary/40"
+          }`}
+        >
+          <div className="flex items-start gap-3">
+            <span
+              className={`mt-1 rounded-lg ${nested ? "p-1.5" : "p-2"} ${
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
+              }`}
+            >
+              <Icon className={nested ? "w-4 h-4" : "w-5 h-5"} />
+            </span>
+            <div>
+              <p className={`${nested ? "text-xs" : "text-sm"} font-semibold text-foreground`}>{category.label}</p>
+              <p className="text-xs text-muted-foreground">{category.description}</p>
+              <p className="text-xs text-muted-foreground mt-2">{selectedItem ? selectedItem.name : "Ej valt"}</p>
+            </div>
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            if (!selectedItem) return;
+            setSelected((prev) => ({ ...prev, [category.key]: null }));
+          }}
+          className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
+            selectedItem ? "hover:bg-slate-800 dark:hover:bg-slate-600" : "opacity-40 cursor-default"
+          }`}
+          aria-label={`Ta bort ${category.label}`}
+          aria-disabled={!selectedItem}
+        >
+          <TrashIcon className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  };
+
+  const selectedExtraCount = OPTIONAL_CATEGORIES.filter((category) => selected[category.key]).length;
+
   const renderCardFilterGrid = (
     label: string,
     options: string[],
@@ -5020,9 +5108,10 @@ export default function CustomBuild() {
    */
   const selectedCount = REQUIRED_CATEGORIES.filter((category) => selected[category.key]).length;
   const allComponentsSelected = selectedCount === REQUIRED_CATEGORIES.length;
-  const activeCategoryIndex = CATEGORY_LIST.findIndex((category) => category.key === activeCategory);
-  const nextCategory = activeCategoryIndex >= 0 ? CATEGORY_LIST[activeCategoryIndex + 1] : null;
-  const isLastCategory = activeCategoryIndex === CATEGORY_LIST.length - 1;
+  const activeCategoryGroup = getCategoryGroup(activeCategory);
+  const activeCategoryIndex = activeCategoryGroup.findIndex((category) => category.key === activeCategory);
+  const nextCategory = activeCategoryIndex >= 0 ? activeCategoryGroup[activeCategoryIndex + 1] : null;
+  const isLastCategory = activeCategoryIndex === activeCategoryGroup.length - 1;
   const nextBubbleLabel = nextCategory?.label ?? "Sammanfattning";
   const showNextBubble = Boolean(
     selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
@@ -5040,9 +5129,10 @@ export default function CustomBuild() {
     : [];
 
   const getNextCategoryKey = (currentCategory: CategoryKey) => {
-    const currentIndex = CATEGORY_ORDER.indexOf(currentCategory);
-    if (currentIndex < 0 || currentIndex >= CATEGORY_ORDER.length - 1) return null;
-    return CATEGORY_ORDER[currentIndex + 1];
+    const group = getCategoryGroup(currentCategory);
+    const currentIndex = group.findIndex((category) => category.key === currentCategory);
+    if (currentIndex < 0 || currentIndex >= group.length - 1) return null;
+    return group[currentIndex + 1].key;
   };
 
   const handleNextBubbleClick = () => {
@@ -5209,6 +5299,11 @@ export default function CustomBuild() {
 
   const handleCategorySelect = (key: CategoryKey) => {
     handleStorePickerClose();
+    /* Klickar man sig hit från sammanfattningen ska listan inte vara
+       hopfälld när man kommer fram. */
+    if (OPTIONAL_CATEGORIES.some((category) => category.key === key)) {
+      setExtraOpen(true);
+    }
     setActiveCategory(key);
     setMobileSidebarOpen(false);
     scrollToCategoryPicker();
@@ -5496,61 +5591,33 @@ export default function CustomBuild() {
                   <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
                       <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Komponenter</p>
                       <div className="mt-4 space-y-2">
-                        {CATEGORY_LIST.map((category) => {
-                          const Icon = category.icon;
-                          const isActive = category.key === activeCategory;
-                          const selectedItem = selected[category.key];
+                        {REQUIRED_CATEGORIES.map((category) => renderCategoryRow(category))}
 
-                          return (
-                            <div key={category.key} className="relative">
-                              <button
-                                type="button"
-                                onClick={() => handleCategorySelect(category.key)}
-                                className={`w-full text-left rounded-xl border px-3 py-3 pr-10 transition-colors ${
-                                  isActive
-                                    ? "border-primary bg-primary/10 dark:bg-primary/10"
-                                    : "border-foreground/10 bg-background/60 hover:border-primary/40"
-                                }`}
-                              >
-                                <div className="flex items-start gap-3">
-                                  <span
-                                    className={`mt-1 rounded-lg p-2 ${
-                                      isActive
-                                        ? "bg-primary text-primary-foreground"
-                                        : "bg-foreground/[0.04] text-muted-foreground dark:bg-foreground/[0.06] dark:text-foreground"
-                                    }`}
-                                  >
-                                    <Icon className="w-5 h-5" />
-                                  </span>
-                                  <div>
-                                    <p className="text-sm font-semibold text-foreground">{category.label}</p>
-                                    <p className="text-xs text-muted-foreground">{category.description}</p>
-                                    <p className="text-xs text-muted-foreground mt-2">
-                                      {selectedItem ? selectedItem.name : "Ej valt"}
-                                    </p>
-                                  </div>
-                                </div>
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(event) => {
-                                  event.stopPropagation();
-                                  if (!selectedItem) return;
-                                  setSelected((prev) => ({ ...prev, [category.key]: null }));
-                                }}
-                                className={`absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-slate-700 text-white shadow-sm transition-colors dark:bg-slate-700 ${
-                                  selectedItem
-                                    ? "hover:bg-slate-800 dark:hover:bg-slate-600"
-                                    : "opacity-40 cursor-default"
-                                }`}
-                                aria-label={`Ta bort ${category.label}`}
-                                aria-disabled={!selectedItem}
-                              >
-                                <TrashIcon className="h-4 w-4" />
-                              </button>
+                        <div className="rounded-xl border border-dashed border-foreground/15 bg-foreground/[0.02] dark:bg-background/40">
+                          <button
+                            type="button"
+                            onClick={() => setExtraOpen((open) => !open)}
+                            aria-expanded={extraOpen}
+                            className="flex w-full items-center justify-between gap-3 px-3 py-3 text-left"
+                          >
+                            <span>
+                              <span className="block text-sm font-semibold text-foreground">Extra komponenter</span>
+                              <span className="block text-xs text-muted-foreground">
+                                {selectedExtraCount > 0
+                                  ? `${selectedExtraCount} tillagd${selectedExtraCount === 1 ? "" : "a"}`
+                                  : "Valfritt - fläktar och nätverkskort"}
+                              </span>
+                            </span>
+                            <ChevronDown
+                              className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${extraOpen ? "rotate-180" : ""}`}
+                            />
+                          </button>
+                          {extraOpen ? (
+                            <div className="space-y-2 border-t border-foreground/10 px-2 pb-2 pt-2">
+                              {OPTIONAL_CATEGORIES.map((category) => renderCategoryRow(category, { nested: true }))}
                             </div>
-                          );
-                        })}
+                          ) : null}
+                        </div>
                       </div>
                   </div>
                   <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
@@ -6147,7 +6214,11 @@ export default function CustomBuild() {
                     <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Din build</p>
                     <h3 className="text-xl font-semibold mt-2">Sammanfattning</h3>
                     <div className="mt-4 space-y-3 text-sm text-muted-foreground">
-                      {CATEGORY_LIST.map((category) => (
+                      {/* Tillvalen tar ingen plats förrän de valts - "Ej vald"
+                          på två rader som ingen bett om läser sig som en brist. */}
+                      {CATEGORY_LIST.filter(
+                        (category) => !category.optional || selected[category.key],
+                      ).map((category) => (
                         <button
                           key={category.key}
                           type="button"
