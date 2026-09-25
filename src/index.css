@@ -3318,6 +3318,114 @@
   }
 }
 
+
+/* Konfiguratorns kolumner -------------------------------------------
+ *
+ * Sorteringen bor i kolumnrubrikerna, inte i en knapprad ovanför.
+ *
+ * Förut satt "Populärast / Billigast / Dyrast" i verktygsfältet, långt
+ * från det de sorterade, och de kunde bara sortera på pris. Allt annat -
+ * kärnor, minne, effekt, läshastighet - fanns som egna knappar man
+ * först måste hitta. I en kolumnrubrik står namnet på det man sorterar
+ * rakt ovanför siffrorna det gäller.
+ *
+ * Rubrikraden och varje produktrad delar samma spaltmall genom
+ * variabeln --cb-spalter, som sätts per kategori. Två mallar som ska
+ * hållas lika hade glidit isär första gången en kolumn lades till.
+ */
+.cb-tabell {
+  display: grid;
+  grid-template-columns: var(--cb-spalter);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cb-huvud {
+  padding: 0 0.75rem 0.5rem;
+  border-bottom: 1px solid hsl(var(--foreground) / 0.1);
+}
+
+.cb-huvud__cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.14s ease-out;
+}
+
+button.cb-huvud__cell:hover {
+  color: hsl(var(--foreground));
+}
+
+.cb-huvud__cell[data-aktiv="true"] {
+  color: hsl(var(--primary));
+}
+
+/* Pilen håller sin plats även när den inte pekar, så rubrikerna inte
+   hoppar i sidled när man sorterar om. */
+.cb-huvud__pil {
+  display: inline-block;
+  width: 0.6rem;
+  text-align: center;
+  opacity: 0.45;
+}
+
+.cb-huvud__cell[data-aktiv="true"] .cb-huvud__pil {
+  opacity: 1;
+}
+
+/* Tal höger, text vänster - en sifferkolumn läses nedifrån och upp när
+   entalen står i linje. */
+.cb-cell--tal {
+  justify-self: end;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cb-cell {
+  min-width: 0;
+  font-size: 0.75rem;
+  color: hsl(var(--muted-foreground));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/*
+ * Etiketterna under namnet göms när kolumnerna syns.
+ *
+ * De säger samma sak - "6 cores" bredvid kolumnen KÄRNOR med en sexa i.
+ * Under 1100 px försvinner kolumnerna, och då är etiketterna det enda
+ * som berättar vad varan är. Därför byter de av varandra i stället för
+ * att stå båda.
+ */
+@media (min-width: 1101px) {
+  .cb-row__specar {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  /* Under den här bredden får kolumnerna inte plats. Raden faller
+     tillbaka till bild, namn och pris, och specifikationerna läses i
+     etiketterna under namnet i stället. */
+  .cb-huvud {
+    display: none;
+  }
+
+  .cb-tabell {
+    grid-template-columns: 4rem minmax(0, 1fr) auto;
+  }
+
+  .cb-cell:not(.cb-cell--pris):not(.cb-cell--knapp) {
+    display: none;
+  }
+}
+
 /* Ytan från panelen och nedåt ---------------------------------------
  *
  * Panelen och allt under den delar en kulör, så att sidan inte byter

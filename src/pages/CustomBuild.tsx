@@ -770,6 +770,100 @@ type SortKey =
  * blev den ett nytt objekt varje gång, och knappradens useMemo kunde
  * aldrig återanvända något.
  */
+/*
+ * Vad varje kategori visar för kolumner.
+ *
+ * "sort" är nyckeln kolumnen sorterar på; utan den är rubriken bara en
+ * rubrik. "bredd" går in i rutnätets spaltmall, och samma mall används
+ * av både rubrikraden och produktraderna - därav en enda lista.
+ *
+ * Kolumnerna är valda efter vad man faktiskt jämför i kategorin. Man
+ * väljer minne efter hastighet och latens, lagring efter kapacitet och
+ * läshastighet, aggregat efter effekt och verkningsgrad. Att visa samma
+ * fyra kolumner överallt hade varit enklare och sämre.
+ */
+type Kolumn = {
+  id: string;
+  etikett: string;
+  bredd: string;
+  sort?: SortKey;
+  riktning?: SortDirection;
+  tal?: boolean;
+  varde: (item: ComponentItem) => string;
+};
+
+const visaTal = (value: number | null | undefined, enhet = "") =>
+  typeof value === "number" && Number.isFinite(value) ? `${value}${enhet}` : "—";
+
+const KOLUMNER_PER_KATEGORI: Record<CategoryKey, Kolumn[]> = {
+  cpu: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "karnor", etikett: "Kärnor", bredd: "5rem", sort: "cores", riktning: "desc", tal: true, varde: (i) => visaTal(getCpuCoreCount(i)) },
+    { id: "ghz", etikett: "GHz", bredd: "4.5rem", sort: "speed", riktning: "desc", tal: true, varde: (i) => visaTal(getCpuSpeedGhz(i)) },
+  ],
+  gpu: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "krets", etikett: "Krets", bredd: "7rem", varde: (i) => getItemGpuChip(i) || "—" },
+    { id: "vram", etikett: "Minne", bredd: "5rem", sort: "vram", riktning: "desc", tal: true, varde: (i) => visaTal(getGpuVramGb(i), " GB") },
+  ],
+  motherboard: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "chipset", etikett: "Chipset", bredd: "5.5rem", sort: "chipset", riktning: "desc", varde: (i) => getDisplayChipsetValue(i) || "—" },
+    { id: "format", etikett: "Format", bredd: "6rem", varde: (i) => getItemFormFactorFilterValue(i) || "—" },
+  ],
+  ram: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "storlek", etikett: "Storlek", bredd: "5rem", sort: "ramSize", riktning: "desc", tal: true, varde: (i) => visaTal(getRamSizeGb(i), " GB") },
+    { id: "hastighet", etikett: "MHz", bredd: "5rem", sort: "ramSpeed", riktning: "desc", tal: true, varde: (i) => visaTal(getRamSpeedMhz(i)) },
+    { id: "cl", etikett: "CL", bredd: "3.5rem", sort: "ramCl", riktning: "asc", tal: true, varde: (i) => visaTal(getRamClValue(i)) },
+  ],
+  storage: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    {
+      id: "storlek",
+      etikett: "Storlek",
+      bredd: "5rem",
+      sort: "storageSize",
+      riktning: "desc",
+      tal: true,
+      /* "32768 GB" är rätt men oläsligt. Butiken säger 32 TB och så
+         säger kunden också. */
+      varde: (i) => {
+        const gb = getStorageSizeGb(i);
+        if (typeof gb !== "number" || !Number.isFinite(gb)) return "—";
+        return gb >= 1024 ? `${Math.round((gb / 1024) * 10) / 10} TB` : `${gb} GB`;
+      },
+    },
+    { id: "las", etikett: "Läs", bredd: "5.5rem", sort: "read", riktning: "desc", tal: true, varde: (i) => visaTal(getStorageReadMb(i), " MB/s") },
+    { id: "skriv", etikett: "Skriv", bredd: "5.5rem", sort: "write", riktning: "desc", tal: true, varde: (i) => visaTal(getStorageWriteMb(i), " MB/s") },
+  ],
+  psu: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "effekt", etikett: "Effekt", bredd: "5rem", sort: "wattage", riktning: "desc", tal: true, varde: (i) => visaTal(getItemPsuWattage(i), " W") },
+    { id: "cert", etikett: "80 Plus", bredd: "5.5rem", varde: (i) => getItemPsuRating(i) || "—" },
+  ],
+  case: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "format", etikett: "Storlek", bredd: "6rem", varde: (i) => getItemFormFactorFilterValue(i) || "—" },
+  ],
+  cooling: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "typ", etikett: "Typ", bredd: "5.5rem", sort: "coolingType", riktning: "desc", varde: (i) => getCoolingTypeValue(i) || "—" },
+  ],
+  chassifan: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "storlek", etikett: "Storlek", bredd: "5rem", tal: true, varde: (i) => visaTal(getChassiFanSizeMm(i), " mm") },
+  ],
+  networkcard: [
+    { id: "tillverkare", etikett: "Tillverkare", bredd: "6rem", varde: (i) => i.brand || "—" },
+    { id: "fack", etikett: "Fack", bredd: "5rem", varde: (i) => getNetworkCardSlot(i) },
+  ],
+};
+
+/* Bild, produktnamn, kategorins kolumner, pris, knapp. */
+const spaltMall = (kolumner: Kolumn[]) =>
+  `3.5rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 6rem 5rem`;
+
 const PRIMARY_SORTS = [
   { key: "popularity" as SortKey, label: "Populärast", direction: "desc" as SortDirection, exact: true },
   { key: "price" as SortKey, label: "Billigast", direction: "asc" as SortDirection, exact: true },
@@ -4991,26 +5085,33 @@ export default function CustomBuild() {
           return getComparablePrice(item, activeCategory);
         case "chipset":
           return getChipsetSortRank(getDisplayChipsetValue(item));
+        /*
+         * Saknat värde är null, inte noll.
+         *
+         * Med ?? 0 hamnade varje komponent utan uppgift överst vid
+         * stigande sortering: "lägst CL" gav tre rader med streck innan
+         * det första riktiga talet. Noll är ett värde, okänt är det inte.
+         */
         case "speed":
-          return getCpuSpeedGhz(item) ?? 0;
+          return getCpuSpeedGhz(item);
         case "cores":
-          return getCpuCoreCount(item) ?? 0;
+          return getCpuCoreCount(item);
         case "vram":
-          return getGpuVramGb(item) ?? 0;
+          return getGpuVramGb(item);
         case "ramSize":
-          return getRamSizeGb(item) ?? 0;
+          return getRamSizeGb(item);
         case "ramSpeed":
-          return getRamSpeedMhz(item) ?? 0;
+          return getRamSpeedMhz(item);
         case "ramCl":
-          return getRamClValue(item) ?? 0;
+          return getRamClValue(item);
         case "storageSize":
-          return getStorageSizeGb(item) ?? 0;
+          return getStorageSizeGb(item);
         case "read":
-          return getStorageReadMb(item) ?? 0;
+          return getStorageReadMb(item);
         case "write":
-          return getStorageWriteMb(item) ?? 0;
+          return getStorageWriteMb(item);
         case "wattage":
-          return getItemPsuWattage(item) ?? 0;
+          return getItemPsuWattage(item);
         case "coolingType":
           return getCoolingTypeValue(item) === "Vatten" ? 2 : 1;
         case "popularity":
@@ -5019,9 +5120,32 @@ export default function CustomBuild() {
       }
     };
 
+    const saknas = (value: unknown) =>
+      value === null ||
+      value === undefined ||
+      value === "" ||
+      (typeof value === "number" && !Number.isFinite(value));
+
     return [...filteredItems].sort((a, b) => {
       const aValue = getSortValue(a);
       const bValue = getSortValue(b);
+
+      /*
+       * Okända värden ligger sist åt BÅDA hållen.
+       *
+       * Utan det här hamnade de överst vid stigande sortering och
+       * längst ner vid fallande, alltså precis där man letar efter det
+       * lägsta riktiga värdet. Den som sorterar på läshastighet vill se
+       * diskar med känd läshastighet, inte de utan uppgift.
+       */
+      const aSaknas = saknas(aValue);
+      const bSaknas = saknas(bValue);
+      if (aSaknas && bSaknas) {
+        return (itemIndexLookup[a.id] ?? 0) - (itemIndexLookup[b.id] ?? 0);
+      }
+      if (aSaknas) return 1;
+      if (bSaknas) return -1;
+
       if (aValue === bValue) {
         return (itemIndexLookup[a.id] ?? 0) - (itemIndexLookup[b.id] ?? 0);
       }
@@ -5163,6 +5287,8 @@ export default function CustomBuild() {
     () => CASE_BOARD_SIZE_OPTIONS.filter((val) => items.some((item) => getCaseBoardSizes(item).includes(val))),
     [items],
   );
+
+  const aktivaKolumner = KOLUMNER_PER_KATEGORI[activeCategory];
 
   const selectedExtraCount = OPTIONAL_CATEGORIES.filter((category) => selected[category.key]).length;
 
@@ -6210,10 +6336,11 @@ export default function CustomBuild() {
                     ) : null}
                   </div>
 
-                  {/* Sorteringen som chips, inte som fyra rutor i rutnät.
-                      Rutorna var lika stora som kategorivalen i vänsterspalten
-                      och såg därför ut att väga lika tungt. */}
-                  <div className="cb-snabbfilter mt-4 border-b border-foreground/10 pb-4 dark:border-foreground/10">
+                  {/* Sorteringen flyttade till kolumnrubrikerna ovanför
+                      listan. Kvar här stod den långt från det den sorterade
+                      och kunde bara nå pris och populärast - kärnor, minne
+                      och effekt låg som egna knappar man först måste hitta. */}
+                  <div className="hidden">
                     <span className="cb-snabbfilter__etikett">Sortera</span>
                     {tableSortButtons.map((sortButton) => {
                       /*
@@ -6251,7 +6378,65 @@ export default function CustomBuild() {
                     })}
                   </div>
                 </div>
-                <div className="space-y-4">
+                <div className="space-y-2">
+                  {/* Rubrikraden. Klickbar där kolumnen går att sortera på. */}
+                  <div
+                    className="cb-tabell cb-huvud"
+                    style={{ ["--cb-spalter" as string]: spaltMall(aktivaKolumner) }}
+                  >
+                    <span />
+                    <button
+                      type="button"
+                      onClick={() => setSortForCategory("popularity", "desc")}
+                      className="cb-huvud__cell"
+                      data-aktiv={activeSort?.key === "popularity" ? "true" : "false"}
+                    >
+                      Produkt
+                      <span className="cb-huvud__pil">
+                        {activeSort?.key === "popularity" ? "▾" : "⇅"}
+                      </span>
+                    </button>
+                    {aktivaKolumner.map((kolumn) =>
+                      kolumn.sort ? (
+                        <button
+                          key={kolumn.id}
+                          type="button"
+                          onClick={() => toggleSortForCategory(kolumn.sort!, kolumn.riktning ?? "desc")}
+                          className={`cb-huvud__cell${kolumn.tal ? " cb-cell--tal" : ""}`}
+                          data-aktiv={activeSort?.key === kolumn.sort ? "true" : "false"}
+                        >
+                          {kolumn.etikett}
+                          <span className="cb-huvud__pil">
+                            {activeSort?.key === kolumn.sort
+                              ? activeSort.direction === "asc"
+                                ? "▴"
+                                : "▾"
+                              : "⇅"}
+                          </span>
+                        </button>
+                      ) : (
+                        <span
+                          key={kolumn.id}
+                          className={`cb-huvud__cell${kolumn.tal ? " cb-cell--tal" : ""}`}
+                        >
+                          {kolumn.etikett}
+                        </span>
+                      ),
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => toggleSortForCategory("price", "asc")}
+                      className="cb-huvud__cell cb-cell--tal"
+                      data-aktiv={activeSort?.key === "price" ? "true" : "false"}
+                    >
+                      Pris
+                      <span className="cb-huvud__pil">
+                        {activeSort?.key === "price" ? (activeSort.direction === "asc" ? "▴" : "▾") : "⇅"}
+                      </span>
+                    </button>
+                    <span />
+                  </div>
+
                   {visibleItems.map((item) => {
                     const isSelected = selected[activeCategory]?.id === item.id;
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
@@ -6291,7 +6476,10 @@ export default function CustomBuild() {
                         data-vald={isSelected ? "true" : "false"}
                         data-oppen={isExpanded ? "true" : "false"}
                       >
-                        <div className="cb-row__topp">
+                        <div
+                          className="cb-row__topp cb-tabell"
+                          style={{ ["--cb-spalter" as string]: spaltMall(aktivaKolumner) }}
+                        >
                         <div className="cb-row__media">
                           <span className="cb-row__ikon">
                             <ActiveIcon className="h-3.5 w-3.5" />
@@ -6341,10 +6529,10 @@ export default function CustomBuild() {
                             ) : null}
                           </div>
                           <h4 className="cb-row__namn">{item.name}</h4>
+                          {/* Etiketterna står kvar. På smala skärmar döljs
+                              kolumnerna och då är de det enda som berättar
+                              vad varan är. */}
                           <div className="cb-row__specar">
-                            {/* Fyra räcker. Butiken skriver ibland åtta, och
-                                då blev etiketterna två rader som tryckte ner
-                                nästa rad i listan. */}
                             {item.specs.slice(0, 4).map((spec) => (
                               <span key={spec} className="cb-row__spec">
                                 {spec}
@@ -6353,14 +6541,29 @@ export default function CustomBuild() {
                           </div>
                         </div>
 
-                        <div className="cb-row__hoger">
-                          <p className="cb-row__pris">{getDisplayPriceLabel(item, activeCategory)}</p>
+                        {aktivaKolumner.map((kolumn) => (
+                          <span
+                            key={kolumn.id}
+                            className={`cb-cell${kolumn.tal ? " cb-cell--tal" : ""}`}
+                            title={kolumn.varde(item)}
+                          >
+                            {kolumn.varde(item)}
+                          </span>
+                        ))}
+
+                        <span className="cb-cell cb-cell--pris cb-cell--tal">
+                          <span className="cb-row__pris block">
+                            {getDisplayPriceLabel(item, activeCategory)}
+                          </span>
                           {visarRiktpris ? <span className="cb-row__kalla">Riktpris</span> : null}
                           {customBuildDebugEnabled ? (
-                            <span className="rounded-full border border-sky-300 bg-sky-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300">
+                            <span className="block text-[10px] font-semibold uppercase tracking-[0.15em] text-sky-400">
                               {getPriceSourceLabel(item)}
                             </span>
                           ) : null}
+                        </span>
+
+                        <span className="cb-cell cb-cell--knapp">
                           <button
                             type="button"
                             onClick={(event) => {
@@ -6374,7 +6577,7 @@ export default function CustomBuild() {
                               }
                               openStorePickerForComponent(activeCategory, item);
                             }}
-                            className={`w-full rounded-lg px-4 py-1.5 text-xs font-semibold transition-colors ${
+                            className={`w-full rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                               isSelected
                                 ? "bg-primary text-primary-foreground"
                                 : "border border-primary/60 text-primary hover:bg-primary hover:text-primary-foreground"
@@ -6382,7 +6585,7 @@ export default function CustomBuild() {
                           >
                             {isSelected ? "Vald" : "Välj"}
                           </button>
-                        </div>
+                        </span>
                         </div>
                         {isExpanded ? (
                           <div className="cb-panel">
