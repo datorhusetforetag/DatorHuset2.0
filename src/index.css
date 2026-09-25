@@ -3235,6 +3235,63 @@
   }
 }
 
+
+/* Prestandaklassernas innehåll --------------------------------------
+ *
+ * Klassnamnen säger ingenting för den som inte redan vet vad de betyder.
+ * "Sweet-Spot" är en åsikt tills man ser vilka kort som ryms i den.
+ * Därför står kretsarna utskrivna under varje namn.
+ */
+.cb-klasser {
+  margin-top: 0.5rem;
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+}
+
+.cb-klass {
+  border-radius: 0.55rem;
+  border: 1px solid hsl(var(--foreground) / 0.12);
+  background: hsl(var(--foreground) / 0.03);
+  padding: 0.5rem 0.6rem;
+  text-align: left;
+  transition: border-color 0.14s ease-out, background-color 0.14s ease-out;
+}
+
+.cb-klass:hover {
+  border-color: hsl(var(--foreground) / 0.28);
+}
+
+.cb-klass[data-aktiv="true"] {
+  border-color: hsl(var(--primary) / 0.7);
+  background: hsl(var(--primary) / 0.12);
+}
+
+.cb-klass__namn {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.cb-klass[data-aktiv="true"] .cb-klass__namn {
+  color: hsl(var(--primary));
+}
+
+.cb-klass__kretsar {
+  margin-top: 0.3rem;
+  display: block;
+  font-size: 0.625rem;
+  line-height: 1.5;
+  color: hsl(var(--muted-foreground));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-klass {
+    transition: none;
+  }
+}
+
 /* Ytan från panelen och nedåt ---------------------------------------
  *
  * Panelen och allt under den delar en kulör, så att sidan inte byter

@@ -651,7 +651,41 @@ const getItemPsuModularValue = (item: ComponentItem) => {
   return "";
 };
 
-const getItemGpuPerformanceClass = (item: ComponentItem) => item.performanceClass || "";
+/*
+ * Flödets grafikkort ärver prestandaklass av de handplockade.
+ *
+ * performanceClass sätts för hand, och bara de 67 kurerade korten har
+ * en. De 327 ur Proshops flöde hade ingen alls, så klassfiltret dolde
+ * fyra femtedelar av listan utan att säga det.
+ *
+ * Kartan byggs ur de handplockade själva: varje kort med en klass lånar
+ * ut den till sin krets, och varje annat kort med samma krets får den.
+ * Alltså inga nya omdömen från min sida - ett RTX 5070 ur flödet hamnar
+ * i den klass Sahran redan satt på sitt eget RTX 5070.
+ *
+ * Klassar han ett nytt kort ärver flödet det automatiskt.
+ */
+/*
+ * Byggs vid första användningen, inte när filen läses.
+ *
+ * CURATED_COMPONENTS och getItemGpuChip står längre ner i filen, och en
+ * karta som byggs direkt hade läst dem innan de fanns.
+ */
+let gpuKlassKarta: Map<string, string> | null = null;
+
+const getGpuKlassKarta = () => {
+  if (gpuKlassKarta) return gpuKlassKarta;
+  gpuKlassKarta = new Map<string, string>();
+  for (const item of CURATED_COMPONENTS.gpu) {
+    if (!item.performanceClass) continue;
+    const krets = getItemGpuChip(item);
+    if (krets && !gpuKlassKarta.has(krets)) gpuKlassKarta.set(krets, item.performanceClass);
+  }
+  return gpuKlassKarta;
+};
+
+const getItemGpuPerformanceClass = (item: ComponentItem) =>
+  item.performanceClass || getGpuKlassKarta().get(getItemGpuChip(item)) || "";
 
 
 const getItemCpuChip = (item: ComponentItem) => {
@@ -1172,6 +1206,39 @@ const getNetworkCardSlot = (item: ComponentItem) => {
   const fromDetails = item.details?.["Fack"];
   if (fromDetails) return String(fromDetails);
   return /\bm\.2\b/i.test(item.name) ? "M.2" : "PCIe";
+};
+
+/*
+ * Vilka moderkort ett chassi rymmer.
+ *
+ * HÄRLETT, INTE HÄMTAT. Proshops chassititlar nämner aldrig
+ * moderkortsformat - noll träffar på ATX, mATX eller ITX bland 1 210
+ * chassin. Det enda butiken skriver är tornhöjden.
+ *
+ * Kopplingen nedan är branschkonvention: ett miditorn tar ATX och allt
+ * mindre, ett minitorn tar Micro-ATX och mindre. Den stämmer nästan
+ * alltid men är inte butikens besked, och därför är den ett FILTER och
+ * ingen kompatibilitetsspärr. Konfiguratorn säger aldrig nej till en
+ * kombination på grund av den här tabellen.
+ */
+const CASE_BOARD_SIZE_OPTIONS = ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"];
+
+const CASE_BOARD_SIZES_BY_TOWER: Record<string, string[]> = {
+  "Full tower": ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+  "E-ATX": ["E-ATX", "ATX", "Micro-ATX", "Mini-ITX"],
+  Miditower: ["ATX", "Micro-ATX", "Mini-ITX"],
+  Tower: ["ATX", "Micro-ATX", "Mini-ITX"],
+  ATX: ["ATX", "Micro-ATX", "Mini-ITX"],
+  Desktop: ["Micro-ATX", "Mini-ITX"],
+  Cube: ["Micro-ATX", "Mini-ITX"],
+  "Mini tower": ["Micro-ATX", "Mini-ITX"],
+  "Micro-ATX": ["Micro-ATX", "Mini-ITX"],
+  "Mini-ITX": ["Mini-ITX"],
+};
+
+const getCaseBoardSizes = (item: ComponentItem) => {
+  const torn = getItemFormFactorFilterValue(item);
+  return torn ? CASE_BOARD_SIZES_BY_TOWER[torn] || [] : [];
 };
 
 const CHASSI_FAN_SIZE_OPTIONS = ["80 mm", "92 mm", "120 mm", "140 mm", "200 mm"];
@@ -3989,6 +4056,18 @@ export default function CustomBuild() {
   const [coolingManufacturerFilters, setCoolingManufacturerFilters] = useState<string[]>([]);
   const [coolingSocketFilters, setCoolingSocketFilters] = useState<string[]>([]);
   const [coolingHeightRange, setCoolingHeightRange] = useState<[number, number]>([0, 0]);
+  /*
+   * Ett gemensamt tillverkarfilter i stället för fyra nya.
+   *
+   * Moderkort, grafikkort, minne, lagring, aggregat och kylare har
+   * vardera sitt eget tillstånd för tillverkare. Chassi, chassifläktar
+   * och nätverkskort saknade helt - och att lägga till tre till hade
+   * betytt tre nya tillstånd, tre nollställningar och tre grenar att
+   * glömma. Ett delat räcker: bara en kategori är öppen i taget, och
+   * det nollställs när man byter.
+   */
+  const [genericBrandFilters, setGenericBrandFilters] = useState<string[]>([]);
+  const [caseBoardSizeFilters, setCaseBoardSizeFilters] = useState<string[]>([]);
   const [chassiFanSizeFilters, setChassiFanSizeFilters] = useState<string[]>([]);
   const [chassiFanRgbFilter, setChassiFanRgbFilter] = useState<"Alla" | "RGB" | "Utan RGB">("Alla");
   const [networkCardSlotFilters, setNetworkCardSlotFilters] = useState<string[]>([]);
@@ -4285,6 +4364,30 @@ export default function CustomBuild() {
     () => Array.from(new Set(items.map((item) => getItemGpuPerformanceClass(item)).filter(Boolean))),
     [items]
   );
+
+  /*
+   * Kretsarna per klass, räknade ur den lista som faktiskt visas.
+   *
+   * Hårdkodad hade listan blivit fel den dag ett kort byter klass eller
+   * butiken slutar sälja en krets. Räknad ur items säger den alltid vad
+   * kunden verkligen kan välja på just nu.
+   */
+  const gpuKretsarPerKlass = useMemo(() => {
+    const karta = new Map<string, string[]>();
+    if (activeCategory !== "gpu") return karta;
+    for (const item of items) {
+      const klass = getItemGpuPerformanceClass(item);
+      const krets = getItemGpuChip(item);
+      if (!klass || !krets) continue;
+      const lista = karta.get(klass) || [];
+      if (!lista.includes(krets)) {
+        lista.push(krets);
+        karta.set(klass, lista);
+      }
+    }
+    for (const lista of karta.values()) lista.sort((a, b) => a.localeCompare(b, "sv"));
+    return karta;
+  }, [items, activeCategory]);
   const ramTypeFilterOptions = useMemo(
     () => sortValuesByPreferredOrder(Array.from(new Set(items.map((item) => getItemRamTypeFilterValue(item)).filter(Boolean))), RAM_TYPE_CARD_OPTIONS),
     [items]
@@ -4561,6 +4664,8 @@ export default function CustomBuild() {
     setPsuFormFactorFilters([]);
     setCoolingManufacturerFilters([]);
     setCoolingSocketFilters([]);
+    setGenericBrandFilters([]);
+    setCaseBoardSizeFilters([]);
     setChassiFanSizeFilters([]);
     setChassiFanRgbFilter("Alla");
     setNetworkCardSlotFilters([]);
@@ -4609,6 +4714,8 @@ export default function CustomBuild() {
     psuFormFactorFilters.length > 0 ||
     coolingManufacturerFilters.length > 0 ||
     coolingSocketFilters.length > 0 ||
+    genericBrandFilters.length > 0 ||
+    caseBoardSizeFilters.length > 0 ||
     chassiFanSizeFilters.length > 0 ||
     chassiFanRgbFilter !== "Alla" ||
     networkCardSlotFilters.length > 0 ||
@@ -4745,6 +4852,20 @@ export default function CustomBuild() {
         return true;
       }
 
+      /* Gäller de tre kategorier som delar tillverkarfiltret. */
+      if (
+        genericBrandFilters.length > 0 &&
+        (activeCategory === "case" || activeCategory === "chassifan" || activeCategory === "networkcard") &&
+        !genericBrandFilters.includes(normalizeBrandLabel(item.brand))
+      ) {
+        return false;
+      }
+
+      if (activeCategory === "case" && caseBoardSizeFilters.length > 0) {
+        const storlekar = getCaseBoardSizes(item);
+        if (!caseBoardSizeFilters.some((val) => storlekar.includes(val))) return false;
+      }
+
       if (activeCategory === "chassifan") {
         const size = getChassiFanSizeMm(item);
         const rgb = /\bargb\b|\brgb\b/i.test(item.name);
@@ -4850,6 +4971,8 @@ export default function CustomBuild() {
     coolingManufacturerFilters,
     coolingSocketFilters,
     coolingHeightRange,
+    genericBrandFilters,
+    caseBoardSizeFilters,
     chassiFanSizeFilters,
     chassiFanRgbFilter,
     networkCardSlotFilters,
@@ -5021,6 +5144,20 @@ export default function CustomBuild() {
       </div>
     );
   };
+
+  /* Tillverkarna som faktiskt finns i den öppna kategorin. */
+  const genericBrandOptions = useMemo(
+    () =>
+      Array.from(new Set(items.map((item) => normalizeBrandLabel(item.brand)).filter(Boolean))).sort(
+        (a, b) => a.localeCompare(b, "sv"),
+      ),
+    [items],
+  );
+
+  const caseBoardSizeOptions = useMemo(
+    () => CASE_BOARD_SIZE_OPTIONS.filter((val) => items.some((item) => getCaseBoardSizes(item).includes(val))),
+    [items],
+  );
 
   const selectedExtraCount = OPTIONAL_CATEGORIES.filter((category) => selected[category.key]).length;
 
@@ -5817,7 +5954,25 @@ export default function CustomBuild() {
                       ? (
                         <>
                           {renderCardFilterGrid("Välj chiptillverkare", GPU_VENDOR_CARD_OPTIONS, (option) => gpuChipVendorFilter === option, (option) => setGpuChipVendorFilter(option))}
-                          {renderCardFilterGrid("Välj din prestandaklass", gpuPerformanceFilterOptions, (option) => gpuPerformanceFilters.includes(option), (option) => toggleArrayFilter(option, setGpuPerformanceFilters))}
+                          <div>
+                            <span className="cb-snabbfilter__etikett">Prestandaklass</span>
+                            <div className="cb-klasser">
+                              {gpuPerformanceFilterOptions.map((option) => (
+                                <button
+                                  key={`klass-${option}`}
+                                  type="button"
+                                  onClick={() => toggleArrayFilter(option, setGpuPerformanceFilters)}
+                                  className="cb-klass"
+                                  data-aktiv={gpuPerformanceFilters.includes(option) ? "true" : "false"}
+                                >
+                                  <span className="cb-klass__namn">{option}</span>
+                                  <span className="cb-klass__kretsar">
+                                    {(gpuKretsarPerKlass.get(option) || []).join(", ") || "—"}
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
                         </>
                       )
                       : null}
@@ -5949,6 +6104,21 @@ export default function CustomBuild() {
                           <>
                             {renderToggleChipGroup("Formfaktor", CASE_FORM_FACTOR_OPTIONS.filter((option) => caseFormFactorOptions.includes(option)), formFactorFilters, (option) => toggleArrayFilter(option, setFormFactorFilters))}
                           </>
+                        ) : null}
+                        {activeCategory === "case" ||
+                        activeCategory === "chassifan" ||
+                        activeCategory === "networkcard" ? (
+                          renderToggleChipGroup("Tillverkare", genericBrandOptions, genericBrandFilters, (option) =>
+                            toggleArrayFilter(option, setGenericBrandFilters),
+                          )
+                        ) : null}
+                        {activeCategory === "case" ? (
+                          renderToggleChipGroup(
+                            "Passar moderkort",
+                            caseBoardSizeOptions,
+                            caseBoardSizeFilters,
+                            (option) => toggleArrayFilter(option, setCaseBoardSizeFilters),
+                          )
                         ) : null}
                         {activeCategory === "chassifan" ? (
                           <>
