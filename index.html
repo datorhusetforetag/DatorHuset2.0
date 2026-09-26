@@ -1,8 +1,18 @@
 <!doctype html>
-<html lang="sv">
+<!--
+  class="dark" står här och inte i skriptet.
+
+  Sajten har bara ett läge, och klassen måste finnas innan första målningen
+  - sätts den av React hinner webbläsaren rita en vit sida först. Den finns
+  kvar enbart för Tailwinds dark:-varianter; färgerna ligger på :root.
+-->
+<html lang="sv" class="dark" style="color-scheme: dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Mobilens webblasarfalt tar samma kulor som sidan. Utan den star
+         adressfaltet vitt ovanfor en morkt sida. -->
+    <meta name="theme-color" content="#140F24" />
     <title>DatorHuset - Bygg Din Drömdator | Gaming PC & Professionella Datorer</title>
     <meta name="description" content="Högpresterande stationära datorer för gaming och professionellt bruk. Upptäck vårt sortiment av gaming PC, komponenter och expertservice." />
     <meta name="author" content="DatorHuset" />

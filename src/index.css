@@ -13,42 +13,21 @@
 */
 
 @layer base {
+  /*
+   * En enda palett. Sajten är mörk, punkt.
+   *
+   * Här låg förut ett ljust läge i :root och ett mörkt i .dark, och
+   * en knapp i sidhuvudet som bytte mellan dem. Ljust läge är borta:
+   * märket är byggt för mörk bakgrund - cyan och plommon mot
+   * märkessvart - och produktbilderna läser bättre mot mörkt. Två
+   * lägen betydde dessutom att varje ny yta måste ritas två gånger,
+   * och det andra gick sällan att se efteråt.
+   *
+   * Värdena ligger på :root och inte bara på .dark, så sidan är mörk
+   * även innan något skript hunnit sätta klassen. Klassen sätts ändå
+   * i index.html, för Tailwinds dark:-varianter behöver den.
+   */
   :root {
-    /* Ljus yta – cyan och plommon i sina mörkare varianter, annars syns de inte mot vitt */
-    --background: 0 0% 100%;
-    --foreground: 232 25% 6%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 232 25% 6%;
-
-    --surface: 240 24% 96%;
-    --surface-foreground: 232 25% 6%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 232 25% 6%;
-
-    --primary: 190 76% 44%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 279 54% 37%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 240 20% 95%;
-    --muted-foreground: 232 12% 38%;
-
-    --accent: 273 64% 77%;
-    --accent-foreground: 232 25% 6%;
-
-    --destructive: 0 72% 46%;
-    --destructive-foreground: 0 0% 100%;
-
-    --success: 152 58% 34%;
-    --success-foreground: 0 0% 100%;
-
-    --border: 240 16% 88%;
-    --input: 240 16% 88%;
-    --ring: 190 76% 44%;
-
     /* Radieskala. Dessa två läses av tailwind.config.ts – utan dem blir
        varje rounded-* i appen border-radius: 0. */
     --radius: 0.75rem;
@@ -67,37 +46,6 @@
     --brand-black-plum: 281 53% 9%;
     --brand-chassis: 240 5% 15%;
 
-    /* Nivåer – ersätter guld/silver/platina med husets egen skala */
-    --tier-start: 190 76% 44%;
-    --tier-core: 277 64% 65%;
-    --tier-elite: 272 70% 59%;
-    --sale: 0 72% 46%;
-
-    --gradient-hero: radial-gradient(
-        120% 120% at 15% 0%,
-        hsl(var(--brand-cyan) / 0.14) 0%,
-        transparent 55%
-      ),
-      radial-gradient(100% 100% at 85% 10%, hsl(var(--brand-plum) / 0.12) 0%, transparent 60%),
-      linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(240 24% 97%) 100%);
-    --gradient-card: linear-gradient(160deg, hsl(0 0% 100%) 0%, hsl(240 24% 97%) 100%);
-    --gradient-primary: linear-gradient(120deg, hsl(var(--brand-cyan-deep)) 0%, hsl(var(--brand-plum-deep)) 100%);
-    --gradient-seam: linear-gradient(
-      90deg,
-      transparent 0%,
-      hsl(var(--brand-cyan) / 0.85) 35%,
-      hsl(var(--brand-plum) / 0.85) 65%,
-      transparent 100%
-    );
-
-    --shadow-card: 0 1px 2px hsl(232 25% 6% / 0.06), 0 8px 24px hsl(232 25% 6% / 0.08);
-    --shadow-lifted: 0 2px 4px hsl(232 25% 6% / 0.08), 0 16px 40px hsl(232 25% 6% / 0.12);
-    --shadow-glow: 0 0 0 1px hsl(var(--brand-cyan-deep) / 0.35), 0 8px 32px hsl(var(--brand-cyan-deep) / 0.22);
-
-    --header-height: 4rem;
-  }
-
-  .dark {
     /*
      * Mörk yta – ett djupt plommonlila, inte svart.
      *
@@ -155,9 +103,28 @@
     --gradient-card: linear-gradient(160deg, hsl(240 10% 15%) 0%, hsl(240 12% 11%) 100%);
     --gradient-primary: linear-gradient(120deg, hsl(var(--brand-cyan)) 0%, hsl(var(--brand-plum)) 100%);
 
+    /* Sömmen mellan sektioner - cyan som går över i plommon. Kulörerna
+       är märkets egna och ändras inte med ytan. */
+    --gradient-seam: linear-gradient(
+      90deg,
+      transparent 0%,
+      hsl(var(--brand-cyan) / 0.85) 35%,
+      hsl(var(--brand-plum) / 0.85) 65%,
+      transparent 100%
+    );
+
     --shadow-card: 0 1px 2px hsl(0 0% 0% / 0.4), 0 8px 24px hsl(0 0% 0% / 0.35);
     --shadow-lifted: 0 2px 4px hsl(0 0% 0% / 0.5), 0 16px 40px hsl(0 0% 0% / 0.45);
     --shadow-glow: 0 0 0 1px hsl(var(--brand-cyan) / 0.4), 0 8px 32px hsl(var(--brand-cyan) / 0.25);
+  }
+
+  /*
+   * .dark ärver allt av :root och finns bara kvar för att Tailwinds
+   * dark:-varianter ska matcha. Att skriva om alla dem hade varit
+   * hundratals ändringar utan en enda synlig skillnad.
+   */
+  .dark {
+    color-scheme: dark;
   }
 }
 
@@ -204,7 +171,7 @@
 
   /* Samma uppbyggnad i ljust läge, men kraftigare - kulör mot vitt
      försvinner långt innan den syns. */
-  :root:not(.dark) [data-sandbox-id="global-theme"] {
+  :root [data-sandbox-id="global-theme"] {
     background-image:
       radial-gradient(85% 55% at 15% 2%, hsl(var(--brand-plum-light) / 0.22) 0%, transparent 60%),
       radial-gradient(80% 55% at 85% 38%, hsl(var(--brand-plum) / 0.14) 0%, transparent 62%),
@@ -715,15 +682,6 @@
     transform: translate3d(calc(var(--topo-tile) * -1), 0, 0);
   }
 }
-
-/* Mot vitt tar lila över långt innan det syns lika mycket. */
-:root:not(.dark) .ambient-topo__layer--far {
-  opacity: 0.2;
-}
-:root:not(.dark) .ambient-topo__layer--near {
-  opacity: 0.13;
-}
-
 /* Mönstret får stå kvar, men stilla. */
 @media (prefers-reduced-motion: reduce) {
   .ambient-topo__layer {
@@ -2403,14 +2361,6 @@
   transition: border-color 0.16s ease-out, transform 0.18s ease-out,
     box-shadow 0.18s ease-out;
 }
-
-/* I ljust läge är samma blågrå för mörk. Där ljusnar den till en kall
-   grå som fortfarande skiljer sig från den vita sidan. */
-:root:not(.dark) .pc-card {
-  --pc-card-surface: #eef1f6;
-  border-color: hsl(220 20% 20% / 0.1);
-}
-
 .pc-card:hover {
   transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 45%, transparent);
@@ -2617,11 +2567,6 @@
  */
 
 
-:root:not(.dark) .cb-row {
-  --pc-card-surface: #eef1f6;
-  border-color: hsl(220 20% 20% / 0.1);
-}
-
 .cb-row:hover {
   transform: translateY(-2px);
   border-color: color-mix(in srgb, hsl(var(--primary)) 45%, transparent);
@@ -2685,16 +2630,6 @@
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7),
     inset 0 -2px 4px rgb(15 23 42 / 0.1);
 }
-
-/*
- * I ljust läge är kortet redan #eef1f6, och en platta i samma kulör
- * hade varit osynlig. Där blir brickan i stället vit med en tunn kant.
- */
-:root:not(.dark) .cb-row__media {
-  background: #ffffff;
-  box-shadow: inset 0 0 0 1px hsl(220 20% 20% / 0.08);
-}
-
 .cb-row__media img {
   height: 100%;
   width: 100%;
@@ -3045,6 +2980,27 @@
 }
 
 /*
+ * Kategorier med antal får raden under namnet.
+ *
+ * Räknaren låg förut ovanpå namnets slut - den fick plats, men lade sig
+ * över texten och det såg ut som ett fel. Att i stället reservera dess
+ * bredd bredvid namnet kapade namnet till "Lian Li UNI..." hela tiden.
+ *
+ * Egen rad löser båda: namnet får hela bredden, räknaren hela sin plats,
+ * och ingenting ligger ovanpå någonting. Den kostar en rad, och bara i
+ * de fyra kategorier där det finns ett antal att ändra.
+ */
+.cb-val[data-flera="true"] .cb-val__namn {
+  grid-column: 1 / -1;
+}
+
+.cb-val[data-flera="true"] .cb-val__rad {
+  grid-column: 1 / -1;
+  grid-row: 2;
+  margin-top: 0.1rem;
+}
+
+/*
  * Antalet i vila, räknaren när man pekar.
  *
  * De ligger på samma plats i flödet - antalet syns, räknaren ligger
@@ -3071,9 +3027,11 @@
   position: relative;
   display: inline-flex;
   flex: none;
-  min-width: 1.6rem;
+  /* Så bred som räknaren behöver. På egen rad finns plats, och då kan
+     antalet och räknaren dela ruta utan att raden hoppar. */
+  min-width: 4.4rem;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: center;
 }
 
 .cb-val__antal {
@@ -3085,9 +3043,8 @@
 
 .cb-val .cb-antal {
   position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  inset: 0;
+  justify-content: center;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.12s ease-out;
@@ -3156,6 +3113,10 @@
     position: static;
     opacity: 1;
     pointer-events: auto;
+  }
+
+  .cb-val__kvantitet {
+    min-width: 0;
   }
 
   .cb-val[data-flera="true"] .cb-val__antal {
@@ -3335,11 +3296,6 @@
   background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7),
     inset 0 -2px 4px rgb(15 23 42 / 0.1);
-}
-
-:root:not(.dark) .cb-panel__bild {
-  background: #ffffff;
-  box-shadow: inset 0 0 0 1px hsl(220 20% 20% / 0.08);
 }
 
 .cb-panel__bild img {
@@ -3759,10 +3715,6 @@ button.cb-huvud__cell:hover {
   pointer-events: none;
   transform: translateY(-50%) scale(0.94);
   transition: opacity 0.14s ease-out, transform 0.14s ease-out;
-}
-
-:root:not(.dark) .cb-row__forstoring {
-  background: #ffffff;
 }
 
 .cb-row__forstoring img {

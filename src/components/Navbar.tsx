@@ -19,7 +19,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup } from "@/lib/productOverrides";
 import { buildSearchCatalog, buildSearchState } from "@/lib/siteSearch";
 import { Wordmark } from "./Wordmark";
-import { ThemeToggle } from "./ThemeToggle";
 import { useAuth } from "@/context/AuthContext";
 
 /**
@@ -575,7 +574,6 @@ export const Navbar = () => {
               </button>
 
               <div className="hidden sm:block">
-                <ThemeToggle />
               </div>
 
               <div className="hidden sm:block">
@@ -701,7 +699,6 @@ export const Navbar = () => {
 
             <div className="flex items-center justify-between gap-3">
               <LoginButton />
-              <ThemeToggle />
             </div>
 
             {isAdmin && (
