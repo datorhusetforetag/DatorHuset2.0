@@ -47,7 +47,6 @@ export const buildStageViews = (
 
 type ProductStageProps = {
   art: ProductArt;
-  seedKey: string;
   images: string[];
   index: number;
   onIndexChange: (next: number) => void;
@@ -58,7 +57,6 @@ type ProductStageProps = {
 
 export const ProductStage = ({
   art,
-  seedKey,
   images,
   index,
   onIndexChange,
@@ -84,7 +82,7 @@ export const ProductStage = ({
        I studio står datorn på ett bord med riktat ljus; i aura svävar
        den i luften och har bara en mjuk skugga under sig. */
     <div className="product-stage" data-backdrop={art.backdrop.kind ?? "aura"}>
-      <ProductBackdrop art={art} seedKey={seedKey} />
+      <ProductBackdrop art={art} />
 
       {/* Lappen gäller urklippet, som är en ritning av chassityp och
           inte ett foto av just den här maskinen. På ett riktigt foto

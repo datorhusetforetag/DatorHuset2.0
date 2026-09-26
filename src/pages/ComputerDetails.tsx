@@ -1063,7 +1063,6 @@ export default function ComputerDetails() {
       <div className="product-split">
         <ProductStage
           art={art}
-          seedKey={resolvedComputer.id}
           images={detailImageCandidates}
           index={selectedView}
           onIndexChange={setSelectedView}

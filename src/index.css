@@ -1445,38 +1445,35 @@
 
 .product-backdrop__wash,
 .product-backdrop__glow,
-.product-backdrop__motes,
+.product-backdrop__fog,
 .product-backdrop__floor {
   position: absolute;
   inset: 0;
 }
 
-.product-backdrop__motes {
-  width: 100%;
-  height: 100%;
-}
-
-/* Stoftet driver uppåt och tonar in och ut. Bara transform och
-   opacity, så grafikkortet sköter det utan att rita om duken. */
-@keyframes mote-drift {
-  0% {
-    transform: translateY(60px);
-    opacity: 0;
-  }
-  15% {
-    opacity: 1;
-  }
-  85% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-260px);
-    opacity: 0;
-  }
+/*
+ * Dimman nedtill.
+ *
+ * Oskärpan ligger på lagret och inte i gradienten. En radialgradient
+ * har redan mjuka kanter, men de följer en matematisk kurva och ser
+ * därefter ut - ett filter ovanpå bryter den och ger dis i stället för
+ * en ring.
+ */
+.product-backdrop__fog {
+  filter: blur(46px);
+  opacity: 0.85;
 }
 
 .product-backdrop__floor {
   background: linear-gradient(to bottom, transparent 55%, rgb(0 0 0 / 0.45) 100%);
+}
+
+/* Mörkret i kanterna, samma som studioduken har. Det är den som gör
+   att blicken stannar mitt i bilden i stället för att vandra ut. */
+.product-backdrop:not(.product-backdrop--studio) .product-backdrop__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(78% 74% at 50% 46%, transparent 42%, rgb(0 0 0 / 0.55) 100%);
 }
 
 /* Motivet ---------------------------------------------------------- */
@@ -1816,8 +1813,7 @@
 @media (prefers-reduced-motion: reduce) {
   .product-stage__cutout,
   .product-stage__shadow,
-  .product-stage__cast,
-  .product-backdrop__motes circle {
+  .product-stage__cast {
     animation: none;
   }
 
@@ -2349,12 +2345,28 @@
  * fyrkanter på en lila duk - man såg ramen men inte kortet. En blågrå
  * yta står still mot duken och ger datorn i mitten något att synas mot.
  */
+/*
+ * Datorn bryter kortets överkant.
+ *
+ * Maskinen är varan; kortet är bara underlaget den står på. Låg den
+ * helt innanför blev den en bild i en ruta bland andra rutor. Sticker
+ * den upp ur kortet läser ögat den som ett föremål framför en yta, och
+ * det är den enda skillnaden mellan en produktlista och en katalogsida.
+ *
+ * --pc-utstick är hur mycket. Ett enda tal: kortet skjuts ned lika
+ * mycket som bilden dras upp, så raden ovanför krockar aldrig, och
+ * märket flyttar med av sig självt.
+ */
 .pc-card {
   --pc-card-surface: #232c3b;
+  --pc-utstick: 2.25rem;
 
+  position: relative;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* Ingen klippning - det är hela poängen. */
+  overflow: visible;
+  margin-top: var(--pc-utstick);
   border-radius: 0.75rem;
   border: 1px solid hsl(220 20% 100% / 0.08);
   background: var(--pc-card-surface);
@@ -2386,7 +2398,9 @@
   min-height: 0;
   align-items: center;
   justify-content: center;
-  padding: 1.15rem 1.15rem 0.5rem;
+  /* Uppåt ur kortet. Ingen utfyllnad upptill - där ska bilden nå ut. */
+  margin-top: calc(var(--pc-utstick) * -1);
+  padding: 0 1.15rem 0.5rem;
 }
 
 /*
@@ -2407,21 +2421,32 @@
 .pc-card__media::before {
   content: "";
   position: absolute;
-  inset: 0;
+  /* Utanför mediaytan, så halon når förbi kortets kanter som i
+     förlagan. Den har inget att klippas av mot nu. */
+  inset: -14% -10% -8%;
   z-index: 0;
-  opacity: 0;
+  /*
+   * Tänd i vila, starkare vid hovring.
+   *
+   * Den var helt släckt tills pekaren kom. Då var glöden en markering
+   * av kortet man pekade på, inte en egenskap hos datorn - och en
+   * lista med sju släckta maskiner ser ut som en lista med sju
+   * släckta maskiner. Nu lyser de, och den man siktar på lyser mer.
+   */
+  opacity: 0.5;
   background: radial-gradient(
-    52% 48% at 50% 54%,
-    color-mix(in srgb, var(--pc-glow, #3fd9f5) 62%, transparent) 0%,
-    color-mix(in srgb, var(--pc-glow, #3fd9f5) 22%, transparent) 46%,
-    transparent 74%
+    58% 52% at 50% 52%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 68%, transparent) 0%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 26%, transparent) 44%,
+    transparent 76%
   );
-  transition: opacity 0.16s ease-out;
+  transition: opacity 0.18s ease-out, transform 0.18s ease-out;
 }
 
 .pc-card:hover .pc-card__media::before,
 .pc-card:focus-visible .pc-card__media::before {
   opacity: 1;
+  transform: scale(1.06);
 }
 
 /*
@@ -2446,12 +2471,31 @@
   transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.pc-card:hover .pc-card__cutout {
-  transform: translateY(-5px) scale(1.03);
+/* Märkbart, inte hoppigt. 1,03 syntes knappt på en bild som redan är
+   liten; 1,07 läses som att den kommer emot en. */
+.pc-card:hover .pc-card__cutout,
+.pc-card:focus-visible .pc-card__cutout {
+  transform: translateY(-6px) scale(1.07);
 }
 
 /* Reservläge: foto med egen bakgrund får en ram, annars blir det en
    rektangel klistrad mitt på kortet. */
+/*
+ * Ett foto med egen bakgrund får inte sticka upp ur kortet.
+ *
+ * Ett urklipp som bryter kanten ser ut som ett föremål framför en yta.
+ * En fyrkantig bild som gör samma sak ser ut som ett fel.
+ *
+ * Marginal på bilden räckte inte: mediaytan centrerar sina barn, så
+ * halva marginalen åt ett håll togs tillbaka åt det andra och fotot
+ * stack upp sjutton pixlar ändå. Utsticket tas därför bort på ytan
+ * i stället, med :has - då finns det aldrig att kompensera för.
+ */
+.pc-card__media:has(.pc-card__photo) {
+  margin-top: 0;
+  padding-top: 1.15rem;
+}
+
 .pc-card__photo {
   position: relative;
   z-index: 1;
@@ -2461,10 +2505,12 @@
   object-fit: cover;
 }
 
+/* Räknat från mediaytans överkant, som nu ligger ovanför kortet.
+   Utsticket läggs till så att märket hamnar innanför kortet igen. */
 .pc-card__badge {
   position: absolute;
   left: 0.85rem;
-  top: 0.85rem;
+  top: calc(var(--pc-utstick) + 0.85rem);
   z-index: 2;
   border-radius: 9999px;
   padding: 0.2rem 0.6rem;

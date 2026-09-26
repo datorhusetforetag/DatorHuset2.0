@@ -1,4 +1,4 @@
-import { useId, useMemo } from "react";
+import { useId } from "react";
 
 import type { ProductArt } from "@/data/productArt";
 
@@ -12,13 +12,11 @@ import type { ProductArt } from "@/data/productArt";
  *
  * TVÅ SORTER, se BackdropKind i src/data/productArt.ts.
  *
- * AURA - toning, ljus och stoft
+ * AURA - mörkt rum, glöd och dimma
  *
- * Prickarna ligger i en SVG med fasta koordinater, inte i procent.
- * Procent räknas om vid varje ändrad fönsterbredd, och då räknas hela
- * mönstret om medan man drar i fönstret. Mönstret är slumpat men inte
- * slumpmässigt: fröet kommer ur maskinens id, så samma dator får samma
- * stoft varje gång sidan öppnas.
+ * Ett mörkt rum där ljuset kommer ur maskinen: dukens kulör är
+ * datorns egen blandad mot nästan svart, glöden sitter tätt bakom
+ * chassit, och dimman ligger nedtill där golvet börjar.
  *
  * STUDIO - rund skiva, golv och vinjett
  *
@@ -32,61 +30,13 @@ import type { ProductArt } from "@/data/productArt";
  * rand. Ett svagt brus ovanpå bryter upp banden. Det ritas en gång med
  * feTurbulence och rör sig aldrig.
  *
- * Inget stoft i studio: förlagan är en stillbild i en ren studio, och
- * damm i luften hade motsagt just det.
+ * Ingen dimma i studio: förlagan är en stillbild i en ren studio, och
+ * dis i luften hade motsagt just det.
  */
 
-/** Liten deterministisk generator, så duken ser likadan ut varje gång. */
-const seeded = (seed: number) => {
-  let value = seed || 1;
-  return () => {
-    value = (value * 1664525 + 1013904223) % 4294967296;
-    return value / 4294967296;
-  };
-};
-
-const hashOf = (input: string) => {
-  let hash = 0;
-  for (let i = 0; i < input.length; i += 1) {
-    hash = (hash * 31 + input.charCodeAt(i)) % 2147483647;
-  }
-  return hash;
-};
-
-type Mote = {
-  cx: number;
-  cy: number;
-  r: number;
-  delay: number;
-  duration: number;
-  opacity: number;
-};
-
-const MOTE_COUNT = 26;
-
-export const ProductBackdrop = ({
-  art,
-  seedKey,
-}: {
-  art: ProductArt;
-  /** Maskinens id. Styr stoftets mönster. */
-  seedKey: string;
-}) => {
+export const ProductBackdrop = ({ art }: { art: ProductArt }) => {
   const grainId = useId();
   const studio = art.backdrop.kind === "studio";
-
-  const motes = useMemo<Mote[]>(() => {
-    if (studio) return [];
-    const random = seeded(hashOf(seedKey) + 7);
-    return Array.from({ length: MOTE_COUNT }, () => ({
-      cx: random() * 1000,
-      cy: random() * 1000,
-      r: 1.5 + random() * 4.5,
-      delay: -random() * 26,
-      duration: 18 + random() * 18,
-      opacity: 0.18 + random() * 0.4,
-    }));
-  }, [seedKey, studio]);
 
   if (studio) {
     const disc = art.backdrop.disc ?? art.backdrop.glow;
@@ -157,42 +107,51 @@ export const ProductBackdrop = ({
 
   return (
     <div aria-hidden="true" className="product-backdrop">
+      {/*
+        Duken, tydligt mörkare än maskinens egna kulörer.
+
+        Den var tidigare maskinens två kulörer rakt av, och blev då en
+        ljus platt yta som datorn låg PÅ. En produktbild vill ha det
+        omvända: ett mörkt rum som datorn står I, och ljuset kommer från
+        maskinen. Kulörerna är kvar, blandade mot nästan svart, så varje
+        sida behåller sin ton utan att konkurrera med motivet.
+      */}
       <div
         className="product-backdrop__wash"
         style={{
-          background: `linear-gradient(155deg, ${art.backdrop.from} 0%, ${art.backdrop.to} 100%)`,
+          background: `linear-gradient(155deg, color-mix(in srgb, ${art.backdrop.from} 50%, #05030c) 0%, color-mix(in srgb, ${art.backdrop.to} 42%, #05030c) 100%)`,
         }}
       />
 
+      {/* Glöden sitter tätt bakom datorn, inte över halva duken. En vid
+          och svag glöd läser som en färgad bakgrund; en tät och stark
+          läser som ljus som kommer ur maskinen. */}
       <div
         className="product-backdrop__glow"
         style={{
-          background: `radial-gradient(48% 46% at 50% 48%, ${art.backdrop.glow}59 0%, ${art.backdrop.glow}1F 45%, transparent 72%)`,
+          background: `radial-gradient(38% 34% at 50% 46%, ${art.backdrop.glow}8C 0%, ${art.backdrop.glow}2E 42%, transparent 70%)`,
         }}
       />
 
-      <svg
-        className="product-backdrop__motes"
-        viewBox="0 0 1000 1000"
-        preserveAspectRatio="xMidYMid slice"
-        focusable="false"
-      >
-        {motes.map((mote, index) => (
-          <circle
-            key={index}
-            cx={mote.cx}
-            cy={mote.cy}
-            r={mote.r}
-            fill={art.backdrop.glow}
-            opacity={mote.opacity}
-            style={{
-              animation: `mote-drift ${mote.duration}s linear ${mote.delay}s infinite`,
-            }}
-          />
-        ))}
-      </svg>
+      {/*
+        Dimman.
+
+        Här låg förut stoft - tjugosex prickar som drev uppåt. De rörde
+        sig, och rörelse drar blicken; på en sida där man ska titta på
+        datorn var det tjugosex saker som inte var datorn. Dimman ligger
+        stilla, fyller samma uppgift - luft mellan betraktaren och
+        bakgrunden - och lyser i maskinens kulör nedtill där den möter
+        golvet.
+      */}
+      <div
+        className="product-backdrop__fog"
+        style={{
+          background: `radial-gradient(76% 104% at 26% 102%, ${art.backdrop.glow}59 0%, transparent 66%), radial-gradient(64% 92% at 80% 106%, ${art.backdrop.glow}38 0%, transparent 60%)`,
+        }}
+      />
 
       <div className="product-backdrop__floor" />
+      <div className="product-backdrop__vignette" />
     </div>
   );
 };
