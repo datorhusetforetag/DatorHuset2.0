@@ -87,6 +87,17 @@ export const buildCategoryPriceResponse = async (category, items) => {
        */
       offer_count: offers.length,
       in_stock_count: offers.filter((offer) => offer.status === "available").length,
+      /*
+       * Lagerstatus per butik: 1 i lager, 0 slut.
+       *
+       * En butik som inte alls for varan saknas i objektet - det ar en
+       * tredje sak an "slut", och listan visar en ruta per butik som
+       * faktiskt har den. Formen ar kompakt med flit: svaret innehaller
+       * upp till 1 209 poster.
+       */
+      stock: Object.fromEntries(
+        offers.map((offer) => [offer.store_id, offer.status === "available" ? 1 : 0]),
+      ),
       // "live-offer" = riktigt butikspris, "fallback" = katalogens listpris.
       price_source: butikspris ? "live-offer" : Number.isFinite(item.price) ? "fallback" : null,
     };

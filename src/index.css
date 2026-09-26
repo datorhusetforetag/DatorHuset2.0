@@ -2899,24 +2899,26 @@
  * ("Hjärnan i datorn") hjälper den som inte vet vad en processor är, och
  * behövs bara tills hon valt en - efter det vill hon se vilken.
  */
+/* Ett steg i bygget ---------------------------------------------------
+ *
+ * Kategorin är en rubrik, de valda komponenterna rader under den. Aldrig
+ * samma namn två gånger: förut stod valet i kategoriraden OCH en gång
+ * till i en lista under, med en alltid synlig räknare och två
+ * papperskorgar. Åtta valda komponenter blev en spalt man fick leta i.
+ *
+ * Det som alltid syns är det man läser - namn och pris. Det man ibland
+ * gör - ändra antal, ta bort - kommer fram när pekaren är på raden.
+ */
 .cb-steg {
   position: relative;
-  display: flex;
-  width: 100%;
-  align-items: center;
-  gap: 0.65rem;
   border-radius: 0.6rem;
   border: 1px solid transparent;
-  /* Höger utrymme rymmer papperskorgen OCH luft till priset. Med
-     2,1rem låg prissiffran fyra pixlar från knappen och såg ihopklistrad
-     ut så fort en komponent var vald. */
-  padding: 0.5rem 2.6rem 0.5rem 0.55rem;
-  text-align: left;
+  padding: 0.35rem 0.5rem 0.4rem;
   transition: background-color 0.14s ease-out, border-color 0.14s ease-out;
 }
 
 .cb-steg:hover {
-  background: hsl(var(--foreground) / 0.05);
+  background: hsl(var(--foreground) / 0.04);
 }
 
 .cb-steg[data-aktiv="true"] {
@@ -2924,14 +2926,22 @@
   background: hsl(var(--primary) / 0.1);
 }
 
+.cb-steg__rubrik {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.55rem;
+  text-align: left;
+}
+
 .cb-steg__ikon {
   display: inline-flex;
   flex: none;
   align-items: center;
   justify-content: center;
-  height: 2rem;
-  width: 2rem;
-  border-radius: 0.5rem;
+  height: 1.75rem;
+  width: 1.75rem;
+  border-radius: 0.45rem;
   background: hsl(var(--foreground) / 0.06);
   color: hsl(var(--muted-foreground));
 }
@@ -2949,88 +2959,259 @@
 }
 
 .cb-steg__namn {
-  font-size: 0.875rem;
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.8125rem;
   font-weight: 600;
-  line-height: 1.25;
   color: hsl(var(--foreground));
 }
 
-/*
- * Namnet och priset på samma rad.
- *
- * Spalten till höger räknade upp samma åtta kategorier med samma
- * komponentnamn som steglistan, och skilde sig bara på att den visade
- * pris. Två spalter för en uppgift. Priset flyttade hit i stället, och
- * högerspalten försvann - listan i mitten fick bredden.
- */
-.cb-steg__rad {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 0.5rem;
+.cb-steg__antal {
+  flex: none;
+  border-radius: 999px;
+  background: hsl(var(--primary) / 0.14);
+  padding: 0.05rem 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
 }
 
-/*
- * Två rader i stället för en, och större text.
- *
- * "Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz CL36" kapades efter
- * "32GB..." på en rad i elva pixlar, och då säger raden inte vilket
- * minne som sitter i bygget - bara att det är ett Corsair.
- */
-.cb-steg__vald {
-  margin-top: 0.15rem;
+.cb-steg__tom {
+  display: block;
+  width: 100%;
+  padding: 0.1rem 0 0 2.3rem;
+  text-align: left;
   font-size: 0.75rem;
-  line-height: 1.35;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-steg__tak {
+  padding: 0.2rem 0 0 2.3rem;
+  font-size: 0.6875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* En vald komponent ---------------------------------------------------
+ *
+ * Indragen till kategorinamnets vänsterkant, så att raden läses som
+ * dess innehåll och inte som ett eget steg.
+ */
+/*
+ * Namnet till vänster, priset uppe till höger.
+ *
+ * Priset låg först på egen rad under namnet, och då tog varje vald
+ * komponent tre rader: kategori, namn, pris. Åtta komponenter blev en
+ * spalt på nästan tolvhundra pixlar.
+ *
+ * Namnet får fortfarande två rader när det behövs - hela namnet ska
+ * synas - men det växer nedåt bredvid priset i stället för under det.
+ */
+.cb-val {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  column-gap: 0.5rem;
+  padding: 0.1rem 0 0.15rem 2.3rem;
+}
+
+.cb-val__namn {
+  grid-column: 1;
+  overflow: hidden;
+  text-align: left;
+  font-size: 0.8125rem;
+  line-height: 1.3;
   color: hsl(var(--primary));
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
-.cb-steg__pris {
+.cb-val__namn:hover {
+  text-decoration: underline;
+}
+
+.cb-val__rad {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.4rem;
+  min-height: 1.4rem;
+}
+
+/*
+ * Antalet i vila, räknaren när man pekar.
+ *
+ * De ligger på samma plats i flödet - antalet syns, räknaren ligger
+ * ovanpå och är genomskinlig - så raden inte hoppar när knapparna
+ * kommer fram. Att få innehållet att flytta sig när man närmar sig med
+ * pekaren är det säkraste sättet att få någon att klicka fel.
+ */
+/*
+ * Rutan antalet och räknaren delar.
+ *
+ * Rutan är bara så bred som "×1" behöver. Räknaren ligger ovanpå den,
+ * fäst i högerkanten, och växer åt vänster över namnet när man pekar.
+ *
+ * Reserverade rutan plats åt hela räknaren i stället blev namnet fyra
+ * tecken brett - "Corsair Vengeanc..." - hela tiden, för en knapp som
+ * syns någon sekund ibland. Namnet är det man läser; räknaren är det
+ * man sträcker sig efter, och då får den låna platsen.
+ *
+ * Priset står till höger om rutan och rörs aldrig, så raden hoppar inte
+ * när knapparna kommer fram - det säkraste sättet att få någon att
+ * klicka fel.
+ */
+.cb-val__kvantitet {
+  position: relative;
+  display: inline-flex;
   flex: none;
+  min-width: 1.6rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.cb-val__antal {
   font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--muted-foreground));
+  transition: opacity 0.12s ease-out;
+}
+
+.cb-val .cb-antal {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.12s ease-out;
+}
+
+.cb-val__pris {
+  font-size: 0.8125rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: hsl(var(--foreground));
 }
 
-.cb-steg__tom {
-  margin-top: 0.15rem;
-  font-size: 0.75rem;
-  color: hsl(var(--muted-foreground));
-}
-
-/* Ytan papperskorgen räknar sitt top: 50% mot. Utan den mätte den
-   mot hela steget inklusive vallistan och hamnade mitt i listan. */
-.cb-steg__yta {
-  position: relative;
-}
-
-.cb-steg__rensa {
-  position: absolute;
-  right: 0.4rem;
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  height: 1.5rem;
-  width: 1.5rem;
+.cb-val__bort {
+  display: flex;
+  flex: none;
   align-items: center;
   justify-content: center;
-  border-radius: 9999px;
+  border-radius: 0.3rem;
+  padding: 0.15rem;
   color: hsl(var(--muted-foreground));
-  transition: background-color 0.14s ease-out, color 0.14s ease-out;
-}
-
-.cb-steg__rensa:hover {
-  background: hsl(var(--foreground) / 0.1);
-  color: hsl(var(--foreground));
-}
-
-.cb-steg__rensa[disabled] {
   opacity: 0;
-  pointer-events: none;
+  transition: opacity 0.12s ease-out, color 0.12s ease-out,
+    background-color 0.12s ease-out;
+}
+
+.cb-val__bort:hover {
+  background: hsl(var(--destructive) / 0.14);
+  color: hsl(var(--destructive));
+}
+
+/*
+ * Knapparna kommer fram vid hovring - och vid tangentbordsfokus.
+ *
+ * Utan :focus-within går de inte att nå med tabb: en knapp med
+ * opacity 0 tar emot fokus men syns inte, och då står markören på något
+ * osynligt.
+ */
+.cb-val:hover .cb-val__bort,
+.cb-val:focus-within .cb-val__bort {
+  opacity: 1;
+}
+
+.cb-val[data-flera="true"]:hover .cb-antal,
+.cb-val[data-flera="true"]:focus-within .cb-antal {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.cb-val[data-flera="true"]:hover .cb-val__antal,
+.cb-val[data-flera="true"]:focus-within .cb-val__antal {
+  opacity: 0;
+}
+
+/*
+ * På en pekskärm finns ingen hovring.
+ *
+ * Där står knapparna framme hela tiden i stället - alternativet är att
+ * de aldrig går att nå.
+ */
+@media (hover: none) {
+  .cb-val__bort {
+    opacity: 1;
+  }
+
+  .cb-val[data-flera="true"] .cb-antal {
+    position: static;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .cb-val[data-flera="true"] .cb-val__antal {
+    display: none;
+  }
+}
+
+/* Räknaren -----------------------------------------------------------
+ *
+ * Samma sak i bygget och i produktlistan, för det är samma handling.
+ * Siffran har fast bredd så att raden inte hoppar när man går från 9
+ * till 10, och tabular-nums så att ettan tar lika mycket plats som
+ * åttan.
+ */
+.cb-antal {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid hsl(var(--primary) / 0.45);
+  border-radius: 0.4rem;
+  background: hsl(var(--background));
+}
+
+.cb-antal button {
+  display: flex;
+  height: 1.4rem;
+  width: 1.4rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  color: hsl(var(--primary));
+  transition: background-color 0.12s ease-out;
+}
+
+.cb-antal button:hover:not(:disabled) {
+  background: hsl(var(--primary) / 0.14);
+}
+
+.cb-antal button:disabled {
+  cursor: not-allowed;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-antal__tal {
+  min-width: 1.5rem;
+  border-left: 1px solid hsl(var(--primary) / 0.28);
+  border-right: 1px solid hsl(var(--primary) / 0.28);
+  padding: 0 0.1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
 }
 
 /* Förloppet. En rad siffror räcker inte - en stapel syns i ögonvrån. */
@@ -3051,7 +3232,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .cb-steg,
-  .cb-steg__rensa,
+  .cb-val__antal,
+  .cb-val .cb-antal,
+  .cb-val__bort,
   .cb-forlopp__fyllt {
     transition: none;
   }
@@ -3507,143 +3690,40 @@ button.cb-huvud__cell:hover {
 }
 
 
-/* Flera val i samma steg ---------------------------------------------
+/* Lagerstatus ---------------------------------------------------------
  *
- * Lagring, minne, chassifläktar och nätverkskort tar mer än en sak. De
- * stegen får en lista under rubriken med en rad per modell, och på varje
- * rad en räknare. De sex andra stegen ser ut precis som förut: en sockel
- * tar en processor och då finns inget antal att visa.
+ * En ruta per butik som för varan. Grön betyder hemma, röd betyder slut.
+ * En butik som inte för varan alls har ingen ruta - det är en tredje sak
+ * än att den är slut, och den skillnaden är värd att synas.
  *
- * Listan ligger utanför själva stegknappen, för en knapp får inte
- * innehålla andra knappar. Indragningen mot ikonen ovanför gör att den
- * ändå läses som en del av steget.
+ * Rutorna står i fast ordning, inte i den ordning databasen råkar svara.
+ * Annars byter de plats mellan raderna och kolumnen går inte att läsa
+ * nedåt, vilket är hela dess uppgift.
+ *
+ * Färg ensam räcker inte: var tolfte man ser inte skillnad på rött och
+ * grönt. Därför har den slutsålda rutan också en mörk kant, och varje
+ * ruta en title som säger butik och status i ord.
  */
-.cb-steg__antal {
-  margin-left: 0.45rem;
-  border-radius: 999px;
-  background: hsl(var(--primary) / 0.14);
-  padding: 0.05rem 0.4rem;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  color: hsl(var(--primary));
-}
-
-.cb-vallista {
-  margin: 0.15rem 0 0.35rem 1.85rem;
+.cb-lager {
   display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  border-left: 1px solid hsl(var(--foreground) / 0.12);
-  padding-left: 0.55rem;
-}
-
-.cb-val {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: 0.2rem;
 }
 
-/*
- * Namnet på egen rad, räknaren och priset på nästa.
- *
- * Allt på en rad krävde plats för "Samsung 990 Pro 2TB" plus en räknare
- * plus ett pris plus en papperskorg i en spalt på knappt trehundra
- * pixlar. Namnet kapades då efter "Samsung 990..." och det är just det
- * namnet raden finns för att berätta.
- */
-.cb-val__namn {
-  overflow: hidden;
-  font-size: 0.75rem;
-  line-height: 1.3;
-  color: hsl(var(--foreground));
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-}
-
-.cb-val__rad {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.cb-val__pris {
-  margin-left: auto;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: hsl(var(--primary));
-}
-
-.cb-val__bort {
-  display: flex;
+.cb-lager__ruta {
+  height: 0.5rem;
+  width: 0.5rem;
   flex: none;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.3rem;
-  padding: 0.2rem;
-  color: hsl(var(--muted-foreground));
-  transition: color 0.12s ease-out, background-color 0.12s ease-out;
+  border-radius: 0.125rem;
 }
 
-.cb-val__bort:hover {
-  background: hsl(var(--destructive) / 0.12);
-  color: hsl(var(--destructive));
+.cb-lager__ruta[data-lager="ja"] {
+  background: #22c55e;
 }
 
-.cb-vallista__tak {
-  font-size: 0.6875rem;
-  color: hsl(var(--muted-foreground));
-}
-
-/* Räknaren -----------------------------------------------------------
- *
- * Samma sak i bygget och i produktlistan, för det är samma handling.
- * Siffran har fast bredd så att raden inte hoppar när man går från 9
- * till 10, och tabular-nums så att ettan tar lika mycket plats som
- * åttan.
- */
-.cb-antal {
-  display: inline-flex;
-  flex: none;
-  align-items: center;
-  overflow: hidden;
-  border: 1px solid hsl(var(--primary) / 0.45);
-  border-radius: 0.4rem;
-}
-
-.cb-antal button {
-  display: flex;
-  height: 1.4rem;
-  width: 1.4rem;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  line-height: 1;
-  color: hsl(var(--primary));
-  transition: background-color 0.12s ease-out;
-}
-
-.cb-antal button:hover:not(:disabled) {
-  background: hsl(var(--primary) / 0.14);
-}
-
-.cb-antal button:disabled {
-  cursor: not-allowed;
-  color: hsl(var(--muted-foreground));
-}
-
-.cb-antal__tal {
-  min-width: 1.5rem;
-  border-left: 1px solid hsl(var(--primary) / 0.28);
-  border-right: 1px solid hsl(var(--primary) / 0.28);
-  padding: 0 0.1rem;
-  text-align: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: hsl(var(--foreground));
+.cb-lager__ruta[data-lager="nej"] {
+  background: #ef4444;
+  box-shadow: inset 0 0 0 1px hsl(var(--brand-black) / 0.35);
 }
 
 /* Förstoringen vid hovring ------------------------------------------

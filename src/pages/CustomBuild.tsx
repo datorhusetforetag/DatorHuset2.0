@@ -2,6 +2,7 @@
 import { PageHero } from "@/components/PageHero";
 import { PAGE_BANNERS } from "@/lib/pageBanners";
 import {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -202,6 +203,7 @@ type CatalogCategoryPricesResponse = {
     image_url?: string | null;
     offer_count?: number;
     in_stock_count?: number;
+    stock?: Record<string, number>;
     price_source?: "live-offer" | "fallback" | "search" | "no-store" | null;
   }>;
 };
@@ -753,6 +755,7 @@ type SortDirection = "asc" | "desc";
 type SortKey =
   | "popularity"
   | "price"
+  | "lager"
   | "chipset"
   | "speed"
   | "cores"
@@ -876,7 +879,7 @@ const spaltMall = (kolumner: Kolumn[]) =>
    * kvadratisk när den sträcks över hela höjden. Sista spalten rymmer
    * antingen "Lägg till" eller räknaren − 2 +.
    */
-  `5.25rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 6rem 5.75rem`;
+  `5.25rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 4.25rem 6rem 5.75rem`;
 
 const PRIMARY_SORTS = [
   { key: "popularity" as SortKey, label: "Populärast", direction: "desc" as SortDirection, exact: true },
@@ -4039,6 +4042,24 @@ const BUTIKSMARKEN: Record<string, string[]> = {
   ],
 };
 
+/*
+ * Ordningen butikerna står i lagerrutan.
+ *
+ * Fast ordning, inte den databasen råkar svara med. Annars byter
+ * rutorna plats mellan två rader och kolumnen blir omöjlig att läsa
+ * nedåt - det är just det den finns för.
+ */
+const BUTIKSORDNING = ["proshop", "webhallen"];
+
+const sorteradeButiker = (stock: Record<string, number> | undefined) => {
+  if (!stock) return [];
+  const nycklar = Object.keys(stock);
+  return [
+    ...BUTIKSORDNING.filter((id) => nycklar.includes(id)),
+    ...nycklar.filter((id) => !BUTIKSORDNING.includes(id)).sort(),
+  ];
+};
+
 const getButiksmarken = (offer: StoreOffer) => {
   const id = String(offer.store_id || offer.store || "").toLowerCase().trim();
   return BUTIKSMARKEN[id] || [];
@@ -4435,6 +4456,11 @@ export default function CustomBuild() {
    * andra vår uppskattning.
    */
   const [offerCountByItemId, setOfferCountByItemId] = useState<Record<string, number>>({});
+  /* Lagerstatus per butik och komponent: 1 i lager, 0 slut, saknas helt
+     om butiken inte för varan. */
+  const [stockByItemId, setStockByItemId] = useState<Record<string, Record<string, number>>>({});
+  /* Filtret som bara visar det som går att köpa i dag. */
+  const [endastILager, setEndastILager] = useState(false);
   /* Kategorier vars prislista hunnit fram. Före svaret vet vi ingenting
      om butikerna, och då är det fel att dölja något. */
   const [kategorierMedPrislista, setKategorierMedPrislista] = useState<Record<string, boolean>>({});
@@ -4600,6 +4626,14 @@ export default function CustomBuild() {
     if (!kategorierMedPrislista[activeCategory]) return alla;
     return alla.filter((item) => (offerCountByItemId[item.id] ?? 0) > 0);
   }, [activeCategory, kategorierMedPrislista, offerCountByItemId]);
+
+  /* Hur många butiker som har varan hemma just nu. Memoiserad för att
+     sorteringen har den som beroende och annars skulle räkna om hela
+     listan vid varje rendering. */
+  const antalILager = useCallback(
+    (itemId: string) => Object.values(stockByItemId[itemId] || {}).filter((v) => v === 1).length,
+    [stockByItemId],
+  );
   const getComparablePrice = (item: ComponentItem, category: CategoryKey) => {
     const livePrice = lowestOfferPriceByItemId[item.id];
     if (typeof livePrice === "number" && Number.isFinite(livePrice) && livePrice > 0) {
@@ -4915,6 +4949,13 @@ export default function CustomBuild() {
           });
           return nextState;
         });
+        setStockByItemId((prev) => {
+          const nextState = { ...prev };
+          nextEntries.forEach((entry) => {
+            nextState[entry.item_id] = entry?.stock && typeof entry.stock === "object" ? entry.stock : {};
+          });
+          return nextState;
+        });
         setKategorierMedPrislista((prev) => ({ ...prev, [activeCategory]: true }));
         setPriceSourceByItemId((prev) => {
           const nextState = { ...prev };
@@ -5123,6 +5164,11 @@ export default function CustomBuild() {
     const allowedRamType = selectedMotherboardSocket ? SOCKET_RAM_TYPE[selectedMotherboardSocket] : null;
 
     return items.filter((item) => {
+      /* "Bara i lager" är ett hårt nej, inte en sortering: den som
+         kryssat i den vill inte se varor hon inte kan beställa. */
+      if (endastILager && !Object.values(stockByItemId[item.id] || {}).some((v) => v === 1)) {
+        return false;
+      }
       const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
       const comparablePrice = getComparablePrice(item, activeCategory);
       const matchesPrice = comparablePrice >= priceRange[0] && comparablePrice <= priceRange[1];
@@ -5286,6 +5332,8 @@ export default function CustomBuild() {
       return true;
     });
   }, [
+    endastILager,
+    stockByItemId,
     valdSockelModerkort,
     valdSockelProcessor,
     items,
@@ -5361,6 +5409,9 @@ export default function CustomBuild() {
          * stigande sortering: "lägst CL" gav tre rader med streck innan
          * det första riktiga talet. Noll är ett värde, okänt är det inte.
          */
+        /* Flest butiker med varan hemma först. */
+        case "lager":
+          return antalILager(item.id);
         case "speed":
           return getCpuSpeedGhz(item);
         case "cores":
@@ -5509,11 +5560,18 @@ export default function CustomBuild() {
   );
 
   /*
-   * En rad i vänsterlistan.
+   * Ett steg i bygget.
    *
-   * Samma markup används för de åtta stegen och för tillvalen under dem;
-   * det enda som skiljer är en indragning. Två nästan-lika kopior av det
-   * här hade garanterat glidit isär.
+   * En rad per vald komponent, aldrig samma namn två gånger. Förut stod
+   * kategorin med sitt val på en rad OCH samma val en gång till i en
+   * lista under - två rader som sa samma sak, plus en alltid synlig
+   * räknare och två papperskorgar. Åtta valda komponenter blev en spalt
+   * man fick leta i.
+   *
+   * Nu: kategorin är en rubrik, valen står under den, och knapparna
+   * kommer fram när pekaren är på raden. Det som alltid syns är det man
+   * läser - namn och pris. Det man ibland gör - ändra antal, ta bort -
+   * finns där när man sträcker sig efter det.
    */
   const renderCategoryRow = (category: CategoryConfig, options?: { nested?: boolean }) => {
     const Icon = category.icon;
@@ -5522,132 +5580,98 @@ export default function CustomBuild() {
     const flera = tarFlera(category.key);
     const nested = options?.nested === true;
     const enheter = antalEnheter(val);
-    const kategoriPris = val.reduce(
-      (sum, v) => sum + getComparablePrice(v.item, category.key) * v.antal,
-      0,
-    );
-
-    /*
-     * Två utseenden, inte ett.
-     *
-     * En kategori som bara tar en sak visar den i själva raden, precis som
-     * förut - där finns inget antal att ändra och ingen lista att bläddra.
-     * En som tar flera får en rubrik med summan och en lista under, för
-     * det är i listan antalen bor.
-     */
-    const visaLista = flera && val.length > 0;
 
     return (
-      <div key={category.key} className="relative">
-        {/* Egen yta för stegraden, så att papperskorgen kan centreras mot
-            raden och inte mot raden plus hela vallistan under den. */}
-        <div className="cb-steg__yta">
+      <div
+        key={category.key}
+        className="cb-steg"
+        data-aktiv={isActive ? "true" : "false"}
+        data-klart={val.length > 0 ? "true" : "false"}
+      >
         <button
           type="button"
           onClick={() => handleCategorySelect(category.key)}
-          className="cb-steg"
-          data-aktiv={isActive ? "true" : "false"}
-          data-klart={val.length > 0 ? "true" : "false"}
+          className="cb-steg__rubrik"
         >
           <span className="cb-steg__ikon">
             <Icon className={nested ? "h-3.5 w-3.5" : "h-4 w-4"} />
           </span>
-          <span className="min-w-0 flex-1">
-            <span className="cb-steg__namn block">
-              {category.label}
-              {/* Antalet står i rubriken. Annars måste man räkna raderna
-                  och gånga med steppersiffrorna för att veta att det blev
-                  sex fläktar. */}
-              {flera && enheter > 0 ? (
-                <span className="cb-steg__antal">{enheter} st</span>
-              ) : null}
-            </span>
-            {visaLista ? (
-              <span className="cb-steg__rad">
-                <span className="cb-steg__vald">
-                  {val.length === 1 ? val[0].item.name : `${val.length} olika modeller`}
-                </span>
-                <span className="cb-steg__pris">{formatPrice(kategoriPris)} kr</span>
-              </span>
-            ) : val.length > 0 ? (
-              <span className="cb-steg__rad">
-                <span className="cb-steg__vald">{val[0].item.name}</span>
-                <span className="cb-steg__pris">{formatPrice(kategoriPris)} kr</span>
-              </span>
-            ) : (
-              <span className="cb-steg__tom block">{category.description}</span>
-            )}
-          </span>
+          <span className="cb-steg__namn">{category.label}</span>
+          {/* Antalet bara när det är mer än ett. "1 st" bredvid en rad
+              som redan visar en enda vara är ett ord utan innehåll. */}
+          {flera && enheter > 1 ? <span className="cb-steg__antal">{enheter} st</span> : null}
         </button>
-        {/* Papperskorgen syns först när det finns något att ta bort. En
-            nedtonad knapp som ändå inte gör något är en knapp för mycket.
-            På en kategori med flera val tömmer den hela steget - de
-            enskilda raderna har sin egen. */}
-        <button
-          type="button"
-          onClick={(event) => {
-            event.stopPropagation();
-            if (val.length === 0) return;
-            setBygge((prev) => ({ ...prev, [category.key]: [] }));
-          }}
-          className="cb-steg__rensa"
-          aria-label={`Ta bort ${category.label}`}
-          disabled={val.length === 0}
-        >
-          <TrashIcon className="h-3.5 w-3.5" />
-        </button>
-        </div>
 
-        {visaLista ? (
-          <div className="cb-vallista">
-            {val.map(({ item, antal }) => (
-              <div key={item.id} className="cb-val">
-                <p className="cb-val__namn" title={item.name}>
-                  {item.name}
-                </p>
-                <div className="cb-val__rad">
-                  <span className="cb-antal">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setBygge((prev) => medAndratAntal(prev, category.key, item.id, -1))
-                      }
-                      aria-label={`Färre ${item.name}`}
-                    >
-                      −
-                    </button>
-                    <span className="cb-antal__tal">{antal}</span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setBygge((prev) => medAndratAntal(prev, category.key, item.id, 1))
-                      }
-                      disabled={enheter >= MAX_ANTAL[category.key]}
-                      aria-label={`Fler ${item.name}`}
-                    >
-                      +
-                    </button>
+        {val.length === 0 ? (
+          <button
+            type="button"
+            onClick={() => handleCategorySelect(category.key)}
+            className="cb-steg__tom"
+          >
+            {category.description}
+          </button>
+        ) : (
+          val.map(({ item, antal }) => (
+            <div key={item.id} className="cb-val" data-flera={flera ? "true" : "false"}>
+              <button
+                type="button"
+                onClick={() => handleCategorySelect(category.key)}
+                className="cb-val__namn"
+                title={item.name}
+              >
+                {item.name}
+              </button>
+
+              <div className="cb-val__rad">
+                {/* Antalet i vila, räknaren när man pekar - i samma ruta, så
+                    raden varken hoppar eller lägger räknaren över priset. */}
+                {flera ? (
+                  <span className="cb-val__kvantitet">
+                    <span className="cb-val__antal">&times;{antal}</span>
+                    <span className="cb-antal" onClick={(event) => event.stopPropagation()}>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBygge((prev) => medAndratAntal(prev, category.key, item.id, -1))
+                        }
+                        aria-label={`Färre ${item.name}`}
+                      >
+                        −
+                      </button>
+                      <span className="cb-antal__tal">{antal}</span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setBygge((prev) => medAndratAntal(prev, category.key, item.id, 1))
+                        }
+                        disabled={enheter >= MAX_ANTAL[category.key]}
+                        aria-label={`Fler ${item.name}`}
+                      >
+                        +
+                      </button>
+                    </span>
                   </span>
-                  <span className="cb-val__pris">
-                    {formatPrice(getComparablePrice(item, category.key) * antal)} kr
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setBygge((prev) => utanVal(prev, category.key, item.id))}
-                    className="cb-val__bort"
-                    aria-label={`Ta bort ${item.name}`}
-                  >
-                    <TrashIcon className="h-3 w-3" />
-                  </button>
-                </div>
+                ) : null}
+
+                <span className="cb-val__pris">
+                  {formatPrice(getComparablePrice(item, category.key) * antal)} kr
+                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setBygge((prev) => utanVal(prev, category.key, item.id))}
+                  className="cb-val__bort"
+                  aria-label={`Ta bort ${item.name}`}
+                >
+                  <TrashIcon className="h-3.5 w-3.5" />
+                </button>
               </div>
-            ))}
-            {enheter >= MAX_ANTAL[category.key] ? (
-              <p className="cb-vallista__tak">
-                Max {MAX_ANTAL[category.key]} st i det här steget.
-              </p>
-            ) : null}
-          </div>
+            </div>
+          ))
+        )}
+
+        {flera && enheter >= MAX_ANTAL[category.key] ? (
+          <p className="cb-steg__tak">Max {MAX_ANTAL[category.key]} st i det här steget.</p>
         ) : null}
       </div>
     );
@@ -6544,6 +6568,20 @@ export default function CustomBuild() {
                         />
                         <span>kr</span>
                       </div>
+
+                      {/* Lagerfiltret står här och inte bland de detaljerade.
+                          Det är den vanligaste frågan en kund har - går den
+                          att få hem - och ska inte ligga bakom ett utfäll. */}
+                      <button
+                        type="button"
+                        onClick={() => setEndastILager((pa) => !pa)}
+                        className="cb-chip ml-auto"
+                        data-aktiv={endastILager ? "true" : "false"}
+                        aria-pressed={endastILager}
+                      >
+                        <span className="cb-lager__ruta" data-lager="ja" aria-hidden="true" />
+                        Endast i lager
+                      </button>
                     </div>
                   </div>
 
@@ -6852,6 +6890,18 @@ export default function CustomBuild() {
                     )}
                     <button
                       type="button"
+                      onClick={() => toggleSortForCategory("lager", "desc")}
+                      className="cb-huvud__cell"
+                      data-aktiv={activeSort?.key === "lager" ? "true" : "false"}
+                      title="En ruta per butik som för varan. Grön betyder i lager."
+                    >
+                      Lager
+                      <span className="cb-huvud__pil">
+                        {activeSort?.key === "lager" ? (activeSort.direction === "asc" ? "▴" : "▾") : "⇅"}
+                      </span>
+                    </button>
+                    <button
+                      type="button"
                       onClick={() => toggleSortForCategory("price", "asc")}
                       className="cb-huvud__cell cb-cell--tal"
                       data-aktiv={activeSort?.key === "price" ? "true" : "false"}
@@ -6939,8 +6989,25 @@ export default function CustomBuild() {
                         data-vald={isSelected ? "true" : "false"}
                         data-oppen={isExpanded ? "true" : "false"}
                       >
+                        {/*
+                          * Hela raden öppnar panelen, inte bara knappen.
+                          *
+                          * Man pekar på varan man vill veta mer om, inte på
+                          * en knapp som råkar ligga i samma rad. Knappen och
+                          * räknaren stoppar sin egen klickning, så de gör
+                          * fortfarande bara sitt.
+                          */}
                         <div
                           className="cb-row__topp cb-tabell"
+                          role="button"
+                          tabIndex={0}
+                          aria-expanded={isExpanded}
+                          onClick={() => openStorePickerForComponent(activeCategory, item)}
+                          onKeyDown={(event) => {
+                            if (event.key !== "Enter" && event.key !== " ") return;
+                            event.preventDefault();
+                            openStorePickerForComponent(activeCategory, item);
+                          }}
                           style={{ ["--cb-spalter" as string]: spaltMall(aktivaKolumner) }}
                         >
                         <div className="cb-row__media">
@@ -6997,6 +7064,19 @@ export default function CustomBuild() {
                             {kolumn.varde(item)}
                           </span>
                         ))}
+
+                        <span className="cb-cell cb-lager">
+                          {sorteradeButiker(stockByItemId[item.id]).map((butik) => (
+                            <span
+                              key={butik}
+                              className="cb-lager__ruta"
+                              data-lager={stockByItemId[item.id]?.[butik] === 1 ? "ja" : "nej"}
+                              title={`${butik === "proshop" ? "Proshop" : butik === "webhallen" ? "Webhallen" : butik}: ${
+                                stockByItemId[item.id]?.[butik] === 1 ? "i lager" : "slut"
+                              }`}
+                            />
+                          ))}
+                        </span>
 
                         <span className="cb-cell cb-cell--pris cb-cell--tal">
                           <span className="cb-row__pris block">
