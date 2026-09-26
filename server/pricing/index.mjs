@@ -37,6 +37,20 @@ const lowestFrom = (offers) => {
   return values.length > 0 ? Math.min(...values) : null;
 };
 
+/*
+ * Lägsta priset oavsett lagerstatus.
+ *
+ * När allt är slut är butikens pris ändå butikens pris, och det är en
+ * riktig siffra. Alternativet var att falla tillbaka på katalogens eget
+ * riktpris - en uppskattning som såg ut som ett pris.
+ */
+const lowestAnyFrom = (offers) => {
+  const values = offers
+    .map((offer) => offer.total_price ?? offer.price)
+    .filter((value) => Number.isFinite(value) && value > 0);
+  return values.length > 0 ? Math.min(...values) : null;
+};
+
 /**
  * Priser för en hel kategori.
  * Ett anrop till databasen för alla produkter, inte ett per produkt.
@@ -54,13 +68,27 @@ export const buildCategoryPriceResponse = async (category, items) => {
       "",
     );
 
+    /* Slutsålt pris är fortfarande butikens pris, inte vår gissning. */
+    const slutpris = lowest === null ? lowestAnyFrom(offers) : null;
+    const butikspris = lowest ?? slutpris;
+
     return {
       item_id: item.id,
-      lowest_price: lowest ?? (Number.isFinite(item.price) ? item.price : null),
+      lowest_price: butikspris ?? (Number.isFinite(item.price) ? item.price : null),
       updated_at: newest || null,
       image_url: rows.find((row) => row.image_url)?.image_url || null,
+      /*
+       * Hur många butiker som har varan, slutsålda inräknade.
+       *
+       * Sidan använder den för att inte visa komponenter som ingen butik
+       * för. Priset ensamt räcker inte som signal: en slutsåld vara har
+       * ett pris men ingen lagersaldo, och en vara utan butik alls har
+       * katalogens riktpris - de såg likadana ut utifrån.
+       */
+      offer_count: offers.length,
+      in_stock_count: offers.filter((offer) => offer.status === "available").length,
       // "live-offer" = riktigt butikspris, "fallback" = katalogens listpris.
-      price_source: lowest ? "live-offer" : Number.isFinite(item.price) ? "fallback" : null,
+      price_source: butikspris ? "live-offer" : Number.isFinite(item.price) ? "fallback" : null,
     };
   });
 
@@ -89,8 +117,9 @@ export const buildItemOffersResponse = async (item) => {
     next_refresh_at: newest
       ? new Date(new Date(newest).getTime() + REFRESH_INTERVAL_MS).toISOString()
       : null,
-    lowest_price: lowest ?? (Number.isFinite(item.price) ? item.price : null),
+    lowest_price: lowest ?? lowestAnyFrom(offers) ?? (Number.isFinite(item.price) ? item.price : null),
     image_url: rows.find((row) => row.image_url)?.image_url || null,
+    offer_count: offers.length,
     offers,
     // Tomt men utan fel betyder "inga källor gav träff", inte "trasigt".
     source: offers.length > 0 ? "affiliate-feeds" : "none",

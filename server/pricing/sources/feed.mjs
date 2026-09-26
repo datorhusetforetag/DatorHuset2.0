@@ -649,8 +649,20 @@ export const streamFeed = async (config, onRow, { timeoutMs = 120000 } = {}) => 
  * Chassin fångas i stället på chassi, kabinett och tower, som är vad både
  * svenska och engelska flöden faktiskt skriver.
  */
+/*
+ * Flödeskategorier som kan innehålla en komponent vi för.
+ *
+ * Nätverkskorten saknades. Proshop kallar kategorin "Nätverkskort
+ * adaptrar osv", och inget av orden här fångade den, så de 56 korten i
+ * katalogen fick aldrig se en enda flödesrad - de såg ut att inte finnas
+ * i någon butik alls, fast de kommer ur just det här flödet.
+ *
+ * Filtret får gärna släppa igenom för mycket. Matchningen sker ändå på
+ * EAN mot vår egen katalog, så en router som slinker med kan inte bli
+ * ett grafikkort - den kostar bara några millisekunder.
+ */
 export const COMPONENT_CATEGORY_FILTER =
-  /processor|cpu|grafikkort|graphics|gpu|moderkort|motherboard|ram|minne|memory|ssd|nvme|hårddisk|hardisk|haarddisk|storage|chassi|kabinett|tower|nätaggregat|natagg|stroemfoers|power supply|psu|kylare|flaekt|cooler|kylning/i;
+  /processor|cpu|grafikkort|graphics|gpu|moderkort|motherboard|ram|minne|memory|ssd|nvme|hårddisk|hardisk|haarddisk|storage|chassi|kabinett|tower|nätaggregat|natagg|stroemfoers|power supply|psu|kylare|flaekt|cooler|kylning|naetverk|nätverk|network|wifi|wlan|ethernet|adaptrar/i;
 
 /*
  * Kategorier som annars slinker igenom på ett ord i titeln.

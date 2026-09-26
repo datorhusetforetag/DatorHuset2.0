@@ -200,6 +200,8 @@ type CatalogCategoryPricesResponse = {
     lowest_price: number | null;
     updated_at?: string | null;
     image_url?: string | null;
+    offer_count?: number;
+    in_stock_count?: number;
     price_source?: "live-offer" | "fallback" | "search" | "no-store" | null;
   }>;
 };
@@ -4007,6 +4009,37 @@ const getCategoryItems = (category: CategoryKey): ComponentItem[] => {
   return displayComponentItems[category];
 };
 
+/*
+ * Butikernas märken.
+ *
+ * Adresserna är butikernas egna och hotlänkas, precis som
+ * produktbilderna. Vi sparar dem inte: märket tillhör butiken, och
+ * hämtas det hos dem byts det dessutom ut av sig självt den dag de gör
+ * om det.
+ *
+ * Nycklarna är store_id ur component_offers, alltså samma sträng
+ * prissystemet skriver.
+ */
+const BUTIKSMARKEN: Record<string, string[]> = {
+  /* Två adresser var. Proshop byter filnamn ibland - "-v2" i namnet
+     röjer att de redan gjort det en gång - och favicon-32 har legat
+     still längre. Går ingen av dem fram står butikens begynnelsebokstav
+     kvar i rutan, så det aldrig blir en trasig ikon. */
+  proshop: [
+    "https://www.proshop.se/apple-touch-icon-v2.png",
+    "https://www.proshop.se/favicon-32x32.png",
+  ],
+  webhallen: [
+    "https://www.webhallen.com/icon.svg",
+    "https://www.webhallen.com/apple-favicon.png",
+  ],
+};
+
+const getButiksmarken = (offer: StoreOffer) => {
+  const id = String(offer.store_id || offer.store || "").toLowerCase().trim();
+  return BUTIKSMARKEN[id] || [];
+};
+
 const formatPrice = (price: number) => price.toLocaleString("sv-SE");
 const formatCurrencyPrice = (price: number, currency = "SEK") =>
   new Intl.NumberFormat("sv-SE", { style: "currency", currency }).format(price);
@@ -4389,11 +4422,26 @@ export default function CustomBuild() {
     )
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
+  /*
+   * Hur många butiker varje komponent finns hos.
+   *
+   * Listan visar bara det som någon butik faktiskt för. Utan den här
+   * siffran gick det inte att skilja "slut hos Proshop" från "finns
+   * ingenstans" - båda visade ett pris, men det ena var butikens och det
+   * andra vår uppskattning.
+   */
+  const [offerCountByItemId, setOfferCountByItemId] = useState<Record<string, number>>({});
+  /* Kategorier vars prislista hunnit fram. Före svaret vet vi ingenting
+     om butikerna, och då är det fel att dölja något. */
+  const [kategorierMedPrislista, setKategorierMedPrislista] = useState<Record<string, boolean>>({});
   /* Vilka kategorier vi redan hämtat bulkpriser för. Ett anrop räcker
      per kategori - svaret innehåller hela kategorin. */
   const bulkprisHamtatRef = useRef<Set<CategoryKey>>(new Set());
   /* Sätts när servern svarat 429. Då slutar vi fråga helt. */
   const prisSparrRef = useRef(false);
+  /* Löpnummer på butiksuppslagen, så att ett sent svar från en komponent
+     man lämnat inte skriver över det man tittar på nu. */
+  const butiksuppslagRef = useRef(0);
 
   useEffect(() => {
     try {
@@ -4527,7 +4575,27 @@ export default function CustomBuild() {
   }, [bygge.motherboard]);
 
   const activeConfig = CATEGORY_LIST.find((category) => category.key === activeCategory);
-  const items = getCategoryItems(activeCategory);
+
+  /*
+   * Bara komponenter som någon butik faktiskt för.
+   *
+   * Katalogen innehåller 6 781 poster, men 492 av dem fanns varken hos
+   * Proshop eller Webhallen. De visade katalogens riktpris, alltså en
+   * uppskattning som såg ut precis som ett riktigt pris - och en kund som
+   * valde en sådan fick ett bygge ingen kan handla.
+   *
+   * Filtret går på data och inte på en lista i koden: slutar en butik
+   * föra en vara försvinner den av sig själv vid nästa prisuppdatering,
+   * och börjar de föra den igen kommer den tillbaka.
+   *
+   * Före prislistans svar vet vi ingenting, och då visas allt. Annars
+   * hade listan stått tom en sekund vid varje kategoribyte.
+   */
+  const items = useMemo(() => {
+    const alla = getCategoryItems(activeCategory);
+    if (!kategorierMedPrislista[activeCategory]) return alla;
+    return alla.filter((item) => (offerCountByItemId[item.id] ?? 0) > 0);
+  }, [activeCategory, kategorierMedPrislista, offerCountByItemId]);
   const getComparablePrice = (item: ComponentItem, category: CategoryKey) => {
     const livePrice = lowestOfferPriceByItemId[item.id];
     if (typeof livePrice === "number" && Number.isFinite(livePrice) && livePrice > 0) {
@@ -4836,6 +4904,14 @@ export default function CustomBuild() {
           });
           return nextState;
         });
+        setOfferCountByItemId((prev) => {
+          const nextState = { ...prev };
+          nextEntries.forEach((entry) => {
+            nextState[entry.item_id] = Number(entry?.offer_count) || 0;
+          });
+          return nextState;
+        });
+        setKategorierMedPrislista((prev) => ({ ...prev, [activeCategory]: true }));
         setPriceSourceByItemId((prev) => {
           const nextState = { ...prev };
           nextEntries.forEach((entry) => {
@@ -5846,6 +5922,16 @@ export default function CustomBuild() {
     setExpandedItemCategory(categoryKey);
     setStorePickerComponent(item);
     setStorePickerError("");
+    /*
+     * Vilken uppslagning som är den aktuella.
+     *
+     * Öppnar man en komponent utan butiker och sedan snabbt en med, hann
+     * det första svaret fram efteråt och skrev "Inga butiksträffar
+     * hittades" ovanför två butiker som stod där och syntes. Svaret gällde
+     * en annan vara.
+     */
+    butiksuppslagRef.current += 1;
+    const uppslag = butiksuppslagRef.current;
     if (!supportsStoreOffersForCategory(categoryKey)) {
       setStorePickerLoading(false);
       return;
@@ -5906,15 +5992,19 @@ export default function CustomBuild() {
       const lowestPricedOffer = getLowestPricedStoreOfferValue(offers);
       const hasPricedOffer = Number.isFinite(lowestPricedOffer) && Number(lowestPricedOffer) > 0;
       applyStoreOffersSnapshotToItem(item, categoryKey, data);
+      if (uppslag !== butiksuppslagRef.current) return;
       if (offers.length === 0) {
         setStorePickerError("Inga butiksträffar hittades för komponenten.");
       }
     } catch (error) {
+      if (uppslag !== butiksuppslagRef.current) return;
       setStorePickerError(
         error instanceof Error ? error.message : "Kunde inte hämta butikpriser just nu."
       );
     } finally {
-      setStorePickerLoading(false);
+      if (uppslag === butiksuppslagRef.current) {
+        setStorePickerLoading(false);
+      }
     }
   };
 
@@ -6302,7 +6392,11 @@ export default function CustomBuild() {
                       får skrolla förbi som vanligt innehåll. */}
                   <div
                     id="build-summary"
-                    className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80 scroll-mt-24 lg:sticky lg:top-24"
+                    /* Ogenomskinlig botten, inte 70 procent. Rutan är
+                       klistrad, och innehållet som rullar förbi under den
+                       lyste igenom: tipsrutans text låg ovanpå totalen och
+                       offertknappen och gjorde båda oläsliga. */
+                    className="rounded-2xl border border-foreground/10 bg-background p-4 shadow-sm dark:border-foreground/10 dark:bg-background scroll-mt-24 lg:sticky lg:top-24"
                   >
                       <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Ditt bygge</p>
                       <p className="mt-2 text-sm font-semibold text-foreground">
@@ -6373,46 +6467,6 @@ export default function CustomBuild() {
                       {shareStatus ? (
                         <p className="mt-2 text-xs text-muted-foreground">{shareStatus}</p>
                       ) : null}
-                  </div>
-                  {/* Flyttad hit från den borttagna högerspalten. Texten
-                      svarar på vad som händer efter att knappen tryckts, så
-                      den hör hemma nära knappen. */}
-                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 text-sm text-muted-foreground shadow-sm dark:border-foreground/10 dark:bg-background/80">
-                    <p className="font-semibold text-foreground">{"Vad h\u00e4nder sen?"}</p>
-                    <ul className="mt-3 space-y-2">
-                      <li>{"Vi granskar dina val och s\u00e4kerst\u00e4ller kompatibilitet."}</li>
-                      <li>{"Du f\u00e5r en offert med bygg- och leveranstid."}</li>
-                      <li>{"N\u00e4r du godk\u00e4nt startar vi bygget."}</li>
-                    </ul>
-                  </div>
-                  <div className="rounded-2xl border border-foreground/10 bg-background/70 p-4 shadow-sm dark:border-foreground/10 dark:bg-background/80">
-                    <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Tips</p>
-                    <p className="text-sm text-muted-foreground mt-3">
-                      {"\u00c4r du os\u00e4ker? V\u00e4lj en budgetniv\u00e5 i b\u00f6rjan och uppgradera stegvis. Vi hj\u00e4lper dig hitta r\u00e4tt balans."}
-                    </p>
-                    <p className="mt-4 text-sm text-muted-foreground">
-                      Hittar du inte exakt komponent? Mejla oss vilket build du vill ha.
-                    </p>
-                    <div className="mt-4 flex flex-wrap gap-3">
-                      <Link
-                        to="/kundservice"
-                        className="inline-flex items-center justify-center gap-2 border border-primary text-primary dark:text-primary font-semibold px-4 py-2 rounded-lg hover:bg-secondary hover:border-secondary hover:text-white transition-colors"
-                      >
-                        {"F\u00e5 r\u00e5dgivning"}
-                      </Link>
-                      {/* Knappen låg som <a> mot https://datorhuset.se och
-                          inte som <Link>. Den bredvid är en Link, så två
-                          knappar i samma rad betedde sig olika: den ena
-                          bytte sida i appen, den andra lämnade sajten man
-                          stod på. Från localhost eller datorhuset.site
-                          hamnade man alltså på den driftsatta sajten. */}
-                      <Link
-                        to="/service-reparation"
-                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-secondary px-4 py-2 font-semibold text-white transition-colors hover:bg-secondary"
-                      >
-                        Mejla oss
-                      </Link>
-                    </div>
                   </div>
                 </div>
               </aside>
@@ -7104,6 +7158,33 @@ export default function CustomBuild() {
                                           key={`${item.id}-${offer.store_id || offer.store}`}
                                           className="cb-butik"
                                         >
+                                          {/* Bokstaven ligger under bilden och syns bara
+                                              om butikens ikon inte går att hämta. */}
+                                          <span className="cb-butik__marke" aria-hidden="true">
+                                            <span className="cb-butik__initial">
+                                              {String(offer.store || "?").charAt(0).toUpperCase()}
+                                            </span>
+                                            {getButiksmarken(offer).length > 0 ? (
+                                              <img
+                                                src={getButiksmarken(offer)[0]}
+                                                alt=""
+                                                loading="lazy"
+                                                decoding="async"
+                                                onError={(event) => {
+                                                  const bild = event.currentTarget;
+                                                  const kedja = getButiksmarken(offer);
+                                                  const steg = Number(bild.dataset.steg ?? "1");
+                                                  if (steg >= kedja.length) {
+                                                    bild.onerror = null;
+                                                    bild.style.display = "none";
+                                                    return;
+                                                  }
+                                                  bild.dataset.steg = String(steg + 1);
+                                                  bild.src = kedja[steg];
+                                                }}
+                                              />
+                                            ) : null}
+                                          </span>
                                           <div className="min-w-0">
                                             <span className="cb-butik__namn block truncate">{offer.store}</span>
                                             <span className="cb-butik__lager" data-ton={lager.tone}>
@@ -7186,10 +7267,32 @@ export default function CustomBuild() {
                   ) : null}
                   {sortedItems.length === 0 ? (
                     <div className="rounded-2xl border border-dashed border-foreground/15 px-6 py-10 text-center">
-                      <p className="text-sm font-semibold text-foreground">Inga komponenter matchar</p>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        Prova en bredare sökning eller nollställ prisintervallet.
-                      </p>
+                      {/*
+                        * Två olika tomma lägen, och de kräver olika besked.
+                        *
+                        * Är hela kategorin borta för att ingen butik för något
+                        * av den hjälper det inte att nollställa filtren, och
+                        * att be kunden göra det är att skicka henne på en
+                        * uppgift som inte går att lösa.
+                        */}
+                      {items.length === 0 && getCategoryItems(activeCategory).length > 0 ? (
+                        <>
+                          <p className="text-sm font-semibold text-foreground">
+                            Inga butiker har {(activeConfig?.label || "komponenten").toLowerCase()} just nu
+                          </p>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            Vi visar bara det Proshop eller Webhallen faktiskt för. Priserna läses om
+                            varje dygn, så titta in igen i morgon.
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <p className="text-sm font-semibold text-foreground">Inga komponenter matchar</p>
+                          <p className="mt-2 text-xs text-muted-foreground">
+                            Prova en bredare sökning eller nollställ prisintervallet.
+                          </p>
+                        </>
+                      )}
                     </div>
                   ) : null}
                 </div>
