@@ -235,6 +235,28 @@ const apiLimiter = rateLimit({
   legacyHeaders: false,
   handler: createRateLimitJsonHandler("För många API-förfrågningar. Försök igen om en liten stund."),
 });
+/*
+ * Konfiguratorns prisvägar har sin egen spärr.
+ *
+ * De är läsande, svarar ur serverns egen cache, och de är vad sidan är
+ * byggd av: en kategori hämtar ett bulkpris och sedan ett pris per rad
+ * som kunden ser. Under den allmänna spärren på 120 anrop per kvart
+ * räckte det med några kategorier innan hela /api/ svarade 429, alltså
+ * innan resten av sajten slutade fungera för någon som bara tittade.
+ *
+ * 600 per kvart är fyrtio i minuten. Det räcker för en kund som
+ * bläddrar och är för lågt för den som vill skrapa sextusen poster.
+ */
+const customBuildPriceLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 600,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => getRateLimitKey(req, "custom-build-price"),
+  handler: createRateLimitJsonHandler(
+    "För många prisförfrågningar. Vänta en stund och försök igen.",
+  ),
+});
 const checkoutLimiter = rateLimit({
   windowMs: 10 * 60 * 1000,
   max: 8,
@@ -492,9 +514,14 @@ app.use(express.json({ limit: JSON_BODY_LIMIT }));
  * requireAdminPermission, så de är inte öppna för vem som helst att
  * hamra på. Deras egen spärr räcker.
  */
-app.use("/api/", (req, res, next) =>
-  req.path.startsWith("/admin") ? next() : apiLimiter(req, res, next),
-);
+app.use("/api/", (req, res, next) => {
+  if (req.path.startsWith("/admin")) return next();
+  /* req.path är relativ till monteringen, alltså "/custom-build/..." */
+  if (req.path.startsWith("/custom-build/")) {
+    return customBuildPriceLimiter(req, res, next);
+  }
+  return apiLimiter(req, res, next);
+});
 app.use("/api/admin", adminLimiter);
 
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -6411,11 +6438,26 @@ app.post("/api/offer-request", mailFormLimiter, async (req, res) => {
     const shareUrl = sanitizeText(req.body?.shareUrl, 500);
     const components = Array.isArray(req.body?.components) ? req.body.components : [];
     const componentLines = components
-      .map((item) => ({
-        category: sanitizeText(item?.category, 80),
-        name: sanitizeText(item?.name, 160),
-        price: Number(item?.price || 0),
-      }))
+      .map((item) => {
+        /*
+         * Antalet kommer från formuläret och måste tåla skräp.
+         *
+         * Bygget kan innehålla fem likadana chassifläktar. Utan antalet
+         * står "Arctic P12" en gång i mejlet och Sahran prissätter en
+         * fläkt i stället för fem. Taket på tio är samma tak som sidan
+         * har, så en handredigerad POST kan inte beställa tusen.
+         */
+        const rawQuantity = Math.round(Number(item?.quantity));
+        const quantity = Number.isFinite(rawQuantity)
+          ? Math.min(Math.max(1, rawQuantity), 10)
+          : 1;
+        return {
+          category: sanitizeText(item?.category, 80),
+          name: sanitizeText(item?.name, 160),
+          price: Number(item?.price || 0),
+          quantity,
+        };
+      })
       .filter((item) => item.category && item.name);
 
     if (!name || !email) {
@@ -6432,7 +6474,9 @@ app.post("/api/offer-request", mailFormLimiter, async (req, res) => {
       ? `<ul>${componentLines
           .map(
             (item) =>
-              `<li>${escapeHtml(item.category)}: ${escapeHtml(item.name)} (${formatCurrency(item.price)})</li>`
+              `<li>${escapeHtml(item.category)}: ${escapeHtml(item.name)}${
+                item.quantity > 1 ? ` &times; ${item.quantity}` : ""
+              } (${formatCurrency(item.price * item.quantity)})</li>`
           )
           .join("")}</ul>`
       : "<p>Inga komponenter valda.</p>";

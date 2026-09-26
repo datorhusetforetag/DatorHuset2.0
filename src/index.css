@@ -2657,7 +2657,8 @@
   align-items: center;
   justify-content: center;
   aspect-ratio: 1;
-  overflow: hidden;
+  /* Ingen overflow: hidden. Bilden ligger ändå innanför med object-fit
+     och utfyllnad, och förstoringen nedan måste få sticka ut. */
   border-radius: 0.55rem;
   padding: 0.3rem;
 
@@ -2956,9 +2957,9 @@
 }
 
 .cb-steg__namn {
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   color: hsl(var(--foreground));
 }
 
@@ -2972,34 +2973,47 @@
  */
 .cb-steg__rad {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
 }
 
+/*
+ * Två rader i stället för en, och större text.
+ *
+ * "Corsair Vengeance 32GB (2x16GB) DDR5 6000MHz CL36" kapades efter
+ * "32GB..." på en rad i elva pixlar, och då säger raden inte vilket
+ * minne som sitter i bygget - bara att det är ett Corsair.
+ */
 .cb-steg__vald {
-  margin-top: 0.1rem;
-  font-size: 0.6875rem;
-  line-height: 1.3;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
   color: hsl(var(--primary));
   display: -webkit-box;
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
 .cb-steg__pris {
   flex: none;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: hsl(var(--foreground));
 }
 
 .cb-steg__tom {
-  margin-top: 0.1rem;
-  font-size: 0.6875rem;
+  margin-top: 0.15rem;
+  font-size: 0.75rem;
   color: hsl(var(--muted-foreground));
+}
+
+/* Ytan papperskorgen räknar sitt top: 50% mot. Utan den mätte den
+   mot hela steget inklusive vallistan och hamnade mitt i listan. */
+.cb-steg__yta {
+  position: relative;
 }
 
 .cb-steg__rensa {
@@ -3423,6 +3437,221 @@ button.cb-huvud__cell:hover {
 
   .cb-cell:not(.cb-cell--pris):not(.cb-cell--knapp) {
     display: none;
+  }
+}
+
+
+/* Flera val i samma steg ---------------------------------------------
+ *
+ * Lagring, minne, chassifläktar och nätverkskort tar mer än en sak. De
+ * stegen får en lista under rubriken med en rad per modell, och på varje
+ * rad en räknare. De sex andra stegen ser ut precis som förut: en sockel
+ * tar en processor och då finns inget antal att visa.
+ *
+ * Listan ligger utanför själva stegknappen, för en knapp får inte
+ * innehålla andra knappar. Indragningen mot ikonen ovanför gör att den
+ * ändå läses som en del av steget.
+ */
+.cb-steg__antal {
+  margin-left: 0.45rem;
+  border-radius: 999px;
+  background: hsl(var(--primary) / 0.14);
+  padding: 0.05rem 0.4rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: hsl(var(--primary));
+}
+
+.cb-vallista {
+  margin: 0.15rem 0 0.35rem 1.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  border-left: 1px solid hsl(var(--foreground) / 0.12);
+  padding-left: 0.55rem;
+}
+
+.cb-val {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+/*
+ * Namnet på egen rad, räknaren och priset på nästa.
+ *
+ * Allt på en rad krävde plats för "Samsung 990 Pro 2TB" plus en räknare
+ * plus ett pris plus en papperskorg i en spalt på knappt trehundra
+ * pixlar. Namnet kapades då efter "Samsung 990..." och det är just det
+ * namnet raden finns för att berätta.
+ */
+.cb-val__namn {
+  overflow: hidden;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: hsl(var(--foreground));
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.cb-val__rad {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.cb-val__pris {
+  margin-left: auto;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--primary));
+}
+
+.cb-val__bort {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.3rem;
+  padding: 0.2rem;
+  color: hsl(var(--muted-foreground));
+  transition: color 0.12s ease-out, background-color 0.12s ease-out;
+}
+
+.cb-val__bort:hover {
+  background: hsl(var(--destructive) / 0.12);
+  color: hsl(var(--destructive));
+}
+
+.cb-vallista__tak {
+  font-size: 0.6875rem;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Räknaren -----------------------------------------------------------
+ *
+ * Samma sak i bygget och i produktlistan, för det är samma handling.
+ * Siffran har fast bredd så att raden inte hoppar när man går från 9
+ * till 10, och tabular-nums så att ettan tar lika mycket plats som
+ * åttan.
+ */
+.cb-antal {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid hsl(var(--primary) / 0.45);
+  border-radius: 0.4rem;
+}
+
+.cb-antal button {
+  display: flex;
+  height: 1.4rem;
+  width: 1.4rem;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  line-height: 1;
+  color: hsl(var(--primary));
+  transition: background-color 0.12s ease-out;
+}
+
+.cb-antal button:hover:not(:disabled) {
+  background: hsl(var(--primary) / 0.14);
+}
+
+.cb-antal button:disabled {
+  cursor: not-allowed;
+  color: hsl(var(--muted-foreground));
+}
+
+.cb-antal__tal {
+  min-width: 1.5rem;
+  border-left: 1px solid hsl(var(--primary) / 0.28);
+  border-right: 1px solid hsl(var(--primary) / 0.28);
+  padding: 0 0.1rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+}
+
+/* Förstoringen vid hovring ------------------------------------------
+ *
+ * Brickan i listan är 3,5 rem. Den räcker för att känna igen en vara man
+ * letar efter, men inte för att se om chassit har glasruta eller vilken
+ * sida fläkten sitter på. Att behöva fälla ut raden för att se bilden är
+ * ett klick för mycket när man skummar tvåhundra chassin.
+ *
+ * Den ligger till höger om brickan och täcker produktnamnet. Det är rätt
+ * håll: till vänster hade den lagt sig över bygget man håller på att
+ * sätta ihop, och namnet står ändå kvar under pekaren man just lämnade.
+ *
+ * pointer-events: none gör att den aldrig kan stjäla hovringen från
+ * brickan och börja blinka.
+ */
+.cb-row__forstoring {
+  position: absolute;
+  left: calc(100% + 0.6rem);
+  top: 50%;
+  z-index: 40;
+  display: flex;
+  height: 15rem;
+  width: 15rem;
+  align-items: center;
+  justify-content: center;
+  padding: 0.9rem;
+  border-radius: 0.75rem;
+  background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
+  box-shadow: 0 18px 40px hsl(var(--brand-black) / 0.55),
+    0 0 0 1px hsl(var(--foreground) / 0.12);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%) scale(0.94);
+  transition: opacity 0.14s ease-out, transform 0.14s ease-out;
+}
+
+:root:not(.dark) .cb-row__forstoring {
+  background: #ffffff;
+}
+
+.cb-row__forstoring img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.cb-row__media:hover .cb-row__forstoring {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/*
+ * Den hovrade raden lägger sig överst.
+ *
+ * Utan det här hamnade förstoringen bakom raderna under: varje rad får
+ * ett eget staplingssammanhang av sin transform vid hovring, och senare
+ * syskon ritas ovanpå tidigare.
+ */
+.cb-row:hover {
+  z-index: 20;
+}
+
+/* Smala skärmar har inte plats för en förstoring bredvid, och där är
+   hovring sällan ens möjlig. */
+@media (max-width: 900px) {
+  .cb-row__forstoring {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cb-row__forstoring {
+    transition: none;
   }
 }
 

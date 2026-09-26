@@ -13,15 +13,16 @@ import {
 } from "react";
 import { Link } from "react-router-dom";
 import {
-  Box,
   CircuitBoard,
   Cpu,
   Fan,
   HardDrive,
   MemoryStick,
   Menu,
-  Monitor,
+  Microchip,
+  PcCase,
   Power,
+  Snowflake,
   Wifi,
   ChevronDown,
   ChevronRight,
@@ -233,7 +234,10 @@ const CATEGORY_LIST: CategoryConfig[] = [
     key: "gpu",
     label: "Grafikkort",
     description: "Rendering & FPS",
-    icon: Monitor,
+    /* Var Monitor. En skärm är inte ett grafikkort - den sitter i andra
+       änden av kabeln. Lucide har ingen grafikkortsikon, och ett chipp är
+       det närmaste som faktiskt läses rätt. */
+    icon: Microchip,
   },
   {
     key: "motherboard",
@@ -257,7 +261,8 @@ const CATEGORY_LIST: CategoryConfig[] = [
     key: "case",
     label: "Chassi",
     description: "Design & airflow",
-    icon: Box,
+    /* Var Box, alltså en flyttkartong. PcCase är en datorlåda. */
+    icon: PcCase,
   },
   {
     key: "psu",
@@ -269,7 +274,9 @@ const CATEGORY_LIST: CategoryConfig[] = [
     key: "cooling",
     label: "Kylning",
     description: "Tysta lösningar",
-    icon: Fan,
+    /* Delade fläktikon med chassifläktarna, så de två stegen såg likadana
+       ut i listan. Kylaren står för kylan, fläkten för fläkten. */
+    icon: Snowflake,
   },
   {
     key: "chassifan",
@@ -862,7 +869,8 @@ const KOLUMNER_PER_KATEGORI: Record<CategoryKey, Kolumn[]> = {
 
 /* Bild, produktnamn, kategorins kolumner, pris, knapp. */
 const spaltMall = (kolumner: Kolumn[]) =>
-  `3.5rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 6rem 5rem`;
+  /* Sista spalten rymmer antingen "Lägg till" eller räknaren − 2 +. */
+  `3.5rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 6rem 5.75rem`;
 
 const PRIMARY_SORTS = [
   { key: "popularity" as SortKey, label: "Populärast", direction: "desc" as SortDirection, exact: true },
@@ -4035,14 +4043,180 @@ const initialOfferForm = {
 const getBasePrice = (item: ComponentItem, category: CategoryKey) =>
   item.price && item.price > 0 ? item.price : CATEGORY_BASE_PRICE[category];
 
-const encodeBuildSelection = (selection: Record<CategoryKey, ComponentItem | null>) =>
-  CATEGORY_ORDER.map((key) => {
-    const item = selection[key];
-    if (!item) return "-";
-    const lastSegment = item.id.split("-").pop();
-    const numberValue = lastSegment ? Number(lastSegment) : Number.NaN;
-    if (!Number.isFinite(numberValue)) return "-";
+/*
+ * Ett bygge håller flera val per kategori, inte ett.
+ *
+ * Man sätter fem fläktar i ett chassi, och tre diskar i ett moderkort:
+ * en systemdisk, en för spelen och en gammal snurrande för lagringen.
+ * Förut höll bygget exakt en komponent per kategori, så den kunden fick
+ * välja vilken av sina tre diskar hon ville berätta om i offerten.
+ *
+ * Antalet ligger i valet i stället för som upprepade poster. Fem rader
+ * "Arctic P12" i sammanfattningen säger samma sak som en rad med en
+ * femma, bara sämre, och att ta bort en av fem likadana rader är en
+ * gissning om vilken.
+ */
+type Byggval = {
+  item: ComponentItem;
+  antal: number;
+};
+
+type Bygge = Record<CategoryKey, Byggval[]>;
+
+/*
+ * Hur många enheter varje kategori tar.
+ *
+ * Taken är fysiska och inte hittade på: ett moderkort har en sockel, ett
+ * chassi en plats, en processor ett fäste. Fläktarna begränsas av
+ * chassits fästen och kortets kontakter, diskarna av M.2-platserna och
+ * SATA-portarna, minnet av hur många kitt som får plats i fyra bankar.
+ *
+ * Där taket är ett fungerar allt precis som innan - samma knapp, samma
+ * rad i bygget, samma länk.
+ */
+const MAX_ANTAL: Record<CategoryKey, number> = {
+  cpu: 1,
+  gpu: 1,
+  motherboard: 1,
+  ram: 2,
+  storage: 4,
+  case: 1,
+  psu: 1,
+  cooling: 1,
+  chassifan: 10,
+  networkcard: 2,
+};
+
+const tarFlera = (key: CategoryKey) => MAX_ANTAL[key] > 1;
+
+const tomtBygge = (): Bygge => ({
+  cpu: [],
+  gpu: [],
+  motherboard: [],
+  ram: [],
+  storage: [],
+  case: [],
+  psu: [],
+  cooling: [],
+  chassifan: [],
+  networkcard: [],
+});
+
+/*
+ * Det första valet i en kategori.
+ *
+ * Kompatibilitetsreglerna handlar om sockeln och minnestypen, och dem
+ * bestämmer moderkortet - det finns bara ett. Att fråga efter "det
+ * första" är därför inte en förenkling utan hela sanningen för de
+ * kategorier reglerna gäller.
+ */
+const forstaValet = (bygge: Bygge, key: CategoryKey) => bygge[key][0]?.item ?? null;
+
+const antalEnheter = (val: Byggval[]) => val.reduce((sum, v) => sum + v.antal, 0);
+
+/*
+ * Lägger till ett val, eller räknar upp det som redan ligger där.
+ *
+ * För en kategori som bara tar en byts valet ut i stället för att
+ * vägras. Annars hade man inte kunnat ändra sig om processorn utan att
+ * först tömma steget.
+ */
+const medTillagd = (bygge: Bygge, key: CategoryKey, item: ComponentItem): Bygge => {
+  const nuvarande = bygge[key];
+
+  if (MAX_ANTAL[key] === 1) {
+    return { ...bygge, [key]: [{ item, antal: 1 }] };
+  }
+
+  if (antalEnheter(nuvarande) >= MAX_ANTAL[key]) {
+    return bygge;
+  }
+
+  const index = nuvarande.findIndex((v) => v.item.id === item.id);
+  if (index === -1) {
+    return { ...bygge, [key]: [...nuvarande, { item, antal: 1 }] };
+  }
+
+  const nasta = [...nuvarande];
+  nasta[index] = { ...nasta[index], antal: nasta[index].antal + 1 };
+  return { ...bygge, [key]: nasta };
+};
+
+const utanVal = (bygge: Bygge, key: CategoryKey, itemId: string): Bygge => ({
+  ...bygge,
+  [key]: bygge[key].filter((v) => v.item.id !== itemId),
+});
+
+/* Ett steg upp eller ner. Under ett betyder bort ur bygget. */
+const medAndratAntal = (
+  bygge: Bygge,
+  key: CategoryKey,
+  itemId: string,
+  steg: number,
+): Bygge => {
+  const nuvarande = bygge[key];
+  const index = nuvarande.findIndex((v) => v.item.id === itemId);
+  if (index === -1) return bygge;
+
+  const nyttAntal = nuvarande[index].antal + steg;
+  if (nyttAntal < 1) {
+    return utanVal(bygge, key, itemId);
+  }
+  /* Taket räknas på kategorin som helhet, inte på den enskilda raden:
+     tio fläktar är tio oavsett om de är tio likadana eller fem av två. */
+  if (steg > 0 && antalEnheter(nuvarande) >= MAX_ANTAL[key]) {
+    return bygge;
+  }
+
+  const nasta = [...nuvarande];
+  nasta[index] = { ...nasta[index], antal: nyttAntal };
+  return { ...bygge, [key]: nasta };
+};
+
+/*
+ * Bygget i en länk.
+ *
+ * Ett fält per kategori i CATEGORY_ORDER, åtskilda med punkt. Fältet är
+ * "-" när inget valts, annars ett eller flera val åtskilda med
+ * understreck, där varje val är id-numret i bas 36 följt av "*antal"
+ * när antalet är mer än ett:
+ *
+ *   -.1f.-.2a_3b.4c*5
+ *
+ * Gamla länkar har varken understreck eller stjärna och läses därför
+ * precis som förut. De ligger i folks chattar och bokmärken och ska
+ * fortsätta fungera.
+ *
+ * De handplockade komponenterna har löpnummer i sitt id - "sto-3" - och
+ * blir därför korta koder. Katalogen ur butiksflödet har det inte:
+ * "feed-storage-1yn6wg6" har inget nummer att förkorta. De skrivs ut i
+ * sin helhet efter ett tilde.
+ *
+ * Utan det tappade en delad länk tyst allt utom de handplockade, alltså
+ * sextusen av sidans knappt sjutusen komponenter. "Spara build" gav en
+ * länk som öppnade ett halvtomt bygge, och den som skickat den fick
+ * ingen aning om varför.
+ */
+const kodaValId = (item: ComponentItem) => {
+  const lastSegment = item.id.split("-").pop();
+  const numberValue = lastSegment ? Number(lastSegment) : Number.NaN;
+  if (Number.isFinite(numberValue)) {
     return numberValue.toString(36);
+  }
+  /* Id:n innehåller bara bokstäver, siffror och bindestreck, aldrig
+     punkt, understreck eller stjärna - alltså ingen av avgränsarna. */
+  return `~${item.id}`;
+};
+
+const encodeBuildSelection = (selection: Bygge) =>
+  CATEGORY_ORDER.map((key) => {
+    const kodade = selection[key]
+      .map(({ item, antal }) => {
+        const kod = kodaValId(item);
+        return antal > 1 ? `${kod}*${antal.toString(36)}` : kod;
+      })
+      .filter(Boolean);
+    return kodade.length ? kodade.join("_") : "-";
   }).join(".");
 
 const decodeBuildSelection = (encoded: string) => {
@@ -4056,13 +4230,43 @@ const decodeBuildSelection = (encoded: string) => {
    * ligger i folks chattar och bokmärken.
    */
   if (parts.length > CATEGORY_ORDER.length) return null;
-  const result: Partial<Record<CategoryKey, string>> = {};
+  const result: Partial<Record<CategoryKey, { id: string; antal: number }[]>> = {};
   parts.forEach((part, index) => {
     if (!part || part === "-") return;
-    const numberValue = parseInt(part, 36);
-    if (!Number.isFinite(numberValue)) return;
     const key = CATEGORY_ORDER[index];
-    result[key] = `${CATEGORY_ID_PREFIX[key]}-${numberValue}`;
+    if (!key) return;
+
+    const val = part
+      .split("_")
+      .map((bit) => {
+        const [idDel, antalDel] = bit.split("*");
+        /*
+         * Antalet klipps mot kategorins tak.
+         *
+         * Länken kommer utifrån och kan vara handredigerad. "chassifan
+         * gånger nittontusen" ska bli tio fläktar, inte en total på
+         * fyra miljoner kronor i ett mejl till Sahran.
+         */
+        const rattAntal = antalDel ? parseInt(antalDel, 36) : 1;
+        const antal = Number.isFinite(rattAntal)
+          ? Math.min(Math.max(1, rattAntal), MAX_ANTAL[key])
+          : 1;
+
+        /* Tilde betyder att id:t står skrivet i klartext. */
+        if (idDel.startsWith("~")) {
+          const id = idDel.slice(1);
+          return id ? { id, antal } : null;
+        }
+
+        const numberValue = parseInt(idDel, 36);
+        if (!Number.isFinite(numberValue)) return null;
+        return { id: `${CATEGORY_ID_PREFIX[key]}-${numberValue}`, antal };
+      })
+      .filter((v): v is { id: string; antal: number } => Boolean(v));
+
+    if (val.length) {
+      result[key] = val;
+    }
   });
   return result;
 };
@@ -4167,18 +4371,7 @@ export default function CustomBuild() {
   const [networkCardSlotFilters, setNetworkCardSlotFilters] = useState<string[]>([]);
   const [isSummaryVisible, setIsSummaryVisible] = useState(false);
   const [extraOpen, setExtraOpen] = useState(false);
-  const [selected, setSelected] = useState<Record<CategoryKey, ComponentItem | null>>({
-    cpu: null,
-    gpu: null,
-    motherboard: null,
-    ram: null,
-    storage: null,
-    case: null,
-    psu: null,
-    cooling: null,
-    chassifan: null,
-    networkcard: null,
-  });
+  const [bygge, setBygge] = useState<Bygge>(tomtBygge);
   const [visibleCount, setVisibleCount] = useState(ROWS_PER_PAGE);
   const [expandedItemId, setExpandedItemId] = useState("");
   const [expandedItemCategory, setExpandedItemCategory] = useState<CategoryKey | null>(null);
@@ -4196,8 +4389,12 @@ export default function CustomBuild() {
     )
   );
   const [itemsWithoutStorePrice, setItemsWithoutStorePrice] = useState<Record<string, boolean>>({});
-  const lowestPriceLookupStartedRef = useRef<Set<string>>(new Set());
+  /* Vilka kategorier vi redan hämtat bulkpriser för. Ett anrop räcker
+     per kategori - svaret innehåller hela kategorin. */
+  const bulkprisHamtatRef = useRef<Set<CategoryKey>>(new Set());
   const liveRefreshAttemptedRef = useRef<Set<string>>(new Set());
+  /* Sätts när servern svarat 429. Då slutar vi fråga helt. */
+  const prisSparrRef = useRef(false);
 
   useEffect(() => {
     try {
@@ -4237,39 +4434,31 @@ export default function CustomBuild() {
     const params = new URLSearchParams(window.location.search);
     const shortCode = params.get("b");
     const decodedIds = shortCode ? decodeBuildSelection(shortCode) : null;
-    const next: Record<CategoryKey, ComponentItem | null> = {
-      cpu: null,
-      gpu: null,
-      motherboard: null,
-      ram: null,
-      storage: null,
-      case: null,
-      psu: null,
-      cooling: null,
-      chassifan: null,
-      networkcard: null,
-    };
+    const next: Bygge = tomtBygge();
     let firstKey: CategoryKey | null = null;
 
     if (decodedIds) {
       CATEGORY_ORDER.forEach((key) => {
-        const id = decodedIds[key];
-        if (!id) return;
-        const match = getCategoryItems(key).find((item) => item.id === id);
-        if (match) {
-          next[key] = match;
+        const val = decodedIds[key];
+        if (!val?.length) return;
+        const katalog = getCategoryItems(key);
+        val.forEach(({ id, antal }) => {
+          const match = katalog.find((item) => item.id === id);
+          if (!match) return;
+          next[key] = [...next[key], { item: match, antal }];
           if (!firstKey) {
             firstKey = key;
           }
-        }
+        });
       });
     } else {
+      /* Den gamla formen, ett id per frågeparameter: ?cpu=cpu-12&gpu=... */
       (Object.keys(COMPONENTS) as CategoryKey[]).forEach((key) => {
         const id = params.get(key);
         if (!id) return;
         const match = getCategoryItems(key).find((item) => item.id === id);
         if (match) {
-          next[key] = match;
+          next[key] = [{ item: match, antal: 1 }];
           if (!firstKey) {
             firstKey = key;
           }
@@ -4277,10 +4466,10 @@ export default function CustomBuild() {
       });
     }
 
-    setSelected(next);
+    setBygge(next);
     /* En delad länk kan innehålla en fläkt eller ett nätverkskort. Då ska
        tillvalslistan stå öppen, annars ser bygget ut att sakna något. */
-    if (OPTIONAL_CATEGORIES.some((category) => next[category.key])) {
+    if (OPTIONAL_CATEGORIES.some((category) => next[category.key].length > 0)) {
       setExtraOpen(true);
     }
     if (firstKey) {
@@ -4313,19 +4502,20 @@ export default function CustomBuild() {
   }, []);
 
   useEffect(() => {
-    const socket = selected.motherboard?.socket;
+    const socket = bygge.motherboard[0]?.item.socket;
     if (!socket) return;
     const allowedRamType = SOCKET_RAM_TYPE[socket];
 
-    setSelected((prev) => {
-      const nextCpu =
-        prev.cpu && prev.cpu.socket && prev.cpu.socket !== socket ? null : prev.cpu;
-      const nextRam =
-        prev.ram && prev.ram.ramType && allowedRamType && prev.ram.ramType !== allowedRamType
-          ? null
-          : prev.ram;
+    setBygge((prev) => {
+      /* Filter, inte nollning: minnet kan vara två kitt och då ska bara
+         det som inte passar bort. Val utan uppgift om sockel eller
+         minnestyp får stanna - vi vet inte att de är fel. */
+      const nextCpu = prev.cpu.filter((v) => !v.item.socket || v.item.socket === socket);
+      const nextRam = allowedRamType
+        ? prev.ram.filter((v) => !v.item.ramType || v.item.ramType === allowedRamType)
+        : prev.ram;
 
-      if (nextCpu === prev.cpu && nextRam === prev.ram) {
+      if (nextCpu.length === prev.cpu.length && nextRam.length === prev.ram.length) {
         return prev;
       }
 
@@ -4335,7 +4525,7 @@ export default function CustomBuild() {
         ram: nextRam,
       };
     });
-  }, [selected.motherboard]);
+  }, [bygge.motherboard]);
 
   const activeConfig = CATEGORY_LIST.find((category) => category.key === activeCategory);
   const items = getCategoryItems(activeCategory);
@@ -4596,18 +4786,34 @@ export default function CustomBuild() {
     });
   };
 
+  /*
+   * Ett bulkanrop per kategori.
+   *
+   * Svaret innehåller priserna för hela kategorin, så en gång räcker.
+   * Förut var grinden en mängd med varje komponent-id i, vilket gav
+   * samma resultat på ett krångligare sätt.
+   */
   useEffect(() => {
     if (!supportsStoreOffersForCategory(activeCategory)) return;
-    const pendingItems = items.filter((item) => !lowestPriceLookupStartedRef.current.has(item.id));
-    if (pendingItems.length === 0) return;
+    if (bulkprisHamtatRef.current.has(activeCategory)) return;
+    if (prisSparrRef.current) return;
+    bulkprisHamtatRef.current.add(activeCategory);
     let isCancelled = false;
 
     const loadLowestPrices = async () => {
-      pendingItems.forEach((item) => lowestPriceLookupStartedRef.current.add(item.id));
       try {
         const endpoint = `${normalizedApiBase}/api/custom-build/catalog-prices?category=${encodeURIComponent(activeCategory)}`;
         const response = await fetch(endpoint);
-        if (!response.ok) return;
+        if (response.status === 429) {
+          prisSparrRef.current = true;
+          return;
+        }
+        if (!response.ok) {
+          /* Markeringen bort igen, annars ger ett tillfälligt fel att
+             kategorin aldrig får sina priser under hela besöket. */
+          bulkprisHamtatRef.current.delete(activeCategory);
+          return;
+        }
         const data = (await response.json().catch(() => ({}))) as CatalogCategoryPricesResponse;
         const nextEntries = Array.isArray(data?.prices) ? data.prices : [];
         if (isCancelled || nextEntries.length === 0) return;
@@ -4660,34 +4866,6 @@ export default function CustomBuild() {
           return nextState;
         });
 
-        const fallbackItemsToRefresh = pendingItems.filter((item) => {
-          const entry = nextEntries.find((candidate) => candidate?.item_id === item.id);
-          return entry?.price_source === "fallback" && !liveRefreshAttemptedRef.current.has(item.id);
-        });
-
-        const refreshQueue = [...fallbackItemsToRefresh];
-        const workerCount = Math.min(4, refreshQueue.length);
-        await Promise.all(
-          Array.from({ length: workerCount }, async () => {
-            while (!isCancelled && refreshQueue.length > 0) {
-              const item = refreshQueue.shift();
-              if (!item) return;
-              liveRefreshAttemptedRef.current.add(item.id);
-              try {
-                const detailEndpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
-                  item.id
-                )}&refresh=1`;
-                const detailResponse = await fetch(detailEndpoint);
-                if (!detailResponse.ok) continue;
-                const detailData = (await detailResponse.json().catch(() => ({}))) as CatalogItemOffersResponse;
-                if (isCancelled || !detailData?.ok) continue;
-                applyStoreOffersSnapshotToItem(item, activeCategory, detailData);
-              } catch {
-                // Keep the existing fallback state on background refresh failures.
-              }
-            }
-          })
-        );
       } catch {
         // Keep cached or reference prices on temporary API issues.
       }
@@ -4697,7 +4875,7 @@ export default function CustomBuild() {
     return () => {
       isCancelled = true;
     };
-  }, [items, normalizedApiBase, activeCategory]);
+  }, [normalizedApiBase, activeCategory]);
 
   const toggleArrayFilter = (value: string, setter: Dispatch<SetStateAction<string[]>>) => {
     setter((prev) => (prev.includes(value) ? prev.filter((entry) => entry !== value) : [...prev, value]));
@@ -4848,9 +5026,21 @@ export default function CustomBuild() {
     coolingHeightRange[0] !== coolingHeightBounds.min ||
     coolingHeightRange[1] !== coolingHeightBounds.max;
 
+  /*
+   * Sockeln, inte hela kortet.
+   *
+   * Filtret bryr sig bara om vilken sockel som är vald. Läste det ur
+   * bygget direkt blev beroendet hela bygget, och då kördes filtret om
+   * varje gång kunden räknade upp en chassifläkt - sextusen komponenter
+   * silade i onödan. Byter man dessutom moderkort till ett annat med
+   * samma sockel har ingenting förändrats för det filtret gör.
+   */
+  const valdSockelModerkort = forstaValet(bygge, "motherboard")?.socket;
+  const valdSockelProcessor = forstaValet(bygge, "cpu")?.socket;
+
   const filteredItems = useMemo(() => {
-    const selectedMotherboardSocket = selected.motherboard?.socket;
-    const selectedCpuSocket = selected.cpu?.socket;
+    const selectedMotherboardSocket = valdSockelModerkort;
+    const selectedCpuSocket = valdSockelProcessor;
     const allowedRamType = selectedMotherboardSocket ? SOCKET_RAM_TYPE[selectedMotherboardSocket] : null;
 
     return items.filter((item) => {
@@ -5017,12 +5207,12 @@ export default function CustomBuild() {
       return true;
     });
   }, [
+    valdSockelModerkort,
+    valdSockelProcessor,
     items,
     activeBrand,
     searchTerm,
     activeCategory,
-    selected.motherboard,
-    selected.cpu,
     priceRange,
     lowestOfferPriceByItemId,
     socketFilters,
@@ -5172,6 +5362,87 @@ export default function CustomBuild() {
   const visibleItems = useMemo(() => sortedItems.slice(0, visibleCount), [sortedItems, visibleCount]);
   const hiddenItemCount = sortedItems.length - visibleItems.length;
 
+  /*
+   * Speglar priskällorna i en ref.
+   *
+   * Uppdateringen nedan behöver veta vilka poster som bara har riktpris,
+   * men får inte ha det som beroende: varje lyckat anrop ändrar kartan
+   * och effekten hade startat om sig själv i all oändlighet.
+   */
+  const priskallaRef = useRef(priceSourceByItemId);
+  priskallaRef.current = priceSourceByItemId;
+
+  /*
+   * Färska priser för raderna man ser, och bara för dem.
+   *
+   * Det här kördes förut för hela kategorin. Att öppna Chassi betydde
+   * 1 210 anrop till /api/custom-build/catalog-offers, och serverns
+   * allmänna spärr släpper igenom 120 per kvart. Anrop nummer 121 och
+   * framåt fick "För många API-förfrågningar", och eftersom spärren
+   * gäller hela /api/ slutade resten av sidan svara också - därav att
+   * komponenterna ibland inte gick att hämta alls.
+   *
+   * Trettio rader syns i taget, så trettio är taket. Bläddrar kunden
+   * vidare hämtas nästa trettio, och katalogens övriga sextusen poster
+   * frågas det aldrig om.
+   */
+  useEffect(() => {
+    if (!supportsStoreOffersForCategory(activeCategory)) return;
+    if (prisSparrRef.current) return;
+
+    const attHamta = visibleItems.filter((item) => {
+      if (liveRefreshAttemptedRef.current.has(item.id)) return false;
+      const kalla = priskallaRef.current[item.id];
+      /* Har bulkanropet redan gett ett butikspris finns inget att hämta. */
+      return !kalla || kalla === "fallback";
+    });
+    if (attHamta.length === 0) return;
+
+    let isCancelled = false;
+    const ko = [...attHamta];
+
+    const arbeta = async () => {
+      while (!isCancelled && ko.length > 0 && !prisSparrRef.current) {
+        const item = ko.shift();
+        if (!item) return;
+        liveRefreshAttemptedRef.current.add(item.id);
+        try {
+          const endpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
+            item.id,
+          )}`;
+          const response = await fetch(endpoint);
+          /*
+           * Ett 429 stoppar hela kön.
+           *
+           * Att fortsätta efter ett nej förvärrar spärren för varje
+           * annat anrop från samma dator, och svaret blir ändå
+           * detsamma. Vi lägger av och låter riktpriset stå - det är
+           * märkt som riktpris och är inte fel, bara inte färskt.
+           */
+          if (response.status === 429) {
+            prisSparrRef.current = true;
+            return;
+          }
+          if (!response.ok) continue;
+          const data = (await response.json().catch(() => ({}))) as CatalogItemOffersResponse;
+          if (isCancelled || !data?.ok) continue;
+          applyStoreOffersSnapshotToItem(item, activeCategory, data);
+        } catch {
+          // Riktpriset står kvar om nätet krånglar.
+        }
+      }
+    };
+
+    /* Två samtidiga, inte fyra. Trettio anrop är ändå klara på ett par
+       sekunder, och hälften så många parallella är hälften så hårt mot
+       både vår spärr och butikens. */
+    void Promise.all([arbeta(), arbeta()]);
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [visibleItems, activeCategory, normalizedApiBase]);
+
   /* Kategorins egna mått. De vänder vid upprepat klick och visar pil. */
   const categorySortButtons = useMemo(() => {
     switch (activeCategory) {
@@ -5226,29 +5497,61 @@ export default function CustomBuild() {
   const renderCategoryRow = (category: CategoryConfig, options?: { nested?: boolean }) => {
     const Icon = category.icon;
     const isActive = category.key === activeCategory;
-    const selectedItem = selected[category.key];
+    const val = bygge[category.key];
+    const flera = tarFlera(category.key);
     const nested = options?.nested === true;
+    const enheter = antalEnheter(val);
+    const kategoriPris = val.reduce(
+      (sum, v) => sum + getComparablePrice(v.item, category.key) * v.antal,
+      0,
+    );
+
+    /*
+     * Två utseenden, inte ett.
+     *
+     * En kategori som bara tar en sak visar den i själva raden, precis som
+     * förut - där finns inget antal att ändra och ingen lista att bläddra.
+     * En som tar flera får en rubrik med summan och en lista under, för
+     * det är i listan antalen bor.
+     */
+    const visaLista = flera && val.length > 0;
 
     return (
       <div key={category.key} className="relative">
+        {/* Egen yta för stegraden, så att papperskorgen kan centreras mot
+            raden och inte mot raden plus hela vallistan under den. */}
+        <div className="cb-steg__yta">
         <button
           type="button"
           onClick={() => handleCategorySelect(category.key)}
           className="cb-steg"
           data-aktiv={isActive ? "true" : "false"}
-          data-klart={selectedItem ? "true" : "false"}
+          data-klart={val.length > 0 ? "true" : "false"}
         >
           <span className="cb-steg__ikon">
             <Icon className={nested ? "h-3.5 w-3.5" : "h-4 w-4"} />
           </span>
           <span className="min-w-0 flex-1">
-            <span className="cb-steg__namn block">{category.label}</span>
-            {selectedItem ? (
+            <span className="cb-steg__namn block">
+              {category.label}
+              {/* Antalet står i rubriken. Annars måste man räkna raderna
+                  och gånga med steppersiffrorna för att veta att det blev
+                  sex fläktar. */}
+              {flera && enheter > 0 ? (
+                <span className="cb-steg__antal">{enheter} st</span>
+              ) : null}
+            </span>
+            {visaLista ? (
               <span className="cb-steg__rad">
-                <span className="cb-steg__vald">{selectedItem.name}</span>
-                <span className="cb-steg__pris">
-                  {formatPrice(getComparablePrice(selectedItem, category.key))} kr
+                <span className="cb-steg__vald">
+                  {val.length === 1 ? val[0].item.name : `${val.length} olika modeller`}
                 </span>
+                <span className="cb-steg__pris">{formatPrice(kategoriPris)} kr</span>
+              </span>
+            ) : val.length > 0 ? (
+              <span className="cb-steg__rad">
+                <span className="cb-steg__vald">{val[0].item.name}</span>
+                <span className="cb-steg__pris">{formatPrice(kategoriPris)} kr</span>
               </span>
             ) : (
               <span className="cb-steg__tom block">{category.description}</span>
@@ -5256,20 +5559,75 @@ export default function CustomBuild() {
           </span>
         </button>
         {/* Papperskorgen syns först när det finns något att ta bort. En
-            nedtonad knapp som ändå inte gör något är en knapp för mycket. */}
+            nedtonad knapp som ändå inte gör något är en knapp för mycket.
+            På en kategori med flera val tömmer den hela steget - de
+            enskilda raderna har sin egen. */}
         <button
           type="button"
           onClick={(event) => {
             event.stopPropagation();
-            if (!selectedItem) return;
-            setSelected((prev) => ({ ...prev, [category.key]: null }));
+            if (val.length === 0) return;
+            setBygge((prev) => ({ ...prev, [category.key]: [] }));
           }}
           className="cb-steg__rensa"
           aria-label={`Ta bort ${category.label}`}
-          disabled={!selectedItem}
+          disabled={val.length === 0}
         >
           <TrashIcon className="h-3.5 w-3.5" />
         </button>
+        </div>
+
+        {visaLista ? (
+          <div className="cb-vallista">
+            {val.map(({ item, antal }) => (
+              <div key={item.id} className="cb-val">
+                <p className="cb-val__namn" title={item.name}>
+                  {item.name}
+                </p>
+                <div className="cb-val__rad">
+                  <span className="cb-antal">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setBygge((prev) => medAndratAntal(prev, category.key, item.id, -1))
+                      }
+                      aria-label={`Färre ${item.name}`}
+                    >
+                      −
+                    </button>
+                    <span className="cb-antal__tal">{antal}</span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setBygge((prev) => medAndratAntal(prev, category.key, item.id, 1))
+                      }
+                      disabled={enheter >= MAX_ANTAL[category.key]}
+                      aria-label={`Fler ${item.name}`}
+                    >
+                      +
+                    </button>
+                  </span>
+                  <span className="cb-val__pris">
+                    {formatPrice(getComparablePrice(item, category.key) * antal)} kr
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setBygge((prev) => utanVal(prev, category.key, item.id))}
+                    className="cb-val__bort"
+                    aria-label={`Ta bort ${item.name}`}
+                  >
+                    <TrashIcon className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+            ))}
+            {enheter >= MAX_ANTAL[category.key] ? (
+              <p className="cb-vallista__tak">
+                Max {MAX_ANTAL[category.key]} st i det här steget.
+              </p>
+            ) : null}
+          </div>
+        ) : null}
       </div>
     );
   };
@@ -5289,8 +5647,16 @@ export default function CustomBuild() {
   );
 
   const aktivaKolumner = KOLUMNER_PER_KATEGORI[activeCategory];
+  const kategorinTarFlera = tarFlera(activeCategory);
+  /* Taket gäller kategorin, så det är samma svar för alla trettio rader.
+     Att räkna det per rad hade varit trettio gånger samma summa. */
+  const kategorinFull = antalEnheter(bygge[activeCategory]) >= MAX_ANTAL[activeCategory];
 
-  const selectedExtraCount = OPTIONAL_CATEGORIES.filter((category) => selected[category.key]).length;
+  /* Antalet enheter, inte antalet rader: fem fläktar är fem tillägg. */
+  const selectedExtraCount = OPTIONAL_CATEGORIES.reduce(
+    (sum, category) => sum + antalEnheter(bygge[category.key]),
+    0,
+  );
 
   /*
    * Etiketterna kortas ner när de ritas, inte där de skrivs.
@@ -5403,7 +5769,23 @@ export default function CustomBuild() {
     }
     return `${value}GB`;
   };
-  const totalPrice = Object.values(selected).reduce((sum, item) => sum + (item?.price ?? 0), 0);
+  /*
+   * Totalen räknar antalet, och räknar med samma pris som raderna visar.
+   *
+   * Förut lästes item.price rakt, alltså katalogens riktpris, medan varje
+   * rad i bygget visade getComparablePrice - butikspriset när ett hittats.
+   * De två siffrorna kunde skilja hundralappar, och det var totalen som
+   * följde med in i offertmejlet.
+   */
+  const totalPrice = (Object.keys(bygge) as CategoryKey[]).reduce(
+    (sum, key) =>
+      sum +
+      bygge[key].reduce(
+        (delsumma, { item, antal }) => delsumma + getComparablePrice(item, key) * antal,
+        0,
+      ),
+    0,
+  );
   /*
    * Bara de obligatoriska stegen räknas.
    *
@@ -5413,7 +5795,9 @@ export default function CustomBuild() {
    * alla. Fläktarna syns fortfarande i sammanfattningen och i totalen
    * när de valts - de är bara inte ett krav.
    */
-  const selectedCount = REQUIRED_CATEGORIES.filter((category) => selected[category.key]).length;
+  const selectedCount = REQUIRED_CATEGORIES.filter(
+    (category) => bygge[category.key].length > 0,
+  ).length;
   const allComponentsSelected = selectedCount === REQUIRED_CATEGORIES.length;
   const activeCategoryGroup = getCategoryGroup(activeCategory);
   const activeCategoryIndex = activeCategoryGroup.findIndex((category) => category.key === activeCategory);
@@ -5421,7 +5805,7 @@ export default function CustomBuild() {
   const isLastCategory = activeCategoryIndex === activeCategoryGroup.length - 1;
   const nextBubbleLabel = nextCategory?.label ?? "Sammanfattning";
   const showNextBubble = Boolean(
-    selected[activeCategory] && (nextCategory || isLastCategory) && !isSummaryVisible
+    bygge[activeCategory].length > 0 && (nextCategory || isLastCategory) && !isSummaryVisible
   );
   const getStoreCacheKey = (categoryKey: CategoryKey, itemId: string) => `${categoryKey}:${itemId}`;
   const expandedStoreCacheKey =
@@ -5588,15 +5972,20 @@ export default function CustomBuild() {
           ? Math.max(0, Math.round(selectedOffer.total_price))
           : null,
     };
-    setSelected((prev) => ({
-      ...prev,
-      [categoryKey]: selectedComponent,
-    }));
+    setBygge((prev) => medTillagd(prev, categoryKey, selectedComponent));
     if (normalizedPrice > 0) {
       setLowestOfferPriceByItemId((prev) => ({ ...prev, [component.id]: normalizedPrice }));
     }
     handleStorePickerClose();
-    advanceAfterSelection(categoryKey);
+    /*
+     * Ingen automatisk framflyttning när kategorin tar flera.
+     *
+     * Den som just lade till sin första av fem fläktar ska inte kastas
+     * vidare till nästa steg och få leta tillbaka fyra gånger.
+     */
+    if (!tarFlera(categoryKey)) {
+      advanceAfterSelection(categoryKey);
+    }
   };
 
   const handleSelectWithoutStore = () => {
@@ -5691,19 +6080,24 @@ export default function CustomBuild() {
       return;
     }
 
-    const components = CATEGORY_LIST.map((category) => {
-      const item = selected[category.key];
-      if (!item) return null;
-      return {
+    /*
+     * En post per val, med antal och med priset raden visar.
+     *
+     * Antalet måste med: "Arctic P12" i en offert på fem fläktar är en
+     * offert Sahran får ringa upp kunden om.
+     */
+    const components = CATEGORY_LIST.flatMap((category) =>
+      bygge[category.key].map(({ item, antal }) => ({
         category: category.label,
         name: item.name,
-        price: item.price || 0,
-      };
-    }).filter(Boolean);
+        price: getComparablePrice(item, category.key),
+        quantity: antal,
+      })),
+    );
 
-    const hasSelection = Object.values(selected).some(Boolean);
+    const hasSelection = components.length > 0;
     const shareUrl = hasSelection
-      ? `${window.location.origin}/custom-bygg?b=${encodeBuildSelection(selected)}`
+      ? `${window.location.origin}/custom-bygg?b=${encodeBuildSelection(bygge)}`
       : `${window.location.origin}/custom-bygg`;
 
     setOfferStatus("sending");
@@ -5755,9 +6149,11 @@ export default function CustomBuild() {
   };
 
   const handleShareBuild = async () => {
-    const hasSelection = Object.values(selected).some(Boolean);
+    const hasSelection = (Object.keys(bygge) as CategoryKey[]).some(
+      (key) => bygge[key].length > 0,
+    );
     const shareUrl = hasSelection
-      ? `${window.location.origin}/custom-bygg?b=${encodeBuildSelection(selected)}`
+      ? `${window.location.origin}/custom-bygg?b=${encodeBuildSelection(bygge)}`
       : `${window.location.origin}/custom-bygg`;
 
     try {
@@ -6438,7 +6834,11 @@ export default function CustomBuild() {
                   </div>
 
                   {visibleItems.map((item) => {
-                    const isSelected = selected[activeCategory]?.id === item.id;
+                    /* Antalet av just den här varan i bygget, noll när den
+                       inte är vald. Ersätter det gamla av/på-läget. */
+                    const valtAntal =
+                      bygge[activeCategory].find((v) => v.item.id === item.id)?.antal ?? 0;
+                    const isSelected = valtAntal > 0;
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
                     const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
@@ -6454,6 +6854,39 @@ export default function CustomBuild() {
                       categoryImage?.src ||
                       FALLBACK_COMPONENT_IMAGE;
                     const imageAlt = item.name || categoryImage?.alt || "Komponent";
+
+                    /*
+                     * Reservbilderna provas en gång var, i ordning.
+                     *
+                     * Förut jämfördes bara adressen mot föregående steg, och
+                     * när två adresser i rad misslyckades pekade provet
+                     * tillbaka på den första: reserven ledde till
+                     * kategoribilden, kategoribilden tillbaka till reserven,
+                     * i all oändlighet. Den lokala bilden sist i kedjan
+                     * nåddes aldrig, och raden visade webbläsarens trasiga
+                     * ikon. Räknaren i data-attributet gör kedjan ändlig.
+                     *
+                     * Samma bild ritas nu på tre ställen - i raden, i
+                     * förstoringen vid hovring och i den utfällda panelen -
+                     * så kedjan bor här och inte i tre kopior.
+                     */
+                    const hanteraBildfel = (
+                      event: React.SyntheticEvent<HTMLImageElement>,
+                    ) => {
+                      const bild = event.currentTarget;
+                      const kedja = [
+                        backupImageSrc,
+                        categoryImage?.src,
+                        FALLBACK_COMPONENT_IMAGE,
+                      ].filter((kandidat): kandidat is string => Boolean(kandidat));
+                      const steg = Number(bild.dataset.reserv ?? "0");
+                      if (steg >= kedja.length) {
+                        bild.onerror = null;
+                        return;
+                      }
+                      bild.dataset.reserv = String(steg + 1);
+                      bild.src = kedja[steg];
+                    };
                     const detailEntries = Object.entries(item.details || {});
                     const showStorePanel = supportsStoreOffersForCategory(activeCategory);
                     const storeOffersForItem = isExpanded ? expandedStoreOffers : [];
@@ -6489,36 +6922,23 @@ export default function CustomBuild() {
                             alt={imageAlt}
                             loading="lazy"
                             decoding="async"
-                            /*
-                             * Reservbilderna provas en gång var, i ordning.
-                             *
-                             * Förut jämfördes bara adressen mot föregående
-                             * steg, och när två adresser i rad misslyckades
-                             * pekade provet tillbaka på den första: reserven
-                             * ledde till kategoribilden, kategoribilden
-                             * tillbaka till reserven, i all oändlighet. Den
-                             * lokala bilden sist i kedjan nåddes aldrig, och
-                             * raden visade webbläsarens trasiga ikon.
-                             *
-                             * Det slog till på riktigt för chassin, vars
-                             * kategoribild ligger på en extern adress. Är den
-                             * nere snurrar varje chassirad.
-                             *
-                             * Räknaren i data-attributet gör kedjan ändlig.
-                             */
-                            onError={(event) => {
-                              const bild = event.currentTarget;
-                              const kedja = [backupImageSrc, categoryImage?.src, FALLBACK_COMPONENT_IMAGE]
-                                .filter((kandidat): kandidat is string => Boolean(kandidat));
-                              const steg = Number(bild.dataset.reserv ?? "0");
-                              if (steg >= kedja.length) {
-                                bild.onerror = null;
-                                return;
-                              }
-                              bild.dataset.reserv = String(steg + 1);
-                              bild.src = kedja[steg];
-                            }}
+                            onError={hanteraBildfel}
                           />
+
+                          {/* Förstoringen vid hovring. Brickan är 3,5 rem och
+                              räcker för att känna igen en vara, inte för att
+                              se om chassit har glasruta. aria-hidden för att
+                              det är samma bild en gång till - skärmläsaren
+                              har redan läst alt-texten ovan. */}
+                          <span className="cb-row__forstoring" aria-hidden="true">
+                            <img
+                              src={imageSrc}
+                              alt=""
+                              loading="lazy"
+                              decoding="async"
+                              onError={hanteraBildfel}
+                            />
+                          </span>
                         </div>
 
                         <div className="min-w-0">
@@ -6564,27 +6984,59 @@ export default function CustomBuild() {
                         </span>
 
                         <span className="cb-cell cb-cell--knapp">
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              if (isSelected) {
-                                setSelected((prev) => ({
-                                  ...prev,
-                                  [activeCategory]: null,
-                                }));
-                                return;
-                              }
-                              openStorePickerForComponent(activeCategory, item);
-                            }}
-                            className={`w-full rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
-                              isSelected
-                                ? "bg-primary text-primary-foreground"
-                                : "border border-primary/60 text-primary hover:bg-primary hover:text-primary-foreground"
-                            }`}
-                          >
-                            {isSelected ? "Vald" : "Välj"}
-                          </button>
+                          {/*
+                            * Vald vara i en kategori som tar flera får en
+                            * räknare i stället för knappen.
+                            *
+                            * Fem likadana fläktar är fem klick på plus, och
+                            * de klicken hör hemma där varan står. Att gå
+                            * till bygget i högerspalten för att räkna upp
+                            * något man just tittar på är en omväg.
+                            */}
+                          {isSelected && kategorinTarFlera ? (
+                            <span className="cb-antal" onClick={(event) => event.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBygge((prev) => medAndratAntal(prev, activeCategory, item.id, -1))
+                                }
+                                aria-label={`Färre ${item.name}`}
+                              >
+                                −
+                              </button>
+                              <span className="cb-antal__tal">{valtAntal}</span>
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setBygge((prev) => medAndratAntal(prev, activeCategory, item.id, 1))
+                                }
+                                disabled={kategorinFull}
+                                aria-label={`Fler ${item.name}`}
+                              >
+                                +
+                              </button>
+                            </span>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                if (isSelected) {
+                                  setBygge((prev) => utanVal(prev, activeCategory, item.id));
+                                  return;
+                                }
+                                openStorePickerForComponent(activeCategory, item);
+                              }}
+                              disabled={!isSelected && kategorinFull}
+                              className={`w-full rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                                isSelected
+                                  ? "bg-primary text-primary-foreground"
+                                  : "border border-primary/60 text-primary hover:bg-primary hover:text-primary-foreground"
+                              }`}
+                            >
+                              {isSelected ? "Vald" : kategorinTarFlera ? "Lägg till" : "Välj"}
+                            </button>
+                          )}
                         </span>
                         </div>
                         {isExpanded ? (
@@ -6598,18 +7050,7 @@ export default function CustomBuild() {
                                   alt={imageAlt}
                                   loading="lazy"
                                   decoding="async"
-                                  onError={(event) => {
-                                    const bild = event.currentTarget;
-                                    const kedja = [backupImageSrc, categoryImage?.src, FALLBACK_COMPONENT_IMAGE]
-                                      .filter((kandidat): kandidat is string => Boolean(kandidat));
-                                    const steg = Number(bild.dataset.reserv ?? "0");
-                                    if (steg >= kedja.length) {
-                                      bild.onerror = null;
-                                      return;
-                                    }
-                                    bild.dataset.reserv = String(steg + 1);
-                                    bild.src = kedja[steg];
-                                  }}
+                                  onError={hanteraBildfel}
                                 />
                               </div>
 
