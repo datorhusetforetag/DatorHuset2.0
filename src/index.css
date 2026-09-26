@@ -2654,13 +2654,20 @@
 .cb-row__media {
   position: relative;
   display: flex;
+  /*
+   * Sträcks över hela radens höjd.
+   *
+   * Rutnätet centrerar sina celler, vilket är rätt för text och pris.
+   * Bilden är undantaget: den ska följa raden uppifrån och ner, så den
+   * får säga ifrån själv i stället för att rutnätet ändras för alla.
+   */
+  align-self: stretch;
   align-items: center;
   justify-content: center;
-  aspect-ratio: 1;
   /* Ingen overflow: hidden. Bilden ligger ändå innanför med object-fit
      och utfyllnad, och förstoringen nedan måste få sticka ut. */
-  border-radius: 0.55rem;
-  padding: 0.3rem;
+  border-radius: 0.7rem 0 0 0.7rem;
+  padding: 0.4rem;
 
   /*
    * Plattan är en toning, inte en vit fyrkant.
@@ -2697,21 +2704,6 @@
 
 .cb-row:hover .cb-row__media img {
   transform: scale(1.06);
-}
-
-/* Kategoriikonen sitter på bildrutans hörn som förut, men mindre och
-   utan den vita platta den satt på. */
-.cb-row__ikon {
-  position: absolute;
-  left: 0.25rem;
-  top: 0.25rem;
-  z-index: 2;
-  display: inline-flex;
-  border-radius: 9999px;
-  background: hsl(var(--brand-black) / 0.55);
-  padding: 0.25rem;
-  color: #fff;
-  backdrop-filter: blur(2px);
 }
 
 .cb-row__brand {
@@ -3076,10 +3068,22 @@
  * flätades ihop till "PRBUTIKERNFO". Därav .cb-row__topp: rutnätet bor
  * där, och panelen är syskon till det på blocknivå.
  */
+/*
+ * Ingen utfyllnad på raden.
+ *
+ * Bilden går hela vägen ut i vänsterkanten och hela vägen upp och ner,
+ * så raden kan inte ha någon egen marginal innanför ramen. Utfyllnaden
+ * ligger i stället på de celler som behöver den, och bildens vänstra
+ * hörn är rundade med radens radie minus ramen.
+ *
+ * Den lilla brickan den ersätter var 3,5 rem i en rad på nästan 5 - en
+ * frimärksstor bild med luft runt om, i en lista där bilden är det man
+ * känner igen en vara på.
+ */
 .cb-row {
   position: relative;
   display: block;
-  padding: 0.75rem;
+  padding: 0;
   border-radius: 0.75rem;
   border: 1px solid hsl(220 20% 100% / 0.08);
   background: var(--pc-card-surface, #232c3b);
@@ -3092,6 +3096,18 @@
   grid-template-columns: 5.25rem minmax(0, 1fr) auto;
   align-items: center;
   gap: 1rem;
+  /*
+   * Höjden bilden fyller, och samma mått som bildspalten är bred - så
+   * blir bilden kvadratisk.
+   *
+   * Måttet är valt efter den gamla radhöjden. Listan är alltså precis
+   * lika tät som innan, medan bilden gått från 56 till 84 pixlar: den
+   * växte genom att ta plattans utfyllnad och radens marginaler, inte
+   * genom att trycka isär raderna.
+   */
+  min-height: 5.25rem;
+  /* Bara höger sida - vänster ägs av bilden. */
+  padding-right: 0.75rem;
 }
 
 /* En utfälld rad ska inte lyfta under pekaren - den står still och är
@@ -3100,10 +3116,16 @@
   transform: none;
 }
 
+/* Fälls raden ut fortsätter kortet nedanför, och då är bildens nedre
+   vänstra hörn inte längre kortets hörn. */
+.cb-row[data-oppen="true"] .cb-row__media {
+  border-bottom-left-radius: 0;
+}
+
 .cb-panel {
-  margin-top: 0.85rem;
   border-top: 1px solid hsl(var(--foreground) / 0.1);
-  padding-top: 0.85rem;
+  /* Raden har ingen utfyllnad längre, så panelen bär sin egen. */
+  padding: 0.85rem 0.75rem 0.75rem;
 }
 
 .cb-panel__ovre {
@@ -3396,8 +3418,10 @@
   gap: 0.75rem;
 }
 
+/* Ingen vänsterutfyllnad, annars står rubrikerna en bit till höger om
+   de spalter de gäller - raderna börjar vid noll nu. */
 .cb-huvud {
-  padding: 0 0.75rem 0.5rem;
+  padding: 0 0.75rem 0.5rem 0;
   border-bottom: 1px solid hsl(var(--foreground) / 0.1);
 }
 

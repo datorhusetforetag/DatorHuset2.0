@@ -871,8 +871,12 @@ const KOLUMNER_PER_KATEGORI: Record<CategoryKey, Kolumn[]> = {
 
 /* Bild, produktnamn, kategorins kolumner, pris, knapp. */
 const spaltMall = (kolumner: Kolumn[]) =>
-  /* Sista spalten rymmer antingen "Lägg till" eller räknaren − 2 +. */
-  `3.5rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 6rem 5.75rem`;
+  /*
+   * Första spalten är lika bred som raden är hög, så bilden blir
+   * kvadratisk när den sträcks över hela höjden. Sista spalten rymmer
+   * antingen "Lägg till" eller räknaren − 2 +.
+   */
+  `5.25rem minmax(0, 1fr) ${kolumner.map((k) => k.bredd).join(" ")} 6rem 5.75rem`;
 
 const PRIMARY_SORTS = [
   { key: "popularity" as SortKey, label: "Populärast", direction: "desc" as SortDirection, exact: true },
@@ -6867,7 +6871,6 @@ export default function CustomBuild() {
                       bygge[activeCategory].find((v) => v.item.id === item.id)?.antal ?? 0;
                     const isSelected = valtAntal > 0;
                     const isExpanded = expandedItemId === item.id && expandedItemCategory === activeCategory;
-                    const ActiveIcon = activeConfig?.icon ?? Cpu;
                     const categoryImage = CATEGORY_IMAGES[activeCategory];
                     const resolvedItemImage = getResolvedComponentImage(
                       activeCategory,
@@ -6941,9 +6944,6 @@ export default function CustomBuild() {
                           style={{ ["--cb-spalter" as string]: spaltMall(aktivaKolumner) }}
                         >
                         <div className="cb-row__media">
-                          <span className="cb-row__ikon">
-                            <ActiveIcon className="h-3.5 w-3.5" />
-                          </span>
                           <img
                             src={imageSrc}
                             alt={imageAlt}
