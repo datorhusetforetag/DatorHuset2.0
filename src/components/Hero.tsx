@@ -71,7 +71,7 @@ const SLIDES: Slide[] = [
     id: "prebuilt",
     eyebrow: "Färdiga datorer",
     title: "Redan byggd. Redan testad.",
-    subtitle: "Handplockade komponenter i fyra nivåer, från Bronze till Diamond.",
+    subtitle: "Handplockade komponenter i fyra nivåer, från Silver till Diamond.",
     image: rigPurpleDesk,
     primary: { label: "Se alla datorer", href: "/products" },
     secondary: { label: "Jämför nivåerna", href: "/products?clear_filters=1" },

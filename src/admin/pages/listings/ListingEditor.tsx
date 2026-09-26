@@ -26,7 +26,7 @@ import { UpgradeEditor, type ProductOption, type Upgrade } from "./UpgradeEditor
  * stället för att låta den sista tysta över den första.
  */
 
-const TIERS = ["Brons", "Silver", "Guld", "Platina", "Diamant"];
+const TIERS = ["Silver", "Guld", "Platina", "Diamant"];
 const TAGS = ["Budgetvänliga", "Price-Performance", "Bästa prestanda"];
 const STORAGE_TYPES = ["SSD", "NVMe", "HDD"];
 

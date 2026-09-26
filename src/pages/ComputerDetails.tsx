@@ -36,13 +36,15 @@ const RAM_PRICE_TOOLTIP =
   "Priserna p\u00e5 RAM har g\u00e5tt upp med cirka 500%, d\u00e4rav anv\u00e4ndning av begagnade RAM.";
 
 /*
- * Kul\u00f6r per niv\u00e5, samma fyra som niv\u00e5avsnittet p\u00e5 startsidan och
- * kategorierna p\u00e5 produktlistan. Nycklarna \u00e4r de svenska namn som
- * faktiskt st\u00e5r i datan - Brons finns inte i sortimentet idag men
- * ligger med s\u00e5 att niv\u00e5n inte tappar sin kul\u00f6r om den tillkommer.
+ * Kul\u00f6r per niv\u00e5. Nycklarna \u00e4r de svenska namn som faktiskt
+ * st\u00e5r i datan.
+ *
+ * Brons l\u00e5g h\u00e4r med motiveringen att niv\u00e5n kunde tillkomma. Den
+ * togs bort ur sortimentet i st\u00e4llet, s\u00e5 kul\u00f6ren \u00e4r borta med den -
+ * en nyckel som aldrig sl\u00e5r an \u00e4r en nyckel som ingen vet om den
+ * anv\u00e4nds.
  */
 const TIER_ACCENTS: Record<string, string> = {
-  Brons: "#E3A567",
   Silver: "#CBD3E1",
   Guld: "#E3A567",
   Platina: "#B26BDE",

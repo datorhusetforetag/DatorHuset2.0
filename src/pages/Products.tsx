@@ -150,11 +150,13 @@ const DEFAULT_BANNER: BannerConfig = {
 /*
  * Kulören på kategoribanderollen.
  *
- * Det är inte fyra nya färger utan exakt de fyra som nivåerna på
- * startsidan använder, och kategorierna länkar redan till samma
- * nivåer. Klickar man sig från Bronze till budgetdatorerna följer alltså
- * kulören med, och sidan känns som en fortsättning i stället för som
- * ett nytt ställe.
+ * Det är inte fyra nya färger utan exakt de som nivåerna på startsidan
+ * använder, och kategorierna länkar till samma nivåer. Klickar man sig
+ * från Silver till prisvärda datorer följer alltså kulören med, och
+ * sidan känns som en fortsättning i stället för som ett nytt ställe.
+ *
+ * budget-kulören står kvar. Den hör till prisfiltret "Budgetvänlig" och
+ * inte till bronsnivån som är borttagen - de delade bara nyans.
  */
 const CATEGORY_ACCENTS: Record<string, string> = {
   budget: "#E3A567",

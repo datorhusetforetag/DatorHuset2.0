@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Reveal } from "./Reveal";
 
-import bronzeTier from "../../images/bronze tier.png";
 import silverTier from "../../images/silver tier.png";
 import platinumTier from "../../images/platinum tier.png";
 import diamondTier from "../../images/diamond tier.png";
@@ -41,19 +40,6 @@ type Tier = {
 };
 
 const TIERS: Tier[] = [
-  {
-    id: "bronze",
-    name: "Bronze",
-    tagline: "Kom igång",
-    description:
-      "Första riktiga speldatorn. Klarar det du spelar idag i 1080p utan att du behöver tömma sparkontot.",
-    specs: ["1080p", "Nybörjarvänlig", "Lägst pris"],
-    image: bronzeTier,
-    href: "/products?category=budget&clear_filters=1",
-    compareHref: "/products?clear_filters=1",
-    glow: "205, 127, 50",
-    accent: "#E3A567",
-  },
   {
     id: "silver",
     name: "Silver",

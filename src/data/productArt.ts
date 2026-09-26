@@ -1,4 +1,7 @@
-import bronzeCutout from "../../images/bronze tier.png";
+/* Filen heter "bronze tier.png" sedan nivån fanns. Den visar en
+   Montech-låda och används till Silver-Speedster - namnet på filen är
+   allt som är kvar av bronsnivån. */
+import montechCutout from "../../images/bronze tier.png";
 import silverCutout from "../../images/silver tier.png";
 import platinumCutout from "../../images/platinum tier.png";
 import diamondCutout from "../../images/diamond tier.png";
@@ -93,7 +96,7 @@ export type ProductArt = {
 export const PRODUCT_ART: Record<string, ProductArt> = {
   // Silver-Speedster - Montech, blå kabinettbelysning med rosa fläktar
   "2": {
-    cutout: bronzeCutout,
+    cutout: montechCutout,
     backdrop: { from: "#12203f", to: "#2b1740", glow: "#4f8ff7" },
   },
 
