@@ -5752,13 +5752,45 @@ export default function CustomBuild() {
   const expandedStoreCacheKey =
     expandedItemId && expandedItemCategory ? getStoreCacheKey(expandedItemCategory, expandedItemId) : "";
   const expandedStoreSnapshot = expandedStoreCacheKey ? storePickerCache[expandedStoreCacheKey] : undefined;
+  /*
+   * En slutsåld vara är inte en vara vi inte hittat.
+   *
+   * Slutsålda erbjudanden filtrerades bort helt, så panelen sa "Inga
+   * butiksträffar hittades för komponenten" om ett minne som Proshop
+   * mycket väl säljer men just nu inte har hemma. Det är två olika
+   * besked, och det ena får kunden att tro att sidan är trasig.
+   *
+   * Priset påverkas inte: getLowestPricedStoreOfferValue räknar bara
+   * med det som går att köpa, och canSelectStoreOffer vägrar fortfarande
+   * välja en butik som inte har varan.
+   */
   const isDisplayableStoreOffer = (offer: StoreOffer) => {
     if (!offer || !offer.product_url) return false;
-    return offer.status === "available" || offer.status === "linked_no_price";
+    return (
+      offer.status === "available" ||
+      offer.status === "linked_no_price" ||
+      offer.status === "unavailable"
+    );
   };
-  const expandedStoreOffers = Array.isArray(expandedStoreSnapshot?.offers)
-    ? expandedStoreSnapshot.offers.filter((offer) => isDisplayableStoreOffer(offer))
-    : [];
+
+  /* Det som går att köpa först. Rubriken lovar billigast överst, och en
+     slutsåld hundralapp är inte billigast, den är inte till salu. */
+  const expandedStoreOffers = (
+    Array.isArray(expandedStoreSnapshot?.offers)
+      ? expandedStoreSnapshot.offers.filter((offer) => isDisplayableStoreOffer(offer))
+      : []
+  )
+    .slice()
+    .sort((a, b) => {
+      const aSlut = a.status === "unavailable" ? 1 : 0;
+      const bSlut = b.status === "unavailable" ? 1 : 0;
+      if (aSlut !== bSlut) return aSlut - bSlut;
+      const aPris = Number(a.total_price ?? a.price);
+      const bPris = Number(b.total_price ?? b.price);
+      if (!Number.isFinite(aPris)) return 1;
+      if (!Number.isFinite(bPris)) return -1;
+      return aPris - bPris;
+    });
 
   const getNextCategoryKey = (currentCategory: CategoryKey) => {
     const group = getCategoryGroup(currentCategory);

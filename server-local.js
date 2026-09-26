@@ -18,6 +18,7 @@ import nodemailer from "nodemailer";
 import crypto from "crypto";
 import { z } from "zod";
 import {
+  CUSTOM_BUILD_ALL_ITEMS,
   CUSTOM_BUILD_CATALOG_BY_ID,
   CUSTOM_BUILD_CATALOG_ITEMS,
   CUSTOM_BUILD_STORE_SOURCES as CUSTOM_BUILD_ALLOWED_STORE_SOURCES,
@@ -6643,7 +6644,11 @@ app.post("/api/admin/pricing/refresh", async (req, res) => {
     res.json({ ok: true, started: true });
 
     pricing
-      .runRefresh(CUSTOM_BUILD_CATALOG_ITEMS, { reason: "admin-manual", logger: logStructured })
+      .runRefresh(CUSTOM_BUILD_ALL_ITEMS, {
+        reason: "admin-manual",
+        logger: logStructured,
+        apiItems: CUSTOM_BUILD_CATALOG_ITEMS,
+      })
       .catch((error) => {
         logStructured("warn", "pricing_manual_refresh_failed", {
           message: error instanceof Error ? error.message : "unknown_error",
@@ -10727,7 +10732,18 @@ app.listen(PORT, () => {
   // Prisuppdateringen. Till skillnad från de gamla schemaläggarna håller den
   // sitt "senast körd" i Supabase, så en omstart av Render-instansen inte
   // nollställer dygnsräkningen.
-  pricing.startScheduler(() => CUSTOM_BUILD_CATALOG_ITEMS, { logger: logStructured });
+  /*
+   * Hela katalogen mot flödet, de handplockade mot sök-API:erna.
+   *
+   * Schemaläggaren körde bara de 455 handplockade. De 6 326 posterna ur
+   * butiksflödet fick därför aldrig något butikspris, och varje sådan
+   * komponent visade "Ingen butik hittades" i väljaren - fast de kommer
+   * ur just det flöde vi läser och alla bär EAN.
+   */
+  pricing.startScheduler(() => CUSTOM_BUILD_ALL_ITEMS, {
+    logger: logStructured,
+    apiItems: () => CUSTOM_BUILD_CATALOG_ITEMS,
+  });
 });
 
 

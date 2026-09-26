@@ -16,6 +16,7 @@ import {
   missingOnlyCapacity,
   pickBestPerStore,
   buildSearchQuery,
+  normalizeEan,
 } from "./match.mjs";
 import * as store from "./store.mjs";
 import webhallen from "./sources/webhallen.mjs";
@@ -88,6 +89,52 @@ export const getFeedConfigs = () => {
  */
 const ingestFeed = async (config, items, identities, candidatesByItem) => {
   let matched = 0;
+
+  /*
+   * Ett index på EAN, i stället för att prova varje rad mot varje post.
+   *
+   * Slingan nedanför gick igenom hela katalogen för varje rad i flödet.
+   * Med 455 handplockade poster gick det an. Med de 6 781 kunden faktiskt
+   * ser blir det miljardtals jämförelser för en uppgift som för de allra
+   * flesta är en uppslagning: nittiosex procent av flödets rader bär EAN,
+   * och det gör 6 423 av katalogens poster också.
+   *
+   * Posterna utan känt EAN måste fortfarande prövas mot varje rad. De är
+   * ett par hundra, och det är den kostnaden som blir kvar.
+   */
+  const perEan = new Map();
+  const utanEan = [];
+  for (const item of items) {
+    const ean = normalizeEan(identities.get(item.id)?.ean || item.ean);
+    if (!ean) {
+      utanEan.push(item);
+      continue;
+    }
+    if (!perEan.has(ean)) perEan.set(ean, []);
+    perEan.get(ean).push(item);
+  }
+
+  /*
+   * Vilka poster en rad över huvud taget kan vara.
+   *
+   * Bär raden ett EAN som vi känner igen är det den posten - plus de utan
+   * känt nummer, som mycket väl kan vara samma vara under ett annat namn.
+   *
+   * Bär raden ett EAN vi inte känner igen kan den inte vara en post med
+   * ett ANNAT nummer. Det är en åtstramning mot hur det fungerade förut,
+   * då titelmatchningen fick försöka ändå, och det är hela poängen med
+   * ett EAN: två olika nummer är två olika varor.
+   *
+   * Saknar raden EAN finns inget att gå på utom namnet, och då får hela
+   * katalogen prövas precis som förut.
+   */
+  const kandidaterFor = (row) => {
+    const ean = normalizeEan(row.ean);
+    if (!ean) return items;
+    const traffar = perEan.get(ean);
+    return traffar ? [...traffar, ...utanEan] : utanEan;
+  };
+
   const stats = await streamFeed(config, async (row) => {
     /* Tidsgränsen sätts nedanför slingan, se FEED_TIMEOUT_MS. */
 
@@ -108,7 +155,7 @@ const ingestFeed = async (config, items, identities, candidatesByItem) => {
     let bestItem = null;
     let bestResult = null;
 
-    for (const item of items) {
+    for (const item of kandidaterFor(row)) {
       const result = matchOffer(identities.get(item.id), item, row);
       if (!result.matched) continue;
       if (!bestResult || result.score > bestResult.score) {
@@ -273,7 +320,10 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
  * Kör en full uppdatering av alla katalogprodukter.
  * Returnerar en sammanfattning; kastar bara om ingenting alls gick att göra.
  */
-export const runRefresh = async (items, { reason = "manual", logger = null } = {}) => {
+export const runRefresh = async (
+  items,
+  { reason = "manual", logger = null, apiItems = null } = {},
+) => {
   const started = Date.now();
   const log = (level, event, payload = {}) => logger?.(level, event, { reason, ...payload });
 
@@ -284,6 +334,32 @@ export const runRefresh = async (items, { reason = "manual", logger = null } = {
   });
 
   const identities = await store.loadIdentities();
+
+  /*
+   * Katalogens eget EAN gäller när identitetsraden saknar ett.
+   *
+   * matchOffer läser numret ur identiteten, aldrig ur katalogposten.
+   * component_identity innehöll 86 EAN medan katalogfilerna bredvid bar
+   * 6 423 - matchningen kände alltså inte till numret för sextusen varor
+   * som har det. Ett EAN är hela skillnaden mellan att veta och att
+   * gissa, och de låg oanvända.
+   *
+   * Identitetsraden vinner när den har ett nummer: den är handkontrollerad
+   * och kan vara en rättelse av just det katalogen säger.
+   */
+  let eanFranKatalogen = 0;
+  for (const item of items) {
+    if (!item.ean) continue;
+    const identity = identities.get(item.id);
+    if (identity?.ean) continue;
+    identities.set(item.id, { ...(identity || { item_id: item.id }), ean: item.ean });
+    eanFranKatalogen++;
+  }
+  log("info", "pricing_identities_loaded", {
+    identities: identities.size,
+    ean_from_catalog: eanFranKatalogen,
+  });
+
   const candidatesByItem = new Map();
   const sourceResults = [];
 
@@ -305,7 +381,20 @@ export const runRefresh = async (items, { reason = "manual", logger = null } = {
   // 2. Sök-API:er utan affiliatekrav.
   if (process.env.PRICING_DISABLE_WEBHALLEN !== "1") {
     try {
-      const stats = await ingestApiSource(webhallen, items, identities, candidatesByItem);
+      /*
+       * Sök-API:erna får en kortare lista.
+       *
+       * De söker en gång per katalogpost. Att låta dem gå igenom alla
+       * 6 781 är tusentals anrop mot någon annans API för att fråga om
+       * varor vi redan har pris på ur flödet. Flödet är en fil vi ändå
+       * hämtar; ett sök-API är någons server.
+       */
+      const stats = await ingestApiSource(
+        webhallen,
+        apiItems || items,
+        identities,
+        candidatesByItem,
+      );
       sourceResults.push({ id: webhallen.id, ok: true, ...stats });
       await store.markSourceResult(webhallen.id, { ok: true, rowCount: stats.matched });
       log("info", "pricing_api_ingested", { source: webhallen.id, ...stats });
@@ -393,7 +482,7 @@ export const isRefreshDue = async () => {
  * timmen. Ingen unref() - timern ska hålla igång även om servern annars
  * är sysslolös.
  */
-export const startScheduler = (getItems, { logger = null } = {}) => {
+export const startScheduler = (getItems, { logger = null, apiItems = null } = {}) => {
   let running = false;
 
   const tick = async (reason) => {
@@ -401,7 +490,13 @@ export const startScheduler = (getItems, { logger = null } = {}) => {
     try {
       if (!(await isRefreshDue())) return;
       running = true;
-      await runRefresh(getItems(), { reason, logger });
+      await runRefresh(getItems(), {
+        reason,
+        logger,
+        /* Listan hämtas vid körning, inte vid start - katalogen läses in
+           en gång men anropsformen är densamma som för getItems. */
+        apiItems: typeof apiItems === "function" ? apiItems() : apiItems,
+      });
     } catch (error) {
       logger?.("warn", "pricing_scheduler_failed", {
         reason,
