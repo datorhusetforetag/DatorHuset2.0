@@ -117,25 +117,50 @@ export const getOffersForItem = async (itemId) => {
   return data || [];
 };
 
+/*
+ * Hur många id som får åka med i en fråga.
+ *
+ * PostgREST lägger .in() i adressen. Chassikategorin har 1 210 poster
+ * och ett id är drygt tjugo tecken, så en enda fråga hade blivit en
+ * adress på nästan trettio kilobyte - längre än vad som går igenom. Med
+ * hundrafemtio i taget håller sig både adressen och radantalet inom det
+ * databasen svarar på.
+ */
+const ID_PER_FRAGA = 150;
+
+const bunta = (lista, storlek) => {
+  const buntar = [];
+  for (let i = 0; i < lista.length; i += storlek) {
+    buntar.push(lista.slice(i, i + storlek));
+  }
+  return buntar;
+};
+
 export const getOffersForItems = async (itemIds) => {
   if (!Array.isArray(itemIds) || itemIds.length === 0) return new Map();
   if (!client) {
     return new Map(itemIds.map((id) => [id, memoryCache.get(id)?.offers || []]));
   }
 
-  const { data, error } = await client
-    .from("component_offers")
-    .select("*")
-    .in("item_id", itemIds)
-    .order("total_cents", { ascending: true });
+  const rader = [];
+  for (const bunt of bunta(itemIds, ID_PER_FRAGA)) {
+    const { data, error } = await client
+      .from("component_offers")
+      .select("*")
+      .in("item_id", bunt)
+      .order("total_cents", { ascending: true });
 
-  if (error) {
-    if (error.code === "42P01" || error.code === "PGRST205") return new Map();
-    return new Map(itemIds.map((id) => [id, memoryCache.get(id)?.offers || []]));
+    if (error) {
+      if (error.code === "42P01" || error.code === "PGRST205") return new Map();
+      /* Databasen svarar inte - visa det vi senast såg hellre än
+         ingenting, för hela frågan och inte bara för den här bunten. */
+      return new Map(itemIds.map((id) => [id, memoryCache.get(id)?.offers || []]));
+    }
+    if (data) rader.push(...data);
   }
 
   const grouped = new Map();
-  for (const row of data || []) {
+  for (const row of rader) {
     if (!grouped.has(row.item_id)) grouped.set(row.item_id, []);
     grouped.get(row.item_id).push(row);
   }

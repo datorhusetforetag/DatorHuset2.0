@@ -1,5 +1,6 @@
 import { STATIC_CUSTOM_BUILD_CATALOG_ITEMS } from "./customBuildStaticCatalog.js";
 import { CATALOG_EAN_BY_ID } from "./customBuildCatalogEans.generated.js";
+import { FEED_CATALOG_ITEMS } from "./customBuildFeedCatalog.generated.js";
 
 const cpu = (
   id,
@@ -1964,9 +1965,44 @@ export const CUSTOM_BUILD_CATALOG_ITEMS = [
   .filter((item) => !REMOVED_CUSTOM_BUILD_ITEM_IDS.has(item.id))
   .map(withEan);
 
+/*
+ * Två listor, med flit.
+ *
+ * CUSTOM_BUILD_CATALOG_ITEMS ovan är de handplockade. Prisschemaläggaren
+ * arbetar igenom just den listan, och den ska inte växa till sjutusen
+ * poster bara för att uppslagningen behöver dem.
+ *
+ * CUSTOM_BUILD_ALL_ITEMS är allt konfiguratorn kan visa, handplockat och
+ * matat. Den behövs för uppslagning på id: en kund som väljer en matad
+ * komponent frågar servern om dess butikspriser, och servern kände inte
+ * igen id:t. Svaret blev "Ogiltig katalogprodukt." för 6 326 av sidans
+ * 6 781 komponenter - alltså för nästan allt utom de handplockade.
+ *
+ * Dubbletter rensas på id och de handplockade vinner. De har
+ * searchTerms, som namnmatchningen behöver när EAN inte räcker till.
+ */
+export const CUSTOM_BUILD_ALL_ITEMS = (() => {
+  const byId = new Map();
+  for (const item of FEED_CATALOG_ITEMS) {
+    if (REMOVED_CUSTOM_BUILD_ITEM_IDS.has(item.id)) continue;
+    byId.set(item.id, item);
+  }
+  /* Handplockade sist i loopen betyder först i värdet: Map.set skriver
+     över, och de ligger ändå främst i listan kunden ser. */
+  for (const item of CUSTOM_BUILD_CATALOG_ITEMS) {
+    byId.set(item.id, item);
+  }
+  return [
+    ...CUSTOM_BUILD_CATALOG_ITEMS,
+    ...Array.from(byId.values()).filter(
+      (item) => !CUSTOM_BUILD_CATALOG_ITEMS.some((kurerad) => kurerad.id === item.id),
+    ),
+  ];
+})();
+
 export const CUSTOM_BUILD_CATALOG_BY_ID = Object.fromEntries(
-  CUSTOM_BUILD_CATALOG_ITEMS.map((item) => [item.id, item])
+  CUSTOM_BUILD_ALL_ITEMS.map((item) => [item.id, item])
 );
 
 export const getCustomBuildCatalogItemsByCategory = (category) =>
-  CUSTOM_BUILD_CATALOG_ITEMS.filter((item) => item.category === category);
+  CUSTOM_BUILD_ALL_ITEMS.filter((item) => item.category === category);

@@ -4392,7 +4392,6 @@ export default function CustomBuild() {
   /* Vilka kategorier vi redan hämtat bulkpriser för. Ett anrop räcker
      per kategori - svaret innehåller hela kategorin. */
   const bulkprisHamtatRef = useRef<Set<CategoryKey>>(new Set());
-  const liveRefreshAttemptedRef = useRef<Set<string>>(new Set());
   /* Sätts när servern svarat 429. Då slutar vi fråga helt. */
   const prisSparrRef = useRef(false);
 
@@ -5363,85 +5362,27 @@ export default function CustomBuild() {
   const hiddenItemCount = sortedItems.length - visibleItems.length;
 
   /*
-   * Speglar priskällorna i en ref.
+   * INGEN BAKGRUNDSUPPDATERING PER KOMPONENT - OCH DET ÄR MED FLIT
    *
-   * Uppdateringen nedan behöver veta vilka poster som bara har riktpris,
-   * men får inte ha det som beroende: varje lyckat anrop ändrar kartan
-   * och effekten hade startat om sig själv i all oändlighet.
-   */
-  const priskallaRef = useRef(priceSourceByItemId);
-  priskallaRef.current = priceSourceByItemId;
-
-  /*
-   * Färska priser för raderna man ser, och bara för dem.
+   * Här låg förut en kö som frågade /api/custom-build/catalog-offers en
+   * gång per komponent i kategorin. Två saker var fel med den.
    *
-   * Det här kördes förut för hela kategorin. Att öppna Chassi betydde
-   * 1 210 anrop till /api/custom-build/catalog-offers, och serverns
-   * allmänna spärr släpper igenom 120 per kvart. Anrop nummer 121 och
+   * Den frågade för mycket. Att öppna Chassi betydde 1 210 anrop, och
+   * serverns spärr släpper igenom 120 per kvart. Anrop nummer 121 och
    * framåt fick "För många API-förfrågningar", och eftersom spärren
    * gäller hela /api/ slutade resten av sidan svara också - därav att
    * komponenterna ibland inte gick att hämta alls.
    *
-   * Trettio rader syns i taget, så trettio är taket. Bläddrar kunden
-   * vidare hämtas nästa trettio, och katalogens övriga sextusen poster
-   * frågas det aldrig om.
+   * Och den frågade i onödan. Båda vägarna läser samma tabell:
+   * catalog-prices gör ett getOffersForItems för hela kategorin,
+   * catalog-offers ett getOffersForItem för en post. Svaret per post kan
+   * alltså inte innehålla något som bulksvaret inte redan gav. Det var
+   * tusen anrop för att fråga om samma sak en gång till.
+   *
+   * Priset per post hämtas nu när kunden faktiskt öppnar en rad eller
+   * butiksväljaren. Där behövs det: då vill hon se alla butiker, inte
+   * bara det lägsta priset.
    */
-  useEffect(() => {
-    if (!supportsStoreOffersForCategory(activeCategory)) return;
-    if (prisSparrRef.current) return;
-
-    const attHamta = visibleItems.filter((item) => {
-      if (liveRefreshAttemptedRef.current.has(item.id)) return false;
-      const kalla = priskallaRef.current[item.id];
-      /* Har bulkanropet redan gett ett butikspris finns inget att hämta. */
-      return !kalla || kalla === "fallback";
-    });
-    if (attHamta.length === 0) return;
-
-    let isCancelled = false;
-    const ko = [...attHamta];
-
-    const arbeta = async () => {
-      while (!isCancelled && ko.length > 0 && !prisSparrRef.current) {
-        const item = ko.shift();
-        if (!item) return;
-        liveRefreshAttemptedRef.current.add(item.id);
-        try {
-          const endpoint = `${normalizedApiBase}/api/custom-build/catalog-offers?item_id=${encodeURIComponent(
-            item.id,
-          )}`;
-          const response = await fetch(endpoint);
-          /*
-           * Ett 429 stoppar hela kön.
-           *
-           * Att fortsätta efter ett nej förvärrar spärren för varje
-           * annat anrop från samma dator, och svaret blir ändå
-           * detsamma. Vi lägger av och låter riktpriset stå - det är
-           * märkt som riktpris och är inte fel, bara inte färskt.
-           */
-          if (response.status === 429) {
-            prisSparrRef.current = true;
-            return;
-          }
-          if (!response.ok) continue;
-          const data = (await response.json().catch(() => ({}))) as CatalogItemOffersResponse;
-          if (isCancelled || !data?.ok) continue;
-          applyStoreOffersSnapshotToItem(item, activeCategory, data);
-        } catch {
-          // Riktpriset står kvar om nätet krånglar.
-        }
-      }
-    };
-
-    /* Två samtidiga, inte fyra. Trettio anrop är ändå klara på ett par
-       sekunder, och hälften så många parallella är hälften så hårt mot
-       både vår spärr och butikens. */
-    void Promise.all([arbeta(), arbeta()]);
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [visibleItems, activeCategory, normalizedApiBase]);
 
   /* Kategorins egna mått. De vänder vid upprepat klick och visar pil. */
   const categorySortButtons = useMemo(() => {

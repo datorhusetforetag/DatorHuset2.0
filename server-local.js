@@ -118,6 +118,14 @@ const CUSTOM_BUILD_PRODUCT_STARTUP_REFRESH_DELAY_MS = Math.max(
   1_000,
   Number(process.env.CUSTOM_BUILD_PRODUCT_STARTUP_REFRESH_DELAY_MS || 2_000)
 );
+/*
+ * Kategorierna som har butikspriser.
+ *
+ * Chassifläktar och nätverkskort saknades här, fast de finns som steg i
+ * konfiguratorn sedan de lades till. /api/custom-build/catalog-prices
+ * svarade "Ogiltig kategori." för dem, så de två stegen fick aldrig
+ * några priser alls - bara katalogens riktpris.
+ */
 const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "cpu",
   "gpu",
@@ -127,6 +135,8 @@ const CUSTOM_BUILD_SUPPORTED_CATEGORIES = new Set([
   "case",
   "psu",
   "cooling",
+  "chassifan",
+  "networkcard",
 ]);
 const TRUSTED_CATALOG_REFERENCE_SOURCES = new Set(["komponentkoll", "prisjakt", "pricerunner", "manual"]);
 const CUSTOM_BUILD_DISCOVERY_TTL_MS = Math.max(
