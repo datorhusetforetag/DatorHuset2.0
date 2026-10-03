@@ -23,6 +23,9 @@ type OrderItem = {
      build_notes finns på raden men hämtas inte hit: den är skriven
      till oss själva och har inget i kundens vy att göra. */
   serial_number?: string | null;
+  /* Det kunden faktiskt betalade per styck, och utförandet de valde. */
+  unit_price_cents?: number | null;
+  configuration?: { summary?: string | null } | null;
   product?: {
     id?: string;
     legacy_id?: string | number | null;
@@ -296,9 +299,19 @@ export default function Orders() {
 
                     {items.map((item) => {
                       const product = item.product;
+                      /* Det som betalades, inte vad datorn kostar i dag.
+                         Tidigare räknades raden ur produktens nuvarande
+                         pris, så en gammal order bytte belopp varje gång
+                         priset ändrades - och en uppgradering syntes inte
+                         alls. Saknas det sparade priset används det
+                         nuvarande som reserv. */
+                      const paidCents =
+                        typeof item.unit_price_cents === "number"
+                          ? item.unit_price_cents
+                          : product?.price_cents;
                       const itemTotal =
-                        typeof product?.price_cents === "number"
-                          ? ((product.price_cents * item.quantity) / 100).toLocaleString("sv-SE")
+                        typeof paidCents === "number"
+                          ? ((paidCents * item.quantity) / 100).toLocaleString("sv-SE")
                           : "--";
                       const imageSrc = resolveProductImage(product);
                       /* Bara det som faktiskt finns. En rad som säger
@@ -346,6 +359,11 @@ export default function Orders() {
                                   <p className="font-display text-lg font-bold leading-tight text-foreground">
                                     {product?.name || "Produkt"}
                                   </p>
+                                  {item.configuration?.summary && (
+                                    <p className="mt-1 text-sm font-semibold text-foreground/80">
+                                      Ditt utförande: {item.configuration.summary}
+                                    </p>
+                                  )}
                                   {item.quantity > 1 && (
                                     <p className="mt-1 text-sm text-muted-foreground">
                                       {item.quantity} exemplar

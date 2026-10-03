@@ -227,6 +227,42 @@
     box-shadow: var(--shadow-card);
   }
 
+  /* Ytan på informationssidorna: tät, en aning ljusare än den mörka
+     duken, med en mjuk skugga under. Inget skiner igenom, så texten
+     står likadant var på sidan den än hamnar. */
+  .info-panel {
+    @apply rounded-lg border border-white/[0.06];
+    background-color: #17111f;
+    /* Skuggan faller bara ned och åt vänster, som om ljuset kom uppifrån
+       höger - panelen ser då ut att lyfta ut ur duken. Den negativa
+       spridningen håller skuggan borta från över- och högerkanten.
+       Två lager: ett tätt nära kanten och ett mjukare längre ut. */
+    box-shadow:
+      -10px 12px 16px -8px rgba(0, 0, 0, 0.9),
+      -22px 28px 40px -18px rgba(0, 0, 0, 0.8);
+  }
+
+  /* Fälten i panelerna: täta och ljusare än panelen, som i förlagan. */
+  .info-panel .field,
+  .info-field {
+    @apply rounded border border-white/[0.08] px-4 text-sm text-white
+      placeholder:text-white/40 transition-colors
+      focus:border-white/30 focus:outline-none focus:ring-2 focus:ring-white/10;
+    background-color: #231b30;
+  }
+
+  /* Bandet överst på informationssidorna. Samma lila som duken hade
+     förut, nu som en låg list som drar åt blått åt höger. */
+  .info-header {
+    background-image: linear-gradient(
+      100deg,
+      #2a1636 0%,
+      #3a1a47 40%,
+      #2e1f5e 75%,
+      #3b2d58 100%
+    );
+  }
+
   .glass-card {
     @apply bg-card/70 backdrop-blur-xl border border-border/60 rounded-lg;
     box-shadow: var(--shadow-card);
@@ -479,58 +515,6 @@
     width: 100%;
   }
 
-  /* Inrullning ------------------------------------------------------ */
-
-  /*
-   * Hör ihop med <Reveal>. Utgångsläget är osynligt och en bit förskjutet;
-   * data-visible sätts när elementet rullats in och allt går tillbaka till
-   * noll.
-   *
-   * Endast opacity och transform ändras, så inrullningen kostar ingenting
-   * i layout. Kurvan är samma som korten använder, så sidan rör sig likadant
-   * överallt.
-   */
-  .reveal {
-    opacity: 0;
-    transition:
-      opacity 0.65s cubic-bezier(0.2, 0.8, 0.2, 1),
-      transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
-    will-change: opacity, transform;
-  }
-
-  .reveal-up {
-    transform: translate3d(0, 28px, 0);
-  }
-
-  .reveal-down {
-    transform: translate3d(0, -20px, 0);
-  }
-
-  .reveal-none {
-    transform: none;
-  }
-
-  .reveal[data-visible] {
-    opacity: 1;
-    transform: none;
-  }
-
-  /* Toningen är över - lämna tillbaka lagret till webbläsaren. */
-  .reveal[data-settled] {
-    will-change: auto;
-  }
-
-  /* Mindre rörelse: innehållet ligger synligt direkt, ingen förskjutning
-     och ingen fördröjning som håller det gömt. */
-  @media (prefers-reduced-motion: reduce) {
-    .reveal {
-      opacity: 1;
-      transform: none;
-      transition: none;
-      transition-delay: 0ms !important;
-    }
-  }
-
   /* Karusell -------------------------------------------------------- */
 
   .carousel-dots {
@@ -599,93 +583,6 @@
 
   .snap-row > * {
     @apply snap-start shrink-0;
-  }
-}
-
-/* Höjdkurvorna längst bak -------------------------------------------
- *
- * Här låg först en prickmatris, sedan en PNG av höjdkurvor. PNG:n var
- * 1239 px bred och skalades upp drygt fyra gånger för att täcka
- * fönstret, så varje linje blev ett suddigt band. Att höja
- * upplösningen bytte bara suddighet mot filstorlek.
- *
- * Nu är kurvorna riktiga vektorer, uträknade av
- * scripts/generate-topo-field.mjs. Samma fil på en telefon som på en
- * 4K-skärm, skarp på båda, och mindre än bilden den ersatte.
- *
- * TVÅ LAGER SOM GLIDER OLIKA FORT
- *
- * Ett enda lager som rör sig läses som en bild som dras förbi. Två som
- * rör sig olika fort läses som djup - det är parallax, och det är det
- * enda som får ett platt mönster att kännas som ett rum. Det fjärran
- * lagret har färre och lugnare kurvor och tar 190 sekunder på sig; det
- * nära har fler och tjockare och tar 110.
- *
- * VARFÖR SLINGAN INTE SYNS
- *
- * Rutan upprepas med sin egen bredd som period, och lagret flyttas
- * exakt en sådan bredd. Efter ett varv står allt alltså pixel för
- * pixel där det stod när varvet började, och det finns ingen punkt
- * där något hoppar. Kurvorna själva går ihop över rutans kanter
- * eftersom fältet de ritades ur är periodiskt - se skriptet.
- *
- * Lagret sträcker sig en hel rutbredd utanför sin behållare åt höger,
- * annars hade en tom rand kommit in från det hållet när det glider.
- *
- * Bara transform animeras, så grafikkortet sköter rörelsen och
- * layouten räknas aldrig om.
- *
- * Vinjetten tonar ut mönstret mot hörnen så det inte slutar i en rak
- * linje mot fönsterkanten. Den ligger på behållaren och gäller därför
- * båda lagren.
- */
-.ambient-topo {
-  mask-image: radial-gradient(88% 78% at 50% 45%, black 0%, black 52%, transparent 100%);
-  -webkit-mask-image: radial-gradient(88% 78% at 50% 45%, black 0%, black 52%, transparent 100%);
-  will-change: transform;
-}
-
-.ambient-topo__layer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  /* En hel ruta extra åt höger, att glida in i. */
-  right: calc(var(--topo-tile) * -1);
-  background-repeat: repeat;
-  background-size: var(--topo-tile) auto;
-  animation: topo-drift var(--topo-speed) linear infinite;
-  will-change: transform;
-}
-
-.ambient-topo__layer--far {
-  background-image: url("/patterns/topo-far.svg");
-  --topo-tile: 1600px;
-  --topo-speed: 190s;
-  opacity: 0.17;
-}
-
-.ambient-topo__layer--near {
-  background-image: url("/patterns/topo-near.svg");
-  --topo-tile: 1120px;
-  --topo-speed: 110s;
-  opacity: 0.11;
-}
-
-/* Exakt en rutbredd. Ett enda avvikande värde här och slingan hackar
-   en gång i minuten, vilket är precis svårt nog att få syn på. */
-@keyframes topo-drift {
-  from {
-    transform: translate3d(0, 0, 0);
-  }
-  to {
-    transform: translate3d(calc(var(--topo-tile) * -1), 0, 0);
-  }
-}
-/* Mönstret får stå kvar, men stilla. */
-@media (prefers-reduced-motion: reduce) {
-  .ambient-topo__layer {
-    animation: none;
   }
 }
 
@@ -791,40 +688,6 @@
   }
 }
 
-/* Ambient ------------------------------------------------------------
- *
- * Ljusen driver långsamt över ytan så att bakgrunden lever utan att
- * dra till sig blicken. Bara transform och opacity animeras - båda
- * hanteras av grafikkortet och tvingar aldrig om layouten. Att i stället
- * animera background-position på en stor gradient hade målat om hela
- * ytan varje bildruta.
- */
-@keyframes drift-a {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  33% {
-    transform: translate3d(6%, -4%, 0) scale(1.12);
-  }
-  66% {
-    transform: translate3d(-4%, 5%, 0) scale(0.94);
-  }
-}
-
-@keyframes drift-b {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  40% {
-    transform: translate3d(-7%, 4%, 0) scale(1.15);
-  }
-  75% {
-    transform: translate3d(5%, -5%, 0) scale(0.92);
-  }
-}
-
 @keyframes pulse-soft {
   0%,
   100% {
@@ -832,24 +695,6 @@
   }
   50% {
     opacity: 0.9;
-  }
-}
-
-/* Ljusstrimma som faller uppifrån och ned, som Starforges smala streck. */
-@keyframes streak-fall {
-  0% {
-    transform: translate3d(0, -110%, 0);
-    opacity: 0;
-  }
-  4% {
-    opacity: 1;
-  }
-  88% {
-    opacity: 1;
-  }
-  100% {
-    transform: translate3d(0, 110%, 0);
-    opacity: 0;
   }
 }
 
@@ -2358,7 +2203,10 @@
  * märket flyttar med av sig självt.
  */
 .pc-card {
-  --pc-card-surface: #232c3b;
+  /* Mörk plommon, samma familj som duken. Den blågrå ytan stod emot den
+     gamla lila duken men såg främmande ut mot den mörka natthimlen - och
+     glöden behöver mörker runt sig för att lysa. */
+  --pc-card-surface: #17111f;
   --pc-utstick: 2.25rem;
 
   position: relative;
@@ -2368,15 +2216,31 @@
   overflow: visible;
   margin-top: var(--pc-utstick);
   border-radius: 0.75rem;
-  border: 1px solid hsl(220 20% 100% / 0.08);
+  border: 1px solid hsl(270 40% 100% / 0.07);
   background: var(--pc-card-surface);
+  /* Samma skugga som panelerna på informationssidorna: bara nedåt och
+     åt vänster, så kortet ser ut att lyfta ut ur duken. */
+  box-shadow:
+    -10px 12px 16px -8px rgba(0, 0, 0, 0.9),
+    -22px 28px 40px -18px rgba(0, 0, 0, 0.8);
   transition: border-color 0.16s ease-out, transform 0.18s ease-out,
     box-shadow 0.18s ease-out;
 }
-.pc-card:hover {
+/*
+ * Kortet reagerar när pekaren är på datorn, inte var som helst på kortet.
+ *
+ * Förut tändes allt så fort pekaren kom in på kortet, också när man
+ * bara skulle klicka på ett minnesval längre ned. Nu är det bilden man
+ * siktar på - :has låter kortet följa med.
+ */
+.pc-card:has(.pc-card__media:hover) {
   transform: translateY(-3px);
   border-color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 45%, transparent);
-  box-shadow: 0 16px 34px hsl(var(--brand-black) / 0.4),
+  /* Skuggan blir längre när kortet lyfter, och en tunn ring i datorns
+     egen kulör tänds runt kanten. */
+  box-shadow:
+    -12px 16px 20px -8px rgba(0, 0, 0, 0.9),
+    -26px 34px 48px -18px rgba(0, 0, 0, 0.8),
     0 0 0 1px color-mix(in srgb, var(--pc-glow, #3fd9f5) 22%, transparent);
 }
 
@@ -2394,13 +2258,18 @@
   position: relative;
   isolation: isolate;
   display: flex;
-  aspect-ratio: 5 / 4;
+  /* Högre än bred, så kortet blir smalt och högt och tornet får stå
+     upprätt. Bilden får lite luft på sidorna, så den inte fyller ut
+     hela bredden. */
+  aspect-ratio: 8 / 9;
   min-height: 0;
-  align-items: center;
+  /* Mot överkanten, så tornet sticker upp ur kortet. Centrerat hamnade
+     det helt innanför i det höga kortet. */
+  align-items: flex-start;
   justify-content: center;
   /* Uppåt ur kortet. Ingen utfyllnad upptill - där ska bilden nå ut. */
   margin-top: calc(var(--pc-utstick) * -1);
-  padding: 0 1.15rem 0.5rem;
+  padding: 0 1.4rem 0.5rem;
 }
 
 /*
@@ -2421,10 +2290,14 @@
 .pc-card__media::before {
   content: "";
   position: absolute;
-  /* Utanför mediaytan, så halon når förbi kortets kanter som i
-     förlagan. Den har inget att klippas av mot nu. */
-  inset: -14% -10% -8%;
+  /* Långt utanför mediaytan: ljuset ska spilla över kortets kanter och
+     upp ovanför det, som om datorn lyste upp rummet runt sig. En glöd
+     som håller sig innanför kortet ser ut som en färgad fläck på det. */
+  inset: -30% -24% -14%;
   z-index: 0;
+  /* Glöden når långt ovanför kortet - på startsidan ända upp över
+     "Se alla datorer". Den är bara ljus och får inte ta emot klick. */
+  pointer-events: none;
   /*
    * Tänd i vila, starkare vid hovring.
    *
@@ -2433,20 +2306,53 @@
    * lista med sju släckta maskiner ser ut som en lista med sju
    * släckta maskiner. Nu lyser de, och den man siktar på lyser mer.
    */
-  opacity: 0.5;
+  opacity: 0.9;
+  /*
+   * Mättad kärna och lång, mjuk avtoning. Den tidigare glöden var en
+   * liten, blek fläck med en tydlig kant; här är färgen stark nära
+   * datorn och tonar ut över en lång sträcka, och en oskärpa ovanpå tar
+   * bort varje antydan till kant. Oskärpan ändras aldrig - bara
+   * opacitet och transform animeras - så hovringen kostar inget.
+   */
   background: radial-gradient(
-    58% 52% at 50% 52%,
-    color-mix(in srgb, var(--pc-glow, #3fd9f5) 68%, transparent) 0%,
-    color-mix(in srgb, var(--pc-glow, #3fd9f5) 26%, transparent) 44%,
-    transparent 76%
+    50% 50% at 50% 50%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 92%, transparent) 0%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 55%, transparent) 28%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 18%, transparent) 56%,
+    transparent 78%
   );
+  filter: blur(28px);
   transition: opacity 0.18s ease-out, transform 0.18s ease-out;
 }
 
-.pc-card:hover .pc-card__media::before,
-.pc-card:focus-visible .pc-card__media::before {
+/* En mindre, ljusare kärna tätt bakom chassit, så det ser ut som att
+   ljuset kommer ur datorn och inte bara ligger bakom den. */
+.pc-card__media::after {
+  content: "";
+  position: absolute;
+  inset: 6% 24% 16%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 80%, white 20%) 0%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 40%, transparent) 45%,
+    transparent 75%
+  );
+  filter: blur(18px);
+  transition: opacity 0.18s ease-out;
+}
+
+.pc-card__media:hover::before,
+.pc-card__media:focus-visible::before {
   opacity: 1;
-  transform: scale(1.06);
+  transform: scale(1.2);
+}
+
+.pc-card__media:hover::after,
+.pc-card__media:focus-visible::after {
+  opacity: 1;
 }
 
 /*
@@ -2467,15 +2373,18 @@
   height: 100%;
   width: 100%;
   object-fit: contain;
+  /* Mot överkanten av ytan, inte centrerat - annars hamnar tornet en bit
+     ned och sticker inte upp ur kortet. */
+  object-position: center top;
   filter: drop-shadow(0 14px 20px rgb(0 0 0 / 0.45));
   transition: transform 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 /* Märkbart, inte hoppigt. 1,03 syntes knappt på en bild som redan är
    liten; 1,07 läses som att den kommer emot en. */
-.pc-card:hover .pc-card__cutout,
-.pc-card:focus-visible .pc-card__cutout {
-  transform: translateY(-6px) scale(1.07);
+.pc-card__media:hover .pc-card__cutout,
+.pc-card__media:focus-visible .pc-card__cutout {
+  transform: translateY(-14px) scale(1.09);
 }
 
 /* Reservläge: foto med egen bakgrund får en ram, annars blir det en
@@ -2586,12 +2495,454 @@
     transition: none;
   }
 
-  .pc-card:hover {
+  .pc-card:has(.pc-card__media:hover) {
     transform: none;
   }
 
-  .pc-card:hover .pc-card__cutout {
+  .pc-card__media:hover .pc-card__cutout {
     transform: none;
+  }
+}
+
+/* Startsidans rader med datorer ---------------------------------------
+ *
+ * Tre kort i bredd på dator, två på surfplatta, ett och en bit på
+ * telefon - biten som sticker in från höger visar att det finns mer att
+ * svepa till.
+ *
+ * En rullbar behållare klipper allt utanför sig, också i höjdled. Här
+ * sticker tornet upp ur kortet, glöden ut åt sidorna och skuggan ned åt
+ * vänster, så raden har utfyllnad runt korten som tas tillbaka med
+ * negativa marginaler. Korten linjerar ändå med rubriken ovanför.
+ */
+.showcase-track {
+  --showcase-gap: 2.75rem;
+  display: flex;
+  gap: var(--showcase-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  /* Sidmarginalen på telefon är bara 1rem, så luften i sidled får inte
+     vara större än så där - annars går raden utanför skärmen och hela
+     sidan kan rullas i sidled. På bredare skärmar finns det plats. */
+  --showcase-bleed: 1rem;
+  scroll-padding-inline: var(--showcase-bleed);
+  /* Glöden över korten sträcker sig långt upp, och växer vid hovring. En
+     rullbar rad klipper allt utanför sig, så den har gott om luft upptill -
+     12rem - som tas tillbaka med negativ marginal, så avståndet till
+     rubriken är detsamma. Luften ligger ovanpå rubriken, och därför släpper
+     raden igenom klick (pointer-events) - bara korten tar emot dem. */
+  margin: calc(3.5rem - 12rem) calc(var(--showcase-bleed) * -1) 0;
+  padding: 12rem var(--showcase-bleed) 3rem;
+  pointer-events: none;
+  overscroll-behavior-x: contain;
+}
+
+@media (min-width: 1280px) {
+  .showcase-track {
+    --showcase-bleed: 2.5rem;
+  }
+}
+
+.showcase-slot {
+  flex: 0 0 82%;
+  pointer-events: auto;
+  scroll-snap-align: start;
+  display: flex;
+}
+
+.showcase-slot > .pc-card {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .showcase-slot {
+    flex-basis: calc((100% - var(--showcase-gap)) / 2);
+  }
+}
+
+@media (min-width: 1024px) {
+  .showcase-slot {
+    flex-basis: calc((100% - var(--showcase-gap) * 2) / 3);
+  }
+}
+
+/* Datorn i kundvagnen -------------------------------------------------
+ *
+ * Samma yta och samma glöd som datorkorten, men liggande: bilden till
+ * vänster, specifikation och prisuppställning till höger. Oftast står
+ * en enda dator här, så kortet får ta plats.
+ */
+.cart-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 0.75rem;
+  border: 1px solid hsl(270 40% 100% / 0.07);
+  background: #17111f;
+  box-shadow:
+    -10px 12px 16px -8px rgba(0, 0, 0, 0.9),
+    -22px 28px 40px -18px rgba(0, 0, 0, 0.8);
+}
+
+@media (min-width: 768px) {
+  .cart-item {
+    grid-template-columns: minmax(0, 17rem) minmax(0, 1fr);
+  }
+}
+
+.cart-item__media {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-height: 16rem;
+  align-items: center;
+  justify-content: center;
+  padding: 1.75rem 1.5rem;
+  background: linear-gradient(
+    160deg,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 10%, #120d19) 0%,
+    #120d19 70%
+  );
+}
+
+/* Datorns egen belysning bakom tornet, som på korten. */
+.cart-item__media::before {
+  content: "";
+  position: absolute;
+  inset: 12% 8%;
+  z-index: -1;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    color-mix(in srgb, var(--pc-glow, #3fd9f5) 55%, transparent) 0%,
+    transparent 100%
+  );
+  filter: blur(28px);
+  opacity: 0.7;
+}
+
+.cart-item__cutout {
+  max-height: 17rem;
+  width: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 14px 20px rgb(0 0 0 / 0.45));
+}
+
+.cart-item__photo {
+  max-height: 15rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.cart-item__body {
+  padding: 1.75rem;
+}
+
+@media (min-width: 768px) {
+  .cart-item__body {
+    padding: 2rem 2rem 1.75rem;
+  }
+}
+
+/* Specifikationen: två spalter, etikett över värde. */
+.cart-item__specs {
+  display: grid;
+  gap: 1rem 1.5rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid hsl(var(--foreground) / 0.08);
+}
+
+@media (min-width: 640px) {
+  .cart-item__specs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.cart-item__specs dt {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.cart-item__specs dd {
+  margin-top: 0.3rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.4;
+  color: hsl(var(--foreground));
+}
+
+/* Det kunden själv valt lyser i datorns kulör. */
+.cart-item__specs [data-upgraded] dd {
+  color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 70%, white);
+}
+
+.cart-item__tag {
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--pc-glow, #3fd9f5) 45%, transparent);
+  padding: 0.05rem 0.45rem;
+  font-size: 0.5625rem;
+  letter-spacing: 0.12em;
+  color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 80%, white);
+}
+
+/* Prisuppställningen: grundpris, tillval, summa per dator. */
+.cart-item__prices {
+  margin-top: 1.5rem;
+  border-radius: 0.6rem;
+  background: hsl(var(--foreground) / 0.03);
+  border: 1px solid hsl(var(--foreground) / 0.06);
+  padding: 0.9rem 1.1rem;
+  font-size: 0.875rem;
+}
+
+.cart-item__prices > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.3rem 0;
+}
+
+.cart-item__prices dt {
+  color: hsl(var(--muted-foreground));
+}
+
+.cart-item__prices dd {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+  white-space: nowrap;
+}
+
+.cart-item__prices > .cart-item__prices-total {
+  margin-top: 0.35rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid hsl(var(--foreground) / 0.08);
+}
+
+.cart-item__prices-total dt,
+.cart-item__prices-total dd {
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+/* Det rikare kortet på startsidan ------------------------------------
+ *
+ * Samma kort som på produktsidan, med tre tillägg: prisrutor för
+ * grundutförandet och uppgraderingarna, en FPS-rad och en tydlig
+ * "Visa datorn" längst ned. Tre kort i bredd ger plats för det; på
+ * produktsidan, med fyra i bredd, hade det blivit trångt.
+ */
+.pc-card--rich .pc-card__name {
+  font-size: 1.05rem;
+}
+
+.pc-card__specs {
+  margin-top: 0.7rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: hsl(var(--foreground) / 0.65);
+}
+
+/* Priset för grundutförandet, och under det minnes- och lagringsvalen
+   som små brickor. Grundvalet är markerat i datorns kulör och står som
+   "Ingår"; de andra visar tillägget. Samma regler och pristabell som
+   produktsidan och kassan (shared/upgradePricing.js). */
+.pc-card__from {
+  margin-top: 1rem;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 70%, white);
+}
+
+.pc-card__from span {
+  font-family: inherit;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.45);
+}
+
+.pc-card__upgrade {
+  margin-top: 0.9rem;
+}
+
+.pc-card__upgrade-title {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.55);
+}
+
+.pc-card__chips {
+  margin-top: 0.45rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.pc-card__chip {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  border-radius: 0.5rem;
+  border: 1px solid hsl(270 40% 100% / 0.08);
+  background: hsl(270 30% 100% / 0.02);
+  padding: 0.5rem 0.6rem;
+}
+
+.pc-card__chip:hover {
+  border-color: hsl(270 40% 100% / 0.22);
+}
+
+.pc-card__chip:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--pc-glow, #3fd9f5) 80%, white);
+  outline-offset: 2px;
+}
+
+.pc-card__chip[data-active] {
+  border-color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 55%, transparent);
+  background: color-mix(in srgb, var(--pc-glow, #3fd9f5) 7%, transparent);
+}
+
+.pc-card__chip-label {
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: hsl(var(--foreground));
+}
+
+.pc-card__chip-price {
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground) / 0.6);
+}
+
+.pc-card__chip[data-active] .pc-card__chip-price {
+  color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 70%, white);
+}
+
+/* FPS-raden, avskild med en linje som på förlagan. */
+.pc-card__fps {
+  margin-top: auto;
+  border-top: 1px solid hsl(270 40% 100% / 0.07);
+  padding: 1.1rem 1.15rem 1.2rem;
+}
+
+.pc-card__fps-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--foreground) / 0.75);
+}
+
+.pc-card__fps-title span {
+  letter-spacing: 0.08em;
+  color: hsl(var(--foreground) / 0.4);
+}
+
+.pc-card__fps-grid {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  text-align: center;
+}
+
+.pc-card__fps-grid li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.pc-card__fps-game {
+  font-size: 0.72rem;
+  color: hsl(var(--foreground) / 0.65);
+}
+
+.pc-card__fps-value {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: hsl(var(--foreground));
+}
+
+.pc-card__fps-unit {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 65%, white);
+}
+
+/* "Visa datorn": hela kortet är redan en länk, så det här är bara en
+   tydlig etikett för den - ingen egen länk inuti länken. */
+.pc-card__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-top: 1px solid hsl(270 40% 100% / 0.07);
+  padding: 1rem;
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--pc-glow, #3fd9f5) 70%, white);
+  transition: background-color 0.16s ease-out;
+}
+
+.pc-card--rich:hover .pc-card__cta {
+  background: hsl(270 30% 100% / 0.03);
+}
+
+/* Platshållaren medan lagret hämtas: ett tomt kort i rätt storlek, så
+   sidan inte hoppar när raden fylls. */
+.pc-card--skeleton {
+  aspect-ratio: 3 / 4;
+  animation: showcase-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes showcase-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pc-card--skeleton {
+    animation: none;
+  }
+
+  .showcase-track {
+    scroll-behavior: auto;
   }
 }
 
@@ -2661,21 +3012,23 @@
   padding: 0.4rem;
 
   /*
-   * Plattan är en toning, inte en vit fyrkant.
+   * Plattan är rent vitt, inte en toning.
    *
-   * Nästan varje produktfoto har vit bakgrund inbränd i jpeg:en, så
-   * fotot måste få något ljust att försvinna in i. Men en platt vit
-   * ruta såg pålagd ut - det var det sidan led av, trettio lysande
-   * fyrkantar nedför en mörk spalt.
-   *
-   * En svag toning plus en ljus kant upptill och en skugga nedtill gör
-   * den till en urgröpt bricka som fotot ligger i. Samma ljushet, helt
-   * annan läsning.
+   * Butikernas foton har vit bakgrund inbränd i jpeg:en. En ljusgrå
+   * toning runt dem gjorde att fotots egen vita fyrkant syntes som en
+   * lapp klistrad på plattan. Med exakt samma vita smälter fotot in och
+   * bara varan syns. multiply på bilderna tar hand om foton vars vita
+   * är en aning gråaktigt.
    */
-  background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7),
-    inset 0 -2px 4px rgb(15 23 42 / 0.1);
+  background: #fff;
 }
+.cb-row__media img,
+.cb-row__forstoring img,
+.cb-panel__bild img,
+.cb-storbild img {
+  mix-blend-mode: multiply;
+}
+
 .cb-row__media img {
   height: 100%;
   width: 100%;
@@ -3339,14 +3692,57 @@
   overflow: hidden;
   border-radius: 0.6rem;
   padding: 0.75rem;
-  background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7),
-    inset 0 -2px 4px rgb(15 23 42 / 0.1);
+  background: #fff;
 }
 
 .cb-panel__bild img {
   height: 100%;
   width: 100%;
+  object-fit: contain;
+  transition: transform 0.2s ease-out;
+}
+
+/* Bilden i panelen är en knapp som öppnar den stora visningen. */
+.cb-panel__bild {
+  cursor: zoom-in;
+}
+
+.cb-panel__bild:hover img {
+  transform: scale(1.05);
+}
+
+.cb-panel__bild:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+
+.cb-panel__forstora {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.4rem;
+  display: flex;
+  height: 1.6rem;
+  width: 1.6rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgb(15 23 42 / 0.75);
+  color: #fff;
+  pointer-events: none;
+}
+
+/* Stor visning av en komponentbild, som på komponentkoll. Vit yta av
+   samma skäl som brickorna: fotot ska inte se inklistrat ut. */
+.cb-storbild {
+  display: flex;
+  height: min(70vh, 40rem);
+  align-items: center;
+  justify-content: center;
+}
+
+.cb-storbild img {
+  max-height: 100%;
+  max-width: 100%;
   object-fit: contain;
 }
 
@@ -3754,7 +4150,7 @@ button.cb-huvud__cell:hover {
   justify-content: center;
   padding: 0.9rem;
   border-radius: 0.75rem;
-  background: linear-gradient(160deg, #f6f8fb 0%, #dde3ed 100%);
+  background: #fff;
   box-shadow: 0 18px 40px hsl(var(--brand-black) / 0.55),
     0 0 0 1px hsl(var(--foreground) / 0.12);
   opacity: 0;

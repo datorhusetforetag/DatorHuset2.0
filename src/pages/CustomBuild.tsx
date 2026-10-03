@@ -27,6 +27,7 @@ import {
   Wifi,
   ChevronDown,
   ChevronRight,
+  ZoomIn,
 } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
 import { AffiliateDisclosure } from "@/components/AffiliateDisclosure";
@@ -4433,6 +4434,8 @@ export default function CustomBuild() {
   const [visibleCount, setVisibleCount] = useState(ROWS_PER_PAGE);
   const [expandedItemId, setExpandedItemId] = useState("");
   const [expandedItemCategory, setExpandedItemCategory] = useState<CategoryKey | null>(null);
+  /* Bilden som visas stort när man klickar på den i den utfällda panelen. */
+  const [storBild, setStorBild] = useState<{ src: string; alt: string } | null>(null);
   const [storePickerComponent, setStorePickerComponent] = useState<ComponentItem | null>(null);
   const [storePickerLoading, setStorePickerLoading] = useState(false);
   const [storePickerError, setStorePickerError] = useState("");
@@ -6342,6 +6345,21 @@ export default function CustomBuild() {
           </DialogContent>
         ) : null}
       </Dialog>
+      {/* Stor bildvisning. Vit yta och mörk text, så att stängknappen syns
+          mot det vita och fotot inte får en kant. */}
+      <Dialog open={storBild !== null} onOpenChange={(open) => (open ? null : setStorBild(null))}>
+        {storBild ? (
+          <DialogContent className="max-w-4xl border-0 bg-white p-6 text-slate-900 sm:p-8">
+            <DialogTitle className="pr-8 text-base font-semibold text-slate-900">
+              {storBild.alt}
+            </DialogTitle>
+            <DialogDescription className="sr-only">Produktbild i full storlek.</DialogDescription>
+            <div className="cb-storbild">
+              <img src={storBild.src} alt={storBild.alt} decoding="async" />
+            </div>
+          </DialogContent>
+        ) : null}
+      </Dialog>
       <main className="flex-1">
         {/* Banderollen var ett eget mörkt skifferband tvärs över sidan,
             i en gråblå ton som inte fanns någon annanstans i butiken.
@@ -7150,8 +7168,22 @@ export default function CustomBuild() {
                           <div className="cb-panel">
                             <div className="cb-panel__ovre">
                               {/* Samma bricka som i raden, tio gånger ytan.
-                                  Här har kunden stannat för att titta närmare. */}
-                              <div className="cb-panel__bild">
+                                  Här har kunden stannat för att titta närmare,
+                                  och ett klick till öppnar bilden i full storlek.
+                                  Adressen tas från bilden själv, så att en
+                                  reservbild som redan bytts in följer med. */}
+                              <button
+                                type="button"
+                                className="cb-panel__bild"
+                                aria-label={`Visa större bild av ${imageAlt}`}
+                                onClick={(event) => {
+                                  const bild = event.currentTarget.querySelector("img");
+                                  setStorBild({
+                                    src: bild?.currentSrc || bild?.src || imageSrc,
+                                    alt: imageAlt,
+                                  });
+                                }}
+                              >
                                 <img
                                   src={imageSrc}
                                   alt={imageAlt}
@@ -7159,7 +7191,10 @@ export default function CustomBuild() {
                                   decoding="async"
                                   onError={hanteraBildfel}
                                 />
-                              </div>
+                                <span className="cb-panel__forstora" aria-hidden="true">
+                                  <ZoomIn className="h-3.5 w-3.5" />
+                                </span>
+                              </button>
 
                               <div className="min-w-0 flex-1">
                                 <div className="flex items-start justify-between gap-3">

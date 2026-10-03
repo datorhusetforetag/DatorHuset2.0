@@ -18,6 +18,9 @@ type OrderItem = {
   quantity: number;
   unit_price_cents?: number | null;
   product?: { name?: string | null };
+  /* Utförandet kunden valde: minne, lagring, grafikkort. summary är den
+     läsbara raden, till exempel "64GB DDR5 · 2TB". */
+  configuration?: { summary?: string | null } | null;
   /* Numret på chassit, och en notering till oss själva. Noteringen
      stannar i portalen; serienumret följer med till kundens
      ordersida. */
@@ -499,6 +502,11 @@ export default function AdminOrders() {
                     <div key={item.id} className="flex justify-between">
                       <span>
                         {item.product?.name || "Produkt"} x{item.quantity}
+                        {item.configuration?.summary && (
+                          <span className="block text-xs font-semibold text-cyan-300">
+                            Utförande: {item.configuration.summary}
+                          </span>
+                        )}
                       </span>
                       <span>
                         {item.unit_price_cents ? formatCurrency((item.unit_price_cents * item.quantity) / 100) : "-"}

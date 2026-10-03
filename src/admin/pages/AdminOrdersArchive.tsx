@@ -39,6 +39,7 @@ type ArchivedItem = {
   unit_price_cents?: number | null;
   serial_number?: string | null;
   build_notes?: string | null;
+  configuration?: { summary?: string | null } | null;
   product?: { name?: string | null } | null;
 };
 
@@ -308,6 +309,11 @@ export default function AdminOrdersArchive() {
                               <span className="text-slate-200">
                                 {item.product?.name || "Produkt"}
                                 {item.quantity > 1 ? ` × ${item.quantity}` : ""}
+                                {item.configuration?.summary && (
+                                  <span className="block text-xs font-semibold text-cyan-300">
+                                    Utförande: {item.configuration.summary}
+                                  </span>
+                                )}
                               </span>
                               <span className="shrink-0 tabular-nums text-slate-400">
                                 {formatCurrency((item.unit_price_cents || 0) * item.quantity)}

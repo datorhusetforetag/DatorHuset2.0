@@ -30,6 +30,16 @@ import { FpsPanel } from "@/components/product/FpsPanel";
 import { ProductStage } from "@/components/product/ProductStage";
 import { CapacityBar } from "@/components/product/CapacityBar";
 import { ProductVariants } from "@/components/product/ProductVariants";
+import { ConfigurationPicker } from "@/components/product/ConfigurationPicker";
+import { useUpgradePricing } from "@/hooks/useUpgradePricing";
+import {
+  cleanConfiguration,
+  findBaseConfig,
+  formatRam,
+  formatStorage,
+  getUpgradeOptions,
+  priceConfiguration,
+} from "../../shared/upgradePricing.js";
 import { checkStock, getAllInventory } from "@/lib/supabaseServices";
 
 const RAM_PRICE_TOOLTIP =
@@ -160,6 +170,23 @@ export default function ComputerDetails() {
   const [useUsedVariant, setUseUsedVariant] = useState(false);
   /* Vald uppgradering, eller null för grundmaskinen. Se variantOptions. */
   const [selectedUpgradeId, setSelectedUpgradeId] = useState<string | null>(null);
+  /* Valt minne, lagring och grafikkort - bara det som skiljer sig från
+     grundutförandet. Tomt betyder grundutförande. Se ConfigurationPicker. */
+  const [configChoice, setConfigChoice] = useState<{ ramGb?: number; storageGb?: number; gpu?: string }>({});
+  const { pricing: upgradePricing } = useUpgradePricing();
+  /* Ett val på en dator ska inte följa med till nästa. Kommer man från ett
+     kort på startsidan står valet i adressen (?ram=64&storage=2000) och
+     förväljs här. Ogiltiga värden faller bort av sig själva - de finns inte
+     bland alternativen och räknas då som grundutförande. */
+  useEffect(() => {
+    const ram = Number(searchParams.get("ram"));
+    const storage = Number(searchParams.get("storage"));
+    setConfigChoice({
+      ...(Number.isFinite(ram) && ram > 0 ? { ramGb: ram } : {}),
+      ...(Number.isFinite(storage) && storage > 0 ? { storageGb: storage } : {}),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- läses bara när man byter dator
+  }, [id]);
   const [usedVariantEnabled, setUsedVariantEnabled] = useState<boolean | null>(null);
   const [usedPartsFromApi, setUsedPartsFromApi] = useState<Record<string, boolean> | null>(null);
   const [usedPartsConfigured, setUsedPartsConfigured] = useState<boolean>(false);
@@ -398,7 +425,7 @@ export default function ComputerDetails() {
         alert("Laddar produktinformation, försök igen om en stund.");
         return;
       }
-      await addToCart(activeProductId, quantity);
+      await addToCart(activeProductId, quantity, configuration);
       navigate("/cart");
     } catch (error) {
       console.error("Failed to add to cart", error);
@@ -576,14 +603,44 @@ export default function ComputerDetails() {
     },
     activeProduct,
   );
-  const displayPrice = merged.price;
+  /*
+   * Minne, lagring och grafikkort ur pristabellen.
+   *
+   * Gäller bara grundutförandet: begagnade delar och andra uppgraderingar
+   * är egna produkter med egna delar. Ett sparat val som inte längre
+   * finns bland alternativen räknas som grundutförande.
+   */
+  const baseConfig =
+    !useUsedVariant && !selectedUpgradeId
+      ? findBaseConfig(resolvedComputer.name, resolvedComputer.id, activeProduct?.slug, activeProduct?.legacy_id)
+      : null;
+  const configOptions = getUpgradeOptions(baseConfig, upgradePricing);
+  const chosenRam =
+    configOptions.ram.find((option) => option.gb === configChoice.ramGb) ??
+    configOptions.ram.find((option) => option.isBase);
+  const chosenStorage =
+    configOptions.storage.find((option) => option.gb === configChoice.storageGb) ??
+    configOptions.storage.find((option) => option.isBase);
+  const chosenGpu = configOptions.gpu.find((option) => option.id === configChoice.gpu) ?? null;
+  const configuration = baseConfig
+    ? cleanConfiguration(baseConfig, {
+        ramGb: chosenRam?.gb,
+        storageGb: chosenStorage?.gb,
+        gpu: chosenGpu?.id,
+      })
+    : null;
+  const configExtra = configuration ? priceConfiguration(baseConfig, configuration, upgradePricing) ?? 0 : 0;
+
+  const displayPrice = merged.price + configExtra;
   const displayName = merged.name;
   const osValue = merged.os || "Windows 10 Pro";
   const displaySpecs = {
     cpu: merged.cpu,
-    gpu: merged.gpu,
-    ram: merged.ram,
-    storage: merged.storage,
+    gpu: chosenGpu ? chosenGpu.label : merged.gpu,
+    /* Har kunden valt annat minne eller annan lagring står valet i
+       specifikationen, så den beskriver datorn som faktiskt beställs. */
+    ram: configuration?.ramGb && baseConfig ? formatRam(configuration.ramGb, baseConfig.ram.type) : merged.ram,
+    storage: configuration?.storageGb ? formatStorage(configuration.storageGb) : merged.storage,
     storagetype: merged.storagetype,
     tier: merged.tier,
     motherboard: merged.motherboard,
@@ -653,7 +710,10 @@ export default function ComputerDetails() {
       } as (typeof options)[number] & { comparePrice: number });
     }
 
+    /* Minne och lagring väljs nu ur pristabellen (ConfigurationPicker),
+       inte som egna produkter. Uppgraderingar av annat slag står kvar. */
     upgradeVariants.forEach((variant) => {
+      if (variant.group === "ram" || variant.group === "storage") return;
       options.push({
         id: variant.id,
         label: variant.label,
@@ -676,6 +736,9 @@ export default function ComputerDetails() {
   const selectedVariantId = selectedUpgradeId ?? (useUsedVariant ? "used" : "base");
 
   const selectVariant = (nextId: string) => {
+    /* Minnes- och lagringsvalen gäller grundutförandet. Byter man till
+       begagnat eller en annan produkt nollställs de. */
+    setConfigChoice({});
     if (nextId === "base") {
       setSelectedUpgradeId(null);
       setUseUsedVariant(false);
@@ -1134,6 +1197,63 @@ export default function ComputerDetails() {
                 accent={accent}
               />
             </div>
+
+            {/* Minne, lagring och grafikkort ---------------------------- */}
+            {baseConfig && (
+              <div className="product-panel__block">
+                <ConfigurationPicker
+                  accent={accent}
+                  groups={[
+                    {
+                      key: "ram",
+                      title: "Minne",
+                      options: configOptions.ram.map((option) => ({
+                        value: String(option.gb),
+                        label: option.label,
+                        price: option.price,
+                        isBase: option.isBase,
+                      })),
+                      selected: String(chosenRam?.gb ?? ""),
+                      onSelect: (value) => setConfigChoice((prev) => ({ ...prev, ramGb: Number(value) })),
+                    },
+                    {
+                      key: "storage",
+                      title: "Lagring",
+                      options: configOptions.storage.map((option) => ({
+                        value: String(option.gb),
+                        label: option.label,
+                        price: option.price,
+                        isBase: option.isBase,
+                      })),
+                      selected: String(chosenStorage?.gb ?? ""),
+                      onSelect: (value) => setConfigChoice((prev) => ({ ...prev, storageGb: Number(value) })),
+                    },
+                    {
+                      key: "gpu",
+                      title: "Grafikkort",
+                      /* Datorns eget grafikkort först, som "Ingår". */
+                      options: configOptions.gpu.length
+                        ? [
+                            { value: "", label: merged.gpu || "Standard", price: 0, isBase: true },
+                            ...configOptions.gpu.map((option) => ({
+                              value: option.id,
+                              label: option.label,
+                              price: option.price,
+                            })),
+                          ]
+                        : [],
+                      selected: chosenGpu?.id ?? "",
+                      onSelect: (value) => setConfigChoice((prev) => ({ ...prev, gpu: value || undefined })),
+                    },
+                  ]}
+                />
+                <p className="mt-3 text-[11px] leading-relaxed text-muted-foreground">
+                  Priserna följer komponentpriserna och kan ändras. Du betalar priset som visas när
+                  du går till kassan. En dator i varukorgen har ett utförande - väljer du om ersätts
+                  det förra.
+                </p>
+              </div>
+            )}
 
             {/* Specifikationer ---------------------------------------- */}
             <div className="product-panel__block">

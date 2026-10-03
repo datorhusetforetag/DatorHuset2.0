@@ -64,7 +64,7 @@ const looksLikeFullBuild = (title) => {
  * heter 4070. Utan den här spärren kan ett minneskit sättas som CPU-pris.
  */
 const CATEGORY_SIGNATURES = {
-  cpu: /\b(?:ryzen|core\s*i[3579]|threadripper|athlon|xeon|pentium|celeron)\b|\bprocessor\b/i,
+  cpu: /\b(?:ryzen|core\s*i[3579]|core\s*ultra|threadripper|athlon|epyc|xeon|pentium|celeron)\b|\bprocessor\b/i,
   gpu: /\b(?:geforce|radeon|rtx|gtx|\brx\s*\d{3,4}|arc\s*a\d{3})\b|\bgrafikkort\b/i,
   motherboard: /\b(?:moderkort|motherboard|mainboard)\b|\b[abxzh]\d{3}[a-z]*\s*(?:m|e)?\b.*\b(?:wifi|gaming|aorus|tomahawk|eagle|elite|tuf|rog|msi|asus|gigabyte|asrock)\b/i,
   ram: /\b(?:ddr[345]|dimm|so-?dimm)\b|\bminne(?:skit)?\b|\d{4}\s*mhz\b/i,
@@ -81,6 +81,17 @@ const CATEGORY_SIGNATURES = {
  * samtidigt inte matcha produktens egen. Butikstitlar är slarviga, och att
  * kräva att rätt kategori alltid syns skulle kosta fler träffar än det räddar.
  */
+/*
+ * Processorer och grafikkort måste dessutom säga vad de är.
+ *
+ * Deras butikstitlar nämner alltid Ryzen, Core, GeForce, Radeon eller
+ * liknande, så kravet kostar inga riktiga träffar. Utan det matchade
+ * "AMD Ryzen 3 3100" ett rackmonteringskit "for Check Point
+ * 3100/3200/3600": den enda modelltoken var 3100, och ett rackkit liknar
+ * ingen annan kategori heller, så krockspärren nedan sa inget.
+ */
+const REQUIRE_OWN_SIGNATURE = new Set(["cpu", "gpu"]);
+
 const conflictsWithCategory = (itemCategory, title) => {
   const own = CATEGORY_SIGNATURES[itemCategory];
   if (!own) return false;
@@ -90,7 +101,119 @@ const conflictsWithCategory = (itemCategory, title) => {
     if (category === itemCategory) continue;
     if (pattern.test(title)) return category;
   }
+
+  /* Tillverkaren räcker när ingen annan kategori gör anspråk på titeln:
+     "AMD R7 7800X3D Boxed" är en processor. */
+  if (REQUIRE_OWN_SIGNATURE.has(itemCategory) && !/\b(?:amd|intel|nvidia|r[3579])\b/i.test(title)) {
+    return "saknar_kategoriord";
+  }
   return false;
+};
+
+/*
+ * Butikens egen kategori, när källan anger en.
+ *
+ * Webhallens sök-API skickar med var varan ligger i sortimentet. En
+ * sökning på "RTX 5070" ger lika många laptops och färdigbyggda datorer
+ * som grafikkort, och fyndvaror ligger i ett eget träd. Butikens egen
+ * placering är säkrare än något vi kan läsa ut ur titeln.
+ *
+ * SODIMM är laptopminne och passar inte i ett stationärt moderkort.
+ */
+const STORE_CATEGORY_PATHS = {
+  cpu: /\/Processor CPU/i,
+  gpu: /\/Grafikkort/i,
+  ram: /\/RAM-minne\/(?!SODIMM)/i,
+  storage: /\/Lagring\//i,
+  motherboard: /\/Moderkort/i,
+  psu: /\/Nätaggregat/i,
+  case: /\/Chassi(?:\/|$)/i,
+  cooling: /\/Kylning\/(?:Processorkylare|Vattenkylning)/i,
+  chassifan: /\/Chassifläkt/i,
+  networkcard: /Nätverkskort/i,
+};
+
+const storeCategoryMismatch = (itemCategory, path) => {
+  if (!path) return null;
+  if (/^Fyndvaror/i.test(path)) return "fyndvara";
+  const expected = STORE_CATEGORY_PATHS[itemCategory];
+  if (expected && !expected.test(path)) return "fel_butikskategori";
+  return null;
+};
+
+/*
+ * Minnesvarianter och färg.
+ *
+ * Proshop säljer "Kingston FURY Beast RGB DDR5-6000 - 32GB" i CL30 och
+ * CL36, som ett kit med två stickor och som en ensam, i svart och i vitt -
+ * åtta varor med åtta priser och samma modellnamn. Webhallen skriver
+ * samma sak som "32GB (2x16GB) / 6000 Mhz / DDR5 / CL36". Utan de här
+ * kontrollerna fick alla åtta Webhallens pris för en av dem.
+ *
+ * Latens och kit jämförs bara när båda sidor anger dem; saknas uppgiften
+ * i ena titeln finns inget att säga emot. Färgen jämförs alltid: en vit
+ * vara är en egen artikel, och en titel utan färg är den svarta.
+ */
+const WHITE_WORDS = /\b(?:vit|white|snow|wh)\b/;
+
+const kitTokenFromName = (rawName) => {
+  const text = String(rawName ?? "");
+  const explicit = text.match(/\b(\d+)\s*x\s*(\d+)\s*GB\b/i);
+  if (explicit) return `${explicit[1]}x${explicit[2]}gb`;
+  const total = text.match(/\b(\d+)\s*GB\b/i);
+  const pieces = text.match(/\((\d+)\s*pcs\)/i);
+  if (total && pieces) {
+    const perStick = Number(total[1]) / Number(pieces[1]);
+    if (Number.isInteger(perStick)) return `${pieces[1]}x${perStick}gb`;
+  }
+  return null;
+};
+
+const ramOrColorConflict = (rawName, title, titleTokens) => {
+  const name = normalizeText(rawName);
+
+  const itemCl = name.match(/\bcl ?(\d{2})\b/)?.[1];
+  const titleCls = titleTokens.filter((token) => /^cl\d{2}$/.test(token)).map((t) => t.slice(2));
+  if (itemCl && titleCls.length > 0 && !titleCls.includes(itemCl)) return "annan_latens";
+
+  const itemKit = kitTokenFromName(rawName);
+  const titleKits = titleTokens.filter((token) => /^\d+x\d+gb$/.test(token));
+  if (itemKit && titleKits.length > 0 && !titleKits.includes(itemKit)) return "annat_kit";
+
+  if (WHITE_WORDS.test(name) !== WHITE_WORDS.test(title)) return "annan_farg";
+  return null;
+};
+
+/*
+ * Tillverkaren måste stå i titeln.
+ *
+ * Utan det kunde ett PNY-kort få priset för ett Gigabyte-kort och en
+ * HP-disk priset för en Kingston, så länge modellnumren råkade
+ * sammanfalla. Märket jämförs utan mellanslag, så "A-Data", "ADATA" och
+ * "Lian Li" / "LianLi" räknas lika. Korta märken som HP och WD måste stå
+ * som eget ord, annars hittas de inuti andra ord.
+ */
+const BRAND_ALIASES = {
+  wd: ["wd", "westerndigital", "sandisk"],
+  westerndigital: ["wd", "westerndigital"],
+  sandisk: ["sandisk", "wd"],
+  adata: ["adata", "xpg"],
+  hewlettpackardenterprise: ["hpe", "hewlett"],
+  dellrefurbished: ["dell"],
+  teamgroup: ["teamgroup", "tforce"],
+  fractaldesign: ["fractal"],
+  startechcom: ["startech"],
+};
+
+const brandInTitle = (brand, title, titleTokenSet) => {
+  const key = normalizeText(brand).replace(/ /g, "");
+  if (!key) return true;
+  const compactTitle = title.replace(/ /g, "");
+  const firstWord = normalizeText(brand).split(" ")[0];
+  const candidates = BRAND_ALIASES[key] || [key, ...(firstWord.length >= 4 ? [firstWord] : [])];
+  return candidates.some((candidate) =>
+    candidate.length < 4 ? titleTokenSet.has(candidate) : compactTitle.includes(candidate),
+  );
 };
 
 /**
@@ -128,7 +251,47 @@ const SIGNIFICANT_SUFFIXES = [
   // Färg säljs som egen artikel hos bl.a. be quiet! och Noctua
   "black",
   "white",
+  /* Varianter som butikerna skriver ut men katalogen ibland inte gör.
+     Varje ord här stod bakom en felmatchning i databasen: RX 9070 fick
+     9070 GRE:s pris, Astral 5090 fick Astral LC:s, Nautilus 360 fick
+     360 RS:s, Visio fick Visio Air:s, Vector V100 fick V100 Mini:s, XT
+     Pro Ultra fick V2:ans och MasterLiquid Core II fick Core Nex:s. ice
+     är den vita utgåvan, sff den kompakta och ax wifi-modellen. */
+  "gre",
+  "lc",
+  "rs",
+  "air",
+  "mini",
+  "nex",
+  "ice",
+  "sff",
+  "ax",
+  "ii",
+  "iii",
+  "v2",
+  "v3",
 ];
+
+/*
+ * Modelldelen av ett namn ur flödet.
+ *
+ * Proshops namn är byggda som "Noctua NH-D9L - CPU Luftkylare - Max 22
+ * dBA": modellen först, sedan butikens egna fält. De fälten skriver
+ * ingen annan butik, så krävdes de i Webhallens titel matchade nästan
+ * ingenting - noll av sextio i ett stickprov. Är första ledet ett
+ * ensamt ord ("HP - SSD - 1 TB") är det inget modellnamn, och då får
+ * hela namnet stå kvar utan strecken.
+ */
+const NAME_SEPARATOR = /\s+[-/]\s+/;
+
+const modelSegment = (name) => {
+  const segments = String(name ?? "").split(NAME_SEPARATOR).filter(Boolean);
+  if (segments.length > 1 && segments[0].trim().split(/\s+/).length >= 2) return segments[0];
+  return segments.join(" ");
+};
+
+const GENERIC_WORDS =
+  /\b(?:strömförsörjning|moderkort|chassi|computer case|processor cooler|cpu cooler|cpu luftkylare|cpu vattenkylare|luftkylare|vattenkylare)\b/gi;
 
 /**
  * Kortar ned ett katalognamn till något en butiks sökruta klarar.
@@ -152,6 +315,11 @@ export const buildSearchQuery = (name) => {
   text = text.replace(/\bCL\d+\b/gi, " ");
   text = text.replace(/\b(?:AMD\s+)?EXPO\b/gi, " ");
   text = text.replace(/\bIntel\s+XMP(?:\s+[\d.]+)?\b/gi, " ");
+
+  text = modelSegment(text);
+  /* Butikens kategoriord. "MSI MPG A850GS PCIE5 Strömförsörjning" gav
+     noll träffar hos Webhallen; utan det sista ordet hittas aggregatet. */
+  text = text.replace(GENERIC_WORDS, " ");
   text = text.replace(/\s+/g, " ").trim();
 
   const words = text.split(" ").filter(Boolean);
@@ -160,12 +328,23 @@ export const buildSearchQuery = (name) => {
   return words.slice(0, 6).join(" ");
 };
 
+/*
+ * "1 TB" och "1TB" blir samma token.
+ *
+ * Utan det blev "HP - SSD - 1 TB" tokenen 1 och tb, ingen av dem en
+ * riktig modell, och 1 fanns i en nätverkskabel på 1,5 m. Nu krävs 1tb,
+ * och en 256 GB-disk kan inte längre ta en 4 TB-disks plats.
+ */
 export const normalizeText = (value) =>
   String(value ?? "")
     .toLowerCase()
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\b(\d+) (gb|tb)\b/g, "$1$2")
+    /* "3200Mhz", "3200 MHz" och "DDR4-3200" betyder samma sak. Enheten
+       tas bort så att alla tre blir tokenen 3200. */
+    .replace(/\b(\d{3,5}) ?(?:mhz|mt s)\b/g, "$1")
     .replace(/\s+/g, " ")
     .trim();
 
@@ -192,9 +371,28 @@ export const normalizeMpn = (value) => {
  * Tillverkarnamn och marknadsföringsord sållas bort; siffergrupper och
  * betydelsebärande suffix behålls.
  */
-export const extractModelTokens = (name) => {
-  const normalized = normalizeText(name);
+/*
+ * Bokstaven efter ett bindestreck i ett modellnamn är en egen modell.
+ *
+ * X870-A och X870-I, Z890-P och Z890-A, B650E-F och B650E-I: samma
+ * kretsuppsättning, olika kort. Bokstaven kastades bort som brus, och
+ * korten fick varandras priser.
+ */
+const HYPHEN_VARIANT = /\b[a-z]*\d+[a-z0-9]*-([a-z])\b/gi;
+
+export const extractModelTokens = (name, { category = null } = {}) => {
+  /* Bara modelldelen krävs, se modelSegment. Kapaciteten står ofta i
+     ett senare led ("... DDR4-3200 - 16GB - CL16") och följer med, för
+     ett 16 GB-kit och ett 32 GB-kit har samma modellnamn. */
+  const model = modelSegment(name);
+  const rest = normalizeText(String(name ?? "").slice(model.length));
+  const capacities = rest.split(" ").filter((word) => /^\d+(?:gb|tb)$/.test(word));
+
+  const normalized = [normalizeText(model), ...capacities].join(" ").trim();
   if (!normalized) return [];
+  const hyphenVariants = Array.from(model.matchAll(HYPHEN_VARIANT), (match) =>
+    match[1].toLowerCase(),
+  );
 
   const noise = new Set([
     "amd",
@@ -234,6 +432,17 @@ export const extractModelTokens = (name) => {
     "till",
     "ny",
     "the",
+    /* Kodnamn och förpackning. Proshop skriver "Core Ultra 5 250K Plus
+       Arrow Lake-S Refresh", Webhallen bara "Core Ultra 5 250K Plus". */
+    "arrow",
+    "lake",
+    "raptor",
+    "refresh",
+    "wraith",
+    "spire",
+    "stealth",
+    "prism",
+    "boxed",
   ]);
 
   const tokens = [];
@@ -249,8 +458,13 @@ export const extractModelTokens = (name) => {
       tokens.push(word);
       continue;
     }
-    // Korta bokstavsord utan siffror bär sällan identitet.
-    if (word.length >= 4) tokens.push(word);
+    if (hyphenVariants.includes(word)) {
+      tokens.push(word);
+      continue;
+    }
+    // Korta bokstavsord utan siffror bär sällan identitet - utom i
+    // moderkortsnamn, där "Gaming X", "TUF" och "Ice" skiljer kort åt.
+    if (word.length >= 4 || category === "motherboard") tokens.push(word);
   }
 
   const unique = Array.from(new Set(tokens));
@@ -282,6 +496,12 @@ const hasExtraSignificantSuffix = (titleTokens, modelTokens) => {
 export const matchOffer = (identity, item, row) => {
   const rowEan = normalizeEan(row.ean);
   const rowMpn = normalizeMpn(row.mpn);
+
+  // Före EAN: en fyndvara bär samma EAN som den nya varan.
+  const pathMismatch = storeCategoryMismatch(item?.category, row.category_path);
+  if (pathMismatch) {
+    return { matched: false, method: "token", score: 0, reason: pathMismatch };
+  }
 
   // 1. EAN - exakt, högsta tilltro.
   const identityEan = normalizeEan(identity?.ean);
@@ -326,22 +546,63 @@ export const matchOffer = (identity, item, row) => {
     };
   }
 
-  const modelTokens =
-    identity?.match_tokens?.length > 0
-      ? identity.match_tokens.map(normalizeText).filter(Boolean)
-      : extractModelTokens(item?.name);
-
-  if (modelTokens.length === 0) {
-    return { matched: false, method: "token", score: 0, reason: "inga_token" };
-  }
-
   const titleTokens = title.split(" ").filter(Boolean);
   const titleTokenSet = new Set(titleTokens);
 
+  if (!brandInTitle(item?.brand, title, titleTokenSet)) {
+    return { matched: false, method: "token", score: 0, reason: "annat_marke" };
+  }
+
+  /* NVMe och SATA är olika diskar även när namn och storlek stämmer.
+     Fujitsus 480 GB NVMe fick annars priset för deras 480 GB SATA. */
+  if (item?.category === "storage") {
+    const name = normalizeText(item?.name);
+    const itemNvme = /\b(?:nvme|pcie)\b/.test(name);
+    const itemSata = /\bsata\b/.test(name);
+    if ((itemNvme && /\bsata\b/.test(title)) || (itemSata && /\b(?:nvme|pcie)\b/.test(title))) {
+      return { matched: false, method: "token", score: 0, reason: "annat_granssnitt" };
+    }
+  }
+
+  /* Sparade token och token ur namnet gäller tillsammans.
+
+     match_tokens i component_identity såddes ur en äldre version av
+     extractModelTokens och fick då ersätta namnet helt. De saknade allt
+     som lagts till sedan - bokstaven i Z890-P, lc, sff, ii - och de 455
+     handplockade varorna matchades därför fortfarande med de gamla,
+     lösare reglerna. */
+  const modelTokens = Array.from(
+    new Set([
+      ...(identity?.match_tokens || []).map(normalizeText).filter(Boolean),
+      ...extractModelTokens(item?.name, { category: item?.category }),
+    ]),
+  );
+
+  /* Bara korta token kvar - "1", "0", "x4" - är inget att matcha på.
+     Det är så en nätverkskabel kunde bli en SSD. */
+  if (modelTokens.length === 0 || !modelTokens.some((token) => token.length >= 3)) {
+    return { matched: false, method: "token", score: 0, reason: "inga_token" };
+  }
+
+  /* B650 är inte B650M. Butikerna skriver ut kretsuppsättningen i
+     titeln ("B650M AORUS ELITE ... AMD B650"), så tokenen b650 finns
+     där även för micro-ATX-kortet och kravet ovan räcker inte. */
+  if (item?.category === "motherboard") {
+    const modelSet = new Set(modelTokens);
+    const mVariant = modelTokens.find(
+      (token) => /\d/.test(token) && titleTokenSet.has(`${token}m`) && !modelSet.has(`${token}m`),
+    );
+    if (mVariant) {
+      return { matched: false, method: "token", score: 0, reason: "annan_variant" };
+    }
+  }
+
   // Varje modell-token måste finnas. Siffergrupper kräver exakt token-träff så
-  // att "5070" inte matchar "50700"; rena ord får matcha som delsträng.
+  // att "5070" inte matchar "50700". Längre rena ord får matcha som
+  // delsträng; korta som "f" eller "ice" måste stå som egna ord, annars
+  // hittades B650E-F:s "f" i nästan vilken titel som helst.
   const missing = modelTokens.filter((token) => {
-    if (/\d/.test(token)) return !titleTokenSet.has(token);
+    if (/\d/.test(token) || token.length < 4) return !titleTokenSet.has(token);
     return !title.includes(token);
   });
 
@@ -362,7 +623,17 @@ export const matchOffer = (identity, item, row) => {
     };
   }
 
-  if (hasExtraSignificantSuffix(titleTokens, modelTokens)) {
+  const variantConflict = ramOrColorConflict(item?.name, title, titleTokens);
+  if (variantConflict) {
+    return { matched: false, method: "token", score: 0, reason: variantConflict };
+  }
+
+  /* Variantorden jämförs mot hela namnet, inte bara modelldelen: färgen
+     står i ett senare led hos Proshop ("... - Svart"), och på svenska. */
+  const fullNameWords = normalizeText(item?.name)
+    .split(" ")
+    .map((word) => ({ svart: "black", vit: "white" })[word] || word);
+  if (hasExtraSignificantSuffix(titleTokens, [...modelTokens, ...fullNameWords])) {
     return {
       matched: false,
       method: "token",

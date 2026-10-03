@@ -7,7 +7,7 @@
  * hoppas det över i stället för att fälla hela sviten.
  */
 
-import { matchOffer, extractModelTokens, pickBestPerStore } from "../server/pricing/match.mjs";
+import { matchOffer, extractModelTokens, pickBestPerStore, buildSearchQuery } from "../server/pricing/match.mjs";
 import webhallen from "../server/pricing/sources/webhallen.mjs";
 
 let pass = 0;
@@ -49,6 +49,51 @@ check("CPU 5600 != moderkort", matchOffer(null, cpu5600, { title: "Gigabyte B850
 check("GPU 4070 != chassi 4070", matchOffer(null, gpu4070, { title: "Fractal Design Meshify 4070 Tower chassi" }).matched, false);
 check("RAM 5600 == riktigt minne", matchOffer(null, ram5600, { title: "Corsair Vengeance 32GB (2x16GB) DDR5 5600MHz CL36" }).matched, true);
 check("CPU utan kategoriord matchar ändå", matchOffer(null, cpu5600, { title: "AMD Ryzen 5 5600 Boxed AM4" }).matched, true);
+
+console.log("\n=== felmatchningar som låg i databasen ===");
+const cpu3100 = { category: "cpu", brand: "AMD", name: "AMD Ryzen 3 3100" };
+const hp1tb = { category: "storage", brand: "HP", name: "HP - SSD - 1 TB - PCIe (NVMe)" };
+const lenovo4tb = { category: "storage", brand: "Lenovo", name: "Lenovo - SSD - 4 TB - PCIe 4.0 x4 (NVMe)" };
+const fujitsuNvme = { category: "storage", brand: "Fujitsu", name: "Fujitsu - SSD - 480 GB - PCIe 4.0 (NVMe)" };
+const pny5070ti = { category: "gpu", brand: "PNY", name: "PNY GeForce RTX 5070 Ti OC" };
+const reaper9070 = { category: "gpu", brand: "PowerColor", name: "PowerColor Reaper AMD Radeon RX 9070" };
+const strixF = { category: "motherboard", brand: "ASUS", name: "ASUS ROG Strix B650E-F Gaming WiFi" };
+const z890p = { category: "motherboard", brand: "MSI", name: "MSI PRO Z890-P WIFI" };
+const b650ax = { category: "motherboard", brand: "Gigabyte", name: "Gigabyte B650 Aorus Elite AX" };
+const nautilus = { category: "cooling", brand: "Corsair", name: "Corsair Nautilus 360" };
+check("Ryzen 3 3100 != rackkit", matchOffer(null, cpu3100, { title: "Rackmount.IT Rack Mount Kit for Check Point 3100/3200/3600" }).matched, false);
+check("HP-disk != nätverkskabel", matchOffer(null, hp1tb, { title: "Nedis CCGL85200GY15 networking cable - Grå - 1.5m" }).matched, false);
+check("HP-disk == HP-disk", matchOffer(null, hp1tb, { title: "HP FX900 - SSD - 1TB - PCIe 4.0 (NVMe)" }).matched, true);
+check("4 TB != 256 GB", matchOffer(null, lenovo4tb, { title: "Lenovo - SSD - Value - 256 GB - PCIe 4.0 x4 (NVMe)" }).matched, false);
+check("NVMe != SATA", matchOffer(null, fujitsuNvme, { title: "Fujitsu Micron - SSD - 480 GB - boot drive - SATA 6Gb/s" }).matched, false);
+check("PNY != Gigabyte", matchOffer(null, pny5070ti, { title: "GIGABYTE GeForce RTX 5070 Ti AERO OC - 16GB" }).matched, false);
+check("RX 9070 != 9070 GRE", matchOffer(null, reaper9070, { title: "PowerColor Radeon RX 9070 GRE Reaper - 12GB" }).matched, false);
+check("B650E-F != B650E-I", matchOffer(null, strixF, { title: "ASUS ROG STRIX B650E-I GAMING WIFI Moderkort" }).matched, false);
+check("B650E-F == B650E-F", matchOffer(null, strixF, { title: "ASUS ROG STRIX B650E-F GAMING WIFI Moderkort" }).matched, true);
+check("Z890-P != Z890-A", matchOffer(null, z890p, { title: "MSI PRO Z890-A WIFI" }).matched, false);
+check("B650 != B650M", matchOffer(null, b650ax, { title: "GIGABYTE B650M AORUS ELITE Moderkort - AMD B650 - AMD AM5" }).matched, false);
+check("Nautilus 360 != 360 RS", matchOffer(null, nautilus, { title: "Corsair Nautilus 360 RS / 360mm" }).matched, false);
+check("sparade token ersätter inte namnet", matchOffer({ match_tokens: ["z890"] }, z890p, { title: "MSI PRO Z890-A WIFI" }).matched, false);
+
+console.log("\n=== Webhallen: butikskategori, minnesvarianter och färg ===");
+const fury30 = { category: "ram", brand: "Kingston", name: "Kingston FURY Beast RGB DDR5-6000 - 32GB - CL30 - Dual Channel (2 pcs) - Svart med RGB" };
+const furySingle = { category: "ram", brand: "Kingston", name: "Kingston FURY Beast RGB DDR5-6000 - 32GB - CL36 - Single Channel (1 pcs) - Svart med RGB" };
+const fury36 = { category: "ram", brand: "Kingston", name: "Kingston FURY Beast RGB DDR5-6000 - 32GB - CL36 - Dual Channel (2 pcs) - Svart med RGB" };
+const d9l = { category: "cooling", brand: "Noctua", name: "Noctua NH-D9L - CPU Luftkylare - Max 22 dBA" };
+const le240vit = { category: "cooling", brand: "DeepCool", name: "DeepCool LE240 V2 Vit" };
+const whFury = "Kingston Fury Beast RGB 32GB (2x16GB) / 6000 Mhz / DDR5 / CL36 / KF560C36BBEA2K2-32";
+const ramPath = "Datorkomponenter/RAM-minne/DDR5";
+check("CL30 != CL36", matchOffer(null, fury30, { title: whFury, category_path: ramPath }).matched, false);
+check("1x32 != 2x16", matchOffer(null, furySingle, { title: whFury, category_path: ramPath }).matched, false);
+check("CL36 2x16 == CL36 2x16", matchOffer(null, fury36, { title: whFury, category_path: ramPath }).matched, true);
+check("SODIMM avvisas", matchOffer(null, fury36, { title: whFury, category_path: "Datorkomponenter/RAM-minne/SODIMM DDR5" }).matched, false);
+check("fyndvara avvisas även på EAN", matchOffer({ ean: "0740617345902" }, fury36, { ean: "0740617345902", title: whFury, category_path: "Fyndvaror/Datorkomponenter/RAM-minne" }).matched, false);
+check("laptop avvisas", matchOffer(null, gpu5070, { title: "ASUS TUF A16 / RTX 5070", category_path: "Datorer & Tillbehör/Laptop Bärbar dator/Gaming laptop" }).matched, false);
+check("Proshops fält krävs inte", matchOffer(null, d9l, { title: "Noctua NH-D9L", category_path: "Datorkomponenter/Kylning/Processorkylare/Luftkylare" }).matched, true);
+check("svart != chromax.black", matchOffer(null, d9l, { title: "Noctua NH-D9L chromax.black" }).matched, false);
+check("vit == WH", matchOffer(null, le240vit, { title: "DeepCool LE240 WH V2 - CPU Vattenkylare" }).matched, true);
+check("vit != svart", matchOffer(null, le240vit, { title: "DeepCool LE240 V2 - CPU Vattenkylare" }).matched, false);
+check("sökfrågan tar modelldelen", buildSearchQuery("Seasonic CORE GX-850 Strömförsörjning - 850 Watt - ATX"), "Seasonic CORE GX-850");
 
 console.log("\n=== EAN och MPN vinner över titel ===");
 check("EAN ger method=ean", matchOffer({ ean: "0730143314626" }, cpu7800, { ean: "730143314626", title: "helt annan titel" }).method, "ean");

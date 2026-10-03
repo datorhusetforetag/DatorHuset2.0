@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
-import { StepsSection } from "@/components/StepsSection";
+import { RealPartsSection } from "@/components/RealPartsSection";
+import { HomeShowcase } from "@/components/HomeShowcase";
 import { HomePromoSplit } from "@/components/HomePromoSplit";
 import { TierSection } from "@/components/TierSection";
 import { WhySection } from "@/components/WhySection";
@@ -34,7 +35,8 @@ const Index = () => {
       <main className="relative z-10 pt-0">
         <Hero />
         <TierSection />
-        <StepsSection settings={settings.homepage.steps} />
+        <RealPartsSection />
+        <HomeShowcase />
         <HomePromoSplit settings={settings.homepage.promo} />
         <WhySection />
         <FaqPreview />

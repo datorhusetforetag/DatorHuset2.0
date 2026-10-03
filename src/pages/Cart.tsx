@@ -6,11 +6,21 @@ import { PageShell } from "@/components/PageShell";
 import { PageHero } from "@/components/PageHero";
 import { CheckoutSteps } from "@/components/CheckoutSteps";
 import { Reveal } from "@/components/Reveal";
-import { useCart } from "@/context/CartContext";
-import { COMPUTERS } from "@/data/computers";
+import { useCart, type CartItem } from "@/context/CartContext";
+import { COMPUTERS, type Computer } from "@/data/computers";
+import { getProductArt } from "@/data/productArt";
+import { useUpgradePricing, type UpgradePricing } from "@/hooks/useUpgradePricing";
+import { bestForResolution } from "@/lib/bestFor";
 import { PAGE_BANNERS } from "@/lib/pageBanners";
 import { resolveProductImage } from "@/lib/productImageResolver";
+import { productPath } from "@/lib/productUrl";
 import { trackEvent } from "@/lib/analytics";
+import {
+  findBaseConfig,
+  formatRam,
+  formatStorage,
+  getUpgradeOptions,
+} from "../../shared/upgradePricing.js";
 
 /**
  * Kundvagnen.
@@ -26,9 +36,12 @@ import { trackEvent } from "@/lib/analytics";
  *   bilder och vill se sin summa. Däremot får den stegindikatorn, så
  *   att man ser att det är två klick kvar och inte fem.
  *
- *   Raderna är rader. En lista med fyra lådor under varandra läses som
- *   fyra olika saker; samma fyra med hårfina linjer emellan läses som
- *   en lista, vilket är vad det är.
+ *   Varje dator är ett eget, stort kort. Nästan alla köper en enda dator
+ *   för flera tusen kronor, och det här är sista stället där de ser vad
+ *   de får innan de betalar. En rad med en tumnagel och ett pris sa
+ *   ingenting om processor, grafikkort eller vilka tillval som var
+ *   valda. Kortet visar hela specifikationen, markerar det kunden
+ *   uppgraderat och räknar upp vad varje tillval kostar.
  *
  *   Summan följer med när man rullar och står kvar tills man trycker.
  */
@@ -50,11 +63,72 @@ const formatPrice = (cents: number) => {
   })} kr`;
 };
 
+/*
+ * En rad i specifikationen. upgrade är satt när kunden valt något annat
+ * än grundutförandet, med tillägget mot grunden i kronor.
+ */
+type SpecRow = {
+  label: string;
+  value: string;
+  upgrade?: { price: number };
+};
+
+const krDelta = (kronor: number) =>
+  `${kronor > 0 ? "+" : "−"}${Math.abs(kronor).toLocaleString("sv-SE")} kr`;
+
+/*
+ * Specifikation och tillval för en dator i vagnen.
+ *
+ * Grunddata kommer ur datorlistan, tillvalen ur samma pristabell och
+ * samma regler som kassan, så beloppen här är de som dras.
+ */
+const describeComputer = (item: CartItem, computer: Computer | undefined, pricing: UpgradePricing) => {
+  if (!computer) return { rows: [] as SpecRow[], upgrades: [] as { label: string; price: number }[] };
+  const product = item.product;
+  const baseConfig = findBaseConfig(
+    product?.name,
+    product?.slug,
+    (product as { legacy_id?: string } | null)?.legacy_id,
+    computer.id,
+  );
+  const options = getUpgradeOptions(baseConfig, pricing);
+  const config = item.configuration || {};
+
+  const ram = config.ramGb != null ? options.ram.find((option) => option.gb === Number(config.ramGb)) : undefined;
+  const storage =
+    config.storageGb != null
+      ? options.storage.find((option) => option.gb === Number(config.storageGb))
+      : undefined;
+  const gpu = config.gpu ? options.gpu.find((option) => option.id === config.gpu) : undefined;
+
+  const rows: SpecRow[] = [
+    { label: "Processor", value: computer.cpu },
+    gpu
+      ? { label: "Grafikkort", value: gpu.label, upgrade: { price: gpu.price } }
+      : { label: "Grafikkort", value: computer.gpu },
+    ram && baseConfig
+      ? { label: "Minne", value: formatRam(ram.gb, baseConfig.ram.type), upgrade: { price: ram.price } }
+      : { label: "Minne", value: computer.ram },
+    storage
+      ? {
+          label: "Lagring",
+          value: [formatStorage(storage.gb), computer.storagetype].filter(Boolean).join(" "),
+          upgrade: { price: storage.price },
+        }
+      : { label: "Lagring", value: [computer.storage, computer.storagetype].filter(Boolean).join(" ") },
+  ];
+
+  const upgrades = rows.flatMap((row) =>
+    row.upgrade ? [{ label: `${row.label}: ${row.value}`, price: row.upgrade.price }] : [],
+  );
+
+  return { rows, upgrades };
+};
+
 export default function Cart() {
-  const { items, loading, removeFromCart, updateQuantity, totalPrice } = useCart();
+  const { items, loading, removeFromCart, updateQuantity, totalPrice, unitPriceOf, describeItem } = useCart();
   const navigate = useNavigate();
-  const serviceFeeCents = 500;
-  const totalWithService = totalPrice + serviceFeeCents;
+  const { pricing } = useUpgradePricing();
 
   useEffect(() => {
     void trackEvent({
@@ -127,7 +201,7 @@ export default function Cart() {
                 </p>
               </div>
               <Link to="/#home-tiers" className="btn-secondary mt-8">
-                Se de fyra nivåerna
+                Se de tre nivåerna
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </Reveal>
@@ -153,54 +227,129 @@ export default function Cart() {
         <div className="container mx-auto px-4 pb-24 pt-10">
           <div className="grid gap-10 lg:grid-cols-[1.6fr_0.9fr] lg:gap-12">
             {/* Raderna ------------------------------------------------- */}
-            <ul className="divide-y divide-foreground/10 border-y border-foreground/10">
-              {items.map((item, index) => {
+            <ul className="space-y-8">
+              {items.map((item) => {
                 const product = item.product;
-                const fallbackComputer = COMPUTERS.find(
-                  (computer) =>
-                    computer.name === product?.name ||
-                    computer.id === product?.id ||
-                    computer.id === String(product?.id),
+                const computer = COMPUTERS.find(
+                  (entry) =>
+                    entry.name === product?.name ||
+                    entry.id === product?.id ||
+                    entry.id === String(product?.id),
                 );
-                const imageSrc = resolveProductImage(product, fallbackComputer?.image);
-                const unitCents = product?.price_cents || 0;
+                const art = getProductArt(computer?.id);
+                const cutout = computer ? art.cutout : null;
+                const imageSrc = cutout || resolveProductImage(product, computer?.image);
+                const unitCents = unitPriceOf(item);
+                const baseCents = product?.price_cents || 0;
                 const name = product?.name || "Produkt";
+                const bestFor = computer ? bestForResolution(computer.name) : null;
+                const { rows, upgrades } = describeComputer(item, computer, pricing);
+                /* Utan specifikation att visa faller kortet tillbaka på
+                   den korta beskrivningen av utförandet. */
+                const fallbackConfiguration = rows.length === 0 ? describeItem(item) : "";
+
+                /* Länken tillbaka till datorn öppnar samma utförande. */
+                const params = new URLSearchParams();
+                if (item.configuration?.ramGb != null) params.set("ram", String(item.configuration.ramGb));
+                if (item.configuration?.storageGb != null) {
+                  params.set("storage", String(item.configuration.storageGb));
+                }
+                const href = computer
+                  ? `${productPath(computer)}${params.toString() ? `?${params}` : ""}`
+                  : null;
 
                 return (
-                  <Reveal
-                    as="li"
+                  <li
                     key={item.id}
-                    delay={index * 60}
-                    className="flex flex-col gap-4 py-6 sm:flex-row sm:items-center sm:gap-6"
+                    className="cart-item"
+                    style={{ ["--pc-glow" as string]: art.backdrop.glow }}
                   >
-                    <div className="h-28 w-full shrink-0 overflow-hidden rounded-sm border border-foreground/10 bg-foreground/[0.04] sm:h-24 sm:w-28">
+                    <div className="cart-item__media">
                       {imageSrc ? (
                         <img
                           src={imageSrc}
                           alt={name}
-                          className="h-full w-full object-cover"
+                          className={cutout ? "cart-item__cutout" : "cart-item__photo"}
                           loading="lazy"
                           decoding="async"
                         />
                       ) : (
-                        <span className="flex h-full w-full items-center justify-center text-xs text-muted-foreground">
-                          Ingen bild
-                        </span>
+                        <span className="text-xs text-muted-foreground">Ingen bild</span>
                       )}
                     </div>
 
-                    <div className="min-w-0 flex-1">
-                      <h2 className="font-display text-base font-bold leading-snug tracking-tight text-foreground">
-                        {name}
-                      </h2>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {formatPrice(unitCents)} per styck
-                      </p>
+                    <div className="cart-item__body">
+                      <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-2">
+                        <div className="min-w-0">
+                          <h2 className="font-display text-2xl font-bold leading-tight tracking-tight text-foreground">
+                            {href ? (
+                              <Link to={href} className="hover:underline">
+                                {name}
+                              </Link>
+                            ) : (
+                              name
+                            )}
+                          </h2>
+                          {bestFor && (
+                            <p className="pc-card__bestfor mt-2">
+                              Bäst för:
+                              <span
+                                className="pc-card__pill"
+                                style={{ color: art.backdrop.glow, borderColor: `${art.backdrop.glow}66` }}
+                              >
+                                {bestFor}
+                              </span>
+                            </p>
+                          )}
+                        </div>
+                        <p className="font-display text-2xl font-bold tabular-nums text-foreground">
+                          {formatPrice(unitCents * item.quantity)}
+                        </p>
+                      </div>
 
+                      {rows.length > 0 && (
+                        <dl className="cart-item__specs">
+                          {rows.map((row) => (
+                            <div key={row.label} data-upgraded={row.upgrade ? "true" : undefined}>
+                              <dt>
+                                {row.label}
+                                {row.upgrade && <span className="cart-item__tag">Uppgraderad</span>}
+                              </dt>
+                              <dd>{row.value}</dd>
+                            </div>
+                          ))}
+                        </dl>
+                      )}
+                      {fallbackConfiguration && (
+                        <p className="mt-3 text-sm font-medium text-foreground/80">{fallbackConfiguration}</p>
+                      )}
+
+                      {/* Prisuppställningen: grundpriset och varje tillval
+                          för sig, så att summan går att följa. */}
+                      <dl className="cart-item__prices">
+                        <div>
+                          <dt>{upgrades.length > 0 ? "Standardutförande" : "Pris"}</dt>
+                          <dd>{formatPrice(upgrades.length > 0 ? baseCents : unitCents)}</dd>
+                        </div>
+                        {upgrades.map((upgrade) => (
+                          <div key={upgrade.label}>
+                            <dt>{upgrade.label}</dt>
+                            <dd>{upgrade.price === 0 ? "Ingår" : krDelta(upgrade.price)}</dd>
+                          </div>
+                        ))}
+                        {(upgrades.length > 0 || item.quantity > 1) && (
+                          <div className="cart-item__prices-total">
+                            <dt>{item.quantity > 1 ? "Per dator" : "Ditt utförande"}</dt>
+                            <dd>{formatPrice(unitCents)}</dd>
+                          </div>
+                        )}
+                      </dl>
+
+                      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-4">
                       {/* Stegaren har riktiga etiketter. Två knappar med
                           bara ett plus och ett minus säger ingenting till
                           den som lyssnar sig igenom sidan. */}
-                      <div className="mt-4 inline-flex items-center rounded-sm border border-foreground/15">
+                      <div className="inline-flex items-center rounded-md border border-foreground/15">
                         <button
                           type="button"
                           onClick={() => updateQuantity(item.id, item.quantity - 1)}
@@ -224,22 +373,25 @@ export default function Cart() {
                           <Plus className="h-4 w-4" />
                         </button>
                       </div>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-6 sm:flex-col sm:items-end sm:justify-center">
-                      <p className="font-display text-lg font-bold tabular-nums text-foreground">
-                        {formatPrice(unitCents * item.quantity)}
-                      </p>
+                      {href && (
+                        <Link
+                          to={href}
+                          className="text-sm font-semibold text-foreground/80 transition-colors hover:text-foreground"
+                        >
+                          Ändra utförande
+                        </Link>
+                      )}
                       <button
                         type="button"
                         onClick={() => removeFromCart(item.id)}
-                        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-destructive"
+                        className="ml-auto inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
                         Ta bort
                       </button>
+                      </div>
                     </div>
-                  </Reveal>
+                  </li>
                 );
               })}
             </ul>
@@ -265,12 +417,6 @@ export default function Cart() {
                     </dd>
                   </div>
                   <div className="flex items-baseline justify-between gap-4">
-                    <dt className="text-muted-foreground">Serviceavgift</dt>
-                    <dd className="font-semibold tabular-nums text-foreground">
-                      {formatPrice(serviceFeeCents)}
-                    </dd>
-                  </div>
-                  <div className="flex items-baseline justify-between gap-4">
                     <dt className="text-muted-foreground">Moms</dt>
                     <dd className="font-semibold text-foreground">Inkluderad</dd>
                   </div>
@@ -284,7 +430,7 @@ export default function Cart() {
                     className="font-display text-3xl font-bold tabular-nums"
                     style={{ color: ACCENT }}
                   >
-                    {formatPrice(totalWithService)}
+                    {formatPrice(totalPrice)}
                   </span>
                 </div>
 
@@ -295,7 +441,7 @@ export default function Cart() {
                       event: "checkout_click_from_cart",
                       properties: {
                         itemCount: items.length,
-                        totalCents: totalWithService,
+                        totalCents: totalPrice,
                       },
                     });
                     navigate("/checkout");

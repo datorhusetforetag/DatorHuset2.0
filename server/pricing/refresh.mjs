@@ -53,6 +53,27 @@ const FEED_TIMEOUT_MS = Math.max(
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/*
+ * Nytt försök när API:et ber oss vänta.
+ *
+ * Med hela katalogen blir det tusentals sökningar per körning. Ett 429
+ * eller ett tillfälligt serverfel räknades förut bara som ett
+ * misslyckande, och varan stod utan Webhallen-pris ett dygn. Vi backar
+ * i stället och provar igen, två gånger.
+ */
+const withRetry = async (fn, delays = [3000, 10000]) => {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      const status = Number(error?.status);
+      const retryable = status === 429 || status >= 500 || error?.name === "TimeoutError";
+      if (!retryable || attempt >= delays.length) throw error;
+      await sleep(delays[attempt]);
+    }
+  }
+};
+
 /**
  * Läser flödeskonfiguration ur miljön.
  *
@@ -206,6 +227,11 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
   let idLookups = 0;
   let eanRescued = 0;
   let idLearned = 0;
+  let eanConfirmed = 0;
+  let eanRejected = 0;
+  /* Samma Webhallen-produkt dyker upp i sökningar för flera poster.
+     Ett uppslag per produkt räcker. */
+  const identifierCache = new Map();
 
   /* En sökning ger flera kandidatrader för samma produkt. Utan den här
      hade varje rad slagit upp sitt eget EAN och vi hade ringt
@@ -222,7 +248,7 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
         // kandidaterna vägs mot varandra i matchOffer.
         const query = buildSearchQuery(identity?.model || item.name);
         try {
-          const rows = await source.search(query);
+          const rows = await withRetry(() => source.search(query));
           for (const row of rows) {
             let accepted = row;
             let result = matchOffer(identity, item, row);
@@ -246,6 +272,38 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
             }
 
             if (!result.matched) continue;
+
+            /* Kontrollera namnträffen mot EAN när vi har ett.
+
+               Sök-API:et svarar utan EAN, så en träff här är en
+               namnträff. Nästan alla poster ur Proshops flöde bär EAN,
+               och Webhallens produktsida har det också. Stämmer numren
+               är det samma vara; skiljer de sig är det en annan, hur
+               lika namnen än är. Saknar Webhallen numret står
+               namnträffen kvar. */
+            const identityEan = normalizeEan(identity?.ean);
+            if (result.method === "token" && identityEan && accepted.external_id) {
+              let ids = identifierCache.get(accepted.external_id);
+              if (ids === undefined) {
+                idLookups++;
+                try {
+                  ids = (await source.fetchIdentifiers?.(accepted.external_id)) || null;
+                } catch {
+                  ids = null;
+                }
+                identifierCache.set(accepted.external_id, ids);
+              }
+              const rowEan = normalizeEan(ids?.ean);
+              if (rowEan) {
+                if (rowEan !== identityEan) {
+                  eanRejected++;
+                  continue;
+                }
+                accepted = { ...accepted, ean: ids.ean, mpn: accepted.mpn || ids.mpn || null };
+                result = { ...result, method: "ean", score: 1, reason: "ean_kontrollerad" };
+                eanConfirmed++;
+              }
+            }
 
             /* Lär katalogen produktens identifierare.
 
@@ -313,7 +371,7 @@ const ingestApiSource = async (source, items, identities, candidatesByItem, onPr
     if (API_BATCH_PAUSE_MS > 0) await sleep(API_BATCH_PAUSE_MS);
   }
 
-  return { matched, failures, idLookups, eanRescued, idLearned };
+  return { matched, failures, idLookups, eanRescued, idLearned, eanConfirmed, eanRejected };
 };
 
 /**
@@ -382,12 +440,12 @@ export const runRefresh = async (
   if (process.env.PRICING_DISABLE_WEBHALLEN !== "1") {
     try {
       /*
-       * Sök-API:erna får en kortare lista.
+       * Sök-API:erna söker en gång per post i apiItems.
        *
-       * De söker en gång per katalogpost. Att låta dem gå igenom alla
-       * 6 781 är tusentals anrop mot någon annans API för att fråga om
-       * varor vi redan har pris på ur flödet. Flödet är en fil vi ändå
-       * hämtar; ett sök-API är någons server.
+       * Det är hela katalogen sedan oktober 2026: utan det hade bara de
+       * handplockade posterna någonsin mer än en butik. Det blir
+       * tusentals anrop per körning mot någon annans server, så de går
+       * tre i taget med paus emellan, och withRetry backar vid 429.
        */
       const stats = await ingestApiSource(
         webhallen,
@@ -406,18 +464,47 @@ export const runRefresh = async (
     }
   }
 
-  // 3. Skriv ned bästa erbjudandet per butik och produkt.
+  /*
+   * 3. Skriv ned bästa erbjudandet per butik och produkt.
+   *
+   * En butik får bara städas bort från en vara om dess källa kördes utan
+   * fel OCH faktiskt frågades om varan. Flödena läses mot hela katalogen;
+   * Webhallen söks bara för apiItems. En källa som inte kördes säger
+   * ingenting om huruvida butiken har varan, och dess rader står kvar.
+   *
+   * Varor utan någon träff alls gås också igenom, men bara de som redan
+   * har rader från en frågad butik. Annars stod en felmatchning kvar för
+   * evigt när matchningen rättats: ingen ny träff, alltså ingen skrivning,
+   * alltså ingen städning.
+   */
+  const feedStoresOk = sourceResults
+    .filter((result) => result.ok && result.id !== webhallen.id && (result.accepted ?? 0) > 0)
+    .map((result) => result.id);
+  const webhallenOk = sourceResults.some((result) => result.id === webhallen.id && result.ok);
+  const apiItemIds = new Set((apiItems || items).map((item) => item.id));
+  const managedStoresFor = (itemId) =>
+    webhallenOk && apiItemIds.has(itemId) ? [...feedStoresOk, webhallen.id] : feedStoresOk;
+
+  const existing =
+    feedStoresOk.length > 0 || webhallenOk
+      ? await store.getOffersForItems(items.map((item) => item.id)).catch(() => new Map())
+      : new Map();
+
   let itemsUpdated = 0;
   let offersWritten = 0;
 
   for (const item of items) {
-    const candidates = candidatesByItem.get(item.id);
-    if (!candidates || candidates.length === 0) continue;
+    const candidates = candidatesByItem.get(item.id) || [];
+    const managedStores = managedStoresFor(item.id);
+    if (candidates.length === 0) {
+      const stale = (existing.get(item.id) || []).some((row) => managedStores.includes(row.store_id));
+      if (!stale) continue;
+    }
     const best = pickBestPerStore(candidates);
     try {
-      const { written } = await store.replaceOffersForItem(item.id, best);
+      const { written } = await store.replaceOffersForItem(item.id, best, { managedStores });
       offersWritten += written;
-      itemsUpdated++;
+      if (written > 0) itemsUpdated++;
     } catch (error) {
       log("warn", "pricing_write_failed", {
         item_id: item.id,

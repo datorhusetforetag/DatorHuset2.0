@@ -1,6 +1,5 @@
-import { PageShell } from "@/components/PageShell";
-import { PageHero } from "@/components/PageHero";
-import { PAGE_BANNERS } from "@/lib/pageBanners";
+import { INFO_PAGE_BACKGROUND, PageShell } from "@/components/PageShell";
+import { InfoPageHeader } from "@/components/InfoPageHeader";
 import { LegalDocument } from "@/components/LegalDocument";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -151,11 +150,9 @@ export default function PrivacyPolicy() {
   const pageSettings = settings.pages.privacyPolicy;
 
   return (
-    <PageShell>
-      <PageHero
+    <PageShell background={INFO_PAGE_BACKGROUND}>
+      <InfoPageHeader
         sandboxId="privacy-hero"
-        image={PAGE_BANNERS.legal.image}
-        accent={PAGE_BANNERS.legal.accent}
         breadcrumb={[{ label: "Hem", href: "/" }, { label: "Integritetspolicy" }]}
         eyebrow={pageSettings?.heroEyebrow || "Integritet"}
         title={pageSettings?.heroTitle || "Integritetspolicy"}
@@ -165,7 +162,11 @@ export default function PrivacyPolicy() {
         }
       />
 
-      <LegalDocument text={privacyPolicyText} />
+      <section data-sandbox-id="privacy-body" className="relative">
+        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-10 sm:pt-14">
+          <LegalDocument text={privacyPolicyText} updatedAt="2026-09-22" />
+        </div>
+      </section>
     </PageShell>
   );
 }

@@ -90,7 +90,7 @@ export interface Computer {
   usedVariant?: ComputerVariant;
   usedVariantEnabled?: boolean;
   /**
-   * Vad maskinen är byggd för. Styr "Gaming datorer" och "Workstation"
+   * Vad maskinen är byggd för. Styr "Speldatorer" och "Workstation"
    * i navigeringen (/products?use=gaming respektive ?use=workstation).
    *
    * Utelämnad betyder "gaming", eftersom allt vi byggt hittills är

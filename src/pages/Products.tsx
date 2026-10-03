@@ -1,5 +1,4 @@
 import { PageShell } from "@/components/PageShell";
-import { productPath } from "@/lib/productUrl";
 import { PageHero } from "@/components/PageHero";
 import { BANNER_ACCENTS, PAGE_BANNERS } from "@/lib/pageBanners";
 import { Reveal } from "@/components/Reveal";
@@ -8,9 +7,10 @@ import { Link, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Star } from "lucide-react";
 import { Headphones, Keyboard, Monitor, Mouse } from "lucide-react";
 import { SeoHead } from "@/components/SeoHead";
+import { PcCard, type PcCardBadge } from "@/components/PcCard";
+import { useUpgradePricing } from "@/hooks/useUpgradePricing";
 import { COMPUTERS, Computer } from "@/data/computers";
 import { getProductArt } from "@/data/productArt";
-import { buildReportedFpsSettingsForProductName } from "../../shared/fpsProfiles.js";
 import { normalizeProductKey, useProducts, type SupabaseProduct } from "@/hooks/useProducts";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 import { buildProductLookup, getProductFromLookup, mergeProductFields } from "@/lib/productOverrides";
@@ -102,36 +102,6 @@ const SORT_LABELS: Record<SortKey, string> = {
   "price-asc": "Lägst pris",
   "price-desc": "Högst pris",
   name: "Namn A-Ö",
-};
-
-/*
- * "Bäst för" på produktkortet.
- *
- * Inte en marknadsföringsetikett utan ett svar räknat ur maskinens egna
- * FPS-värden: den högsta upplösning där Cyberpunk 2077 på High ger
- * minst 60 bilder per sekund. Cyberpunk för att det är det tyngsta
- * spelet i tabellen, High för att det är den nivå folk faktiskt spelar
- * på, 60 för att det är gränsen under vilken det känns trögt.
- *
- * Saknar maskinen profil visas ingen etikett alls. En gissning här hade
- * varit ett prestandapåstående om en produkt.
- */
-const RESOLUTION_ORDER = ["4K", "1440p", "1080p"] as const;
-
-const bestForResolution = (productName: string): string | null => {
-  const profile = buildReportedFpsSettingsForProductName(productName);
-  if (!profile) return null;
-
-  for (const resolution of RESOLUTION_ORDER) {
-    const entry = profile.entries.find(
-      (item: { game: string; resolution: string; graphics: string; baseFps: number }) =>
-        item.game === "Cyberpunk 2077" &&
-        item.resolution === resolution &&
-        item.graphics === "High",
-    );
-    if (entry && entry.baseFps >= 60) return resolution;
-  }
-  return null;
 };
 
 const DEFAULT_BANNER: BannerConfig = {
@@ -332,6 +302,7 @@ export default function Products() {
   const [showAllCpus, setShowAllCpus] = useState(false);
   const [showAllTiers, setShowAllTiers] = useState(false);
   const { products } = useProducts();
+  const { pricing: upgradePricing } = useUpgradePricing();
   const [inventoryMap, setInventoryMap] = useState<Record<string, InventoryEntry>>({});
   const [inventoryLoading, setInventoryLoading] = useState(true);
   const productLookup = useMemo(() => buildProductLookup(products), [products]);
@@ -1045,7 +1016,7 @@ export default function Products() {
     }
 
     return {
-      eyebrow: useFilter === "workstation" ? "Workstation" : "Gaming",
+      eyebrow: "Datorer",
       title: useFilter === "workstation" ? "Arbetsstationer" : "Speldatorer",
       description:
         useFilter === "workstation"
@@ -1329,7 +1300,9 @@ export default function Products() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-3">
+          /* Tre i bredd, samma kort som startsidan. Kortet visar minnes- och
+             lagringsval och FPS, och det får inte plats fyra i bredd. */
+          <div className="mx-auto grid max-w-6xl gap-x-11 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
             {sortedProducts.map((card) => {
               const { computer, useUsedVariant } = card;
               const variant = getDisplayVariant(computer, useUsedVariant);
@@ -1347,70 +1320,31 @@ export default function Products() {
               const inStock = (inventory?.quantity_in_stock ?? 0) > 0;
               const canPreorder = Boolean(inventory?.is_preorder ?? inventory?.allow_preorder);
 
-              const badge = !hasInventory || inventoryLoading
+              const badge: PcCardBadge = !hasInventory || inventoryLoading
                 ? null
                 : inStock
                   ? { label: "I lager", tone: "stock" }
                   : canPreorder
                     ? { label: "Förbeställ", tone: "preorder" }
                     : { label: "Slutsåld", tone: "sold" };
-
-              /* Frilagd bild om den finns - samma urklipp som
-                 produktsidan visar. Annars fotot, i ram. Ett foto med
-                 egen bakgrund lagt fritt blir en rektangel klistrad på
-                 kortet.
-
-                 Glöden vid hovring tas ur samma konst. backdrop.glow är
-                 maskinens egen belysning - CG530 lyser rött, Chieftec
-                 Visio lila, Montechen blått - så kortet tänds i datorns
-                 kulör utan att någon behöver välja en till. */
-              const art = getProductArt(computer.id);
-              const cutout = art.cutout;
-              const bestFor = bestForResolution(computer.name);
               const cardKey = `${computer.id}-${useUsedVariant ? "used" : "new"}`;
 
               return (
-                <Link
+                <PcCard
                   key={cardKey}
-                  to={productPath(computer)}
-                  className="pc-card"
-                  style={{ ["--pc-glow" as string]: art.backdrop.glow }}
-                >
-                  <div className="pc-card__media">
-                    {badge && (
-                      <span className="pc-card__badge" data-tone={badge.tone}>
-                        {badge.label}
-                      </span>
-                    )}
-                    <img
-                      src={cutout || computer.image}
-                      alt={displayName}
-                      className={cutout ? "pc-card__cutout" : "pc-card__photo"}
-                      loading="lazy"
-                      decoding="async"
-                      onError={(event) => {
-                        event.currentTarget.src = FALLBACK_IMAGE;
-                      }}
-                    />
-                  </div>
-
-                  <div className="pc-card__body">
-                    <h2 className="pc-card__name">{displayName}</h2>
-
-                    {bestFor && (
-                      <p className="pc-card__bestfor">
-                        Bäst för:
-                        <span className="pc-card__pill" style={{ color: bannerAccent, borderColor: `${bannerAccent}66` }}>
-                          {bestFor}
-                        </span>
-                      </p>
-                    )}
-
-                    <p className="pc-card__price">
-                      {displayPrice.toLocaleString("sv-SE")} kr
-                    </p>
-                  </div>
-                </Link>
+                  computer={computer}
+                  name={displayName}
+                  price={displayPrice}
+                  cpu={variant.cpu}
+                  gpu={variant.gpu}
+                  badge={badge}
+                  pricing={upgradePricing}
+                  upgrades={!useUsedVariant}
+                  headingLevel="h2"
+                  onImageError={(event) => {
+                    event.currentTarget.src = FALLBACK_IMAGE;
+                  }}
+                />
               );
             })}
           </div>

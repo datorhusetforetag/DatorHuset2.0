@@ -1,171 +1,70 @@
 import { useEffect, useRef } from "react";
 
+import { startStarTrails } from "@/lib/starTrails";
+
 /**
- * Levande bakgrund.
+ * Bakgrunden: stjärnspår på en mörk natthimmel.
  *
- * Tre sorters rörelse, alla avsiktligt långsamma:
+ * Själva himlen finns i src/lib/starTrails.ts. Här ligger bara lagren:
  *
- *   Ljusfälten driver runt på 30-45 sekunders varv. Så trögt att man
- *   inte ser dem röra sig om man tittar rakt på dem, men tillräckligt
- *   för att ytan inte ska kännas som en stillbild.
+ *   sken      Himlen nedskalad och mjukt uppförstorad, så spåren
+ *             glöder.
+ *   himmel    Canvasen med spåren och stjärnorna.
+ *   korn      Ett svagt filmkorn ovanpå, så den mörka ytan känns mjuk i
+ *             stället för som en platt skärmfärg. Stilla - bara en textur.
+ *   vinjett   Mörkare mot kanterna, så blicken dras in mot mitten där
+ *             innehållet står.
  *
- *   Strimmorna faller uppifrån och ned, som Starforges smala streck.
- *   Några stycken, alla olika snabba och med olika fördröjning, så att
- *   mönstret inte går att läsa av.
- *
- *   Och så djupet: allting glider uppåt när man rullar, men olika fort.
- *   Det är det som gör skillnaden. Ett lager som ligger blickstilla mot
- *   fönstret läses som en tapet bakom sidan; flyttar sig punktrastret
- *   långsammare än ljusen, och ljusen långsammare än innehållet, läser
- *   ögat i stället in ett avstånd mellan dem. Samma knep som en kuliss
- *   på en teaterscen.
- *
- * Rullningen skrivs som en CSS-variabel rakt på elementet, inte som
- * state. Ett state-byte per bildruta hade ritat om hela trädet medan
- * man rullar; en variabel rör bara de lager som läser den, och varje
- * lager flyttas med transform som grafikkortet klarar på egen hand.
- *
- * Lagret ligger fast mot fönstret, bakom allt innehåll, och tar aldrig
- * emot klick. Har besökaren bett om mindre rörelse ritas det inte alls -
- * ljus som rör sig är precis vad den inställningen finns till för.
+ * Utan canvas står bara den mörka duken kvar, med korn och vinjett -
+ * fullt användbart, bara utan spår.
  */
 
-type Blob = {
-  /** Kulör som RGB utan alfa. */
-  color: string;
-  className: string;
-  style: React.CSSProperties;
-  /** Hur mycket lagret flyttas per rullad pixel. Mindre = längre bort. */
-  parallax: number;
-};
-
-const BLOBS: Blob[] = [
-  {
-    color: "198, 150, 235",
-    className: "left-[-12%] top-[-8%] h-[52vw] w-[52vw]",
-    style: { animation: "drift-a 38s ease-in-out infinite" },
-    parallax: -0.08,
-  },
-  {
-    color: "178, 107, 222",
-    className: "right-[-14%] top-[12%] h-[58vw] w-[58vw]",
-    style: { animation: "drift-b 45s ease-in-out infinite" },
-    parallax: -0.14,
-  },
-  {
-    color: "110, 43, 146",
-    className: "bottom-[-18%] left-[18%] h-[50vw] w-[50vw]",
-    style: { animation: "drift-a 52s ease-in-out infinite reverse" },
-    parallax: -0.05,
-  },
-];
-
-/** Strimmorna: vänsterposition, längd, varvtid och fördröjning. */
-const STREAKS = [
-  { left: "12%", height: "22vh", duration: "14s", delay: "0s", color: "198, 150, 235" },
-  { left: "27%", height: "16vh", duration: "19s", delay: "4s", color: "178, 107, 222" },
-  { left: "54%", height: "26vh", duration: "16s", delay: "8s", color: "198, 150, 235" },
-  { left: "71%", height: "18vh", duration: "22s", delay: "2s", color: "178, 107, 222" },
-  { left: "88%", height: "20vh", duration: "17s", delay: "11s", color: "198, 150, 235" },
-];
-
-/** Hur långt ett lager flyttas, uttryckt mot den rullade sträckan. */
-const shift = (rate: number) =>
-  `translate3d(0, calc(var(--ambient-scroll, 0px) * ${rate}), 0)`;
+/* Kornet: brus från ett SVG-filter, inbakat som data-URL så det inte
+   kostar en extra förfrågan. 160 px ruta som upprepas. */
+const GRAIN =
+  "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")";
 
 export const AmbientBackground = () => {
-  const rootRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const glowRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
-    const node = rootRef.current;
-    if (!node || typeof window === "undefined") return;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const reducedMotion =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
 
-    let frame = 0;
-
-    const write = () => {
-      frame = 0;
-      node.style.setProperty("--ambient-scroll", `${window.scrollY}px`);
-    };
-
-    // Rullningen kommer tätare än skärmen hinner rita. Utan den här
-    // spärren skrivs variabeln flera gånger per bildruta i onödan.
-    const onScroll = () => {
-      if (frame) return;
-      frame = window.requestAnimationFrame(write);
-    };
-
-    write();
-    window.addEventListener("scroll", onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (frame) window.cancelAnimationFrame(frame);
-    };
+    return startStarTrails({ canvas, glow: glowRef.current, reducedMotion }) ?? undefined;
   }, []);
 
   return (
     <div
-      ref={rootRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden motion-reduce:hidden"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
+      style={{ backgroundColor: "#0e0816" }}
     >
-      {/*
-        Höjdkurvorna. De ligger längst bak och rör sig minst, och det är
-        de som ger de mjuka ljusen något att mätas mot - utan en yta med
-        struktur i finns det inget som avslöjar att de rör sig alls.
-
-        Rutan är tio procent större än fönstret åt alla håll, så
-        parallaxen har något att flytta in i kanterna. Utan marginalen
-        hade en tom rand dykt upp när mönstret skjuts åt sidan.
-      */}
-      <div
-        className="ambient-topo absolute inset-[-10%] overflow-hidden"
-        style={{ transform: shift(-0.03) }}
-      >
-        {/* Två lager, olika fart. Det fjärran är glesare och ljusare,
-            det nära tätare och tyngre. Skillnaden i hastighet är det
-            som gör mönstret till ett rum i stället för en tapet. */}
-        <div className="ambient-topo__layer ambient-topo__layer--far" />
-        <div className="ambient-topo__layer ambient-topo__layer--near" />
-      </div>
-
-      {BLOBS.map((blob, index) => (
-        <div
-          key={`blob-${index}`}
-          className="absolute inset-0"
-          style={{ transform: shift(blob.parallax), willChange: "transform" }}
-        >
-          <div
-            className={`absolute rounded-full blur-[90px] ${blob.className}`}
-            style={{
-              ...blob.style,
-              background: `radial-gradient(circle at 50% 50%, rgba(${blob.color}, 0.5) 0%, rgba(${blob.color}, 0.16) 45%, transparent 70%)`,
-              willChange: "transform",
-            }}
-          />
-        </div>
-      ))}
+      {/* Skenet bakom himlen: samma bild i en sjättedels storlek, mjukt
+          uppförstorad, så spåren och stjärnorna glöder. */}
+      <canvas ref={glowRef} className="absolute inset-0 h-full w-full" style={{ opacity: 0.9 }} />
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
 
       <div
         className="absolute inset-0"
-        style={{ transform: shift(-0.18), willChange: "transform" }}
-      >
-        {STREAKS.map((streak, index) => (
-          <span
-            key={`streak-${index}`}
-            className="absolute top-0 w-px"
-            style={{
-              left: streak.left,
-              height: streak.height,
-              background: `linear-gradient(180deg, transparent 0%, rgba(${streak.color}, 0.55) 45%, transparent 100%)`,
-              animation: `streak-fall ${streak.duration} linear ${streak.delay} infinite`,
-              willChange: "transform",
-            }}
-          />
-        ))}
-      </div>
+        style={{ backgroundImage: GRAIN, backgroundSize: "160px 160px", opacity: 0.06 }}
+      />
+
+      {/* Vinjetten. Kanterna mörknar mot sidorna och hörnen, så att
+          blicken dras in mot mitten. Svag med flit. */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: [
+            "linear-gradient(90deg, rgba(6, 3, 12, 0.6) 0%, rgba(6, 3, 12, 0.22) 14%, transparent 30%, transparent 70%, rgba(6, 3, 12, 0.22) 86%, rgba(6, 3, 12, 0.6) 100%)",
+            "radial-gradient(120% 90% at 50% 45%, transparent 55%, rgba(6, 3, 12, 0.4) 100%)",
+          ].join(", "),
+        }}
+      />
     </div>
   );
 };

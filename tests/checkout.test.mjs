@@ -11,7 +11,6 @@
 import {
   MAX_LINE_ITEMS,
   MAX_QUANTITY,
-  SERVICE_FEE_CENTS,
   SHIPPING_COST_CENTS,
   buildCartLineItems,
   buildFeeLineItems,
@@ -104,37 +103,41 @@ check(
 
 console.log("");
 console.log("=== avgifterna ===");
-check("upphämtning ger bara serviceavgift", buildFeeLineItems("pickup").length, 1);
-check("postnord ger två avgifter", buildFeeLineItems("postnord").length, 2);
-check("serviceavgiften är rätt", buildFeeLineItems("pickup")[0].price_data.unit_amount, SERVICE_FEE_CENTS);
-check("frakten är rätt", buildFeeLineItems("postnord")[1].price_data.unit_amount, SHIPPING_COST_CENTS);
+check("upphämtning ger inga avgifter", buildFeeLineItems("pickup").length, 0);
+check("postnord ger bara frakten", buildFeeLineItems("postnord").length, 1);
+check("frakten är rätt", buildFeeLineItems("postnord")[0].price_data.unit_amount, SHIPPING_COST_CENTS);
+check(
+  "ingen serviceavgift",
+  buildFeeLineItems("postnord").some((fee) => /service/i.test(fee.price_data.product_data.name)),
+  false,
+);
 
 console.log("");
 console.log("=== summan ===");
-check("en dator plus serviceavgift", expectedTotalCents([item(1099000)], "pickup"), 1099000 + SERVICE_FEE_CENTS);
+check("en dator utan frakt kostar datorns pris", expectedTotalCents([item(1099000)], "pickup"), 1099000);
 check(
-  "en dator plus frakt och serviceavgift",
+  "en dator plus frakt",
   expectedTotalCents([item(1099000)], "postnord"),
-  1099000 + SERVICE_FEE_CENTS + SHIPPING_COST_CENTS,
+  1099000 + SHIPPING_COST_CENTS,
 );
 check(
   "två av samma dator räknas dubbelt",
   expectedTotalCents([item(1000000, 2)], "pickup"),
-  2000000 + SERVICE_FEE_CENTS,
+  2000000,
 );
 check(
   "två olika datorer läggs ihop",
   expectedTotalCents([item(1000000, 1, "a"), item(500000, 1, "b")], "pickup"),
-  1500000 + SERVICE_FEE_CENTS,
+  1500000,
 );
 /* Antalet klipps innan summan räknas, annars hade elva datorer i vagnen
    gett ett pris ingen tänkt sig. */
 check(
   "antal över taket summeras mot taket",
   expectedTotalCents([item(1000000, 99)], "pickup"),
-  1000000 * MAX_QUANTITY + SERVICE_FEE_CENTS,
+  1000000 * MAX_QUANTITY,
 );
-check("tom vagn ger bara serviceavgift", expectedTotalCents([], "pickup"), SERVICE_FEE_CENTS);
+check("tom vagn kostar ingenting", expectedTotalCents([], "pickup"), 0);
 check("sumLineItems på tom lista är noll", sumLineItems([]), 0);
 
 console.log("");

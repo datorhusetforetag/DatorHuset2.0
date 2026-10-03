@@ -1,41 +1,14 @@
-import { PageShell } from "@/components/PageShell";
+import { INFO_PAGE_BACKGROUND, PageShell } from "@/components/PageShell";
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { CalendarClock, PackageCheck, RotateCcw, ShieldCheck, Wrench } from "lucide-react";
+import { PackageCheck, Wrench } from "lucide-react";
 
-import { PageHero } from "@/components/PageHero";
-import { PAGE_BANNERS } from "@/lib/pageBanners";
+import { InfoPageHeader } from "@/components/InfoPageHeader";
 import { SeoHead } from "@/components/SeoHead";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 
 const SITE_URL = "https://datorhuset.se";
 const SUPPORT_EMAIL = "support@datorhuset.se";
-const LAST_UPDATED = "2026-09-17";
-
-/**
- * Nyckeltalen samlade på ett ställe. Ändras fristerna är det här de ändras,
- * inte i brödtexten - annars säger sidan två olika saker.
- */
-const KEY_FACTS = [
-  {
-    icon: CalendarClock,
-    value: "14 dagar",
-    label: "Ångerrätt",
-    detail: "Från den dag du tog emot datorn. Gäller lagerförda datorer och tillbehör.",
-  },
-  {
-    icon: ShieldCheck,
-    value: "3 år",
-    label: "Reklamationsrätt",
-    detail: "Enligt konsumentköplagen, räknat från leveransdagen.",
-  },
-  {
-    icon: RotateCcw,
-    value: "14 dagar",
-    label: "Återbetalning",
-    detail: "Efter att vi tagit emot och kontrollerat returen.",
-  },
-];
 
 const STEPS = [
   {
@@ -76,6 +49,7 @@ export default function ReturnPolicy() {
 
   return (
     <PageShell
+      background={INFO_PAGE_BACKGROUND}
       head={
         <>
           <SeoHead
@@ -87,46 +61,20 @@ export default function ReturnPolicy() {
         </>
       }
     >
-        <PageHero
+        <InfoPageHeader
           sandboxId="returns-hero"
-          image={PAGE_BANNERS.legal.image}
-          accent={PAGE_BANNERS.legal.accent}
           breadcrumb={[{ label: "Hem", href: "/" }, { label: "Ångerrätt och returer" }]}
           eyebrow="Köpvillkor"
           title="Ångerrätt och returer"
-          lede="Ångrar du köpet har du 14 dagar på dig. Är det fel på datorn har du tre år. Här står exakt vad som gäller och hur du gör."
-          facts={[
-            `Senast uppdaterad ${new Date(LAST_UPDATED).toLocaleDateString("sv-SE", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}`,
-          ]}
         />
 
-        {/* Nyckeltal ---------------------------------------------------- */}
-        <section className="relative">
-          <div className="container mx-auto px-4 pt-12">
-            <ul className="grid gap-4 sm:grid-cols-3">
-              {KEY_FACTS.map((fact) => (
-                <li key={fact.label} className="surface-card p-6">
-                  <fact.icon className="h-6 w-6 text-primary" strokeWidth={1.5} />
-                  <p className="mt-4 font-display text-2xl font-bold text-foreground">{fact.value}</p>
-                  <p className="text-sm font-semibold text-foreground">{fact.label}</p>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{fact.detail}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        <div className="container mx-auto px-4 py-14">
-          <div className="grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-16">
-            <div className="max-w-2xl space-y-12">
+        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-10 sm:pt-14">
+          <div className="grid gap-8 lg:grid-cols-[1fr_320px] lg:gap-10">
+            <div className="info-panel divide-y divide-white/10 px-6 sm:px-10 [&>section]:max-w-3xl [&>section]:py-8">
               {/* Ångerrätt ------------------------------------------- */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">Ångerrätt</h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <h2 className="text-xl font-semibold text-white">Ångerrätt</h2>
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Som konsument har du enligt distansavtalslagen rätt att ångra ditt köp inom
                     14 dagar från den dag du tog emot varan. Du behöver inte uppge något skäl.
@@ -145,10 +93,10 @@ export default function ReturnPolicy() {
 
               {/* Undantag -------------------------------------------- */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className="text-xl font-semibold text-white">
                   När ångerrätten inte gäller
                 </h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Datorer som vi bygger efter dina val i{" "}
                     <Link to="/custom-bygg" className="text-primary underline-offset-4 hover:underline">
@@ -171,10 +119,10 @@ export default function ReturnPolicy() {
 
               {/* Reklamation ----------------------------------------- */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className="text-xl font-semibold text-white">
                   Reklamation – om något är fel
                 </h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Du har rätt att reklamera en felaktig vara i tre år från leveransdagen enligt
                     konsumentköplagen. Reklamera inom skälig tid från att du upptäckte felet –
@@ -192,10 +140,10 @@ export default function ReturnPolicy() {
 
               {/* Garanti --------------------------------------------- */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className="text-xl font-semibold text-white">
                   Garanti kontra reklamationsrätt
                 </h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Enskilda komponenter har ofta en tillverkargaranti – tre år på nätaggregat,
                     fem på vissa SSD:er, och så vidare. Den garantin är ett tillägg och kan aldrig
@@ -211,21 +159,21 @@ export default function ReturnPolicy() {
 
               {/* Gör så här ------------------------------------------ */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">Så gör du en retur</h2>
+                <h2 className="text-xl font-semibold text-white">Så gör du en retur</h2>
                 <ol className="mt-5 space-y-5">
                   {STEPS.map((step, index) => (
                     <li key={step.title} className="flex gap-4">
                       <span
-                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 font-display text-sm font-bold text-primary"
+                        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 text-sm font-semibold text-white"
                         aria-hidden="true"
                       >
                         {index + 1}
                       </span>
                       <div>
-                        <h3 className="font-display text-base font-semibold text-foreground">
+                        <h3 className="text-base font-semibold text-white">
                           {step.title}
                         </h3>
-                        <p className="mt-1.5 text-[15px] leading-relaxed text-foreground/85">
+                        <p className="mt-1.5 text-[15px] leading-7 text-white/75">
                           {step.body}
                         </p>
                       </div>
@@ -236,10 +184,10 @@ export default function ReturnPolicy() {
 
               {/* Transportskada -------------------------------------- */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className="text-xl font-semibold text-white">
                   Transportskada eller fel vara
                 </h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Är kartongen synligt skadad när du hämtar ut paketet – anmäl det direkt till
                     ombudet och hör av dig till oss samma dag. Upptäcker du skadan först när du
@@ -259,10 +207,10 @@ export default function ReturnPolicy() {
                   utskrivet ovan - men det ska finnas, och det ska gå
                   att komma åt utan att fråga efter det. */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className="text-xl font-semibold text-white">
                   Ångerblankett
                 </h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Du behöver inte använda den här blanketten. Ett mejl där du säger
                     att du ångrar köpet räcker lika bra. Men lagen säger att den ska
@@ -276,8 +224,8 @@ export default function ReturnPolicy() {
                     .
                   </p>
 
-                  <div className="surface-card p-6">
-                    <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground/90">
+                  <div className="rounded-lg border border-white/10 bg-[#110c18] p-6">
+                    <pre className="whitespace-pre-wrap font-mono text-[13px] leading-relaxed text-white/80">
 {`Till DatorHuset, Sahran Rahman
 E-post: support@datorhuset.se
 
@@ -298,7 +246,7 @@ Underskrift: ...........................................
                     </pre>
                   </div>
 
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-white/55">
                     Ångerfristen räknas från den dag du tog emot datorn. Skickar du
                     meddelandet inom fjorton dagar har du använt din ångerrätt i tid,
                     även om returen kommer fram senare.
@@ -308,10 +256,10 @@ Underskrift: ...........................................
 
               {/* Tvist ----------------------------------------------- */}
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground">
+                <h2 className="text-xl font-semibold text-white">
                   Om vi inte kommer överens
                 </h2>
-                <div className="mt-4 space-y-4 text-[15px] leading-relaxed text-foreground/85">
+                <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
                   <p>
                     Skulle vi hamna i en tvist som vi inte löser oss emellan kan du vända dig
                     till{" "}
@@ -339,36 +287,36 @@ Underskrift: ...........................................
             </div>
 
             {/* Sidopanel ---------------------------------------------- */}
-            <aside className="lg:sticky lg:top-24 lg:self-start">
-              <div className="surface-card p-6">
-                <PackageCheck className="h-6 w-6 text-primary" strokeWidth={1.5} />
-                <h2 className="mt-4 font-display text-lg font-semibold text-foreground">
+            <aside className="space-y-4 lg:sticky lg:top-28 lg:self-start">
+              <div className="info-panel p-6">
+                <PackageCheck className="h-5 w-5 text-white/60" strokeWidth={1.75} />
+                <h2 className="mt-4 text-base font-semibold text-white">
                   Starta en retur
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-white/65">
                   Mejla oss med ditt ordernummer så får du ett returnummer och instruktioner
                   tillbaka.
                 </p>
                 <a
                   href={`mailto:${SUPPORT_EMAIL}?subject=Retur%20-%20ordernummer`}
-                  className="mt-5 block rounded-sm bg-primary px-4 py-2.5 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+                  className="mt-5 block rounded-md bg-primary px-4 py-2.5 text-center text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
                 >
                   {SUPPORT_EMAIL}
                 </a>
                 <Link
                   to="/orders"
-                  className="mt-3 block rounded-sm border border-border px-4 py-2.5 text-center text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+                  className="mt-3 block rounded-md border border-white/15 px-4 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:border-white/40 hover:bg-white/[0.05]"
                 >
                   Mina ordrar
                 </Link>
               </div>
 
-              <div className="surface-card mt-4 p-6">
-                <Wrench className="h-6 w-6 text-secondary" strokeWidth={1.5} />
-                <h2 className="mt-4 font-display text-lg font-semibold text-foreground">
+              <div className="info-panel p-6">
+                <Wrench className="h-5 w-5 text-white/60" strokeWidth={1.75} />
+                <h2 className="mt-4 text-base font-semibold text-white">
                   Krånglar datorn?
                 </h2>
-                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-white/65">
                   Ofta går det att lösa utan retur. Vi felsöker gärna med dig först.
                 </p>
                 <Link
@@ -379,23 +327,23 @@ Underskrift: ...........................................
                 </Link>
               </div>
 
-              <nav className="surface-card mt-4 p-6" aria-label="Relaterade villkor">
-                <h2 className="font-display text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+              <nav className="info-panel p-6" aria-label="Relaterade villkor">
+                <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
                   Övriga villkor
                 </h2>
                 <ul className="mt-3 space-y-2 text-sm">
                   <li>
-                    <Link to="/terms-of-service" className="text-foreground hover:text-primary">
+                    <Link to="/terms-of-service" className="text-white/80 transition-colors hover:text-white">
                       Allmänna villkor
                     </Link>
                   </li>
                   <li>
-                    <Link to="/privacy-policy" className="text-foreground hover:text-primary">
+                    <Link to="/privacy-policy" className="text-white/80 transition-colors hover:text-white">
                       Integritetspolicy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/kundservice" className="text-foreground hover:text-primary">
+                    <Link to="/kundservice" className="text-white/80 transition-colors hover:text-white">
                       Kontaktuppgifter
                     </Link>
                   </li>

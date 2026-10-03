@@ -1,10 +1,11 @@
 import { useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 import { SeoJsonLd } from "@/components/SeoJsonLd";
-import { PageShell } from "@/components/PageShell";
-import { PageHero } from "@/components/PageHero";
-import { PAGE_BANNERS } from "@/lib/pageBanners";
+import { Clock, Mail } from "lucide-react";
+
+import { INFO_PAGE_BACKGROUND, PageShell } from "@/components/PageShell";
+import { InfoPageHeader } from "@/components/InfoPageHeader";
 import { Reveal } from "@/components/Reveal";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -59,10 +60,10 @@ const Field = ({
   children: ReactNode;
 }) => (
   <div>
-    <label htmlFor={id} className="block text-xs font-bold text-foreground">
+    <label htmlFor={id} className="block text-sm font-medium text-white/85">
       {label}
       {required && <span aria-hidden="true">*</span>}
-      {hint && <span className="font-normal text-muted-foreground"> {hint}</span>}
+      {hint && <span className="font-normal text-white/50"> {hint}</span>}
     </label>
     <div className="mt-2">{children}</div>
   </div>
@@ -212,23 +213,23 @@ export default function CustomerService() {
   };
 
   return (
-    <PageShell head={<SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />}>
-      <PageHero
+    <PageShell
+      head={<SeoJsonLd data={[localBusinessSchema, breadcrumbSchema]} />}
+      background={INFO_PAGE_BACKGROUND}
+    >
+      <InfoPageHeader
         sandboxId="customer-hero"
-        compact
-        accent={PAGE_BANNERS.support.accent}
         breadcrumb={[{ label: "Hem", href: "/" }, { label: "Kundservice" }]}
         title={pageSettings.heroTitle}
       />
 
-      {/* Formuläret ---------------------------------------------------
-          Ett kort mitt på duken, som i förlagan. Ingenting i spalten
-          bredvid: den som skriver ett meddelande ska inte behöva välja
-          mellan att skriva och att läsa. */}
+      {/* Formuläret är sidan: ett tätt kort mitt på den mörka duken.
+          Kontaktuppgifterna ligger i ett smalt kort under, för den som
+          hellre mejlar själv. */}
       <section data-sandbox-id="customer-contact" className="relative">
-        <div className="container mx-auto max-w-4xl px-4 py-16 sm:py-20">
-          <Reveal className="rounded-xl border border-foreground/10 bg-foreground/[0.03] px-5 py-10 sm:px-10 sm:py-12">
-            <h2 className="text-center font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+        <div className="container mx-auto max-w-5xl space-y-6 px-4 pb-24 pt-12 sm:pt-16">
+          <Reveal className="info-panel px-5 py-10 sm:px-14 sm:py-14">
+            <h2 className="text-center font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
               Har du en fråga? Vi hjälper dig.
             </h2>
 
@@ -262,7 +263,7 @@ export default function CustomerService() {
                 </Field>
               </div>
 
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-5 sm:grid-cols-2">
                 <Field id="contact-email" label="E-post" required>
                   <input
                     id="contact-email"
@@ -290,22 +291,24 @@ export default function CustomerService() {
                     onChange={updateField("confirmEmail")}
                   />
                 </Field>
-                <Field id="contact-topic" label="Ämne" required>
-                  <select
-                    id="contact-topic"
-                    className="field"
-                    required
-                    value={formData.topic}
-                    onChange={updateField("topic")}
-                  >
-                    <option value="">Välj ämne</option>
-                    {TOPICS.map((topic) => (
-                      <option key={topic} value={topic}>
-                        {topic}
-                      </option>
-                    ))}
-                  </select>
-                </Field>
+                <div className="sm:col-span-2">
+                  <Field id="contact-topic" label="Ämne" required>
+                    <select
+                      id="contact-topic"
+                      className="field"
+                      required
+                      value={formData.topic}
+                      onChange={updateField("topic")}
+                    >
+                      <option value="">Välj ämne</option>
+                      {TOPICS.map((topic) => (
+                        <option key={topic} value={topic}>
+                          {topic}
+                        </option>
+                      ))}
+                    </select>
+                  </Field>
+                </div>
               </div>
 
               <Field id="contact-message" label="Meddelande" required>
@@ -343,10 +346,10 @@ export default function CustomerService() {
                 </p>
               )}
 
-              <div className="pt-2 text-center">
+              <div className="pt-3 text-center">
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="btn-primary min-w-[10rem] rounded-full"
                   disabled={status === "sending"}
                 >
                   {status === "sending" ? "Skickar..." : "Skicka"}
@@ -355,89 +358,46 @@ export default function CustomerService() {
             </form>
           </Reveal>
 
-          {/* Adress och öppettider under kortet. Den som hellre mejlar
-              själv, eller vill veta när ett svar kan komma, ska inte
-              behöva fylla i ett formulär för att få reda på det. */}
-          <Reveal
-            delay={90}
-            className="mt-6 grid gap-6 rounded-xl border border-foreground/10 px-6 py-7 sm:grid-cols-2"
-          >
-            <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                {pageSettings.contactTitle}
-              </h3>
-              <a
-                className="link-underline mt-2 block text-sm font-semibold text-primary"
-                href={`mailto:${pageSettings.contactEmail}`}
-              >
-                {pageSettings.contactEmail}
-              </a>
-            </div>
-            <div>
-              <h3 className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground">
-                {pageSettings.hoursTitle}
-              </h3>
-              <div className="mt-2 space-y-1 text-sm text-muted-foreground">
-                {pageSettings.hoursLines.map((line) => (
-                  <p key={line}>{line}</p>
-                ))}
+          {/* Kontaktuppgifterna. Den som hellre mejlar själv, eller vill
+              veta när ett svar kan komma, ska inte behöva fylla i ett
+              formulär för att få reda på det. */}
+          <Reveal delay={90} as="aside">
+            <div className="info-panel grid divide-y divide-white/[0.06] sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+              <div className="flex gap-4 p-6">
+                <span
+                  aria-hidden="true"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white/[0.06] text-white/80"
+                >
+                  <Mail className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-sm font-semibold text-white">{pageSettings.contactTitle}</h3>
+                  <a
+                    className="mt-1 block break-all text-sm text-white/70 underline-offset-4 transition-colors hover:text-white hover:underline"
+                    href={`mailto:${pageSettings.contactEmail}`}
+                  >
+                    {pageSettings.contactEmail}
+                  </a>
+                </div>
+              </div>
+              <div className="flex gap-4 p-6">
+                <span
+                  aria-hidden="true"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-white/[0.06] text-white/80"
+                >
+                  <Clock className="h-5 w-5" />
+                </span>
+                <div>
+                  <h3 className="text-sm font-semibold text-white">{pageSettings.hoursTitle}</h3>
+                  <div className="mt-1 space-y-0.5 text-sm text-white/70">
+                    {pageSettings.hoursLines.map((line) => (
+                      <p key={line}>{line}</p>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* Vanliga ärenden och gången: kvar, men längre ned. Det är
-          uppslagsverk, inte det man kom hit för. */}
-      <section className="relative">
-        <div className="container mx-auto max-w-4xl px-4 pb-24">
-          <div className="grid gap-10 border-t border-foreground/10 pt-12 lg:grid-cols-2">
-            <Reveal sandboxId="customer-issues">
-              <h2 className="section-title text-2xl">
-                {pageSettings.commonIssuesTitle}
-              </h2>
-              <ul className="mt-6 divide-y divide-foreground/10 border-t border-foreground/10">
-                {pageSettings.commonIssues.map((issue) => (
-                  <li
-                    key={issue}
-                    className="flex items-start gap-3 py-4 text-sm leading-relaxed text-muted-foreground"
-                  >
-                    <span aria-hidden="true" className="mt-[3px] text-primary">
-                      &#8250;
-                    </span>
-                    {issue}
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-                {pageSettings.commonIssuesNote}
-              </p>
-            </Reveal>
-
-            <Reveal delay={110} sandboxId="customer-workflow">
-              <h2 className="section-title text-2xl">
-                {pageSettings.workflowTitle}
-              </h2>
-              <ol className="mt-6 space-y-5">
-                {pageSettings.workflowSteps.map((step, index) => (
-                  <li key={step} className="flex items-start gap-4">
-                    <span
-                      aria-hidden="true"
-                      className="font-display text-xl font-bold leading-none tabular-nums text-primary/50"
-                    >
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-sm leading-relaxed text-muted-foreground">
-                      {step}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-              <Link to={pageSettings.workflowCtaHref} className="btn-primary mt-8">
-                {pageSettings.workflowCtaLabel}
-              </Link>
-            </Reveal>
-          </div>
         </div>
       </section>
     </PageShell>

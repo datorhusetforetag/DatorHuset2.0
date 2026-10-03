@@ -87,11 +87,17 @@ type NavEntry = NavLeaf & {
  * visat allt utom det man råkat bocka bort i förrgår.
  */
 const READY_TO_SHIP = "/products?stock=in-stock&clear_filters=1";
-const PREORDER = "/products?stock=preorder&clear_filters=1";
+/*
+ * "Datorer" har inget lagerfilter alls: maskinerna som står redo att
+ * skickas och de som byggs på beställning visas tillsammans. Menyn hette
+ * förut "Preorder" och visade bara beställningsvarorna, så den som ville
+ * se allt i en kategori fick leta i två menyer.
+ */
+const ALL_COMPUTERS = "/products?clear_filters=1";
 
 const purposeLinks = (base: string): NavLeaf[] => [
   { label: "Alla datorer", href: base, hint: "Hela sortimentet" },
-  { label: "Gaming datorer", href: `${base}&use=gaming`, hint: "Byggda för spel" },
+  { label: "Speldatorer", href: `${base}&use=gaming`, hint: "Byggda för spel" },
   { label: "Workstation", href: `${base}&use=workstation`, hint: "Byggda för arbete" },
 ];
 
@@ -102,9 +108,9 @@ const NAV: NavEntry[] = [
     items: purposeLinks(READY_TO_SHIP),
   },
   {
-    label: "Preorder",
-    href: PREORDER,
-    items: purposeLinks(PREORDER),
+    label: "Datorer",
+    href: ALL_COMPUTERS,
+    items: purposeLinks(ALL_COMPUTERS),
   },
   { label: "Custom bygg", href: "/custom-bygg" },
   { label: "Service & reparation", href: "/service-reparation" },
@@ -112,13 +118,9 @@ const NAV: NavEntry[] = [
     label: "Mer",
     href: "/kundservice",
     items: [
-      { label: "Vanliga frågor", href: "/faq", hint: "Svar på det som oftast frågas" },
-      { label: "Kundservice", href: "/kundservice", hint: "Mejla oss eller läs våra tider" },
       { label: "Om oss", href: "/about", hint: "Vilka vi är och hur vi bygger" },
-      { label: "Mina beställningar", href: "/orders", hint: "Status och kvitton" },
-      { label: "Ångerrätt och returer", href: "/angerratt-och-returer" },
-      { label: "Köpvillkor", href: "/terms-of-service" },
-      { label: "Integritetspolicy", href: "/privacy-policy" },
+      { label: "Kundservice", href: "/kundservice", hint: "Mejla oss eller läs våra tider" },
+      { label: "Vanliga frågor", href: "/faq", hint: "Svar på det som oftast frågas" },
     ],
   },
 ];
@@ -143,7 +145,7 @@ export const Navbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { totalItems, items, totalPrice } = useCart();
+  const { totalItems, items, totalPrice, unitPriceOf } = useCart();
   const { user } = useAuth();
   const { settings } = useSiteSettings();
   const { products } = useProducts();
@@ -608,7 +610,7 @@ export const Navbar = () => {
                             {item.product?.name || "Produkt"} x{item.quantity}
                           </span>
                           <span className="shrink-0 font-semibold tabular-nums text-foreground">
-                            {(((item.product?.price_cents || 0) * item.quantity) / 100).toLocaleString("sv-SE")} kr
+                            {((unitPriceOf(item) * item.quantity) / 100).toLocaleString("sv-SE")} kr
                           </span>
                         </div>
                       ))}

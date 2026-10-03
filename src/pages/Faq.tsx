@@ -8,9 +8,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { PageShell } from "@/components/PageShell";
-import { PageHero } from "@/components/PageHero";
-import { PAGE_BANNERS } from "@/lib/pageBanners";
+import { INFO_PAGE_BACKGROUND, PageShell } from "@/components/PageShell";
+import { InfoPageHeader } from "@/components/InfoPageHeader";
 import { Reveal } from "@/components/Reveal";
 import { SeoJsonLd } from "@/components/SeoJsonLd";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
@@ -37,8 +36,6 @@ import { useSiteSettings } from "@/hooks/useSiteSettings";
  * hela listan utan att hitta svaret ska inte behöva rulla tillbaka upp
  * för att hitta vägen till kundservice.
  */
-
-const ACCENT = PAGE_BANNERS.faq.accent;
 
 export default function Faq() {
   const { settings } = useSiteSettings();
@@ -78,11 +75,12 @@ export default function Faq() {
   };
 
   return (
-    <PageShell head={<SeoJsonLd data={[faqSchema, breadcrumbSchema]} />}>
-      <PageHero
+    <PageShell
+      head={<SeoJsonLd data={[faqSchema, breadcrumbSchema]} />}
+      background={INFO_PAGE_BACKGROUND}
+    >
+      <InfoPageHeader
         sandboxId="faq-hero"
-        image={PAGE_BANNERS.faq.image}
-        accent={ACCENT}
         breadcrumb={[{ label: "Hem", href: "/" }, { label: "Vanliga frågor" }]}
         eyebrow={page.heroEyebrow}
         title={page.heroTitle}
@@ -90,8 +88,8 @@ export default function Faq() {
       />
 
       <section data-sandbox-id="faq-items" className="relative">
-        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-14">
-          <div className="grid gap-10 lg:grid-cols-[1.45fr_0.55fr] lg:gap-14">
+        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-10 sm:pt-14">
+          <div className="grid gap-10 lg:grid-cols-[1fr_320px] lg:gap-12">
             <div>
               {/* Filtret ------------------------------------------------ */}
               <Reveal>
@@ -109,11 +107,11 @@ export default function Faq() {
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
                     placeholder="Sök bland frågorna - frakt, betalning, garanti..."
-                    className="field h-12 pl-11"
+                    className="info-field h-12 w-full rounded-lg pl-11"
                   />
                 </div>
 
-                <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
+                <p className="mt-3 text-xs text-white/50" aria-live="polite">
                   {query.trim()
                     ? `${visible.length} av ${page.items.length} frågor matchar`
                     : `${page.items.length} frågor`}
@@ -130,18 +128,18 @@ export default function Faq() {
                     key={query}
                     type="single"
                     collapsible
-                    className="flex flex-col gap-3"
+                    className="info-panel divide-y divide-white/10 overflow-hidden"
                   >
                     {visible.map((item) => (
                       <AccordionItem
                         key={item.question}
                         value={item.question}
-                        className="overflow-hidden rounded-lg border border-foreground/10 bg-background/70 transition-colors hover:border-foreground/25 data-[state=open]:border-foreground/25"
+                        className="border-b-0 transition-colors data-[state=open]:bg-white/[0.03]"
                       >
-                        <AccordionTrigger className="px-5 py-5 text-left text-base font-semibold hover:no-underline sm:px-6 [&>svg]:h-5 [&>svg]:w-5">
+                        <AccordionTrigger className="px-5 py-5 text-left text-[15px] font-semibold text-white hover:bg-white/[0.03] hover:no-underline sm:px-6 [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white/50">
                           {item.question}
                         </AccordionTrigger>
-                        <AccordionContent className="px-5 pb-6 pr-12 text-sm leading-relaxed text-muted-foreground sm:px-6">
+                        <AccordionContent className="px-5 pb-6 pr-12 text-[15px] leading-7 text-white/70 sm:px-6">
                           {item.answer}
                         </AccordionContent>
                       </AccordionItem>
@@ -170,18 +168,17 @@ export default function Faq() {
 
             {/* Vägen vidare ------------------------------------------- */}
             <Reveal delay={140} className="lg:sticky lg:top-28 lg:self-start">
-              <div className="rounded-lg border border-foreground/10 bg-background/70 p-7">
+              <div className="info-panel p-6">
                 <span
                   aria-hidden="true"
-                  className="flex h-11 w-11 items-center justify-center rounded-lg"
-                  style={{ backgroundColor: ACCENT + "1F", color: ACCENT }}
+                  className="flex h-10 w-10 items-center justify-center rounded-lg bg-white/10 text-white"
                 >
                   <MessagesSquare className="h-5 w-5" />
                 </span>
-                <h2 className="mt-5 font-display text-lg font-bold text-foreground">
+                <h2 className="mt-5 text-base font-semibold text-white">
                   Hittade du inte svaret?
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-white/65">
                   Skriv till oss så återkommer vi. Vi svarar hellre på en fråga
                   för mycket än att du beställer fel dator.
                 </p>
@@ -190,11 +187,11 @@ export default function Faq() {
                 </Link>
               </div>
 
-              <div className="mt-5 rounded-lg border border-foreground/10 bg-background/70 p-7">
-                <h2 className="font-display text-base font-bold text-foreground">
+              <div className="info-panel mt-4 p-6">
+                <h2 className="text-base font-semibold text-white">
                   Det längre svaret
                 </h2>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-white/65">
                   Frågor om retur, reklamation och vad som gäller juridiskt står
                   utförligt på villkorssidorna.
                 </p>

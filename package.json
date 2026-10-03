@@ -21,7 +21,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit -p tsconfig.app.json",
     "preview": "vite preview",
-    "test:checkout": "node tests/checkout.test.mjs",
+    "test:checkout": "node tests/checkout.test.mjs && node tests/upgradePricing.test.mjs",
     "test:capacity": "node tests/orderCapacity.test.mjs",
     "test": "node tests/checkout.test.mjs && node tests/orderCapacity.test.mjs && node tests/pricing.match.test.mjs && node tests/pricing.feed.test.mjs"
   },

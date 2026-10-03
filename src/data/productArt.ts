@@ -1,10 +1,12 @@
-/* Filen heter "bronze tier.png" sedan nivån fanns. Den visar en
-   Montech-låda och används till Silver-Speedster - namnet på filen är
-   allt som är kvar av bronsnivån. */
-import montechCutout from "../../images/bronze tier.png";
-import silverCutout from "../../images/silver tier.png";
-import platinumCutout from "../../images/platinum tier.png";
-import diamondCutout from "../../images/diamond tier.png";
+/*
+ * Platshållarbilder tills byggena är fotograferade.
+ *
+ * Tecknade datorer utan bakgrund, ritade av
+ * scripts/generate-pc-placeholders.mjs. Belysningens färg i varje bild
+ * matchar glow nedanför. När ett riktigt foto finns: byt cutout mot
+ * fotot, och ta bort platshållaren när ingen produkt längre använder den.
+ */
+const placeholder = (name: string) => `/products/placeholders/${name}.svg`;
 
 /**
  * Den svävande datorn och dess egen bakgrund, per maskin.
@@ -96,19 +98,19 @@ export type ProductArt = {
 export const PRODUCT_ART: Record<string, ProductArt> = {
   // Silver-Speedster - Montech, blå kabinettbelysning med rosa fläktar
   "2": {
-    cutout: montechCutout,
+    cutout: placeholder("abyss"),
     backdrop: { from: "#12203f", to: "#2b1740", glow: "#4f8ff7" },
   },
 
   // Guld-Inferno - Chieftec Visio, lila och grönt
   "3": {
-    cutout: silverCutout,
+    cutout: placeholder("aurora"),
     backdrop: { from: "#1b1033", to: "#2d0f3d", glow: "#a855f7" },
   },
 
   // Glimmrande Guldigaspiken - samma chassi som Guld-Inferno
   "5": {
-    cutout: silverCutout,
+    cutout: placeholder("neon"),
     backdrop: { from: "#1d1236", to: "#122b2e", glow: "#22d3ee" },
   },
 
@@ -126,7 +128,7 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
    * lampa - som två bilder ur samma fotografering.
    */
   "7": {
-    cutout: platinumCutout,
+    cutout: placeholder("ember"),
     backdrop: {
       kind: "studio",
       from: "#241315",
@@ -139,7 +141,7 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
   },
 
   "9": {
-    cutout: platinumCutout,
+    cutout: placeholder("crimson"),
     backdrop: {
       kind: "studio",
       from: "#1f1218",
@@ -160,18 +162,20 @@ export const PRODUCT_ART: Record<string, ProductArt> = {
    * svävande bild förrän någon friläggt den.
    */
   "10": {
+    cutout: placeholder("sky"),
     backdrop: { from: "#0e1726", to: "#101a2c", glow: "#38bdf8" },
   },
 
   // All White, All Out - vit Lian Li
   "11": {
-    cutout: diamondCutout,
+    cutout: placeholder("glacier"),
     backdrop: { from: "#1b2436", to: "#0f1b2b", glow: "#7dd3fc" },
   },
 };
 
 /** Reservduk för produkter som inte står i listan. */
 export const DEFAULT_PRODUCT_ART: ProductArt = {
+  cutout: placeholder("default"),
   backdrop: { from: "#181233", to: "#150f26", glow: "#3FD9F5" },
 };
 

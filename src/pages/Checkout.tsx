@@ -30,7 +30,7 @@ type SavedAddress = {
 };
 
 export default function Checkout() {
-  const { items, totalPrice, loading: cartLoading } = useCart();
+  const { items, totalPrice, loading: cartLoading, unitPriceOf, describeItem } = useCart();
   const { user, session } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -61,9 +61,8 @@ export default function Checkout() {
   });
   const fullName = `${firstName} ${lastName}`.trim();
   const requiresShipping = shippingMethod === "postnord";
-  const serviceFeeCents = 500;
   const shippingCostCents = requiresShipping ? 31500 : 0;
-  const totalWithFees = totalPrice + serviceFeeCents + shippingCostCents;
+  const totalWithFees = totalPrice + shippingCostCents;
 
   useEffect(() => {
     void trackEvent({
@@ -215,11 +214,11 @@ export default function Checkout() {
                               />
                             ) : null}
                             <span className="text-muted-foreground dark:text-foreground truncate">
-                              {item.product?.name} x{item.quantity}
+                              {item.product?.name}{describeItem(item) ? ` · ${describeItem(item)}` : ""} x{item.quantity}
                             </span>
                           </div>
                           <span className="font-semibold text-foreground">
-                            {((item.product?.price_cents || 0) * item.quantity) / 100} kr
+                            {((unitPriceOf(item) * item.quantity) / 100).toLocaleString("sv-SE")} kr
                           </span>
                         </div>
                       );
@@ -230,10 +229,6 @@ export default function Checkout() {
                     <div className="flex justify-between">
                       <span className="text-muted-foreground dark:text-foreground">Delsumma:</span>
                       <span className="font-semibold text-foreground">{totalPrice / 100} kr</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground dark:text-foreground">Serviceavgift:</span>
-                      <span className="font-semibold text-foreground">5 kr</span>
                     </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground dark:text-foreground">Frakt:</span>
@@ -314,7 +309,7 @@ export default function Checkout() {
           cartItems: items.map((item) => ({
             productId: item.product_id,
             productName: item.product?.name,
-            unitPriceCents: item.product?.price_cents,
+            unitPriceCents: unitPriceOf(item),
             quantity: item.quantity,
           })),
           userEmail: email,
@@ -685,11 +680,11 @@ export default function Checkout() {
                             />
                           ) : null}
                           <span className="text-muted-foreground dark:text-foreground truncate">
-                            {item.product?.name} x{item.quantity}
+                            {item.product?.name}{describeItem(item) ? ` · ${describeItem(item)}` : ""} x{item.quantity}
                           </span>
                         </div>
                         <span className="font-semibold text-foreground">
-                          {((item.product?.price_cents || 0) * item.quantity) / 100} kr
+                          {((unitPriceOf(item) * item.quantity) / 100).toLocaleString("sv-SE")} kr
                         </span>
                       </div>
                     );
@@ -704,10 +699,6 @@ export default function Checkout() {
                   <div className="flex justify-between">
                     <span className="text-muted-foreground dark:text-foreground">Frakt:</span>
                     <span className="font-semibold text-foreground">Väljs i kassan</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground dark:text-foreground">Serviceavgift:</span>
-                    <span className="font-semibold text-foreground">5 kr</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground dark:text-foreground">Skatt:</span>

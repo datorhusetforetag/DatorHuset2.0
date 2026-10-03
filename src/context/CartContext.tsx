@@ -8,6 +8,12 @@ import {
   clearCart as clearUserCartItems,
 } from '@/lib/supabaseServices';
 import { supabase } from '@/lib/supabaseClient';
+import { useUpgradePricing } from '@/hooks/useUpgradePricing';
+import {
+  describeConfiguration,
+  findBaseConfig,
+  priceConfiguration,
+} from '../../shared/upgradePricing.js';
 
 /*
  * Det vagnen faktiskt laser ur en produkt.
@@ -19,28 +25,45 @@ import { supabase } from '@/lib/supabaseClient';
  */
 export type CartProduct = ProductLike & { price_cents?: number | null };
 
+/**
+ * Valt utförande för en dator i vagnen: minne, lagring, grafikkort. Fält
+ * som är lika med grundutförandet utelämnas; null betyder grundutförande.
+ * Reglerna och priserna står i shared/upgradePricing.js.
+ */
+export type CartConfiguration = {
+  ramGb?: number;
+  storageGb?: number;
+  gpu?: string;
+};
+
 export interface CartItem {
   id: string;
   user_id?: string;
   product_id: string;
   quantity: number;
+  configuration?: CartConfiguration | null;
   product?: CartProduct | null;
 }
 
 interface CartContextType {
   items: CartItem[];
   loading: boolean;
-  addToCart: (productId: string, quantity: number) => Promise<void>;
+  addToCart: (productId: string, quantity: number, configuration?: CartConfiguration | null) => Promise<void>;
   removeFromCart: (cartItemId: string) => Promise<void>;
   updateQuantity: (cartItemId: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
   totalItems: number;
   totalPrice: number;
+  /** Styckpriset i ören, med uppgraderingarna inräknade. */
+  unitPriceOf: (item: CartItem) => number;
+  /** Det valda utförandet som läsbar rad, till exempel "64GB DDR5 · 2TB". */
+  describeItem: (item: CartItem) => string;
 }
 
 type GuestCartEntry = {
   product_id: string;
   quantity: number;
+  configuration?: CartConfiguration | null;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -63,6 +86,8 @@ const readGuestCart = (): GuestCartEntry[] => {
       .map((entry) => ({
         product_id: String(entry?.product_id || '').trim(),
         quantity: Math.max(1, Number(entry?.quantity) || 1),
+        configuration:
+          entry?.configuration && typeof entry.configuration === 'object' ? entry.configuration : null,
       }))
       .filter((entry) => Boolean(entry.product_id));
   } catch (error) {
@@ -107,6 +132,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         user_id: 'guest',
         product_id: entry.product_id,
         quantity: entry.quantity,
+        configuration: entry.configuration ?? null,
         product: productsById.get(entry.product_id),
       }));
 
@@ -140,7 +166,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (!productId) continue;
       const existingQuantity = existingByProductId.get(productId) || 0;
       const mergedQuantity = Math.max(1, existingQuantity + Math.max(1, Number(guestEntry.quantity) || 1));
-      await upsertUserCartItem(userId, productId, mergedQuantity);
+      /* Utförandet från gästvagnen följer med in på kontot. */
+      await upsertUserCartItem(userId, productId, mergedQuantity, guestEntry.configuration ?? null);
     }
 
     writeGuestCart([]);
@@ -184,24 +211,31 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const handleAddToCart = async (productId: string, quantity: number) => {
+  const handleAddToCart = async (
+    productId: string,
+    quantity: number,
+    configuration: CartConfiguration | null = null,
+  ) => {
     try {
       const safeProductId = String(productId || '').trim();
       const safeQuantity = Math.max(1, Number(quantity) || 1);
       if (!safeProductId) return;
 
       if (user?.id) {
-        await upsertUserCartItem(user.id, safeProductId, safeQuantity);
+        await upsertUserCartItem(user.id, safeProductId, safeQuantity, configuration);
       } else {
+        /* En rad per dator, som i den inloggade vagnen: väljer kunden ett
+           annat utförande ersätter det det förra. */
         const guestEntries = readGuestCart();
         const existingIndex = guestEntries.findIndex((entry) => entry.product_id === safeProductId);
         if (existingIndex >= 0) {
           guestEntries[existingIndex] = {
             ...guestEntries[existingIndex],
             quantity: safeQuantity,
+            configuration,
           };
         } else {
-          guestEntries.push({ product_id: safeProductId, quantity: safeQuantity });
+          guestEntries.push({ product_id: safeProductId, quantity: safeQuantity, configuration });
         }
         writeGuestCart(guestEntries);
       }
@@ -276,11 +310,25 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  /* Styckpriset med uppgraderingarna, räknat med samma regler och samma
+     tabell som kassan. Är ett sparat utförande inte längre tillåtet visas
+     grundpriset - kassan säger då till, i stället för att ta betalt. */
+  const { pricing } = useUpgradePricing();
+  const baseConfigOf = (item: CartItem) =>
+    findBaseConfig(item.product?.name, item.product?.slug, (item.product as { legacy_id?: string } | null)?.legacy_id);
+
+  const unitPriceOf = (item: CartItem) => {
+    const base = item.product?.price_cents || 0;
+    if (!item.configuration) return base;
+    const extra = priceConfiguration(baseConfigOf(item), item.configuration, pricing);
+    return extra === null ? base : base + extra * 100;
+  };
+
+  const describeItem = (item: CartItem) =>
+    item.configuration ? describeConfiguration(baseConfigOf(item), item.configuration, pricing) : '';
+
   const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce(
-    (sum, item) => sum + (item.product?.price_cents || 0) * item.quantity,
-    0
-  );
+  const totalPrice = items.reduce((sum, item) => sum + unitPriceOf(item) * item.quantity, 0);
 
   return (
     <CartContext.Provider
@@ -293,6 +341,8 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
         clearCart: handleClearCart,
         totalItems,
         totalPrice,
+        unitPriceOf,
+        describeItem,
       }}
     >
       {children}

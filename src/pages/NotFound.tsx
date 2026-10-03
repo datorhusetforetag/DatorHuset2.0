@@ -24,7 +24,7 @@ import { Reveal } from "@/components/Reveal";
  */
 
 const ROUTES = [
-  { href: "/products", label: "Våra datorer", hint: "Färdiga byggen i fyra nivåer" },
+  { href: "/products", label: "Våra datorer", hint: "Färdiga byggen i tre nivåer" },
   { href: "/custom-bygg", label: "Custom bygg", hint: "Sätt ihop en egen från grunden" },
   { href: "/service-reparation", label: "Service och reparation", hint: "Lämna in en maskin som krånglar" },
   { href: "/kundservice", label: "Kundservice", hint: "Hittar du inte rätt hjälper vi till" },

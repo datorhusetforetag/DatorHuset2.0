@@ -99,6 +99,10 @@ export const search = async (query, { timeoutMs = 15000 } = {}) => {
         // Behövs för att kunna hämta produktsidan och därmed EAN.
         external_id: product.id,
         title: product.name || product.mainTitle || "",
+        /* "Datorkomponenter/Processor CPU/AMD/Socket AM5". Sökningen
+           blandar in laptops, färdigbyggda datorer och fyndvaror, och
+           matchOffer använder sökvägen för att sålla bort dem. */
+        category_path: typeof product.categoryTree === "string" ? product.categoryTree : null,
         price_cents: priceCents,
         // Webhallen anger inte frakt per produkt i sök-API:et.
         shipping_cents: null,

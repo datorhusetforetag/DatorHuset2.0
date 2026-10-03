@@ -29,12 +29,12 @@ import * as pricing from "./server/pricing/index.mjs";
 import {
   MAX_LINE_ITEMS,
   MAX_QUANTITY,
-  SERVICE_FEE_CENTS,
   SHIPPING_COST_CENTS,
   buildCartLineItems,
   buildFeeLineItems,
   normalizeQuantity,
 } from "./shared/checkoutMath.js";
+import { DEFAULT_UPGRADE_PRICING, normalizePricing } from "./shared/upgradePricing.js";
 import {
   checkPreorderCapacity,
   remainingCapacity,
@@ -560,8 +560,8 @@ if (!HAS_SERVICE_ROLE_KEY) {
 pricing.store.configure(supabase);
 
 const FRONTEND_URL = RAW_FRONTEND_URL || FRONTEND_URLS[0] || "http://localhost:8080";
-/* MAX_LINE_ITEMS, MAX_QUANTITY, SHIPPING_COST_CENTS och
-   SERVICE_FEE_CENTS importeras från shared/checkoutMath.js, där
+/* MAX_LINE_ITEMS, MAX_QUANTITY och SHIPPING_COST_CENTS
+   importeras från shared/checkoutMath.js, där
    räkningen bor och där tests/checkout.test.mjs prövar den. */
 const PAYMENT_METHODS = ["card", "klarna", "paypal"];
 const CUSTOM_PAYMENT_METHOD = process.env.STRIPE_CUSTOM_PAYMENT_METHOD_ID;
@@ -5658,7 +5658,7 @@ const loadAdminListings = async ({ limit = 200, offset = 0, q = "", sort = "name
       return;
     }
     if (key.startsWith("listing_upgrades:")) {
-      const id = sanitizeText(key.slice(18), 80);
+      const id = sanitizeText(key.slice("listing_upgrades:".length), 80);
       if (!id) return;
       const list = Array.isArray(setting?.value?.upgrades) ? setting.value.upgrades : [];
       upgradesByProductId.set(
@@ -6207,14 +6207,27 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
       safeCity = safeCity || "";
     }
 
-    const { data: dbCartItems, error: cartError } = await supabase
+    /* Utförandet (minne, lagring, grafikkort) ligger i kolumnen
+       configuration. Finns den inte än - migreringen
+       20261003_add_configuration.sql är inte körd - läses vagnen som
+       förut, och allt köps i grundutförande. Hellre det än en kassa som
+       slutar fungera för att driftsättningen kom i fel ordning. */
+    let { data: dbCartItems, error: cartError } = await supabase
       .from("cart_items")
-      .select("quantity, product:product_id (id, name, price_cents)")
+      .select("quantity, configuration, product:product_id (id, name, slug, legacy_id, price_cents)")
       .eq("user_id", user.id);
+    if (cartError?.code === "42703") {
+      ({ data: dbCartItems, error: cartError } = await supabase
+        .from("cart_items")
+        .select("quantity, product:product_id (id, name, slug, legacy_id, price_cents)")
+        .eq("user_id", user.id));
+    }
 
     if (cartError || !dbCartItems || dbCartItems.length === 0) {
       return res.status(400).json({ error: "Cart is empty" });
     }
+
+    const upgradePricing = await loadUpgradePricing();
 
     /* Raderna och avgifterna räknas i shared/checkoutMath.js. Koden
        låg tidigare här inne, mitt bland anrop till Stripe och
@@ -6223,10 +6236,15 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
        betalar. Se tests/checkout.test.mjs. */
     let line_items;
     try {
-      line_items = buildCartLineItems(dbCartItems);
+      line_items = buildCartLineItems(dbCartItems, upgradePricing);
     } catch (error) {
       if (error?.code === "TOO_MANY_ITEMS") {
         return res.status(400).json({ error: "Too many items in cart" });
+      }
+      if (error?.code === "INVALID_CONFIGURATION") {
+        return res.status(400).json({
+          error: "En dator i varukorgen har ett utförande som inte längre går att välja. Öppna den och välj igen.",
+        });
       }
       throw error;
     }
@@ -6287,7 +6305,6 @@ app.post("/api/create-checkout-session", checkoutLimiter, async (req, res) => {
         addressId: safeAddressId,
         shippingMethod: normalizedShippingMethod,
         shippingCostCents: requiresShipping ? String(SHIPPING_COST_CENTS) : "0",
-        serviceFeeCents: String(SERVICE_FEE_CENTS),
       },
       success_url: `${checkoutBaseUrl}/checkout-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${checkoutBaseUrl}/cart`,
@@ -6322,8 +6339,6 @@ app.post("/api/service-request", mailFormLimiter, async (req, res) => {
     const urgency = sanitizeText(req.body?.urgency, 80);
     const serialNumber = sanitizeText(req.body?.serialNumber, 80);
     const notes = sanitizeText(req.body?.notes, 2000);
-    const needsBackup = Boolean(req.body?.needsBackup);
-    const wantsQuote = Boolean(req.body?.wantsQuote);
 
     if (!name || !email || !notes) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -6346,8 +6361,6 @@ app.post("/api/service-request", mailFormLimiter, async (req, res) => {
         <p><strong>Typ av problem:</strong> ${escapeHtml(issueType || "-")}</p>
         <p><strong>Br\u00e5dskande:</strong> ${escapeHtml(urgency || "-")}</p>
         <p><strong>Serienummer:</strong> ${escapeHtml(serialNumber || "-")}</p>
-        <p><strong>Backup-hj\u00e4lp:</strong> ${needsBackup ? "Ja" : "Nej"}</p>
-        <p><strong>Offert innan start:</strong> ${wantsQuote ? "Ja" : "Nej"}</p>
         <p><strong>Beskrivning:</strong></p>
         <p>${escapeHtml(notes).replace(/\n/g, "<br />")}</p>
       </div>
@@ -6647,7 +6660,7 @@ app.post("/api/admin/pricing/refresh", async (req, res) => {
       .runRefresh(CUSTOM_BUILD_ALL_ITEMS, {
         reason: "admin-manual",
         logger: logStructured,
-        apiItems: CUSTOM_BUILD_CATALOG_ITEMS,
+        apiItems: CUSTOM_BUILD_ALL_ITEMS,
       })
       .catch((error) => {
         logStructured("warn", "pricing_manual_refresh_failed", {
@@ -9455,6 +9468,77 @@ app.get("/api/product-upgrades/:productId", async (req, res) => {
     return res.json({ ok: true, data: [] });
   }
 });
+
+/*
+ * Pristabellen för uppgraderingar av minne, lagring och grafikkort.
+ *
+ * Reglerna och uträkningen finns i shared/upgradePricing.js. Här finns
+ * bara tabellen: den sparas i ui_settings under "upgrade_pricing" och
+ * redigeras i adminläget, eftersom komponentpriserna svänger och
+ * stegpriserna ändras ungefär en gång i veckan.
+ *
+ * Saknas en sparad tabell, eller går databasen inte att nå, används
+ * reservtabellen i koden. Kassan räknar alltid med samma tabell som
+ * sajten visar.
+ */
+const UPGRADE_PRICING_KEY = "upgrade_pricing";
+
+const loadUpgradePricing = async () => {
+  if (!supabase) return normalizePricing(DEFAULT_UPGRADE_PRICING);
+  try {
+    const { data } = await supabase
+      .from("ui_settings")
+      .select("value")
+      .eq("key", UPGRADE_PRICING_KEY)
+      .maybeSingle();
+    return normalizePricing(data?.value || DEFAULT_UPGRADE_PRICING);
+  } catch (error) {
+    console.error("Upgrade pricing load error:", error);
+    return normalizePricing(DEFAULT_UPGRADE_PRICING);
+  }
+};
+
+/* Öppen: kunden ska se priserna. Innehåller inget känsligt. */
+app.get("/api/upgrade-pricing", async (_req, res) => {
+  const pricing = await loadUpgradePricing();
+  res.set("Cache-Control", "no-store");
+  return res.json({ ok: true, data: pricing });
+});
+
+app.put("/api/admin/v2/upgrade-pricing", async (req, res) => {
+  if (!supabase) {
+    return jsonError(res, 503, "SERVICE_UNAVAILABLE", "Supabase is not configured.");
+  }
+  try {
+    const access = await requireAdminPermission(req, res, ["ops", "admin"]);
+    if (!access) return;
+    const { user } = access;
+    if (!requireServiceRoleKey(res)) return;
+
+    const previous = await loadUpgradePricing();
+    const pricing = normalizePricing({ ...(req.body?.pricing || {}), updatedAt: new Date().toISOString() });
+
+    const { error } = await supabase
+      .from("ui_settings")
+      .upsert([{ key: UPGRADE_PRICING_KEY, value: pricing }], { onConflict: "key" });
+    if (error) {
+      console.error("Upgrade pricing save failed:", error);
+      return jsonError(res, 500, "SAVE_FAILED", "Kunde inte spara pristabellen.");
+    }
+
+    /* Både före och efter loggas, så det går att se vem som ändrade
+       vilket pris och när - och vad det var innan. */
+    await logAdminAction(req, user, "upgrade_pricing_update", "ui_settings", UPGRADE_PRICING_KEY, {
+      before: { storage: previous.storage, ram: previous.ram, gpu: previous.gpu, overrides: previous.overrides },
+      after: { storage: pricing.storage, ram: pricing.ram, gpu: pricing.gpu, overrides: pricing.overrides },
+    });
+
+    return res.json({ ok: true, data: pricing });
+  } catch (error) {
+    console.error("Upgrade pricing update error:", error);
+    return jsonError(res, 500, "INTERNAL_ERROR", "Internt fel.");
+  }
+});
 app.get("/api/product-images/:productId", async (req, res) => {
   if (!supabase) {
     return res.status(503).json({ error: "Supabase not configured." });
@@ -10506,10 +10590,31 @@ async function handleSuccessfulPayment(stripeSession) {
         : null;
     const productId = sanitizeText(productMeta?.product_id, 64);
     if (productId) {
+      /* Utförandet kunden valde, som kassan lade i radens metadata. Det
+         sparas på orderraden tillsammans med en läsbar rad - "64GB DDR5 ·
+         2TB" - så det framgår vad som ska byggas utan att räkna om något
+         ur en pristabell som kan ha ändrats sedan. */
+      let configuration = null;
+      try {
+        const parsed = productMeta?.configuration ? JSON.parse(productMeta.configuration) : null;
+        if (parsed && typeof parsed === "object") {
+          const name = String(lineItem.description || "");
+          const separator = name.indexOf(" · ");
+          configuration = {
+            ...(Number.isFinite(Number(parsed.ramGb)) ? { ramGb: Number(parsed.ramGb) } : {}),
+            ...(Number.isFinite(Number(parsed.storageGb)) ? { storageGb: Number(parsed.storageGb) } : {}),
+            ...(typeof parsed.gpu === "string" ? { gpu: sanitizeText(parsed.gpu, 40) } : {}),
+            summary: separator >= 0 ? sanitizeText(name.slice(separator + 3), 160) : "",
+          };
+        }
+      } catch {
+        configuration = null;
+      }
       orderItems.push({
         product_id: productId,
         unit_price_cents: unitAmount,
         quantity,
+        ...(configuration ? { configuration } : {}),
       });
       productTotal += unitAmount * quantity;
     }
@@ -10613,9 +10718,19 @@ async function handleSuccessfulPayment(stripeSession) {
     }
   }
 
-  const { error: orderItemsError } = await supabase
+  let { error: orderItemsError } = await supabase
     .from("order_items")
     .insert(orderItems.map((item) => ({ ...item, order_id: order.id })));
+
+  /* Saknas kolumnen configuration (migreringen inte körd) sparas raderna
+     utan den. Kunden har redan betalat - ordern får aldrig falla bort för
+     att en kolumn saknas. Utförandet står ändå i radens namn i Stripe. */
+  if (orderItemsError?.code === "42703") {
+    console.warn("order_items.configuration saknas - kör 20261003_add_configuration.sql");
+    ({ error: orderItemsError } = await supabase
+      .from("order_items")
+      .insert(orderItems.map(({ configuration: _configuration, ...item }) => ({ ...item, order_id: order.id }))));
+  }
 
   if (orderItemsError) {
     throw new Error(`Failed to create order items: ${orderItemsError.message}`);
@@ -10733,7 +10848,10 @@ app.listen(PORT, () => {
   // sitt "senast körd" i Supabase, så en omstart av Render-instansen inte
   // nollställer dygnsräkningen.
   /*
-   * Hela katalogen mot flödet, de handplockade mot sök-API:erna.
+   * Hela katalogen mot både flödet och Webhallen.
+   *
+   * Webhallen söktes först bara för de 455 handplockade. De övriga fick
+   * då aldrig mer än Proshops pris, fast Webhallen säljer många av dem.
    *
    * Schemaläggaren körde bara de 455 handplockade. De 6 326 posterna ur
    * butiksflödet fick därför aldrig något butikspris, och varje sådan
@@ -10742,7 +10860,7 @@ app.listen(PORT, () => {
    */
   pricing.startScheduler(() => CUSTOM_BUILD_ALL_ITEMS, {
     logger: logStructured,
-    apiItems: () => CUSTOM_BUILD_CATALOG_ITEMS,
+    apiItems: () => CUSTOM_BUILD_ALL_ITEMS,
   });
 });
 

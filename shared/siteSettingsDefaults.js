@@ -101,7 +101,7 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
         { platform: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@datorhuset_uf?lang=en-GB" },
         { platform: "youtube", label: "YouTube", href: "https://www.youtube.com/@DatorHuset" },
       ],
-      copyright: "©2026 DatorHuset UF. Alla rättigheter förbehållna.",
+      copyright: "©2026 DatorHuset. Alla rättigheter förbehållna.",
     },
     motion: {
       heroRevealDurationMs: 720,
@@ -355,34 +355,70 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
       heroImageAlt: "DatorHuset logo",
       items: [
         {
-          question: "Hur lÃ¥ng leveranstid har ni?",
-          answer: "Normalt 3-5 arbetsdagar fÃ¶r lagervaror. Special- eller custombyggen kan ta lÃ¤ngre tid.",
+          question: "Hur lång leveranstid har ni?",
+          answer: "Datorer som står färdiga i lager skickas normalt inom 3-5 arbetsdagar. Förbeställningar tar längre tid eftersom datorn byggs efter att du har beställt - se frågan om förbeställning nedan.",
         },
         {
-          question: "Vad innebÃ¤r fÃ¶rbestÃ¤llning?",
-          answer: "FÃ¶rbestÃ¤llning betyder att vi inte har varan i lager just nu, men att vi kan bygga och leverera sÃ¥ snart delar finns.",
+          question: "Vad innebär förbeställning?",
+          answer: "Förbeställning betyder att vi inte har datorn färdigbyggd i lager just nu. Vi beställer in delarna, bygger och testar den, och skickar den så snart den är klar.",
+        },
+        {
+          question: "Hur lång tid tar en förbeställning?",
+          answer: "En förbeställning skickas normalt inom 5-10 dagar. Innehåller datorn en begagnad del kan det ta upp till två veckor innan den skickas. Det står alltid i annonsen om en dator har begagnade delar.",
+        },
+        {
+          question: "Använder ni begagnade delar?",
+          answer: "Ibland, i vissa förbeställningar. Det är alltid tydligt märkt i annonsen, så du vet vad du köper innan du beställer. Begagnade delar testas precis som nya innan datorn skickas.",
+        },
+        {
+          question: "Vad kostar frakten?",
+          answer: "Frakten kostar 345 kr per order. Du ser alltid den totala kostnaden i kassan innan du betalar. Vill du hellre hämta datorn själv går det att göra hos oss i Spånga.",
+        },
+        {
+          question: "Skickar ni utanför Sverige?",
+          answer: "Inte just nu. Vi skickar bara till adresser inom Sverige.",
         },
         {
           question: "Vilka betalmetoder accepterar ni?",
-          answer: "Kort, PayPal, Google Pay och Klarna via vÃ¥r betalningslÃ¶sning.",
+          answer: "Kort, PayPal, Google Pay och Klarna via vår betalningslösning.",
         },
         {
-          question: "Kan jag avbryta eller Ã¤ndra min order?",
-          answer: "Kontakta oss sÃ¥ snabbt som mÃ¶jligt. Om ordern inte har skickats kan vi oftast justera den.",
+          question: "Ingår Windows?",
+          answer: "Ja. Datorn levereras med Windows 11 installerat och aktiverat, så den är klar att använda direkt när du packat upp den.",
+        },
+        {
+          question: "Testas datorn innan den skickas?",
+          answer: "Ja, varje dator stresstestas innan den lämnar oss, så att vi vet att alla delar fungerar som de ska.",
+        },
+        {
+          question: "Kan jag avbryta eller ändra min order?",
+          answer: "Kontakta oss så snabbt som möjligt. Om ordern inte har skickats kan vi oftast justera den.",
+        },
+        {
+          question: "Kan jag ångra mitt köp?",
+          answer: "Ja, du har 14 dagars ångerrätt från den dag du tog emot datorn. Datorer som byggs efter dina egna val i Custom Bygg är undantagna, eftersom de tillverkas specifikt för dig. Allt om hur en retur går till står på sidan Ångerrätt och returer.",
+        },
+        {
+          question: "Vad gäller om något är fel på datorn?",
+          answer: "Du har tre års reklamationsrätt från leveransdagen. Hör av dig till oss så felsöker vi tillsammans och reparerar eller byter ut det som är trasigt. Du behöver inte själv hålla reda på vilken tillverkares garanti som gäller - den kontakten sköter vi.",
+        },
+        {
+          question: "Kan jag uppgradera datorn senare?",
+          answer: "Ja, du kan lämna in datorn hos oss för uppgradering mot en avgift. Har du redan komponenten med dig tar det allt från några timmar upp till två dagar. Behöver vi beställa in delen kan det ta upp till en vecka, men ibland har vi den i lager och kan göra uppgraderingen inom en eller två dagar. Mejla oss vad du vill uppgradera så får du ett exakt pris och en tidsuppskattning.",
         },
         {
           question: "Hur fungerar service och reparation?",
-          answer: "Beskriv problemet via kundservice sÃ¥ Ã¥terkommer vi med offert, tidsplan och instruktioner.",
+          answer: "Beskriv problemet via kundservice så återkommer vi med offert, tidsplan och instruktioner.",
         },
         {
-          question: "Kan jag fÃ¥ rÃ¥dgivning innan kÃ¶p?",
-          answer: "Absolut. Vi hjÃ¤lper dig att vÃ¤lja rÃ¤tt dator efter behov och budget.",
+          question: "Kan jag få rådgivning innan köp?",
+          answer: "Absolut. Vi hjälper dig att välja rätt dator efter behov och budget.",
         },
       ],
     },
     about: {
       heroEyebrow: "Om oss",
-      heroTitle: "DatorHuset UF",
+      heroTitle: "DatorHuset",
       heroDescription: "Vi bygger och sÃ¤ljer stationÃ¤ra datorer fÃ¶r gaming, kreativa flÃ¶den och professionellt arbete.",
       heroImage: "/Datorhuset.png",
       heroImageAlt: "DatorHuset logo",
@@ -438,7 +474,7 @@ export const DEFAULT_SITE_SETTINGS = repairMojibakeValue({
     termsOfService: {
       heroEyebrow: "Villkor",
       heroTitle: "AllmÃ¤nna villkor",
-      heroDescription: "LÃ¤s igenom vÃ¥ra villkor fÃ¶r kÃ¶p, leverans och service hos DatorHuset UF.",
+      heroDescription: "LÃ¤s igenom vÃ¥ra villkor fÃ¶r kÃ¶p, leverans och service hos DatorHuset.",
       heroImage: "/Datorhuset.png",
       heroImageAlt: "DatorHuset logo",
       updatedAt: "2026-02-08",

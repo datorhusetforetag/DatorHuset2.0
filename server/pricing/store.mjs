@@ -54,8 +54,14 @@ export const upsertIdentity = async (identity) => {
  * Skriver erbjudanden för en produkt och tar bort butiker som inte längre
  * har varan. Utan den städningen ligger gamla priser kvar och visas som
  * "lägsta pris" långt efter att butiken slutat sälja produkten.
+ *
+ * Städningen gäller bara butikerna i managedStores: de källor som faktiskt
+ * kördes och frågades om just den här varan. Förut togs varje butik bort
+ * som inte syntes i körningen, och en körning där Proshop-flödet inte
+ * lästes raderade Proshop från allt Webhallen hittade. Ingen vara hade
+ * därför mer än en butik.
  */
-export const replaceOffersForItem = async (itemId, offers) => {
+export const replaceOffersForItem = async (itemId, offers, { managedStores } = {}) => {
   memoryCache.set(itemId, { offers, seenAt: Date.now() });
   if (!client) return { written: offers.length, removed: 0 };
 
@@ -88,15 +94,20 @@ export const replaceOffersForItem = async (itemId, offers) => {
     if (error) throw error;
   }
 
-  // Ta bort butiker som inte fanns med i den här körningen.
-  const keptStores = rows.map((row) => row.store_id);
+  // Ta bort de frågade butiker som inte längre har varan. Övriga lämnas.
+  const keptStores = new Set(rows.map((row) => row.store_id));
+  const staleStores = (managedStores ? Array.from(managedStores) : []).filter(
+    (storeId) => !keptStores.has(storeId),
+  );
   let removed = 0;
-  const deleteQuery = client.from("component_offers").delete().eq("item_id", itemId);
-  const { error: deleteError, count } =
-    keptStores.length > 0
-      ? await deleteQuery.not("store_id", "in", `(${keptStores.join(",")})`)
-      : await deleteQuery;
-  if (!deleteError && Number.isFinite(count)) removed = count;
+  if (staleStores.length > 0) {
+    const { error: deleteError, count } = await client
+      .from("component_offers")
+      .delete({ count: "exact" })
+      .eq("item_id", itemId)
+      .in("store_id", staleStores);
+    if (!deleteError && Number.isFinite(count)) removed = count;
+  }
 
   return { written: rows.length, removed };
 };

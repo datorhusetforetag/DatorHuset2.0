@@ -226,19 +226,43 @@ export async function getCart(userId: string) {
   return data || [];
 }
 
-export async function addToCart(userId: string, productId: string, quantity: number) {
-  const { data, error } = await supabase
+/**
+ * Lägger en produkt i vagnen, eller ändrar antalet.
+ *
+ * configuration är utförandet kunden valt (minne, lagring, grafikkort).
+ * Utelämnat (undefined) lämnas det som redan står i raden orört - så att
+ * ändra antalet i varukorgen inte nollställer en uppgradering. null
+ * betyder grundutförande.
+ *
+ * Saknas kolumnen (migreringen 20261003_add_configuration.sql inte körd)
+ * sparas raden utan utförande hellre än att vagnen slutar fungera.
+ */
+export async function addToCart(
+  userId: string,
+  productId: string,
+  quantity: number,
+  configuration?: Record<string, unknown> | null,
+) {
+  const row: Record<string, unknown> = {
+    user_id: userId,
+    product_id: productId,
+    quantity,
+  };
+  if (configuration !== undefined) row.configuration = configuration;
+
+  let { data, error } = await supabase
     .from('cart_items')
-    .upsert(
-      {
-        user_id: userId,
-        product_id: productId,
-        quantity,
-      },
-      { onConflict: 'user_id,product_id' }
-    )
+    .upsert(row, { onConflict: 'user_id,product_id' })
     .select();
-  
+
+  if (error?.code === '42703' && 'configuration' in row) {
+    const { configuration: _configuration, ...withoutConfiguration } = row;
+    ({ data, error } = await supabase
+      .from('cart_items')
+      .upsert(withoutConfiguration, { onConflict: 'user_id,product_id' })
+      .select());
+  }
+
   if (error) throw error;
   return data?.[0];
 }

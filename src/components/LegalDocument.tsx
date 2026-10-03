@@ -72,20 +72,18 @@ const parseSections = (text: string): Section[] => {
 export const LegalDocument = ({
   text,
   updatedAt,
-  accent = "#9BA3B8",
 }: {
   text: string;
   updatedAt?: string;
-  accent?: string;
 }) => {
   const sections = useMemo(() => parseSections(text), [text]);
 
   /* Ingen numrering: visa texten som den är hellre än ingenting. */
   if (sections.length === 0) {
     return (
-      <Reveal className="mx-auto max-w-3xl">
+      <Reveal className="info-panel mx-auto max-w-3xl px-6 py-8 sm:px-10">
         {updatedAt && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
             Senast uppdaterad: {updatedAt}
           </p>
         )}
@@ -95,31 +93,25 @@ export const LegalDocument = ({
   }
 
   return (
-    <div className="grid gap-12 lg:grid-cols-[240px_1fr] lg:gap-16">
+    <div className="grid gap-8 lg:grid-cols-[260px_1fr] lg:gap-10">
       {/* Förteckningen.
           På telefon ligger den överst som en vanlig lista - att klistra
           fast något på en skärm som redan är kort tar bara plats. */}
-      {/* nav ligger utanför Reveal med flit. Reveal sprider inte vidare
-          okända attribut, så ett aria-label skrivet på den hade fallit
-          bort tyst och förteckningen blivit namnlös för skärmläsare. */}
       <nav aria-label="Innehåll" className="lg:sticky lg:top-28 lg:self-start">
-        <Reveal>
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.22em]"
-            style={{ color: accent }}
-          >
+        <div className="info-panel p-6">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/60">
             Innehåll
           </p>
-          <ol className="mt-4 space-y-1">
+          <ol className="mt-4 space-y-0.5">
             {sections.map((section) => (
               <li key={section.id}>
                 <a
                   href={`#${section.id}`}
-                  className="flex gap-3 rounded-sm py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                  className="-mx-2 flex gap-3 rounded-md px-2 py-1.5 text-sm text-white/70 transition-colors hover:bg-white/[0.06] hover:text-white"
                 >
                   <span
                     aria-hidden="true"
-                    className="w-4 shrink-0 text-right text-xs font-bold tabular-nums opacity-60"
+                    className="w-4 shrink-0 text-right tabular-nums text-white/40"
                   >
                     {section.number}
                   </span>
@@ -130,46 +122,38 @@ export const LegalDocument = ({
           </ol>
 
           {updatedAt && (
-            <p className="mt-8 border-t border-foreground/10 pt-5 text-xs text-muted-foreground">
+            <p className="mt-6 border-t border-white/10 pt-5 text-xs text-white/50">
               Senast uppdaterad
               <br />
-              <span className="font-semibold text-foreground">{updatedAt}</span>
+              <span className="mt-1 inline-block text-sm font-medium text-white/85">{updatedAt}</span>
             </p>
           )}
-        </Reveal>
+        </div>
       </nav>
 
-      {/* Texten. Smal spalt, gott om luft mellan avsnitten - det enda
-          som gör en villkorstext uthärdlig är radlängd och mellanrum. */}
-      <div className="max-w-2xl">
-        {sections.map((section, index) => (
-          <Reveal
-            as="section"
+      {/* Texten. Smal radlängd inne i panelen - det enda som gör en
+          villkorstext uthärdlig är radlängd och mellanrum. */}
+      <article className="info-panel px-6 py-4 sm:px-10 sm:py-6">
+        {sections.map((section) => (
+          <section
             key={section.id}
-            delay={Math.min(index, 6) * 50}
-            className="scroll-mt-28 border-t border-foreground/10 py-9 first:border-t-0 first:pt-0"
+            className="max-w-3xl scroll-mt-28 border-t border-white/10 py-8 first:border-t-0"
           >
-            <h2 id={section.id} className="flex gap-4 scroll-mt-28">
-              <span
-                aria-hidden="true"
-                className="font-display text-xl font-bold tabular-nums"
-                style={{ color: accent }}
-              >
-                {section.number}
+            <h2 id={section.id} className="flex scroll-mt-28 gap-3 text-lg font-semibold text-white sm:text-xl">
+              <span aria-hidden="true" className="tabular-nums text-white/40">
+                {section.number}.
               </span>
-              <span className="font-display text-xl font-bold tracking-tight text-foreground">
-                {section.title}
-              </span>
+              <span>{section.title}</span>
             </h2>
 
-            <div className="mt-4 space-y-4 pl-0 text-[15px] leading-relaxed text-muted-foreground sm:pl-9">
+            <div className="mt-4 space-y-4 text-[15px] leading-7 text-white/75">
               {section.paragraphs.map((paragraph, paragraphIndex) => (
                 <p key={paragraphIndex}>{paragraph}</p>
               ))}
             </div>
-          </Reveal>
+          </section>
         ))}
-      </div>
+      </article>
     </div>
   );
 };

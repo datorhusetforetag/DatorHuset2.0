@@ -1,6 +1,5 @@
-import { PageShell } from "@/components/PageShell";
-import { PageHero } from "@/components/PageHero";
-import { PAGE_BANNERS } from "@/lib/pageBanners";
+import { INFO_PAGE_BACKGROUND, PageShell } from "@/components/PageShell";
+import { InfoPageHeader } from "@/components/InfoPageHeader";
 import { LegalDocument } from "@/components/LegalDocument";
 import { useSiteSettings } from "@/hooks/useSiteSettings";
 
@@ -38,11 +37,9 @@ export default function TermsOfService() {
   const bodyText = pageSettings.bodyText?.trim() || termsOfServiceText;
 
   return (
-    <PageShell>
-      <PageHero
+    <PageShell background={INFO_PAGE_BACKGROUND}>
+      <InfoPageHeader
         sandboxId="terms-hero"
-        image={PAGE_BANNERS.legal.image}
-        accent={PAGE_BANNERS.legal.accent}
         breadcrumb={[{ label: "Hem", href: "/" }, { label: "Köpvillkor" }]}
         eyebrow={pageSettings.heroEyebrow}
         title={pageSettings.heroTitle}
@@ -50,12 +47,8 @@ export default function TermsOfService() {
       />
 
       <section data-sandbox-id="terms-body" className="relative">
-        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-14">
-          <LegalDocument
-            text={bodyText}
-            updatedAt={pageSettings.updatedAt}
-            accent={PAGE_BANNERS.legal.accent}
-          />
+        <div className="container mx-auto max-w-6xl px-4 pb-24 pt-10 sm:pt-14">
+          <LegalDocument text={bodyText} updatedAt={pageSettings.updatedAt} />
         </div>
       </section>
     </PageShell>

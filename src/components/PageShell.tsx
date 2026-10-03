@@ -33,20 +33,36 @@ type PageShellProps = {
   head?: ReactNode;
   /** Extra klasser på main, för sidor som behöver egen rytm. */
   className?: string;
+  /**
+   * Enfärgad duk i stället för temat och den levande bakgrunden.
+   * Informationssidorna använder den - där ska ingenting röra sig
+   * bakom texten.
+   */
+  background?: string;
 };
 
-export const PageShell = ({ children, head, className = "" }: PageShellProps) => {
+/** Duken på informationssidorna (kundservice, FAQ, villkor): nästan svart
+    med en dragning åt lila, så de täta panelerna ovanpå syns mot den. */
+export const INFO_PAGE_BACKGROUND = "#0f0b16";
+
+export const PageShell = ({ children, head, className = "", background }: PageShellProps) => {
   const { settings } = useSiteSettings();
   const themeVars = buildSiteThemeVars(settings.site.theme);
 
   return (
     <div
       data-sandbox-id="global-theme"
-      style={themeVars}
+      /* backgroundImage nollas också: duken har annars tre ljus i
+         index.css som lägger sig ovanpå kulören. */
+      style={
+        background
+          ? { ...themeVars, backgroundColor: background, backgroundImage: "none" }
+          : themeVars
+      }
       className="flex min-h-screen flex-col bg-[var(--site-page-bg)] text-[var(--site-text-primary)] transition-colors dark:bg-[var(--site-page-bg-dark)] dark:text-[var(--site-text-primary-dark)]"
     >
       {head}
-      <AmbientBackground />
+      {!background && <AmbientBackground />}
       <Navbar />
       <main className={`relative z-10 flex-1 ${className}`}>{children}</main>
       <Footer />

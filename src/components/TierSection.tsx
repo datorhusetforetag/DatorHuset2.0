@@ -7,12 +7,12 @@ import platinumTier from "../../images/platinum tier.png";
 import diamondTier from "../../images/diamond tier.png";
 
 /**
- * De fyra nivåerna, i Starforges form.
+ * De tre nivåerna, i Starforges form.
  *
  * Det som gör deras variant luftig är att nästan ingenting är inramat.
  * Datorn står fritt på sidans bakgrund - ingen kortram, ingen egen yta -
- * och bara textsidan har en svag panel. Förhandsbilderna under är inte
- * heller rutor, utan bild plus etikett.
+ * och skjuter in över vänsterkanten på textens mörka panel. Förhandsbilderna
+ * under är inte heller rutor, utan bild plus etikett.
  *
  * Strecket under går genom hela raden och inte bara under den valda.
  * Syns det bara under en av dem ser de andra tre ut som bilder, inte
@@ -97,21 +97,24 @@ export const TierSection = () => {
       <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-32">
         <Reveal className="mb-14 text-center">
           <p className="eyebrow">Våra nivåer</p>
-          <h2 className="section-title mt-3 text-4xl sm:text-5xl lg:text-6xl">Fyra steg, en dator som passar</h2>
+          <h2 className="section-title mt-3 text-4xl sm:text-5xl lg:text-6xl">Tre steg, en dator som passar</h2>
           <p className="section-lede mx-auto mt-4 text-center">
             Alla byggs för hand, testas och levereras körklara. Skillnaden är hur
             långt du vill gå.
           </p>
         </Reveal>
 
-        {/* Datorn står fritt, panelen ligger bredvid ------------------- */}
-        <Reveal delay={80} className="grid items-center gap-8 lg:grid-cols-[1.05fr_1fr] lg:gap-4">
-          <div className="relative flex min-h-[320px] items-center justify-center sm:min-h-[420px]">
+        {/* Datorn står framför panelen och skjuter in över dess vänsterkant.
+            Panelen börjar en bit in under datorn, och texten får en bred
+            vänstermarginal så att den hamnar fritt till höger om bilden.
+            På smal skärm staplas de i stället, bild överst. */}
+        <Reveal delay={80} className="relative mx-auto max-w-6xl">
+          <div className="relative z-10 flex min-h-[320px] items-center justify-center sm:min-h-[420px] lg:absolute lg:-bottom-14 lg:-top-14 lg:left-0 lg:min-h-0 lg:w-[40%]">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 transition-all duration-500"
               style={{
-                background: `radial-gradient(40% 28% at 50% 74%, rgba(${active.glow}, 0.45) 0%, rgba(${active.glow}, 0.15) 42%, transparent 70%)`,
+                background: `radial-gradient(50% 45% at 50% 55%, rgba(${active.glow}, 0.4) 0%, rgba(${active.glow}, 0.12) 45%, transparent 72%)`,
               }}
             />
             <img
@@ -120,14 +123,14 @@ export const TierSection = () => {
               alt={`${active.name}-datorn`}
               loading="lazy"
               decoding="async"
-              className="relative max-h-[420px] w-auto animate-in fade-in zoom-in-95 object-contain duration-500"
+              className="relative max-h-[420px] w-auto max-w-full animate-in fade-in zoom-in-95 object-contain duration-500 lg:max-h-full"
               style={{ filter: `drop-shadow(0 28px 44px rgba(${active.glow}, 0.4))` }}
             />
           </div>
 
-          {/* Panelen: svag ram, nästan genomskinlig botten */}
-          <div className="overflow-hidden rounded-lg border border-foreground/10 bg-foreground/[0.03] backdrop-blur-sm">
-            <div className="p-8 sm:p-10">
+          {/* Panelen: mörk och nästan tät, så texten står stadigt mot bakgrunden */}
+          <div className="relative flex flex-col overflow-hidden rounded-lg border border-foreground/10 bg-background/85 shadow-[0_30px_60px_-20px_rgba(0,0,0,0.6)] backdrop-blur-md lg:ml-[32%] lg:min-h-[420px]">
+            <div className="flex-1 p-8 sm:p-10 lg:py-14 lg:pl-[22%] lg:pr-14">
               <p
                 className="text-xs font-semibold uppercase tracking-[0.28em]"
                 style={{ color: active.accent }}
@@ -151,7 +154,7 @@ export const TierSection = () => {
                 ))}
               </ul>
 
-              <p className="mt-5 text-base leading-relaxed text-muted-foreground">
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">
                 {active.description}
               </p>
             </div>
@@ -175,8 +178,13 @@ export const TierSection = () => {
           </div>
         </Reveal>
 
-        {/* Förhandsraden: bild och etikett, ingen ruta ----------------- */}
-        <Reveal delay={160} className="mt-16 grid grid-cols-2 gap-x-0 gap-y-8 lg:grid-cols-4">
+        {/* Förhandsraden: en kolumn per nivå, lika breda, över samma bredd
+            som panelen ovanför. Ett tunt streck går under hela raden och
+            den valda lägger ett tjockare i sin kulör ovanpå. */}
+        <Reveal
+          delay={160}
+          className="mx-auto mt-16 grid max-w-6xl grid-cols-3 border-b border-foreground/15 lg:mt-28"
+        >
           {TIERS.map((tier) => {
             const isActive = tier.id === active.id;
             return (
@@ -185,10 +193,10 @@ export const TierSection = () => {
                 type="button"
                 onClick={() => setActiveId(tier.id)}
                 aria-pressed={isActive}
-                className="group flex min-h-[44px] items-center gap-3 border-b-2 border-foreground/20 pb-4 pr-4 text-left transition-colors hover:border-foreground/50 sm:gap-4 sm:pr-6"
+                className="group relative -mb-px flex min-h-[44px] flex-col items-center gap-2 border-b-2 border-transparent px-2 pb-5 text-center transition-colors hover:border-foreground/40 sm:flex-row sm:justify-center sm:gap-5 sm:px-4 sm:text-left"
                 style={isActive ? { borderColor: tier.accent } : undefined}
               >
-                <span className="relative block h-14 w-14 shrink-0 sm:h-20 sm:w-20">
+                <span className="relative block h-16 w-16 shrink-0 sm:h-24 sm:w-24">
                   <span
                     aria-hidden="true"
                     className="pointer-events-none absolute inset-0 transition-opacity duration-300"
@@ -207,7 +215,7 @@ export const TierSection = () => {
                   />
                 </span>
                 <span
-                  className="font-display text-sm font-bold leading-tight tracking-tight transition-colors sm:text-lg"
+                  className="font-display text-sm font-bold leading-tight tracking-tight transition-colors sm:text-xl"
                   style={{ color: isActive ? tier.accent : "hsl(var(--muted-foreground))" }}
                 >
                   {tier.name}
